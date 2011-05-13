@@ -1,6 +1,6 @@
-class Category < ActiveRecord::Base
+class Page < ActiveRecord::Base
   validates :name, :presence => true
   validates :url_match, :presence => true
   
-  has_many :pages
+  belongs_to :category
 end
