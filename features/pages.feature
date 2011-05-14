@@ -11,14 +11,17 @@ Feature: pages
   
   @wip
   Scenario: enter home page
+    Given a page named "Home page" with URL match "home"
+    And page "Home page" has text "Home page text"
     When I go to the home page
-    Then I should see "Category 1" within ".menu a[href=/category-1]"
+    Then I should see "Home page text"
+    And I should see "Category 1" within ".menu a[href=/category-1]"
     And I should see "Category 2" within ".menu a[href=/category-2]"
     But I should not see element ".menu a[href=/category-1/page-11]"
     But I should not see element ".menu a[href=/category-2/page-21]"
     
   Scenario: enter category
-    Given "Category 1" has text "Category 1 text"
+    Given category "Category 1" has text "Category 1 text"
     When I go to the "Category 1"
     Then I should see "Category 1 text"
     And I should see "Page 11" within ".category_pages a[href=/category-1/page-11]"
@@ -28,7 +31,7 @@ Feature: pages
     But I should not see element ".menu a[href=/category-2/page-21]"
     
   Scenario: enter page
-    Given "Page 11" has text "Page 11 text"
+    Given page "Page 11" has text "Page 11 text"
     When I go to the "Page 11"
     Then I should see "Page 11 text"
     And I should see "Category 1" within ".menu a[href=/category-1].selected"

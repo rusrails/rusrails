@@ -54,7 +54,7 @@ require 'webrat'
 require 'webrat/core/matchers'
 
 Webrat.configure do |config|
- config.mode = :rails
+ config.mode = :rack
  config.open_error_files = false
 end
 
