@@ -8,3 +8,4 @@ db/schema.rb
 public/system
 public/system/*
 Gemfile.lock
+webrat.log

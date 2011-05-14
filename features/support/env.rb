@@ -49,3 +49,14 @@ end
 #     DatabaseCleaner.strategy = :transaction
 #   end
 #
+
+require 'webrat'
+require 'webrat/core/matchers'
+
+Webrat.configure do |config|
+ config.mode = :rails
+ config.open_error_files = false
+end
+
+World(Webrat::Methods)
+World(Webrat::Matchers)
