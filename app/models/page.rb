@@ -3,4 +3,8 @@ class Page < ActiveRecord::Base
   validates :url_match, :presence => true
   
   belongs_to :category
+  
+  def self.matching url_match
+    where(:url_match => url_match).first
+  end
 end
