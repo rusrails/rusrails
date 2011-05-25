@@ -14,5 +14,5 @@ end
 
 Given /^page "([^"]*)" has text "([^"]*)"$/ do |name, text|
   page = Page.find_by_name name
-  page.text = text
+  page.update_attributes :text => text
 end
