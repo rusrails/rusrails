@@ -3,7 +3,7 @@ class CreatePages < ActiveRecord::Migration
     create_table :pages do |t|
       t.string :name
       t.string :url_match
-      t.text :text
+      t.text :text, :null => false
       t.references :category
 
       t.timestamps
