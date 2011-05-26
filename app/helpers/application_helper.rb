@@ -4,7 +4,7 @@ module ApplicationHelper
     builder = Nokogiri::HTML::Builder.new do |doc|
       doc.ul :class => "menu" do
         @categories.each do |cat|
-          doc.li selected_class(cat==@category) do
+          doc.li selected_class(cat==@category, "category_pages") do
             doc.a cat.name, :href => cat.path
             if cat==@category
               doc.ul do
@@ -22,11 +22,8 @@ module ApplicationHelper
     builder.doc.inner_html.html_safe
   end
   
-  def selected_class condition
-    if condition
-      {:class => "selected"}
-    else
-      {}
-    end
+  def selected_class condition, *other_classes
+    other_classes << "selected" if condition
+    {:class => other_classes*" "} unless other_classes.empty?
   end
 end

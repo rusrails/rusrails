@@ -75,4 +75,25 @@ describe ApplicationHelper do
       end
     end  
   end
+  
+  describe "#selected_class" do
+    context "when condition is true" do
+      it "return nil if no other classes" do
+        helper.selected_class(false).should == nil
+      end
+      
+      it "return hash with :class key if other classes present" do
+        helper.selected_class(false,"foo","bar").should == {:class => "foo bar"}
+      end
+    end
+    
+    context "when condition is true" do
+      it "return hash with :class key if no other classes" do
+        helper.selected_class(true).should == {:class => "selected"}
+      end
+      it "return hash with :class key if other classes present" do
+        helper.selected_class(true,"foo","bar").should == {:class => "foo bar selected"}
+      end
+    end
+  end
 end
