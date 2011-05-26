@@ -25,19 +25,51 @@ describe ApplicationHelper do
     
     it "renders names of categories" do
       menu = helper.menu
-      menu.should include("Category 1")
-      menu.should include("Category 2")
+      menu.should contain("Category 1")
+      menu.should contain("Category 2")
     end
     
     context "when @category present" do
-      it "renders list of active pages that belongs to @category"
+      before :each do
+        @page1 = mock_model("Page", :name => "Page 1",
+                            :path => "/category-1/page-1").as_null_object
+        @page2 = mock_model("Page", :name => "Page 2",
+                            :path => "/category-1/page-2").as_null_object
+        @cat1.stub_chain(:pages, :active).and_return Array[@page1,@page2]
+        assign :category, @cat1
+      end
       
-      it "renders that list of pages within category list item"
+      it "marks category as selected" do
+        menu = helper.menu
+        menu.should have_selector("li.selected a", :href => "/category-1")
+      end
       
-      it "marks category as selected"
+      it "renders links to active pages which belongs to @category" do
+        menu = helper.menu
+        menu.should have_selector("a", :href => "/category-1/page-1")
+        menu.should have_selector("a", :href => "/category-1/page-2")
+      end
+      
+      it "renders names of active pages which belongs to @category" do
+        menu = helper.menu
+        menu.should contain("Page 1")
+        menu.should contain("Page 2")
+      end
+      
+      it "renders its list of pages within active category's list item" do
+        menu = helper.menu
+        menu.should have_selector(".menu>li.selected") do |li|
+          li.should contain("Page 1")
+          li.should contain("Page 2")
+        end
+      end
       
       context "when @page present" do
-        it "marks page as selected"
+        it "marks page as selected" do
+          assign :page, @page1
+          menu = helper.menu
+          menu.should have_selector("li.selected a", :href => "/category-1/page-1")
+        end
       end
     end  
   end
