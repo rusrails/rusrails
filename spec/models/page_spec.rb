@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Page do
   before :each do
-    @page = Factory :page, :name => "Page 11", :url_match => "page_11"
+    @page = Factory :page, :name => "Page 11", :url_match => "page_11", :enabled => true
   end
   
   it "is valid with valid attributes" do
@@ -17,6 +17,23 @@ describe Page do
   it "is not valid without url_match" do
     @page.url_match = nil
     @page.should_not be_valid
+  end
+  
+  describe "scope :enabled" do
+    before :each do
+      @disabled_page = Factory  :page, :name => "page 12",
+                                :url_match => "page_12", :enabled => false
+      @category = Factory :category, :name => "Ctg 1", :url_match => "ctg_1"
+      @category.pages << @page << @disabled_page
+    end
+    
+    it "returns enabled pages within category" do
+      @category.pages.enabled.should include(@page)
+    end
+    
+    it "doesn't return disabled pages within category"do
+      @category.pages.enabled.should_not include(@disabled_page)
+    end
   end
   
   describe "self.matching" do

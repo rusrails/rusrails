@@ -6,6 +6,10 @@ class Category < ActiveRecord::Base
   
   scope :enabled, where(:enabled=>true)
   
+  def self.matching url_match
+    where(:url_match => url_match, :enabled => true).first
+  end
+  
   def path
     "/"+url_match
   end

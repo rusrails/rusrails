@@ -35,6 +35,22 @@ describe Category do
     end
   end
   
+  describe "self.matching" do
+    it "returns matching category when it present and enabled" do
+      Category.matching("category_1").should == @category
+    end
+    
+    it "returns nil when category present but disabled" do
+      @disabled_category = Factory  :category, :name => "Category 2",
+                                    :url_match => "category_2", :enabled => false
+      Category.matching("category_2").should == nil
+    end
+    
+    it "returns nil when category not present" do
+      Category.matching("no-category").should == nil
+    end
+  end
+  
   describe "#path" do
     it "returns path to category, based on url_match" do
       @category.path.should == "/category_1"

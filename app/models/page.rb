@@ -4,6 +4,8 @@ class Page < ActiveRecord::Base
   
   belongs_to :category
   
+  scope :enabled, where(:enabled=>true)
+  
   def self.matching url_match
     where(:url_match => url_match).first
   end
