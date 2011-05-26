@@ -9,7 +9,7 @@ module ApplicationHelper
             if cat==@category
               doc.ul do
                 @category.pages.enabled.each do |p|
-                  doc.li do
+                  doc.li selected_class(p==@page) do
                     doc.a p.name, :href => p.path
                   end
                 end

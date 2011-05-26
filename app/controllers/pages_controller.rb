@@ -6,6 +6,13 @@ class PagesController < ApplicationController
   end
 
   def show
+    if  @category = Category.matching(params[:category_url_match]) and
+        @page = @category.pages.matching(params[:url_match])
+      @categories = Category.enabled
+      @pages = @category.pages.enabled
+    else
+      redirect_to "/404.html"
+    end
   end
 
 end

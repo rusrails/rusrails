@@ -29,16 +29,16 @@ Feature: pages
     And I should see "Page 11" within ".menu a[href='/category-1/page-11']"
     But I should not see element ".menu a[href='/category-2/page-21']"
        
-  @wip 
   Scenario: enter page
     Given page "Page 11" has text "Page 11 text"
     When I go to the page "Page 11"
     Then I should see "Page 11 text"
-    And I should see "Category 1" within ".menu a[href='/category-1'].selected"
+    And I should see "Category 1" within ".menu li.selected a[href='/category-1']"
     And I should see "Category 2" within ".menu a[href='/category-2']"
     And I should see "Page 11" within ".category_pages li.selected a[href='/category-1/page-11']"
     But I should not see element ".menu a[href='/category-2/page-21']"
-    
+  
+  @wip 
   Scenario Outline: navigating between pages
     Given "Category 1" additionally have <number> page(s)
     When I go to <n>-th page

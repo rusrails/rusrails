@@ -70,7 +70,8 @@ describe ApplicationHelper do
         it "marks page as selected" do
           assign :page, @page1
           menu = helper.menu
-          menu.should have_selector("li.selected a", :href => "/category-1/page-1")
+          menu.should have_selector("li.category_pages li.selected a",
+                                    :href => "/category-1/page-1")
         end
       end
     end  

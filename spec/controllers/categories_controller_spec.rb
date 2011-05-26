@@ -19,7 +19,7 @@ describe CategoriesController do
         assigns(:category).should == category
       end
       
-      it "gives list of categories (for menu helper)" do
+      it "assigns @categories (for menu helper)" do
         Category.should_receive(:enabled)
         get :show, :url_match=>"category-1"
         assigns[:categories].should eq([category])
@@ -36,7 +36,7 @@ describe CategoriesController do
         Category.stub(:matching).and_return nil
       end
       
-      it "renders 404 page when no matching category" do
+      it "renders 404 page" do
         get :show, :url_match=>"no-category"
         response.should redirect_to('/404.html')
       end
