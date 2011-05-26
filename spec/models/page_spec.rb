@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Page do
   before :each do
-    @page = Factory :page, :name => "Page 11", :url_match => "page_11", :enabled => true
+    @page = Factory :page, :name => "Page 11", :url_match => "page_11"
   end
   
   it "is valid with valid attributes" do

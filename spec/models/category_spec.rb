@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe Category do
   before :each do
-    @category = Factory :category, :name => "Category 1",
-                        :url_match => "category_1", :enabled => true
+    @category = Factory :category, :name => "Category 1", :url_match => "category_1"
   end
   
   it "is valid with valid attributes" do
