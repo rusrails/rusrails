@@ -16,6 +16,9 @@ module NavigationHelpers
       
     when /^the page "([^"]*)"$/i
       Page.find_by_name($1).path
+      
+    when /^(\d+)-th page$/i
+      @pages[$1.to_i-1].path
     
     else
       begin

@@ -36,6 +36,19 @@ describe Page do
     it "doesn't return disabled pages within category"do
       @category.pages.enabled.should_not include(@disabled_page)
     end
+    
+    it "returns pages ordered by show_order" do
+      @second_page = Factory  :page, :name => "page 13",
+                                :url_match => "page_13", :show_order => 1
+      @category.pages << @second_page
+      @category.pages.enabled.should == [@second_page,@page]
+    end
+    
+    it "returns pages with equal show_order ordered by creation time" do
+      @second_page = Factory  :page, :name => "page 13", :url_match => "page_13"
+      @category.pages << @second_page
+      @category.pages.enabled.should == [@page,@second_page]
+    end
   end
   
   describe "self.matching" do

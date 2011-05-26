@@ -34,6 +34,17 @@ describe Category do
     it "doesn't return disabled categories"do
       Category.enabled.should_not include(@disabled_category)
     end
+    
+    it "returns categories ordered by show_order" do
+      @second_category = Factory  :category, :name => "Category 2",
+                                  :url_match => "cat_2", :show_order => 1
+      Category.enabled.should == [@second_category,@category]
+    end
+    
+    it "returns categories with equal show_order ordered by creation time" do
+      @second_category = Factory  :category, :name => "Category 2", :url_match => "cat_2"
+      Category.enabled.should == [@category,@second_category]
+    end
   end
   
   describe "self.matching" do

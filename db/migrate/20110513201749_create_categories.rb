@@ -5,6 +5,7 @@ class CreateCategories < ActiveRecord::Migration
       t.string :url_match
       t.text :text
       t.boolean :enabled, :default => true
+      t.integer :show_order, :default => 0
 
       t.timestamps
     end

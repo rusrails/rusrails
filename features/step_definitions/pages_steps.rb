@@ -24,12 +24,11 @@ Given /^page "([^"]*)" has text "([^"]*)"$/ do |name, text|
 end
 
 Given /^"([^"]*)" additionally have (\d+) page\(s\)$/ do |name, number|
-  if (number=number.to_i)>0
-    cat = Category.find_by_name name
-    (1..number).each do |n|
-      cat.pages << Factory(:page, :name => "Additional #{n}", :url_match => "add-#{n}")
-    end
+  cat = Category.find_by_name name
+  (1..number.to_i).each do |n|
+    cat.pages << Factory(:page, :name => "Additional #{n}", :url_match => "add-#{n}")
   end
+  @pages = cat.pages.enabled
 end
 
 Then /^I should not see element "([^"]*)"$/ do |element|

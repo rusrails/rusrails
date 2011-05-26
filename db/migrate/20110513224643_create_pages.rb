@@ -6,6 +6,7 @@ class CreatePages < ActiveRecord::Migration
       t.text :text, :null => false
       t.references :category
       t.boolean :enabled, :default => true
+      t.integer :show_order, :default => 0
 
       t.timestamps
     end
