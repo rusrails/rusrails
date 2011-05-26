@@ -20,6 +20,8 @@ describe Category do
     @category.should_not be_valid
   end
   
+  it "should have valid format of url_match"
+  
   describe "scope :enabled" do
     before :each do
       @disabled_category = Factory  :category, :name => "Category 2",

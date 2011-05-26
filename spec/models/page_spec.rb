@@ -19,6 +19,8 @@ describe Page do
     @page.should_not be_valid
   end
   
+  it "should have valid format of url_match"
+  
   describe "scope :enabled" do
     before :each do
       @disabled_page = Factory  :page, :name => "page 12",

@@ -13,6 +13,9 @@ module NavigationHelpers
 
     when /^the category "([^"]*)"$/i
       Category.find_by_name($1).path
+      
+    when /^the page "([^"]*)"$/i
+      Page.find_by_name($1).path
     
     else
       begin
