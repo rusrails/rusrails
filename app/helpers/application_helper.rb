@@ -8,7 +8,7 @@ module ApplicationHelper
             doc.a cat.name, :href => cat.path
             if cat==@category
               doc.ul do
-                @category.pages.active.each do |p|
+                @category.pages.enabled.each do |p|
                   doc.li do
                     doc.a p.name, :href => p.path
                   end

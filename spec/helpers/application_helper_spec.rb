@@ -35,7 +35,7 @@ describe ApplicationHelper do
                             :path => "/category-1/page-1").as_null_object
         @page2 = mock_model("Page", :name => "Page 2",
                             :path => "/category-1/page-2").as_null_object
-        @cat1.stub_chain(:pages, :active).and_return Array[@page1,@page2]
+        @cat1.stub_chain(:pages, :enabled).and_return Array[@page1,@page2]
         assign :category, @cat1
       end
       

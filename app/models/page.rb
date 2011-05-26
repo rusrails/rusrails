@@ -7,4 +7,8 @@ class Page < ActiveRecord::Base
   def self.matching url_match
     where(:url_match => url_match).first
   end
+  
+  def path
+    (category ? category.path : "") + "/" + url_match
+  end
 end

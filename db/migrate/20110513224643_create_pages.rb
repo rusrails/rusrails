@@ -5,6 +5,7 @@ class CreatePages < ActiveRecord::Migration
       t.string :url_match
       t.text :text, :null => false
       t.references :category
+      t.boolean :enabled, :default => true
 
       t.timestamps
     end

@@ -1,9 +1,9 @@
 Given /^a category named "([^"]*)" with URL match "([^"]*)"$/ do |name, url_match|
-  Factory :category, :name => name, :url_match => url_match
+  Factory :category, :name => name, :url_match => url_match, :enabled => true
 end
 
 Given /^a page named "([^"]*)" with URL match "([^"]*)"$/ do |name, url_match|
-  Factory :page, :name => name, :url_match => url_match
+  Factory :page, :name => name, :url_match => url_match, :enabled => true
 end
 
 Given /^"([^"]*)" have a page named "([^"]*)" with URL match "([^"]*)"$/ do

@@ -19,7 +19,7 @@ describe Page do
     @page.should_not be_valid
   end
   
-  describe "scope :matching" do
+  describe "self.matching" do
     it "returns page, matching given url, if exist" do
       Page.matching("page_11").should == @page
     end
@@ -47,6 +47,18 @@ describe Page do
         @page.save
         @category.pages.matching("page_11").should == nil
       end
+    end
+  end
+  
+  describe "#path" do
+    it "returns path to page based on url_match if page without category" do
+      @page.path.should == "/page_11"
+    end
+    
+    it "returns path to page based on url_matches of page and category if present" do
+      @category = Factory :category, :name => "Ctg 1", :url_match => "ctg_1"
+      @category.pages << @page
+      @page.path.should == "/ctg_1/page_11"
     end
   end
 end

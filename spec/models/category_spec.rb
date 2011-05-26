@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Category do
   before :each do
-    @category = Category.new :name => "Category 1", :url_match => "category_1"
+    @category = Factory :category, :name => "Category 1",
+                        :url_match => "category_1", :enabled => true
   end
   
   it "is valid with valid attributes" do
@@ -17,5 +18,26 @@ describe Category do
   it "is not valid without url_match" do
     @category.url_match = nil
     @category.should_not be_valid
+  end
+  
+  describe "scope :enabled" do
+    before :each do
+      @disabled_category = Factory  :category, :name => "Category 2",
+                                    :url_match => "category_2", :enabled => false
+    end
+    
+    it "returns enabled categories" do
+      Category.enabled.should include(@category)
+    end
+    
+    it "doesn't return disabled categories"do
+      Category.enabled.should_not include(@disabled_category)
+    end
+  end
+  
+  describe "#path" do
+    it "returns path to category, based on url_match" do
+      @category.path.should == "/category_1"
+    end
   end
 end

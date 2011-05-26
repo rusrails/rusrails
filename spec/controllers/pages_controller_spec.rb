@@ -3,8 +3,10 @@ require 'spec_helper'
 describe PagesController do
   describe "GET index" do
     let(:homepage){ mock_model(Page) }
+    let(:category){mock_model(Category)}
     before :each do
       Page.stub(:matching).with("home").and_return homepage
+      Category.stub(:enabled).and_return [category]
     end
     
     it "loads homepage if present" do
@@ -22,6 +24,12 @@ describe PagesController do
     it "gives homepage to the view" do
       get :index
       assigns[:homepage].should eq(homepage)
+    end
+    
+    it "gives list of categories (for menu helper)" do
+      Category.should_receive(:enabled)
+      get :index
+      assigns[:categories].should eq([category])
     end
     
     it "render index template" do
