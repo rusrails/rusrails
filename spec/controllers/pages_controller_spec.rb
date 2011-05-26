@@ -21,7 +21,7 @@ describe PagesController do
       get :index
     end
     
-    it "gives homepage to the view" do
+    it "assigns @homepage" do
       get :index
       assigns[:homepage].should eq(homepage)
     end
@@ -32,7 +32,7 @@ describe PagesController do
       assigns[:categories].should eq([category])
     end
     
-    it "render index template" do
+    it "renders index template" do
       get :index
       response.should render_template("index")
     end

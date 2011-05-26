@@ -12,6 +12,11 @@ Given /^"([^"]*)" have a page named "([^"]*)" with URL match "([^"]*)"$/ do
   Factory :page, :name => name, :url_match => url_match, :category => category
 end
 
+Given /^category "([^"]*)" has text "([^"]*)"$/ do |name, text|
+  cat = Category.find_by_name name
+  cat.update_attributes :text => text
+end
+
 Given /^page "([^"]*)" has text "([^"]*)"$/ do |name, text|
   page = Page.find_by_name name
   page.update_attributes :text => text
