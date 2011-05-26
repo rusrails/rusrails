@@ -8,8 +8,7 @@ Feature: pages
     And "Category 1" have a page named "Page 11" with URL match "page-11"
     And a category named "Category 2" with URL match "category-2"
     And "Category 2" have a page named "Page 21" with URL match "page-21"
-  
-  @wip
+
   Scenario: enter home page
     Given a page named "Home page" with URL match "home"
     And page "Home page" has text "Home page text"
@@ -20,6 +19,7 @@ Feature: pages
     But I should not see element ".menu a[href='/category-1/page-11']"
     But I should not see element ".menu a[href='/category-2/page-21']"
     
+  @wip
   Scenario: enter category
     Given category "Category 1" has text "Category 1 text"
     When I go to the "Category 1"

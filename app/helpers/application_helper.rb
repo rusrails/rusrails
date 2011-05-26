@@ -19,7 +19,7 @@ module ApplicationHelper
         end
       end
     end
-    builder.doc.inner_html
+    builder.doc.inner_html.html_safe
   end
   
   def selected_class condition

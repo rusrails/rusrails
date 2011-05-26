@@ -16,3 +16,7 @@ Given /^page "([^"]*)" has text "([^"]*)"$/ do |name, text|
   page = Page.find_by_name name
   page.update_attributes :text => text
 end
+
+Then /^I should not see element "([^"]*)"$/ do |element|
+  page.should have_no_selector(element)
+end

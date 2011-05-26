@@ -29,6 +29,8 @@ describe ApplicationHelper do
       menu.should contain("Category 2")
     end
     
+    specify {helper.menu.should be_html_safe}
+    
     context "when @category present" do
       before :each do
         @page1 = mock_model("Page", :name => "Page 1",
