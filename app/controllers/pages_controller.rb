@@ -11,7 +11,7 @@ class PagesController < ApplicationController
       @categories = Category.enabled
       @pages = @category.pages.enabled
     else
-      redirect_to "/404.html"
+      render "/public/404.html"
     end
   end
 

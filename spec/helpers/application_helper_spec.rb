@@ -3,10 +3,8 @@ require 'spec_helper'
 describe ApplicationHelper do
   describe "#menu" do
     before :each do
-      @cat1 = mock_model("Category", :name => "Category 1",
-                         :path => "/category-1").as_null_object
-      @cat2 = mock_model("Category", :name => "Category 2",
-                         :path => "/category-2").as_null_object
+      @cat1 = mock_model "Category", :name => "Category 1", :path => "/category-1"
+      @cat2 = mock_model "Category", :name => "Category 2", :path => "/category-2"
       assign :categories, [@cat1,@cat2]
     end
     
@@ -33,10 +31,8 @@ describe ApplicationHelper do
     
     context "when @category present" do
       before :each do
-        @page1 = mock_model("Page", :name => "Page 1",
-                            :path => "/category-1/page-1").as_null_object
-        @page2 = mock_model("Page", :name => "Page 2",
-                            :path => "/category-1/page-2").as_null_object
+        @page1 = mock_model "Page", :name => "Page 1", :path => "/category-1/page-1"
+        @page2 = mock_model "Page", :name => "Page 2", :path => "/category-1/page-2"
         @cat1.stub_chain(:pages, :enabled).and_return Array[@page1,@page2]
         assign :category, @cat1
       end

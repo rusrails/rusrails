@@ -1,4 +1,4 @@
-Feature: pages
+Feature: navigating pages
   As a guest visitor
   I want to navigate between site pages
   So that can satisfy my interest in some information of this site
@@ -38,12 +38,11 @@ Feature: pages
     And I should see "Page 11" within ".category_pages li.selected a[href='/category-1/page-11']"
     But I should not see element ".menu a[href='/category-2/page-21']"
   
-  @wip 
   Scenario Outline: navigating between pages
     Given "Category 1" additionally have <number> page(s)
     When I go to <n>-th page
     Then I should see <prev> previous link
-    And I should see <next> link
+    And I should see <next> next link
     
     Scenarios:
       | number  | n | prev  | next  |

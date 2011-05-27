@@ -34,3 +34,23 @@ end
 Then /^I should not see element "([^"]*)"$/ do |element|
   page.should have_no_selector(element)
 end
+
+Then /^I should see (\d+) (.+) link$/ do |number,link|
+  case link
+  when "previous"
+    link_selector = "a.prev_page"
+  when "next"
+    link_selector = "a.next_page"
+  else
+    raise "Describe '#{link}' link in #{__FILE__}"
+  end
+  
+  case number.to_i
+  when 0
+    page.should have_no_selector(link_selector)
+  when 1
+    page.should have_selector(link_selector)
+  else
+    raise "Not defined step when '#{number}' links present in #{__FILE__}"
+  end
+end
