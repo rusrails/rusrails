@@ -23,11 +23,12 @@ When /^I return next time$/ do
 end
 
 Then /^I should be already signed in$/ do
-  And %{I should see "admin_logout"}
+  And %{I should see element "#admin_logout"}
 end
 
 Then /^I should be signed in$/ do
-  Then %{I should see "Signed in successfully."}
+  Then %{I should see element "#notice"}
+  Then %{I should see element ".admin_menu"}
 end
 
 Then /^I sign out$/ do
@@ -39,3 +40,6 @@ Then /^I should be signed out$/ do
   And %{I should not see element ".admin_menu"}
 end
 
+Then /^admin should have email "([^"]*)" and password "([^"]*)"$/ do |email, password|
+  
+end
