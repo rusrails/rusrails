@@ -10,7 +10,13 @@ module NavigationHelpers
 
     when /^the home\s?page$/
       '/'
+    
+    when /the sign up page/
+      '/admins/sign_up'
 
+    when /the sign in page/
+      '/admins/sign_in'
+    
     when /^the category "([^"]*)"$/i
       Category.find_by_name($1).path
       
