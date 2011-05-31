@@ -21,6 +21,8 @@ describe Page do
   
   it "should have valid format of url_match"
   
+  it "is not valid when homepage belongs to category"
+  
   describe "scope :enabled" do
     before :each do
       @disabled_page = Factory  :page, :name => "page 12",

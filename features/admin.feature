@@ -49,7 +49,7 @@ Feature: enter admin zone
   Scenario: Admin signs up not allowed
     Given I am not logged in
     When I go to the sign up page
-    Then I go to the admin root page
+    Then I should be on the sign in page
 
   Scenario: I sign in and edit my account
     When I sign in as "admin@domain.com/123456"
