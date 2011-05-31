@@ -1,0 +1,17 @@
+!!! 5
+%html
+  %head
+    %title Административная зона
+    = stylesheet_link_tag :all
+    = javascript_include_tag :defaults
+    = csrf_meta_tag
+  %body
+    - if notice
+      #notice= notice
+    - if alert
+      #alert= alert
+    - if admin_signed_in?
+      %ul.admin_menu
+        %li= link_to "Профиль", edit_admin_registration_path, :id => "admin_edit"
+        %li= link_to "Выйти", destroy_admin_session_path, :id => "admin_logout"
+    = yield

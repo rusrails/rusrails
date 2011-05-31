@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "categories/show.html.erb" do
+describe "categories/show.html.haml" do
   before :each do
     assign :category, mock_model(Category,
                                  :name=>"Category 1",

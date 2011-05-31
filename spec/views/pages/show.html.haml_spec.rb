@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "pages/show.html.erb" do
+describe "pages/show.html.haml" do
   before :each do
     assign :page, mock_model(Page,
                               :name=>"Page 11",
