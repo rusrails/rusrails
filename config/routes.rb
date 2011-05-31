@@ -2,6 +2,7 @@ Urrr::Application.routes.draw do
   devise_for :admins, :controllers => {:registrations => "admin/registrations" }
   
   namespace "admin" do
+    resources :categories, :except => :show
     root :to => "index#index"
   end
 
