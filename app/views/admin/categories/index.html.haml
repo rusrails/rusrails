@@ -1,5 +1,5 @@
 = link_to "Новая категория", new_admin_category_path, :id => :new_category
-%table
+%table.admin_list
   %tr
     %th id
     %th Имя
@@ -7,11 +7,10 @@
     %th Состояние
     %th Действия
   - @categories.each do |category|
-    %tr
-      %th= category.id
-      %th= category.name
-      %th= link_to category.path, category.path
-      %th= link_to_toggle category
-      %th
-        = link_to "Изменить", edit_admin_category_path(category)
+    %tr.admin_item
+      %td= category.id
+      %td= link_to category.name, edit_admin_category_path(category)
+      %td= link_to category.path, category.path
+      %td= link_to_toggle category
+      %td
         = link_to "Удалить", admin_category_path(category), :method => :delete, :confirm => "Вы уверены?"
