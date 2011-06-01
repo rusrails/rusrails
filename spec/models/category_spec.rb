@@ -47,6 +47,19 @@ describe Category do
     end
   end
   
+  describe "scope :ordered" do
+    it "returns categories ordered by show_order" do
+      @second_category = Factory  :category, :name => "Category 2",
+                                  :url_match => "cat_2", :show_order => 1
+      Category.ordered.should == [@second_category,@category]
+    end
+    
+    it "returns categories with equal show_order ordered by creation time" do
+      @second_category = Factory  :category, :name => "Category 2", :url_match => "cat_2"
+      Category.ordered.should == [@category,@second_category]
+    end
+  end
+  
   describe "self.matching" do
     it "returns matching category when it present and enabled" do
       Category.matching("category_1").should == @category

@@ -12,7 +12,6 @@ Feature: administrating pages
     And a category named "Category 2" with URL match "category-2"
     And "Category 2" have a page named "Page 21" with URL match "page-21"
 
-  @wip    
   Scenario: listing categories
     When I follow "category_manager"
     Then I should see "Category 1"
@@ -41,6 +40,7 @@ Feature: administrating pages
     Then I should be on the new admin category page
     And I should see element ".alert"
   
+  @wip
   Scenario: editing category
   
   Scenario: editing category - failed

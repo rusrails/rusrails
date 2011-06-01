@@ -4,7 +4,8 @@ class Category < ActiveRecord::Base
   
   has_many :pages
   
-  scope :enabled, where(:enabled=>true).order("show_order DESC",:created_at)
+  scope :ordered, order("show_order DESC",:created_at)
+  scope :enabled, where(:enabled=>true).ordered
   
   def self.matching url_match
     where(:url_match => url_match, :enabled => true).first
