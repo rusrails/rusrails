@@ -1,5 +1,6 @@
 class Admin::CategoriesController < Admin::IndexController
   def index
+    @categories = Category.ordered
   end
   
   def new

@@ -1,5 +1,6 @@
 Factory.define :admin do |a|
-  a.password "bar"
+  a.email "admin@domain.com"
+  a.password "foobar"
   a.password_confirmation { |x| x.password }
   a.remember_me true
 end
