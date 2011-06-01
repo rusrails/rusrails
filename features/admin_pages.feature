@@ -31,6 +31,7 @@ Feature: administrating pages
     And I check "category_enabled"
     And I press "category_submit"
     Then I should be on the admin categories page
+    And I should see element ".notice"
     And I should see "Category 3"
   
   @wip
@@ -38,7 +39,7 @@ Feature: administrating pages
     Given I am on the new admin category page
     When I press "category_submit"
     Then I should be on the new admin category page
-    And I should see element ".error"
+    And I should see element ".alert"
   
   Scenario: editing category
   

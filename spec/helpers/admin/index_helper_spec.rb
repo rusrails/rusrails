@@ -1,15 +1,22 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the Admin::IndexHelper. For example:
-#
-# describe Admin::IndexHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       helper.concat_strings("this","that").should == "this that"
-#     end
-#   end
-# end
 describe Admin::IndexHelper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "link_to_toggle" do
+    before :each do
+      @category = mock_model Category, :id => 1, :enabled => false
+      @result = helper.link_to_toggle(@category)
+    end
+    
+    it "returns link to resource" do
+      @result.should.should=~ /\/admin\/categories\/1/
+    end
+    
+    it "returns query string with resource[enabled] negative to actual value1" do
+       @result.should=~ /category\[enabled\]=true/
+    end
+    
+    it "returns link with put method" do
+      @result.should have_selector("a", "data-method" => "put")
+    end
+  end
 end
