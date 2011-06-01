@@ -27,7 +27,7 @@ Then /^I should be already signed in$/ do
 end
 
 Then /^I should be signed in$/ do
-  Then %{I should see element "#notice"}
+  Then %{I should see element ".notice"}
   Then %{I should see element ".admin_menu"}
 end
 

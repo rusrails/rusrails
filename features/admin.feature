@@ -15,7 +15,7 @@ Feature: enter admin zone
     Given I am not logged in
     When I go to the admin root page
     And I sign in as "noadmin@domain.com/please"
-    Then I should see element "#alert"
+    Then I should see element ".alert"
     
     When I go to the admin root page
     Then I should be signed out
@@ -24,7 +24,7 @@ Feature: enter admin zone
     Given I am not logged in
     When I go to the admin root page
     And I sign in as "admin@domain.com/wrongpassword"
-    Then I should see element "#alert"
+    Then I should see element ".alert"
     
     When I go to the admin root page
     Then I should be signed out

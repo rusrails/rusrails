@@ -17,7 +17,6 @@ Feature: administrating pages
     Then I should see "Category 1"
     And I should see "Category 2"
   
-  @wip
   Scenario: creating category
     Given I am on the admin categories page
     When I follow "new_category"
@@ -33,7 +32,6 @@ Feature: administrating pages
     And I should see element ".notice"
     And I should see "Category 3"
   
-  @wip
   Scenario: creating category - failed
     Given I am on the new admin category page
     When I press "category_submit"

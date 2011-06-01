@@ -7,9 +7,9 @@
     = csrf_meta_tag
   %body
     - if notice
-      #notice= notice
+      .notice= notice
     - if alert
-      #alert= alert
+      .alert= alert
     - if admin_signed_in?
       %ul.admin_menu
         %li= link_to "Менеджер категорий", admin_categories_path, :id => "category_manager"
