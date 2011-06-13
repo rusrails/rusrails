@@ -11,7 +11,7 @@ describe Admin::IndexHelper do
       @result.should.should=~ /\/admin\/categories\/1/
     end
     
-    it "returns query string with resource[enabled] negative to actual value1" do
+    it "returns query string with resource[enabled] negative to actual value" do
        @result.should=~ /category\[enabled\]=true/
     end
     

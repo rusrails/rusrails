@@ -54,7 +54,7 @@ describe Admin::CategoriesController do
       
       it "creates new category from flash[:category]" do
         Category.should_receive(:new).with "name"=>"Category 1", "url_match"=>"category-1"
-        post :new,nil,nil,{:category => {"name"=>"Category 1", "url_match"=>"category-1"}}
+        get :new,nil,nil,{:category => {"name"=>"Category 1", "url_match"=>"category-1"}}
       end
       
       it "renders new template" do

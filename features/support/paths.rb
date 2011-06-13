@@ -16,7 +16,7 @@ module NavigationHelpers
 
     when /the sign in page/
       '/admins/sign_in'
-    
+
     when /^the category "([^"]*)"$/i
       Category.find_by_name($1).path
       
@@ -25,6 +25,9 @@ module NavigationHelpers
       
     when /^(\d+)-th page$/i
       @pages[$1.to_i-1].path
+
+    when /the edit admin category "([^"]*)" page/
+      edit_admin_category_path Category.find_by_name($1)
     
     else
       begin

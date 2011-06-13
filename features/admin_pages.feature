@@ -75,6 +75,8 @@ Feature: administrating pages
   
   Scenario: toggling activity of category
   
+  Scenario: changing show order of category
+  
   Scenario: listing pages
   
   Scenario: creating page
@@ -86,3 +88,7 @@ Feature: administrating pages
   Scenario: editing page - failed
   
   Scenario: deleting page
+  
+  Scenario: toggling activity of page
+  
+  Scenario: changing show order of page
