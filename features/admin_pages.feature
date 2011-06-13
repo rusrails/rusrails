@@ -37,8 +37,7 @@ Feature: administrating pages
     When I press "category_submit"
     Then I should be on the new admin category page
     And I should see element ".alert"
-  
-  @wip
+
   Scenario: editing category
     Given I am on the admin categories page
     When I follow "Category 1"
@@ -55,9 +54,8 @@ Feature: administrating pages
     Then I should be on the admin categories page
     And I should see element ".notice"
     And I should see "Category Super"
-    And I should see element "a[href='/category-super']
-  
-  @wip
+    And I should see element "a[href='/category-super']"
+
   Scenario: editing category - failed
     Given I am on the edit admin category "Category 1" page
     When I fill in the following:

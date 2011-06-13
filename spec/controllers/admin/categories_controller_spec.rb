@@ -82,7 +82,7 @@ describe Admin::CategoriesController do
       context "when saving succesfull" do
         it "sets flash[:notice]" do
           post :create
-          flash[:notice].should=~ /.+/
+          flash[:notice].should_not be_empty
         end
         
         it "redirects to categories index" do
@@ -98,7 +98,7 @@ describe Admin::CategoriesController do
         
         it "sets flash[:alert]" do
           post :create
-          flash[:alert].should=~ /.+/
+          flash[:alert].should_not be_empty
         end
         
         it "sets flash[:category] with params[:category]" do
@@ -128,6 +128,52 @@ describe Admin::CategoriesController do
       it "renders edit template" do
         get :edit, :id => 1
         response.should render_template(:edit)
+      end
+    end
+    
+    describe "PUT 'update'" do
+      let(:category){mock_model(Category, :update_attributes => true).as_null_object}
+      before :each do
+        Category.stub(:find).and_return category
+      end
+      
+      it "finds the category" do
+        Category.should_receive(:find).with 1
+        put :update, :id=>1
+      end
+      
+      it "updates category" do
+        category.should_receive(:update_attributes).with "name"=>"Category 1",
+                                                         "url_match"=>"category-1"
+        put :update, :id=>1, :category => {"name"=>"Category 1", "url_match"=>"category-1"}
+      end
+      
+      context "when saving succesfull" do
+        it "sets flash[:notice]" do
+          put :update, :id=>1
+          flash[:notice].should_not be_empty
+        end
+        
+        it "redirects to categories index" do
+          put :update, :id=>1
+          response.should redirect_to(admin_categories_path)
+        end
+      end
+      
+      context "when saving failed" do
+        before :each do
+          category.stub(:update_attributes).and_return false
+        end
+        
+        it "sets flash[:alert]" do
+          put :update, :id=>1
+          flash[:alert].should_not be_empty
+        end
+       
+        it "redirects to edit category" do
+          put :update, :id=>1
+          response.should redirect_to(edit_admin_category_path(category))
+        end
       end
     end
   end
