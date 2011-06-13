@@ -1,0 +1,13 @@
+= form_for [:admin, @category] do |f|
+  = f.label :name
+  = f.text_field :name
+  = f.label :text
+  = f.text_area :text
+  = f.label :url_match
+  = f.text_field :url_match
+  = f.label :enabled
+  = f.check_box :enabled
+  = f.label :show_order
+  = f.text_field :show_order  
+  = f.submit
+= link_to "К списку категорий", admin_categories_path

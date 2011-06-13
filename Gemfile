@@ -13,6 +13,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "cucumber-rails"
   gem 'webrat'
+  gem 'capybara', "= 1.0.0.beta1"   # remove this line when rails 3.1
 end
 
 group :test do

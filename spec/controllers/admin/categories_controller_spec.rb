@@ -112,5 +112,23 @@ describe Admin::CategoriesController do
         end
       end
     end
+    
+    describe "GET 'edit'" do
+      let(:category){ mock_model Category }
+      before :each do
+        Category.stub(:find).and_return category
+      end
+      
+      it "assigns @category as finded category" do
+        Category.should_receive(:find).with 1
+        get :edit, :id => 1
+        assigns[:category].should == category
+      end
+      
+      it "renders edit template" do
+        get :edit, :id => 1
+        response.should render_template(:edit)
+      end
+    end
   end
 end
