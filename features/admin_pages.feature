@@ -64,18 +64,22 @@ Feature: administrating pages
     And I press "category_submit"
     Then I should be on the edit admin category "Category 1" page
     And I should see element ".alert"
-  
-  @wip
+
   Scenario: deleting category
     Given I am on the admin categories page
     When I follow "Удалить"
     Then I should not see "Category 1"
-  
+    
+  @wip
   Scenario: toggling activity of category
-  
+    
+  @wip
   Scenario: changing show order of category
-  
+    
+  @wip
   Scenario: listing pages
+  
+  Scenario: listing pages by category
   
   Scenario: creating page
   

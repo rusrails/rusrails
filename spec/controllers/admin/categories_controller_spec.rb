@@ -176,5 +176,27 @@ describe Admin::CategoriesController do
         end
       end
     end
+    
+    describe "DELETE 'destroy'" do
+      let(:category){mock_model(Category).as_null_object}
+      before :each do
+        Category.stub(:find).and_return category
+      end
+      
+      it "finds the category" do
+        Category.should_receive(:find).with 1
+        delete :destroy, :id=>1
+      end
+      
+      it "destroys category" do
+        category.should_receive(:destroy)
+        delete :destroy, :id=>1
+      end
+       
+      it "redirects to categories index" do
+        delete :destroy, :id=>1
+        response.should redirect_to(admin_categories_path)
+      end
+    end
   end
 end
