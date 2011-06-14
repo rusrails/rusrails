@@ -84,7 +84,6 @@ Feature: administrating pages
     And I submit edit form for category "Category 1"
     Then the "category_show_order" field should contain "1" within xpath //tr[.//text()="Category 1"]
 
-  @wip
   Scenario: listing pages
     When I follow "page_manager"
     Then I should see "Page 11"
@@ -102,8 +101,27 @@ Feature: administrating pages
   
   @wip
   Scenario: creating page
-  
+    Given I am on the admin pages page
+    When I follow "new_page"
+    Then I should be on the new admin page page
+    
+    When I fill in the following:
+      | page_name       | Tiptoeing           |
+      | page_text       | Lee plays Tiptoeing |
+      | page_url_match  | tiptoeing           |
+    And I select "Category 1" from "category_id"
+    And I check "page_enabled"
+    And I press "page_submit"
+    Then I should be on the admin pages page
+    And I should see element ".notice"
+    And I should see "Tiptoeing"
+
+  @wip
   Scenario: creating page - failed
+    Given I am on the new admin page page
+    When I press "page_submit"
+    Then I should be on the new admin page page
+    And I should see element ".alert"
   
   Scenario: editing page
   

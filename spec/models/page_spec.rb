@@ -23,6 +23,19 @@ describe Page do
   
   it "is not valid when homepage belongs to category"
   
+  describe "scope :ordered" do
+    it "returns pages ordered by show_order" do
+      @second_page = Factory :page, :name => "page 13",
+                             :url_match => "page_13", :show_order => 1
+      Page.ordered.should == [@second_page,@page]
+    end
+    
+    it "returns pages with equal show_order ordered by creation time" do
+      @second_page = Factory  :page, :name => "page 13", :url_match => "page_13"
+      Page.ordered.should == [@page,@second_page]
+    end
+  end
+  
   describe "scope :enabled" do
     before :each do
       @disabled_page = Factory  :page, :name => "page 12",

@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Admin::PagesController < Admin::IndexController
   def index
+    @pages = Page.ordered
   end
   
   def new
