@@ -97,8 +97,7 @@ Feature: administrating pages
     Then I should see "Page 11"
     And I should see "Page 12"
     But I should not see "Page 21"
-  
-  @wip
+
   Scenario: creating page
     Given I am on the admin pages page
     When I follow "new_page"
@@ -115,17 +114,19 @@ Feature: administrating pages
     And I should see element ".notice"
     And I should see "Tiptoeing"
 
-  @wip
   Scenario: creating page - failed
     Given I am on the new admin page page
     When I press "page_submit"
     Then I should be on the new admin page page
     And I should see element ".alert"
-  
+ 
+  @wip 
   Scenario: editing page
   
+  @wip
   Scenario: editing page - failed
   
+  @wip
   Scenario: deleting page
   
   Scenario: toggling activity of page

@@ -66,7 +66,7 @@ describe Admin::PagesController do
     describe "GET 'new'" do
       before :each do
         @category = mock_model(Category).as_null_object
-        @page = mock_model(Page).as_null_object
+        @page = mock_model(Page).as_new_record.as_null_object
         Category.stub(:ordered).and_return [@category]
         Page.stub(:new).and_return @page
       end
@@ -92,5 +92,57 @@ describe Admin::PagesController do
         response.should render_template(:new)
       end
     end
+    
+    describe "POST 'create'" do
+      before :each do
+        @page = mock_model(Page, :save => true).as_new_record.as_null_object
+        Page.stub(:new).and_return @page
+      end
+      
+      it "creates new page" do
+        Page.should_receive(:new).with "name"=>"Tiptoeing", "url_match"=>"tiptoeing"
+        post :create, :page => {"name"=>"Tiptoeing", "url_match"=>"tiptoeing"}
+      end
+      
+      it "saves the page" do
+        @page.should_receive :save
+        post :create
+      end
+      
+      context "when saving succesfull" do
+        it "sets flash[:notice]" do
+          post :create
+          flash[:notice].should_not be_empty
+        end
+        
+        it "redirects to pages index" do
+          post :create
+          response.should redirect_to(admin_pages_path)
+        end
+      end
+      
+      context "when saving failed" do
+        before :each do
+          @page.stub(:save).and_return false
+        end
+        
+        it "sets flash[:alert]" do
+          post :create
+          flash[:alert].should_not be_empty
+        end
+        
+        it "sets flash[:page] with params[:page]" do
+          post :create, :page => {"name"=>"Tiptoeing", "url_match"=>"tiptoeing"}
+          flash[:page].should == {"name"=>"Tiptoeing", "url_match"=>"tiptoeing"}
+        end
+        
+        it "redirects to new page" do
+          post :create
+          response.should redirect_to(new_admin_page_path)
+        end
+      end
+    end
+    
+    
   end
 end

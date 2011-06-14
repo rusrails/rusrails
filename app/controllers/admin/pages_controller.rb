@@ -16,6 +16,15 @@ class Admin::PagesController < Admin::IndexController
   end
   
   def create
+    page = Page.new params[:page]
+    if page.save
+      flash[:notice] = "страница создана"
+      redirect_to admin_pages_path
+    else
+      flash[:alert] = "Произошли ошибки: "+page.errors.full_messages*", "
+      flash[:page] = params[:page]
+      redirect_to new_admin_page_path
+    end
   end
   
   def edit
