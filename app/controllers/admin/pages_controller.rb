@@ -28,6 +28,8 @@ class Admin::PagesController < Admin::IndexController
   end
   
   def edit
+    @categories = Category.ordered
+    @page = Page.find params[:id]
   end
   
   def update

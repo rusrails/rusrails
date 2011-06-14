@@ -143,6 +143,30 @@ describe Admin::PagesController do
       end
     end
     
+    describe "GET 'edit'" do
+      before :each do
+        @category = mock_model(Category).as_null_object
+        @page = mock_model(Page).as_null_object
+        Category.stub(:ordered).and_return [@category]
+        Page.stub(:find).and_return @page
+      end
+      
+      it "assign @categories" do
+        get :edit, :id => 1
+        assigns(:categories).should == [@category]
+      end
+      
+      it "assigns @page as finded page" do
+        Page.should_receive(:find).with 1
+        get :edit, :id => 1
+        assigns[:page].should == @page
+      end
+      
+      it "renders edit template" do
+        get :edit, :id => 1
+        response.should render_template(:edit)
+      end
+    end
     
   end
 end
