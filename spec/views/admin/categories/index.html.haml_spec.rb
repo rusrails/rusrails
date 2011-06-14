@@ -38,5 +38,14 @@ describe "admin/categories/index.html.haml" do
       rendered.should have_selector("a", "data-method" => "delete",
                                     :href => admin_category_path(@category))
     end
+    
+    it "shows form for editing show_order" do
+      render
+      rendered.should have_selector("form", :method => "post",
+                                    :action => admin_category_path(@category)) do |form|
+        form.should have_selector("input", :type => "hidden", :name => "_method",:value=>"put")
+        form.should have_selector("input", :type => "text", :name=> "category[show_order]")
+      end
+    end
   end
 end

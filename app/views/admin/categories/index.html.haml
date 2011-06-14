@@ -13,4 +13,7 @@
       %td= link_to category.path, category.path
       %td= link_to_toggle category
       %td
+        = form_for [:admin, category] do |f|
+          = f.text_field :show_order
+          = f.submit :class => :hidden
         = link_to "Удалить", admin_category_path(category), :method => :delete, :confirm => "Вы уверены?"

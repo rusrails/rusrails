@@ -77,12 +77,11 @@ Feature: administrating pages
     
     When I follow "Выкл." within xpath //tr[.//text()="Category 1"]
     Then I should see "Вкл." within xpath //tr[.//text()="Category 1"]
-    
-  @wip
+
   Scenario: changing show order of category
     Given I am on the admin categories page
     When I fill in "category_show_order" with "1" within xpath //tr[.//text()="Category 1"]
-    And I submit edit form for category "category-1"
+    And I submit edit form for category "Category 1"
     Then the "category_show_order" field should contain "1" within xpath //tr[.//text()="Category 1"]
 
   @wip
@@ -95,6 +94,7 @@ Feature: administrating pages
   @wip
   Scenario: filtering pages by category
   
+  @wip
   Scenario: creating page
   
   Scenario: creating page - failed

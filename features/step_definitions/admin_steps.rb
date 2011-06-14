@@ -22,6 +22,10 @@ When /^I return next time$/ do
   And %{I go to the admin root page}
 end
 
+When /^I submit edit form for category "([^"]*)"$/ do |name|
+  When %{I submit "edit_category_#{Category.find_by_name(name).id}"}
+end
+
 Then /^I should be already signed in$/ do
   And %{I should see element "#admin_logout"}
 end
