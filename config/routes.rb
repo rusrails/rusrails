@@ -3,6 +3,7 @@ Urrr::Application.routes.draw do
   
   namespace "admin" do
     resources :categories, :except => :show
+    resources :pages, :except => :show
     root :to => "index#index"
   end
 

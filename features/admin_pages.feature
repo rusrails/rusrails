@@ -93,6 +93,12 @@ Feature: administrating pages
 
   @wip
   Scenario: filtering pages by category
+    Given I am on the admin pages page
+    When I select "Category 1" from "category_id"
+    And I submit "category_filter_form"
+    Then I should see "Page 11"
+    And I should see "Page 12"
+    But I should not see "Page 21"
   
   @wip
   Scenario: creating page
