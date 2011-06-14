@@ -21,20 +21,43 @@ describe Admin::PagesController do
       @request.env["devise.mapping"] = Devise.mappings[:admin]
       sign_in Factory.create(:admin)
     end
-    
-    describe "GET 'index'" do
-      let(:page){mock_model Page}
+
+    describe "GET index" do
       before :each do
-        Page.stub(:ordered).and_return [page]
+        @category = mock_model(Category).as_null_object
+        @category.stub_chain(:pages,:ordered).and_return []
+        @page = mock_model(Page).as_null_object
+        Page.stub(:ordered).and_return [@page]
+        Category.stub(:find_by_id).and_return nil
+        Category.stub(:ordered).and_return [@category]
       end
       
-      it "assigns @pages" do
-        Page.should_receive(:ordered)
+      it "assign @categories" do
         get :index
-        assigns[:pages].should eq([page])
+        assigns(:categories).should == [@category]
       end
       
-      it "renders index template" do
+      it "checks category filter" do
+        Category.should_receive(:find_by_id).with '1'
+        get :index, :category_id => '1'
+      end
+      
+      context "when no category filter" do
+        it "assign @pages" do
+          get :index
+          assigns(:pages).should == [@page]
+        end
+      end
+    
+      context "when category filter present" do
+        it "assign @pages only belonging to this category" do
+          Category.stub(:find_by_id).and_return @category
+          get :index, :category_id => '1'
+          assigns(:pages).should == []
+        end
+      end
+      
+      it "renders index view" do
         get :index
         response.should render_template(:index)
       end

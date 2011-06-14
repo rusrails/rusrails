@@ -1,3 +1,6 @@
+= form_tag admin_pages_path, :method => :get, :id => :category_filter_form do
+  = select_tag :category_id, options_for_select([["---",nil]]+@categories.map{ |s| [s.name, s.id]}, params[:category_id])
+  = submit_tag "", :class => :hidden
 = link_to "Новая страница", new_admin_page_path, :id => :new_page
 %table.admin_list
   %tr

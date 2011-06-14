@@ -14,6 +14,18 @@ describe "admin/pages/index.html.haml" do
     rendered.should have_selector("a", :href => new_admin_page_path)
   end
   
+  it "shows filter for category" do
+    render
+    rendered.should have_selector("form", :method => "get",
+                                  :action => admin_pages_path) do |form|
+      form.should have_selector("select", :name => "category_id") do |s|
+        s.should have_selector("option", :value => "1") do |opt|
+          opt.should contain("Folks")
+        end
+      end
+    end
+  end
+  
   context "when some pages present" do
     it "shows page's name" do
       render

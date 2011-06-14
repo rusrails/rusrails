@@ -90,7 +90,6 @@ Feature: administrating pages
     And I should see "Page 12"
     And I should see "Page 21"
 
-  @wip
   Scenario: filtering pages by category
     Given I am on the admin pages page
     When I select "Category 1" from "category_id"
