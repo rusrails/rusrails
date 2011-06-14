@@ -72,14 +72,28 @@ Feature: administrating pages
     
   @wip
   Scenario: toggling activity of category
+    Given I am on the admin categories page
+    When I follow "Вкл." within xpath //tr[.//text()="category-1"]
+    Then I should see "Выкл." within xpath //tr[.//text()="category-1"]
+    
+    When I follow "Выкл." within xpath //tr[.//text()="category-1"]
+    Then I should see "Вкл." within xpath //tr[.//text()="category-1"]
     
   @wip
   Scenario: changing show order of category
-    
+    Given I am on the admin categories page
+    When I fill in "category_show_order" with "1" within xpath //tr[.//text()="category-1"]
+    And I submit edit form for category "category-1"
+    Then the "category_show_order" field should contain "1" within xpath //tr[.//text()="category-1"]
+
   @wip
   Scenario: listing pages
+    When I follow "page_manager"
+    Then I should see "Page 11"
+    And I should see "Page 12"
+    And I should see "Page 21"
   
-  Scenario: listing pages by category
+  Scenario: filtering pages by category
   
   Scenario: creating page
   
