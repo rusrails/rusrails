@@ -11,6 +11,8 @@ class Admin::PagesController < Admin::IndexController
   end
   
   def new
+    @categories = Category.ordered
+    @page = Page.new flash[:page]
   end
   
   def create

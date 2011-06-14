@@ -108,7 +108,7 @@ Feature: administrating pages
       | page_name       | Tiptoeing           |
       | page_text       | Lee plays Tiptoeing |
       | page_url_match  | tiptoeing           |
-    And I select "Category 1" from "category_id"
+    And I select "Category 1" from "page_category_id"
     And I check "page_enabled"
     And I press "page_submit"
     Then I should be on the admin pages page

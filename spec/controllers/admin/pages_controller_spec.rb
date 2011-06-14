@@ -62,5 +62,35 @@ describe Admin::PagesController do
         response.should render_template(:index)
       end
     end
+    
+    describe "GET 'new'" do
+      before :each do
+        @category = mock_model(Category).as_null_object
+        @page = mock_model(Page).as_null_object
+        Category.stub(:ordered).and_return [@category]
+        Page.stub(:new).and_return @page
+      end
+      
+      it "assign @categories" do
+        get :new
+        assigns(:categories).should == [@category]
+      end
+      
+      it "assigns @page as new page" do
+        Page.should_receive(:new)
+        get :new
+        assigns[:page].should == @page
+      end
+      
+      it "creates new page from flash[:page]" do
+        Page.should_receive(:new).with "name"=>"Tiptoeing", "url_match"=>"tiptoeing"
+        get :new,nil,nil,{:page => {"name"=>"Tiptoeing", "url_match"=>"tiptoeing"}}
+      end
+      
+      it "renders new template" do
+        get :new
+        response.should render_template(:new)
+      end
+    end
   end
 end
