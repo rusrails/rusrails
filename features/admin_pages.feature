@@ -67,7 +67,7 @@ Feature: administrating pages
 
   Scenario: deleting category
     Given I am on the admin categories page
-    When I follow "Удалить"
+    When I follow "Удалить" within xpath //tr[.//text()="Category 1"]
     Then I should not see "Category 1"
 
   Scenario: toggling activity of category
@@ -113,6 +113,7 @@ Feature: administrating pages
     Then I should be on the admin pages page
     And I should see element ".notice"
     And I should see "Tiptoeing"
+    And I should see element "a[href='/category-1/tiptoeing']"
 
   Scenario: creating page - failed
     Given I am on the new admin page page
@@ -122,12 +123,36 @@ Feature: administrating pages
  
   @wip 
   Scenario: editing page
+    Given I am on the admin pages page
+    When I follow "Page 11"
+    Then I should be on the edit admin page "Page 11" page
+    And the "page_name" field should contain "Page 11"
+    And the "page_url_match" field should contain "page-11"
+    
+    When I fill in the following:
+      | page_name       | Tiptoeing           |
+      | page_text       | Lee plays Tiptoeing |
+      | page_url_match  | tiptoeing           |
+    And I select "Category 2" from "page_category_id"
+    And I press "page_submit"
+    Then I should be on the admin pages page
+    And I should see element ".notice"
+    And I should see "Tiptoeing"
+    And I should see element "a[href='/category-2/tiptoeing']"
   
   @wip
   Scenario: editing page - failed
-  
+    Given I am on the edit admin page "Page 11" page
+    When I fill in "page_url_match" with ""
+    And I press "page_submit"
+    Then I should be on the edit admin page "Page 11" page
+    And I should see element ".alert"
+    
   @wip
   Scenario: deleting page
+    Given I am on the admin pages page
+    When I follow "Удалить" within xpath //tr[.//text()="Page 11"]
+    Then I should not see "Page 11"
   
   Scenario: toggling activity of page
   
