@@ -168,5 +168,51 @@ describe Admin::PagesController do
       end
     end
     
+    describe "PUT 'update'" do
+      before :each do
+        @page = mock_model(Page, :update_attributes => true).as_null_object
+        Page.stub(:find).and_return @page
+      end
+      
+      it "finds the page" do
+        Page.should_receive(:find).with 1
+        put :update, :id=>1
+      end
+      
+      it "updates page" do
+        @page.should_receive(:update_attributes).with "name"=>"Tiptoeing",
+                                                      "url_match"=>"tiptoeing"
+        put :update, :id=>1, :page => {"name"=>"Tiptoeing", "url_match"=>"tiptoeing"}
+      end
+      
+      context "when saving succesfull" do
+        it "sets flash[:notice]" do
+          put :update, :id=>1
+          flash[:notice].should_not be_empty
+        end
+        
+        it "redirects to pages index" do
+          put :update, :id=>1
+          response.should redirect_to(admin_pages_path)
+        end
+      end
+      
+      context "when saving failed" do
+        before :each do
+          @page.stub(:update_attributes).and_return false
+        end
+        
+        it "sets flash[:alert]" do
+          put :update, :id=>1
+          flash[:alert].should_not be_empty
+        end
+       
+        it "redirects to edit page" do
+          put :update, :id=>1
+          response.should redirect_to(edit_admin_page_path(@page))
+        end
+      end
+    end
+    
   end
 end

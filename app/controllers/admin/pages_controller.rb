@@ -33,6 +33,14 @@ class Admin::PagesController < Admin::IndexController
   end
   
   def update
+    page = Page.find params[:id]
+    if page.update_attributes params[:page]
+      flash[:notice] = "Страница обновлена"
+      redirect_to admin_pages_path
+    else
+      flash[:alert] = "Произошли ошибки: "+page.errors.full_messages*", "
+      redirect_to edit_admin_page_path(page)
+    end
   end
   
   def destroy

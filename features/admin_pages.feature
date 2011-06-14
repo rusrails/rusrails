@@ -120,8 +120,7 @@ Feature: administrating pages
     When I press "page_submit"
     Then I should be on the new admin page page
     And I should see element ".alert"
- 
-  @wip 
+
   Scenario: editing page
     Given I am on the admin pages page
     When I follow "Page 11"
@@ -139,8 +138,7 @@ Feature: administrating pages
     And I should see element ".notice"
     And I should see "Tiptoeing"
     And I should see element "a[href='/category-2/tiptoeing']"
-  
-  @wip
+
   Scenario: editing page - failed
     Given I am on the edit admin page "Page 11" page
     When I fill in "page_url_match" with ""
@@ -153,7 +151,18 @@ Feature: administrating pages
     Given I am on the admin pages page
     When I follow "Удалить" within xpath //tr[.//text()="Page 11"]
     Then I should not see "Page 11"
-  
+
   Scenario: toggling activity of page
-  
+    Given I am on the admin pages page
+    When I follow "Вкл." within xpath //tr[.//text()="Page 11"]
+    Then I should see "Выкл." within xpath //tr[.//text()="Page 11"]
+    
+    When I follow "Выкл." within xpath //tr[.//text()="Page 11"]
+    Then I should see "Вкл." within xpath //tr[.//text()="Page 11"]
+   
+  @wip 
   Scenario: changing show order of page
+    Given I am on the admin pages page
+    When I fill in "page_show_order" with "1" within xpath //tr[.//text()="Page 11"]
+    And I submit edit form for page "Page 11"
+    Then the "page_show_order" field should contain "1" within xpath //tr[.//text()="Page 11"]
