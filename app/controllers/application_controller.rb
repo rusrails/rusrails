@@ -15,4 +15,8 @@ private
   def after_sign_out_path_for resource
     admin_root_path
   end
+
+  def expire_content_cache
+    expire_fragment %r{.*}
+  end
 end

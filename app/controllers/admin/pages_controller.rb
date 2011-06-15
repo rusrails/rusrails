@@ -1,5 +1,7 @@
 # encoding: utf-8
 class Admin::PagesController < Admin::IndexController
+  after_filter :expire_content_cache, :only => [:create, :update, :destroy]
+  
   def index
     @categories = Category.ordered
     category = Category.find_by_id params[:category_id]
