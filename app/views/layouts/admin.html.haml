@@ -14,10 +14,11 @@
       .notice= notice
     - if alert
       .alert= alert
-    - if admin_signed_in?
-      %ul.admin_menu
-        %li= link_to "Менеджер категорий", admin_categories_path, :id => "category_manager"
-        %li= link_to "Менеджер страниц", admin_pages_path, :id => "page_manager"
-        %li= link_to "Профиль", edit_admin_registration_path, :id => "admin_edit"
-        %li= link_to "Выйти", destroy_admin_session_path, :id => "admin_logout"
-    = yield
+    #admin_panel
+      - if admin_signed_in?
+        %ul.admin_menu
+          %li= link_to "Менеджер категорий", admin_categories_path,:id => "category_manager"
+          %li= link_to "Менеджер страниц", admin_pages_path, :id => "page_manager"
+          %li= link_to "Профиль", edit_admin_registration_path, :id => "admin_edit"
+          %li= link_to "Выйти", destroy_admin_session_path, :id => "admin_logout"
+    #admin_zone= yield

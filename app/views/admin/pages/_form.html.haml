@@ -3,10 +3,10 @@
   = f.select :category_id, [["---",nil]]+@categories.map{ |s| [s.name, s.id]}
   = f.label :name
   = f.text_field :name
-  = f.label :text
-  = f.text_area :text
   = f.label :url_match
   = f.text_field :url_match
+  = f.label :text
+  = f.text_area :text
   = f.label :enabled
   = f.check_box :enabled
   = f.label :show_order

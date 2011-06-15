@@ -1,0 +1,36 @@
+/* special */
+
+.hidden {
+  display: none !important;
+}
+
+.clear {
+  clear: both;
+}
+
+/* secret */
+
+#admin_panel {
+  float:left;
+  width:200px;
+  padding:40px 0;
+}
+
+#admin_zone {
+  margin-left:210px;
+  padding:40px 0 0 0;
+}
+
+
+#admin_zone label, #admin_zone input, #admin_zone select, #admin_zone textarea {
+  display:block;
+}
+
+#admin_zone select {
+  min-width:200px;
+}
+
+#admin_zone textarea {
+  width:95%;
+  height:400px;
+}
