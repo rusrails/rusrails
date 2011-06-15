@@ -44,5 +44,8 @@ class Admin::PagesController < Admin::IndexController
   end
   
   def destroy
+    page = Page.find params[:id]
+    page.destroy
+    redirect_to admin_pages_path
   end
 end

@@ -214,5 +214,26 @@ describe Admin::PagesController do
       end
     end
     
+    describe "DELETE 'destroy'" do
+      before :each do
+        @page = mock_model(Page).as_null_object
+        Page.stub(:find).and_return @page
+      end
+      
+      it "finds the page" do
+        Page.should_receive(:find).with 1
+        delete :destroy, :id=>1
+      end
+      
+      it "destroys the page" do
+        @page.should_receive(:destroy)
+        delete :destroy, :id=>1
+      end
+       
+      it "redirects to pages index" do
+        delete :destroy, :id=>1
+        response.should redirect_to(admin_pages_path)
+      end
+    end
   end
 end

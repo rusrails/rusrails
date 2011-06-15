@@ -25,6 +25,10 @@ end
 When /^I submit edit form for category "([^"]*)"$/ do |name|
   When %{I submit "edit_category_#{Category.find_by_name(name).id}"}
 end
+  
+When /^I submit edit form for page "([^"]*)"$/ do |name|
+  When %{I submit "edit_page_#{Page.find_by_name(name).id}"}
+end
 
 Then /^I should be already signed in$/ do
   And %{I should see element "#admin_logout"}

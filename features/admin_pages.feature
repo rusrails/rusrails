@@ -145,8 +145,7 @@ Feature: administrating pages
     And I press "page_submit"
     Then I should be on the edit admin page "Page 11" page
     And I should see element ".alert"
-    
-  @wip
+
   Scenario: deleting page
     Given I am on the admin pages page
     When I follow "Удалить" within xpath //tr[.//text()="Page 11"]
@@ -159,8 +158,7 @@ Feature: administrating pages
     
     When I follow "Выкл." within xpath //tr[.//text()="Page 11"]
     Then I should see "Вкл." within xpath //tr[.//text()="Page 11"]
-   
-  @wip 
+
   Scenario: changing show order of page
     Given I am on the admin pages page
     When I fill in "page_show_order" with "1" within xpath //tr[.//text()="Page 11"]
