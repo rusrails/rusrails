@@ -10,5 +10,9 @@
     = javascript_include_tag :defaults
     = csrf_meta_tag
   %body
-    = yield
-    = menu
+    #container
+      #header= link_to "", root_path, :id => "logo"
+      #right= menu
+      #content= yield
+      .clear
+      #footer

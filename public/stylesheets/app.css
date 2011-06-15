@@ -1,3 +1,12 @@
+html {
+  height: 100%;
+}
+
+body {
+  background: #D5E9F6;
+  height: 100%;
+}
+
 /* special */
 
 .hidden {
@@ -8,17 +17,85 @@
   clear: both;
 }
 
+/* layout */
+#header {
+  height:77px;
+  padding:21px 0;
+  background:#F7F7F7;
+  border-radius: 0 0 119px 119px;
+}
+
+a#logo {
+  display: block;
+  height:77px;
+  background: url('../images/rusrails.png') center center no-repeat;
+}
+
+div#container {
+  background: #ffffff;
+  min-width: 1000px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#content {
+  padding: 20px 10px 20px 30px;
+  margin-right:210px;
+}
+
+#right {
+  width:190px;
+  float:right;
+  padding: 20px 10px;
+}
+
+#right ul.menu {
+  margin: 0;
+  padding:0;
+  list-style-type: none;
+}
+
+#right li.category_pages {
+  border:1px solid red;
+  background: #fee;
+  margin-bottom:5px;
+  padding: 3px;
+}
+
+#right li.category_pages>a {
+  color: #a10f15;
+  font-size: 17px;
+  line-height:10px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#right li.category_pages.selected>a, #right li.category_pages>a:hover {
+  text-decoration: underline;
+}
+
+#right li.category_pages ul a {
+  color: #a10f15;
+  text-decoration: none;
+}
+
+#right li.category_pages ul li.selected a, #right li.category_pages ul a:hover {
+  text-decoration: underline;
+}
+
 /* secret */
 
 #admin_panel {
   float:left;
   width:200px;
   padding:40px 0;
+  background:#fff;
 }
 
 #admin_zone {
-  margin-left:210px;
-  padding:40px 0 0 0;
+  margin-left:200px;
+  padding:40px 10px 5px 10px;
+  background:#fff;
 }
 
 
@@ -33,4 +110,10 @@
 #admin_zone textarea {
   width:95%;
   height:400px;
+}
+
+.notice, .alert {
+  position: absolute;
+  right: 0;
+  width: 400px;
 }
