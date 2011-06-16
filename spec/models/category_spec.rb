@@ -19,7 +19,26 @@ describe Category do
     @category.should_not be_valid
   end
   
-  it "should have valid format of url_match"
+  describe "format of url_match" do
+    it "is valid when have no slashes" do
+      @category.url_match = "some/path"
+      @category.should_not be_valid
+      @category.url_match = "some\\path"
+      @category.should_not be_valid
+    end
+    
+    it "is valid when #path returns valid url" do
+      @category.stub(:path).and_return "wrong path!"
+      @category.should_not be_valid
+    end
+    
+    it "is valid when #path have no host and qs parts" do
+      @category.stub(:path).and_return "http://www.domain.ru/some/path"
+      @category.should_not be_valid
+      @category.stub(:path).and_return "some/path?query=true"
+      @category.should_not be_valid
+    end
+  end
   
   describe "scope :enabled" do
     before :each do

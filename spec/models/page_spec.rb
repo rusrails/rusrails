@@ -19,7 +19,26 @@ describe Page do
     @page.should_not be_valid
   end
   
-  it "should have valid format of url_match"
+  describe "format of url_match" do
+    it "is valid when have no slashes" do
+      @page.url_match = "some/path"
+      @page.should_not be_valid
+      @page.url_match = "some\\path"
+      @page.should_not be_valid
+    end
+    
+    it "is valid when #path returns valid url" do
+      @page.stub(:path).and_return "wrong path!"
+      @page.should_not be_valid
+    end
+    
+    it "is valid when #path have no host and qs parts" do
+      @page.stub(:path).and_return "http://www.domain.ru/some/path"
+      @page.should_not be_valid
+      @page.stub(:path).and_return "some/path?query=true"
+      @page.should_not be_valid
+    end
+  end
   
   it "is not valid when homepage belongs to category"
   

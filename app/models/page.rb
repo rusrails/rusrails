@@ -1,6 +1,7 @@
 class Page < ActiveRecord::Base
   validates :name, :presence => true
-  validates :url_match, :presence => true
+  validates :url_match, :presence => true, :format => {:without => /(\\|\/)/}
+  validate :validates_path
   
   belongs_to :category
   
@@ -13,5 +14,13 @@ class Page < ActiveRecord::Base
   
   def path
     (category ? category.path : "") + "/" + url_match
+  end
+  
+  def validates_path
+    require 'uri'
+    uri = URI.parse path
+    raise if uri.scheme or uri.host or uri.query
+  rescue
+    errors.add :url_match
   end
 end
