@@ -40,7 +40,11 @@ describe Page do
     end
   end
   
-  it "is not valid when homepage belongs to category"
+  it "is not valid when homepage belongs to category" do
+    @page.url_match = "home"
+    @page.category_id = 1
+    @page.should_not be_valid
+  end
   
   describe "scope :ordered" do
     it "returns pages ordered by show_order" do

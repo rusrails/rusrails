@@ -1,7 +1,7 @@
 class Page < ActiveRecord::Base
   validates :name, :presence => true
   validates :url_match, :presence => true, :format => {:without => /(\\|\/)/}
-  validate :validates_path
+  validate :validates_path, :homepage_not_belongs_category
   
   belongs_to :category
   
@@ -22,5 +22,9 @@ class Page < ActiveRecord::Base
     raise if uri.scheme or uri.host or uri.query
   rescue
     errors.add :url_match
+  end
+  
+  def homepage_not_belongs_category
+    errors.add :url_match, "homepage belongs to category" if url_match=='home'&&category_id
   end
 end
