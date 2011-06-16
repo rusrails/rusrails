@@ -83,6 +83,26 @@ div#container {
   text-decoration: underline;
 }
 
+#footer {
+  height:49px;
+  padding:35px 0;
+  background:#F7F7F7;
+  border-radius: 119px 119px 0 0;
+  text-align: center;
+}
+
+#morsbox_link {
+  color: #f00;
+  font-weight: bold;
+  padding: 0 100px;
+}
+
+#twitter_link {
+  color: #33CCFF;
+  font-weight: bold;
+  padding: 0 100px;
+}
+
 /* secret */
 
 #admin_panel {
