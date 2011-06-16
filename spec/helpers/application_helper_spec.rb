@@ -1,6 +1,26 @@
 require 'spec_helper'
 
 describe ApplicationHelper do
+  describe "#title" do
+    let(:cat){ mock_model "Category", :name => "Category 1" }
+    let(:page){ mock_model "Page", :name => "Page 11" }
+    
+    it "returns page's name if present" do
+      assign :category, cat
+      assign :page, page
+      helper.title.should contain("Page 11")
+    end
+    
+    it "returns category's name if present, and no page" do
+      assign :category, cat
+      helper.title.should contain("Category 1")
+    end
+    
+    it "returns something if no page or category" do
+      helper.title.should_not be_empty
+    end
+  end
+  
   describe "#menu" do
     before :each do
       @cat1 = mock_model "Category", :name => "Category 1", :path => "/category-1"

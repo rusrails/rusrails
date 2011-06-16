@@ -1,4 +1,15 @@
+# encoding: utf-8
 module ApplicationHelper
+  def title
+    if @page
+      "Rusrails: "+@page.name
+    elsif @category
+      "Rusrails: "+@category.name
+    else
+      "Rusrails: Ruby on Rails по-русски"
+    end
+  end
+  
   def menu
     return if @categories.nil? or @categories.empty?
     builder = Nokogiri::HTML::Builder.new do |doc|
