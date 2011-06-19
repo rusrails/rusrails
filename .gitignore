@@ -8,3 +8,5 @@ db/schema.rb
 public/system
 public/system/*
 webrat.log
+config/deploy.rb
+Capfile
