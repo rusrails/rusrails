@@ -7,6 +7,7 @@ gem 'devise'
 gem 'nokogiri'
 gem 'haml'
 
+gem 'jquery-rails'
 gem 'capistrano'
 
 group :development, :test do

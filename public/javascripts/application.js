@@ -1,2 +1,9 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
+$(function() {
+  SyntaxHighlighter.autoloader(
+    'text plain             /javascripts/shBrushPlain.js',
+    'ruby rails ror rb      /javascripts/shBrushRuby.js',
+    'sql                    /javascripts/shBrushSql.js',
+    'xml xhtml xslt html    /javascripts/shBrushXml.js'
+  );
+  SyntaxHighlighter.all();
+});
