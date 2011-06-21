@@ -98,7 +98,7 @@ Feature: administrating pages
     And I should see "Page 12"
     But I should not see "Page 21"
 
-  Scenario: creating page
+  Scenario: creating page - saving
     Given I am on the admin pages page
     When I follow "new_page"
     Then I should be on the new admin page page
@@ -115,12 +115,28 @@ Feature: administrating pages
     And I should see "Tiptoeing"
     And I should see element "a[href='/category-1/tiptoeing']"
 
+@wip
+  Scenario: creating page - applying
+    Given I am on the new admin page page
+    When I fill in the following:
+      | page_name       | Tiptoeing           |
+      | page_text       | Lee plays Tiptoeing |
+      | page_url_match  | tiptoeing           |
+    And I select "Category 1" from "page_category_id"
+    And I check "page_enabled"
+    And I press "page_apply"
+    Then I should be on the edit admin page "Tiptoeing" page
+    And I should see element ".notice"
+    And the "page_name" field should contain "Tiptoeing"
+    And the "page_url_match" field should contain "tiptoeing"
+
   Scenario: creating page - failed
     Given I am on the new admin page page
     When I press "page_submit"
     Then I should be on the new admin page page
     And I should see element ".alert"
 
+@wip
   Scenario: editing page
     Given I am on the admin pages page
     When I follow "Page 11"
@@ -133,7 +149,13 @@ Feature: administrating pages
       | page_text       | Lee plays Tiptoeing |
       | page_url_match  | tiptoeing           |
     And I select "Category 2" from "page_category_id"
-    And I press "page_submit"
+    When I press "page_apply"
+    Then I should be on the edit admin page "Tiptoeing" page
+    And I should see element ".notice"
+    And the "page_name" field should contain "Tiptoeing"
+    And the "page_url_match" field should contain "tiptoeing"
+    
+    When I press "page_submit"
     Then I should be on the admin pages page
     And I should see element ".notice"
     And I should see "Tiptoeing"

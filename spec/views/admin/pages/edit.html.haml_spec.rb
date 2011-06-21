@@ -28,7 +28,8 @@ describe "admin/pages/edit.html.haml" do
       form.should have_selector("input", :type => "text", :name => "page[url_match]")
       form.should have_selector("input", :type => "checkbox", :name => "page[enabled]")
       form.should have_selector("input", :type => "text", :name => "page[show_order]")
-      form.should have_selector("input", :type => "submit")
+      form.should have_selector("input", :type => "submit", :name => "commit")
+      form.should have_selector("input", :type => "submit", :name => "apply")
     end
   end
 end
