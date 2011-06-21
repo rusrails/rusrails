@@ -17,7 +17,7 @@ Feature: administrating pages
     Then I should see "Category 1"
     And I should see "Category 2"
   
-  Scenario: creating category
+  Scenario: creating category - saving
     Given I am on the admin categories page
     When I follow "new_category"
     Then I should be on the new admin category page
@@ -32,12 +32,27 @@ Feature: administrating pages
     And I should see element ".notice"
     And I should see "Category 3"
   
+  @wip
+  Scenario: creating category - applying
+    Given I am on the new admin category page
+    When I fill in the following:
+      | category_name       | Category 3      |
+      | category_text       | category 3 text |
+      | category_url_match  | category-3      |
+    And I check "category_enabled"
+    And I press "category_apply"
+    Then I should be on the edit admin category "Category 3" page
+    And I should see element ".notice"
+    And the "category_name" field should contain "Category 3"
+    And the "category_url_match" field should contain "category-3"
+  
   Scenario: creating category - failed
     Given I am on the new admin category page
     When I press "category_submit"
     Then I should be on the new admin category page
     And I should see element ".alert"
-
+  
+  @wip
   Scenario: editing category
     Given I am on the admin categories page
     When I follow "Category 1"
@@ -50,7 +65,13 @@ Feature: administrating pages
       | category_text       | category super  |
       | category_url_match  | category-super  |
     And I check "category_enabled"
-    And I press "category_submit"
+    And I press "category_apply"
+    Then I should be on the edit admin category "Category 3" page
+    And I should see element ".notice"
+    And the "category_name" field should contain "Category 3"
+    And the "category_url_match" field should contain "category-3"
+    
+    When I press "category_submit"
     Then I should be on the admin categories page
     And I should see element ".notice"
     And I should see "Category Super"
@@ -115,7 +136,6 @@ Feature: administrating pages
     And I should see "Tiptoeing"
     And I should see element "a[href='/category-1/tiptoeing']"
 
-@wip
   Scenario: creating page - applying
     Given I am on the new admin page page
     When I fill in the following:
@@ -136,7 +156,6 @@ Feature: administrating pages
     Then I should be on the new admin page page
     And I should see element ".alert"
 
-@wip
   Scenario: editing page
     Given I am on the admin pages page
     When I follow "Page 11"

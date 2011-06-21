@@ -21,7 +21,7 @@ class Admin::PagesController < Admin::IndexController
     page = Page.new params[:page]
     if page.save
       flash[:notice] = "страница создана"
-      redirect_to admin_pages_path
+      redirect_to params[:apply] ? edit_admin_page_path(page) : admin_pages_path
     else
       flash[:alert] = "Произошли ошибки: "+page.errors.full_messages*", "
       flash[:page] = params[:page]
@@ -38,7 +38,7 @@ class Admin::PagesController < Admin::IndexController
     page = Page.find params[:id]
     if page.update_attributes params[:page]
       flash[:notice] = "Страница обновлена"
-      redirect_to admin_pages_path
+      redirect_to params[:apply] ? edit_admin_page_path(page) : admin_pages_path
     else
       flash[:alert] = "Произошли ошибки: "+page.errors.full_messages*", "
       redirect_to edit_admin_page_path(page)

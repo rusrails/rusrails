@@ -95,7 +95,7 @@ describe Admin::PagesController do
     
     describe "POST 'create'" do
       before :each do
-        @page = mock_model(Page, :save => true).as_new_record.as_null_object
+        @page = mock_model(Page, :save => true).as_null_object
         Page.stub(:new).and_return @page
       end
       
@@ -115,7 +115,12 @@ describe Admin::PagesController do
           flash[:notice].should_not be_empty
         end
         
-        it "redirects to pages index" do
+        it "redirects to edit this page if apply was passed" do
+          post :create, :apply => "foo"
+          response.should redirect_to(edit_admin_page_path(@page))
+        end
+        
+        it "redirects to pages index if apply wasn't passed" do
           post :create
           response.should redirect_to(admin_pages_path)
         end
@@ -191,7 +196,12 @@ describe Admin::PagesController do
           flash[:notice].should_not be_empty
         end
         
-        it "redirects to pages index" do
+        it "redirects to edit this page if apply was passed" do
+          put :update, :id => 1, :apply => "foo"
+          response.should redirect_to(edit_admin_page_path(@page))
+        end
+        
+        it "redirects to pages index if apply wasn't passed" do
           put :update, :id=>1
           response.should redirect_to(admin_pages_path)
         end
