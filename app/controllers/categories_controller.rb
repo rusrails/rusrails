@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
     if @category = Category.matching(params[:url_match])
       @categories = Category.enabled
     else
-      render "/public/404.html"
+      render_404
     end
   end
 end

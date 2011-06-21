@@ -13,7 +13,7 @@ class PagesController < ApplicationController
       @categories = Category.enabled
       @pages = @category.pages.enabled
     else
-      render "/public/404.html"
+      render_404
     end
   end
 

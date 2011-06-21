@@ -38,7 +38,7 @@ describe CategoriesController do
       
       it "renders 404 page" do
         get :show, :url_match=>"no-category"
-        response.should render_template('/public/404.html')
+        response.should render_template('pages/404')
       end
       
       it "should not load list of categories" do

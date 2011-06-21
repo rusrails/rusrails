@@ -89,7 +89,7 @@ describe PagesController do
         
         it "renders 404 page" do
           get :show, :category_url_match=>"category-1", :url_match=>"no-page"
-          response.should render_template('/public/404.html')
+          response.should render_template('pages/404')
         end
         
         it "should not load list of categories" do
@@ -106,7 +106,7 @@ describe PagesController do
       
       it "renders 404 page" do
         get :show, :category_url_match=>"no-category", :url_match=>"page-11"
-        response.should render_template('/public/404.html')
+        response.should render_template('pages/404')
       end
       
       it "should not load list of categories" do

@@ -1,14 +1,19 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   layout :layout_by_resource
+  around_filter :catch_exceptions
 
 protected
   def layout_by_resource
-    if devise_controller?
-      "admin"
-    else
-      "application"
-    end
+    devise_controller? ? "admin" : "application"
+  end
+  
+  def method_missing method_name, *args
+    render_404
+  end
+  
+  def render_404
+    render 'pages/404', :status => 404
   end
   
 private  
@@ -18,5 +23,11 @@ private
 
   def expire_content_cache
     expire_fragment %r{.*}
+  end
+  
+  def catch_exceptions
+    yield
+  rescue ActiveRecord::RecordNotFound
+    render_404
   end
 end
