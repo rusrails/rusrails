@@ -1,2 +1,6 @@
 %h1= @category.name
 != @category.text
+- unless @category.pages.empty?
+  %ul
+    - @category.pages.each do |page|
+      %li= link_to page.name, page.path

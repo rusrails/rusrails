@@ -19,7 +19,6 @@ Feature: navigating pages
     But I should not see element ".menu a[href='/category-1/page-11']"
     But I should not see element ".menu a[href='/category-2/page-21']"
 
-@wip
   Scenario: enter category
     Given category "Category 1" has text "Category 1 text"
     When I go to the category "Category 1"
