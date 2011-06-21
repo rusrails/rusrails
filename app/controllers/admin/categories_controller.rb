@@ -14,7 +14,8 @@ class Admin::CategoriesController < Admin::IndexController
     category = Category.new params[:category]
     if category.save
       flash[:notice] = "Категория создана"
-      redirect_to admin_categories_path
+      path = params[:apply] ? edit_admin_category_path(category) : admin_categories_path
+      redirect_to path
     else
       flash[:alert] = "Произошли ошибки: "+category.errors.full_messages*", "
       flash[:category] = params[:category]
@@ -30,7 +31,8 @@ class Admin::CategoriesController < Admin::IndexController
     category = Category.find params[:id]
     if category.update_attributes params[:category]
       flash[:notice] = "Категория обновлена"
-      redirect_to admin_categories_path
+      path = params[:apply] ? edit_admin_category_path(category) : admin_categories_path
+      redirect_to path
     else
       flash[:alert] = "Произошли ошибки: "+category.errors.full_messages*", "
       redirect_to edit_admin_category_path(category)

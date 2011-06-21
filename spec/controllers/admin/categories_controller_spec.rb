@@ -64,7 +64,7 @@ describe Admin::CategoriesController do
     end
     
     describe "POST 'create'" do
-      let(:category){mock_model(Category, :save => true).as_new_record.as_null_object}
+      let(:category){mock_model(Category, :save => true).as_null_object}
       before :each do
         Category.stub(:new).and_return category
       end
@@ -85,7 +85,12 @@ describe Admin::CategoriesController do
           flash[:notice].should_not be_empty
         end
         
-        it "redirects to categories index" do
+        it "redirects to edit this category if apply was passed" do
+          post :create, :apply => "foo"
+          response.should redirect_to(edit_admin_category_path(category))
+        end
+        
+        it "redirects to categories index if apply wasn't passed" do
           post :create
           response.should redirect_to(admin_categories_path)
         end
@@ -154,7 +159,12 @@ describe Admin::CategoriesController do
           flash[:notice].should_not be_empty
         end
         
-        it "redirects to categories index" do
+        it "redirects to edit this category if apply was passed" do
+          put :update, :id=>1, :apply => "foo"
+          response.should redirect_to(edit_admin_category_path(category))
+        end
+        
+        it "redirects to categories index if apply wasn't passed" do
           put :update, :id=>1
           response.should redirect_to(admin_categories_path)
         end

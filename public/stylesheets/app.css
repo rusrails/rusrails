@@ -152,7 +152,7 @@ div.code_container {
   display:block;
 }
 
-#admin_zone input#page_submit {
+#admin_zone input#page_submit, #admin_zone input#category_submit {
   float:left;
 }
 

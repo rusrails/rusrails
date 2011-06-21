@@ -31,8 +31,7 @@ Feature: administrating pages
     Then I should be on the admin categories page
     And I should see element ".notice"
     And I should see "Category 3"
-  
-  @wip
+
   Scenario: creating category - applying
     Given I am on the new admin category page
     When I fill in the following:
@@ -51,8 +50,7 @@ Feature: administrating pages
     When I press "category_submit"
     Then I should be on the new admin category page
     And I should see element ".alert"
-  
-  @wip
+
   Scenario: editing category
     Given I am on the admin categories page
     When I follow "Category 1"
@@ -66,10 +64,10 @@ Feature: administrating pages
       | category_url_match  | category-super  |
     And I check "category_enabled"
     And I press "category_apply"
-    Then I should be on the edit admin category "Category 3" page
+    Then I should be on the edit admin category "Category Super" page
     And I should see element ".notice"
-    And the "category_name" field should contain "Category 3"
-    And the "category_url_match" field should contain "category-3"
+    And the "category_name" field should contain "Category Super"
+    And the "category_url_match" field should contain "category-super"
     
     When I press "category_submit"
     Then I should be on the admin categories page

@@ -20,7 +20,8 @@ describe "admin/categories/new.html.haml" do
       form.should have_selector("input", :type => "text", :name => "category[url_match]")
       form.should have_selector("input", :type => "checkbox", :name => "category[enabled]")
       form.should have_selector("input", :type => "text", :name => "category[show_order]")
-      form.should have_selector("input", :type => "submit")
+      form.should have_selector("input", :type => "submit", :name => "commit")
+      form.should have_selector("input", :type => "submit", :name => "apply")
     end
   end
 end
