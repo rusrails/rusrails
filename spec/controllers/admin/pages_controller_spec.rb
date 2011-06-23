@@ -25,9 +25,9 @@ describe Admin::PagesController do
     describe "GET index" do
       before :each do
         @category = mock_model(Category).as_null_object
-        @category.stub_chain(:pages,:ordered).and_return []
+        @category.stub_chain(:pages,:ordered, :without_text).and_return []
         @page = mock_model(Page).as_null_object
-        Page.stub(:ordered).and_return [@page]
+        Page.stub_chain(:ordered, :without_text).and_return [@page]
         Category.stub(:find_by_id).and_return nil
         Category.stub(:ordered).and_return [@category]
       end

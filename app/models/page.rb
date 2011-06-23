@@ -7,6 +7,7 @@ class Page < ActiveRecord::Base
   
   scope :ordered, order("show_order DESC",:created_at)
   scope :enabled, where(:enabled=>true).ordered
+  scope :without_text, select("id,name,url_match,category_id,enabled,show_order,created_at")
   
   def self.matching url_match
     where(:url_match => url_match).first

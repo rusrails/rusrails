@@ -6,9 +6,9 @@ class Admin::PagesController < Admin::IndexController
     @categories = Category.ordered
     category = Category.find_by_id params[:category_id]
     if category
-      @pages = category.pages.ordered
+      @pages = category.pages.ordered.without_text
     else
-      @pages = Page.ordered
+      @pages = Page.ordered.without_text
     end
   end
   

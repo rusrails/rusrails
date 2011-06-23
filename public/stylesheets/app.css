@@ -132,6 +132,13 @@ div.code_container {
 
 .note tt, .info tt {border:none; background: none; padding: 0;}
 
+#prev_link{
+  float:left;
+}
+#next_link{
+  float:right;
+}
+
 /* secret */
 
 #admin_panel {
