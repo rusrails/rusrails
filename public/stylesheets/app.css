@@ -33,7 +33,7 @@ a#logo {
 
 div#container {
   background: #ffffff;
-  min-width: 1000px;
+  min-width: 800px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -135,8 +135,24 @@ div.code_container {
 #prev_link{
   float:left;
 }
+
+#prev_link a {
+  display:block;
+  background: url('/images/arrow_left.png') no-repeat left top;
+  padding:35px 0 15px;
+  min-width:35px;
+  margin-left:85px;
+}
+
 #next_link{
   float:right;
+}
+
+#next_link a {
+  display:block;
+  background: url('/images/arrow_right.png') no-repeat right top;
+  padding:35px 0 15px;
+  min-width:35px;
 }
 
 /* secret */
