@@ -1,0 +1,15 @@
+/ Yandex.Metrika counter
+%div{:style => "display:none"}
+  :javascript
+    (function(w, c) {
+      (w[c] = w[c] || []).push(function() {
+        try {
+          w.yaCounter1006929 = new Ya.Metrika(1006929);
+           yaCounter1006929.trackLinks(true);
+        } catch(e) {}
+      });
+    })(window, 'yandex_metrika_callbacks');
+= javascript_include_tag "//mc.yandex.ru/metrika/watch.js", :defer => "defer"
+%noscript
+  %div{:style => "display:none"}= image_tag "//mc.yandex.ru/watch/1006929"
+/ /Yandex.Metrika counter

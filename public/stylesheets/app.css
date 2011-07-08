@@ -104,6 +104,11 @@ div#container {
 }
 
 /* content */
+
+#content h4 {
+  font-weight: bold;
+}
+
 div.warning {
   background: #f9d9d8 url(../images/tab_red.gif) no-repeat left top;
   padding: 1em 1em 0.25em 48px;
