@@ -7,6 +7,7 @@ gem 'thinking-sphinx'
 gem 'devise'
 gem 'nokogiri'
 gem 'haml'
+gem 'sass'
 
 gem 'jquery-rails'
 gem 'capistrano'
