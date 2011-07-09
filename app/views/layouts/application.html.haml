@@ -14,7 +14,13 @@
   %body
     #container
       #header= link_to "", root_path, :id => "logo"
-      #right= menu
+      #right
+        %ul.menu
+          %li.category_pages
+            = form_tag search_path, :method => :get do
+              = text_field_tag :search
+              = submit_tag :search, :class => :hidden
+        = menu
       #content= yield
       .clear
       #footer

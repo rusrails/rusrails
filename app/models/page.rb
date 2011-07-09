@@ -5,6 +5,12 @@ class Page < ActiveRecord::Base
   
   belongs_to :category
   
+  define_index do
+    indexes :name
+    indexes :text
+    where :enabled => true
+  end
+  
   scope :ordered, order("show_order DESC",:created_at)
   scope :enabled, where(:enabled=>true).ordered
   scope :without_text, select("id,name,url_match,category_id,enabled,show_order,created_at")

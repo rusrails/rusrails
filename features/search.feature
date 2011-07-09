@@ -15,7 +15,7 @@ Scenario: search
   And the Sphinx indexes are updated
   When I go to the home page
   And I fill in "search" with "music"
-  And I press "submit"
+  And I press "search"
   Then I should be on the search page
   And I should see "Radio" within "#content a[href='/radio']"
   And I should see "The Music Stopped" within "#content a[href='/radio/the-music-stopped']"

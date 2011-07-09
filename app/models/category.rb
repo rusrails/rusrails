@@ -5,6 +5,12 @@ class Category < ActiveRecord::Base
   
   has_many :pages
   
+  define_index do
+    indexes :name
+    indexes :text
+    where :enabled => true
+  end
+  
   scope :ordered, order("show_order DESC",:created_at)
   scope :enabled, where(:enabled=>true).ordered
   
