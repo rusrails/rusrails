@@ -62,3 +62,6 @@ end
 
 World(Webrat::Methods)
 World(Webrat::Matchers)
+
+require 'cucumber/thinking_sphinx/external_world'
+Cucumber::ThinkingSphinx::ExternalWorld.new
