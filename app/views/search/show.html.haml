@@ -1,0 +1,12 @@
+%h1
+  Вы искали:
+  = @search
+- if @result.empty?
+  %p Ничего не найдено
+- else
+  %ol
+    - @result.each do |result|
+      %li
+        - case result.class.name
+        - when "Category", "Page"
+          = link_to result.name, result.path

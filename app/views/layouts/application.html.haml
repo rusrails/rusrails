@@ -18,7 +18,7 @@
         %ul.menu
           %li.category_pages
             = form_tag search_path, :method => :get do
-              = text_field_tag :search
+              = text_field_tag :search, params[:search]
               = submit_tag :search, :class => :hidden
         = menu
       #content= yield
