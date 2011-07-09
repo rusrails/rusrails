@@ -16,8 +16,7 @@ describe PagesController do
     
     it "creates new empty homepage if it isn't present yet" do
       Page.should_receive(:matching).with("home").and_return nil
-      Page.should_receive(:create)
-          .with(:name => "Homepage", :url_match => "home").and_return homepage
+      Page.should_receive(:create).with(:name => "Homepage", :url_match => "home").and_return homepage
       get :index
     end
     
