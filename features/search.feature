@@ -14,9 +14,10 @@ Scenario: search
   And page "Far Away" has text "Long ago and far away"
   And the Sphinx indexes are updated
   When I go to the home page
-  And I fill in "search" with "music"
+  And I fill in "search" with "Music"
   And I press "search"
   Then I should be on the search page
-  And I should see "Radio" within "#content a[href='/radio']"
-  And I should see "The Music Stopped" within "#content a[href='/radio/the-music-stopped']"
+  And I should see "Music" within "#content"
+  And I should see "Radio" within "#content"
+  And I should see "The Music Stopped" within "#content"
   But I should not see "Far Away" within "#content"

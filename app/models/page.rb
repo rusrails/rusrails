@@ -8,7 +8,7 @@ class Page < ActiveRecord::Base
   define_index do
     indexes :name
     indexes :text
-    where :enabled => true
+    has :enabled
   end
   
   scope :ordered, order("show_order DESC",:created_at)
