@@ -160,6 +160,26 @@ div.code_container {
   min-width:35px;
 }
 
+/* search */
+
+#search {
+  margin: 0;
+  width: 150px; 
+  padding: 5px 15px 5px 15px;
+  background: #f7f7f7;
+  border: 1px solid #e7e7e7;
+  border-radius: 0 0 20px 20px;
+  color: #aaa;
+  outline: none; /*Remove Chrome and Safari glows on focus*/
+}
+
+#search.active {
+  background: #ebf3fc;
+  border: 1px solid #abd2ff;
+  color: #a10f15;
+  font-weight:bold;
+}
+
 /* secret */
 
 #admin_panel {

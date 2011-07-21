@@ -6,4 +6,15 @@ $(function() {
     'xml xhtml xslt html    /javascripts/shBrushXml.js'
   );
   SyntaxHighlighter.all();
+  
+  var text = "Поиск..";
+  $("#search").focus(function() {
+    $(this).addClass("active");
+    if($(this).attr("value") == text) $(this).attr("value", "");
+  });
+  $("#search").blur(function() {
+    $(this).removeClass("active");
+    if($(this).attr("value") == "") $(this).attr("value", text);
+  });
+  $("#search").blur();
 });
