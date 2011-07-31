@@ -17,4 +17,8 @@ $(function() {
     if($(this).attr("value") == "") $(this).attr("value", text);
   });
   $("#search").blur();
+
+  $('#category_filter_form #section_id').change(function(){
+    $('#category_filter_form').submit()
+  });
 });

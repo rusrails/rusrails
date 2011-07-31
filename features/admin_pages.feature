@@ -203,3 +203,12 @@ Feature: administrating pages
     When I fill in "page_show_order" with "1" within xpath //tr[.//text()="Page 11"]
     And I submit edit form for page "Page 11"
     Then the "page_show_order" field should contain "1" within xpath //tr[.//text()="Page 11"]
+
+  Scenario: changing show order of filtered page
+    Given I am on the admin pages page
+    And I select "Category 1" from "category_id"
+    And I submit "category_filter_form"
+    When I fill in "page_show_order" with "1" within xpath //tr[.//text()="Page 11"]
+    And I submit edit form for page "Page 11"
+    Then the "page_show_order" field should contain "1" within xpath //tr[.//text()="Page 11"]
+    And I should not see "Page 21"

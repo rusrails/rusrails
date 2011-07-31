@@ -205,6 +205,11 @@ describe Admin::PagesController do
           put :update, :id=>1
           response.should redirect_to(admin_pages_path)
         end
+        
+        it "redirects to pages index with category filter if exist" do
+          put :update, :id=>1, :category_id =>5
+          response.should redirect_to(admin_pages_path(:category_id =>5))
+        end
       end
       
       context "when saving failed" do

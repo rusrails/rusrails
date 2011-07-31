@@ -59,6 +59,7 @@ describe "admin/pages/index.html.haml" do
                                     :action => admin_page_path(@page)) do |form|
         form.should have_selector("input", :type => "hidden", :name => "_method",
                                   :value=>"put")
+        form.should have_selector("input", :type => "hidden", :name => "category_id")
         form.should have_selector("input", :type => "text", :name=> "page[show_order]")
       end
     end

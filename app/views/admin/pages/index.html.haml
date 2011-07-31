@@ -18,5 +18,6 @@
       %td
         = form_for [:admin, page] do |f|
           = f.text_field :show_order
+          = hidden_field_tag :category_id, params[:category_id]
           = f.submit :class => :hidden
         = link_to "Удалить", admin_page_path(page), :method => :delete, :confirm => "Вы уверены?"

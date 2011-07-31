@@ -38,7 +38,7 @@ class Admin::PagesController < Admin::IndexController
     page = Page.find params[:id]
     if page.update_attributes params[:page]
       flash[:notice] = "Страница обновлена"
-      redirect_to params[:apply] ? edit_admin_page_path(page) : admin_pages_path
+      redirect_to params[:apply] ? edit_admin_page_path(page) : admin_pages_path(:category_id =>params[:category_id])
     else
       flash[:alert] = "Произошли ошибки: "+page.errors.full_messages*", "
       redirect_to edit_admin_page_path(page)
