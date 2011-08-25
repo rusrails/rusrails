@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.9'
+gem 'rails', '3.0.10'
 gem 'rake', '0.8.7'         # remove this line when rails 3.1
 gem 'mysql2', '= 0.2.7'     # version needed for rails 3.0
 gem 'thinking-sphinx'
@@ -18,7 +18,7 @@ group :development, :test do
   gem 'webrat'
   gem 'capybara', "= 1.0.0.beta1"   # remove this line when rails 3.1
   # until bug with :to_ary not fixed:
-  gem "rspec-mocks", :git => "git://github.com/Mik-die/rspec-mocks.git", :branch => "patch-1"
+  gem "rspec-mocks", :git => "git://github.com/rspec/rspec-mocks.git"
 end
 
 group :test do

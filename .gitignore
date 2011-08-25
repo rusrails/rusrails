@@ -1,6 +1,7 @@
 *~
 config/database.yml
 config/deploy.rb
+config/*.sphinx.conf
 db/*.sqlite3
 db/schema.rb
 db/sphinx
