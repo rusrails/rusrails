@@ -15,7 +15,7 @@ Feature: enter admin zone
   Scenario: User is not signed up
     Given I am not logged in as user
     When I go to the root page
-    And I sign in as "nouser@domain.com/please"
+    And I sign in as user "nouser@domain.com/please"
     Then I should see element ".alert"
     
     When I go to the root page
