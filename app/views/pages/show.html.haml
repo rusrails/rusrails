@@ -1,5 +1,5 @@
 %h1= @page.name
-!= @page.text
+!= textile(@page.text)
 %p#links
   #prev_link= prev_page_link
   #next_link= next_page_link

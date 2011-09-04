@@ -37,4 +37,11 @@ module ApplicationHelper
     other_classes << "selected" if condition
     {:class => other_classes*" "} unless other_classes.empty?
   end
+
+  def textile(body, lite_mode=false)
+    t = RedCloth.new(body)
+    t.hard_breaks = false
+    t.lite_mode = lite_mode
+    t.to_html(:notestuff, :plusplus, :code)
+  end
 end

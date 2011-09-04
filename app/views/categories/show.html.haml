@@ -1,5 +1,5 @@
 %h1= @category.name
-!= @category.text
+!= textile(@category.text)
 - unless @category.pages.empty?
   %ul
     - @category.pages.each do |page|

@@ -8,6 +8,7 @@ gem 'devise'
 gem 'nokogiri'
 gem 'haml'
 gem 'sass'
+gem 'RedCloth'
 
 gem 'jquery-rails'
 gem 'capistrano'
