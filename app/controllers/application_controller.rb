@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 protected
   def layout_by_resource
-    devise_controller? ? "admin" : "application"
+    devise_controller? && resource_class == Admin ? "admin" : "application"
   end
   
   def method_missing method_name, *args
@@ -18,7 +18,7 @@ protected
   
 private  
   def after_sign_out_path_for resource
-    admin_root_path
+    resource == Admin ? admin_root_path : root_path
   end
 
   def expire_content_cache

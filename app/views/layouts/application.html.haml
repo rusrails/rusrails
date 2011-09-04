@@ -13,7 +13,20 @@
     = csrf_meta_tag
   %body
     #container
-      #header= link_to "", root_path, :id => "logo"
+      #header
+        = link_to "", root_path, :id => "logo"
+        - if notice
+          .notice= notice
+        - if alert
+          .alert= alert
+        #user_panel
+          %ul
+            - if user_signed_in?
+              %li= link_to current_user.name||current_user.email, edit_user_registration_path, :id => :user_edit
+              %li= link_to "Выход", destroy_user_session_path
+            - else
+              %li= link_to "Регистрация", new_user_registration_path
+              %li= link_to "Вход", new_user_session_path
       #right
         %ul.menu
           %li.category_pages

@@ -23,12 +23,12 @@ When /^I return next time as user$/ do
 end
 
 Then /^I should be already signed in as user$/ do
-  And %{I should see element "#user_logout"}
+  And %{I should see element "a[href='/users/sign_out']"}
 end
 
 Then /^I should be signed in as user$/ do
   Then %{I should see element ".notice"}
-  Then %{I should see element ".user_menu"}
+  Then %{I should see element "a[href='/users/sign_out']"}
 end
 
 Then /^I sign out as user$/ do
@@ -36,6 +36,6 @@ Then /^I sign out as user$/ do
 end
 
 Then /^I should be signed out as user$/ do
-  And %{I should see element "form.user_new"}
-  And %{I should not see element ".user_menu"}
+  And %{I should see element "a[href='/users/sign_in']"}
+  And %{I should not see element "a[href='/users/sign_out']"}
 end

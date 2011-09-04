@@ -19,16 +19,29 @@ body {
 
 /* layout */
 #header {
-  height:77px;
-  padding:21px 0;
+  height:119px;
+  padding:0;
   background:#F7F7F7;
   border-radius: 0 0 119px 119px;
 }
 
 a#logo {
   display: block;
-  height:77px;
+  height:119px;
   background: url('../images/rusrails.png') center center no-repeat;
+  width: 60%;
+  float: left;
+}
+
+#header .notice, #header .alert {
+  margin: 0 60px 0 60%;
+}
+
+div#user_panel {
+  margin: 0 60px 0 60%;
+  background: #eee;
+  border-radius: 0 0 20px 20px;
+  height: 40px;
 }
 
 div#container {
@@ -213,7 +226,7 @@ div.code_container {
   height:400px;
 }
 
-.notice, .alert {
+.admin .notice, .admin .alert {
   position: absolute;
   right: 0;
   width: 400px;
