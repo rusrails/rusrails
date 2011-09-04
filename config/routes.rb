@@ -1,4 +1,5 @@
 Urrr::Application.routes.draw do
+  devise_for :users
   devise_for :admins, :controllers => {:registrations => "admin/registrations" }
   
   namespace "admin" do
