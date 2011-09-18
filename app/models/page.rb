@@ -2,9 +2,10 @@ class Page < ActiveRecord::Base
   validates :name, :presence => true
   validates :url_match, :presence => true, :format => {:without => /(\\|\/)/}
   validate :validates_path, :homepage_not_belongs_category
-  
+
   belongs_to :category
-  
+  has_many :discussions, :as => :subject
+
   define_index do
     indexes :name
     indexes :text

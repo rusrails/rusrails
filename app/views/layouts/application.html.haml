@@ -1,7 +1,7 @@
 !!! 5
 %html
   %head
-    %meta{:name => "keywords", :content => "Ruby, Rails, Rails3, 3.1.0, руководство, начинающим, самоучитель, manual, мануал, справочник, учебник, примеры, Руби, рельсы"}
+    %meta{:name => "keywords", :content => "ruby on rails, Ruby, Rails, Rails3, Rails 3.1, руководство, начинающим, самоучитель, manual, мануал, справочник, учебник, примеры, Руби, рельсы"}
     %meta{:name => "description", :content => "Ruby on Rails русские руководства, учебники, статьи"}
     %title= title
     = stylesheet_link_tag "blueprint/screen", :media => "screen, projection"
@@ -27,7 +27,7 @@
             - else
               %li= link_to "Регистрация", new_user_registration_path
               %li= link_to "Вход", new_user_session_path
-            %li= link_to "Общение", root_path
+            %li= link_to "Общение", discussions_path
       #right
         %ul.menu
           %li.category_pages

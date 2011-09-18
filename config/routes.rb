@@ -8,6 +8,7 @@ Urrr::Application.routes.draw do
     root :to => "pages#index"
   end
 
+  resources :discussions, :only => [:index, :show, :new, :create]
   resource :search, :only => :show, :controller => :search
 
   root :to => "pages#index"

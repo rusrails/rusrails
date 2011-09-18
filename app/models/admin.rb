@@ -6,4 +6,7 @@ class Admin < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me
+
+  has_many :discussions, :as => :author
+  has_many :says, :as => :author
 end

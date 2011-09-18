@@ -4,6 +4,7 @@ class Category < ActiveRecord::Base
   validate :validates_path
   
   has_many :pages
+  has_many :discussions, :as => :subject
   
   define_index do
     indexes :name

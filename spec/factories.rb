@@ -1,23 +1,31 @@
-Factory.define :admin do |a|
-  a.email "admin@domain.com"
-  a.password "foobar"
-  a.password_confirmation { |x| x.password }
-  a.remember_me true
+Factory.define :admin do |f|
+  f.email "admin@domain.com"
+  f.password "foobar"
+  f.password_confirmation { |x| x.password }
+  f.remember_me true
 end
 
-Factory.define :user do |a|
-  a.email "user@domain.com"
-  a.password "foobar"
-  a.password_confirmation { |x| x.password }
-  a.remember_me true
+Factory.define :user do |f|
+  f.email "user@domain.com"
+  f.password "foobar"
+  f.password_confirmation { |x| x.password }
+  f.remember_me true
 end
 
-Factory.define :category do |c|
-  c.enabled true
-  c.show_order 0
+Factory.define :category do |f|
+  f.enabled true
 end
 
-Factory.define :page do |p|
-  p.enabled true
-  p.show_order 0
+Factory.define :page do |f|
+  f.enabled true
+end
+
+Factory.define :discussion do |f|
+  f.title "New discussion"
+  f.enabled true
+end
+
+Factory.define :say do |f|
+  f.text "New question"
+  f.enabled true
 end
