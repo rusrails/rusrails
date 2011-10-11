@@ -1,2 +1,8 @@
-%h1= Обсуждения
-
+%h1 Обсуждения
+= link_to "Начать новое обсуждение", new_discussion_path
+- @discussions.each do |discussion|
+  .discussion_title
+    %span= link_to discussion.title, discussion_path(discussion)
+    %span= "(#{discussion.says.count}  сообщений)"
+    %span= discussion.author.name
+    %span= "обновлено #{l discussion.updated_at, :format => :short}"
