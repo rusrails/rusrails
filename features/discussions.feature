@@ -11,7 +11,6 @@ Feature: Discussion interesting questions
       | My question | user@user.com   |
       | My answer   | other@user.com  |
 
-  @wip
   Scenario: View discussions
     When I go to the home page
     Then I should see element "a[href='/discussions']"

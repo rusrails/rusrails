@@ -1,0 +1,6 @@
+%h1= @discussion.title
+- @discussion.says.each do |say|
+  .say
+    .name= say.author.name
+    .time= l say.updated_at, :format => :short
+    .text!= textile(say.text)

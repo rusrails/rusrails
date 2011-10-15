@@ -10,7 +10,7 @@ module NavigationHelpers
 
     when /^the home\s?page$/
       '/'
-    
+
     when /the sign up page/
       '/admins/sign_up'
 
@@ -25,19 +25,22 @@ module NavigationHelpers
 
     when /^the category "([^"]*)"$/i
       Category.find_by_name($1).path
-      
+
     when /^the page "([^"]*)"$/i
       Page.find_by_name($1).path
-      
+
     when /^(\d+)-th page$/i
       @pages[$1.to_i-1].path
 
     when /the edit admin category "([^"]*)" page/
       edit_admin_category_path Category.find_by_name($1)
-    
+
     when /the edit admin page "([^"]*)" page/
       edit_admin_page_path Page.find_by_name($1)
-    
+
+    when /the discussion "([^"]*)" page/
+      discussion_path Discussion.find_by_title($1)
+
     else
       begin
         page_name =~ /^the (.*) page$/
