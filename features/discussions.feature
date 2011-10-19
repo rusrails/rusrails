@@ -26,6 +26,27 @@ Feature: Discussion interesting questions
 
   @wip
   Scenario: Start discussion
+    When I go to the discussions page
+    Then I should not see element "a[href='/discussions/new']"
+
+    When I sign in as user "user@user.com/123456"
+    And I go to the discussions page
+    Then I should see element "a[href='/discussions/new']"
+
+    When I go to the new discussion page
+    And I fill in the following:
+      | discussion_title     | Have question |
+      | discussion_says_text | My question   |
+    And I press "discussion_submit"
+    Then I should be on the discussion "Have question" page
+    And I should see element ".notice"
+    And I should see "Have question"
+    And I should see "My question"
+
+    When I go to the new discussion page
+    And I press "discussion_submit"
+    Then I should be on the new discussion page
+    And I should see element ".alert"
 
   @wip
   Scenario: Continue discussion
