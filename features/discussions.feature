@@ -24,7 +24,6 @@ Feature: Discussion interesting questions
     And I should see "My question"
     And I should see "My answer"
 
-  @wip
   Scenario: Start discussion
     When I go to the discussions page
     Then I should not see element "a[href='/discussions/new']"
@@ -35,8 +34,8 @@ Feature: Discussion interesting questions
 
     When I go to the new discussion page
     And I fill in the following:
-      | discussion_title     | Have question |
-      | discussion_says_text | My question   |
+      | discussion_title                  | Have question |
+      | discussion_says_attributes_0_text | My question   |
     And I press "discussion_submit"
     Then I should be on the discussion "Have question" page
     And I should see element ".notice"
@@ -45,7 +44,7 @@ Feature: Discussion interesting questions
 
     When I go to the new discussion page
     And I press "discussion_submit"
-    Then I should be on the new discussion page
+    Then I should be on the discussions page
     And I should see element ".alert"
 
   @wip

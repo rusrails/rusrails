@@ -1,0 +1,13 @@
+%h1 Начать новое обсуждение
+= form_for @discussion do |f|
+  = f.label :title
+  = f.text_field :title
+
+  = f.fields_for :says, @say do |say|
+    = say.label :text
+    = say.text_area :text
+    %p
+      Можно использовать разметку
+      = link_to "Textile", "http://textile.thresholdstate.com/"
+
+  = f.submit "Начать обсуждение"

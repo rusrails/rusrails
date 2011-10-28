@@ -9,4 +9,8 @@ class User < ActiveRecord::Base
 
   has_many :discussions, :as => :author
   has_many :says, :as => :author
+
+  def name
+    read_attribute(:name) || email.split('@').first
+  end
 end

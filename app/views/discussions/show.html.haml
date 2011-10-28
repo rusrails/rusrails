@@ -1,6 +1,15 @@
 %h1= @discussion.title
-- @discussion.says.each do |say|
+- @discussion.says.enabled.each do |say|
   .say
-    .name= say.author.name
+    .name= say.author.try :name
     .time= l say.updated_at, :format => :short
     .text!= textile(say.text)
+- if current_author
+  %h3 Ответить
+  = form_for [@discussion, @discussion.says.build] do |f|
+    = f.label :text
+    = f.text_area :text
+    %p
+      Можно использовать разметку
+      = link_to "Textile", "http://textile.thresholdstate.com/"
+    = f.submit "Отправить"

@@ -22,7 +22,7 @@
         #user_panel
           %ul
             - if user_signed_in?
-              %li= link_to current_user.name||current_user.email, edit_user_registration_path, :id => :user_edit
+              %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path
             - else
               %li= link_to "Регистрация", new_user_registration_path
@@ -42,7 +42,7 @@
           = link_to "MORSbox", "http://morsbox.ru", :id => :morsbox_link
           2011
           = link_to "Твиттер", "http://twitter.com/rusrails", :id => :twitter_link
-          Хостинг - 
+          Хостинг -
           =link_to "Locum.ru", "http://locum.ru?code=91f0442af4234d9f732d89e111795557f795edb6"
         %p
           = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"

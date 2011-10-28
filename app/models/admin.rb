@@ -9,4 +9,8 @@ class Admin < ActiveRecord::Base
 
   has_many :discussions, :as => :author
   has_many :says, :as => :author
+
+  def name
+    "Admin"
+  end
 end
