@@ -155,7 +155,7 @@ div.warning {
   background: #f9d9d8 url(../images/tab_red.gif) no-repeat left top;
   padding: 1em 1em 0.25em 48px;
   margin: 0.25em 0 1.5em 0;
-}  
+}
 
 div.code_container {
   background: #EEE url(../images/tab_grey.gif) no-repeat left top;
@@ -206,7 +206,7 @@ div.code_container {
 
 #search {
   margin: 0;
-  width: 150px; 
+  width: 150px;
   padding: 5px 15px 5px 15px;
   background: #f7f7f7;
   border: 1px solid #e7e7e7;
@@ -220,6 +220,18 @@ div.code_container {
   border: 1px solid #abd2ff;
   color: #a10f15;
   font-weight:bold;
+}
+
+/* discussions */
+
+.discussion_title {
+  margin-top: 15px;
+  padding: 5px 10px;
+  background: #eee;
+}
+
+.discussion_title .title a {
+  font-size: 16px;
 }
 
 /* secret */

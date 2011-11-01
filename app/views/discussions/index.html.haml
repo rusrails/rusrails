@@ -6,7 +6,9 @@
 
 - @discussions.each do |discussion|
   .discussion_title
-    %span= link_to discussion.title, discussion_path(discussion)
-    %span= "(#{discussion.says.enabled.count}  сообщений)"
-    %span= discussion.author.try :name
-    %span= "обновлено #{l discussion.updated_at, :format => :short}"
+    %div.title
+      = link_to discussion.title, discussion_path(discussion)
+      = "(#{discussion.says.enabled.count} сообщений)"
+    %div.author
+      = "автор #{discussion.author.try(:name) || неизвестен},"
+      = "обновлено #{l discussion.updated_at, :format => :short}"
