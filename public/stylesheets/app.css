@@ -282,6 +282,10 @@ div.code_container {
   margin-top: 15px;
 }
 
+.admin_name {
+  color: #a10f15;
+}
+
 /* secret */
 
 #admin_panel {
