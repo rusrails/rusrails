@@ -20,6 +20,8 @@
           %li= link_to "Перейти на сайт", root_path
           %li= link_to "Менеджер категорий", admin_categories_path,:id => "category_manager"
           %li= link_to "Менеджер страниц", admin_pages_path, :id => "page_manager"
+          %li= link_to "Обсуждения", admin_discussions_path
+          %li= link_to "Высказывания", admin_says_path
           %li= link_to "Профиль", edit_admin_registration_path, :id => "admin_edit"
           %li= link_to "Выйти", destroy_admin_session_path, :id => "admin_logout"
     #admin_zone= yield

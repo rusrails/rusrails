@@ -5,11 +5,15 @@
     .time= l say.updated_at, :format => :short
     .text!= textile(say.text)
 - if current_author
-  %h3 Ответить
   = form_for [@discussion, @discussion.says.build] do |f|
-    = f.label :text
-    = f.text_area :text
-    %p
-      Можно использовать разметку
-      = link_to "Textile", "http://textile.thresholdstate.com/"
-    = f.submit "Отправить"
+    %h3 Ответить
+    %div
+      .left_label
+        = f.label :text
+        %p
+          Можно использовать разметку
+          = link_to "Textile", "http://textile.thresholdstate.com/"
+      .right_value
+        = f.text_area :text
+    %div
+      .right_value= f.submit "Отправить"

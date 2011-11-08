@@ -5,6 +5,8 @@ Urrr::Application.routes.draw do
   namespace "admin" do
     resources :categories, :except => :show
     resources :pages, :except => :show
+    resources :discussions, :except => [:new, :create, :show]
+    resources :says, :except => [:new, :create, :show]
     root :to => "pages#index"
   end
 

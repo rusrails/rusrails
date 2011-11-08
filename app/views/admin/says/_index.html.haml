@@ -1,0 +1,16 @@
+%table.admin_list
+  %tr
+    %th id
+    %th Обсуждение
+    %th Текст
+    %th Ссылка
+    %th Состояние
+    %th Действия
+  - says.each do |say|
+    %tr.admin_item
+      %td= say.id
+      %td= link_to say.discussion.title, edit_admin_discussion_path(say.discussion) if say.discussion
+      %td= say.text
+      %td= link_to 'Редактирование', edit_admin_say_path(say)
+      %td= link_to_toggle say
+      %td= link_to "Удалить", admin_say_path(say), :method => :delete, :confirm => "Вы уверены?"

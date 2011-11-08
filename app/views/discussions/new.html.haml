@@ -1,13 +1,18 @@
 %h1 Начать новое обсуждение
 = form_for @discussion do |f|
-  = f.label :title
-  = f.text_field :title
+  %div
+    .left_label= f.label :title
+    .right_value= f.text_field :title
 
-  = f.fields_for :says, @say do |say|
-    = say.label :text
-    = say.text_area :text
-    %p
-      Можно использовать разметку
-      = link_to "Textile", "http://textile.thresholdstate.com/"
+  %div
+    = f.fields_for :says, @say do |say|
+      .left_label
+        = say.label :text
+        %p
+          Можно использовать разметку
+          = link_to "Textile", "http://textile.thresholdstate.com/"
+      .right_value
+        = say.text_area :text
 
-  = f.submit "Начать обсуждение"
+  %div
+    .right_value= f.submit "Начать обсуждение"

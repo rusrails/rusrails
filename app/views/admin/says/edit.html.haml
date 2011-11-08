@@ -1,0 +1,11 @@
+%h1 Редактирование высказывания
+= form_for [:admin, @say] do |f|
+  = f.label :text
+  = f.text_field :text
+  = f.label :enabled
+  = f.check_box :enabled
+  = f.submit
+= link_to "К списку высказываний", admin_says_path
+- if @say.discussion
+  = link_to "К редактированию обсуждения", edit_admin_discussion_path(@say.discussion)
+  = link_to "К обсуждению", discussion_path(@say.discussion)

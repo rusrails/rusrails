@@ -222,6 +222,30 @@ div.code_container {
   font-weight:bold;
 }
 
+/* forms */
+
+#content input {
+  padding: 5px;
+}
+
+.left_label{
+  float: left;
+  width: 200px;
+  padding: 5px;
+}
+
+.right_value{
+  margin-left: 210px;
+}
+
+.right_value input[type=text]{
+  width: 50%;
+}
+
+.right_value textarea{
+  width: 80%;
+}
+
 /* discussions */
 
 .discussion_title {
@@ -232,6 +256,30 @@ div.code_container {
 
 .discussion_title .title a {
   font-size: 16px;
+}
+
+.say {
+  margin-top: 15px;
+  padding: 5px 10px;
+  background: #f7f7f7;
+}
+
+.say .name{
+  font-weight: bold
+}
+
+.say .time{
+  font-style: italic
+}
+
+.say .text{
+  padding: 5px 15px;
+  background: #eee;
+  border-radius: 0 0 15px 15px;
+}
+
+#new_say{
+  margin-top: 15px;
 }
 
 /* secret */
