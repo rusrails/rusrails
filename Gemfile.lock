@@ -99,7 +99,7 @@ GEM
     nokogiri (1.5.0)
     orm_adapter (0.0.5)
     polyglot (0.3.3)
-    rack (1.2.4)
+    rack (1.2.3)
     rack-mount (0.6.14)
       rack (>= 1.0.0)
     rack-test (0.5.7)
@@ -176,6 +176,7 @@ DEPENDENCIES
   jquery-rails
   mysql2 (= 0.2.7)
   nokogiri
+  rack (= 1.2.3)
   rails (= 3.0.10)
   rake (= 0.8.7)
   rspec-mocks

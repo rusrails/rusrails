@@ -16,6 +16,7 @@ set :user, "hosting_mik-die"
 set :use_sudo, false
 set :deploy_to, dpath
 set :bundle_cmd, '/var/lib/gems/1.8/bin/bundle'
+set :bundle_flags, "--deployment"
 
 role :web, "hydrogen.locum.ru"
 role :app, "hydrogen.locum.ru"
