@@ -9,7 +9,7 @@ module ApplicationHelper
       "Rusrails: Ruby on Rails по-русски"
     end
   end
-  
+
   def menu
     return if @categories.nil? or @categories.empty?
     builder = Nokogiri::HTML::Builder.new do |doc|
@@ -24,15 +24,15 @@ module ApplicationHelper
                     doc.a p.name, :href => p.path
                   end
                 end
-              end
+              end # ul
             end
           end
-        end
+        end # each
       end
     end
     builder.doc.inner_html.html_safe
   end
-  
+
   def selected_class condition, *other_classes
     other_classes << "selected" if condition
     {:class => other_classes*" "} unless other_classes.empty?

@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   layout :layout_by_resource
   around_filter :catch_exceptions
-  helper_method :current_author
+  helper_method :current_author, :page_cache_key
 
 protected
   def layout_by_resource
@@ -23,6 +23,16 @@ protected
 
   def render_404
     render 'pages/404', :status => 404
+  end
+
+  def page_cache_key
+    if @page
+      "page_#{@page.id}"
+    elsif @category
+      "category_#{@category.id}"
+    else
+      ""
+    end
   end
 
 private

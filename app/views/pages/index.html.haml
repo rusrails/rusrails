@@ -1,2 +1,3 @@
-%h1= @homepage.name
-!= textile(@homepage.text)
+- cache page_cache_key do
+  %h1= @homepage.name
+  != textile(@homepage.text)

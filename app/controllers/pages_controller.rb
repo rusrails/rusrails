@@ -1,6 +1,4 @@
 class PagesController < ApplicationController
-  caches_action :index, :show
-  
   def index
     @homepage = Page.matching("home") ||
         Page.create(:name => "Homepage", :url_match => "home")

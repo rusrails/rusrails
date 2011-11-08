@@ -34,7 +34,8 @@
             = form_tag search_path, :method => :get do
               = text_field_tag :search, params[:search]
               = submit_tag :search, :class => :hidden
-        = menu
+        - cache "menu_#{page_cache_key}" do
+          = menu
       #content= yield
       .clear
       #footer
