@@ -19,13 +19,9 @@ describe Discussion do
       Discussion.enabled.should_not include(@disabled_discussion)
     end
 
-
-    it "returns discussions ordered by update time" do
+    it "returns discussions ordered by update time 1" do
       @second_discussion = Factory :discussion, :updated_at => Time.now + 1.second
       Discussion.enabled.should == [@second_discussion, @discussion]
-
-      @discussion.update_attributes :updated_at => Time.now + 2.seconds
-      Discussion.enabled.should == [@discussion, @second_discussion]
     end
   end
 end

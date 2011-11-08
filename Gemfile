@@ -19,7 +19,7 @@ group :development, :test do
   gem 'webrat'
   gem 'capybara', "= 1.0.0.beta1"   # remove this line when rails 3.1
   # until bug with :to_ary not fixed:
-  gem "rspec-mocks", :git => "git://github.com/rspec/rspec-mocks.git"
+  gem "rspec-mocks"
 end
 
 group :test do
