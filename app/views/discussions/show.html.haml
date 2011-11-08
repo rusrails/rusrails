@@ -17,3 +17,5 @@
         = f.text_area :text
     %div
       .right_value= f.submit "Отправить"
+- else
+  = link_to "Авторизуйтесь, чтобы участвовать в обсуждениях", new_user_session_path

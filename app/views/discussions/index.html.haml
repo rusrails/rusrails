@@ -8,7 +8,9 @@
   .discussion_title
     %div.title
       = link_to discussion.title, discussion_path(discussion)
-      = "(#{discussion.says.enabled.count} сообщений)"
+      = "(#{discussion.says.enabled.count} высказываний)"
     %div.author
-      = "автор #{discussion.author.try(:name) || неизвестен},"
+      автор
+      = author_of(discussion)
+      = ","
       = "обновлено #{l discussion.updated_at, :format => :short}"
