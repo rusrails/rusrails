@@ -3,7 +3,7 @@
   .say
     .name= author_of say
     .time= l say.updated_at, :format => :short
-    .text!= textile(say.text)
+    .text!= safe_textile(say.text)
 - if current_author
   = form_for [@discussion, @discussion.says.build] do |f|
     %h3 Ответить
