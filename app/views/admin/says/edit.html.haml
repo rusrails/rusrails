@@ -1,7 +1,7 @@
 %h1 Редактирование высказывания
 = form_for [:admin, @say] do |f|
   = f.label :text
-  = f.text_field :text
+  = f.text_area :text
   = f.label :enabled
   = f.check_box :enabled
   = f.submit
