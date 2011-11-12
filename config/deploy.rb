@@ -4,7 +4,7 @@ require 'thinking_sphinx/deploy/capistrano'
 set :application, "rusrails"
 
 default_run_options[:pty] = true  # Must be set for the password prompt from git to work
-set :repository, "git://github.com/morsbox/urrr.git"  # Your clone URL
+set :repository, "git://github.com/morsbox/rusrails.git"  # Your clone URL
 set :branch, "production"
 set :scm, "git"
 set :deploy_via, :remote_cache
