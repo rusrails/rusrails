@@ -57,6 +57,7 @@ namespace :deploy do
     rails_env = fetch(:rails_env, "production")
 
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} db:seed"
+    run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:import"
   end
   after "deploy:migrate", "deploy:seed_database"
 
