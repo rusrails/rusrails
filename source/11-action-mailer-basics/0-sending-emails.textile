@@ -1,0 +1,344 @@
+h1. Отправка электронной почты
+
+<p>Этот раздел представляет пошаговое руководство по созданию рассыльщика и его вьюх.</p>
+
+<h4 id="walkthrough-to-generating-a-mailer">1. Пошаговое руководство по созданию рассыльщика</h4>
+
+<h5 id="create-the-mailer">1.1 Создаем рассыльщик</h5>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate mailer UserMailer
+create  app/mailers/user_mailer.rb
+invoke  erb
+create    app/views/user_mailer
+invoke  test_unit
+create    test/functional/user_mailer_test.rb
+</pre></div>
+<p>Таким образом мы получим рассыльщик, фикстуры и тесты.</p>
+
+<h5 id="edit-the-model">1.2 Редактируем рассыльщик</h5>
+<tt>app/mailers/user_mailer.rb</tt> содержит пустой рассыльщик:
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  default :from =&gt; &quot;from@example.com&quot;
+end
+</pre></div>
+<p>Давайте добавим метод, названный <tt>welcome_email</tt>, который будет посылать email на зарегистрированный адрес email пользователя:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  default :from =&gt; &quot;notifications@example.com&quot;
+
+  def welcome_email(user)
+    @user = user
+    @url  = &quot;http://example.com/login&quot;
+    mail(:to =&gt; user.email,
+         :subject =&gt; &quot;Welcome to My Awesome Site&quot;)
+  end
+
+end
+</pre></div>
+<p>Вот краткое описание элементов, представленных в этом методе. Для полного списка всех доступных опций, обратитесь к <a href="#complete-list-of-action-mailer-user-settable-attributes">соответствующему разделу</a>.</p>
+<ul>
+	<li><tt>Хэш default</tt> &#8211; Это хэш значений по умолчанию для любых рассылаемых вами email, в этом случае мы присваиваем заголовку <tt>:from</tt> значение для всех сообщений в этом классе, что может быть переопределено для отдельного письма</li>
+	<li><tt>mail</tt> &#8211; Фактическое сообщение email, куда мы передаем заголовки <tt>:to</tt> и <tt>:subject</tt>.</li>
+</ul>
+<p>Как и в контроллере, любые переменные экземпляра, определенные в методе, будут доступны для использования во вьюхе.</p>
+
+<h5 id="create-a-mailer-view">1.3 Создаем вьюху рассыльщика</h5>
+<p>Создадим файл, названный <tt>welcome_email.html.erb</tt> в <tt>app/views/user_mailer/</tt>. Это будет шаблоном, используемым для email, форматированным в <span class="caps">HTML</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta content=&quot;text/html; charset=UTF-8&quot; http-equiv=&quot;Content-Type&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to example.com, &lt;%= @user.name %&gt;&lt;/h1&gt;
+    &lt;p&gt;
+      You have successfully signed up to example.com,
+      your username is: &lt;%= @user.login %&gt;.&lt;br/&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      To login to the site, just follow this link: &lt;%= @url %&gt;.
+    &lt;/p&gt;
+    &lt;p&gt;Thanks for joining and have a great day!&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Также неплохо создать текстовую часть для этого email, создайте файл с именем <tt>welcome_email.text.erb</tt> в <tt>app/views/user_mailer/</tt>.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Welcome to example.com, &lt;%= @user.name %&gt;
+===============================================
+
+You have successfully signed up to example.com,
+your username is: &lt;%= @user.login %&gt;.
+
+To login to the site, just follow this link: &lt;%= @url %&gt;.
+
+Thanks for joining and have a great day!
+</pre></div>
+<p>Теперь при вызове метода <tt>mail</tt>, Action Mailer обнаружит два шаблона (text и <span class="caps">HTML</span>) и автоматически создаст <tt>multipart/alternative</tt> email.</p>
+
+<h5 id="wire-it-up-so-that-the-system-sends-the-email-when-a-user-signs-up">1.4 Делаем так, что система отправляет письмо, когда пользователь регистрируется</h5>
+<p>Есть несколько способов сделать так, одни создают обсерверы Rails для отправки email, другие это делают внутри модели User Model.  Однако в  Rails 3 рассыльщики это всего лишь другой способ отрендерить вьюху. Вместо рендеринга вьюхи и отсылки ее по протоколу <span class="caps">HTTP</span>, они всего лишь вместо этого отправляют ее по протоколам Email. Благодаря этому имеет смысл, чтобы контроллер сказал рассыльщику отослать письмо тогда, когда пользователь был успешно создан.</p>
+<p>Настройка этого до безобразия проста.</p>
+<p>Во первых, необходимо создать простой скаффолд <tt>User</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails generate scaffold user name:string email:string login:string
+$ rake db:migrate
+</pre></div>
+<p>Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать <tt>app/controllers/users_controller.rb</tt>, чтобы поручить UserMailer доставлять email каждому вновь созданному пользователю, изменив экшн create и вставив вызов <tt>UserMailer.welcome_email</tt> сразу после того, как пользователь был успешно сохранен:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UsersController &lt; ApplicationController
+  # POST /users
+  # POST /users.json
+  def create
+    @user = User.new(params[:user])
+
+    respond_to do |format|
+      if @user.save
+        # Говорим UserMailer отправить приветственный Email после сохранения
+        UserMailer.welcome_email(@user).deliver
+
+        format.html { redirect_to(@user, :notice => 'User was successfully created.') }
+        format.json { render :json => @user, :status => :created, :location => @user }
+      else
+        format.html { render :action => "new" }
+        format.json { render :json => @user.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+end
+</pre></div>
+<p>Это обеспечит более простую реализацию, не требующую регистрацию обсерверов и тому подобного.</p>
+<p>Метод <tt>welcome_email</tt> возвращает объект Mail::Message, которому затем можно сказать <tt>deliver</tt>, чтобы он сам себя отослал.</p>
+<div class='note'><p>В предыдущих версиях Rails, нужно было вызывать <tt>deliver_welcome_email</tt> или <tt>create_welcome_email</tt>, однако в Rails 3.0 это устарело в пользу простого вызова имени метода на себе.</p></div>
+<div class='warning'><p>Отсылка одного email займет доли секунды, если планируете рассылать много email, или у вас медленный доменный сервер, вы, возможно, захотите рассмотреть использование фонового процесса, подобного отложенному заданию.</p></div>
+
+<h4 id="auto-encoding-header-values">2. Автоматическое кодирование значений заголовка</h4>
+<p>Action Mailer теперь осуществляет автоматическое кодирование многобитных символов в заголовках и телах.</p>
+<p>Если используете <span class="caps">UTF</span>-8 как набор символов, вам не нужно делать ничего особенного, просто отправьте данные в <span class="caps">UTF</span>-8 в поля адреса, темы, ключевых слов, имен файлов или тела письма, и ActionMailer автоматически кодирует их в подходящие для печати в случае поля заголовка или закодирует в Base64 любые части тела не в  US-<span class="caps">ASCII</span>.</p>
+<p>Для более сложных примеров, таких, как определение альтернативных кодировок или самокодировок текста, обратитесь к библиотеке Mail.</p>
+
+<h4 id="complete-list-of-action-mailer-user-settable-attributes">3. Полный перечень методов Action Mailer</h4>
+<p>Имеется всего три метода, необходимых для рассылки почти любых сообщений email:</p>
+<ul>
+	<li><tt>headers</tt> &#8211; Определяет любой заголовок email, можно передать хэш пар имен и значений полей заголовка, или можно вызвать <tt>headers[:field_name] = &#8216;value&#8217;</tt></li>
+	<li><tt>attachments</tt> &#8211; AПозволяет добавить вложения в Ваш email, например, <tt>attachments[&#8216;file-name.jpg&#8217;] = File.read(&#8216;file-name.jpg&#8217;)</tt></li>
+	<li><tt>mail</tt> &#8211; Фактически отсылает сам email. Можете передать в headers хэш к методу mail как параметр, mail затем создаст email, или чистый текст, или multipart, в зависимости от определенных вами шаблонов email.</li>
+</ul>
+
+<h5 id="custom-headers">3.1 Произвольные заголовки</h5>
+<p>Определение произвольных заголовков простое, это можно сделать тремя способами:</p>
+<ul>
+	<li>Определить поле заголовка как параметр в методе <tt>mail</tt>:</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+mail(&quot;X-Spam&quot; =&gt; value)
+</pre></div>
+<ul>
+	<li>Передать в присвоении ключа в методе <tt>headers</tt>:</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+headers[&quot;X-Spam&quot;] = value
+</pre></div>
+<ul>
+	<li>Передать хэш пар ключ-значение в методе <tt>headers</tt>:</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+headers {&quot;X-Spam&quot; =&gt; value, &quot;X-Special&quot; =&gt; another_value}
+</pre></div>
+<div class='info'><p>Все заголовки <tt>X-Value</tt> в соответствии с RFC2822 могут появляться более одного раза. Если хотите удалить заголовок <tt>X-Value</tt>, присвойте ему значение <tt>nil</tt>.</p></div>
+
+<h5 id="adding-attachments">3.2 Добавление вложений</h5>
+<p>Добавление вложений было упрощено в Action Mailer 3.0.</p>
+<ul>
+	<li>Передайте имя файла и содержимое, и Action Mailer и гем Mail автоматически определят mime_type, установят кодировку и создадут вложение.</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+attachments['filename.jpg'] = File.read('/path/to/filename.jpg')
+</pre></div>
+<div class='note'><p>Mail автоматически кодирует вложение в Base64, если хотите что-то иное, предварительно кодируйте свое содержимое и передайте в кодированном содержимом, и укажите кодировку в хэше в методе <tt>attachments</tt>.</p></div>
+<ul>
+	<li>Передайте имя файла и определите заголовки и содержимое, и Action Mailer и Mail используют переданные вами настройки.</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+encoded_content = SpecialEncode(File.read('/path/to/filename.jpg'))
+attachments['filename.jpg'] = {:mime_type =&gt; 'application/x-gzip',
+                               :encoding =&gt; 'SpecialEncoding',
+                               :content =&gt; encoded_content }
+</pre></div>
+<div class='note'><p>Если указать кодировку, Mail будет полагать, что ваше содержимое уже кодировано в ней и не попытается кодировать в  Base64.</p></div>
+
+<h5 id="making-inline-attachments">3.3 Создание встроенных вложений</h5>
+<p>ActionMailer 3.0 создает встроенные вложения, которые вовлекали множество хаков в версиях до 3.0, более просто и обычно, так, как и должно было быть.</p>
+<ul>
+	<li>Сначала, чтобы сказать Mail превратить вложения во встроенные вложения, надо всего лишь вызвать <tt>#inline</tt> на методе attachments в вашем рассыльщике:</li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def welcome
+  attachments.inline['image.jpg'] = File.read('/path/to/image.jpg')
+end
+</pre></div>
+<ul>
+	<li>Затем, во вьюхе можно просто сослаться на <tt>attachments[]</tt> как хэш и определить, какое вложение хотите отобразить, вызвав <tt>url</tt> на нем и затем передать результат в метод <tt>image_tag</tt>:</li>
+</ul>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p&gt;Hello there, this is our image&lt;/p&gt;
+
+&lt;%= image_tag attachments['image.jpg'].url %&gt;
+</pre></div>
+<ul>
+	<li>Так как это стандартный вызов <tt>image_tag</tt>, можно передать хэш опций после url вложения, как это делается для любого другого изображения:</li>
+</ul>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p&gt;Hello there, this is our image&lt;/p&gt;
+
+&lt;%= image_tag attachments['image.jpg'].url, :alt =&gt; 'My Photo',
+                                            :class =&gt; 'photos' %&gt;
+</pre></div>
+
+<h5>Рассылка Email нескольким получателям</h5>
+<p>Возможно отослать email одному и более получателям в одном письме (для примера, информируя всех админов о новой регистрации пользователя), настроив список адресов email в ключе <tt>:to</tt>. Ключ <tt>to:</tt>, однако, ожидает строку, поэтому можно соединить список получателей запятой.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  class AdminMailer < ActionMailer::Base
+    default :to => Admin.all.map(&:email).join(", "),
+            :from => "notification@example.com"
+
+    def new_registration(user)
+      @user = user
+      mail(:subject => "New User Signup: #{@user.email}")
+    end
+  end
+</pre></div>
+
+<h5>Рассылка Email с именем</h5>
+<p>Иногда хочется показать имена людей вместо их электронных адресов, при получении ими email. Фокус в том, что формат адреса email следующий <tt>"Name &lt;email&gt;"</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  def welcome_email(user)
+    @user = user
+    email_with_name = "#{@user.name} <#{@user.email}>"
+    mail(:to => email_with_name,
+         :subject => "Welcome to My Awesome Site")
+  end
+</pre></div>
+
+<h4 id="mailer-views">4. Вьюхи рассыльщика</h4>
+<p>Вьюхи рассыльщика расположены в директории <tt>app/views/name_of_mailer_class</tt>. Определенная вьюха рассыльщика известна классу, поскольку у нее имя такое же, как у метода рассыльщика. Так, в нашем примере, вьюха рассыльщика для метода <tt>welcome_email</tt> будет в <tt>app/views/user_mailer/welcome_email.html.erb</tt> для версии <span class="caps">HTML</span> и <tt>welcome_email.text.erb</tt> для обычной текстовой версии.</p>
+<p>Чтобы изменить вьюху рассыльщика по умолчанию для вашего экшна, сделайте так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  default :from =&gt; &quot;notifications@example.com&quot;
+
+  def welcome_email(user)
+    @user = user
+    @url  = &quot;http://example.com/login&quot;
+    mail(:to =&gt; user.email,
+         :subject => "Welcome to My Awesome Site",
+         :template_path => 'notifications',
+         :template_name => 'another')
+    end
+  end
+
+end
+</pre></div>
+<p>В этом случае он будет искать шаблон this case в <tt>app/views/notifications</tt> с именем <tt>another</tt>.</p>
+<p>Если желаете большей гибкости, также возможно передать блок и рендерить определенный шаблон или даже рендерить вложенный код или текст без использования файла шаблона:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer < ActionMailer::Base
+  default :from => "notifications@example.com"
+
+  def welcome_email(user)
+    @user = user
+    @url  = "http://example.com/login"
+    mail(:to => user.email,
+         :subject => "Welcome to My Awesome Site") do |format|
+      format.html { render 'another_template' }
+      format.text { render :text => 'Render text' }
+    end
+  end
+
+end
+</pre></div>
+<p>Это отрендерит шаблон &#8216;another_template.html.erb&#8217; для HTML части и использует 'Render text' для текстовой части. Команда render та же самая, что используется в Action Controller, поэтому можете использовать те же опции, такие как <tt>:text</tt>, <tt>:inline</tt> и т.д.</p>
+
+<h4 id="action-mailer-layouts">5. Макеты Action Mailer</h4>
+<p>Как и во вьюхах контроллера, можно также иметь макеты рассыльщика. Имя макета должно быть таким же, как у вашего рассыльщика, таким как <tt>user_mailer.html.erb</tt> и <tt>user_mailer.text.erb</tt>, чтобы автоматически распознаваться вашим рассыльщиком как макет.</p>
+<p>Чтобы задействовать другой файл, просто используйте:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  layout 'awesome' # использовать awesome.(html|text).erb как макет
+end
+</pre></div>
+<p>Подобно вьюхам контроллера, используйте <tt>yield</tt> для рендера вьюхи внутри макета.</p>
+<p>Также можно передать опцию <tt>:layout =&gt; &#8216;layout_name&#8217;</tt>, в вызов render в формате блока, чтобы определить различные макеты для различных действий:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  def welcome_email(user)
+    mail(:to =&gt; user.email) do |format|
+      format.html { render :layout =&gt; 'my_layout' }
+      format.text
+    end
+  end
+end
+</pre></div>
+<p>Отрендерит часть в <span class="caps">HTML</span>, используя файл <tt>my_layout.html.erb</tt>, и текстовую часть с обыычным файлом <tt>user_mailer.text.erb</tt>, если он существует.</p>
+
+<h4 id="generating-urls-in-action-mailer-views">6. Создаем URL во вьюхах Action Mailer</h4>
+<p>URL могут быть созданы во вьюхах рассыльщика, используя <tt>url_for</tt> или именнованные маршруты.</p>
+<p>В отличие от контроллеров, экземпляр рассыльщика не может использовать какой-либо контекст относительно входящего запроса, поэтому необходимо предоставить <tt>:host</tt>, <tt>:controller</tt> и <tt>:action</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= url_for(:host =&gt; &quot;example.com&quot;,
+            :controller =&gt; &quot;welcome&quot;,
+            :action =&gt; &quot;greeting&quot;) %&gt;
+</pre></div>
+<p>При использовании именнованных маршрутов, необходимо предоставить только <tt>:host</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= user_url(@user, :host =&gt; &quot;example.com&quot;) %&gt;
+</pre></div>
+<p>У клиентов email отсутствует веб контекст, таким образом у путей нет базового <span class="caps">URL</span> для формирования полного веб адреса. Поэтому при использовании именнованных маршрутов имеет смысл только вариант &#8220;_url&#8221;.</p>
+<p>Также возможно установить хост по умолчанию, который будет использоваться во всех рассыльщиках, установив опцию <tt>:host</tt> в хэше <tt>ActionMailer::Base.default_url_options</tt> следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  default_url_options[:host] = &quot;example.com&quot;
+
+  def welcome_email(user)
+    @user = user
+    @url  = user_url(@user)
+    mail(:to =&gt; user.email,
+         :subject =&gt; &quot;Welcome to My Awesome Site&quot;)
+  end
+end
+</pre></div>
+
+<h4 id="sending-multipart-emails">7. Рассылка  multipart email</h4>
+<p>Action Mailer автоматически посылает multipart email, если имеются разные шаблоны для одного и того же экшна. Таким образом, для нашего примера UserMailer, если есть <tt>welcome_email.text.erb</tt> и <tt>welcome_email.html.erb</tt> в <tt>app/views/user_mailer</tt>, то Action Mailer автоматически пошлет multipart email с версиями <span class="caps">HTML</span> и текстовой, настроенными как разные части.</p>
+<p>Порядок, в котором части будут вставлены, определяется <tt>:parts_order</tt> в методе <tt>ActionMailer::Base.default</tt>. Если хотите явно изменить порядок, можете или изменить <tt>:parts_order</tt>, или явно отрендерить части в различном порядке:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  def welcome_email(user)
+    @user = user
+    @url  = user_url(@user)
+    mail(:to =&gt; user.email,
+         :subject =&gt; &quot;Welcome to My Awesome Site&quot;) do |format|
+      format.html
+      format.text
+    end
+  end
+end
+</pre></div>
+<p>Поместит сначала часть <span class="caps">HTML</span>, а текстовую часть разместит второй.</p>
+
+<h4 id="sending-emails-with-attachments">8. Рассылка писем с вложениями</h4>
+<p>Вложения могут быть добавлены с помощью метода <tt>attachment</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailer &lt; ActionMailer::Base
+  def welcome_email(user)
+    @user = user
+    @url  = user_url(@user)
+    attachments['terms.pdf'] = File.read('/path/terms.pdf')
+    mail(:to =&gt; user.email,
+         :subject =&gt; &quot;Please see the Terms and Conditions attached&quot;)
+  end
+end
+</pre></div>
+<p>Вышеописанное отошлет multipart email с правильно размещенным вложением, верхний уровень будет <tt>multipart/mixed</tt>, и первая часть будет <tt>multipart/alternative</tt>, содержащая сообщения email в чистом тексте и <span class="caps">HTML</span>.</p>

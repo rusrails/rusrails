@@ -1,0 +1,76 @@
+h1. Продвинутая командная строка Rails
+
+<p>Более продвинутое использование командной строки сфокусировано на полезных (даже иногда удивляющих) опциях утилит, и подгонке утилит к вашим потребностям и особенностям рабочего процесса. Сейчас мы перечислим трюки из рукава Rails.</p>
+
+<h4 id="rails-with-databases-and-scm">1. Rails с базами данными и <span class="caps">SCM</span></h4>
+<p>При создании нового приложения на Rails, можно выбрать, какой тип базы данных и какой тип системы управления исходным кодом (SCM) собирается использовать ваше приложение. Это сэкономит вам несколько минут и, конечно, несколько строк.</p>
+<p>Давайте посмотрим, что могут сделать для нас опции <tt>--git</tt> и <tt>--database=postgresql</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ mkdir gitapp
+$ cd gitapp
+$ git init
+Initialized empty Git repository in .git/
+$ rails new . --git --database=postgresql
+      exists
+      create  app/controllers
+      create  app/helpers
+...
+...
+      create  tmp/cache
+      create  tmp/pids
+      create  Rakefile
+add 'Rakefile'
+      create  README
+add 'README'
+      create  app/controllers/application_controller_.rb
+add 'app/controllers/application_controller_.rb'
+      create  app/helpers/application_helper.rb
+...
+      create  log/test.log
+add 'log/test.log'
+</pre></div>
+<p>Мы создали директорию <strong>gitapp</strong> и инициализировали пустой репозиторий перед тем, как Rails добавил бы созданные им файлы в наш репозиторий. Давайте взглянем, что он нам поместил в конфигурацию базы данных:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ cat config/database.yml
+# PostgreSQL. Versions 8.2 and up are supported.
+#
+# Install the ruby-postgres driver:
+#   gem install ruby-postgres
+# On Mac OS X:
+#   gem install ruby-postgres -- --include=/usr/local/pgsql
+# On Windows:
+#   gem install ruby-postgres
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: gitapp_development
+  pool: 5
+  username: gitapp
+  password:
+...
+...
+</pre></div>
+<p>Она также создала несколько строчек в нашей конфигурации database.yml, соответствующих нашему выбору PostgreSQL как базы данных. Единственная хитрость с использованием опции <span class="caps">SCM</span> состоит в том, что сначала нужно создать директорию для приложения, затем инициализировать Ваш <span class="caps">SCM</span>, и лишь затем можно запустить команду <tt>rails new</tt> для создания основы вашего приложения.</p>
+
+<h4 id="server-with-different-backends">2. <tt>server</tt> с различным бэкендом</h4>
+<p>Создано много различных веб серверов на Ruby, и многие из них могут использоваться для запуска Rails. С версии 2.3, Rails использует Rack для обслуживания своих веб-страниц, который означает, что может быть использован любой вебсервер, реализующий обработчик Rack. Они включают в себя WEBrick, Mongrel, Thin и Phusion Passenger (и это только немногие!).</p>
+<div class='note'><p>Детальнее о интеграции Rack, смотрите <a href="http://guides.rubyonrails.org/rails_on_rack.htmll">Rails on Rack</a>.</p></div>
+<p>Чтобы использовать другой сервер, всего лишь установите его гем, затем используйте его имя, как первый параметр для <tt>rails server</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ sudo gem install mongrel
+Building native extensions.  This could take a while...
+Building native extensions.  This could take a while...
+Successfully installed gem_plugin-0.2.3
+Successfully installed fastthread-1.0.1
+Successfully installed cgi_multipart_eof_fix-2.5.0
+Successfully installed mongrel-1.1.5
+...
+...
+Installing RDoc documentation for mongrel-1.1.5...
+$ rails server mongrel
+=&gt; Booting Mongrel (use 'rails server webrick' to force WEBrick)
+=&gt; Rails 3.1.0 application starting on http://0.0.0.0:3000
+...
+</pre></div>

@@ -1,0 +1,50 @@
+h1. Расширения для Range
+
+<h4 id="to_s">1. <tt>to_s</tt></h4>
+<p>Active Support расширяет метод <tt>Range#to_s</tt> так, что он понимает необязательный аргумент формата. В настоящий момент имеется только один поддерживаемый формат, отличный от дефолтного, это <tt>:db</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(Date.today..Date.tomorrow).to_s
+# =&gt; &quot;2009-10-25..2009-10-26&quot;
+
+(Date.today..Date.tomorrow).to_s(:db)
+# =&gt; &quot;BETWEEN '2009-10-25' AND '2009-10-26'&quot;
+</pre></div>
+<p>Как изображено в примере, формат <tt>:db</tt> создает <span class="caps">SQL</span> условие <tt>BETWEEN</tt>. Это используется Active Record в его поддержке интервальных значений в условиях.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/range/conversions.rb</tt>.</p></div>
+
+<h4 id="step">2. <tt>step</tt></h4>
+<p>Active Support расширяет метод <tt>Range#step</tt> так. что он может быть вызван без блока:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(1..10).step(2) # =&gt; [1, 3, 5, 7, 9]
+</pre></div>
+<p>Как показывает пример, в этом случае метод возвращает массив с соответствующими элементами.</p>
+<div class='note'><p>Опредедено в <tt>active_support/core_ext/range/blockless_step.rb</tt>.</p></div>
+
+<h4 id="include">3. <tt>include?</tt></h4>
+<p>Метод <tt>Range#include?</tt> говорит, лежит ли некоторое значение между концами заданного экземпляра:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(2..3).include?(Math::E) # =&gt; true
+</pre></div>
+<p>Active Support расширяет этот метод так, что аргумент может также быть другим интервалом. В этом случае тестируется, принадлежат ли концы аргумента самому получателю:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(1..10).include?(3..7)  # =&gt; true
+(1..10).include?(0..7)  # =&gt; false
+(1..10).include?(3..11) # =&gt; false
+(1...9).include?(3..9)  # =&gt; false
+</pre></div>
+<div class='warning'><p>Оригинальный <tt>Range#include?</tt> все еще псевдоним <tt>Range#===</tt>.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/range/include_range.rb</tt>.</p></div>
+
+<h4>4. <tt>cover?</tt></h4>
+<p>Ruby 1.9 предоставляет <tt>cover?</tt>, и Active Support определяет его для предыдущих версий как псевдоним для <tt>include?</tt>.</p>
+<p>Метод <tt>include?</tt> в Ruby 1.9 отличается от 1.8 в отношении нечисловых интервалов: вместо основанного на сравнении между значением и конечными точками интервала, он проходит интервал с поиском значения с помощью <tt>succ</tt>. Это работает лучше с интервалами с дырами, но является более сложным и может не завершиться в некоторых случаях.</p>
+<p>В Ruby 1.9 старое поведение все еще доступно в новом <tt>cover?</tt>, который Active Support создал для обратной совместимости. Например, Rails использует <tt>cover?</tt> для интервалов в <tt>validates_inclusion_of</tt>.</p>
+
+<h4 id="overlaps">5. <tt>overlaps?</tt></h4>
+<p>Метод <tt>Range#overlaps?</tt> говорит, имеют ли два заданных интервала непустое пересечение:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(1..10).overlaps?(7..11)  # =&gt; true
+(1..10).overlaps?(0..7)   # =&gt; true
+(1..10).overlaps?(11..27) # =&gt; false
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/range/overlaps.rb</tt>.</p></div>

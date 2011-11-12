@@ -1,0 +1,181 @@
+h1. Подробная информация по связи has_one
+
+<p>Связь <tt>has_one</tt> создает соответствие один-к-одному с другой моделью. В терминах базы данных эта связь сообщает, что другой класс содержит внешний ключ. Если этот класс содержит внешний ключ, следует использовать <tt>belongs_to</tt>.</p>
+
+<h4 id="methods-added-by-has-one">1. Методы, добавляемые <tt>has_one</tt></h4>
+<p>Когда объявляете связь <tt>has_one</tt>, объявляющий класс автоматически получает четыре метода, относящихся к связи:</p>
+<ul>
+	<li><tt><em>association</em>(force_reload = false)</tt></li>
+	<li><tt><em>association</em>=(associate)</tt></li>
+	<li><tt>build_<em>association</em>(attributes = {})</tt></li>
+	<li><tt>create_<em>association</em>(attributes = {})</tt></li>
+</ul>
+<p>Во всех этих методах <tt><em>association</em></tt> заменяется на символ, переданный как первый аргумент в <tt>has_one</tt>. Например, имеем объявление:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier < ActiveRecord::Base
+  has_one :account
+end
+</pre></div>
+<p>Каждый экземпляр модели <tt>Supplier</tt> будет иметь эти методы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+account
+account=
+build_account
+create_account
+</pre></div>
+<div class='note'><p>Когда устанавливаете новую связь <tt>has_one</tt> или <tt>belongs_to</tt>, следует использовать префикс <tt>build_</tt> для построения связи, в отличие от метода <tt>association.build</tt>, используемый для связей <tt>has_many</tt> или <tt>has_and_belongs_to_many</tt>. Чтобы создать связь, используйте префикс <tt>create_</tt>.</p></div>
+
+<h5 id="ttemassociationemforce-reload--falsett">1.1 <tt><em>association</em>(force_reload = false)</tt></h5>
+<p>Метод <tt><em>association</em></tt> возвращает связанный объект, если таковой имеется. Если связанный объект не найден, возвращает <tt>nil</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@account = @supplier.account
+</pre></div>
+<p>Если связанный объект уже был получен из базы данных для этого объекта, возвращается кэшированная версия. Чтобы переопределить это поведение (и заставить прочитать из базы данных), передайте <tt>true</tt> как аргумент <tt>force_reload</tt>.</p>
+
+<h5 id="ttemassociationemassociatett">1.2 <tt><em>association</em>=(associate)</tt></h5>
+<p>Метод <tt><em>association</em>=</tt> привязывает связанный объект к этому объекту. Фактически это означает извлечение первичного ключа этого объекта и присвоение его значения внешнему ключу связанного объекта.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@supplier.account = @account
+</pre></div>
+
+<h5 id="ttbuild-emassociationemattributes--tt">1.3 <tt>build_<em>association</em>(attributes = {})</tt></h5>
+<p>Метод <tt>build_<em>association</em></tt> возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, и будет установлена связь через внешний ключ, но связанный объект <em>не</em> будет пока сохранен.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@account = @supplier.build_account(:terms => "Net 30")
+</pre></div>
+
+<h5 id="ttcreate-emassociationemattributes--tt">1.4 <tt>create_<em>association</em>(attributes = {})</tt></h5>
+<p>Метод <tt>create_<em>association</em></tt> возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, и будет установлена связь через внешний ключ. Дополнительно связанный объект <em>будет</em> сохранен (разумеется, если пройдет валидации).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@account = @supplier.create_account(:terms => "Net 30")
+</pre></div>
+
+<h4 id="options-for-has-one">2. Опции для <tt>has_one</tt></h4>
+<p>Во многих случаях можно использовать стандартные возможности <tt>has_one</tt> без какой-либо настройки. Но, не смотря на акцент Rails в пользу соглашений над настройками, возможно изменить это поведение различными способами. Этот раздел раскрывает опции, которые можно передать при создании связи <tt>has_one</tt>. Например, связь с несколькими опциями может выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account, :class_name =&gt; &quot;Billing&quot;, :dependent =&gt; :nullify
+end
+</pre></div>
+<p>Связь <tt>has_one</tt> поддерживает эти опции:</p>
+<ul>
+	<li><tt>:as</tt></li>
+	<li><tt>:autosave</tt></li>
+	<li><tt>:class_name</tt></li>
+	<li><tt>:conditions</tt></li>
+	<li><tt>:dependent</tt></li>
+	<li><tt>:foreign_key</tt></li>
+	<li><tt>:include</tt></li>
+	<li><tt>:order</tt></li>
+	<li><tt>:primary_key</tt></li>
+	<li><tt>:readonly</tt></li>
+	<li><tt>:select</tt></li>
+	<li><tt>:source</tt></li>
+	<li><tt>:source_type</tt></li>
+	<li><tt>:through</tt></li>
+	<li><tt>:validate</tt></li>
+</ul>
+
+<h5 id="as">2.1 <tt>:as</tt></h5>
+<p>Установка опции <tt>:as</tt> показывает, что это полиморфная связь. Полиморфные связи подробно рассматривались <a href="/active-record-associations/the-types-of-associations-2#polymorphic-associations">ранее</a>.</p>
+
+<h5 id="autosave">2.2 <tt>:autosave</tt></h5>
+<p>Если установить опцию <tt>:autosave</tt> в <tt>true</tt>, это сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда вы сохраните родительский объект.</p>
+
+<h5 id="class-name">2.3 <tt>:class_name</tt></h5>
+<p>Если имя другой модели не может быть образовано из имени связи, можете использовать опцию <tt>:class_name</tt> для предоставления имени модели. Например, если поставщик имеет аккаунт, но фактическое имя модели, содержащей аккаунты, это <tt>Billing</tt>, можете установить это следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account, :class_name =&gt; &quot;Billing&quot;
+end
+</pre></div>
+
+<h5 id="conditions">2.4 <tt>:conditions</tt></h5>
+<p>Опция <tt>:conditions</tt> позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе <span class="caps">SQL</span>, используемом в условии  <tt>WHERE</tt>).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account, :conditions =&gt; &quot;confirmed = 1&quot;
+end
+</pre></div>
+
+<h5 id="dependent">2.5 <tt>:dependent</tt></h5>
+<p>Если установите опцию <tt>:dependent</tt> как <tt>:destroy</tt>, то удаление этого объекта вызовет метод <tt>destroy</tt> для связанного объекта для его удаления. Если установить опцию <tt>:dependent</tt> как <tt>:delete</tt>, то удаление этого объекта удалит связанный объект <em>без</em> вызова его метода <tt>destroy</tt>. Если установите опцию <tt>:dependent</tt> как <tt>:nullify</tt>, то удаление этого объекта установит внешний ключ связанного объекта как <tt>NULL</tt>.</p>
+
+<h5 id="foreign-key">2.6 <tt>:foreign_key</tt></h5>
+<p>По соглашению Rails полагает, что столбец, используемый для хранения внешнего ключа в этой модели, имеет имя модели с добавленным суффиксом <tt>_id</tt>. Опция <tt>:foreign_key</tt> позволяет установить имя внешнего ключа прямо:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account, :foreign_key =&gt; &quot;supp_id&quot;
+end
+</pre></div>
+<div class="info"><p>В любом случае, Rails не создаст столбцы внешнего ключа за Вас. Вам необходимо явно определить их в своих миграциях.</p></div>
+
+<h5 id="include">2.7 <tt>:include</tt></h5>
+<p>Можете использовать опцию <tt>:include</tt> для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier < ActiveRecord::Base
+  has_one :account
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier
+  belongs_to :representative
+end
+
+class Representative < ActiveRecord::Base
+  has_many :accounts
+end
+</pre></div>
+<p>Если Вы часто получаете представителей непосредственно из поставщиков (<tt>@supplier.account.representative</tt>), тогда можете сделать свой код более эффективным, включив представителей в связь между поставщиками и аккаунтами:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account, :include =&gt; :representative
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier
+  belongs_to :representative
+end
+
+class Representative < ActiveRecord::Base
+  has_many :accounts
+end
+</pre></div>
+
+<h5 id="order">2.8 <tt>:order</tt></h5>
+<p>Опция <tt>:order</tt> предписывает порядок, в котором связанные объекты будут получены (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>ORDER BY</tt>). Так как связь <tt>has_one</tt> получает только один связанный объект, в этой опции нет необходимости.</p>
+
+<h5 id="primary-key">2.9 <tt>:primary_key</tt></h5>
+<p>По соглашению, Rails полагает, что столбец, используемый для хранения первичного ключа, это <tt>id</tt>. Вы можете переопределить это и явно определить первичный ключ с помощью опции <tt>:primary_key</tt>.</p>
+
+<h5 id="readonly">2.10 <tt>:readonly</tt></h5>
+<p>Если установите опцию <tt>:readonly</tt> в <tt>true</tt>, тогда связанный объект будет доступен только для чтения, когда получен посредством связи.</p>
+
+<h5 id="select">2.11 <tt>:select</tt></h5>
+<p>Опция <tt>:select</tt> позволяет переопределить <span class="caps">SQL</span> условие <tt>SELECT</tt>, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.</p>
+
+<h5 id="source">2.12 <tt>:source</tt></h5>
+<p>Опция <tt>:source</tt> определяет имя источника связи для связи <tt>has_one :through</tt>.</p>
+
+<h5 id="source-type">2.13 <tt>:source_type</tt></h5>
+<p>Опция <tt>:source_type</tt> определяет тип источника связи для связи <tt>has_one :through</tt>, который действует при полиморфной связи.</p>
+
+<h5 id="through">2.14 :through</h5>
+<p>Опция <tt>:through</tt> определяет соединительную модель, через которую выполняется запрос. Связи <tt>has_one :through</tt> подробно рассматривались <a href="/active-record-associations/the-types-of-associations-1#the-has-one-through-association">ранее</a>.</p>
+
+<h5 id="validate">2.15 <tt>:validate</tt></h5>
+<p>Если установите опцию <tt>:validate</tt> в <tt>true</tt>, тогда связанные объекты будут проходить валидацию всякий раз, когда Вы сохраняете этот объект. По умолчанию она равна <tt>false</tt>: связанные объекты не проходят валидацию, когда этот объект сохраняется.</p>
+
+<h4 id="how-to-know-whether-theres-an-associated-object">3. Как узнать, существует ли связанный объект?</h4>
+<p>Чтобы узнать, имеется ли связанный объект, просто проверьте <tt><em>association</em>.nil?</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+if @supplier.account.nil?
+  @msg = "No account found for this supplier"
+end
+</pre></div>
+
+<h4 id="when-are-objects-saved">4. Когда сохраняются объекты?</h4>
+<p>Когда Вы назначаете объект связью <tt>has_one</tt>, этот объект автоматически сохраняется (для того, чтобы обновить его внешний ключ). Кроме того, любой заменяемый объект также автоматически сохраняется, поскольку его внешний ключ также изменяется.</p>
+<p>Если одно из этих сохранений проваливается из-за ошибок валидации, тогда выражение назначения возвращает <tt>false</tt>, и само назначение отменяется.</p>
+<p>Если родительский объект (который объявляет связь <tt>has_one</tt>) является несохраненным (то есть <tt>new_record?</tt> возвращает <tt>true</tt>), тогда дочерние объекты не сохраняются. Они сохранятся автоматически, когда сохранится родительский объект.</p>
+<p>Если Вы хотите назначить объект связью <tt>has_one</tt> без сохранения объекта, используйте метод <tt><em>association</em>.build</tt>.</p>

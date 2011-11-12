@@ -1,0 +1,116 @@
+h1. Интернационализация вашего приложения
+
+<p>Хорошо! Вы уже инициализировали поддержку I18n в своем приложении на Ruby on Rails, и сообщили ему, какую локаль использовать, и как ее сохранять между запросами. С этого момента мы готовы к действительно интересным вещам.</p>
+<p>Давайте <em>интернационализируем</em> наше приложение, т.е. абстрагируем каждую специфичную к локали часть, а затем <em>локализуем</em> его, т.е. предоставим необходимые переводы для этих абстракций:</p>
+<p>Скорее всего у вас есть что-то подобное в одном из ваших приложений:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/routes.rb
+Yourapp::Application.routes.draw do
+  root :to =&gt; &quot;home#index&quot;
+end
+
+# app/controllers/home_controller.rb
+class HomeController &lt; ApplicationController
+  def index
+    flash[:notice] = &quot;Hello flash!&quot;
+  end
+end
+
+# app/views/home/index.html.erb
+&lt;h1&gt;Hello world!&lt;/h1&gt;
+&lt;p&gt;&lt;%= flash[:notice] %&gt;&lt;/p&gt;
+</pre></div>
+<p><img src="/system/images/demo_untranslated.png" title="непереведенная демонстрация rails i18n" alt="непереведенная демонстрация rails i18n" /></p>
+
+<h4 id="adding-translations">1. Добавление переводов</h4>
+<p>Очевидно, что у нас есть <strong>две строки, локализованные на английском</strong>. Чтобы интернационализировать этот код, <strong>замените эти строки</strong> вызовами хелпера Rails <tt>#t</tt> с имеющим смысл для перевода ключом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# app/controllers/home_controller.rb
+class HomeController &lt; ApplicationController
+  def index
+    flash[:notice] = t(:hello_flash)
+  end
+end
+
+# app/views/home/index.html.erb
+&lt;h1&gt;&lt;%=t :hello_world %&gt;&lt;/h1&gt;
+&lt;p&gt;&lt;%= flash[:notice] %&gt;&lt;/p&gt;
+</pre></div>
+<p>Теперь при рендере вьюхи будет показано сообщение об ошибке, сообщающее, что отсутствуют переводы для ключей <tt>:hello_world</tt> и <tt>:hello_flash</tt>.</p>
+<p><img src="/system/images/demo_translation_missing.png" title="демонстрация отсутствия перевода в rails i18n" alt="демонстрация отсутствия перевода в rails i18n" /></p>
+<div class='note'><p>Rails добавляет метод хелпера <tt>t</tt> (<tt>translate</tt>) во вьюхи, так что вам не нужно впечатывать <tt>I18n.t</tt> каждый раз. Дополнительно этот хелпер ловит отсутствующие переводы и  оборачивает результирующее сообщение об ошибке в <tt>&lt;span class="translation_missing"&gt;</tt>.</p></div>
+<p>Давайте добавим отсутствующие переводы в файлы словарей (т.е. выполним часть &#8220;локализация&#8221;):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/locales/en.yml
+en:
+  hello_world: Hello World
+  hello_flash: Hello Flash
+
+# config/locales/pirate.yml
+pirate:
+  hello_world: Ahoy World
+  hello_flash: Ahoy Flash
+</pre></div>
+<p>Продолжим. Так как мы не сменили default_locale, I18n будет использовать английский. Теперь ваше приложение покажет:</p>
+<p><img src="/system/images/demo_translated_en.png" title="пример rails i18n, переведенный на английский" alt="пример rails i18n, переведенный на английский" /></p>
+<p>А когда вы измените <span class="caps">URL</span>, чтобы передать пиратскую локаль (<tt>http://localhost:3000?locale=pirate</tt>), то получите:</p>
+<p><img src="/system/images/demo_translated_pirate.png" title="пример rails i18n, переведенный на пиратский" alt="пример rails i18n, переведенный на пиратский" /></p>
+<div class='note'><p>Нужно перезагрузить сервер после того, как вы добавили новые файлы локали.</p></div>
+<p>Для хранения переводов в SimpleStore можно использовать файлы <span class="caps">YAML</span> (<tt>.yml</tt>) или чистого Ruby (<tt>.rb</tt>). <span class="caps">YAML</span> является наиболее предпочитаемым вариантом среди разработчиков Rails. Однако у него есть один большой недостаток. <span class="caps">YAML</span> очень чувствителен к пробелам и спецсимволам, поэтому приложение может неправильно загрузить ваш словарь. Файлы Ruby уронят ваше приложение при первом же обращении, поэтому ваv будет просто найти, что в них неправильно. (Если возникают &#8220;странности&#8221; со словарями <span class="caps">YAML</span>, попробуйте поместить соответствующие части словаря в файл Ruby.)</p>
+
+<h4 id="adding-date-time-formats">2. Добавление форматов даты/времени</h4>
+<p>Хорошо! Теперь давайте добавим временную метку во вьюху, чтобы продемонстрировать особенности <strong>локализации даты/времени</strong>. Чтобы локализовать формат даты, нужно передать объект Time в <tt>I18n.l</tt>, или (лучше) использовать хелпер Rails <tt>#l</tt>. Формат можно выбрать передав опцию <tt>:format</tt> &#8212; по умолчанию используется формат <tt>:default</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# app/views/home/index.html.erb
+&lt;h1&gt;&lt;%=t :hello_world %&gt;&lt;/h1&gt;
+&lt;p&gt;&lt;%= flash[:notice] %&gt;&lt;/p
+&lt;p&gt;&lt;%= l Time.now, :format =&gt; :short %&gt;&lt;/p&gt;
+</pre></div>
+<p>И в нашем файле переводов на пиратский давайте добавим формат времени (в Rails уже есть формат по умолчанию для английского):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/locales/pirate.yml
+pirate:
+  time:
+    formats:
+      short: &quot;arrrround %H'ish&quot;
+</pre></div>
+<p>Что даст вам:</p>
+<p><img src="/system/images/demo_localized_pirate.png" title="демонстрация локализации времени rails i18n на пиратский" alt="демонстрация локализации времени rails i18n на пиратский" /></p>
+<div class='info'><p>Сейчас вам, возможно, захочется добавить больше форматов для того, чтобы бэкенд I18n работал как нужно (как минимум для локали &#8216;pirate&#8217;). Конечно, есть большая вероятность, что кто-то еще выполнил всю работу по <strong>переводу значений по умолчанию Rails для вашей локали</strong>. Смотрите в <a href="http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale">репозитории rails-i18n на Github</a> архив с различными файлами локали. Когда вы поместите такой файл(ы) в директорию <tt>config/locales/</tt>, они автоматически станут готовыми для использования.</p></div>
+
+<h4 id="localized-views">3. Локализованные вьюхи</h4>
+<p>Rails 2.3 представил другую удобную особенность локализации: локализованные вьюхи (шаблоны). Скажем, у вас в приложении есть <em>BooksController</em>. Экшн <em>index</em> рендерит содержимое в шаблоне <tt>app/views/books/index.html.erb</tt>. Когда вы помещаете <em>локализованный вариант</em> этого шаблона: <strong><tt>index.es.html.erb</tt></strong> в ту же директорию, Rails будет рендерить содержимое в этот шаблон, когда локаль будет установлена как <tt>:es</tt>. Когда будет установлена локаль по умолчанию, будет использована обычная вьюха <tt>index.html.erb</tt>. (Будущие версии Rails, возможно, перенесут эту возможность <em>автоматической</em> локализации на файлы в <tt>public</tt>, и т.д.)</p>
+<p>Можете использовать эту особенность, например, при работе с большим количеством статичного содержимого, который было бы неудобно вложить в словари <span class="caps">YAML</span> или Ruby. Хотя имейте в виду, что любое изменение, которое вы в дальнейшем сделаете в шаблоне, должно быть распространено на все локали.</p>
+
+<h4 id="organization-of-locale-files">4. Организация файлов локали</h4>
+<p>При использовании дефолтного SimpleStore вместе с библиотекой i18n, словари хранятся в текстовых файлах на диске. Помещение переводов ко всем частям приложения в один файл на локаль будет трудным для управления. Можно хранить эти файлы в иерархии, которая будет для вас понятной.</p>
+<p>К примеру, ваша директория <tt>config/locales</tt> может выглядеть так:</p>
+<pre>
+|-defaults
+|---es.rb
+|---en.rb
+|-models
+|---book
+|-----es.rb
+|-----en.rb
+|-views
+|---defaults
+|-----es.rb
+|-----en.rb
+|---books
+|-----es.rb
+|-----en.rb
+|---users
+|-----es.rb
+|-----en.rb
+|---navigation
+|-----es.rb
+|-----en.rb
+</pre>
+<p>Таким образом можно разделить модель и имена атрибутов модели от текста внутри вьюх, и все это от &#8220;defaults&#8221; (т.е. форматов даты и времени). Другие хранилища для библиотеки i18n могут предоставить другие средства подобного разделения.</p>
+<div class='note'><p>Механизм загрузки локали по умолчанию в Rails не загружает файлы локали во вложенных словарях, как тут. Поэтому, чтобы это заработало, нужно явно указать Rails смотреть глубже:</p></div>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/application.rb
+  config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+</pre></div>
+<p>Обратите внимание на <a href="http://rails-i18n.org/wiki">Rails i18n Wiki</a>, там есть перечень инструментов для управления переводами.</p>

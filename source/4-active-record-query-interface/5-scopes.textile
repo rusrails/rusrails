@@ -1,0 +1,95 @@
+h1. Скоупы
+
+<p>Скоупинг позволяет определить часто используемые запросы ARel, к которым можно обращаться как к вызовам метода в связанных объектах или моделях. С помощью этих скоупов можно использовать каждый ранее раскрытый метод, такой как <tt>where</tt>, <tt>joins</tt> и <tt>includes</tt>. Все методы скоупов возвращают объект <tt>ActiveRecord::Relation</tt>, который позволяет вызывать следующие методы (такие как другие скоупы).</p>
+<p>Для определения простого скоупа мы используем метод <tt>scope</tt> внутри класса, передав запрос ARel, который хотим запустить при вызове скоупа:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  scope :published, where(:published => true)
+end
+</pre></div>
+<p>Как и ранее, эти методы также сцепляются:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  scope :published, where(:published => true).joins(:category)
+end
+</pre></div>
+<p>Скоупы также сцепляются с другими скоупами:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  scope :published, where(:published => true)
+  scope :published_and_commented, published.and(self.arel_table[:comments_count].gt(0))
+end
+</pre></div>
+<p>Для вызова этого скоупа <tt>published</tt>, можно вызвать его либо на классе:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Post.published => [published posts]
+</pre></div>
+<p>Либо на связи, состоящей из объектов <tt>Post</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+category = Category.first
+category.posts.published => [published posts belonging to this category]
+</pre></div>
+
+<h4>1. Работа со временем</h4>
+
+<p>Если вы работаете в скоупах с датой или временем, в связи с особенностями их вычисления необходимо использовать лямбду, таким образом скоуп будет вычисляться каждый раз.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  scope :last_week, lambda { where("created_at < ?", Time.zone.now ) }
+end
+</pre></div>
+<p>Без <tt>lambda</tt>, этот <tt>Time.zone.now</tt> будет вызван один раз.</p>
+
+<h4>2. Передача аргумента</h4>
+<p>Когда <tt>lambda</tt> используется для <tt>scope</tt>, можно принимать аргументы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  scope :1_week_before, lambda { |time| where("created_at < ?", time)
+end
+</pre></div>
+<p>Это можно использовать так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Post.1_week_before(Time.zone.now)
+</pre></div>
+<p>Однако, это всего лишь дублирование функциональности, которая должна быть предоставлена методом класса.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  def self.1_week_before(time)
+    where("created_at < ?", time)
+  end
+end
+</pre></div>
+<p>Использование метода класса - более предпочтительный способ принятию аргументов скоупом. Эти методы также будут доступны на связанных объектах:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+category.posts.1_week_before(time)
+</pre></div>
+
+<h4>3. Работа со скоупами</h4>
+<p>Когда требуется реляционный объект, может пригодиться метод <tt>scoped</tt>. Он возвратит объект <tt>ActiveRecord::Relation</tt>, к которому можно впоследствии применять скоупы. Это полезно при применении на связях:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+client = Client.find_by_first_name("Ryan")
+orders = client.orders.scoped
+</pre></div>
+<p>Для полученного объекта <tt>orders</tt> можно применить дополнительные скоупы. Например, если хотите возвратить заказы только за последние 30 дней.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+orders.where("created_at > ?", 30.days.ago)
+</pre></div>
+
+<h4>4. Применение скоупа по умолчанию</h4>
+<p>Если хотите, чтобы скоуп был применен ко всем запросам к модели, можно использовать метод <tt>default_scope</tt> в самой модели.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Client < ActiveRecord::Base
+  default_scope where("removed_at IS NULL")
+end
+</pre></div>
+<p>Когды запросы для этой модели будут выполняться, запрос SQL теперь будет выглядеть примерно так:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM clients WHERE removed_at IS NULL
+</pre></div>
+
+<h4>5. Удаление всех скоупов</h4>
+<p>Если хотите удалить скоупы по какой-то причине, можете использовать метод <tt>unscoped</tt>. Это особенно полезно, если в модели определен <tt>default_scope</tt>, и он не должен быть применен для конкретно этого запроса.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.unscoped.all
+</pre></div>
+<p>Этот метод удаляет все скоупы и выполняет обычный запрос к таблице.</p>

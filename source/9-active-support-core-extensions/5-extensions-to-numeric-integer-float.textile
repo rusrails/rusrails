@@ -1,0 +1,56 @@
+h1. Расширения для Numeric, Integer, Float
+
+<h3 id="extensions-to-numeric">Расширения для <tt>Numeric</tt></h3>
+
+<h4 id="bytes">1. Байты</h4>
+<p>Все числа отвечают на эти методы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+bytes
+kilobytes
+megabytes
+gigabytes
+terabytes
+petabytes
+exabytes
+</pre></div>
+<p>Они возвращают соответствующее количество байтов, используя конвертирующий множитель 1024:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+2.kilobytes   # =&gt; 2048
+3.megabytes   # =&gt; 3145728
+3.5.gigabytes # =&gt; 3758096384
+-4.exabytes   # =&gt; -4611686018427387904
+</pre></div>
+<p>Форма в единственном числе является псевдонимом, поэтому можно написать так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+1.megabyte # =&gt; 1048576
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/numeric/bytes.rb</tt>.</p></div>
+
+<h3 id="extensions-to-integer">Расширения для <tt>Integer</tt></h3>
+
+<h4 id="multiple_of">1. <tt>multiple_of?</tt></h4>
+<p>Метод <tt>multiple_of?</tt> тестирует, является ли число множителем аргумента:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+2.multiple_of?(1) # =&gt; true
+1.multiple_of?(2) # =&gt; false
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/integer/multiple.rb</tt>.</p></div>
+
+<h4 id="ordinalize">2. <tt>ordinalize</tt></h4>
+<p>Метод <tt>ordinalize</tt> возвращает порядковые строки, соответствующие полученному числу:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+1.ordinalize    # =&gt; &quot;1st&quot;
+2.ordinalize    # =&gt; &quot;2nd&quot;
+53.ordinalize   # =&gt; &quot;53rd&quot;
+2009.ordinalize # =&gt; &quot;2009th&quot;
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/integer/inflections.rb</tt>.</p></div>
+
+<h3 id="extensions-to-float">Расширения для <tt>Float</tt></h3>
+
+<h4 id="round">1. <tt>round</tt></h4>
+<p>Встроенный метод <tt>Float#round</tt> округляет дробное число до ближайшего целого. Active Support добавляет дополнительный параметр, позволяющий определить точность:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Math::E.round(4) # =&gt; 2.7183
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/float/rounding.rb</tt>.</p></div>

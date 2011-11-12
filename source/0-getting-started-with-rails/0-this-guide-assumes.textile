@@ -1,0 +1,21 @@
+h1. Допущения в этом руководстве
+
+<p>Это руководство рассчитано на новичков, которые хотят запустить приложение на Rails с нуля. Оно не предполагает, что Вы раньше работали с Rails. Однако, чтобы полноценно им воспользоваться, необходимо предварительно установить:</p>
+<ul>
+	<li>Язык <a href="http://www.ruby-lang.org/en/downloads">Ruby</a> версии 1.8.7 или выше</li>
+<div class='info'><p>Отметьте, что в Ruby 1.8.7 p248 и p249 имеются баги, роняющие Rails 3.0. Хотя для Ruby Enterprise Edition их исправили, начиная с релиза 1.8.7-2010.02. На фронте 1.9, Ruby 1.9.1 не стабилен, поскольку он явно ломает Rails 3.0, поэтому если хотите использовать Rails 3 с 1.9.x, переходите на 1.9.2 для гладкой работы.</p></div>
+	<li>Систему пакетов <a href="http://rubyforge.org/frs/?group_id=126">RubyGems</a></li>
+	<li>Рабочую инсталляцию <a href="http://www.sqlite.org">SQLite3 Database</a></li>
+</ul>
+<p>Rails – фреймворк для веб-разработки, написанный на языке программирования Ruby. Если у вас нет опыта в Ruby, возможно вам будет тяжело сразу приступить к изучению Rails. Есть несколько хороших англоязычных ресурсов, посвященных изучению Ruby, например:</p>
+<ul>
+	<li><a href="http://www.humblelittlerubybook.com">Mr. Neighborly’s Humble Little Ruby Book</a></li>
+	<li><a href="http://www.rubycentral.com/book">Programming Ruby</a></li>
+	<li><a href="http://poignantguide.net/ruby/">Why’s (Poignant) Guide to Ruby</a></li>
+</ul>
+<p>Из русскоязычных ресурсов, посвященных изучению Ruby, я бы выделил следующие:</p>
+<ul>
+	<li><a href="http://ru.wikibooks.org/wiki/Ruby">Викиучебник по Ruby</a></li>
+	<li><a href="http://www.linuxshare.ru/docs/devel/languages/ruby/ruby.html">Руководство по Руби на 1 странице</a></li>
+	<li><a href="http://www.shokhirev.com/mikhail/ruby/ltp/title.html">Учебник "Учись программировать", автор Крис Пайн</a></li>
+</ul>

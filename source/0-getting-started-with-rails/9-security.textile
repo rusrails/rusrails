@@ -1,0 +1,30 @@
+h1. Безопасность
+
+<p>Если Вы опубликуете свой блог онлайн, любой сможет добавлять, редактировать и удалять публикации или удалять комментарии.</p>
+<p>Rails предоставляет очень простую аутентификационную систему <span class="caps">HTTP</span>, которая хорошо работает в этой ситуации.</p>
+<p>В <tt>PostsController</tt> нам нужен способ блокировать доступ к различным экшнам, если пользователь не аутентифицирован, тут мы можем использовать метод Rails <tt>http_basic_authenticate_with</tt>, разрешающий доступ к требуемым экшнам, если метод позволит это.</p>
+<p>Чтобы использовать систему аутентификации, мы определим ее вверху нашего <tt>PostsController</tt>, в нашем случае, мы хотим, чтобы пользователь был аутентифицирован для каждого экшна, кроме <tt>index</tt> и <tt>show</tt>, поэтому напишем так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class PostsController < ApplicationController
+
+  http_basic_authenticate_with :name => "dhh", :password => "secret", :except => :index
+
+  # GET /posts
+  # GET /posts.json
+  def index
+    @posts = Post.all
+    respond_to do |format|
+# пропущено для краткости
+</pre></div>
+<p>Мы также хотим позволить только аутентифицированным пользователям удалять комментарии, поэтому в <tt>CommentsController</tt> мы напишем:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CommentsController < ApplicationController
+
+  http_basic_authenticate_with :name => "dhh", :password => "secret", :only => :destroy
+
+  def create
+    @post = Post.find(params[:post_id])
+# пропущено для краткости
+</pre></div>
+<p>Теперь, если попытаетесь создать новую публикацию, то встретитесь с простым вызовом аутентификации <span class="caps">HTTP</span></p>
+<p><img src="/system/images/challenge.png" title="Простой вызов аутентификации HTTP" alt="Простой вызов аутентификации HTTP" /></p>

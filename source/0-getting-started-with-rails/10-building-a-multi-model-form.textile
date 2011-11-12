@@ -1,0 +1,115 @@
+h1. Создаем мульти-модельную форму
+
+<p>Другой особенностью обычного блога является возможность метки (тэгирования) публикаций. Чтобы применить эту особенность, вашему приложению нужно взаимодействовать более чем с одной моделью в одной форме. Rails предлагает поддержку вложенных форм.</p>
+<p>Чтобы это продемонстрировать, добавим поддержку для присвоения каждой публикации множественных тегов непосредственно в форме, где вы создаете публикации. Сначала создадим новую модель для хранения тегов:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails generate model tag name:string post:references
+</pre></div>
+<p>Снова запустим миграцию для создания таблицы в базе данных:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rake db:migrate
+</pre></div>
+<p>Далее отредактируем файл <tt>post.rb</tt>, создав другую сторону связи, и сообщим Rails (с помощью макроса <tt>accepts_nested_attributes_for</tt>), что намереваемся редактировать теги непосредственно в публикациях:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post &lt; ActiveRecord::Base
+  validates :name,  :presence =&gt; true
+  validates :title, :presence =&gt; true,
+                    :length =&gt; { :minimum =&gt; 5 }
+
+  has_many :comments, :dependent =&gt; :destroy
+  has_many :tags
+
+  accepts_nested_attributes_for :tags, :allow_destroy =&gt; :true,
+    :reject_if =&gt; proc { |attrs| attrs.all? { |k, v| v.blank? } }
+end
+</pre></div>
+<p>Опция <tt>:allow_destroy</tt> на объявлении вложенного атрибута говорит Rails отображать чекбокс &#8220;remove&#8221; во вьюхе, которую вы скоро создадите. Опция <tt>:reject_if</tt> предотвращает сохранение новых тегов, не имеющих каких-либо заполненных аттрибутов.</p>
+<p>Изменим <tt>views/posts/_form.html.erb</tt>, чтобы рендерить партиал, создающий теги:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;% @post.tags.build %&gt;
+&lt;%= form_for(@post) do |post_form| %&gt;
+  &lt;% if @post.errors.any? %&gt;
+  &lt;div id=&quot;errorExplanation&quot;&gt;
+    &lt;h2&gt;&lt;%= pluralize(@post.errors.count, &quot;error&quot;) %&gt; prohibited this post from being saved:&lt;/h2&gt;
+    &lt;ul&gt;
+    &lt;% @post.errors.full_messages.each do |msg| %&gt;
+      &lt;li&gt;&lt;%= msg %&gt;&lt;/li&gt;
+    &lt;% end %&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+  &lt;% end %&gt;
+
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= post_form.label :name %&gt;&lt;br /&gt;
+    &lt;%= post_form.text_field :name %&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= post_form.label :title %&gt;&lt;br /&gt;
+    &lt;%= post_form.text_field :title %&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= post_form.label :content %&gt;&lt;br /&gt;
+    &lt;%= post_form.text_area :content %&gt;
+  &lt;/div&gt;
+  &lt;h2&gt;Tags&lt;/h2&gt;
+  &lt;%= render :partial =&gt; 'tags/form',
+             :locals =&gt; {:form =&gt; post_form} %&gt;
+  &lt;div class=&quot;actions&quot;&gt;
+    &lt;%= post_form.submit %&gt;
+  &lt;/div&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Отметьте, что мы изменили <tt>f</tt> в <tt>form_for(@post) do |f|</tt> на <tt>post_form</tt>, чтобы было проще понять, что происходит.</p>
+<p>Этот пример показывает другую опцию хелпера render, способную передавать локальные переменные, в нашем случае мы хотим передать переменную <tt>form</tt> в партиал, относящуюся к объекту <tt>post_form</tt>.</p>
+<p>Мы также добавили <tt>@post.tags.build</tt> вверху формы, это сделано для того, чтобы убедиться, что имеется новый тег, готовый к указанию его имени пользователем. Если не создаете новый тег, то форма не появится, так как не будет доступного для создания нового объекта Tag.</p>
+<p>Теперь создайте папку <tt>app/views/tags</tt> и создайте файл с именем <tt>_form.html.erb</tt>, содержащий форму для тега:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= form.fields_for :tags do |tag_form| %&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= tag_form.label :name, 'Tag:' %&gt;
+    &lt;%= tag_form.text_field :name %&gt;
+  &lt;/div&gt;
+  &lt;% unless tag_form.object.nil? || tag_form.object.new_record? %&gt;
+    &lt;div class=&quot;field&quot;&gt;
+      &lt;%= tag_form.label :_destroy, 'Remove:' %&gt;
+      &lt;%= tag_form.check_box :_destroy %&gt;
+    &lt;/div&gt;
+  &lt;% end %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Наконец, отредактируйте шаблон <tt>app/views/posts/show.html.erb</tt>, чтобы отображались наши теги.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Name:&lt;/b&gt;
+  &lt;%= @post.name %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Title:&lt;/b&gt;
+  &lt;%= @post.title %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Content:&lt;/b&gt;
+  &lt;%= @post.content %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Tags:&lt;/b&gt;
+  &lt;%= @post.tags.map { |t| t.name }.join(&quot;, &quot;) %&gt;
+&lt;/p&gt;
+
+&lt;h2&gt;Comments&lt;/h2&gt;
+&lt;%= render @post.comments %&gt;
+
+&lt;h2&gt;Add a comment:&lt;/h2&gt;
+&lt;%= render &quot;comments/form&quot; %&gt;
+
+
+&lt;%= link_to 'Edit Post', edit_post_path(@post) %&gt; |
+&lt;%= link_to 'Back to Posts', posts_path %&gt; |
+</pre></div>
+<p>После этих изменений, Вы сможете редактировать публикацию и ее теги в одной и той же вьюхе.</p>
+<p>Однако, такой вызов метода <tt>@post.tags.map { |t| t.name }.join(&quot;, &quot;)</tt> неуклюж, мы можем исправить это, создав метод хелпера.</p>

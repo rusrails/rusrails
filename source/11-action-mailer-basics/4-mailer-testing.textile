@@ -1,0 +1,22 @@
+h1. Тестирование рассыльщика
+
+<p>По умолчанию Action Mailer не посылает электронные письма в среде разработки test. Они всего лишь добавляются к массиву <tt>ActionMailer::Base.deliveries</tt>.</p>
+<p>Тестирование рассыльщиков обычно включает две вещи: Первая это то, что письмо помещается в очередь, а вторая это то, что письмо правильное. Имея это в виду, можем протестировать наш пример рассыльщика из предыдущих статей таким образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UserMailerTest &lt; ActionMailer::TestCase
+  def test_welcome_email
+    user = users(:some_user_in_your_fixtures)
+
+    # Посылаем email, затем тестируем, если оно не попало в очередь
+    email = UserMailer.deliver_welcome_email(user)
+    assert !ActionMailer::Base.deliveries.empty?
+
+    # Тестируем, содержит ли тело посланного email то, что мы ожидаем
+    assert_equal [user.email], email.to
+    assert_equal &quot;Welcome to My Awesome Site&quot;, email.subject
+    assert_match /&lt;h1&gt;Welcome to example.com, #{user.name}&lt;\/h1&gt;/, email.encoded
+    assert_match /Welcome to example.com, #{user.name}/, email.encoded
+  end
+end
+</pre></div>
+<p>В тесте мы посылаем email и храним возвращенный объект в переменной <tt>email</tt>. Затем мы убеждаемся, что он был послан (первый assert), затем, во второй группе операторов контроля, мы убеждаемся, что email действительно содержит то, что мы ожидаем.</p>

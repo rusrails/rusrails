@@ -1,0 +1,37 @@
+h1. Методы хелпера
+
+<p>Rails предоставляет различные методы хелпера в Active Record, Action Controller и Action View для измерения времени, затраченного на заданный кусок кода. Метод называется <tt>benchmark()</tt> во всех трех компонентах.</p>
+
+<h4 id="model">1. Модель</h4>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Project.benchmark(&quot;Creating project&quot;) do
+  project = Project.create(&quot;name&quot; =&gt; &quot;stuff&quot;)
+  project.create_manager(&quot;name&quot; =&gt; &quot;David&quot;)
+  project.milestones &lt;&lt; Milestone.find(:all)
+end
+</pre></div>
+<p>Это произведет бенчмаркинг кода, заключенного в блок <tt>Project.benchmark("Creating project") do...end</tt> и напечатает результат в файл лога:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Creating project (185.3ms)
+</pre></div>
+<p>Пожалуйста, обратитесь к <a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M001336"><span class="caps">API</span> docs</a>, чтобы узнать дополнительные опции для <tt>benchmark()</tt></p>
+
+<h4 id="controller">2. Контроллер</h4>
+<p>Подобным образом можно использовать этот метод хелпера в <a href="http://api.rubyonrails.org/classes/ActionController/Benchmarking/ClassMethods.html#M000715">контроллерах</a></p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def process_projects
+  self.class.benchmark(&quot;Processing projects&quot;) do
+    Project.process(params[:project_ids])
+    Project.update_cached_projects
+  end
+end
+</pre></div>
+<div class='note'><p><tt>benchmark</tt> это метод класса в контроллерах</p></div>
+
+<h4 id="view">3. Вьюха</h4>
+<p>И во <a href="http://api.rubyonrails.org/classes/ActionController/Benchmarking/ClassMethods.html#M000715">вьюхах</a>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;% benchmark(&quot;Showing projects partial&quot;) do %&gt;
+  &lt;%= render :partial =&gt; @projects %&gt;
+&lt;% end %&gt;
+</pre></div>

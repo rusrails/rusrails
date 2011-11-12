@@ -1,0 +1,16 @@
+h1. Рендеринг данных xml и json
+
+<p>ActionController позволяет очень просто рендерить данные <tt>xml</tt> или <tt>json</tt>. Если создадите контроллер с помощью скаффолда, то ваш контроллер будет выглядеть следующим образом.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class UsersController < ApplicationController
+  def index
+    @users = User.all
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @users}
+      format.json { render :json => @users}
+    end
+  end
+end
+</pre></div>
+<p>Отметьте, что в вышеописанном коде <tt>render :xml => @users</tt>, а не <tt>render :xml => @users.to_xml</tt>. Это связано с тем, что если введена не строка, то rails автоматически вызовет <tt>to_xml</tt>.</p>

@@ -1,0 +1,558 @@
+h1. Варианты тестирования производительности
+
+<p>Тесты производительности Rails являются специальным типом интеграционных тестов, разработанным для бенчмаркинга и профилирования тестируемого кода. С тестами производительности можно определить, откуда идут проблемы вашего приложения с памятью или скоростью, и получить более глубокую картину об этих проблемах.</p>
+<p>В только что созданном приложении на Rails, <tt>test/performance/browsing_test.rb</tt> содержит пример теста производительности:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+require 'performance_test_help'
+
+# Profiling results for each test method are written to tmp/performance.
+class BrowsingTest &lt; ActionController::PerformanceTest
+  def test_homepage
+    get '/'
+  end
+end
+</pre></div>
+<p>Этот пример является простым случаем теста производительности для профилирования запроса <span class="caps">GET</span> к домашней странице приложения.</p>
+
+<h4 id="generating-performance-tests">1. Создание тестов производительности</h4>
+<p>Rails предоставляет генератор, названный <tt>performance_test</tt>, для создания новых тестов производительности:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails generate performance_test homepage
+</pre></div>
+<p>Это создаст <tt>homepage_test.rb</tt> в директории <tt>test/performance</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+require 'performance_test_help'
+
+class HomepageTest &lt; ActionController::PerformanceTest
+  # Replace this with your real tests.
+  def test_homepage
+    get '/'
+  end
+end
+</pre></div>
+
+<h4 id="examples">2. Примеры</h4>
+<p>Давайте предположим, что ваше приложение имеет следующие контроллер и модель:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# routes.rb
+root :to => 'home#index'
+resources :posts
+
+# home_controller.rb
+class HomeController < ApplicationController
+  def dashboard
+    @users = User.last_ten.includes(:avatars)
+    @posts = Post.all_today
+  end
+end
+
+# posts_controller.rb
+class PostsController < ApplicationController
+  def create
+    @post = Post.create(params[:post])
+    redirect_to(@post)
+  end
+end
+
+# post.rb
+class Post < ActiveRecord::Base
+  before_save :recalculate_costly_stats
+
+  def slow_method
+    # Запускаем 100500 запросов, тормозящих все вокруг
+  end
+
+  private
+
+  def recalculate_costly_stats
+    # Вычисления, нагружающие CPU
+  end
+end
+</pre></div>
+
+<h5 id="controller-example">2.1 Пример с контроллером</h5>
+<p>Поскольку тесты производительности являются специальным видом интеграционного теста, можете использовать в них методы <tt>get</tt> и <tt>post</tt>.</p>
+<p>Вот тест производительности для <tt>HomeController#dashboard</tt> и <tt>PostsController#create</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+require 'performance_test_help'
+
+class PostPerformanceTest &lt; ActionController::PerformanceTest
+  def setup
+    # Приложение требует залогиненого пользователя
+    login_as(:lifo)
+  end
+
+  def test_homepage
+    get '/dashboard'
+  end
+
+  def test_creating_new_post
+    post '/posts', :post =&gt; { :body =&gt; 'lifo is fooling you' }
+  end
+end
+</pre></div>
+<p>Более детально о методах <tt>get</tt> и <tt>post</tt> написано в руководстве по <a href="/a-guide-to-testing-rails-applications">тестированию приложений на Rails</a>.</p>
+
+<h5 id="model-example">2.2 Пример с моделью</h5>
+<p>Несмотря на то, что тесты производительности являются интеграционными тестами и поэтому ближе к циклу запрос/ответ по своей природе, вы также можете тестировать производительность кода модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+require 'performance_test_help'
+
+class PostModelTest &lt; ActionController::PerformanceTest
+  def test_creation
+    Post.create :body =&gt; 'still fooling you', :cost =&gt; '100'
+  end
+
+  def test_slow_method
+    # Используем фикстуру posts(:awesome)
+    posts(:awesome).slow_method
+  end
+end
+</pre></div>
+
+<h4 id="modes">3. Режимы</h4>
+<p>Тесты производительности могут быть запущены в двух режимах: Бенчмаркинг и Профилирование.</p>
+
+<h5 id="benchmarking">3.1 Бенчмаркинг</h5>
+<p>Бенчмаркинг помогает найти как быстро выполняется каждый тест производительности. В режиме бенчмаркинга каждый случай тестирования выполняется <tt>4 раза</tt>.</p>
+<p>Чтобы запустить тесты производительности в режиме бенчмаркинга:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+$ rake test:benchmark
+</pre></div>
+
+<h5 id="profiling">3.2 Профилирование</h5>
+<p>Профилирование помогает увидеть подробности теста производительности и предоставить углубленную картину медленных и памятепотребляемых частей. В режиме профилирования каждый случай тестирования запускается <tt>1 раз</tt>.</p>
+<p>Чтобы запустить тесты производительности в режиме профилирования:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+$ rake test:profile
+</pre></div>
+
+<h4 id="metrics">4. Метрики</h4>
+<p>Бенчмаркинг и профилирование запускают тесты производительности и выдают разные метрики. Доступность каждой метрики определена используемым интерпретатором - не все из них поддерживают все метрики - и используемым режимом. Краткое описание каждой метрики и их доступность для интерпретатора/режима описаны ниже.</p>
+
+<h5 id="wall-time">4.1 Время разделения (Wall Time)</h5>
+<p>Время разделения измеряет реальное время, прошедшее в течение запуска теста. Оно зависит от любых других процессов, параллельно работающих в системе.</p>
+
+<h5 id="process-time">4.2 Время процесса (Process Time)</h5>
+<p>Время процесса измеряет время, затраченное процессом. Оно не зависит от любых других процессов, параллельно работающих в системе. Поэтому время процесса скорее всего будет постоянным для любого конкретного теста производительности, независимо от загрузки машины.</p>
+
+<h5 id="memory">4.3 Память (Memory)</h5>
+<p>Память измеряет количество памяти, использованной в случае теста производительности.</p>
+
+<h5 id="objects">4.4 Объекты (Objects)</h5>
+<p>Объекты измеряют число объектов, выделенных в случае теста производительности.</p>
+
+<h5 id="gc-runs">4.5 Запуски GC (GC Runs)</h5>
+<p>Запуски GC измеряют, сколько раз GC был вызван в случае теста производительности.</p>
+
+<h5 id="gc-time">4.6 Время GC (GC Time)</h5>
+<p>Время GC измеряет количество времени, потраченного в GC для случая теста производительности.</p>
+
+<h5>4.7 Доступность метрик</h5>
+
+<h6>4.7.1 Бенчмаркинг</h6>
+<table>
+<tr>
+  <th>Интерпретатор</th>
+  <th>Wall Time</th>
+  <th>Process Time</th>
+  <th>CPU Time</th>
+  <th>User Time</th>
+  <th>Memory</th>
+  <th>Objects</th>
+  <th>GC Runs</th>
+  <th>GC Time</th>
+</tr>
+<tr>
+  <th>MRI</th>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>REE</th>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>Rubinius</th>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>JRuby</th>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+</table>
+
+<h6>4.7.2 Профилирование</h6>
+<table>
+<tr>
+  <th>Интерпретатор</th>
+  <th>Wall Time</th>
+  <th>Process Time</th>
+  <th>CPU Time</th>
+  <th>User Time</th>
+  <th>Memory</th>
+  <th>Objects</th>
+  <th>GC Runs</th>
+  <th>GC Time</th>
+</tr>
+<tr>
+  <th>MRI</th>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>REE</th>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>Rubinius</th>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+</tr>
+<tr>
+  <th>JRuby</th>
+  <td>да</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+  <td>нет</td>
+</tr>
+</table>
+<div class='note'><p>Для профилирования под JRuby следует запустить <tt>export JRUBY_OPTS="-Xlaunch.inproc=false --profile.api"</tt> <strong>перед</strong> тестами производительности.</p></div>
+
+<h4 id="understanding-the-output">5. Интерпретация результата</h4>
+<p>Тесты производительности выводят различные результаты в директорию <tt>tmp/performance</tt>, в зависимости от их режима и метрики.</p>
+
+<h5 id="benchmarking">5.1 Бенчмаркинг</h5>
+<p>В режиме бенчмаркинга тесты производительности выводят два типа результата:</p>
+
+<h6 id="command-line">5.1.1 Командная строка</h6>
+<p>Это основная форма результата в режиме бенчмаркинга. пример:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+BrowsingTest#test_homepage (31 ms warmup)
+           wall_time: 6 ms
+              memory: 437.27 KB
+             objects: 5514
+             gc_runs: 0
+             gc_time: 19 ms
+</pre></div>
+
+<h6 id="csv-files">5.1.2 Файлы <span class="caps">CSV</span></h6>
+<p>Результаты теста производительности также добавляются к файлам <tt>.csv</tt> в <tt>tmp/performance</tt>. Напрмер, запуск дефолтного <tt>BrowsingTest#test_homepage</tt> создаст следующие пять файлов:</p>
+<ul>
+	<li>BrowsingTest#test_homepage_gc_runs.csv</li>
+	<li>BrowsingTest#test_homepage_gc_time.csv</li>
+	<li>BrowsingTest#test_homepage_memory.csv</li>
+	<li>BrowsingTest#test_homepage_objects.csv</li>
+	<li>BrowsingTest#test_homepage_wall_time.csv</li>
+</ul>
+<p>Так как результаты добавляются к этим файлам каждый раз, как тесты производительности запускаются, вы можете собирать данные за период времени. Это может быть полезным при анализе эффекта от изменения кода.</p>
+<p>Образец вывода в <tt>BrowsingTest#test_homepage_wall_time.csv</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+measurement,created_at,app,rails,ruby,platform
+0.00738224999999992,2009-01-08T03:40:29Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00755874999999984,2009-01-08T03:46:18Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00762099999999993,2009-01-08T03:49:25Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00603075000000008,2009-01-08T04:03:29Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00619899999999995,2009-01-08T04:03:53Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00755449999999991,2009-01-08T04:04:55Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00595999999999997,2009-01-08T04:05:06Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00740450000000004,2009-01-09T03:54:47Z,,2.3.0.master.859e150,ruby-1.8.6.110,i686-darwin9.0.0
+0.00603150000000008,2009-01-09T03:54:57Z,,2.3.0.master.859e150,ruby-1.8.6.111,i686-darwin9.1.0
+0.00771250000000012,2009-01-09T15:46:03Z,,2.3.0.master.859e150,ruby-1.8.6.110,i686-darwin9.0.0
+</pre></div>
+
+<h5 id="profiling">5.2 Профилирование</h5>
+<p>В режиме профилирования тесты производительности могут создавать разные типы результатов. Результат в командной строке всегда присутствует, но поддержка остальных зависит от используемого интерпретатора. Краткое описание каждого типа и их доступность для интерпретаторов представлены ниже.</p>
+
+<h6 id="command-line">5.2.1 Командная строка</h6>
+<p>Это очень простая форма вывода результата в режиме профилирования:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+BrowsingTest#test_homepage (58 ms warmup)
+        process_time: 63 ms
+              memory: 832.13 KB
+             objects: 7882
+</pre></div>
+
+<h6 id="flat">5.2.2 Флэт (Flat)</h6>
+<p>Флэт показывает метрики - время. память и т.д. - потраченные на каждый метод. <a href="http://ruby-prof.rubyforge.org/files/examples/flat_txt.html">Обратитесь к профессиональной документации по ruby для лучшего объяснения</a>.</p>
+
+<h6 id="graph">5.2.3 Граф (Graph)</h6>
+<p>Граф показывает, как долго каждый метод запускался, какие методы его вызывали, и какие методы вызывал он. <a href="http://ruby-prof.rubyforge.org/files/examples/graph_txt.html">Обратитесь к профессиональной документации по ruby для лучшего объяснения</a>.</p>
+
+<h6 id="tree">5.2.4 Дерево (Tree)</h6>
+<p>Дерево это профилированная информация в формате calltree, используемом в <a href="http://kcachegrind.sourceforge.net/html/Home.html">kcachegrind</a> и подобных инструментах.</p>
+
+<h6>5.2.5 Доступность вывода результатов</h6>
+<table>
+<tr>
+  <th></th>
+  <th>Flat</th>
+  <th>Graph</th>
+  <th>Tree</th>
+</tr>
+<tr>
+  <th>MRI</th>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>REE</th>
+  <td>да</td>
+  <td>да</td>
+  <td>да</td>
+</tr>
+<tr>
+  <th>Rubinius</th>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+</tr>
+<tr>
+  <th>JRuby</th>
+  <td>да</td>
+  <td>да</td>
+  <td>нет</td>
+</tr>
+</table>
+
+<h4 id="tuning-test-runs">6. Настройка тестовых прогонов</h4>
+<p>Запуски тестов могут быть настроены с помощью установки переменной класса <tt>profile_options</tt> в вашем классе теста.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+require 'rails/performance_test_help'
+
+# Profiling results for each test method are written to tmp/performance.
+class BrowsingTest < ActionDispatch::PerformanceTest
+  self.profile_options = { :runs => 5,
+                           :metrics => [:wall_time, :memory] }
+
+  def test_homepage
+    get '/'
+  end
+end
+</pre></div>
+<p>В этом примере тест будет запущен 5 раз и измерит время разделения и память. Есть несколько конфигурационных опций:</p>
+<table>
+	<tr>
+		<th>Опция   </th>
+		<th>Описание</th>
+		<th>По умолчанию</th>
+		<th>Режим</th>
+	</tr>
+	<tr>
+		<td><tt>:runs</tt>    </td>
+		<td>Количество запусков.</td>
+		<td>Бенчмаркинг: 4, Профилирование: 1</td>
+		<td>Оба</td>
+	</tr>
+	<tr>
+		<td><tt>:output</tt>  </td>
+		<td>Директория, используемая для записи результатов.</td>
+		<td><tt>tmp/performance</tt></td>
+		<td>Оба</td>
+	</tr>
+	<tr>
+		<td><tt>:metrics</tt> </td>
+		<td>Используемые метрики.</td>
+		<td>Смотрите ниже.</td>
+		<td>Оба</td>
+	</tr>
+	<tr>
+		<td><tt>:formats</tt> </td>
+		<td>Ворматы вывода результатов.</td>
+		<td>Смотрите ниже.</td>
+		<td>Оба</td>
+	</tr>
+</table>
+<p>У метрик и форматов разные значения по умолчанию, зависящие от используемого интерпретатора.</p>
+<table>
+	<tr>
+		<th>Интерпретатор</th>
+		<th>Режим</th>
+		<th>Метрики по умолчанию</th>
+		<th>Форматы по умолчанию</th>
+	</tr>
+	<tr>
+		<td rowspan="2"><span class="caps">MRI</span>/<span class="caps">REE</span> </td>
+		<td>Бенчмаркинг</td>
+		<td><tt>[:wall_time, :memory, :objects, :gc_runs, :gc_time]</tt></td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>Профилирование   </td>
+		<td><tt>[:process_time, :memory, :objects]</tt></td>
+		<td><tt>[:flat, :graph_html, :call_tree, :call_stack]</tt></td>
+	</tr>
+	<tr>
+		<td rowspan="2">Rubinius</td>
+		<td>Бенчмаркинг</td>
+		<td><tt>[:wall_time, :memory, :objects, :gc_runs, :gc_time]</tt></td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>Профилирование   </td>
+		<td><tt>[:wall_time]</tt></td>
+		<td><tt>[:flat, :graph]</tt></td>
+	</tr>
+	<tr>
+		<td rowspan="2">JRuby   </td>
+		<td>Бенчмаркинг</td>
+		<td><tt>[:wall_time, :user_time, :memory, :gc_runs, :gc_time]</tt></td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>Профилирование   </td>
+		<td><tt>[:wall_time]</tt></td>
+		<td><tt>[:flat, :graph]</tt></td>
+	</tr>
+</table>
+
+<p>Как вы уже, наверное, заметили, метрики и форматы определены с использованием массива символов, с <a href="http://api.rubyonrails.org/classes/String.html#method-i-underscore">подчеркиванием</a> в каждом имени.</p>
+
+<h4 id="performance-test-environment">7. Среда тестов производительности</h4>
+<p>Тесты производительности запускаются в среде <tt>development</tt>. Но запускаемые тесты производительности могут настраиваться следующими конфигурационными параметрами:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+ActionController::Base.perform_caching = true
+ActiveSupport::Dependencies.mechanism = :require
+Rails.logger.level = ActiveSupport::BufferedLogger::INFO
+</pre></div>
+<p>Когда <tt>ActionController::Base.perform_caching</tt> устанавливается в <tt>true</tt>, тесты производительности будут вести себя так, как будто они в среде <tt>production</tt>.</p>
+
+<h4 id="installing-gc-patched-ruby">8. Установка Ruby, пропатченного GC</h4>
+<p>Чтобы взять лучшее от тестов производительности Rails под MRI, нужно создать специальный мощный двоичный файл Ruby.</p>
+<p>Рекомендованные патчи для каждой версии <span class="caps">MRI</span> следующие:</p>
+<table>
+	<tr>
+		<th>Version</th>
+		<th>Patch</th>
+	</tr>
+	<tr>
+		<td>1.8.6</td>
+		<td>ruby186gc</td>
+	</tr>
+	<tr>
+		<td>1.8.7</td>
+		<td>ruby187gc</td>
+	</tr>
+	<tr>
+		<td>1.9.2 и выше</td>
+		<td>gcdata</td>
+	</tr>
+</table>
+<p>Все они находятся в директории <a href="https://github.com/wayneeseguin/rvm/tree/master/patches/ruby"><em>patches</em> RVM</a> для каждой определенной версии интерпретатора.</p>
+<p>Что касается самой установки, можно либо сделать это просто, используя <a href="http://rvm.beginrescueend.com"><span class="caps">RVM</span></a>, либо создать все из исходников, что несколько сложнее.</p>
+
+<h5 id="install-using-rvm">8.1 Установка с использованием <span class="caps">RVM</span></h5>
+<p>Процесс установки пропатченного интерпретатора Ruby очень прост, если позволить всю работу выполнить <span class="caps">RVM</span>. Все нижеследующие команды <span class="caps">RVM</span> предоставят пропатченный интерпретатор Ruby:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rvm install 1.9.2-p180 --patch gcdata
+$ rvm install 1.8.7 --patch ruby187gc
+$ rvm install 1.9.2-p180 --patch ~/Downloads/downloaded_gcdata_patch.patch
+</pre></div>
+<p>можно даже сохранить обычный интерпретатор, назначив имя пропатченному:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rvm install 1.9.2-p180 --patch gcdata --name gcdata
+$ rvm use 1.9.2-p180 # your regular ruby
+$ rvm use 1.9.2-p180-gcdata # your patched ruby
+</pre></div>
+<p>И все! Вы установили пропатченный интерпретатор Rubyr.</p>
+
+<h5 id="install-from-source">8.2 Установка из исходников</h5>
+<p>Этот процесс более сложный, но не чересчур. Если ранее вы ни разу не компилировали двоичные файлы Ruby, нижеследующее приведет к созданию двоичных файлов Ruby в ваше домашней директории.</p>
+
+<h6 id="download-and-extract">8.2.1 Скачать и извлечь</h6>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ mkdir rubygc
+$ wget &lt;the version you want from ftp://ftp.ruby-lang.org/pub/ruby&gt;
+$ tar -xzvf &lt;ruby-version.tar.gz&gt;
+$ cd &lt;ruby-version&gt;
+</pre></div>
+
+<h6 id="apply-the-patch">8.2.2 Применить патч</h6>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ curl http://github.com/wayneeseguin/rvm/raw/master/patches/ruby/1.9.2/p180/gcdata.patch | patch -p0 # if you're on 1.9.2!
+$ curl http://github.com/wayneeseguin/rvm/raw/master/patches/ruby/1.8.7/ruby187gc.patch | patch -p0 # if you're on 1.8.7!
+</pre></div>
+
+<h6 id="configure-and-install">8.2.3 Настроить и установить</h6>
+<p>Следующее установит Ruby в директорию <tt>/rubygc</tt> вашей домашней директории. Убедитесь, что заменили <tt>&lt;homedir&gt;</tt> полным путем к вашей фактической домашней директории.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ ./configure --prefix=/&lt;homedir&gt;/rubygc
+$ make &amp;&amp; make install
+</pre></div>
+
+<h6 id="prepare-aliases">8.2.4 Подготовить псевдонимы</h6>
+<p>Для удобства добавьте следующие строки в ваш <tt>~/.profile</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+alias gcruby='~/rubygc/bin/ruby'
+alias gcrake='~/rubygc/bin/rake'
+alias gcgem='~/rubygc/bin/gem'
+alias gcirb='~/rubygc/bin/irb'
+alias gcrails='~/rubygc/bin/rails'
+</pre></div>
+<p>Не забудьте использовать псевдонимы с этого момента.</p>
+
+<h6 id="install-rubygems-1-8-only">8.2.5 Установить Rubygems (только 1.8!)</h6>
+<p>Скачайте <a href="http://rubyforge.org/projects/rubygems">Rubygems</a> и установите их из исходников. В файле Rubygems <span class="caps">README</span> имеются необходимые инструкции по установке. Отметьте, что этот шаг не является необходимым, если вы установили  Ruby 1.9 и выше.</p>
+
+<h4 id="using-ruby-prof-on-mri-and-ree">9.Использование Ruby-Prof на <span class="caps">MRI</span> и <span class="caps">REE</span></h4>
+<p>Добавьте Ruby-Prof в Gemfile вашего приложения, если хотите использовать бенчмаркинг/профилирование под <span class="caps">MRI</span> или <span class="caps">REE</span>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+gem 'ruby-prof', :path =&gt; 'git://github.com/wycats/ruby-prof.git'
+</pre></div>
+<p>теперь запустите <tt>bundle install</tt> и все готово.</p>

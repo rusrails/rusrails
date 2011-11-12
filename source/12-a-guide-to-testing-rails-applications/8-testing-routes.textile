@@ -1,0 +1,8 @@
+h1. Тестирование маршрутов
+
+<p>Как и все в вашем приложении на Rails, рекомендуется тестировать маршруты. Пример теста для маршрутов в экшне по умолчанию <tt>show</tt> для контроллера <tt>Posts</tt>, приведенного ранее, будет выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+test &quot;should route to post&quot; do
+  assert_routing '/posts/1', { :controller =&gt; &quot;posts&quot;, :action =&gt; &quot;show&quot;, :id =&gt; &quot;1&quot; }
+end
+</pre></div>

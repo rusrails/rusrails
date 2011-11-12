@@ -1,0 +1,92 @@
+h1. Расширения для Enumerable
+
+<h4 id="group_by">1. <tt>group_by</tt></h4>
+<p>Active Support переопределяет <tt>group_by</tt> в Ruby 1.8.7 таким образом, что он возвращает упорядоченный хэш как в 1.9:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+entries_by_surname_initial = address_book.group_by do |entry|
+  entry.surname.at(0).upcase
+end
+</pre></div>
+<p>Отдельный блок возвращает значения, добавляемые в хэш как они идут, таким образом это итоговый порядок.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>
+
+<h4 id="sum">2. <tt>sum</tt></h4>
+<p>Метод <tt>sum</tt> складывает элементы перечисления:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[1, 2, 3].sum # =&gt; 6
+(1..100).sum  # =&gt; 5050
+</pre></div>
+<p>Сложение только применяется к элементам, откликающимся на <tt>+</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[[1, 2], [2, 3], [3, 4]].sum    # =&gt; [1, 2, 2, 3, 3, 4]
+%w(foo bar baz).sum             # =&gt; &quot;foobarbaz&quot;
+{:a =&gt; 1, :b =&gt; 2, :c =&gt; 3}.sum # =&gt; [:b, 2, :c, 3, :a, 1]
+</pre></div>
+<p>Сумма пустой коллекции равна нулю по умолчанию, но это может быть настроено:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[].sum    # =&gt; 0
+[].sum(1) # =&gt; 1
+</pre></div>
+<p>Если задан блок, <tt>sum</tt> становиться итератором, вкладывающим элементы коллекции и суммирующим возвращаемые значения:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+(1..5).sum {|n| n * 2 } # =&gt; 30
+[2, 4, 6, 8, 10].sum    # =&gt; 30
+</pre></div>
+<p>Сумма пустого получателя также может быть настроена в такой форме:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[].sum(1) {|n| n**3} # =&gt; 1
+</pre></div>
+<p>Метод <tt>ActiveRecord::Observer#observed_subclasses</tt>, к примеру, применяет это так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def observed_subclasses
+  observed_classes.sum([]) { |klass| klass.send(:subclasses) }
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>
+
+<h4 id="each_with_object">3. <tt>each_with_object</tt></h4>
+<p>Метод <tt>inject</tt> предлагает итерацию с накоплением:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[2, 3, 4].inject(1) {|acc, i| product*i } # =&gt; 24
+</pre></div>
+<p>От блока ожидается возврат значения сумматора для следующей итерации, это делает построение сложных объектов немного громоздким:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[1, 2].inject({}) {|h, i| h[i] = i**2; h} # =&gt; {1 =&gt; 1, 2 =&gt; 4}
+</pre></div>
+<p>Видите эти лишние &#8220;<tt>; h</tt>&#8221;?</p>
+<p>Active Support портирует <tt>each_with_object</tt> из Ruby 1.9, который рассматривает такие задачи. Он перебирает коллекцию, передает сумматор и возвращает сумматор, когда закончит. Обычно сумматор изменяется на месте. Вышеописанный пример может быть переписан следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[1, 2].each_with_object({}) {|i, h| h[i] = i**2} # =&gt; {1 =&gt; 1, 2 =&gt; 4}
+</pre></div>
+<div class='warning'><p>Отметьте, что элемент коллекции и сумматор идут в разном порядке в <tt>inject</tt> и <tt>each_with_object</tt>.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>
+
+<h4 id="index_by">4. <tt>index_by</tt></h4>
+<p>Метод <tt>index_by</tt> создает хэш с элементами перечисления, индексированные по некоторому ключу.</p>
+<p>Он перебирает коллекцию и передает каждый элемент в блок. Значение, возвращенное блоком, будет ключом для элемента:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+invoices.index_by(&amp;:number)
+# =&gt; {'2009-032' =&gt; &lt;Invoice ...&gt;, '2009-008' =&gt; &lt;Invoice ...&gt;, ...}
+</pre></div>
+<div class='warning'><p>Ключи, как правило, должны быть уникальными. Если блок возвратит то же значение для нескольких элементов, для этого ключа не будет построена коллекция. Победит последний элемент.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>
+
+<h4 id="many">5. <tt>many?</tt></h4>
+<p>Метод <tt>many?</tt> это сокращение для <tt>collection.size > 1</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;% if pages.many? %&gt;
+  &lt;%= pagination_links %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Если задан необязательный блок <tt>many?</tt> принимает во внимание только те элементы, которые возвращают true:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@see_more = videos.many? {|video| video.category == params[:category]}
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>
+
+<h4 id="exclude">6. <tt>exclude?</tt></h4>
+<p>Условие <tt>exclude?</tt> тестирует, является ли заданный объект <strong>не</strong> принадлежащим коллекции. Это противоположность встроенного <tt>include?</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+to_visit &lt;&lt; node if visited.exclude?(node)
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/enumerable.rb</tt>.</p></div>

@@ -1,0 +1,82 @@
+h1. Запуск миграций
+
+<p>Rails предоставляет ряд задач rake для работы с миграциями, которые сводятся к запуску определенных наборов миграций. Самая первая команда rake, относящаяся к миграциям, которую Вы использовали, это <tt>db:migrate</tt>. В своей основной форме она всего лишь запускает метод <tt>up</tt> для всех миграций, которые еще не были запущены. Если таких миграций нет, она выходит.</p>
+<p>Заметьте, что запуск <tt>db:migrate</tt> также вызывает задачу <tt>db:schema:dump</tt>, которая обновляет Ваш файл db/schema.rb в соответствии со структурой Вашей базы данных.</p>
+<p>Если вы определите целевую версию, Active Record запустит требуемые миграции (методы up или down), пока не достигнет требуемой версии. Версия это числовой префикс у файла миграции. Например, чтобы мигрировать к версии 20080906120000, запустите</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rake db:migrate VERSION=20080906120000
+</pre></div>
+<p>Если это больше текущей версии (т.е. миграция вперед) это запустит метод <tt>up</tt> для всех миграций до и включая 20080906120000, если миграция назад, это запустит метод <tt>down</tt> для всех миграций до, но не включая, 20080906120000.</p>
+
+<h4 id="rolling-back">1. Откат</h4>
+<p>Обычная задача это откатить последнюю миграцию, например, Вы сделали ошибку и хотите исправить ее. Можно отследить версию предыдущей миграци и произвести миграцию до нее, но можно поступить проще, запустив</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rake db:rollback
+</pre></div>
+<p>Это запустит метод <tt>down</tt> последней миграции. Если нужно отменить несколько миграций, можно указать параметр <tt>STEP</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rake db:rollback STEP=3
+</pre></div>
+<p>это запустит метод <tt>down</tt> у 3 последних миграций.</p>
+<p>Задача <tt>db:migrate:redo</tt> это ярлык для выполнения отката, а затем снова запуска миграции. Так же, как и с задачей <tt>db:rollback</tt> можно указать параметр <tt>STEP</tt>, если нужно работать более чем с одной версией, например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rake db:migrate:redo STEP=3
+</pre></div>
+<p>Ни одна из этик команд Rake не может сделать ничего такого, чего нельзя было бы сделать с <tt>db:migrate</tt>, они просто более удобны, так как Вам не нужно явно указывать версию миграции, к которой нужно мигрировать.</p>
+<p>Наконец, задача <tt>db:reset</tt> удаляет базу данных, пересоздает ее и загружает в нее текущую схему.</p>
+<div class='note'><p>Это не то же самое, что запуск всех миграций, смотрите раздел про <a href="/rails-database-migrations/schema-dumping-and-you">schema.rb</a>.</p></div>
+
+<h4 id="being-specific">2. Они определены</h4>
+<p>Если Вам нужно запустить определенную миграцию (up или down), задачи <tt>db:migrate:up</tt> и <tt>db:migrate:down</tt> сделают это. Просто определите подходящий вариант и у соответствующей миграция будет вызван метод <tt>up</tt> или <tt>down</tt>, например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rake db:migrate:up VERSION=20080906120000
+</pre></div>
+<p>запустит метод <tt>up</tt> у миграции 20080906120000. Эти задачи проверяют, были ли миграции уже запущены, так, например, <tt>db:migrate:up VERSION=20080906120000</tt> ничего делать не будет, если Active Record считает, что 20080906120000 уже была запущена.</p>
+<h4 id="being-talkative">3. Они говорят</h4>
+<p>По умолчанию миграции говорят нам только то, что они делают, и сколько времени это заняло. Миграция, создающая таблицу и добавляющая индекс, выдаст что-то наподобие этого</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+20080906170109 CreateProducts: migrating
+-- create_table(:products)
+   -&gt; 0.0021s
+-- add_index(:products, :name)
+   -&gt; 0.0026s
+20080906170109 CreateProducts: migrated (0.0059s)
+</pre></div>
+<p>Некоторые методы позволяют Вам все это контролировать:</p>
+<ul>
+	<li><tt>suppress_messages</tt> запрещает любой вывод, сгенерированный этим блоком</li>
+	<li><tt>say</tt> выводит текст (второй аргумент контролирует, есть отступ или нет)</li>
+	<li><tt>say_with_time</tt> выводит текст вместе с продолжительностью выполнения блока. Если блок возвращает число, предполагается, что это количество затронутых строк.</li>
+</ul>
+<p>Например, эта миграция</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+class CreateProducts &lt; ActiveRecord::Migration
+  def change
+    suppress_messages do
+      create_table :products do |t|
+        t.string :name
+        t.text :description
+        t.timestamps
+      end
+    end
+    say &quot;Created a table&quot;
+    suppress_messages {add_index :products, :name}
+    say &quot;and an index!&quot;, true
+    say_with_time 'Waiting for a while' do
+      sleep 10
+      250
+    end
+  end
+end
+</pre></div>
+<p>сгенерирует следующий результат</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+20080906170109 CreateProducts: migrating
+  Created a table
+   -&gt; and an index!
+  Waiting for a while
+   -&gt; 10.0001s
+   -&gt; 250 rows
+20080906170109 CreateProducts: migrated (10.0097s)
+</pre></div>
+<p>Если вы просто хотите, чтобы Active Record выполнялся молча, <tt>rake db:migrate VERBOSE=false</tt> запретит любой вывод.</p>

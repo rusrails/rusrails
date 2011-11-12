@@ -1,0 +1,38 @@
+h1. Инструменты командной строки
+
+<p>Варианты написания теста производительности могут быть излишними, когда нужны одноразовые тесты. Rails имеет два инструмента командной строки, которые позволяют быстрое и черновое тестирование производительности:</p>
+
+<h4 id="benchmarker">1. <tt>benchmarker</tt></h4>
+<p>Использование:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Usage: rails benchmarker 'Ruby.code' 'Ruby.more_code' ... [OPTS]
+    -r, --runs N                     Number of runs.
+                                     Default: 4
+    -o, --output PATH                Directory to use when writing the results.
+                                     Default: tmp/performance
+    -m, --metrics a,b,c              Metrics to use.
+                                     Default: wall_time,memory,objects,gc_runs,gc_time
+</pre></div>
+<p>Пример:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails benchmarker 'Item.all' 'CouchItem.all' --runs 3 --metrics wall_time,memory
+</pre></div>
+
+<h4 id="profiler">2. <tt>profiler</tt></h4>
+<p>Использование:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Usage: rails profiler 'Ruby.code' 'Ruby.more_code' ... [OPTS]
+    -r, --runs N                     Number of runs.
+                                     Default: 1
+    -o, --output PATH                Directory to use when writing the results.
+                                     Default: tmp/performance
+        --metrics a,b,c              Metrics to use.
+                                     Default: process_time,memory,objects
+    -m, --formats x,y,z              Formats to output to.
+                                     Default: flat,graph_html,call_tree
+</pre></div>
+<p>Пример:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails profiler 'Item.all' 'CouchItem.all' --runs 2 --metrics process_time --formats flat
+</pre></div>
+<div class='note'><p>Метрики и форматы изменяются от интерпретатора к интерпретатору. Передавайте <tt>--help</tt> каждому инструменту, чтобы просмотреть значения по умолчанию для своего интерпретатора.</p></div>

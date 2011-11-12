@@ -1,0 +1,281 @@
+h1. Расширения ко всем объектам
+
+<h4 id="blank-and-present">1. <tt>blank?</tt> и <tt>present?</tt></h4>
+<p>Следующие значения рассматриваются как пустые (blank) в приложении на Rails:</p>
+<ul>
+	<li><tt>nil</tt> и <tt>false</tt>,</li>
+</ul>
+<ul>
+	<li>строки, состоящие только из пробелов (смотрите примечание ниже),</li>
+</ul>
+<ul>
+	<li>пустые массивы и хэши,</li>
+</ul>
+<ul>
+	<li>и любые другие объекты, откликающиеся на <tt>empty?</tt>, и являющиеся пустыми.</li>
+</ul>
+<div class='info'><p>В Ruby 1.9 условие для строк использует учитывающий Unicode символьный класс <tt>[:space:]</tt>, поэтому, к примеру, U+2029 (разделитель параграфов) рассматривается как пробле. В Ruby 1.8 пробелом считается <tt>\s</tt> вместе с идеографическим пробелом U+3000.</p></div>
+<div class='warning'><p>Отметьте, что числа тут не упомянуты, в частности, 0 и 0.0 <strong>не</strong> являются пустыми.</p></div>
+<p>Например, этот метод из <tt>ActionDispatch::Session::AbstractStore</tt> использует <tt>blank?</tt> для проверки, существует ли ключ сессии:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def ensure_session_key!
+  if @key.blank?
+    raise ArgumentError, 'A key is required...'
+  end
+end
+</pre></div>
+<p>Метод <tt>present?</tt> является эквивалентом <tt>!blank?</tt>. Этот пример взят из <tt>ActionDispatch::Http::Cache::Response</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def set_conditional_cache_control!
+  return if self[&quot;Cache-Control&quot;].present?
+  ...
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/blank.rb</tt>.</p></div>
+
+<h4 id="presence">2. <tt>presence</tt></h4>
+<p>Метод <tt>presence</tt> возвращает его получателя, если <tt>present?</tt>, и <tt>nil</tt> в противном случае. Он полезен для подобных идиом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+host = config[:host].presence || 'localhost'
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/blank.rb</tt>.</p></div>
+
+<h4 id="duplicable">3. <tt>duplicable?</tt></h4>
+<p>Некоторые фундаментальные объекты в Ruby являются одноэлементными. Например, в течение жизненного цикла программы число 1 всегда относится к одному экземпляру:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+1.object_id                 # =&gt; 3
+Math.cos(0).to_i.object_id  # =&gt; 3
+</pre></div>
+<p>Следовательно, нет никакого способа дублировать эти объекты с помощью <tt>dup</tt> или <tt>clone</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+true.dup  # =&gt; TypeError: can't dup TrueClass
+</pre></div>
+<p>Некоторые числа, не являющиеся одноэлементными, также не могут быть дублированы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+0.0.clone        # =&gt; allocator undefined for Float
+(2**1024).clone  # =&gt; allocator undefined for Bignum
+</pre></div>
+<p>Active Support предоставляет <tt>duplicable?</tt> для программного запроса к объекту о таком свойстве:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&quot;&quot;.duplicable?     # =&gt; true
+false.duplicable?  # =&gt; false
+</pre></div>
+<p>По определению все объекты являются <tt>duplicable?</tt>, кроме <tt>nil</tt>, <tt>false</tt>, <tt>true</tt>, символов, чисел и объектов class и module.</p>
+<div class='warning'><p>Любой класс может запретить дублирование, убрав <tt>dup</tt> и <tt>clone</tt>, или вызвав исключение в них, тогда только <tt>rescue</tt> может сказать, является ли данный отдельный объект дублируемым. <tt>duplicable?</tt> зависит от жестко заданного вышеуказанного перечня, но он намного быстрее, чем <tt>rescue</tt>. Используйте его, только если знаете, что жесткий перечень достаточен в конкретном случае.</p></div>
+<div class='note'><p>Определено в  <tt>active_support/core_ext/object/duplicable.rb</tt>.</p></div>
+
+<h4 id="try">4. <tt>try</tt></h4>
+<p>Иногда хочется вызвать метод, предоставленный объектом-получателем, если он не <tt>nil</tt>, что обычно проверяется вначале. <tt>try</tt> подобен <tt>Object#send</tt> за исключением того, что он возвращает <tt>nil</tt>, если посылается к <tt>nil</tt>.</p>
+<p>Для примера, в этом коде из <tt>ActiveRecord::ConnectionAdapters::AbstractAdapter</tt> <tt>@logger</tt> может быть <tt>nil</tt>, но проверка сохраняется и пишется в оптимистичном стиле:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def log_info(sql, name, ms)
+  if @logger.try(:debug?)
+    name = '%s (%.1fms)' % [name || 'SQL', ms]
+    @logger.debug(format_log_entry(name, sql.squeeze(' ')))
+  end
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/try.rb</tt>.</p></div>
+
+<h4 id="singleton_class">5. <tt>singleton_class</tt></h4>
+<p>Метод <tt>singleton_class</tt> возвращает экземпляр (singleton) класса получателя:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+String.singleton_class     # =&gt; #&lt;Class:String&gt;
+String.new.singleton_class # =&gt; #&lt;Class:#&lt;String:0x17a1d1c&gt;&gt;
+</pre></div>
+<div class='warning'><p>Fixnums и symbols не имеют экземпляров классов, <tt>singleton_class</tt> вызывает <tt>TypeError</tt> на них. Кроме того, экземплярами класса для <tt>nil</tt>, <tt>true</tt> и <tt>false</tt> являются <tt>NilClass</tt>, <tt>TrueClass</tt> и <tt>FalseClass</tt> соответственно.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/kernel/singleton_class.rb</tt>.</p></div>
+
+<h4 id="class_eval-args-block">6. <tt>class_eval(*args, &block)</tt></h4>
+<p>Можно вычислить код в контексте экземпляра класса любого объекта, используя <tt>class_eval</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Proc
+  def bind(object)
+    block, time = self, Time.now
+    object.class_eval do
+      method_name = &quot;__bind_#{time.to_i}_#{time.usec}&quot;
+      define_method(method_name, &amp;block)
+      method = instance_method(method_name)
+      remove_method(method_name)
+      method
+    end.bind(object)
+  end
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/kernel/singleton_class.rb</tt>.</p></div>
+
+<h4 id="acts_like-duck">7. <tt>acts_like?(duck)</tt></h4>
+<p>Метод <tt>acts_like</tt> предоставляет способ проверки, работает ли какой любо класс как некоторый другой класс, основываясь на простом соглашении: класс предоставляющий тот же интерфейс, как у <tt>String</tt> определяет</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def acts_like_string?
+end
+</pre></div>
+<p>, являющийся всего лишь маркером, его содержимое или возвращаемое значение ничего не значит. Затем, код клиента может безопасно запросить следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+some_klass.acts_like?(:string)
+</pre></div>
+<p>В Rails имеются классы, действующие как <tt>Date</tt> или <tt>Time</tt> и следующие этому соглашению.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/acts_like.rb</tt>.</p></div>
+
+<h4 id="to_param">8. <tt>to_param</tt></h4>
+<p>Все объекты в Rails отвечают на метод <tt>to_param</tt>, который преднозначен для возврата чего-то, что представляет их в строке запроса или как фрагменты <span class="caps">URL</span>.</p>
+<p>По умолчанию <tt>to_param</tt> просто вызывает <tt>to_s</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+7.to_param # =&gt; &quot;7&quot;
+</pre></div>
+<p>Возвращаемое значение <tt>to_param</tt> <strong>не</strong> должно быть экранировано:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&quot;Tom &amp; Jerry&quot;.to_param # =&gt; &quot;Tom &amp; Jerry&quot;
+</pre></div>
+<p>Некоторые классы в Rails переопределяют этот метод.</p>
+<p>Например, <tt>nil</tt>, <tt>true</tt> и <tt>false</tt> возвращают сами себя. <tt>Array#to_param</tt> вызывает <tt>to_param</tt> на элементах и соединяет результат с помощью &#8220;/&#8221;:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[0, true, String].to_param # =&gt; &quot;0/true/String&quot;
+</pre></div>
+<p>В частности, система маршрутов Rails вызывает <tt>to_param</tt> на моделях, чтобы получить значение для заполнения <tt>:id</tt>. <tt>ActiveRecord::Base#to_param</tt> возвращает <tt>id</tt> модели, но можно переопределить этот метод в своих моделях. Например, задав</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User
+  def to_param
+    &quot;#{id}-#{name.parameterize}&quot;
+  end
+end
+</pre></div>
+<p>мы получим:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+user_path(@user) # =&gt; &quot;/users/357-john-smith&quot;
+</pre></div>
+<div class='warning'><p>Контроллерам нужно быть в курсе любых переопределений <tt>to_param</tt>, поскольку в подобном запросе &#8220;357-john-smith&#8221; будет значением <tt>params[:id]</tt>.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/to_param.rb</tt>.</p></div>
+
+<h4 id="to_query">9. <tt>to_query</tt></h4>
+<p>За исключением хэшей, для заданного неэкранированного <tt>ключа</tt> этот метод создает часть строки запроса, который связывает с этим ключом то, что возвращает <tt>to_param</tt>. Например, задав</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User
+  def to_param
+    &quot;#{id}-#{name.parameterize}&quot;
+  end
+end
+</pre></div>
+<p>мы получим:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+current_user.to_query('user') # =&gt; user=357-john-smith
+</pre></div>
+<p>Этот метод экранирует все что нужно, и ключ, и значение:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+account.to_query('company[name]')
+# =&gt; &quot;company%5Bname%5D=Johnson+%26+Johnson&quot;
+</pre></div>
+<p>поэтому результат готов для использования в строке запроса.</p>
+<p>Массивы возвращают результат применения <tt>to_query</tt> к каждому элементу с <tt><em>key</em>[]</tt> как ключом, и соединяет результат с помощью &#8220;&amp;&#8221;:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+[3.4, -45.6].to_query('sample')
+# =&gt; &quot;sample%5B%5D=3.4&amp;sample%5B%5D=-45.6&quot;
+</pre></div>
+<p>Хэши также отвечают на <tt>to_query</tt>, но в другом ключе. Если аргументы не заданы, вызов создает сортированную серию назначений ключ/значение, вызвав <tt>to_query(key)</tt> на его значениях. Затем он соединяет результат с помощью &#8220;&amp;&#8221;:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{:c =&gt; 3, :b =&gt; 2, :a =&gt; 1}.to_query # =&gt; &quot;a=1&amp;b=2&amp;c=3&quot;
+</pre></div>
+<p>метод <tt>Hash#to_query</tt> принимает опциональное пространство имен для ключей:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{:id =&gt; 89, :name =&gt; &quot;John Smith&quot;}.to_query('user')
+# =&gt; &quot;user%5Bid%5D=89&amp;user%5Bname%5D=John+Smith&quot;
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/to_query.rb</tt>.</p></div>
+
+<h4 id="with_options">10. <tt>with_options</tt></h4>
+<p>Метод <tt>with_options</tt> предоставляет способ для исключения общих опций в серии вызовов метода.</p>
+<p>Задав хэш опций по умолчанию, <tt>with_options</tt> предоставляет прокси на объект в блок. В блоке методы, вызванные на прокси, возвращаются получателю с прикрепленными опциями. Например, имеются такие дублирования:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Account &lt; ActiveRecord::Base
+  has_many :customers, :dependent =&gt; :destroy
+  has_many :products,  :dependent =&gt; :destroy
+  has_many :invoices,  :dependent =&gt; :destroy
+  has_many :expenses,  :dependent =&gt; :destroy
+end
+</pre></div>
+<p>заменяем:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Account &lt; ActiveRecord::Base
+  with_options :dependent =&gt; :destroy do |assoc|
+    assoc.has_many :customers
+    assoc.has_many :products
+    assoc.has_many :invoices
+    assoc.has_many :expenses
+  end
+end
+</pre></div>
+<p>Эта идиома также может передавать <em>группировку</em> в reader. Например скажем, что нужно послать письмо, язык которого зависит от пользователя. Где-нибудь в рассыльщике можно сгруппировать локале-зависимые кусочки, наподобие этих:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.with_options :locale =&gt; user.locale, :scope =&gt; &quot;newsletter&quot; do |i18n|
+  subject i18n.t :subject
+  body    i18n.t :body, :user_name =&gt; user.name
+end
+</pre></div>
+<div class='info'><p>Поскольку <tt>with_options</tt> перенаправляет вызовы получателю, они могут быть вложены. Каждый уровень вложения объединит унаследованные значения со своими собственными.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/with_options.rb</tt>.</p></div>
+
+<h4 id="instance-variables">11. Переменные экземпляра</h4>
+<p>Active Support предоставляет несколько методов для облегчения доступа к переменным экземпляра.</p>
+
+<h5 id="instance_variable_names">11.1 <tt>instance_variable_names</tt></h5>
+<p>В Ruby 1.8 и 1.9 есть метод <tt>instance_variables</tt>, возвращающий имена определенных переменных экземпляра. Но они ведут себя по-разному, в 1.8 он возвращает строки, в то время как в 1.9 он возвращает символы. Active Support определяет <tt>instance_variable_names</tt> как способ сохранить их как строки:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class C
+  def initialize(x, y)
+    @x, @y = x, y
+  end
+end
+
+C.new(0, 1).instance_variable_names # =&gt; [&quot;@y&quot;, &quot;@x&quot;]
+</pre></div>
+<div class='warning'><p>Порядок, в котором имена возвращаются, не определен, и он в действительности определяется версией интерпретатора.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/instance_variables.rb</tt>.</p></div>
+
+<h5 id="instance_values">11.2 <tt>instance_values</tt></h5>
+<p>Метод <tt>instance_values</tt> возвращает хэш, который связывает имена переменных экземпляра без &#8220;@&#8221; с их соответствующими значениями. Ключи являются строками в Ruby 1.8 и 1.9:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class C
+  def initialize(x, y)
+    @x, @y = x, y
+  end
+end
+
+C.new(0, 1).instance_values # =&gt; {&quot;x&quot; =&gt; 0, &quot;y&quot; =&gt; 1}
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/instance_variables.rb</tt>.</p></div>
+
+<h4 id="silencing-warnings-streams-and-exceptions">12. Отключение предупреждений, потоки и исключения</h4>
+<p>Методы <tt>silence_warnings</tt> и <tt>enable_warnings</tt> изменяют значение <tt>$VERBOSE</tt> соответственно на протяжение их блока и перегружает его после:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+silence_warnings { Object.const_set &quot;RAILS_DEFAULT_LOGGER&quot;, logger }
+</pre></div>
+<p>Можно отключить любой поток пока запущен блок с помощью <tt>silence_stream</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+silence_stream(STDOUT) do
+  # STDOUT is silent here
+end
+</pre></div>
+
+<p>Метод <tt>quietly</tt> обычно используется в случаях, когда вы хотите отключить STDOUT и STDERR, даже в подпроцессах:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+quietly { system 'bundle install' }
+</pre></div>
+<p>Например, тестовый набор railties использует его в нескольких местах, чтобы избежать вывода сообщений команды, смешанный со статусом прогресса.</p>
+<p>Отключение исключений также возможно с помощью <tt>suppress</tt>. Этот метод получает определенное количество классов исключений. Если вызывается исключение на протяжении выполнения блока, и <tt>kind_of?</tt> соответствует любому аргументу <tt>suppress</tt> ловит его и возвращает отключенным. В противном случае исключение перевызывается:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Если пользователь под блокировкой, инкремент теряется, ничего страшного.
+suppress(ActiveRecord::StaleObjectError) do
+  current_user.increment! :visits
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/kernel/reporting.rb</tt>.</p></div>
+
+<h4>13. <tt>in?</tt></h4>
+<p>Условие <tt>in?</tt> проверяет, включен ли объект в другой объект. Если переданный элемент не отвечает на <tt>include?</tt>, будет вызвано исключение <tt>ArgumentError</tt>.</p>
+<p>Примеры <tt>in?</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+1.in?([1,2])        # => true
+"lo".in?("hello")   # => true
+25.in?(30..50)      # => false
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/object/inclusion.rb</tt>.</p></div>

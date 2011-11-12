@@ -1,0 +1,154 @@
+h1. Ресурсный роутинг (часть вторая)
+
+<p><a href="/rails-routing/resource-routing-the-rails-default-1">&gt;&gt;&gt; Первая часть</a></p>
+
+<h4 id="nested-resources">7. Вложенные ресурсы</h4>
+<p>Нормально иметь ресурсы, которые логически дети других ресурсов. Например, предположим ваше приложение включает эти модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Magazine &lt; ActiveRecord::Base
+  has_many :ads
+end
+
+class Ad &lt; ActiveRecord::Base
+  belongs_to :magazine
+end
+</pre></div>
+<p>Вложенные маршруты позволяют перехватить эти отношения в вашем роутинге. В этом случае можете включить такое объявление маршрута:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :magazines do
+  resources :ads
+end
+</pre></div>
+<p>В дополнение к маршрутам для magazines, это объявление также создаст маршруты для ads в <tt>AdsController</tt>. URL с ad требует magazine:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь</th>
+		<th>Экшн</th>
+		<th>Использование</th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/magazines/:id/ads         </td>
+		<td>index    </td>
+		<td>отображает список всей рекламы для определенного журнала</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/magazines/:id/ads/new     </td>
+		<td>new      </td>
+		<td>возвращает форму <span class="caps">HTML</span> для создания новой рекламы, принадлежащей определенному журналу</td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>       </td>
+		<td>/magazines/:id/ads         </td>
+		<td>create   </td>
+		<td>создает новую рекламу, принадлежащую указанному журналу</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/magazines/:id/ads/:id       </td>
+		<td>show     </td>
+		<td>отражает определенную рекламу, принадлежащую определенному журналу</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/magazines/:id/ads/:id/edit  </td>
+		<td>edit     </td>
+		<td>возвращает форму <span class="caps">HTML</span> для редактирования рекламы, принадлежащей определенному журналу</td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>        </td>
+		<td>/magazines/:id/ads/:id       </td>
+		<td>update   </td>
+		<td>обновляет определенную рекламу, принадлежащую определенному журналу</td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>     </td>
+		<td>/magazines/:id/ads/:id       </td>
+		<td>destroy  </td>
+		<td>удаляет определенную рекламу, принадлежащую определенному журналу</td>
+	</tr>
+</table>
+<p>Также будут созданы маршрутные хелперы, такие как <tt>magazine_ads_url</tt> и <tt>edit_magazine_ad_path</tt>. Эти хелперы принимают экземпляр Magazine как первый параметр (<tt>magazine_ads_url(@magazine)</tt>).</p>
+
+<h5 id="limits-to-nesting">7.1 Ограничения для вложения</h5>
+<p>Вы можете вкладывать ресурсы в другие вложенные ресурсы, если хотите. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :publishers do
+  resources :magazines do
+    resources :photos
+  end
+end
+</pre></div>
+<p>Глубоко вложенные ресурсы быстро становятся громоздкими. В этом случае, например, приложение будет распознавать URL, такие как</p>
+<pre>
+/publishers/1/magazines/2/photos/3
+</pre>
+<p>Соответствующий маршрутный хелпер будет <tt>publisher_magazine_photo_url</tt>, требующий определения объектов на всех трех уровнях. Действительно, эта ситуация достаточно запутана, так что в <a href="http://weblog.jamisbuck.org/2007/2/5/nesting-resources">статье</a> Jamis Buck предлагает правило хорошей разработки на Rails:</p>
+<div class='info'><p><em>Ресурсы никогда не должны быть вложены глубже, чем на 1 уровень.</em></p></div>
+
+<h4 id="route-generation-from-arrays">8. Создание путей и URL из объектов</h4>
+<p>В дополнение к использованию маршрутных хелперов, Rails может также создавать пути и URL из массива параметров. Например, предположим у вас есть этот набор маршрутов:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :magazines do
+  resources :ads
+end
+</pre></div>
+<p>При использовании magazine_ad_path, можно передать экземпляры <tt>Magazine</tt> и <tt>Ad</tt> вместо числовых ID:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= link_to &quot;Ad details&quot;, magazine_ad_path(@magazine, @ad) %&gt;
+</pre></div>
+<p>Можно также использовать <tt>url_for</tt> с набором объектов, и Rails автоматически определит, какой маршрут вам нужен:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= link_to &quot;Ad details&quot;, url_for(@magazine, @ad) %&gt;
+</pre></div>
+<p>В этом случае Rails увидит, что <tt>@magazine</tt> это <tt>Magazine</tt> и <tt>@ad</tt> это <tt>Ad</tt> и поэтому использует хелпер <tt>magazine_ad_path</tt>. В хелперах, таких как <tt>link_to</tt>, можно определить лишь объект вместо полного вызова <tt>url_for</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= link_to &quot;Ad details&quot;, [@magazine, @ad] %&gt;
+</pre></div>
+<p>Если хотите ссылку только на magazine, можете опустить массив:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= link_to &quot;Magazine details&quot;, @magazine %&gt;
+</pre></div>
+<p>Это позволит рассматривать экземпляры Ваших моделей как URL, это ключевое преимущество ресурсного стиля.</p>
+
+<h4 id="adding-more-restful-actions">9. Добавление больше экшнов RESTful</h4>
+<p>Вы не ограничены семью маршрутами, которые создает роутинг RESTful по умолчанию. Если хотите, можете добавить дополнительные маршруты, применяющиеся к коллекции или отдельным элементам коллекции.</p>
+
+<h5 id="adding-member-routes">9.1 Добавление маршрутов к элементам</h5>
+<p>Для добавления маршрута к элементу, добавьте блок tt>member</tt> в блок ресурса:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos do
+  member do
+    get 'preview'
+  end
+end
+</pre></div>
+<p>Это распознает <tt>/photos/1/preview</tt> с <span class="caps">GET</span>, и направит его в экшн <tt>preview</tt> <tt>PhotosController</tt>. Это также создаст хелперы <tt>preview_photo_url</tt> и <tt>preview_photo_path</tt>.</p>
+<p>В блоке маршрутов к элементу каждое имя маршрута определяет метод <span class="caps">HTTP</span>, с которым он будет распознан. Тут можно использовать <tt>get</tt>, <tt>put</tt>, <tt>post</tt> или <tt>delete</tt>. Если у вас нет нескольких маршрутов к <tt>элементу</tt>, также можно передать <tt>:on</tt> к маршруту, избавившись от блока:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos do
+  get 'preview', :on =&gt; :member
+end
+</pre></div>
+
+<h5 id="adding-collection-routes">9.2 Добавление маршрутов к коллекции</h5>
+<p>Чтобы добавить маршрут к коллекции:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos do
+  collection do
+    get 'search'
+  end
+end
+</pre></div>
+<p>Это позволит Rails распознать URL, такие как <tt>/photos/search</tt> с <span class="caps">GET</span> и направить его в экшн <tt>search</tt> <tt>PhotosController</tt>. Это также создаст маршрутные хелперы <tt>search_photos_url</tt> и <tt>search_photos_path</tt>.</p>
+<p>Как и с маршрутами к элементу, можно передать <tt>:on</tt> к маршруту:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos do
+  get 'search', :on =&gt; :collection
+end
+</pre></div>
+
+<h5 id="a-note-of-caution">9.3 Предостережение</h5>
+<p>Если вдруг Вы захотели добавить много дополнительных экшнов в ресурсный маршрут, нужно остановиться и спросить себя, может от вас утаилось присутствие другого ресурса.</p>

@@ -1,0 +1,119 @@
+h1. Обзор особенностей I18n API
+
+<p>Теперь у вас есть хорошее понимание об использовании библиотеки i18n, знания всех необходимых аспектов интернационализации простого приложения на Rails. В следующих частях мы раскроем особенности более детально.</p>
+<p>Раскроем особенности такие, как:</p>
+<ul>
+<li>поиск переводов</li>
+<li>интерполяция данных в переводы</li>
+<li>множественное число у переводов</li>
+<li>локализация дат, номеров, валют и т.п.</li>
+</ul>
+
+<h4>1. Поиск переводов</h4>
+
+<h5 id="basic-lookup-scopes-and-nested-keys">1.1 Основы поиска, области имен и вложенных ключей</h5>
+<p>Переводы ищутся по ключам, которые могут быть как символами, так и строками, поэтому следующие вызовы эквивалентны:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t :message
+I18n.t 'message'
+</pre></div>
+<p>Метод <tt>translate</tt> также принимает опцию <tt>:scope</tt>, которая содержит один или более дополнительных ключей, которые будут использованы для определения “пространства” или области имен для ключа перевода:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t :record_invalid, :scope =&gt; [:activerecord, :errors, :messages]
+</pre></div>
+<p>Тут будет искаться сообщение <tt>:record_invalid</tt> в сообщениях об ошибке Active Record.</p>
+<p>Кроме того, и ключ, и область имен могут быть определены как ключи с точкой в качестве разделителя, как в:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.translate :&quot;activerecord.errors.messages.record_invalid&quot;
+</pre></div>
+<p>Таким образом, следующие вызовы эквивалентны:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t 'activerecord.errors.messages.record_invalid'
+I18n.t 'errors.messages.record_invalid', :scope =&gt; :active_record
+I18n.t :record_invalid, :scope =&gt; 'activerecord.errors.messages'
+I18n.t :record_invalid, :scope =&gt; [:activerecord, :errors, :messages]
+</pre></div>
+
+<h5 id="defaults">1.2 Значения по умолчанию</h5>
+<p>Когда задана опция <tt>:default</tt>, будет возвращено ее значение в случае, если отсутствует перевод:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t :missing, :default =&gt; 'Not here'
+# =&gt; 'Not here'
+</pre></div>
+<p>Если значение <tt>:default</tt> является символом, оно будет использовано как ключ и будет переведено. Может быть представлено несколько значений по умолчанию. Будет возвращено первое, которое даст результат.</p>
+<p>Т.е., следующее попытается перевести ключ <tt>:missing</tt>, затем ключ <tt>:also_missing.</tt> Если они оба не дадут результат, будет возвращена строка &#8220;Not here&#8221;:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t :missing, :default =&gt; [:also_missing, 'Not here']
+# =&gt; 'Not here'
+</pre></div>
+
+<h5 id="bulk-and-namespace-lookup">1.3 Массовый поиск и поиск в пространстве имен</h5>
+<p>Чтобы найти несколько переводов за раз, может быть передан массив ключей:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t [:odd, :even], :scope =&gt; 'activerecord.errors.messages'
+# =&gt; [&quot;must be odd&quot;, &quot;must be even&quot;]
+</pre></div>
+<p>Также, ключ может перевести хэш (потенциально вложенный) сгруппированных переводов. Т.е. следующее получит <em>все</em> сообщения об ошибке Active Record как хэш:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t 'activerecord.errors.messages'
+# =&gt; { :inclusion =&gt; &quot;is not included in the list&quot;, :exclusion =&gt; ... }
+</pre></div>
+
+<h5 id="lazy-lookup">1.4 &#8220;Ленивый&#8221; поиск</h5>
+<p>Rails реализует удобный способ поиска локали внутри <em>вьюх</em>. Когда имеется следующий словарь:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+es:
+  books:
+    index:
+      title: &quot;Título&quot;
+</pre></div>
+<p>можно найти значение <tt>books.index.title</tt> <strong>в</strong> шаблоне <tt>app/views/books/index.html.erb</tt> таким образом (обратите внимание на точку):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;%= t '.title' %&gt;
+</pre></div>
+
+<h4 id="interpolation">2. Интерполяция</h4>
+<p>Во многих случаях хочется абстрагировать свои переводы так, чтобы <strong>переменные могли быть интерполированы в переводы</strong>. В связи с этим, I18n <span class="caps">API</span> предоставляет особенность интерполяции.</p>
+<p>Все опции, кроме <tt>:default</tt> и <tt>:scope</tt>, которые передаются в  <tt>#translate</tt>, будут интерполированы в перевод:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.backend.store_translations :en, :thanks =&gt; 'Thanks %{name}!'
+I18n.translate :thanks, :name =&gt; 'Jeremy'
+# =&gt; 'Thanks Jeremy!'
+</pre></div>
+<p>Если перевод использует <tt>:default</tt> или <tt>:scope</tt> как интерполяционную переменную, будет вызвано исключение <tt>18n::ReservedInterpolationKey</tt>. Если перевод ожидает интерполяционную переменную, но она не была передана в <tt>#translate</tt>, вызовется исключение <tt>I18n::MissingInterpolationArgument</tt>.</p>
+
+<h4 id="pluralization">3. Множественное число</h4>
+<p>В английском только одна форма единственного числа, и одна множественного для заданной строки, т.е. &#8220;1 message&#8221; и &#8220;2 messages&#8221;. В других языках (<a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ru">русском</a>, <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ar">арабском</a>, <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ja">японском</a> и многих других) имеются различные правила грамматики, имеющие дополнительные или остутствующие <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">формы множественного числа</a>. Таким образом, I18n <span class="caps">API</span> предоставляет гибкую возможность множественных форм.</p>
+<p>У переменной интерполяции <tt>:count</tt> есть специальная роль в том, что она интерполируется для перевода, и используется для подбора множественного числа для перевода в соответствии с правилами множественного числа, определенными в <span class="caps">CLDR</span>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.backend.store_translations :en, :inbox =&gt; {
+  :one =&gt; '1 message',
+  :other =&gt; '%{count} messages'
+}
+I18n.translate :inbox, :count =&gt; 2
+# =&gt; '2 messages'
+</pre></div>
+<p>Алгоритм для образования множественного числа в <tt>:en</tt> прост:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+entry[count == 1 ? 0 : 1]
+</pre></div>
+<p>Т.е., перевод помеченный как <tt>:one</tt>, рассматривается как единственное число, все другое как множественное (включая ноль).</p>
+<p>Если поиск по ключу не возвратит хэш, подходящий для образования множественного числа, вызовется исключение <tt>18n::InvalidPluralizationData</tt>.</p>
+
+<h4 id="setting-and-passing-a-locale">4. Настройка и передача локали</h4>
+<p>Локаль может быть либо установленной псевдо-глобально в <tt>I18n.locale</tt> (когда используется <tt>Thread.current</tt>, например <tt>Time.zone</tt>), либо быть переданной опцией в <tt>#translate</tt> и <tt>#localize</tt>.</p>
+<p>Если локаль не была передана, используется <tt>I18n.locale</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.locale = :de
+I18n.t :foo
+I18n.l Time.now
+</pre></div>
+<p>Явно переданная локаль:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t :foo, :locale =&gt; :de
+I18n.l Time.now, :locale =&gt; :de
+</pre></div>
+<p>Умолчанием для <tt>I18n.locale</tt> является <tt>I18n.default_locale</tt>, для которой по умолчанию установлено :<tt>en</tt>. Локаль по умолчанию может быть установлена так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.default_locale = :de
+</pre></div>

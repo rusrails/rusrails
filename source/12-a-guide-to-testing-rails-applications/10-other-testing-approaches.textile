@@ -1,0 +1,10 @@
+h1. Другие подходы к тестированию
+
+<p>Тестирование, основанное на встренном <tt>test/unit</tt>, не является единственным способом тестировать приложение на Rails. Разработчики на Rails прибегают к различным подходам и вспомогательным инструментам для тестирования, включающим:</p>
+<ul>
+<li><a href="http://avdi.org/projects/nulldb/">NullDB</a>, способ ускорить тестирование, избегая использование базы данных.</li>
+<li><a href="https://github.com/thoughtbot/factory_girl/tree/master">Factory Girl</a>, замена для фикстур.</li>
+<li><a href="https://github.com/notahat/machinist/tree/master">Machinist</a>, другая замена для фикстур.</li>
+<li><a href="http://www.thoughtbot.com/projects/shoulda">Shoulda</a>, расширение для <tt>test/unit</tt> с дополнительными хелперами, макросами и операторами контроля.</li>
+<li><a href="http://relishapp.com/rspec">RSpec</a>, фреймворк разработки, основанной на поведении</li>
+</ul>

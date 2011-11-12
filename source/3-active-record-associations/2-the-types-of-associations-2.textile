@@ -1,0 +1,120 @@
+h1. Типы связей (часть вторая)
+
+<p>Продолжение. <a href="/active-record-associations/the-types-of-associations-1">Часть первая тут.</a></p>
+
+<h4 id="choosing-between-belongs-to-and-has-one">7. Выбор между <tt>belongs_to</tt> и <tt>has_one</tt></h4>
+<p>Если хотите настроить отношение 1–1 между двумя моделями, необходимо добавить <tt>belongs_to</tt> к одной и <tt>has_one</tt> к другой. Как узнать что к какой?</p>
+<p>Различие в том, где помещен внешний ключ (он должен быть в таблице для класса, объявляющего связь <tt>belongs_to</tt>), но вы также должны думать о реальном значении данных. Отношение <tt>has_one</tt> говорит, что что-то принадлежит вам &#8211; то есть что что-то указывает на вас. Например, больше смысла в том, что поставщик владеет аккаунтом, чем в том, что аккаунт владеет поставщиком. Это означает, что правильные отношения подобны этому:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account
+end
+
+class Account &lt; ActiveRecord::Base
+  belongs_to :supplier
+end
+</pre></div>
+<p>Соответствующая миграция может выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CreateSuppliers &lt; ActiveRecord::Migration
+  def change
+    create_table :suppliers do |t|
+      t.string  :name
+      t.timestamps
+    end
+
+    create_table :accounts do |t|
+      t.integer :supplier_id
+      t.string  :account_number
+      t.timestamps
+    end
+  end
+end
+</pre></div>
+<div class='note'><p>Использование <tt>t.integer :supplier_id</tt> указывает имя внешнего ключа очевидно и явно. В современных версиях Rails можно абстрагироваться от деталей реализации используя <tt>t.references :supplier</tt>.</p></div>
+
+<h4 id="choosing-between-has-many-through-and-has-and-belongs-to-many">8. Выбор между <tt>has_many :through</tt> и <tt>has_and_belongs_to_many</tt></h4>
+<p>Rails предлагает два разных способа объявления отношения многие-ко-многим между моделями. Простейший способ &#8211; использовать <tt>has_and_belongs_to_many</tt>, который позволяет создать связь напрямую:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Assembly &lt; ActiveRecord::Base
+  has_and_belongs_to_many :parts
+end
+
+class Part &lt; ActiveRecord::Base
+  has_and_belongs_to_many :assemblies
+end
+</pre></div>
+<p>Второй способ объявить отношение многие-ко-многим &#8211; использование <tt>has_many :through</tt>. Это осуществляет связь не напрямую, а через соединяющую модель:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Assembly &lt; ActiveRecord::Base
+  has_many :manifests
+  has_many :parts, :through =&gt; :manifests
+end
+
+class Manifest &lt; ActiveRecord::Base
+  belongs_to :assembly
+  belongs_to :part
+end
+
+class Part &lt; ActiveRecord::Base
+  has_many :manifests
+  has_many :assemblies, :through =&gt; :manifests
+end
+</pre></div>
+<p>Простейший признак того, что нужно настраивать отношение <tt>has_many :through</> &#8211; если необходимо работать с моделью отношений как с независимым объектом. Если вам не нужно ничего делать с моделью отношений, проще настроить связь <tt>has_and_belongs_to_many</tt> (хотя нужно не забыть создать соединяющую таблицу в базе данных).</p>
+<p>Вы должны использовать <tt>has_many :through</tt>, если нужны валидации, колбэки или дополнительные атрибуты для соединительной модели.</p>
+
+<h4 id="polymorphic-associations">9. Полиморфные связи</h4>
+<p><em>Полиморфные связи</em> &#8211; это немного более "навороченный" вид связей. С полиморфными связями модель может принадлежать более чем одной модели, на одиночной связи. Например, имеется модель изображения, которая принадлежит или модели работника, или модели продукта. Вот как это объявляется:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Picture &lt; ActiveRecord::Base
+  belongs_to :imageable, :polymorphic =&gt; true
+end
+
+class Employee &lt; ActiveRecord::Base
+  has_many :pictures, :as =&gt; :imageable
+end
+
+class Product &lt; ActiveRecord::Base
+  has_many :pictures, :as =&gt; :imageable
+end
+</pre></div>
+<p>Можете считать полиморфное объявление <tt>belongs_to</tt> как настройку интерфейса, который может использовать любая другая модель. Из экземпляра модели <tt>Employee</tt> можно получить коллекцию изображений: <tt>@employee.pictures</tt>.</p>
+<p>Подобным образом можно получить <tt>@product.pictures</tt>.</p>
+<p>Если имеется экземпляр модели <tt>Picture</tt>, можно получить его родителя посредством <tt>@picture.imageable</tt>. Чтобы это работало, необходимо объявить столбец внешнего ключа и столбец типа в модели, объявляющей полиморфный интерфейс:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CreatePictures &lt; ActiveRecord::Migration
+  def change
+    create_table :pictures do |t|
+      t.string  :name
+      t.integer :imageable_id
+      t.string  :imageable_type
+      t.timestamps
+    end
+  end
+end
+</pre></div>
+<p>Эта миграция может быть упрощена при использовании формы <tt>t.references</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CreatePictures &lt; ActiveRecord::Migration
+  def change
+    create_table :pictures do |t|
+      t.string :name
+      t.references :imageable, :polymorphic =&gt; true
+      t.timestamps
+    end
+  end
+end
+</pre></div>
+<p><img src="/system/images/polymorphic.png" title="Диаграмма для полиморфной связи" alt="Диаграмма для полиморфной связи" /></p>
+
+<h4 id="self-joins">10. Самоприсоединение</h4>
+<p>При разработке модели данных иногда находится модель, которая может иметь отношение сама к себе. Например, мы хотим хранить всех работников в одной модели базы данных, но нам нужно отслеживать отношения начальник-подчиненный. Эта ситуация может быть смоделирована с помощью самоприсоединяемых связей:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Employee &lt; ActiveRecord::Base
+  has_many :subordinates, :class_name => "Employee"
+  belongs_to :manager, :class_name => "Employee",
+    :foreign_key => "manager_id"
+end
+</pre></div>
+<p>С такой настройкой, Вы можете получить <tt>@employee.subordinates</tt> и <tt>@employee.manager</tt>.</p>

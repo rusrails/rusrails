@@ -1,0 +1,57 @@
+h1. Использование хелперов даты и времени
+
+<p>Хелперы даты и времени отличаются от остальных хелперов форм в двух важных аспектах:</p>
+<ol>
+	<li>Дата и время не представлены отдельным элементом ввода. Вместо них есть несколько, один на каждый компонент (год, месяц, день и т.д.), и, таким образом, нет одного значения в хэше <tt>params</tt> с Вашими датой и временем.</li>
+	<li>Другие хелперы используют суффикс <tt>_tag</tt> для обозначения, является ли хелпер скелетным, либо работает на основе объектов модели. Что касается дат и времени, <tt>select_date</tt>, <tt>select_time</tt> и <tt>select_datetime</tt> это скелетные хелперы, <tt>date_select</tt>, <tt>time_select</tt> и <tt>datetime_select</tt> это эквивалентные хелперы объекта модели.</li>
+</ol>
+<p>Оба эти семейства хелперов создадут ряд списков выбора для различных компонент (год, месяц, день и т.д.).</p>
+
+<h4 id="barebones-helpers">1. Скелетные хелперы</h4>
+<p>Семейство хелперов <tt>select_*</tt> принимает как первый аргумент экземпляр Date, Time или DateTime, который используется как текущее выбранное значение. Можете опустить этот параметр в случае, если используется текущая дата. Например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= select_date Date.today, :prefix =&gt; :start_date %&gt;
+</pre></div>
+<p>выведет (с опущенными для краткости начальными значениями вариантов)</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;select id=&quot;start_date_year&quot; name=&quot;start_date[year]&quot;&gt; ... &lt;/select&gt;
+&lt;select id=&quot;start_date_month&quot; name=&quot;start_date[month]&quot;&gt; ... &lt;/select&gt;
+&lt;select id=&quot;start_date_day&quot; name=&quot;start_date[day]&quot;&gt; ... &lt;/select&gt;
+</pre></div>
+<p>Эти элементы ввода выдадут результат в <tt>params[:start_date]</tt>, являющийся хэшем с ключами <tt>:year</tt>, <tt>:month</tt>, <tt>:day</tt>. Чтобы получить фактический объект Time или Date, необходимо извлечь эти значения и передать их в подходящий конструктор, например</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Date.civil(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
+</pre></div>
+<p>Опция <tt>:prefix</tt> это ключ, используемый для получения хэша компонентов даты из хэша <tt>params</tt>. Здесь она была установлена как <tt>start_date</tt>, если опущена, то по умолчанию равна <tt>date</tt>.</p>
+
+<h4 id="model-object-helpers">2. Хелперы объекта модели</h4>
+<p><tt>select_date</tt> не очень хорошо работает с формами, обновляющими или создающими объекты Active Record, так как Active Record ожидает, что каждый элемент хэша <tt>params</tt> соответствует одному атрибуту.</p>
+<p>Хелперы объекта модели для даты и времени подтверждают параметры со специальными именами, когда Active Record видит параметры с такими именами, он знает, что они должны быть комбинированы с другими параметрами, и передает конструктору подходящее значения для типа столбца. Например:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= date_select :person, :birth_date %&gt;
+</pre></div>
+<p>выдаст (с опущенными для краткости начальными значениями вариантов)</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;select id=&quot;person_birth_date_1i&quot; name=&quot;person[birth_date(1i)]&quot;&gt; ... &lt;/select&gt;
+&lt;select id=&quot;person_birth_date_2i&quot; name=&quot;person[birth_date(2i)]&quot;&gt; ... &lt;/select&gt;
+&lt;select id=&quot;person_birth_date_3i&quot; name=&quot;person[birth_date(3i)]&quot;&gt; ... &lt;/select&gt;
+</pre></div>
+<p>что приведет к такому результату в хэше <tt>params</tt></p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{:person =&gt; {'birth_date(1i)' =&gt; '2008', 'birth_date(2i)' =&gt; '11', 'birth_date(3i)' =&gt; '22'}}
+</pre></div>
+<p>Когда это передастся в <tt>Person.new</tt> (или <tt>update_attributes</tt>), Active Record отметит, что эти параметры должны быть использованы, для конструирования атрибута <tt>birth_date</tt> и использует суффиксную информацию для определения, в каком порядке должен передать эти параметры в функции, такие как <tt>Date.civil</tt>.</p>
+
+<h4 id="common-options">3. Общие опции</h4>
+<p>Оба семейства хелперов используют одинаковый базовый набор функций для создания индивидуальных тэгов select, таким образом, они оба принимают множество одинаковых опций. В частности, по умолчанию Rails создаст варианты выбора года как текущий год плюс/минус пять лет. Если это неподходящий вариант, опции <tt>:start_year</tt> и <tt>:end_year</tt> переопределяют это. Для получения исчерпывающего перечня доступных опций обратитесь к <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/DateHelper.html"><span class="caps">документации по API</span></a>.</p>
+<p>как правило, следует использовать <tt>date_select</tt> при работе с объектами модели и <tt>select_date</tt> в иных случаях, таких как формы поиска, в которых результаты фильтруются по дате.</p>
+<div class='note'><p>В основном, встроенные элементы подбора дат неуклюжи, так как не позволяют пользователю видеть отношения между днями и днями недели.</p></div>
+
+<h4 id="individual-components">4. Индивидуальные компоненты</h4>
+<p>Иногда необходимо отобразить лишь одиночный компонента даты, такой как год или месяц. Rails предоставляет ряд хелперов для этого, по одному для каждого компонента <tt>select_year</tt>, <tt>select_month</tt>, <tt>select_day</tt>, <tt>select_hour</tt>, <tt>select_minute</tt>, <tt>select_second</tt>. Эти хелперы достаточно простые. По умолчанию они создадут поле ввода, названное по имени компонента времени (например &#8220;year&#8221; для <tt>select_year</tt>, &#8220;month&#8221; для <tt>select_month</tt> и т.д.), хотя это может быть переопределено в опции <tt>:field_name</tt>. Опция <tt>:prefix</tt> работает так же, как работает для <tt>select_date</tt> и <tt>select_time</tt> и имеет такое же значение по умолчанию.</p>
+<p>Первый параметр определяет, какое значение будет выбрано, и может быть либо экземпляром Date, Time или DateTime, в этом случае будет извлечен соответствующий компонент, либо числовым значением. Например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= select_year(2011) %&gt;
+&lt;%= select_year(Time.now) %&gt;
+</pre></div>
+<p>создаст такой же результат, если сейчас 2011 год, и значение, выбранное пользователем, может быть получено как <tt>params[:date][:year]</tt>.</p>

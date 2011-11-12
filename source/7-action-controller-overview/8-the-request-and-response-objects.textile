@@ -1,0 +1,98 @@
+h1. Объекты Request и Response
+
+<p>В каждом контроллере есть два accessor-метода, указывающих на объекты запроса и отклика, связанные с циклом запроса, находящегося в текущее время на исполнении. Метод <tt>request</tt> содержит экземпляр <tt>AbstractRequest</tt>, а метод <tt>response</tt> возвращает объект отклика, представляющий то, что собирается быть отправлено обратно на клиент.</p>
+
+<h4 id="the-request-object">1. Объект <tt>request</tt></h4>
+<p>Объект request содержит множество полезной информации о запросе, полученном с клиента. Чтобы получить полный перечень доступных методов, обратитесь к <a href=":http://api.rubyonrails.org/classes/ActionDispatch/Request.html">документации по <span class="caps">API</span></a>. В числе свойств, доступных для этого объекта, следующие:</p>
+<table class="inner_table">
+	<tr>
+		<th>Свойство <tt>request</tt></th>
+		<th>Цель</th>
+	</tr>
+	<tr>
+		<td>host</td>
+		<td>Имя хоста, используемого для этого запроса.</td>
+	</tr>
+	<tr>
+		<td>domain(n=2)</td>
+		<td>Первые <tt>n</tt> сегментов имени хоста, начиная справа(<span class="caps">домен верхнего уровня</span>).</td>
+	</tr>
+	<tr>
+		<td>format</td>
+		<td>Тип содержимого, запрошенного с клиента.</td>
+	</tr>
+	<tr>
+		<td>method</td>
+		<td>Метод <span class="caps">HTTP</span>, использованного для запроса.</td>
+	</tr>
+	<tr>
+		<td>get?, post?, put?, delete?, head?</td>
+		<td>Возвращает true, если метод <span class="caps">HTTP</span> это <span class="caps">GET</span>/<span class="caps">POST</span>/<span class="caps">PUT</span>/<span class="caps">DELETE</span>/<span class="caps">HEAD</span>.</td>
+	</tr>
+	<tr>
+		<td>headers</td>
+		<td>Возвращает хэш, содержащий заголовки, связанные с запросом.</td>
+	</tr>
+	<tr>
+		<td>port</td>
+		<td>Номер порта (число), использованного для запроса.</td>
+	</tr>
+	<tr>
+		<td>protocol</td>
+		<td>Возвращает строку, содержащую использованный протокол плюс &#8220;://&#8221;, например &#8220;http://&#8221;.</td>
+	</tr>
+	<tr>
+		<td>query_string</td>
+		<td>Часть <span class="caps">URL</span> со строкой запроса, т.е. все после &#8220;?&#8221;.</td>
+	</tr>
+	<tr>
+		<td>remote_ip</td>
+		<td>Адрес IP клиента.</td>
+	</tr>
+	<tr>
+		<td>url</td>
+		<td>Полный <span class="caps">URL</span>, использованный для запроса.</td>
+	</tr>
+</table>
+
+<h5 id="path-parameters-query-parameters-and-request-parameters">1.1 <tt>path_parameters</tt>, <tt>query_parameters</tt> и <tt>request_parameters</tt></h5>
+<p>Rails собирает все параметры, посланные вместе с запросом, в хэше <tt>params</tt>, были ли они посланы как часть строки запроса, либо в теле запроса post. У объекта request имеется три метода доступа, которые дают доступ э этим параметрам в зависимости от того, откуда они пришли. Хэш <tt>query_parameters</tt> содержит параметры, посланные как часть строки запроса, а хэш <tt>request_parameters</tt> содержит параметры, посланные как часть тела post. Хэш <tt>path_parameters</tt> содержит параметры, распознанные роутингом как часть пути, ведущего к определенному контроллеру и экшну.</p>
+
+<h4 id="the-response-object">2. Объект <tt>response</tt></h4>
+<p>Объект response обычно не используется напрямую, но он создается в течение исполнения экшна и рендеринга данных, которые посылаются обратно пользователю, но иногда &#8211; например, в последующем фильтре &#8211; бывает полезно иметь доступ к отклику напрямую. Некоторые из этих методов доступа имеют настройки, позволяющие изменять их значения.</p>
+<table class="inner_table">
+	<tr>
+		<th>Свойство <tt>response</tt></th>
+		<th>Цель</th>
+	</tr>
+	<tr>
+		<td>body</td>
+		<td>Это строка данных, которая будет возвращена на клиент. Часто это <span class="caps">HTML</span>.</td>
+	</tr>
+	<tr>
+		<td>status</td>
+		<td>Код статуса <span class="caps">HTTP</span> для отклика, например 200 для успешного отклика или 404 для ненайденного файла.</td>
+	</tr>
+	<tr>
+		<td>location</td>
+		<td><span class="caps">URL</span>, по которому клиент будет перенаправлен, если указан.</td>
+	</tr>
+	<tr>
+		<td>content_type</td>
+		<td>Тип содержимого отклика.</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Кодировка, используемая для отклика. По умолчанию это &#8220;utf-8&#8221;.</td>
+	</tr>
+	<tr>
+		<td>headers</td>
+		<td>Заголовки, используемые для отклика.</td>
+	</tr>
+</table>
+
+<h5 id="setting-custom-headers">2.1 Установка пользовательских заголовков</h5>
+<p>Если хотите установить произвольные заголовки для отклика, то <tt>response.headers</tt> как раз то место, что нужно. Атрибут заголовков это хэш, который связывает имена заголовков с их значениями, и Rails устанавливает некоторые из них автоматически. Если хотите добавить или изменить заголовок, назначьте его <tt>response.headers</tt> следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+response.headers[&quot;Content-Type&quot;] = &quot;application/pdf&quot;
+</pre></div>

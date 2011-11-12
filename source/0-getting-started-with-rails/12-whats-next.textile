@@ -1,0 +1,23 @@
+h1. Что дальше?
+
+<p>После того, как вы создали свое первое приложение на Rails, можете свободно его модифицировать и экспериментировать на свое усмотрение. Но без посторонней помощи, вы, скорее всего, ничего не сможете сделать. Так же, как вы обращались к этому руководству "Rails для начинающих", далее можете так же свободно пользоваться этими ресурсами:</p>
+<ul>
+	<li>The <a href="http://guides.rubyonrails.org">Ruby On Rails guides</a></li>
+	<li>The <a href="http://railstutorial.org/book">Ruby on Rails Tutorial</a></li>
+	<li>The <a href="http://groups.google.com/group/rubyonrails-talk">Ruby on Rails mailing list</a></li>
+	<li>The <a href="irc://irc.freenode.net/#rubyonrails">#rubyonrails</a> channel on irc.freenode.net</li>
+	<li>The <a href="http://wiki.rubyonrails.org/">Rails Wiki</a></li>
+        <li><a href="http://rusrails.ru/">Ruby on Rails по-русски</a></li>
+</ul>
+<p>Отдельно хотелось бы выделить и поддержать следующие хорошие русскоязычные ресуры по Ruby on rails:</p>
+<ul>
+        <li><a href="http://rusrails.ru/">Ruby on Rails по-русски</a></li>
+        <li><a href="http://russian.railstutorial.org">Изучение Rails на примерах (Майкл Харт)</a></li>
+        <li><a href="http://rubydev.ru/">Блог "Ruby on Rails c нуля!"</a></li>
+        <li><a href="http://railsclub.ru">Railsclub - организация конференций</a></li>
+</ul>
+<p>Rails также поставляется со встроенной помощью, которую Вы можете вызвать, используя коммандную утилиту rake:</p>
+<ul>
+	<li>Запуск <tt>rake doc:guides</tt> выложит полную копию Rails Guides в папку <tt>/doc/guides</tt> Вашего приложения. Откройте <tt>/doc/guides/index.html</tt> в веб-браузере, для обзора руководства.</li>
+	<li>Запуск <tt>rake doc:rails</tt> выложит полную копию документацию по <span class="caps">API</span> для Rails в папку <tt>/doc/api</tt> Вашего приложения. Откройте <tt>/doc/api/index.html</tt> в веб-браузере, для обзора документации по <span class="caps">API</span>.</li>
+</ul>

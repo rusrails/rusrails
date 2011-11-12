@@ -1,0 +1,216 @@
+h1. Подробная информация по связи belongs_to
+
+<p>Связь <tt>belongs_to</tt> создает соответствие один-к-одному с другой моделью. В терминах базы данных эта связь сообщает, что этот класс содержит внешний ключ. Если внешний ключ содержит другой класс, вместо этого следует использовать <tt>has_one</tt>.</p>
+
+<h4 id="methods-added-by-belongs-to">1. Методы, добавляемые <tt>belongs_to</tt></h4>
+<p>Когда объявляете связь <tt>belongs_to</tt>, объявляющий класс автоматически получает четыре метода, относящихся к связи:</p>
+<ul>
+	<li><tt><em>association</em>(force_reload = false)</tt></li>
+	<li><tt><em>association</em>=(associate)</tt></li>
+	<li><tt>build_<em>association</em>(attributes = {})</tt></li>
+	<li><tt>create_<em>association</em>(attributes = {})</tt></li>
+</ul>
+<p>Во всех четырех методах <tt><em>association</em></tt> заменяется символом, переданным как первый аргумент в <tt>belongs_to</tt>. Например, имеем объявление:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+end
+</pre></div>
+<p>Каждый экземпляр модели order будет иметь эти методы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+customer
+customer=
+build_customer
+create_customer
+</pre></div>
+<div class='note'><p>Когда устанавливаете новую связь <tt>has_one</tt> или <tt>belongs_to</tt>, следует использовать префикс <tt>build_</tt> для построения связи, в отличие от метода <tt>association.build</tt>, используемый для связей <tt>has_many</tt> или <tt>has_and_belongs_to_many</tt>. Чтобы создать связь, используйте префикс <tt>create_</tt>.</p></div>
+
+<h5 id="-association-force-reload--false">1.1 <em>association</em>(force_reload = false)</h5>
+<p>Метод <tt><em>association</em></tt> возвращает связанный объект, если он есть. Если объекта нет, возвращает <tt>nil</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer = @order.customer
+</pre></div>
+<p>Если связанный объект уже был получен из базы данных для этого объекта, возвращается кэшированная версия. Чтобы переопределить это поведение (и заставить прочитать из базы данных), передайте <tt>true</tt> как аргумент <tt>force_reload</tt>.</p>
+
+<h5 id="-association-associate">1.2 <em>association</em>=(associate)</h5>
+<p>Метод <tt><em>association</em>=</tt> привязывает связанный объект к этому объекту. Фактически это означает извлечение первичного ключа из связанного объекта и присвоение его значения внешнему ключу.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order.customer = @customer
+</pre></div>
+
+<h5 id="build-emassociationemattributes--">1.3 build_<em>association</em>(attributes = {})</h5>
+<p>Метод <tt>build_<em>association</em></tt> возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет установлена связь с внешним ключом этого объекта, но связанный объект пока <em>не</em> будет сохранен.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer = @order.build_customer(:customer_number =&gt; 123,
+  :customer_name =&gt; &quot;John Doe&quot;)
+</pre></div>
+
+<h5 id="create-emassociationemattributes--">1.4 create_<em>association</em>(attributes = {})</h5>
+<p>Метод <tt>create_<em>association</em></tt> возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет установлена связь с внешним ключом этого объекта. В добавок связанный объект <em>будет</em> сохранен (разумеется, если пройдет валидации).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer = @order.create_customer(:customer_number =&gt; 123,
+  :customer_name =&gt; &quot;John Doe&quot;)
+</pre></div>
+
+<h4 id="options-for-belongs-to">2. Опции для <tt>belongs_to</tt></h4>
+<p>Во многих случаях можно использовать стандартные возможности <tt>belongs_to</tt> без какой-либо настройки. Но, несмотря на акцент Rails в пользу соглашений над настройками, возможно изменить это поведение различными способами. Этот раздел раскрывает опции, которые можно передать при создании связи <tt>belongs_to</tt>. Например, связь с несколькими опциями может выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :counter_cache =&gt; true,
+    :conditions =&gt; &quot;active = 1&quot;
+end
+</pre></div>
+<p>Связь <tt>belongs_to</tt> поддерживает эти опции:</p>
+<ul>
+	<li><tt>:autosave</tt></li>
+	<li><tt>:class_name</tt></li>
+	<li><tt>:conditions</tt></li>
+	<li><tt>:counter_cache</tt></li>
+	<li><tt>:dependent</tt></li>
+	<li><tt>:foreign_key</tt></li>
+	<li><tt>:include</tt></li>
+	<li><tt>:polymorphic</tt></li>
+	<li><tt>:readonly</tt></li>
+	<li><tt>:select</tt></li>
+	<li><tt>:touch</tt></li>
+	<li><tt>:validate</tt></li>
+</ul>
+
+<h5 id="autosave">2.1 <tt>:autosave</tt></h5>
+<p>Если установить опцию <tt>:autosave</tt> в <tt>true</tt>, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда Вы сохраните родительский объект.</p>
+
+<h5 id="class-name">2.2 <tt>:class_name</tt></h5>
+<p>Если имя другой модели не может быть произведено из имени связи, можете использовать опцию <tt>:class_name</tt> для предоставления имени модели. Например, если заказ принадлежит покупателю, но фактическое имя модели, содержащей покупателей <tt>Patron</tt>, можете установить это следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :class_name =&gt; &quot;Patron&quot;
+end
+</pre></div>
+
+<h5 id="conditions">2.3 <tt>:conditions</tt></h5>
+<p>Опция <tt>:conditions</tt> позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>WHERE</tt>).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :conditions =&gt; &quot;active = 1&quot;
+end
+</pre></div>
+
+<h5 id="counter-cache">2.4 <tt>:counter_cache</tt></h5>
+<p>Опция <tt>:counter_cache</tt> может быть использована, чтобы сделать поиск количества принадлежацих объектов более эффективным. Рассмотрим эти модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+end
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>С этими объявлениями запрос значения <tt>@customer.orders.size</tt> требует обращения к базе данных для выполнения запроса <tt>COUNT(*)</tt>. Чтобы этого избежать, можете добавить кэш счетчика в <em>принадлежащую</em> модель:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :counter_cache =&gt; true
+end
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>С этим объявлением, Rails будет хранить в кэше актуальное значение и затем возвращать это значение в ответ на метод <tt>size</tt>.</p>
+<p>Хотя опция <tt>:counter_cache</tt> определяется в модели, включающей определение <tt>belongs_to</tt>, фактический столбец должен быть добавлен в <em>связанную</em> модель. В вышеописанном случае, необходимо добавить столбец, названный  <tt>orders_count</tt> в модель <tt>Customer</tt>. Имя столбца по умолчанию можно переопределить, если Вы этого желаете:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :counter_cache =&gt; :count_of_orders
+end
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>Столбцы кэша счетчика добавляются в список атрибутов модели только для чтения посредством <tt>attr_readonly</tt>.</p>
+
+<h5 id="dependent">2.5 <tt>:dependent</tt></h5>
+<p>Если установить опцию <tt>:dependent</tt> как <tt>:destroy</tt>, тогда удаление этого объекта вызовет метод <tt>destroy</tt> у связанного объекта, для удаление того объекта. Если установить опцию <tt>:dependent</tt> как <tt>:delete</tt>, тогда удаление этого объекта удалит связанный объект <em>без</em> вызова его метода <tt>destroy</tt>.</p>
+<div class='warning'><p>Не следует определять эту опцию в связи <tt>belongs_to</tt>, которая соединена со связью <tt>has_many</tt> в другом классе. Это приведет к "битым" связям в записях Вашей базы данных.</p></div>
+
+<h5 id="foreign-key">2.6 <tt>:foreign_key</tt></h5>
+<p>По соглашению Rails полагает, что столбец, используемый для хранения внешнего ключа в этой модели, имеет имя модели с добавленным суффиксом <tt>_id</tt>. Опция <tt>:foreign_key</tt> позволяет установить имя внешнего ключа прямо:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :class_name =&gt; &quot;Patron&quot;,
+    :foreign_key =&gt; &quot;patron_id&quot;
+end
+</pre></div>
+<div class='info'><p>В любом случае, Rails не создаст столбцы внешнего ключа за Вас. Вам необходимо явно определить их в своих миграциях.</p></div>
+
+<h5 id="include">2.7 <tt>:include</tt></h5>
+<p>Можете использовать опцию <tt>:include</tt> для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class LineItem &lt; ActiveRecord::Base
+  belongs_to :order
+end
+
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>Если Вы часто получаете покупателей непосредственно из товарных позиций (<tt>@line_item.order.customer</tt>), тогда можете сделать свой код более эффективным, включив покупателей в связь между товарными позициями и заказами:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class LineItem &lt; ActiveRecord::Base
+  belongs_to :order, :include =&gt; :customer
+end
+
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<div class='note'><p>Нет необходимости использовать <tt>:include</tt> для прямых связей &#8211; то есть, если есть <tt>Order belongs_to :customer</tt>, тогда customer нетерпеливо загрузится автоматически, когда это потребуется.</p></div>
+
+<h5 id="polymorphic">2.8 <tt>:polymorphic</tt></h5>
+<p>Передача <tt>true</tt> для опции <tt>:polymorphic</tt> показывает, что это полиморфная связь. Полиморфные связи подробно рассматривались <a href="/active-record-associations/the-types-of-associations-2#polymorphic-associations">ранее</a>.</p>
+
+<h5 id="readonly">2.9 <tt>:readonly</tt></h5>
+<p>Если установите опцию <tt>:readonly</tt> в <tt>true</tt>, тогда связанный объект будет доступен только для чтения, когда получен посредством связи.</p>
+
+<h5 id="select">2.10 <tt>:select</tt></h5>
+<p>Опция <tt>:select</tt> позволяет переопределить <span class="caps">SQL</span> условие <tt>SELECT</tt>, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.</p>
+<div class='info'><p>Если установите опцию <tt>:select</tt> в связи <tt>belongs_to</tt>, вы должны также установить опцию <tt>foreign_key</tt>, чтобы гарантировать правильные результаты.</p></div>
+
+<h5 id="touch">2.11 <tt>:touch</tt></h5>
+<p>Если установите опцию <tt>:touch</tt> в <tt>:true</tt>, то временные метки <tt>updated_at</tt> или <tt>updated_on</tt> на связанном объекте будут установлены в текущее время всякий раз, когда этот объект будет сохранен или уничтожен:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :touch =&gt; true
+end
+
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>В этом случае, сохранение или уничтожение заказа обновит временную метку на связанном покупателе. Также можно определить конкретный атрибут временной метки для обновления:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :touch =&gt; :orders_updated_at
+end
+</pre></div>
+
+<h5 id="validate">2.12 <tt>:validate</tt></h5>
+<p>Если установите опцию <tt>:validate</tt> в <tt>true</tt>, тогда связанные объекты будут проходить валидацию всякий раз, когда Вы сохраняете этот объект. По умолчанию она равна <tt>false</tt>: связанные объекты не проходят валидацию, когда этот объект сохраняется.</p>
+
+<h4 id="how-to-know-whether-theres-an-associated-object">3. Как узнать, существует ли связанный объект?</h4>
+<p>Чтобы узнать, имеется ли связанный объект, просто проверьте <tt><em>association</em>.nil?</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+if @order.customer.nil?
+  @msg = &quot;No customer found for this order&quot;
+end
+</pre></div>
+
+<h4 id="when-are-objects-saved">4. Когда сохраняются объекты?</h4>
+<p>Назначение объекту связи <tt>belongs_to</tt> <em>не</em> сохраняет автоматически объект. Это также не сохранит связанный объект.</p>

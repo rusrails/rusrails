@@ -1,0 +1,401 @@
+h1. Создание откликов (часть первая)
+
+<p>С точки зрения контроллера есть три способа создать отклик <span class="caps">HTTP</span>:</p>
+<ul>
+	<li>Вызвать <tt>render</tt> для создания полного отклика, возвращаемого браузеру</li>
+	<li>Вызвать <tt>redirect_to</tt> для передачи браузеру кода переадресации <span class="caps">HTTP</span></li>
+	<li>Вызвать <tt>head</tt> для создания отклика, включающего только заголовки <span class="caps">HTTP</span>, возвращаемого браузеру</li>
+</ul>
+<p>Мы раскроем каждый из этих методов по очереди. Но сначала немного о самой простой вещи, которую может делать контроллер для создания отклика: не делать ничего.</p>
+<h4 id="rendering-by-default-convention-over-configuration-in-action">1. Рендеринг по умолчанию: соглашение над конфигурацией в действии</h4>
+<p>Вы уже слышали, что Rails содействует принципу &#8220;convention over configuration.&#8221; Рендеринг по умолчанию - прекрасный пример этого. По умолчанию контроллеры в Rails автоматически рендерят вьюхи с именами, соответствующими экшну. Например, если есть такой код в Вашем классе <tt>BooksController</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class BooksController &lt; ApplicationController
+end
+</pre></div>
+<p>И следующее в файле маршрутов:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :books
+</pre></div>
+<p>И у Вас имеется файл вьюхи <tt>app/views/books/index.html.erb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;h1&gt;Books are coming soon!&lt;/h1&gt;
+</pre></div>
+<p>Rails автоматически отрендерит <tt>app/views/books/index.html.erb</tt> при переходе на адрес <tt>/books</tt>, и Вы увидите на экране надпись &#8220;Books are coming soon!&#8221;</p>
+<p>Однако это сообщение минимально полезно, поэтому вскоре вы создадите модель <tt>Book</tt> и добавите экшн index в <tt>BooksController</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class BooksController &lt; ApplicationController
+  def index
+    @books = Book.all
+  end
+end
+</pre></div>
+<p>Снова отметьте, что у нас соглашения превыше конфигурации в том, что отсутствует избыточный рендер в конце этого экшна index. Правило в том, что не нужно что-то избыточно рендерить в конце экшна контроллера, rails будет искать шаблон <tt>action_name.html.erb</tt> по пути вьюх контроллера и отрендерит его, поэтому в нашем случае Rails отрендерит файл <tt>app/views/books/index.html.erb</tt>.</p>
+<p>Итак, в нашей вьюхе мы хотим отобразить свойства всех книг, это делается с помощью шаблона <span class="caps">ERB</span>, подобного следующему:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;h1&gt;Listing Books&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Title&lt;/th&gt;
+    &lt;th&gt;Summary&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+
+&lt;% @books.each do |book| %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= book.title %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= book.content %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Show', book %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Edit', edit_book_path(book) %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Remove', book, :confirm =&gt; 'Are you sure?', :method =&gt; :delete %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+&lt;br /&gt;
+
+&lt;%= link_to 'New book', new_book_path %&gt;
+</pre></div>
+<div class='note'><p>Фактически рендеринг осуществляется подклассами <tt>ActionView::TemplateHandlers</tt>. Мы не будем углубляться в этот процесс, но важно знать, что расширение файла вьюхи контролирует выбор обработчика шаблона. В Rails 2, стандартные расширения это <tt>.erb</tt> для <span class="caps">ERB</span> (<span class="caps">HTML</span> со встроенным Ruby) и <tt>.builder</tt> для Builder (генератор <span class="caps">XML</span>). </p></div>
+
+<h4 id="using-render">2. Использование <tt>render</tt></h4>
+<p>Во многих случаях метод <tt>ActionController::Base#render</tt> выполняет большую работу по рендерингу содержимого Вашего приложения для использования в браузере. Имеются различные способы настройки возможностей <tt>render</tt>. Вы можете рендерить вьюху по умолчанию для шаблона Rails, или определенный шаблон, или файл, или встроенный код, или совсем ничего. Можно рендерить текст, <span class="caps">JSON</span> или <span class="caps">XML</span>. Также можно определить тип содержимого или статус <span class="caps">HTTP</span> отрендеренного отклика.</p>
+<div class='info'><p>Если хотите увидеть точные результаты вызова <tt>render</tt> без необходимости смотреть его в браузере, можете вызвать <tt>render_to_string</tt>. Этот метод принимает те же самые опции, что и <tt>render</tt>, но возвращает строку вместо отклика для браузера.</p></div>
+
+<h5 id="rendering-nothing">2.1 Не рендерим ничего</h5>
+<p>Самое простое, что мы можем сделать с <tt>render</tt> это не рендерить ничего:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :nothing =&gt; true
+</pre></div>
+<p>Если взглянуть на отклик, используя cURL, увидим следующее:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+ $ curl -i 127.0.0.1:3000/books
+HTTP/1.1 200 OK
+Connection: close
+Date: Sun, 24 Jan 2010 09:25:18 GMT
+Transfer-Encoding: chunked
+Content-Type: */*; charset=utf-8
+X-Runtime: 0.014297
+Set-Cookie: _blog_session=...snip...; path=/; HttpOnly
+Cache-Control: no-cache
+
+
+ $
+</pre></div>
+<p>Мы видим пустой отклик (нет данных после <tt>Cache-Control</tt> line), но Rails установил отклик 200 OK, поэтому запрос был успешным. Можете установить опцию <tt>:status</tt>, чтобы изменить этот отклик. Рендеринг ничего полезен для запросов <span class="caps">AJAX</span>, когда все, что Вы хотите вернуть браузеру, это подтверждение того, что запрос был выполнен.</p>
+<div class='info'><p>Возможно следует использовать метод <tt>head</tt>, который рассмотрим во второй части этой статьи, вместо <tt>render :nothing</tt>. Это придаст дополнительную гибкость и сделает явным то, что генерируются только заголовки <span class="caps">HTTP</span>.</p></div>
+
+<h5 id="rendering-an-actions-view">2.2 Рендеринг вьюхи экшна</h5>
+<p>Если хотите отрендерить вьюху, соответствующую другому экшну, в тот же шаблон, можно использовать <tt>render</tt> с именем вьюхи:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def update
+  @book = Book.find(params[:id])
+    if @book.update_attributes(params[:book])
+      redirect_to(@book)
+    else
+      render &quot;edit&quot;
+    end
+  end
+end
+</pre></div>
+<p>Если вызов <tt>update_attributes</tt> проваливается, вызов экшна <tt>update</tt> в этом контроллере отрендерит шаблон <tt>edit.html.erb</tt>, принадлежащий тому же контроллеру.</p>
+<p>Если хотите, можете использовать символ вместо строки для определения экшна для рендеринга:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def update
+  @book = Book.find(params[:id])
+    if @book.update_attributes(params[:book])
+      redirect_to(@book)
+    else
+      render :edit
+    end
+  end
+end
+</pre></div>
+<p>Чтобы быть точным, можете использовать <tt>render</tt> с опцией <tt>:action</tt> (хотя это не является необходимым в Rails 3.0):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def update
+  @book = Book.find(params[:id])
+    if @book.update_attributes(params[:book])
+      redirect_to(@book)
+    else
+      render :action =&gt; &quot;edit&quot;
+    end
+  end
+end
+</pre></div>
+<div class='warning'><p>Использование <tt>render</tt> с <tt>:action</tt> - частый источник путаницы для новичков в Rails. Определенный экшн используется для определения, какую рендерить вьюху, но Rails <em>не</em> запускает какой-либо код для этого экшна в контроллере. Любые переменные экземпляра, которые требуются во вьюхе, должны быть определены в текущем экшне до вызова <tt>render</tt>.</p></div>
+
+<h5 id="rendering-an-actions-template-from-another-controller">2.3 Рендеринг шаблона экшна из другого контроллера</h5>
+<p>Что, если вы хотите отрендерить шаблон из абсолютно другого контроллера? Это можно также сделать с <tt>render</tt>, который принимает полный путь шаблона для рендера (относительно <tt>app/views</tt>). Например, если запускаем код в <tt>AdminProductsController</tt> который находится в <tt>app/controllers/admin</tt>, можете отрендерить результат экшна в шаблон в <tt>app/views/products</tt> следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render 'products/show'
+</pre></div>
+<p>Rails знает, что эта вьюха принадлежит к другому контроллеру, поскольку содержит символ слэша в строке. Если хотите быть точными, можете использовать опцию <tt>:template</tt> (которая требовалась в Rails 2.2 и более ранних):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :template =&gt; 'products/show'
+</pre></div>
+
+<h5 id="rendering-an-arbitrary-file">2.4 Рендеринг произвольного файла</h5>
+<p>Метод <tt>render</tt> также может использовать вьюху, которая расположена вне Вашего приложения (возможно, Вы совместно используете вьюхи двумя приложениями на Rails):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render &quot;/u/apps/warehouse_app/current/app/views/products/show&quot;
+</pre></div>
+<p>Rails определяет, что это рендер файла по начальному символу слэша. Если хотите быть точным, можете использовать опцию <tt>:file</tt> (которая требовалась в Rails 2.2 и более ранних):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :file =&gt; 
+  &quot;/u/apps/warehouse_app/current/app/views/products/show&quot;
+</pre></div>
+<p>Опция <tt>:file</tt> принимает абсолютный путь в файловой системе. Разумеется, Вам необходимы права на просмотр того, что вы используете для рендера.</p>
+<div class='note'><p>По умолчанию файл рендериться без использования текущего макета. Если Вы хотите, чтобы Rails вложил файл в текущий макет, необходимо добавить опцию <tt>:layout => true</tt>.</p></div>
+<div class='info'><p>Если Вы работаете под Microsoft Windows, Вы должны использовать опцию <tt>:file</tt> для рендера файла, потому что имена файлов Windows не имеют тот же формат, как имена файлов Unix.</p></div>
+
+<h5 id="wrapping-it-up">2.5 Навороченность</h5>
+<p>Вышеописанные три метода рендера (рендеринг другого шаблона в контроллере, рендеринг шаблона в другом контроллере и рендеринг произвольного файла в файловой системе) на самом деле являются вариантами одного и того же экшна.</p>
+<p>Фактически в методе BooksController, в экшне edit, в котором мы хотим отрендерить шаблон edit, если книга не была успешно обновлена, все нижеследующие вызовы отрендерят шаблон <tt>edit.html.erb</tt> в директории <tt>views/books</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :edit
+render :action =&gt; :edit
+render 'edit'
+render 'edit.html.erb'
+render :action =&gt; 'edit'
+render :action =&gt; 'edit.html.erb'
+render 'books/edit'
+render 'books/edit.html.erb'
+render :template =&gt; 'books/edit'
+render :template =&gt; 'books/edit.html.erb'
+render '/path/to/rails/app/views/books/edit'
+render '/path/to/rails/app/views/books/edit.html.erb'
+render :file =&gt; '/path/to/rails/app/views/books/edit'
+render :file =&gt; '/path/to/rails/app/views/books/edit.html.erb'
+</pre></div>
+<p>Какой из них вы будете использовать - это вопрос стиля и соглашений, но практическое правило заключается в использовании простейшего, которое имеет смысл для кода и написания.</p>
+
+<h5 id="using-render-with-inline">2.6 Использование <tt>render</tt> с <tt>:inline</tt></h5>
+<p>Метод <tt>render</tt> вполне может обойтись без вьюхи, если Вы используете опцию <tt>:inline</tt> для поддержки <span class="caps">ERB</span>, как части вызова метода.  Это вполне валидно:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :inline =&gt; 
+  &quot;&lt;% products.each do |p| %&gt;&lt;p&gt;&lt;%= p.name %&gt;&lt;p&gt;&lt;% end %&gt;&quot;
+</pre></div>
+<div class='warning'><p>Должно быть серьезное основание для использования этой опции. Вкрапление <span class="caps">ERB</span> в контроллер нарушает <span class="caps">MVC</span> ориентированность Rails и создает трудности для других разработчиков в следовании логике вашего проекта. Вместо этого используйте отдельную erb-вьюху.</p></div>
+<p>По умолчанию встроенный рендеринг использует ERb. Можете принудить использовать вместо этого Builder с помощью опции <tt>:type</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :inline =&gt; 
+  &quot;xml.p {'Horrid coding practice!'}&quot;, :type =&gt; :builder
+</pre></div>
+
+<h5 id="rendering-text">2.7 Рендеринг текста</h5>
+<p>Вы можете послать простой текст &#8211; совсем без разметки &#8211; обратно браузеру с использованием опции <tt>:text</tt> в <tt>render</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :text =&gt; &quot;OK&quot;
+</pre></div>
+<div class='info'><p>Рендеринг чистого текста наиболее полезен, когда Вы делаете <span class="caps">AJAX</span> отклик, или отвечаете на запросы веб-сервиса, ожидающего что-то иное, чем <span class="caps">HTML</span>.</p></div>
+<div class='note'><p>По умолчанию при использовании опции <tt>:text</tt> текст рендериться без использования текущего макета. Если Вы хотите, чтобы Rails вложил текст в текущий макет, необходимо добавить опцию <tt>:layout => true</tt></div>
+
+<h5 id="rendering-json">2.8 Рендеринг <span class="caps">JSON</span></h5>
+<p><span class="caps">JSON</span> iэто формат данных javascript, используемый многими библиотеками <span class="caps">AJAX</span>. Rails имеет встроенную поддержку для конвертации объектов в <span class="caps">JSON</span> и рендеринга этого <span class="caps">JSON</span> браузеру:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :json =&gt; @product
+</pre></div>
+<div class='info'><p>Не нужно вызывать <tt>to_json</tt> в объекте, который Вы хотите рендерить. Если используется опция <tt>:json</tt>, <tt>render</tt> автоматически вызовет <tt>to_json</tt> за Вас.</p></div>
+
+<h5 id="rendering-xml">2.9 Рендеринг <span class="caps">XML</span></h5>
+<p>Rails также имеет встроенную поддержку для конвертации объектов в <span class="caps">XML</span> и рендеринга этого <span class="caps">XML</span> для вызывающего:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :xml =&gt; @product
+</pre></div>
+<div class='info'><p>Не нужно вызывать <tt>to_xml</tt> в объекте, который Вы хотите рендерить. Если используется опция <tt>:xml</tt>, <tt>render</tt> автоматически вызовет <tt>to_xml</tt> за Вас.</p></div>
+
+<h5 id="rendering-vanilla-javascript">2.10 Рендеринг внешнего JavaScript</h5>
+<p>Rails может рендерить внешний JavaScript:</p>
+<div class="code_container"><code class="ruby">
+render :js =&gt; &quot;alert('Hello Rails');&quot;
+</code></div>
+<p>Это пошлет указанную строку в браузер с типом <span class="caps">MIME</span> <tt>text/javascript</tt>.</p>
+
+<h5 id="options-for-render">2.11 Опции для <tt>render</tt></h5>
+<p>Вызов метода <tt>render</tt> как правило принимает четыре опции:</p>
+<ul>
+	<li><tt>:content_type</tt></li>
+	<li><tt>:layout</tt></li>
+	<li><tt>:status</tt></li>
+	<li><tt>:location</tt></li>
+</ul>
+
+<h6 id="the-content-type-option">2.11.1 Опция <tt>:content_type</tt></h6>
+<p>По умолчанию Rails укажет результатам операции рендеринга тип содержимого <span class="caps">MIME</span> <tt>text/html</tt> (или <tt>application/json</tt> если используется опция <tt>:json</tt>, или <tt>application/xml</tt> для опции <tt>:xml</tt>). Иногда бывает так, что вы хотите изменить это, и тогда можете настроить опцию <tt>:content_type</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :file =&gt; filename, :content_type =&gt; 'application/rss'
+</pre></div>
+
+<h6 id="the-layout-option">2.11.2 Опция <tt>:layout</tt></h6>
+<p>С большинством опций для <tt>render</tt>, отрендеренное содержимое отображается как часть текущего макета. Вы узнаете более подробно о макетах, и как их использовать, позже в этом руководстве.</p>
+<p>Опция <tt>:layout</tt> нужна, чтобы сообщить Rails использовать определенный файл как макет для текущего экшна:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :layout =&gt; 'special_layout'
+</pre></div>
+<p>Также можно сообщить Rails рендерить вообще без макета:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :layout =&gt; false
+</pre></div>
+
+<h6 id="the-status-option">2.11.3 Опция <tt>:status</tt></h6>
+<p>Rails автоматически сгенерирует отклик с корректным кодом статуса <span class="caps">HTML</span> (в большинстве случаев равный <tt>200 OK</tt>). Опцию <tt>:status</tt> можно использовать, чтобы изменить это:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :status =&gt; 500
+render :status =&gt; :forbidden
+</pre></div>
+<p>Rails понимает и числовой код статуса, и символ для кода статуса.</p>
+
+<h6 id="the-location-option">2.11.4 Опция <tt>:location</tt></h6>
+<p>Опцию <tt>:location</tt> можно использовать, чтобы установить заголовок <span class="caps">HTTP</span> <tt>Location</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+render :xml =&gt; photo, :location =&gt; photo_url(photo)
+</pre></div>
+
+<h5 id="finding-layouts">2.12 Поиск макетов</h5>
+<p>Чтобы найти текущий макет, Rails сперва смотрит файл в <tt>app/views/layouts</tt> с именем, таким же, как имя контроллера. Например, рендеринг экшнов из класса <tt>PhotosController</tt> будет использовать <tt>/app/views/layouts/photos.html.erb</tt> (или <tt>app/views/layouts/photos.builder</tt>). Если такого макета нет, Rails будет использовать <tt>/app/views/layouts/application.html.erb</tt> или <tt>/app/views/layouts/application.builder</tt>. Если нет макета <tt>.erb</tt>, Rails будет использовать макет <tt>.builder</tt>, если таковой имеется. Rails также предоставляет несколько способов более точно назначить определенные макеты отдельным контроллерам и экшнам.</p>
+
+<h6 id="specifying-layouts-on-a-per-controller-basis">2.12.1 Определение макетов на основе контроллера</h6>
+<p>Вы можете переопределить автоматические соглашения по макетам в контроллере, используя объявление <tt>layout</tt> в нем. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ProductsController &lt; ApplicationController
+  layout &quot;inventory&quot;
+  #...
+end
+</pre></div>
+<p>С этим объявлением все методы в <tt>ProductsController</tt> будут использовать <tt>app/views/layouts/inventory.html.erb</tt> как макет.</p>
+<p>Чтобы привязать определенный макет к приложению в целом, используйте объявление в классе <tt>ApplicationController</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+  layout &quot;main&quot;
+  #...
+end
+</pre></div>
+<p>С этим объявлением все вьюхи во всем приложении будут использовать <tt>app/views/layouts/main.html.erb</tt> как макет.</p>
+
+<h6 id="choosing-layouts-at-runtime">2.12.2 Выбор макетов во время выполнения</h6>
+<p>Можете использовать символ для отсрочки выбора макета до тех пор, пока не будет произведен запрос:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ProductsController &lt; ApplicationController
+  layout :products_layout
+
+  def show
+    @product = Product.find(params[:id])
+  end
+
+  private
+    def products_layout
+      @current_user.special? ? &quot;special&quot; : &quot;products&quot;
+    end
+
+end
+</pre></div>
+<p>Теперь, если текущий пользователь является специальным, он получит специальный макет при просмотре продукта. Можете даже использовать вложенный метод для определения макета.</p>
+<p>Также можно определить макет, передав объект Proc, блок переданный в Proc, будет передан в экземпляр <tt>контроллера</tt>, таким образом можно принимать решение, основанное на текущем запросе. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ProductsController &lt; ApplicationController
+  layout proc { |controller| controller.request.xhr? ? 'popup' : 'application' }
+  # ...
+end
+</pre></div>
+
+<h6 id="conditional-layouts">2.12.3 Условные макеты</h6>
+<p>Макеты, определенные на уровне контроллера,  поддерживают опции <tt>:only</tt> и <tt>:except</tt>, которые принимают либо имя метода, либо массив имен методов:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ProductsController &lt; ApplicationController
+  layout &quot;product&quot;, :except =&gt; [:index, :rss]
+  #...
+end
+</pre></div>
+<p>С таким объявлением макет <tt>product</tt> будет использован везде, кроме методов <tt>rss</tt> и <tt>index</tt>.</p>
+
+<h6 id="layout-inheritance">2.12.4 Наследование макета</h6>
+<p>Макеты участвуют в иерархии, и более конкретные макеты всегда переопределяют более общие. Например:</p>
+<ul>
+	<li><tt>application_controller.rb</tt></li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+  layout &quot;main&quot;
+end
+</pre></div>
+<ul>
+	<li><tt>posts_controller.rb</tt></li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class PostsController &lt; ApplicationController
+end
+</pre></div>
+<ul>
+	<li><tt>special_posts_controller.rb</tt></li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class SpecialPostsController &lt; PostsController
+  layout &quot;special&quot;
+end
+</pre></div>
+<ul>
+	<li><tt>old_posts_controller.rb</tt></li>
+</ul>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class OldPostsController &lt; SpecialPostsController
+  layout nil
+
+  def show
+    @post = Post.find(params[:id])
+  end
+
+  def index
+    @old_posts = Post.older
+    render :layout =&gt; &quot;old&quot;
+  end
+  # ...
+end
+</pre></div>
+<p>В этом приложении:</p>
+<ul>
+	<li>В общем, вьюхи будут рендериться в макет <tt>main</tt></li>
+	<li><tt>PostsController#index</tt> будет использовать макет <tt>main</tt></li>
+	<li><tt>SpecialPostsController#index</tt> будет использовать макет <tt>special</tt></li>
+	<li><tt>OldPostsController#show</tt> не будет использовать макет совсем</li>
+	<li><tt>OldPostsController#index</tt> будет использовать макет <tt>old</tt></li>
+</ul>
+
+<h5 id="avoiding-double-render-errors">2.13 Избегание ошибок двойного рендера</h5>
+<p>Рано или поздно, большинство разработчиков на Rails увидят сообщение об ошибке &#8220;Can only render or redirect once per action&#8221;. Хоть такое и раздражает, это относительно просто правится. Обычно такое происходит в связи с фундаментальным непониманием метода работы <tt>render</tt>.</p>
+<p>Например, вот некоторый код, который вызовет эту ошибку:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def show
+  @book = Book.find(params[:id])
+  if @book.special?
+    render :action =&gt; &quot;special_show&quot;
+  end
+  render :action =&gt; &quot;regular_show&quot;
+end
+</pre></div>
+<p>Если <tt>@book.special?</tt> определяется как <tt>true</tt>, Rails начинает процесс рендеринга, выгружая переменную <tt>@book</tt> во вьюху <tt>special_show</tt>. Но это <em>не</em> остановит от выполнения остальной код в экшне <tt>show</tt>, и когда Rails достигнет конца экшна, он начнет рендерить вьюху <tt>show</tt> &#8211; и выдаст ошибку. Решение простое: убедитесь, что у вас есть только один вызов <tt>render</tt> или <tt>redirect</tt> за один проход. Еще может помочь такая вещь, как <tt>and return</tt>. Вот исправленная версия метода:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def show
+  @book = Book.find(params[:id])
+  if @book.special?
+    render :action =&gt; &quot;special_show&quot; and return
+  end
+  render :action =&gt; &quot;regular_show&quot;
+end
+</pre></div>
+<p>Убедитесь, что вы используете <tt>and return</tt>, а не <tt>&amp;&amp; return</tt>, поскольку первое будет работать, а последнее нет, в связи с приоритетом операторов в языке Ruby.</p>
+<p>Отметьте, что неявный рендер, выполняемый ActionController, определяет, был ли вызван <tt>render</tt>, и таким образом избегает этой ошибки. Поэтому следующий код будет работать без проблем:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  def show
+    @book = Book.find(params[:id])
+    if @book.special?
+      render :action =&gt; &quot;special_show&quot;
+    end
+  end
+</pre></div>
+<p>Это отрендерит книгу с заданным <tt>special?</tt> с помощью шаблона <tt>special_show</tt>, в то время как остальные книги будут рендериться с дефолтным шаблоном <tt>show</tt>.</p>
+<p></p>
+<p>В <a href="/layouts-and-rendering-in-rails/creating-responses-2">продолжении</a> будут раскрыты вопросы использования <tt>redirect_to</tt> и <tt>head</tt></p>

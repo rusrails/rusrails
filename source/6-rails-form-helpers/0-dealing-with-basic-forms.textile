@@ -1,0 +1,125 @@
+h1. Разбираемся с простыми формами
+
+<p>Самый простой хелпер форм это <tt>form_tag</tt>.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= form_tag do %&gt;
+  Содержимое формы
+&lt;% end %&gt;
+</pre></div>
+<p>При подобном вызове без аргументов, он создает тег <tt>&lt;form&gt;</tt>, который, при отправке, отправит POST к текущей странице. Например, предположим текущая страница <tt>/home/index</tt>, тогда сгенерированный HTML будет выглядеть так (некоторые переводы строк добавлены для читаемости):</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/home/index" method="post">
+  <div style="margin:0;padding:0">
+    <input name="utf8" type="hidden" value="&#x2713;" />
+    <input name="authenticity_token" type="hidden" value="f755bb0ed134b76c432144748a6d4b7a7ddf2b71" />
+  </div>
+  Form contents
+</form>
+</pre></div>
+<p>Можно увидеть, что HTML содержит нечто дополнительное: элемент <tt>div</tt> с двумя скрытыми input внутри. Этот div важен, поскольку без него форма не может быть успешно отправлена. Первый элемент input с именем <tt>utf8</tt> обеспечивает, чтобы браузер правильно относился к кодировке вашей формы, он генерируется для всех форм, у которых action равен "GET" или "POST". Второй элемент input с именем <tt>authenticity_token</tt> является  особенностью безопасности Rails, называемой <strong>защитой от подделки межсайтовых запросов</strong>, и хелперы форм генерируют его для каждой формы, у которых action не "GET" (если эта особенность безопасности включена). Подробнее об этом можно прочитать в <a href="/ruby-on-rails-security-guide/cross-site-request-forgery-csrf">Руководстве Ruby On Rails по безопасности</a>.</p>
+<div class='note'><p>На всем протяжении этого руководства, <tt>div</tt> со скрытыми элементами input будет исключаться для краткости.</p></div>
+
+<h4 id="a-generic-search-form">1. Характерная форма поиска</h4>
+<p>Одной из наиболее простых форм, встречающихся в вебе, является форма поиска. Эта форма содержит:</p>
+<ol>
+	<li>элемент формы с методом &#8220;<span class="caps">GET</span>&#8221;,</li>
+	<li>метку для поля ввода,</li>
+	<li>элемент поля ввода текста и</li>
+	<li>элемент отправки.</li>
+</ol>
+<p>Чтобы создать эту форму, используем, соответственно, <tt>form_tag</tt>, <tt>label_tag</tt>, <tt>text_field_tag</tt> и <tt>submit_tag</tt>. Как здесь:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_tag("/search", :method => "get") do %>
+  <%= label_tag(:q, "Search for:") %>
+  <%= text_field_tag(:q) %>
+  <%= submit_tag("Search") %>
+<% end %>
+</pre></div>
+<p>Это создаст следующий HTML:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/search" method="get">
+  <label for="q">Search for:</label>
+  <input id="q" name="q" type="text" />
+  <input name="commit" type="submit" value="Search" />
+</form>
+</pre></div>
+<div class='info'><p>Для каждого поля формы генерируется атрибут ID из его имени (&#8220;q&#8221; в примере). Эти ID могут быть очень полезны для стилей <span class="caps">CSS</span> или управления полями форм с помощью JavaScript.</p></div>
+<p>Кроме <tt>text_field_tag</tt> и <tt>submit_tag</tt> имеется похожий хелпер для <em>каждого</em> элемента управления формой в <span class="caps">HTML</span>.</p>
+<div class='warning'><p>Всегда используйте &#8220;<span class="caps">GET</span>&#8221; как метод для форм поиска. Это позволит пользователям сохранить в закладки определенный поиск и потом вернуться к нему. В более общем плане Rails призывает вас использовать правильный метод <span class="caps">HTTP</span> для экшна.</p></div>
+
+<h4 id="multiple-hashes-in-form-helper-calls">2. Несколько хэшей в вызовах хелпера формы</h4>
+<p>Хелпер <tt>form_tag</tt> принимает 2 аргумента: путь для экшна и хэш опций. Этот хэш определяет метод отправки формы и опции <span class="caps">HTML</span>, такие как класс элемента form.</p>
+<p>Как в случае с хелпером <tt>link_to</tt>, аргумент пути не обязан быть указан в строке. Это может быть хэш параметров <span class="caps">URL</span>, распознаваемый механизмом маршрутизации Rails, преобразующим хэш в валидный <span class="caps">URL</span>. Однако, если оба аргумента для <tt>form_tag</tt> хэши, можно легко получить проблему, если захотите определить оба. Например, вы напишите так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+form_tag(:controller => "people", :action => "search", :method => "get", :class => "nifty_form")
+# => '<form accept-charset="UTF-8" action="/people/search?method=get&class=nifty_form" method="post">'
+</pre></div>
+<p>Здесь методы <tt>method</tt> и <tt>class</tt> присоединены к строке запроса сгенерированного URL, поскольку, хотя вы и хотели передать два хэша, фактически вы передали один. Чтобы сообщить об этом Ruby, следует выделить первый хэш (или оба хэша) фигурными скобками. Это создаст HTML, который вы ожидаете:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+form_tag({:controller => "people", :action => "search"}, :method => "get", :class => "nifty_form")
+# => '<form accept-charset="UTF-8" action="/people/search" method="get" class="nifty_form">'
+</pre></div>
+
+<h4 id="helpers-for-generating-form-elements">3. Хелперы для создания элементов форм</h4>
+<p>Rails предоставляет ряд хелперов для генерации элементов форм, таких как чекбоксы, текстовые поля, радио-кнопки и так далее. Эти простые хелперы с именами, оканчивающимися на "_tag" (такие как <tt>text_field_tag</tt> и <tt>check_box_tag</tt>), генерируют отдельный элемент <tt>&lt;input&gt;</tt>. Первый параметр у них это всегда имя поля. Когда форма отправлена, имя будет передано среди данных формы, и, в свою очередь, помещено в хэш <tt>params</tt> со значением, введенным пользователем в это поле. Например, если форма содержит <tt><pre><%= text_field_tag(:query) %></pre></tt>, то значение для этого поля можно получить в контроллере с помощью <tt>params[:query]</tt>.</p>
+<p>При именовании полей Rails использует определенные соглашения, делающие возможным отправлять параметры с нескалярными величинами, такие как массивы и хэши, которые также будут доступны в <tt>params</tt>. Об этом можно прочесть в <a href="/rails-form-helpers/understanding-parameter-naming-conventions">разделе про именование параметров</a>. Для подробностей по точному использованию этих хелперов, обратитесь к <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html">документации по <span class="caps">API</span></a>.</p>
+
+<h5 id="checkboxes">3.1 Чекбоксы</h5>
+<p>Чекбоксы это элементы управления формой, которые дают пользователю ряд опций, которые он может включить или выключить:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= check_box_tag(:pet_dog) %&gt;
+  &lt;%= label_tag(:pet_dog, &quot;I own a dog&quot;) %&gt;
+&lt;%= check_box_tag(:pet_cat) %&gt;
+  &lt;%= label_tag(:pet_cat, &quot;I own a cat&quot;) %&gt;
+</pre></div>
+<p>Это создаст следующее:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;pet_dog&quot; name=&quot;pet_dog&quot; type=&quot;checkbox&quot; value=&quot;1&quot; /&gt;
+  &lt;label for=&quot;pet_dog&quot;&gt;I own a dog&lt;/label&gt;
+&lt;input id=&quot;pet_cat&quot; name=&quot;pet_cat&quot; type=&quot;checkbox&quot; value=&quot;1&quot; /&gt;
+  &lt;label for=&quot;pet_cat&quot;&gt;I own a cat&lt;/label&gt;
+</pre></div>
+<p>Первый параметр у <tt>check_box_tag</tt>, разумеется, это имя поля. Второй параметр, естественно, это значение поля. Это значение будет включено в данные формы (и будет присутствовать в <tt>params</tt>), когда чекбокс нажат.</p>
+
+<h5 id="radio-buttons">3.2 Радио-кнопки</h5>
+<p>Радио-кнопки, чем-то похожие на чекбоксы, это элементы управления, которые определяют набор взаимоисключающих опций (т.е. пользователь может выбрать только одну):</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= radio_button_tag(:age, &quot;child&quot;) %&gt;
+  &lt;%= label_tag(:age_child, &quot;I am younger than 21&quot;) %&gt;
+&lt;%= radio_button_tag(:age, &quot;adult&quot;) %&gt;
+  &lt;%= label_tag(:age_adult, &quot;I'm over 21&quot;) %&gt;
+</pre></div>
+<p>Результат:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;age_child&quot; name=&quot;age&quot; type=&quot;radio&quot; value=&quot;child&quot; /&gt;
+  &lt;label for=&quot;age_child&quot;&gt;I am younger than 21&lt;/label&gt;
+&lt;input id=&quot;age_adult&quot; name=&quot;age&quot; type=&quot;radio&quot; value=&quot;adult&quot; /&gt;
+  &lt;label for=&quot;age_adult&quot;&gt;I'm over 21&lt;/label&gt;
+</pre></div>
+<p>Как и у <tt>check_box_tag</tt>, второй параметр для <tt>radio_button_tag</tt> это значение поля. Так как эти две радио-кнопки имеют одинаковое имя (age), пользователь может выбрать одну, и <tt>params[:age]</tt> будет содержать или &#8220;child&#8221;, или &#8220;adult&#8221;.</p>
+<div class='note'><p>Всегда используйте метки (labels) для чекбоксов и радио-кнопок. Они связывают текст с определенной опцией и упрощают ввод, предоставляя большее пространство для щелчка.</p></div>
+
+<h4 id="other-helpers-of-interest">4. Другие интересные хелперы</h4>
+<p>Среди других элементов управления формой стоит упомянуть текстовое поле, поле пароля, скрытое поле, поля поиска, ввода телефона, url и email:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= text_area_tag(:message, "Hi, nice site", :size => "24x6") %>
+<%= password_field_tag(:password) %>
+<%= hidden_field_tag(:parent_id, "5") %>
+<%= search_field(:user, :name) %>
+<%= telephone_field(:user, :phone) %>
+<%= url_field(:user, :homepage) %>
+<%= email_field(:user, :address) %>
+</pre></div>
+<p>результат:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<textarea id="message" name="message" cols="24" rows="6">Hi, nice site</textarea>
+<input id="password" name="password" type="password" />
+<input id="parent_id" name="parent_id" type="hidden" value="5" />
+<input id="user_name" name="user[name]" size="30" type="search" />
+<input id="user_phone" name="user[phone]" size="30" type="tel" />
+<input id="user_homepage" size="30" name="user[homepage]" type="url" />
+<input id="user_address" size="30" name="user[address]" type="email" />
+</pre></div>
+<p>Скрытые поля не отображаются пользователю, вместо этого они содержат данные, как и любое текстовое поле. Их значения могут быть изменены с помощью JavaScript.</p>
+<div class='info'><p>Поля поиска, ввода телефона, url и email это элементы управления HTML5. Если необходимо, чтобы у вашего приложения была совместимость со старыми браузерами, вам необходим HTML5 polyfill (предоставляемый с помощью CSS и/или JavaScript). Хотя в таких решениях <a href="https://github.com/Modernizr/Modernizr/wiki/HTML5-Cross-Browser-Polyfills">нет недостатка</a>, популярными инструментами на сегодняшний момен являются <a href="http://www.modernizr.com/">Modernizr</a> и <a href="http://yepnopejs.com/">yepnope</a>, предоставляющие простой способ добавить функциональность, основанную на присутствии обнаруженных особенностей HTML5.</p></div>
+<div class='info'><p>Если используются поля для ввода пароля (для любых целей), вы можете настроить свое приложение для предотвращения появления их значений в логах приложения. Это можно изучить в <a href="/ruby-on-rails-security-guide">Руководстве Ruby On Rails по безопасности</a>.</p></div>

@@ -1,0 +1,121 @@
+h1. ИСТОРИЯ
+
+1. Категория
+2. Ссылка на гитхаб
+3. Последний коммит (для https://github.com/lifo/docrails/compare)
+4. Дата внесения изменений
+5. Комментарии
+
+1. Rails для начинающих
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/getting_started.textile
+3. fa159d317611d1fe5b48
+4. 27/07/11
+5. Закончено
+
+1. Миграции базы данных Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/migrations.textile
+3. 6734bc98e7a90dd7c4dc
+4. 25/07/11
+5. Закончено
+
+1. Валидации и колбэки Active Record
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_validations_callbacks.textile
+3. 52add05a6be58a675117
+4. 31/07/11
+5. Закончено
+
+1. Связи Active Record
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/association_basics.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
+1. Интерфейс запросов Active Record
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_querying.textile
+3. 573c6e6982224e681717
+4. 23/07/11
+5. Закончено
+
+1. Макеты и рендеринг в Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/layouts_and_rendering.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
+1. Хелперы форм Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/form_helpers.textile
+3. f330e6af34dfbbe18834
+4. 25/07/11
+5. Закончено
+
+1. Обзор Action Controller
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_controller_overview.textile
+3. 732690589ed4f12d48bc
+4. 27/06/11
+5. Закончено
+
+1. Роутинг в Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/routing.textile
+3. ace3723d2fcb1a96d51c
+4. 23/07/11
+5. Закончено
+
+1. Основы Action Mailer
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
+1. Руководство по тестированию приложений на Rails 
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
+3. 2eac4e2e2ff3a740c712
+4. 23/06/11
+5. Закончено
+
+1. Руководство Ruby On Rails по безопасности
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
+3. 662a71b09f025016db22
+4. 24/06/11
+5. Закончено
+
+1. Расширения ядра Active Support
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_support_core_extensions.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
+1. API интернационализации Rails (I18n)
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
+3. 71012eafb6916d270b78
+4. 30/07/11
+5. Обновляется
+
+1. Отладка приложений на Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/debugging_rails_applications.textile
+3. 5724625e81380d46ad0a
+4. 08/07/11
+5. Закончено
+
+1. Тестирование производительности приложений Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/performance_testing.textile
+3. 95f827f9109a6f5d9034
+4. 22/06/11
+5. Закончено
+
+1. Конфигурирование приложений на Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/configuring.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
+1. Руководство по командной строке Rails
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/command_line.textile
+3. ddbf3b6215d91c2c4657
+4. 06/08/11
+5. Закончено
+
+1. Кэширование с Rails: Обзор
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/caching_with_rails.textile
+3. 14b9726ecd8635254c2a
+4. 23/07/11
+5. Закончено

@@ -1,0 +1,89 @@
+h1. Параметры
+
+<p>Возможно, вы хотите получить доступ к данным, посланным пользователем, или к другим параметрам в экшнах вашего контроллера. Имеются два типа параметров, возможных в веб приложениях. Первый это параметры, посланные как часть <span class="caps">URL</span>, называемые параметрами строки запроса. Строка запроса всегда следует после &#8220;?&#8221; в <span class="caps">URL</span>. Второй тип параметров обычно упоминаются как данные <span class="caps">POST</span>. Эта информация обычно приходит из формы <span class="caps">HTML</span>, заполняемой пользователем. Они называется данными <span class="caps">POST</span>, так как могут быть посланы только как часть <span class="caps">HTTP</span> запроса <span class="caps">POST</span>. Rails не делает каких-либо различий между строковыми параметрами и параметрами <span class="caps">POST</span>, и они оба доступны в хэше <tt>params</tt> в вашем контроллере:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ClientsController &lt; ActionController::Base
+  # Этот экшн использует параметры строки запроса, потому, что он
+  # запускается HTTP запросом GET, но это не делает каких-либо
+  # различий в способе, с помощью которого можно получить доступ к
+  # ним. URL для этого экшна выглядит как этот, запрашивающий список
+  # активированных клиентов: /clients?status=activated
+  def index
+    if params[:status] == &quot;activated&quot;
+      @clients = Client.activated
+    else
+      @clients = Client.unactivated
+    end
+  end
+
+  # Этот экшн использует параметры POST. Они, скорее всего, пришли от
+  # формы HTML, которую подтвердил пользователь. URL для этого 
+  # RESTful запроса будет &quot;/clients&quot;, и данные будут посланы
+  # как часть тела запроса.
+  def create
+    @client = Client.new(params[:client])
+    if @client.save
+      redirect_to @client
+    else
+      # Эта строка переопределяет дефолтные возможности рендеринга,
+      # которые должны были рендерить вьюху &quot;create&quot;.
+      render :action =&gt; &quot;new&quot;
+    end
+  end
+end
+</pre></div>
+
+<h4 id="hash-and-array-parameters">1. Параметры в хэше и в массиве</h4>
+<p>Хэш <tt>params</tt> не ограничен одномерными ключами и значениями. Он может содержать массивы и хэши (вложенные). Чтобы послать массив значений, добавьте пустую пару квадратных скобок &#8220;[]&#8221; к имени ключа:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+GET /clients?ids[]=1&amp;ids[]=2&amp;ids[]=3
+</pre></div>
+<div class='note'><p>Фактический <span class="caps">URL</span> в этом примере будет перекодирован как &#8220;/clients?ids%5b%5d=1&amp;ids%5b%5d=2&amp;ids%5b%5b=3&#8221;, так как &#8220;[&#8221; и &#8220;]&#8221; не допустимы в URL. В основном, вам не придется беспокоиться об этом, так как браузер позаботится об этом за вас, а Rails декодирует это обратно, когда получит, но если вы когда-нибудь будете отправлять эти запросы вручную, имейте это в виду.</p></div>
+<p>Значение <tt>params[:ids]</tt> теперь будет <tt>["1", "2", "3"]</tt>. Отметьте, что значения параметра всегда строчное; Rails не делает попыток угадать или предсказать тип.</p>
+<p>Чтобы послать хэш, следует заключить имя ключа в скобки:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/clients" method="post">
+  <input type="text" name="client[name]" value="Acme" />
+  <input type="text" name="client[phone]" value="12345" />
+  <input type="text" name="client[address][postcode]" value="12345" />
+  <input type="text" name="client[address][city]" value="Carrot City" />
+</form>
+</pre></div>
+<p>Когда эта форма будет подтверждена, значение <tt>params[:client]</tt> будетe <tt>{&quot;name&quot; =&gt; &#8220;Acme&#8221;, &#8220;phone&#8221; =&gt; &#8220;12345&#8221;, &#8220;address&#8221; =&gt; {&quot;postcode&quot; =&gt; &#8220;12345&#8221;, &#8220;city&#8221; =&gt; &#8220;Carrot City&#8221;}}</tt>. Обратите внимание на вложенный хэш в <tt>params[:client][:address]</tt>.</p>
+<p>Отметьте, что хэш <tt>params</tt> фактически является экземпляром <tt>HashWithIndifferentAccess</tt> от Active Support, который ведет себя как хэш, который позволяет взаимозаменяемо использовать символы и строки как ключи.</p>
+
+<h4>2. Параметры JSON/XML</h4>
+<p>Если вы пишете приложение веб-сервиса, возможно вам более комфортно принимать параметры в формате JSON или XML. Rails автоматически преобразует ваши параметры в хэш <tt>params</tt>, к которому можно получить доступ так же, как и к обычным данным формы.</p>
+<p>Так, к примеру, если вы пошлете этот параметр JSON:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+{ "company": { "name": "acme", "address": "123 Carrot Street" } }
+</pre></div>
+<p>То получите <tt>params[:company]</tt> как <tt>{ :name => "acme", "address" => "123 Carrot Street" }</tt>.</p>
+<p>Также, если включите <tt>config.wrap_parameters</tt> в своем инициализаторе или вызовете <tt>wrap_parameters</tt> в своем контроллере, можно безопасно опустить корневой элемент в параметре JSON/XML. Параметры будут клонированы и обернуты в ключ, соответствующий по умолчанию имени вашего контроллера. Таким образом, вышеупомянутый параметр может быть записан как:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+{ "name": "acme", "address": "123 Carrot Street" }
+</pre></div>
+<p>И предположим, что мы посылаем данные в <tt>CompaniesController</tt>, тогда он будет обернут в ключ <tt>:company</tt> следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{ :name => "acme", :address => "123 Carrot Street", :company => { :name => "acme", :address => "123 Carrot Street" }}
+</pre></div>
+<p>Можно настроить имя ключа или определенные параметры, которые вы хотите обернуть, обратитесь к <a href="http://api.rubyonrails.org/classes/ActionController/ParamsWrapper.html">документации API</a>:</p>
+
+<h4 id="routing-parameters">3. Параметры роутинга</h4>
+<p>Хэш <tt>params</tt> будет всегда содержать ключи <tt>:controller</tt> и <tt>:action</tt>, но следует использовать методы <tt>controller_name</tt> и <tt>action_name</tt> вместо них для доступа к этим значениям. Любой другой параметр, определенный роутингом, такой как <tt>:id</tt>, также будет доступен. Как пример рассмотрим перечень клиентов, где список может быть показан либо для активных, либо для неактивных клиентов. Мы можем добавить маршрут, который перехватывает параметр <tt>:status</tt> в &#8220;красивом&#8221; <span class="caps">URL</span>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+match '/clients/:status' => 'clients#index', :foo => "bar"
+</pre></div>
+<p>В этом случае, когда пользователь откроет <span class="caps">URL</span> <tt>/clients/active</tt>, <tt>params[:status]</tt> будет установлен в &#8220;active&#8221;. Когда использован этот маршрут, <tt>params[:foo]</tt> также будет установлен в &#8220;bar&#8221;, как будто он был передан в строке запроса. Аналогично <tt>params[:action]</tt> будет содержать &#8220;index&#8221;.</p>
+
+<h4 id="default-url-options">4. <tt>default_url_options</tt></h4>
+<p>Можно установить глобальные параметры по умолчанию, которые будут использованы, когда генерируется URL, с использованием <tt>default_url_options</tt>. Чтобы сделать это, определите метод с этим именем в вашем контроллере:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+  # Параметр options это хэш, переданный в 'url_for'
+  def default_url_options(options)
+    {:locale =&gt; I18n.locale}
+  end
+end
+</pre></div>
+<p>Эти опции будут использованы как начальная точка при генерации URL, поэтому, возможно, они будут переопределены с помощью <tt>url_for</tt>. Поскольку этот метод определяется в контроллере, можете определить его в <tt>ApplicationController</tt>, таким образом он будет использован при любой генерации <span class="caps">URL</span>, или можете определить его только в одном контроллере для всех генерируемых там URL.</p>

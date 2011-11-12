@@ -1,0 +1,410 @@
+h1. Создание ресурса
+
+<p>В случае с приложением блога, можно начать с генерации скаффолда для ресурса Post: это будет представлять собой отдельную публикацию в блоге. Чтобы осуществить это, напишите команду в терминале:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails generate scaffold Post name:string title:string content:text
+</pre></div>
+<p>Генератор скаффолда создаст несколько файлов в Вашем приложении в разных папках, и отредактирует <tt>config/routes.rb</tt>. Вот краткое описание того, что он создаст:</p>
+<table class="inner_table">
+	<tr>
+		<th>Файл                                        </th>
+		<th>Цель</th>
+	</tr>
+	<tr>
+		<td>db/migrate/20100207214725_create_posts.rb     </td>
+		<td>Миграция для создания таблицы posts в вашей базе данных (у вашего файла будет другая временная метка)</td>
+	</tr>
+	<tr>
+		<td>app/models/post.rb                            </td>
+		<td>Модель Post</td>
+	</tr>
+	<tr>
+		<td>test/fixtures/posts.yml                       </td>
+		<td>Публикации-болванки для использования в тестировании</td>
+	</tr>
+	<tr>
+		<td>app/controllers/posts_controller.rb           </td>
+		<td>Контроллер Posts</td>
+	</tr>
+	<tr>
+		<td>app/views/posts/index.html.erb                </td>
+		<td>Вьюха для отображения перечня всех публикаций </td>
+	</tr>
+	<tr>
+		<td>app/views/posts/edit.html.erb                 </td>
+		<td>Вьюха для редактирования существующей публикации</td>
+	</tr>
+	<tr>
+		<td>app/views/posts/show.html.erb                 </td>
+		<td>Вьюха для отображения отдельной публикации</td>
+	</tr>
+	<tr>
+		<td>app/views/posts/new.html.erb                  </td>
+		<td>Вьюха для создания новой публикации</td>
+	</tr>
+	<tr>
+		<td>app/views/posts/_form.html.erb               </td>
+		<td>Партиал, контролирующий внешний вид и поведение форм, используемых во вьюхах edit и new</td>
+	</tr>
+	<tr>
+		<td>app/helpers/posts_helper.rb                   </td>
+		<td>Функции хелпера, используемые из вьюх posts</td>
+	</tr>
+	<tr>
+		<td>app/assets/stylesheets/scaffold.css.scss      </td>
+		<td>Каскадная таблица стилей, чтобы вьюхи смотрелись лучше</td>
+	</tr>
+	<tr>
+		<td>app/assets/stylesheets/post.css.scss     </td>
+		<td>Каскадная таблица стилей для контроллера posts</td>
+	</tr>
+	<tr>
+		<td>app/assets/javascripts/post.js.coffee    </td>
+		<td>CoffeeScript для контроллера posts</td>
+	</tr>
+	<tr>
+		<td>test/unit/post_test.rb                        </td>
+		<td>Каркас юнит-тестирования для модели posts</td>
+	</tr>
+	<tr>
+		<td>test/functional/posts_controller_test.rb      </td>
+		<td>Каркас функционального тестирования для контроллера posts</td>
+	</tr>
+	<tr>
+		<td>test/unit/helpers/posts_helper_test.rb        </td>
+		<td>Каркас юнит-тестирования для хелпера posts</td>
+	</tr>
+	<tr>
+		<td>config/routes.rb                              </td>
+		<td>Отредактирован, чтобы включить маршрутную информацию для posts</td>
+	</tr>
+</table>
+<div class='note'><p>Хотя скаффолд позволяет быстро разрабатывать, стандартный код, который он генерирует, не всегда подходит для вашего приложения. Как правило, необходимо модифицировать сгенерированный код. Многие опытные разработчики на Rails избегают работы со скаффолдом, предпочитая писать весь или большую часть кода с нуля. Rails, однако, позволяет легко настраивать шаблоны для генерируемых моделей, контроллеров, вьюх и других источников файлов. Больше информации вы найдете в <a href="/todo">Руководстве по созданию и настройке генераторов и шаблонов Rails</a>.</p></div>
+
+<h4 id="running-a-migration">1. Запуск миграции</h4>
+<p>Одним из продуктов команды <tt>rails generate scaffold</tt> является <em>миграция базы данных</em>. Миграции - это класс Ruby, разработанный для того, чтобы было просто создавать и модифицировать таблицы базы данных. Rails использует команды rake для запуска миграций, и возможна отмена миграции после того, как она была применена к вашей базе данных. Имя файла миграции включает временную метку, чтобы быть уверенным, что они выполняются в той последовательности, в которой они создавались.</p>
+<p>Если Вы заглянете в файл <tt>db/migrate/20100207214725_create_posts.rb</tt> (помните, у вас файл имеет немного другое имя), вот что там обнаружите:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CreatePosts &lt; ActiveRecord::Migration
+  def change
+    create_table :posts do |t|
+      t.string :name
+      t.string :title
+      t.text :content
+
+      t.timestamps
+    end
+  end
+end
+</pre></div>
+<p>Эта миграция создает метод <tt>change</tt>, вызываемый при запуске этой миграции. Действие, определенное в этой миграции, также является обратимым, что означает, что Rails знает, как отменить изменения, сделанные этой миграцией, в случае, если вы решите их отменить позже. По умолчанию, когда вы запустите эту миграцию, она создаст таблицу <tt>posts</tt> с двумя строковыми столбцами и текстовым столбцом. Она также создаст два поля временных меток для отслеживания создания и обновления записи. Более подробно о миграциях Rails можно прочесть в руководстве <a href="/rails-database-migrations">Миграции базы данных Rails</a>.</p>
+<p>Сейчас нам нужно использовать команду rake, чтобы запустить миграцию:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rake db:migrate
+</pre></div>
+<p>Rails запустит эту команду миграции и сообщит, что он создал таблицу Posts.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+==  CreatePosts: migrating ====================================================
+-- create_table(:posts)
+   -&gt; 0.0019s
+==  CreatePosts: migrated (0.0020s) ===========================================
+</pre></div>
+<div class='note'><p>Так как Вы работаете по умолчанию в среде development, эта команда будет применена к базе данных, определенной в секции <tt>development</tt> вашего файла <tt>config/database.yml</tt>.</p></div>
+
+<h4 id="adding-a-link">2. Добавляем ссылку</h4>
+<p>Чтобы подключить контроллер posts к домашней странице, которую уже создали, можно добавить ссылку на ней. Откройте <tt>/app/views/home/index.html.erb</tt> И измените его следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;h1&gt;Hello, Rails!&lt;/h1&gt;
+&lt;%= link_to "Мой блог", posts_path %&gt;
+</pre></div>
+<p>Метод <tt>link_to</tt> &#8211; один из встроенных хелперов Rails. Он создает гиперссылку, на основе текста для отображения и указания куда перейти &#8211; в нашем случае путь для контроллера posts.</p>
+
+<h4 id="working-with-posts-in-the-browser">3. Работаем с публикациями в браузере</h4>
+<p>Теперь Вы готовы работать с публикациями. Чтобы это сделать, перейдите по адресу <a href="http://localhost:3000/">http://localhost:3000</a> и нажмите на ссылку &#8220;Мой блог&#8221;:</p>
+<p><img src="/system/images/posts_index.png" title="Скриншот страницы Posts Index" alt="Скриншот страницы Posts Index" /></p>
+<p>Это результат рендеринга Rails вьюхи Ваших публикаций <tt>index</tt>. Сейчас нет никаких публикаций в базе данных, но если нажать на ссылку <tt>New Post</tt>, вы можете создать одну. После этого вы увидите, что можете редактировать публикацию, просматривать или уничтожать ее. Вся логика и <span class="caps">HTML</span> были построены одной единственной командой <tt>rails generate scaffold</tt>.</p>
+<div class='info'><p>В режиме development (с которым Вы работаете по умолчанию), Rails перегружает Ваше приложение с каждым запросом браузера, так что не нужно останавливать и перезапускать веб-сервер.</p></div>
+<p>Поздравляем, Вы начали свой путь по рельсам! =) Теперь настало время узнать, как это все работает.</p>
+
+<h4 id="the-model">4. Модель</h4>
+<p>Файл модели <tt>app/models/post.rb</tt> выглядит проще простого:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post &lt; ActiveRecord::Base
+end
+</pre></div>
+<p>Не так уж много написано в этом файле, но заметьте, что класс <tt>Post</tt> наследован от <tt>ActiveRecord::Base</tt>. Active Record обеспечивает огромную функциональность для Ваших моделей Rails, включая основные операции для базы данных <span class="caps">CRUD</span> (Create, Read, Update, Destroy - создать, читать, обновить, уничтожить), валидации данных, сложную поддержку поиска и возможность устанавливать отношения между разными моделями.</p>
+
+<h4 id="adding-some-validation">5. Добавляем немного валидации</h4>
+<p>Rails включает методы, помогающие проверить данные, которые Вы передаете в модель. Откройте файл <tt>app/models/post.rb</tt> и отредактируйте:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post &lt; ActiveRecord::Base
+  validates :name,  :presence =&gt; true
+  validates :title, :presence =&gt; true,
+                    :length =&gt; { :minimum =&gt; 5 }
+end
+</pre></div>
+<p>Эти изменения позволят быть уверенным, что все публикации имеют имя и заголовок, и что заголовок длиной как минимум пять символов. Rails может проверять разные условия в модели, включая существование или уникальность полей, их формат и существование связанных объектов.</p>
+
+<h4 id="using-the-console">6. Использование консоли</h4>
+<p>Чтобы увидеть валидации в действии, можно использовать консоль. Консоль это инструмент, который позволяет запускать код Ruby в контексте вашего приложения:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails console
+</pre></div>
+<div class='note'><p>По умолчанию, консоль изменяет вашу базу данных. Вместо этого можно запустить консоль, которая откатывает все изменения, которые вы сделали, используя <tt>rails console -—sandbox</tt>.</p></div>
+<p>После загрузки консоли можно работать с моделями Вашего приложения:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&gt;&gt; p = Post.new(:content =&gt; &quot;A new post&quot;)
+=&gt; #&lt;Post id: nil, name: nil, title: nil,
+     content: &quot;A new post&quot;, created_at: nil,
+     updated_at: nil&gt;
+&gt;&gt; p.save
+=&gt; false
+&gt;&gt; p.errors
+=&gt; #&lt;OrderedHash { :title=&gt;[&quot;can't be blank&quot;,
+                           &quot;is too short (minimum is 5 characters)&quot;],
+                   :name=&gt;[&quot;can't be blank&quot;] }&gt;
+</pre></div>
+<p>Этот код показывает создание нового экземпляра <tt>Post</tt>, попытку его сохранения и возврата в качестве ответа <tt>false</tt> (что означает, что сохранить не получилось), и просмотр <tt>ошибок</tt> публикации.</p>
+<p>Когда закончите, напишите <tt>exit</tt> и нажмите <tt>return</tt>, чтобы вернуться в консоль.</p>
+<div class='info'><p>В отличие от веб-сервера development, консоль автоматически не загружет Ваш код после выполнения строки. Если вы внесли изменения в свои модели в то время, когда консоль была открыта, напишите в консоли  <tt>reload!</tt>, чтобы консоль загрузила эти изменения.</p></div>
+
+<h4 id="listing-all-posts">7. Отображение всех публикаций</h4>
+<p>Проще всего начать изучать функциональность с того места, где отображаются все публикации. Откройте файл <tt>app/controllers/posts_controller.rb </tt> и взгляните на экшн <tt>index</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def index
+  @posts = Post.all
+
+  respond_to do |format|
+    format.html # index.html.erb
+    format.json  { render :json =&gt; @posts }
+  end
+end
+</pre></div>
+<p><tt>Post.all</tt> вызывает модель <tt>Post</tt>, которая возвращает все публикации, которые сейчас есть в базе данных. Результатом этого вызова является массив, содержащий все публикации, который сохраняется в переменную экземпляра с именем <tt>@posts</tt>.</p>
+<div class='info'><p>Дальнейшую информацию о поиске записей с помощью Active Record можете посмотреть в руководстве <a href="/active-record-query-interface">Интерфейс запросов Active Record</a>.</p></div>
+<p>Блок <tt>respond_to</tt> отвечает за вызов <span class="caps">HTML</span> и <span class="caps">JSON</span> для этого экшна. Если вы пройдете по адресу <a href="http://localhost:3000/posts.json">http://localhost:3000/posts.json</a>, то увидите все публикации в формате <span class="caps">JSON</span>. Формат <span class="caps">HTML</span> ищет вьюху в <tt>app/views/posts/</tt> с именем, соответствующим имени экшна. В Rails все переменные экземпляра экшна доступны во вьюхе. Вот код <tt>app/view/posts/index.html.erb</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;h1&gt;Listing posts&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Name&lt;/th&gt;
+    &lt;th&gt;Title&lt;/th&gt;
+    &lt;th&gt;Content&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+
+&lt;% @posts.each do |post| %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= post.name %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= post.title %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= post.content %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Show', post %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Edit', edit_post_path(post) %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= link_to 'Destroy', post, :confirm =&gt; 'Are you sure?', :method =&gt; :delete %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+&lt;br /&gt;
+
+&lt;%= link_to 'New post', new_post_path %&gt;
+</pre></div>
+<p>Эта вьюха перебирает содержимое массива <tt>@posts</tt>, чтобы отразить содержимое и ссылки. Следует кое-что отметить во вьюхе:</p>
+<ul>
+	<li><tt>link_to</tt> создает гиперссылку определенного назначения</li>
+	<li><tt>edit_post_path</tt> и <tt>new_post_path</tt> это хелперы, предоставленные Rails как часть роутинга RESTful. Вы увидите, что есть много таких хелперов для различных экшнов, включенных в контроллер.</li>
+</ul>
+<div class='note'><p>В прежних версиях Rails следовало использовать <tt>&lt;%=h post.name %&gt;</tt>, чтобы любой <span class="caps">HTML</span> был экранирован перед вставкой на страницу. Теперь в Rails 3.0 это по умолчанию. Чтобы получить неэкранированный <span class="caps">HTML</span>, сейчас следует использовать <tt>&lt;%= raw post.name %&gt;</tt>.</p></div>
+<div class='info'><p>Более детально о процессе рендеринга смотрите тут: <a href="/layouts-and-rendering-in-rails">Шаблоны и рендеринг в Rails</a>.</p></div>
+
+<h4 id="customizing-the-layout">8. Настройка макета</h4>
+<p>Вьюха это только часть того, как <span class="caps">HTML</span> отображается в Вашем браузере. В Rails также есть концепция <tt>макетов</tt>, которые являются контейнерами для вьюх. Когда Rails рендерит вьюху для браузера, он делает это вкладывая вьюшный <span class="caps">HTML</span> в <span class="caps">HTML</span> макета. В прежних версиях Rails команда <tt>rails generate scaffold</tt> создала бы автоматически макет для определенного контроллера, такой как <tt>app/views/layouts/posts.html.erb</tt> для контроллера posts. Однако, это изменилось в Rails 3.0. Определенный для приложения <tt>макет</tt> используется для всех контроллеров и располагается в <tt>app/views/layouts/application.html.erb</tt>. Откройте этот макет в своем редакторе и измените тег <tt>body</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Blog&lt;/title&gt;
+  &lt;%= stylesheet_link_tag :all %&gt;
+  &lt;%= javascript_include_tag :defaults %&gt;
+  &lt;%= csrf_meta_tag %&gt;
+&lt;/head&gt;
+&lt;body style=&quot;background: #EEEEEE;&quot;&gt;
+
+&lt;%= yield %&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Теперь, когда Вы обновите страницу <tt>/posts</tt>, Вы увидите серый бэкграунд страницы. Тот же серый бэкграунд будет использоваться везде на всех вьюхах контроллера posts.</p>
+
+<h4 id="creating-new-posts">9. Создание новой публикации</h4>
+<p>Создание новой публикации включает два экшна. Первый экшн это <tt>new</tt>, который  создает экземпляр пустого объекта <tt>Post</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def new
+  @post = Post.new
+
+  respond_to do |format|
+    format.html # new.html.erb
+    format.json  { render :json =&gt; @post }
+  end
+end
+</pre></div>
+<p>Вьюха <tt>new.html.erb</tt> отображает этот пустой объект Post пользователю:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;h1&gt;New post&lt;/h1&gt;
+
+&lt;%= render 'form' %&gt;
+
+&lt;%= link_to 'Back', posts_path %&gt;
+</pre></div>
+<p>Строка <tt>&lt;%= render 'form' %&gt;</tt> это наше первое введение в <em>партиалы</em> Rails. Партиал это фрагмент <span class="caps">HTML</span> и кода Ruby, который может использоваться в нескольких местах. В нашем случае форма, используемая для создания новой публикации, в основном сходна с формой, используемой для редактирования публикации, обе имеют текстовые поля для имени и заголовка и текстовую область для содержимого с кнопкой, чтобы сделать новую публикацию или обновить существующую.</p>
+<p>Если заглянете в файл <tt>views/posts/_form.html.erb</tt>, то увидите следующее:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= form_for(@post) do |f| %&gt;
+  &lt;% if @post.errors.any? %&gt;
+  &lt;div id=&quot;errorExplanation&quot;&gt;
+    &lt;h2&gt;&lt;%= pluralize(@post.errors.count, &quot;error&quot;) %&gt; prohibited this post from being saved:&lt;/h2&gt;
+    &lt;ul&gt;
+    &lt;% @post.errors.full_messages.each do |msg| %&gt;
+      &lt;li&gt;&lt;%= msg %&gt;&lt;/li&gt;
+    &lt;% end %&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+  &lt;% end %&gt;
+
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= f.label :name %&gt;&lt;br /&gt;
+    &lt;%= f.text_field :name %&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= f.label :title %&gt;&lt;br /&gt;
+    &lt;%= f.text_field :title %&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;%= f.label :content %&gt;&lt;br /&gt;
+    &lt;%= f.text_area :content %&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;actions&quot;&gt;
+    &lt;%= f.submit %&gt;
+  &lt;/div&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Этот партиал получает все переменные экземпляра, определенные в вызывающем файле вьюхи, поэтому в нашем случае контроллер назначил новый объект Post в <tt>@post</tt> и поэтому он доступен и во вьюхе, и в партиале как <tt>@post</tt>.</p>
+<p>Чтобы узнать больше о партиалах, обратитесь к руководству <a href="/layouts-and-rendering-in-rails/structuring-layouts-3">Макеты и рендеринг в Rails</a>.</p>
+<p>Блок <tt>form_for</tt> используется, чтобы создать форму <span class="caps">HTML</span>. Внутри этого блока у Вас есть доступ к методам построения различных элементов управления формы. Например, <tt>f.text_field :name</tt> говорит Rails создать поле ввода текста в форме и подключить к нему аттрибут <tt>name</tt> экземпляра для отображения. Эти методы можно использовать только для аттрибутов той модели, на которой основана форма (в нашем случае <tt>name</tt>, <tt>title</tt>, и <tt>content</tt>). В Rails предпочтительней использовать <tt>form_for</tt> чем писать на чистом <span class="caps">HTML</span>, так как код получается более компактным и явно связывает форму с конкретным экземпляром модели.</p>
+<p>Блок <tt>form_for</tt> также достаточно сообразительный, чтобы понять, что Вы собираетесь выполнить экшн <em>New Post</em> или <em>Edit Post</em>, и установит теги формы <tt>action</tt> и имена кнопок подтверждения подходящим образом в результирующем <span class="caps">HTML</span>.</p>
+<div class='info'><p>Если Вам нужно создать форму <span class="caps">HTML</span>, которая отображает произвольные поля, не связанные с моделью, нужно использовать метод <tt>form_tag</tt>, который предоставляет ярлыки для построения форм, которые непосредственно не связаны с экземпляром модели.</p></div>
+<p>Когда пользователь нажмет кнопку <tt>Create Post</tt> в этой форме, браузер пошлет информацию назад к методу <tt>create</tt> контроллера (Rails знает, что нужно вызвать метод <tt>create</tt>, потому что форма посылает <span class="caps">POST</span> запрос; это еще одно соглашение, о котором говорилось ранее):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def create
+  @post = Post.new(params[:post])
+
+  respond_to do |format|
+    if @post.save
+      format.html { redirect_to(@post,
+                    :notice =&gt; 'Post was successfully created.') }
+      format.json  { render :json =&gt; @post,
+                    :status =&gt; :created, :location =&gt; @post }
+    else
+      format.html { render :action =&gt; &quot;new&quot; }
+      format.json  { render :json =&gt; @post.errors,
+                    :status =&gt; :unprocessable_entity }
+    end
+  end
+end
+</pre></div>
+<p>Экшн <tt>create</tt> создает новый экземпляр объекта Post из данных, предоставленных пользователем в форме, которые в Rails доступны в хэше <tt>params</tt>. После успешного сохранения новой публикации, <tt>create</tt> возвращает подходящий формат, который запросил пользователь (<span class="caps">HTML</span> в нашем случае). Затем он перенаправляет пользователя на экшн <tt>show</tt> получившейся публикации и устанавливает уведомление пользователя, что Post was successfully created.</p>
+<p>Если публикация не была успешно сохранена, в связи с ошибками валидации, то контроллер возвратит пользователя обратно на экшн <tt>new</tt> со всеми сообщениями об ошибке, таким образом у пользователя есть шанс исправить их и попробовать снова.</p>
+<p>Сообщение &#8220;Post was successfully created&#8221; храниться в хэше Rails <tt>flash</tt>, (Обычно называемый просто Flash), с помощью него сообщения могут переноситься в другой экшн, предоставляя пользователю полезную информацию от статусе своих запросов. В случае с <tt>create</tt>, пользователь никогда не увидит какой-либо отрендеренной страницы в процессе создания нового экземпляра Post, так как происходит немедленный редирект, как только Rails сохраняет запись. Flash переносит сообщение в следующий экшн, поэтому когда пользователь перенаправляется в экшн <tt>show</tt> ему выдается сообщение &#8220;Post was successfully created.&#8221;</p>
+
+<h4 id="showing-an-individual-post">10. Отображение отдельной публикации</h4>
+<p>Когда нажмете на ссылку <tt>show</tt> для публикации на индексной странице, вы перейдете по <span class="caps">URL</span> такого вида <tt>http://localhost:3000/posts/1</tt>. Rails интерпретирует это как вызов экшна <tt>show</tt> для ресурса и передает <tt>1</tt> как параметр <tt>:id</tt>. Вот код экшна <tt>show</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def show
+  @post = Post.find(params[:id])
+
+  respond_to do |format|
+    format.html # show.html.erb
+    format.json  { render :json =&gt; @post }
+  end
+end
+</pre></div>
+<p>Экшн <tt>show</tt> использует <tt>Post.find</tt>, чтобы найти отдельную запись в базе данных по ее значению id. После нахождения записи, Rails отображает ее, используя <tt>show.html.erb</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Name:&lt;/b&gt;
+  &lt;%= @post.name %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Title:&lt;/b&gt;
+  &lt;%= @post.title %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Content:&lt;/b&gt;
+  &lt;%= @post.content %&gt;
+&lt;/p&gt;
+
+
+&lt;%= link_to 'Edit', edit_post_path(@post) %&gt; |
+&lt;%= link_to 'Back', posts_path %&gt;
+</pre></div>
+
+<h4 id="editing-posts">11. Редактирование публикаций</h4>
+<p>Подобно созданию новой публикации, редактирование публикации двусторонний процесс. Первый шаг это запрос определенной публикации <tt>edit_post_path(@post)</tt>. Это вызывает экшн <tt>edit</tt> в контроллере:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def edit
+  @post = Post.find(params[:id])
+end
+</pre></div>
+<p>После нахождения требуемой публикации, Rails использует вьюху <tt>edit.html.erb</tt> чтобы отобразить ее:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;h1&gt;Editing post&lt;/h1&gt;
+
+&lt;%= render 'form' %&gt;
+
+&lt;%= link_to 'Show', @post %&gt; |
+&lt;%= link_to 'Back', posts_path %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Снова, как и в случае с экшном <tt>new</tt>, экшн <tt>edit</tt> использует партиал <tt>form</tt>, однако в этот раз форма выполнит действие <span class="caps">PUT</span> в PostsController и кнопка подтверждения будет называться &#8220;Update Post&#8221;</p>
+<p>Подтвержение формы, созданной в этой вьюхе, вызывает экшн <tt>update</tt> в контроллере:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def update
+  @post = Post.find(params[:id])
+
+  respond_to do |format|
+    if @post.update_attributes(params[:post])
+      format.html { redirect_to(@post,
+                    :notice =&gt; 'Post was successfully updated.') }
+      format.json  { render :json => {}, :status => :ok }
+    else
+      format.html { render :action =&gt; &quot;edit&quot; }
+      format.json  { render :json =&gt; @post.errors,
+                    :status =&gt; :unprocessable_entity }
+    end
+  end
+end
+</pre></div>
+<p>В экшне <tt>update</tt>, Rails сначала использует параметр <tt>:id</tt>, возвращенный от вьюхи edit, чтобы обнаружить запись в базе данных, которую будем редактировать. Затем вызов <tt>update_attributes</tt> берет остальные параметры запроса и применяет их к записи. Если все проходит хорошо, пользователь перенаправляется на вьюху <tt>show</tt>. Если возникает какая-либо проблема, происходит возврат на <tt>edit</tt>, чтобы исправить ее.</p>
+
+<h4 id="destroying-a-post">12. Уничтожение публикации</h4>
+<p>Наконец, нажатие на одну из ссылок <tt>destroy</tt> пошлет соответствующий id в экшн <tt>destroy</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def destroy
+  @post = Post.find(params[:id])
+  @post.destroy
+
+  respond_to do |format|
+    format.html { redirect_to(posts_url) }
+    format.json  { render :json => {}, :status => :ok }
+  end
+end
+</pre></div>
+<p>Метод <tt>destroy</tt> экземпляра модели Active Record убирает соответствующую запись из базы данных. После этого отображать нечего и Rails перенаправляет браузер пользователя на вьюху index.</p>

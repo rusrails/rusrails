@@ -1,0 +1,120 @@
+h1. Типы связей (часть первая)
+
+<p>В Rails <em>связи</em> это соединения между двумя моделями Active Record. Связи реализовываются с использованием макро-вызовов (macro-style calls), таким образом Вы можете декларативно добавлять возможности для Ваших моделей. Например, объявляя, что одна модель принадлежит (<tt>belongs_to</tt>) другой, Вы указываете Rails сохранять информацию о первичном-внешнем ключах между экземплярами двух моделей, а также получаете несколько полезных методов, добавленных в модель. Rails поддерживает шесть типов связей:</p>
+<ul>
+	<li><tt>belongs_to</tt></li>
+	<li><tt>has_one</tt></li>
+	<li><tt>has_many</tt></li>
+	<li><tt>has_many :through</tt></li>
+	<li><tt>has_one :through</tt></li>
+	<li><tt>has_and_belongs_to_many</tt></li>
+</ul>
+<p>После прочтения всего этого руководства, вы научитесь объявлять и использовать различные формы связей. Но сначала следует быстро ознакомиться с ситуациями, когда применим каждый тип связи.</p>
+
+<h4 id="the-belongs-to-association">1. Связь <tt>belongs_to</tt></h4>
+<p>Связь <tt>belongs_to</tt> устанавливает соединение один-к-одному с другой моделью, когда один экземпляр  объявляющей модели &#8220;принадлежит&#8221; одному экземпляру другой модели. Например, если в приложении есть покупатели и заказы, и один заказ может быть связан только с одним покупателем, нужно объявить модель order следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+end
+</pre></div>
+<p><img src="/system/images/belongs_to.png" title="Диагармма для связи belongs_to" alt="Диагармма для связиbelongs_to" /></p>
+
+<h4 id="the-has-one-association">2. Связь <tt>has_one</tt></h4>
+<p>Связь <tt>has_one</tt> также устанавливает соединение один-к-одному с другой моделью, но в несколько ином смысле (и с другими последствиями). Эта связь показывает, что каждый экземпляр модели содержит или обладает одним экземпляром другой модели. Например, если каждый поставщик имеет только один аккаунт, можете объявить модель supplier подобно этому:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account
+end
+</pre></div>
+<p><img src="/system/images/has_one.png" title="Диагармма для связи has_one" alt="Диагармма для связи has_one" /></p>
+
+<h4 id="the-has-many-association">3. Связь <tt>has_many</tt></h4>
+<p>Связь <tt>has_many</tt> указывает на соединение один-ко-многим с другой моделью. Эта связь часто бывает на &#8220;другой стороне&#8221; связи <tt>belongs_to</tt>. Эта связь указывает на то, что каждый экземпляр модели имеет ноль или более экземпляров другой модели. Например, в приложении, содержащем покупателей и заказы, модель customer может быть объявлена следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<div class='note'><p>Имя другой модели указывается во множественном числе при объявлении связи <tt>has_many</tt>.</p></div>
+<p><img src="/system/images/has_many.png" title="Диагармма для связи has_many" alt="Диагармма для связи has_many" /></p>
+
+<h4 id="the-has-many-through-association">4. Связь <tt>has_many :through</tt></h4>
+<p>Связь <tt>has_many :through</tt> часто используется для настройки соединения многие-ко-многим с другой моделью. Эта связь указывает, что объявляющая модель может соответствовать нулю или более экземплярам другой модели <em>через</em> третью модель. Например, рассмотрим поликлинику, где пациентам (patients) дают направления (appointments) к врачам (physicians). Соответствующие объявления связей будут выглядеть следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Physician &lt; ActiveRecord::Base
+  has_many :appointments
+  has_many :patients, :through =&gt; :appointments
+end
+
+class Appointment &lt; ActiveRecord::Base
+  belongs_to :physician
+  belongs_to :patient
+end
+
+class Patient &lt; ActiveRecord::Base
+  has_many :appointments
+  has_many :physicians, :through =&gt; :appointments
+end
+</pre></div>
+<p><img src="/system/images/has_many_through.png" title="Диагармма для связи has_many :through" alt="Диагармма для связи has_many :through" /></p>
+<p>Коллекция соединительных моделей может управляться с помощью <span class="caps">API</span>. Например, если Вы присвоите:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+physician.patients = patients
+</pre></div>
+<p>будет создана новая соединительная модель для вновь связанных объектов, и если некоторые из них закончатся, их строки будут удалены.</p>
+<div class='warning'><p>Автоматическое удаление соединительных моделей прямое, ни один из колбэков на уничтожение не включается.</p></div>
+<p>Связь <tt>has_many :through</tt> также полезна для настройки &#8220;ярлыков&#8221; через вложенные связи <tt>has_many</tt>. Например, если документ имеет много секций, а секция имеет много параграфов, иногда хочется получить просто коллекцию всех параграфов в документе. Это можно настроить следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Document &lt; ActiveRecord::Base
+  has_many :sections
+  has_many :paragraphs, :through =&gt; :sections
+end
+
+class Section &lt; ActiveRecord::Base
+  belongs_to :document
+  has_many :paragraphs
+end
+
+class Paragraph &lt; ActiveRecord::Base
+  belongs_to :section
+end
+</pre></div>
+<p>С определенным <tt>:through =&gt; :sections</tt> Rails теперь понимает:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@document.paragraphs
+</pre></div>
+
+<h4 id="the-has-one-through-association">5. Связь <tt>has_one :through</tt></h4>
+<p>Связь <tt>has_one :through</tt> настраивает соединение один-к-одному с другой моделью. Эта связь показывает, что объявляющая модель может быть связана с одним экземпляром другой модели <em>через</em> третью модель. Например, если каждый поставщик имеет один аккаунт, и каждый аккаунт связан с одной историей аккаунта, тогда модели могут выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Supplier &lt; ActiveRecord::Base
+  has_one :account
+  has_one :account_history, :through =&gt; :account
+end
+
+class Account &lt; ActiveRecord::Base
+  belongs_to :supplier
+  has_one :account_history
+end
+
+class AccountHistory &lt; ActiveRecord::Base
+  belongs_to :account
+end
+</pre></div>
+<p><img src="/system/images/has_one_through.png" title="Диагармма для связи has_one :through" alt="Диагармма для связи has_one :through" /></p>
+
+<h4 id="the-has-and-belongs-to-many-association">6. Связь <tt>has_and_belongs_to_many</tt></h4>
+<p>Связь <tt>has_and_belongs_to_many</tt> создает прямое соединение многие-ко-многим с другой моделью, без промежуточной модели. Например, если Ваше приложение включает узлы (assemblies) и детали (parts), где каждый узел имеет много деталей, и каждая деталь встречается во многих узлах, модели можно объявить таким образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Assembly &lt; ActiveRecord::Base
+  has_and_belongs_to_many :parts
+end
+
+class Part &lt; ActiveRecord::Base
+  has_and_belongs_to_many :assemblies
+end
+</pre></div>
+<p><img src="/system/images/habtm.png" title="Диагармма для связи has_and_belongs_to_many" alt="Диагармма для связи has_and_belongs_to_many" /></p>
+
+<p>В <a href="/active-record-associations/the-types-of-associations-2">следующей части</a> будет рассказано о принципах выбора между <tt>belongs_to</tt> и <tt>has_one</tt>, между <tt>has_many :through</tt> и <tt>has_and_belongs_to_many</tt>, про полиморфные связи и самоприсоединения.</p>

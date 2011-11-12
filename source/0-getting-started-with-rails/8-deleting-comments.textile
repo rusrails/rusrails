@@ -1,0 +1,52 @@
+h1. Удаление комментариев
+
+<p>Другой важной особенностью блога является возможность удаления <span class="caps">SPAM</span>-комментариев. Чтобы сделать это, нужно вставить некоторую ссылку во вьюхе и экшн <tt>DELETE</tt> в <tt>CommentsController</tt>.</p>
+<p>Поэтому сначала добавим ссылку для удаления в партиал <tt>app/views/comments/_comment.html.erb</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p&gt;
+  &lt;b&gt;Commenter:&lt;/b&gt;
+  &lt;%= comment.commenter %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Comment:&lt;/b&gt;
+  &lt;%= comment.body %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;%= link_to 'Destroy Comment', [comment.post, comment],
+               :confirm =&gt; 'Are you sure?',
+               :method =&gt; :delete %&gt;
+&lt;/p&gt;
+</pre></div>
+<p>Нажатие этой новой ссылки &#8220;Destroy Comment&#8221; запустит <tt><span class="caps">DELETE</span> /posts/:id/comments/:id</tt> в нашем <tt>CommentsController</tt>, который затем будет использоваться для нахождения комментария, который мы хотим удалить, поэтому давайте добавим экшн destroy в наш контроллер:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CommentsController &lt; ApplicationController
+
+  def create
+    @post = Post.find(params[:post_id])
+    @comment = @post.comments.create(params[:comment])
+    redirect_to post_path(@post)
+  end
+
+  def destroy
+    @post = Post.find(params[:post_id])
+    @comment = @post.comments.find(params[:id])
+    @comment.destroy
+    redirect_to post_path(@post)
+  end
+
+end
+</pre></div>
+<p>Экшн <tt>destroy</tt> найдет публикацию, которую мы просматриваем, обнаружит комментарий в коллекции <tt>@post.comments</tt> и затем уберет его из базы данных и вернет нас обратно на просмотр публикации.</p>
+
+<h4 id="deleting-associated-objects">1. Удаление связанных объектов</h4>
+<p>Если удаляете публикацию, связанные с ней комментарии также должны быть удалены. В ином случае они будут просто занимать место в базе данных. Rails позволяет использовать опцию <tt>dependent</tt> на связи для достижения этого. Измените модель Post, <tt>app/models/post.rb</tt>, следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post &lt; ActiveRecord::Base
+  validates :name,  :presence =&gt; true
+  validates :title, :presence =&gt; true,
+                    :length =&gt; { :minimum =&gt; 5 }
+  has_many :comments, :dependent =&gt; :destroy
+end
+</pre></div>

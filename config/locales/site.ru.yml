@@ -4,6 +4,7 @@ ru:
       admin:
         current_password: Текущий пароль
         email: Email
+        name: Имя
         password: Пароль
         password_confirmation: Подтверждение пароля
         remember_me: Запомните меня

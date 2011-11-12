@@ -1,0 +1,11 @@
+h1. Создание сложных форм
+
+<p>Многие приложения вырастают из пределов простых форм, редактирующих одиночные объекты. Например, при создании Person вы, возможно, захотите позволить пользователю (в той же самой форме) создать несколько записей адресов (дом, работа и т.д.). Позже, редактируя этого человека, пользователю должно быть доступно добавление, удаление или правка адреса, по необходимости. Хотя настоящее руководство показало все частицы для управления всем этим, в Rails пока нет стандартного законченного способа выполнения такого, но многие разработали свои эффективные подходы. Они включают:</p>
+<ul>
+	<li>As of Rails 2.3, Rails includes <a href="http://guides.rubyonrails.org/2_3_release_notes.html#nested-attributes">Nested Attributes</a> and <a href="http://guides.rubyonrails.org/2_3_release_notes.html#nested-object-forms">Nested Object Forms</a></li>
+	<li>Ryan Bates&#8217; series of Railscasts on <a href="http://railscasts.com/episodes/75">complex forms</a></li>
+	<li>Handle Multiple Models in One Form from <a href="http://media.pragprog.com/titles/fr_arr/multiple_models_one_form.pdf">Advanced Rails Recipes</a></li>
+	<li>Eloy Duran&#8217;s <a href="http://github.com/alloy/complex-form-examples/">complex-forms-examples</a> application</li>
+	<li>Lance Ivy&#8217;s <a href="http://github.com/cainlevy/nested_assignment/tree/master">nested_assignment</a> plugin and <a href="http://github.com/cainlevy/complex-form-examples/tree/cainlevy">sample application</a></li>
+	<li>James Golick&#8217;s <a href="http://github.com/jamesgolick/attribute_fu">attribute_fu</a> plugin</li>
+</ul>

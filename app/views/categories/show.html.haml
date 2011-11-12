@@ -3,5 +3,5 @@
   != textile(@category.text)
   - unless @category.pages.empty?
     %ul
-      - @category.pages.each do |page|
+      - @category.pages.enabled.each do |page|
         %li= link_to page.name, page.path

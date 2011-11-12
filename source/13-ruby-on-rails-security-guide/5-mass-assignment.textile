@@ -1,0 +1,86 @@
+h1. Массовое назначение
+
+<p>&#8212; <em>Без каких-либо защитных мер Model.new(params[:model]) позволит злоумышленникам установить значение любого столбца базы данных.</em></p>
+<p>Возможность массового назначения может стать проблемой, так как она позволяет злоумышленнику задать любые атрибуты модели, манипулируя с хэшем, передаваемым в метод модели <tt>new()</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def signup
+  params[:user] #=&gt; {:name =&gt; “ow3ned”, :admin =&gt; true}
+  @user = User.new(params[:user])
+end
+</pre></div>
+<p>Массовое назначение экономит вам много усилий, так как не нужно устанавливать каждое значение отдельно. Просто передайте хэш в метод new, или присвойте attributes= значение хэша, для присвоения атрибутам модели значений в хэше. Проблема в том, что это часто используется в сочетании с хэшем параметров (params), доступным в контроллере, которым может манипулировать злоумышленник. Например, он может так изменить <span class="caps">URL</span>:</p>
+<pre>
+"name":http://www.example.com/user/signup?user=ow3ned&amp;user[admin]=1
+</pre>
+<p>Это передаст следующие параметры в контроллер:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+params[:user] #=&gt; {:name =&gt; “ow3ned”, :admin =&gt; true}
+</pre></div>
+<p>Таким образом, если вы создаете нового пользователя, используя массовое назначение, может быть очень просто стать администратором.</p>
+<p>Отметьте, что эта уязвимость не ограничена столбцами базы данных. Любой устанавливающий метод, кроме явно защищенных, доступен через метод <tt>attributes=</tt>.  Фактически эта уязвимость распространилась еще больше с появлением вложенного массового назначения (и вложенных объектных форм) в Rails 2.3.  Объявление <tt>accepts_nested_attributes_for</tt> предоставляет нам возможность расширения массового назначения на связи модели (<tt>has_many</tt>, <tt>has_one</tt>, <tt>has_and_belongs_to_many</tt>).  Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  class Person &lt; ActiveRecord::Base
+    has_many :children
+
+    accepts_nested_attributes_for :children
+  end
+
+  class Child &lt; ActiveRecord::Base
+    belongs_to :person
+  end  
+</pre></div>
+<p>В результате уязвимость расширяется за рамки простого присвоения столбцов, предоставляя злоумышленнику возможность создания совершенно новых записей в связанных таблицах (в нашем случае children).</p>
+
+<h4 id="countermeasures">1. Контрмеры</h4>
+<p>Чтобы всего этого избежать, Rails предоставляет два метода класса Active Record для контроля доступа к вашим атрибутам. Метод <tt>attr_protected</tt> принимает перечень атрибутов, к которым не будет доступа при массовом назначении. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+attr_protected :admin
+</pre></div>
+<p><tt>attr_protected</tt> также дополнительно принимает опцию роли, используя :as, которая позволяет определить несколько группировок массового назначения. Если роль не определена, то атрибуты будут добавлены к роли :default.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+attr_protected :last_login, :as => :admin
+</pre></div>
+<p>Более предпочтительным способом, поскольку он следует принципу белого списка, является метод <tt>attr_accessible</tt>. Это точная противоположность <tt>attr_protected</tt>, поскольку <em class="highlight">он принимает перечень атрибутов, которые будут доступны</em>. Все другие атрибуты будут защищены. С этим способом вы не забудете защитить атрибуты при добавлении новых в процессе разработки. Вот пример:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+attr_accessible :name
+attr_accessible :name, :is_admin, :as => :admin
+</pre></div>
+<p>Если захотите установить защищенный атрибут, нужно назначить его отдельно:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+params[:user] # => {:name => "ow3ned", :admin => true}
+@user = User.new(params[:user])
+@user.admin # => false # not mass-assigned
+@user.admin = true
+@user.admin # => true
+</pre></div>
+<p>При назначении атрибутов в Active Record при использовании <tt>attributes=</tt> будет использована роль :default. Чтобы назначить атрибуты, используя различные роли, следует использовать <tt>assign_attributes</tt>, который принимает опциональный параметр :as. Если опция :as не предоставлена, то будет использована роль :default. Также можно пропустить проверку массового назначения используя опцию <tt>:without_protection</tt>. Вот пример:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@user = User.new
+
+@user.assign_attributes({ :name => 'Josh', :is_admin => true })
+@user.name # => Josh
+@user.is_admin # => false
+
+@user.assign_attributes({ :name => 'Josh', :is_admin => true }, :as => :admin)
+@user.name # => Josh
+@user.is_admin # => true
+
+@user.assign_attributes({ :name => 'Josh', :is_admin => true }, :without_protection => true)
+@user.name # => Josh
+@user.is_admin # => true
+</pre></div>
+<p>подобным образом методы <tt>new</tt>, <tt>create</tt>, <tt>create!</tt>, <tt>update_attributes</tt> и <tt>update_attributes!</tt> учитывают проверку массового назначения и принимают либо опцию <tt>:as</tt>, либо опцию <tt>:without_protection</tt>. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@user = User.new({ :name => 'Sebastian', :is_admin => true }, :as => :admin)
+@user.name # => Sebastian
+@user.is_admin # => true
+
+@user = User.create({ :name => 'Sebastian', :is_admin => true }, :without_protection => true)
+@user.name # => Sebastian
+@user.is_admin # => true
+</pre></div>
+<p>Более параноидальной техникой защитить целый проект будет принуждение всех моделей иметь белые списки своих доступных атрибутов. Это достигается с помощью простого инициализатора:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+config.active_record.whitelist_attributes = true
+</pre></div>
+<p>Это просто создаст пустой белый список атрибутов, доступных для массового назначения, во всех моделях вашего приложения. Как таковые, ваши модели будут нуждаться в явном белом списке доступных параметров, с использованием объявления <tt>attr_accessible</tt> или <tt>attr_protected</tt>.  Эту технику лучше всего применять при запуске нового проекта. Однако для существующего проекта с полным набором функциональных тестов может быть простым и относительно быстрым вставить этот инициализатор, запустить тесты и выставить каждый атрибут (с помощью <tt>attr_accessible</tt> или <tt>attr_protected</tt>), как диктуют ваши проваленные тесты.</p>

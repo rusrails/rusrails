@@ -1,0 +1,118 @@
+h1. Рефакторинг
+
+<p>Теперь, когда у нас есть работающие публикации и комментарии, если взглянем на шаблон <tt>app/views/posts/show.html.erb</tt>, он стал длинным и неудобным. Давайте воспользуемся партиалами, чтобы разгрузить его.</p>
+
+<h4 id="rendering-partial-collections">1. Рендеринг коллекций партиалов</h4>
+<p>Сначала сделаем партиал для комментариев, показывающий все комментарии для публикации. Создайте файл <tt>app/views/comments/_comment.html.erb</tt> и поместите в него следующее:</p>
+
+<erb>
+<p>
+  <b>Commenter:</b>
+  <%= comment.commenter %>
+</p>
+
+<p>
+  <b>Comment:</b>
+  <%= comment.body %>
+</p>
+</erb>
+
+<p>Затем <tt>app/views/posts/show.html.erb</tt> можно изменить вот так:</p>
+
+<erb>
+<p class="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @post.name %>
+</p>
+
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+
+<p>
+  <b>Content:</b>
+  <%= @post.content %>
+</p>
+
+<h2>Comments</h2>
+<%= render @post.comments %>
+
+<h2>Add a comment:</h2>
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <div class="field">
+    <%= f.label :commenter %><br />
+    <%= f.text_field :commenter %>
+  </div>
+  <div class="field">
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<br />
+
+<%= link_to 'Edit Post', edit_post_path(@post) %> |
+<%= link_to 'Back to Posts', posts_path %> |
+</erb>
+
+<p>Теперь это отрендерит партиал <tt>app/views/comments/_comment.html.erb</tt> по разу для каждого комментария в коллекции <tt>@post.comments</tt>.  Так как метод <tt>render</tt> перебирает коллекцию <tt>@post.comments</tt>, он назначает каждый комментарий локальной переменной с именем, как у партиала, в нашем случае <tt>comment</tt>, которая нам доступна в партиале для отображения.</p>
+
+<h4 id="rendering-a-partial-form">2. Рендеринг партиальной формы</h4>
+<p>Давайте также переместим раздел нового коментария в свой партиал, опять же, создайте файл <tt>app/views/comments/_form.html.erb</tt> и поместите в него:</p>
+
+<erb>
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <div class="field">
+    <%= f.label :commenter %><br />
+    <%= f.text_field :commenter %>
+  </div>
+  <div class="field">
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+</erb>
+
+<p>Затем измените <tt>app/views/posts/show.html.erb</tt> следующим образом:</p>
+
+<erb>
+<p class="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @post.name %>
+</p>
+
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+
+<p>
+  <b>Content:</b>
+  <%= @post.content %>
+</p>
+
+<h2>Comments</h2>
+<%= render @post.comments %>
+
+<h2>Add a comment:</h2>
+<%= render "comments/form" %>
+
+<br />
+
+<%= link_to 'Edit Post', edit_post_path(@post) %> |
+<%= link_to 'Back to Posts', posts_path %> |
+</erb>
+
+<p>Второй render всего лишь определяет шаблон партиала, который мы хотим рендерить, <tt>comments/form</tt>, Rails достаточно сообразительный, чтобы подставить подчеркивание в эту строку и понять, что Вы хотели рендерить файл <tt>_form.html.erb</tt> в директории <tt>app/views/comments</tt>.</p>
+<p>Объект <tt>@post</tt> доступен в любых партиалах, рендерируемых во вьюхе, так как мы определили его как переменную экземпляра.</p>

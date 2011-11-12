@@ -1,0 +1,45 @@
+h1. Хелперы вьюхи
+
+<p>Хелперы вьюхи обитают в <tt>app/helpers</tt> и представляют небольшие фрагменты повторно используемого кода для вьюх. В нашем случае, мы хотим метод, который заносит в строку несколько объектов вместе, используя их атрибуты имени и соединяя их запятыми. Так как это нужно для шаблона Post show, мы поместим код в PostsHelper.</p>
+<p>Откройте <tt>app/helpers/posts_helper.rb</tt> и добавьте следующее:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+module PostsHelper
+  def join_tags(post)
+    post.tags.map { |t| t.name }.join(&quot;, &quot;)
+  end
+end
+</pre></div>
+<p>Теперь можно отредактировать вьюху в <tt>app/views/posts/show.html.erb</tt>, чтобы она выглядела так:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Name:&lt;/b&gt;
+  &lt;%= @post.name %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Title:&lt;/b&gt;
+  &lt;%= @post.title %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Content:&lt;/b&gt;
+  &lt;%= @post.content %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;b&gt;Tags:&lt;/b&gt;
+  &lt;%= join_tags(@post) %&gt;
+&lt;/p&gt;
+
+&lt;h2&gt;Comments&lt;/h2&gt;
+&lt;%= render @post.comments %&gt;
+
+&lt;h2&gt;Add a comment:&lt;/h2&gt;
+&lt;%= render &quot;comments/form&quot; %&gt;
+
+
+&lt;%= link_to 'Edit Post', edit_post_path(@post) %&gt; |
+&lt;%= link_to 'Back to Posts', posts_path %&gt; |
+</pre></div>

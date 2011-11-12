@@ -1,0 +1,99 @@
+h1. Создание откликов (часть вторая)
+
+<p><a href="/layouts-and-rendering-in-rails/creating-responses-1">&gt;&gt;&gt; Первая часть.</a></p>
+
+<h4 id="using-redirect-to">3. Использование <tt>redirect_to</tt></h4>
+<p>Другой способ управлять возвратом отклика на запрос <span class="caps">HTTP</span> - с помощью <tt>redirect_to</tt>. Как вы видели, <tt>render</tt> говорит Rails, какую вьюху (или иной ресурс) использовать в создании ответа. Метод <tt>redirect_to</tt> делает нечто полностью отличное: он говорит браузеру послать новый запрос по другому <span class="caps">URL</span>. Например, можно перенаправить из того места, где сейчас выполняется код, в индекс фотографий Вашего приложения, с помощью этого вызова:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redirect_to photos_path
+</pre></div>
+<p><tt>redirect_to</tt> можно использовать с любыми аргументами, которые могут использоваться с <tt>link_to</tt> или <tt>url_for</tt>. Дополнительно, есть специальное перенаправление, которое посылает пользователя обратно на страницу, с которой он пришел:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redirect_to :back
+</pre></div>
+
+<h5 id="getting-a-different-redirect-status-code">3.1 Получение различного кода статуса перенаправления</h5>
+<p>Rails использует код статуса <span class="caps">HTTP</span> 302 (временное перенаправление), когда вызывается <tt>redirect_to</tt>. Если хотите использовать иной код статуса (возможно 301, постоянное перенаправление), можете использовать опцию <tt>:status</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redirect_to photos_path, :status =&gt; 301
+</pre></div>
+<p>Подобно опции <tt>:status</tt> для <tt>render</tt>, <tt>:status</tt> для <tt>redirect_to</tt> принимает и числовые, и символьные обозначения заголовка.</p>
+
+<h5 id="the-difference-between-render-and-redirect-to">3.2 Различие между <tt>render</tt> и <tt>redirect_to</tt></h5>
+<p>Иногда неопытные разработчики представляют себе <tt>redirect_to</tt> как разновидность команды <tt>goto</tt>, перемещающую выполнение из одного места в другое в Вашем коде Rails. Это <em>не</em> правильно. Ваш код останавливается и ждет нового запроса от браузера. Просто получается так, что вы говорите браузеру, какой запрос он должен сделать следующим, возвращая код статуса <span class="caps">HTTP</span> 302.</p>
+<p>Рассмотрим эти экшны, чтобы увидеть разницу:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def index
+  @books = Book.all
+end
+
+def show
+  @book = Book.find_by_id(params[:id])
+  if @book.nil?
+    render :action =&gt; &quot;index&quot;
+  end
+end
+</pre></div>
+<p>С кодом в такой форме, вероятно, будет проблема, если переменная <tt>@book</tt> равна <tt>nil</tt>. Помните, <tt>render :action</tt> не запускает какой-либо код в указанном экшне, таким образом ничего не будет присвоено переменной <tt>@books</tt>, от которой предположительно зависит вьюха <tt>index</tt>. Способ исправить это - использовать перенаправление вместо рендера:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def index
+  @books = Book.all
+end
+
+def show
+  @book = Book.find_by_id(params[:id])
+  if @book.nil?
+    redirect_to :action =&gt; :index
+  end
+end
+</pre></div>
+<p>С таким кодом браузер сделает новый запрос для индексной страницы, код в методе <tt>index</tt> запустится, и все будет хорошо.</p>
+<p>Единственный недостаток этого кода в том, что он требует круговорот через браузер, браузер запрашивает экшн show с помощью <tt>/books/1</tt>, и контроллер обнаруживает, что книг нет, поэтому отсылает отклик-перенаправление 301 браузеру, сообщающий перейти на <tt>/books/</tt>, браузер выполняет и посылает новый запрос контроллеру, теперь запрашивая экшн <tt>index</tt>, затем контроллер получает все книги в базе данных и рендерит шаблон index, отсылает его обратно браузеру, который затем показывает его на экране.</p>
+<p>Пока это небольшое приложение, такое состояние не может быть проблемой, но иногда стоит подумать, что скорость отклика существенна. Одним из способов управления этим двойным запросом (хотя это и хитрость) может быть код:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def index
+  @books = Book.all
+end
+
+def show
+  @book = Book.find_by_id(params[:id])
+  if @book.nil?
+    @books = Book.all
+    render &quot;index&quot;, :alert =&gt; 'Your book was not found!'
+  end
+end
+</pre></div>
+<p>Который, обнаружив, что нет книг, заполнит переменную экземпляра <tt>@books</tt> всеми книгами в базе данных, и затем напрямую отрендерит шаблон <tt>index.html.erb</tt>, возвратив его браузеру с предупреждающим сообщением в flash, сообщающим пользователю, что произошло.</p>
+
+<h4 id="using-head-to-build-header-only-responses">4. Использование <tt>head</tt> для создания отклика, содержащего только заголовок</h4>
+<p>Метод <tt>head</tt> существует, чтобы позволить возвращать отклики браузеру, содержащие только заголовки. Он представляет более явную альтернативу вызова <tt>render :nothing</tt>. Метод <tt>head</tt> принимает один параметр, который интерпретируется как хэш имен заголовков и значений. Например, можете возвратить только заголовок ошибки:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+head :bad_request
+</pre></div>
+<p>Что создаст следующий заголовок:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+HTTP/1.1 400 Bad Request
+Connection: close
+Date: Sun, 24 Jan 2010 12:15:53 GMT
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=utf-8
+X-Runtime: 0.013483
+Set-Cookie: _blog_session=...snip...; path=/; HttpOnly
+Cache-Control: no-cache
+</pre></div>
+<p>Или можете использовать другие заголовки <span class="caps">HTTP</span> для передачи дополнительной информации:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+head :created, :location =&gt; photo_path(@photo)
+</pre></div>
+<p>Что создаст:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+HTTP/1.1 201 Created
+Connection: close
+Date: Sun, 24 Jan 2010 12:16:44 GMT
+Transfer-Encoding: chunked
+Location: /photos/1
+Content-Type: text/html; charset=utf-8
+X-Runtime: 0.083496
+Set-Cookie: _blog_session=...snip...; path=/; HttpOnly
+Cache-Control: no-cache
+</pre></div>

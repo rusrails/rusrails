@@ -1,0 +1,156 @@
+h1. Функциональные тесты для ваших контроллеров
+
+<p>В Rails тестирование различных экшнов одного контроллера называется написанием функциональных тестов для этого контроллера. Контроллеры обрабатывают входящие веб запросы к вашему приложению и в конечном итоге откликаются отрендеренной вьюхой.</p>
+
+<h4 id="what-to-include-in-your-functional-tests">1. Что включать в функциональные тесты</h4>
+<p>Следует протестировать такие вещи, как:</p>
+<ul>
+	<li>был ли веб запрос успешным?</li>
+	<li>был ли пользователь перенаправлен на правильную страницу?</li>
+	<li>был ли пользователь успешно аутентифицирован?</li>
+	<li>был ли правильный объект сохранен в шаблон отклика?</li>
+	<li>было ли подходящее сообщение отражено для пользователя во вьюхе</li>
+</ul>
+<p>Теперь, когда мы использовали Rails scaffold generator для нашего ресурса <tt>Post</tt>, он также создал код контроллера и функциональные тесты. Можете посмотреть файл <tt>posts_controller_test.rb</tt> в директории <tt>test/functional</tt>.</p>
+<p>Давайте пробежимся про одному такому тесту, <tt>test_should_get_index</tt> из файла <tt>posts_controller_test.rb</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+test &quot;should get index&quot; do
+  get :index
+  assert_response :success
+  assert_not_nil assigns(:posts)
+end
+</pre></div>
+<p>В тесте <tt>test_should_get_index</tt>, Rails имитирует запрос к экшну index, убеждается, что запрос был успешным, а также обеспечивает, что назначается валидная переменная экземпляра <tt>posts</tt>.</p>
+<p>Метод <tt>get</tt> стартует веб запрос и заполняет результаты в ответ. Он принимает 4 аргумента:</p>
+<ul>
+	<li>Экшн контроллера, к которомы обращаетесь. Он может быть в форме строки или символа.</li>
+	<li>Необязательный хэш параметров запроса для передачи в экшн (эквивалент параметров строки запроса или переменных post).</li>
+	<li>Необязательный хэш переменных сессии для передачи вместе с запросом.</li>
+	<li>Необязательный хэш значений flash.</li>
+</ul>
+<p>Пример: Вызов экшна <tt>:show</tt>, передача <tt>id</tt>, равного 12, как <tt>params</tt>, и установка <tt>user_id</tt> как 5 в сессии:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+get(:show, {'id' =&gt; &quot;12&quot;}, {'user_id' =&gt; 5})
+</pre></div>
+<p>Другой пример: Вызов экшна <tt>:view</tt>, передача <tt>id</tt>, равного 12, как <tt>params</tt>, в этот раз без сессии, но с сообщением flash.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+get(:view, {'id' =&gt; '12'}, nil, {'message' =&gt; 'booya!'})
+</pre></div>
+<div class='note'><p>Если попытаетесь запустить тест <tt>test_should_create_post</tt> из <tt>posts_controller_test.rb</tt>, он провалится из-за недавно добавленной валидации на уровне модели, и это правильно.</p></div>
+<p>Давайте изменим тест <tt>test_should_create_post</tt> в <tt>posts_controller_test.rb</tt> так, чтобы все наши тесты проходили:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+test &quot;should create post&quot; do
+  assert_difference('Post.count') do
+    post :create, :post =&gt; { :title =&gt; 'Some title'}
+  end
+
+  assert_redirected_to post_path(assigns(:post))
+end
+</pre></div>
+<p>Теперь можете попробовать запустить все тесты, и они должны пройти.</p>
+
+<h4 id="available-request-types-for-functional-tests">2. Доступные типы запросов для функциональных тестов</h4>
+<p>Если вы знакомы с протоколом <span class="caps">HTTP</span>, то знаете, что <tt>get</tt> это тип запроса. Имеется 5 типов запроса, поддерживаемых в функциональных тестах Rails:</p>
+<ul>
+	<li><tt>get</tt></li>
+	<li><tt>post</tt></li>
+	<li><tt>put</tt></li>
+	<li><tt>head</tt></li>
+	<li><tt>delete</tt></li>
+</ul>
+<p>Все типы запросов являются методами, которые можете использовать, однако, скорее всего, первые два вы будете использовать чаше остальных.</p>
+
+<h4 id="the-four-hashes-of-the-apocalypse">3. The Four Hashes of the Apocalypse</h4>
+<p>После того, как запрос был сделан с использованием одного из 5 методов (<tt>get</tt>, <tt>post</tt>, и т.д.) и обработан, у Вас будет 4 объекта Hash, готовых для использования:</p>
+<ul>
+	<li><tt>assigns</tt> &#8211; любые объекты, хранящиеся как переменные экземпляров в экшнах для использования во вьюхах.</li>
+	<li><tt>cookies</tt> &#8211; Любые установленные куки.</li>
+	<li><tt>flash</tt> &#8211; Любые объекты, находящиеся во flash.</li>
+	<li><tt>session</tt> &#8211; Любой объект, находящийся в переменных сессии.</li>
+</ul>
+<p>Как и в случае с обычными объектами Hash, можете получать доступ к значениям, указав ключ в строке. Также можете указать его именем символа, кроме <tt>assigns</tt>. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  flash[&quot;gordon&quot;]               flash[:gordon]
+  session[&quot;shmession&quot;]          session[:shmession]
+  cookies[&quot;are_good_for_u&quot;]     cookies[:are_good_for_u]
+
+# Так как нельзя использовать assigns[:something] в силу исторических причин:
+  assigns[&quot;something&quot;]          assigns(:something)
+</pre></div>
+
+<h4 id="instance-variables-available">4. Доступные переменные экземпляра</h4>
+<p>В Ваших функциональных тестах также доступны три переменные экземпляра:</p>
+<ul>
+	<li><tt>@controller</tt> &#8211; Контроллер, обрабатывающий запрос</li>
+	<li><tt>@request</tt> &#8211; Запрос</li>
+	<li><tt>@response</tt> &#8211; Отклик</li>
+</ul>
+
+<h4 id="a-fuller-functional-test-example">5. Полноценный пример функционального теста</h4>
+<p>Вот другой пример, использующий <tt>flash</tt>, <tt>assert_redirected_to</tt> и <tt>assert_difference</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+test &quot;should create post&quot; do
+  assert_difference('Post.count') do
+    post :create, :post =&gt; { :title =&gt; 'Hi', :body =&gt; 'This is my first post.'}
+  end
+  assert_redirected_to post_path(assigns(:post))
+  assert_equal 'Post was successfully created.', flash[:notice]
+end
+</pre></div>
+
+<h4 id="testing-views">6. Тестирование вьюх</h4>
+<p>Тестирование отклика на ваш запрос с помощью подтверждения наличия ключевых элементов <span class="caps">HTML</span> и их содержимого, это хороший способ протестировать вьюхи вашего приложения. Оператор контроля <tt>assert_select</tt> позволяет осуществить это с помощью простого, но мощного синтаксиса.</p>
+<div class='note'><p>В другой документации Вы можете обнаружить применение <tt>assert_tag</tt>, но сейчас он устарел в пользу <tt>assert_select</tt>.</p></div>
+<p>Имеется две формы <tt>assert_select</tt>:</p>
+<p><tt>assert_select(selector, [equality], [message])</tt> обеспечивает, что условие equality выполняется для выбранных через selector элементах. selector может быть выражением селектора <span class="caps">CSS</span> (String), выражением с заменяемыми значениями или объектом <tt>HTML::Selector</tt>.</p>
+<p><tt>assert_select(element, selector, [equality], [message])</tt> обеспечивает, что условие equality выполняется для всех элементов, выбранных через selector начиная с <em>element</em> (экземпляра <tt>HTML::Node</tt>) и его потомков.</p>
+<p>Например, можете проверить содержимое в элементе title Вашего отклика с помощью:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_select 'title', &quot;Welcome to Rails Testing Guide&quot;
+</pre></div>
+<p>Также можно использовать вложенные блоки <tt>assert_select</tt>. В этом случае внутренний <tt>assert_select</tt> запускает оператор контроля для полной коллекции элементов, выбранных во внешнем блоке <tt>assert_select</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_select 'ul.navigation' do
+  assert_select 'li.menu_item'
+end
+</pre></div>
+<p>Альтернативно, коллекция элементов, переданная внешним <tt>assert_select</tt>, может быть перебрана, таким образом <tt>assert_select</tt> может быть вызван отдельно для каждого элемента. Предположим для примера, что отклик содержит два упорядоченных списка, каждый из четырех элементов, тогда оба следующих теста пройдут.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_select &quot;ol&quot; do |elements|
+  elements.each do |element|
+    assert_select element, &quot;li&quot;, 4
+  end
+end
+
+assert_select &quot;ol&quot; do
+  assert_select &quot;li&quot;, 8
+end
+</pre></div>
+<p>Оператор контроля <tt>assert_select</tt> достаточно мощный. Для более продвинутого использования обратитесь к его <a href="http://api.rubyonrails.org/classes/ActionController/Assertions/SelectorAssertions.html">документации</a>.</p>
+
+<h5 id="additional-view-based-assertions">6.1 Дополнительные операторы контроля, основанные на вьюхе</h5>
+<p>В тестировании вьюх в основном используется такие операторы контроля:</p>
+<table class="inner_table">
+	<tr>
+		<th>Оператор контроля                                                                        </th>
+		<th>Назначение</th>
+	</tr>
+	<tr>
+		<td><tt>assert_select_email</tt>                                                              </td>
+		<td>Позволяет сделать утверждение относительно тела e-mail. </td>
+	</tr>
+	<tr>
+		<td><tt>assert_select_encoded</tt>                                                            </td>
+		<td>Позволяет сделать утверждение относительно закодированного <span class="caps">HTML</span>. Он делает это декодируя содержимое каждого элемента и затем вызывая блок со всеми декодированными элементами.</td>
+	</tr>
+	<tr>
+		<td><tt>css_select(selector)</tt>  или <tt>css_select(element, selector)</tt>                         </td>
+		<td>Возвращают массив всех элементов, выбранных через <em>selector</em>. Во втором варианте сначала проверяется соответствие базовому <em>element</em>, а затем пытается применить соответствие выражению <em>selector</em> на каждом из его детей. Если нет соответствий, оба варианта возвращают пустой массив.</td>
+	</tr>
+</table>
+<p>Вот пример использования <tt>assert_select_email</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_select_email do
+  assert_select 'small', 'Please click the &quot;Unsubscribe&quot; link if you want to opt-out.'
+end
+</pre></div>

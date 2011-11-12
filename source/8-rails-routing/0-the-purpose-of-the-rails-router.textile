@@ -1,0 +1,24 @@
+h1. Цель роутера Rails
+
+<p>Роутер Rails распознает URL и соединяет их с экшном контроллера. Он также создает пути и URL, избегая необходимость писать тяжелый код в ваших вьюхах.</p>
+
+<h4 id="connecting-urls-to-code">1. Соединение URL с кодом</h4>
+<p>Когда ваше приложение на Rails получает входящий запрос</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+GET /patients/17
+</pre></div>
+<p>оно опрашивает роутер на предмет соответствия экшну контроллера. Если первый соответствующий маршрут это</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+match &quot;/patients/:id&quot; =&gt; &quot;patients#show&quot;
+</pre></div>
+<p> то запрос будет направлен в контроллер <tt>patients</tt> в экшн <tt>show</tt> с <tt>{ :id =&gt; &#8220;17&#8221; }</tt> в <tt>params</tt>.</p>
+
+<h4 id="generating-urls-from-code">2. Создание URL из кода</h4>
+<p>Также можно создавать пути и URL. Если приложение содержит код:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">>
+@patient = Patient.find(17)
+</pre></div>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= link_to &quot;Patient Record&quot;, patient_path(@patient.id) %&gt;
+</pre></div>
+<p>То роутер создаст путь <tt>/patients/17</tt>. Это увеличит устойчивость вашей вьюхи и упростит код для понимания. Отметьте, что id не нужно указывать в маршрутном хелпере.</p>

@@ -1,0 +1,100 @@
+h1. Инициализация
+
+<h3 id="using-initializers">Использование файлов инициализаторов</h3>
+<p>После загрузки фреймворка и любых гемов и плагинов в вашем приложении, Rails приступает к загрузке инициализаторов. Инициализатор это любой файл с кодом ruby, хранящийся в <tt>/config/initializers</tt> вашего приложения. Инициализаторы могут использоваться для хранения конфигурационных настроек, которые должны быть выполнены после загрузки фреймворков, плагинов и гемов, таких как опции для конфигурирования настроек для этих частей.</p>
+<div class='note'><p>Можно использовать подпапки для организации ваших инициализаторов, если нужно, так как Rails смотрит файловую иерархию в целом в папке <tt>initializers</tt> и ниже.</p></div>
+<div class='info'><p>Если имеется какая-либо зависимость от порядка в ваших инициализаторах, можно контролировать порядок загрузки с помощью именования. Например, <tt>01_critical.rb</tt> будет загружен до <tt>02_normal.rb</tt>.</p></div>
+
+<h3 id="initialization-events">События инициализации</h3>
+<p>В Rails имеется 5 событий инициализации, которые могут быть втроены в (отображено в порядке запуска):</p>
+<ul>
+	<li><tt>before_configuration</tt>: Это запустится как только константа приложения унаследуется от <tt>Rails::Application</tt>. Вызовы <tt>config</tt> будут произведены до того, как это произойдет.</li>
+</ul>
+<ul>
+	<li><tt>before_initialize</tt>: Это запустится непосредственно перед процессом инициализации с помощью инициализатора <tt>:bootstrap_hook</tt>, расположенного рядом с началом процесса инициализации Rails.</li>
+</ul>
+<ul>
+	<li><tt>to_prepare</tt>: Запустится после того, как инициализаторы будут запущены для всех Railties (включая само приложение), но до нетерпеливой загрузки и построения стека промежуточного ПО.</li>
+</ul>
+<ul>
+	<li><tt>before_eager_load</tt>: Это запустится непосредственно после нетерпеливой загрузки, что является поведением по умолчанию для среды <em>production</em>, но не <tt>development</tt>.</li>
+</ul>
+<ul>
+	<li><tt>after_initialize</tt>: Запустится сразу после инициализации приложения, но до запуска инициализаторов приложения.</li>
+</ul>
+<div class='warning'><p>Некоторые части вашего приложения, в частности обсерверы и роутинг, пока еще не настроены в месте, где вызывается блок <tt>after_initialize</tt>.</p></div>
+
+<h4 id="rails-railtie-initializer">1. <tt>Rails::Railtie#initializer</tt></h4>
+<p>В Rails имеется несколько инициализаторов, выполняющихся при запуске, все они определены с использованием метода <tt>initializer</tt> из <tt>Rails::Railtie</tt>. Вот пример инициализатора <tt>initialize_whiny_nils</tt> из Active Support:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+initializer &quot;active_support.initialize_whiny_nils&quot; do |app|
+  require 'active_support/whiny_nil' if app.config.whiny_nils
+end
+</pre></div>
+<p>Метод <tt>initializer</tt> принимает три аргумента, первый имя инициализатора, второй хэш опций (здесь не показан) и третий блок. В хэше опций может быть определен ключ <tt>:before</tt> для указания, перед каким инициализатором должен быть зпущен новый инициализатор, и ключ <tt>:after</tt> определяет, после какого инициализатора запустить этот.</p>
+<p>Инициализаторы, определенные методом <tt>initializer</tt>, будут запущены в порядке, в котором они определены, за исключением тех, в которых использованы методы <tt>:before</tt> или <tt>:after</tt>.</p>
+<div class='warning'><p>Можно помещать свои инициализаторы до или после других инициализаторов в цепочки, пока это логично. Скажем, имеется 4 инициализатора, названные от &#8220;one&#8221; до &#8220;four&#8221; (определены в этом порядке), и вы определяете &#8220;four&#8221; идти <em>before</em> &#8220;four&#8221;, но <em>after</em> &#8220;three&#8221;, это не логично, и Rails не сможет установить ваш порядок инициализаторов.</p></div>
+<p>Блочный аргумент метода <tt>initializer</tt> это экземпляр самого приложение, таким образом, можно получить доступ к его конфигурации, используя метод <tt>config</tt>, как это сделано в примере.</p>
+<p>Поскольку <tt>Rails::Application</tt> унаследован от <tt>Rails::Railtie</tt> (опосредованно), можно использовать метод <tt>initializer</tt> в <tt>config/application.rb</tt> для определения инициализаторов для приложения.</p>
+
+<h4 id="initializers">2. Инициализаторы</h4>
+<p>Ниже приведен полный список всех инициализаторов, присутствующих в Rails в порядке,в котором они определены (и, следовательно, запущены, если не указано иное).</p>
+<p><strong><tt>load_environment_hook</tt></strong>
+Служит плейсхолдером, так что <tt>:load_environment_config</tt> может быть определено для запуска до него.</p>
+<p><strong><tt>load_active_support</tt></strong> Требует <tt>active_support/dependencies</tt>, настраивающий основу для Active Support. Опционально требует <tt>active_support/all</tt>, если <tt>config.active_support.bare</tt> не истинно, что является значением по умолчанию.</p>
+<p><strong><tt>preload_frameworks</tt></strong> Автоматически загружает все автозагружаемые зависимости Rails, если <tt>config.preload_frameworks</tt> <tt>true</tt> или &#8220;истинно&#8221;. По умолчанию эта конфигурационная опция отключена. В Rails они загружаются, когда внутренние классы обращаются в первый раз. <tt>:preload_frameworks</tt> загружает их все за раз при инициализации.</p>
+<p><strong><tt>initialize_logger</tt></strong> Инициализирует логгер (объект <tt>ActiveSupport::BufferedLogger</tt>) для приложения и делает его доступным как <tt>Rails.logger</tt>, если до него другой инициализатор не определит <tt>Rails.logger</tt>.</p>
+<p><strong><tt>initialize_cache</tt></strong> Если <tt>RAILS_CACHE</tt> еще не установлена, инициализирует кэш, обращаясь к значению <tt>config.cache_store</tt> и сохраняя результат как <tt>RAILS_CACHE</tt>. Если этот объект отвечает на метод <tt>middleware</tt>, его промежуточное ПО вставляется до <tt>Rack::Runtime</tt> в стеке промежуточного ПО.</p>
+<p><strong><tt>set_clear_dependencies_hook</tt></strong> Представляет кух для использования <tt>active_record.set_dispatch_hooks</tt>, запускаемого до этого инициализатора. Этот инициализатор &#8212; запускающийся только если <tt>cache_classes</tt> установлена <tt>false</tt> &#8212; использует <tt>ActionDispatch::Callbacks.after</tt> для удаления констант, на которые ссылались на протяжении запроса от пространства объекта, так что они могут быть перезагружены в течение следующего запроса.</p>
+<p><strong><tt>initialize_dependency_mechanism</tt></strong> Если <tt>config.cache_classes</tt> true, конфигурирует <tt>ActiveSupport::Dependencies.mechanism</tt> требовать (<tt>require</tt>) зависимости, а не загружать (<tt>load</tt>) их.</p>
+<p><strong><tt>bootstrap_hook</tt></strong> Запускает все сконфигурированные блоки <tt>before_initialize</tt>.</p>
+<p><strong><tt>i18n.callbacks</tt></strong> В среде development, настраивает колбэк <tt>to_prepare</tt>, вызывающий <tt>I18n.reload!</tt>, если любая из локалей изменилась с последнего запроса. В режиме production этот колбэк запускается один раз при первом запросе.</p>
+<p><strong><tt>active_support.initialize_whiny_nils</tt></strong> Требует <tt>active_support/whiny_nil</tt>, если <tt>config.whiny_nils</tt> true. Этот файл выведет ошибки, такие как:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Called id for nil, which would mistakenly be 4 -- if you really wanted the id of nil, use object_id
+</pre></div>
+<p>И:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+You have a nil object when you didn't expect it!
+You might have expected an instance of Array.
+The error occurred while evaluating nil.each
+</pre></div>
+<p><strong><tt>active_support.deprecation_behavior</tt></strong> Настраивает отчеты об устаревании для сред, по умолчанию <tt>:log</tt> для development, <tt>:notify</tt> для production и <tt>:stderr</tt> для test. Если для <tt>config.active_support.deprecation</tt> не установлено значение, то инициализатор подскажет пользователю сконфигурировать эту строку в файле <tt>config/environments</tt> текущей среды. Можно установить массив значений.</p>
+<p><strong><tt>active_support.initialize_time_zone</tt></strong> Устанавливает для приложения временную зону по умолчанию, основываясь на настройке <tt>config.time_zone</tt>, которая по умолчанию равна &#8220;<span class="caps">UTC</span>&#8221;.</p>
+<p><strong><tt>action_dispatch.configure</tt></strong> Конфигурирует  <tt>ActionDispatch::Http::URL.tld_length</tt> быть равным значению <tt>config.action_dispatch.tld_length</tt>.</p>
+<p><strong><tt>action_view.cache_asset_ids</tt></strong> Устанавливает <tt>ActionView::Helpers::AssetTagHelper::AssetPaths.cache_asset_ids</tt> <tt>false</tt> при загрузке Active Support, но только, если <tt>config.cache_classes</tt> тоже <tt>false</tt>.</p>
+<p><strong><tt>action_view.javascript_expansions</tt></strong> Регистрирует расширения, установленные <tt>config.action_view.javascript_expansions</tt> и <tt>config.action_view.stylesheet_expansions</tt>, чтобы они распознавались Action View, и, следовательно, могли быть использованы во вьюхах.</p>
+<p><strong><tt>action_view.set_configs</tt></strong> Устанавливает, чтобы Action View использовал настройки в <tt>config.action_view</tt>, посылая имена методов через <tt>send</tt> как сеттер в <tt>ActionView::Base</tt> и передавая в него значения.</p>
+<p><strong><tt>action_controller.logger</tt></strong> Устанавливает <tt>ActionController::Base.logger</tt> &#8212; если он еще не установлен &#8212; в <tt>Rails.logger</tt>.</p>
+<p><strong><tt>action_controller.initialize_framework_caches</tt></strong> Устанавливает <tt>ActionController::Base.cache_store</tt> &#8212; если он еще не установлен &#8212; в <tt>RAILS_CACHE</tt>.</p>
+<p><strong><tt>action_controller.set_configs</tt></strong> Устанавливает, чтобы Action Controller использовал настройки в <tt>config.action_controller</tt>, посылая имена методов через <tt>send</tt> как сеттер в <tt>ActionController::Base</tt> и передавая в него значения.</p>
+<p><strong><tt>action_controller.compile_config_methods</tt></strong> Инициализирует методы для указанных конфигурационных настроек, чтобы доступ к ним был быстрее.</p>
+<p><strong><tt>active_record.initialize_timezone</tt></strong> Устанавливает <tt>ActiveRecord::Base.time_zone_aware_attributes</tt> true, а также <tt>ActiveRecord::Base.default_timezone</tt> <span class="caps">UTC</span>. Когда атрибуты считываются из базы данных, они будут конвертированы во временную зону с использованием <tt>Time.zone</tt>.</p>
+<p><strong><tt>active_record.logger</tt></strong> Устанавливает <tt>ActiveRecord::Base.logger</tt> &#8212; если еще не установлен &#8212; как <tt>Rails.logger</tt>.</p>
+<p><strong><tt>active_record.set_configs</tt></strong> Устанавливает, чтобы Active Record использовал настройки в <tt>config.active_record</tt>, посылая имена методов через <tt>send</tt> как сеттер в <tt>ActiveRecord::Base</tt> и передавая в него значения.</p>
+<p><strong><tt>active_record.initialize_database</tt></strong> Загружает конфигурацию базы данных (по умолчанию) из <tt>config/database.yml</tt> и устанавливает соединение для текущей среды.</p>
+<p><strong><tt>active_record.log_runtime</tt></strong> Включает <tt>ActiveRecord::Railties::ControllerRuntime</tt>, ответственный за отчет в логгер по времени, затраченному вызовом Active Record для запроса.</p>
+<p><strong><tt>active_record.set_dispatch_hooks</tt></strong> Сбрасывает все перезагружаемые соединения к базе данных, если  <tt>config.cache_classes</tt> установлена <tt>false</tt>.</p>
+<p><strong><tt>action_mailer.logger</tt></strong> Устанавливает <tt>ActionMailer::Base.logger</tt> &#8212; если еще не установлен &#8212; как <tt>Rails.logger</tt>.</p>
+<p><strong><tt>action_mailer.set_configs</tt></strong> Устанавливает, чтобы Action Mailer использовал настройки в <tt>config.action_mailer</tt>, посылая имена методов через <tt>send</tt> как сеттер в <tt>ActionMailer::Base</tt> и передавая в него значения.</p>
+<p><strong><tt>action_mailer.compile_config_methods</tt></strong> Инициализирует методы для указанных конфигурационных настроек, чтобы доступ к ним был быстрее.</p>
+<p><strong><tt>active_resource.set_configs</tt></strong> Устанавливает, чтобы Active Resource использовал настройки в <tt>config.active_resource</tt>, посылая имена методов через <tt>send</tt> как сеттер в <tt>ActiveResource::Base</tt> и передавая в него значения.</p>
+<p><strong><tt>set_load_path</tt></strong> Этот инициализатор запускается перед <tt>bootstrap_hook</tt>. Добавляет <tt>vendor</tt>, <tt>lib</tt>, все директории в <tt>app</tt> и любые пути, определенные <tt>config.load_paths</tt>, к <tt>$LOAD_PATH</tt>.</p>
+<p><strong><tt>set_autoload_path</tt></strong> Этот инициализатор запускается перед <tt>bootstrap_hook</tt>. Добавляет все поддиректории <tt>app</tt> и пути, определенные <tt>config.autoload_paths</tt>, в <tt>ActiveSupport::Dependencies.autoload_paths</tt>.</p>
+<p><strong><tt>add_routing_paths</tt></strong> Загружает (по умолчанию) все файлы <tt>config/routes.rb</tt> (в приложении и railties, включая движки) и настраивает маршруты для приложения.</p>
+<p><strong><tt>add_locales</tt></strong> Добавляет файлы в <tt>config/locales</tt> (из приложения, railties и движков) в <tt>I18n.load_path</tt>, делая доступными переводы в этих файлах.</p>
+<p><strong><tt>add_view_paths</tt></strong> Добавляет директорию <tt>app/views</tt> из приложения, railties и движков в путь поиска файлов вьюх приложения.</p>
+<p><strong><tt>load_environment_config</tt></strong> Загружает файл <tt>config/environments</tt> для текущей среды.</p>
+<p><strong><tt>append_asset_paths</tt></strong> Находит пути ресурсов для приложения и всех присоединенных railties и отслеживает доступные директории в <tt>config.static_asset_paths</tt>.</p>
+<p><strong><tt>prepend_helpers_path</tt></strong> Добавляет директорию <tt>app/helpers</tt> из приложения, railties и движков в путь поиска файлов хелперов приложения.</p>
+<p><strong><tt>load_config_initializers</tt></strong> Загружает все файлы Ruby из <tt>config/initializers</tt> в приложении, railties и движках. Файлы в этой директории могут использоваться для хранения конфигурационных настроек, которые нужно сделать после загрузки всех фреймворков и плагинов.</p>
+<p><strong><tt>engines_blank_point</tt></strong> Предоставляет точку инициализации для хука, если нужно что-то сделать до того, как загрузятся движки. После этой точки будут запущены все инициализаторы railtie и движков.</p>
+<p><strong><tt>add_generator_templates</tt></strong> Находит шаблоны для генераторов в <tt>lib/templates</tt> приложения, railities и дижков, и добавляет их в настройку <tt>config.generators.templates</tt>, что делает шаблоны доступными для всех ссылающихся генераторов.</p>
+<p><strong><tt>ensure_autoload_once_paths_as_subset</tt></strong> Убеждается, что <tt>config.autoload_once_paths</tt> содержит пути только из <tt>config.autoload_paths</tt>. Если она содержит другие пути, будет вызвано исключение.</p>
+<p><strong><tt>add_to_prepare_blocks</tt></strong> Блок для каждого вызова <tt>config.to_prepare</tt> в приложении, railtie или движке добавляется в колбэк <tt>to_prepare</tt> для Action Dispatch, который будет запущен при каждом запросе в development или перед первым запросом в production.</p>
+<p><strong><tt>add_builtin_route</tt></strong> Если приложение запускается в среде development, то в маршруты приложения будет добавлен маршрут для <tt>rails/info/properties</tt>. Этот маршрут предоставляет подробную информацию, такую как версию Rails and Ruby для <tt>public/index.html</tt> в приложении Rails по умолчанию.</p>
+<p><strong><tt>build_middleware_stack</tt></strong> Создает стек промежуточного ПО для приложения, возвращает объект, у которого есть метод <tt>call</tt>, принимающий объект среды Rack для запроса.</p>
+<p><strong><tt>eager_load!</tt></strong> Если <tt>config.cache_classes</tt> true, запускает хуки <tt>config.before_eager_load</tt>, а затем вызывает <tt>eager_load!</tt>, загружающий все файлы Ruby из <tt>config.eager_load_paths</tt>.</p>
+<p><strong><tt>finisher_hook</tt></strong> Представляет хук после завершения процесса инициализации приложения, а также запускает все блоки <tt>config.after_initialize</tt> для приложения, railties и движков.</p>
+<p><strong><tt>set_routes_reloader</tt></strong> Конфигурирует Action Dispatch, перезагружая файл маршрутов с использованием <tt>ActionDispatch::Callbacks.to_prepare</tt>.</p>
+<p><strong><tt>disable_dependency_loading</tt></strong> Отключает автоматическую загрузку зависимостей, если <tt>config.cache_classes</tt> установлена true, и <tt>config.dependency_loading</tt> установлена false.</p>

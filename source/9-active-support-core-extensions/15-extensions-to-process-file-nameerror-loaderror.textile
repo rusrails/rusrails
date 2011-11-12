@@ -1,0 +1,94 @@
+h1. Расширения для Process, File, Logger, NameError, LoadError
+
+<h3 id="extensions-to-process">Расширения для <tt>Process</tt></h3>
+
+<h4 id="daemon">1. <tt>daemon</tt></h4>
+<p>Ruby 1.9 предоставил нам <tt>Process.daemon</tt>, а Active Support определил его для предыдушщих версий. Он принимает те же два аргумента, должен ли он перейти в корневую директорию (по умолчанию true), и должен ли наследовать стандартные дескрипторы файла (по умолчанию false).</p>
+
+<h3 id="extensions-to-file">Расширения для <tt>File</tt></h3>
+
+<h4 id="atomic_write">1. <tt>atomic_write</tt></h4>
+<p>С помощью метода класса <tt>File.atomic_write</tt> можно записать в файл способом, предотвращающим от просмотра недописанного содержимого.</p>
+<p>Имя файла передается как аргумент, и в метод вкладываются обработчики файла, открытого для записи. Как только блок выполняется, <tt>atomic_write</tt> закрывает файл и завершает свою работу.</p>
+<p>Например, Action Pack uиспользует этот метод для записи активных файлов кэша, таких как <tt>all.css</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+File.atomic_write(joined_asset_path) do |cache|
+  cache.write(join_asset_file_contents(asset_paths))
+end
+</pre></div>
+<p>Для выполнения этого <tt>atomic_write</tt> создает временный файл. Фактически код в блоке пишет в этот файл. При выполнении временный файл переименовывается, что является атомарной операцией в системах <span class="caps">POSIX</span>. Если целевой файл существует <tt>atomic_write</tt> перезаписывает его и сохраняет владельцев и права.</p>
+<div class='warning'><p>Отметьте, что с помощью <tt>atomic_write</tt> нельзя дописывать.</p></div>
+<p>Вспомогательный файл записывается в стандартной директории для временных файлов, но можно передать эту директорию как второй аргумент.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/file/atomic.rb</tt>.</p></div>
+
+<h3>Расширения для <tt>Logger</tt></h3>
+
+<h4>1. <tt>around_[level]</tt></h4>
+<p>Принимает два аргумента, <tt>before_message</tt> и <tt>after_message</tt>, и вызывает метод текущего уровня в экземпляре <tt>Logger</tt>, передавая <tt>before_message</tt>, затем определенное сообщение, затем <tt>after_message</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+  logger = Logger.new("log/development.log")
+  logger.around_info("before", "after") { |logger| logger.info("during") }
+</pre></div>
+
+<h4>2. <tt>silence</tt></h4>
+
+<p>Заглушает каждый уровень лога, меньший чем определенный, на протяжении заданного блока. Порядок уровня логов следующий: debug, info, error и fatal.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+logger = Logger.new("log/development.log")
+logger.silence(Logger::INFO) do
+  logger.debug("In space, no one can hear you scream.")
+  logger.info("Scream all you want, small mailman!")
+end
+</pre></div>
+
+<h4>3. <tt>datetime_format=</tt></h4>
+<p>Изменяет формат вывода datetime с помощью класса форматирования, связанного с этим логером. Если у класса форматирования нет метода <tt>datetime_format</tt>, то он будет проигнорирован.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Logger::FormatWithTime < Logger::Formatter
+  cattr_accessor(:datetime_format) { "%Y%m%d%H%m%S" }
+
+  def self.call(severity, timestamp, progname, msg)
+    "#{timestamp.strftime(datetime_format)} -- #{String === msg ? msg : msg.inspect}\n"
+  end
+end
+
+logger = Logger.new("log/development.log")
+logger.formatter = Logger::FormatWithTime
+logger.info("<- is the current time")
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/logger.rb</tt>.</p></div>
+
+<h3 id="extensions-to-nameerror">Расширения для <tt>NameError</tt></h3>
+<p>Active Support добавляет <tt>missing_name?</tt> к <tt>NameError</tt>, который тестирует было ли исключение вызвано в связи с тем, что имя было передано как аргумент.</p>
+<p>Имя может быть задано как символ или строка. Символ тестируется как простое имя константы, строка - как полное имя константы.</p>
+<div class='info'><p>Символ может представлять полное имя константы как <tt>:"ActiveRecord::Base"</tt>, такое поведение для символов определено для удобства, а не потому, что такое возможно технически.</p></div>
+<p>К примеру, когда вызывается экшн <tt>PostsController</tt>, Rails пытается оптимистично использовать <tt>PostsHelper</tt>. Это нормально, когда не существует модуль хелпера, поэтому если вызывается исключение для этого имени константы, оно должно молчать. Но в случае, если <tt>posts_helper.rb</tt> вызывает <tt>NameError</tt> благодаря неизвестной константе, оно должно быть перевызвано. Метод <tt>missing_name?</tt> предоставляет способ проведения различия в этих двух случаях:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def default_helper_module!
+  module_name = name.sub(/Controller$/, '')
+  module_path = module_name.underscore
+  helper module_path
+rescue MissingSourceFile =&gt; e
+  raise e unless e.is_missing? &quot;#{module_path}_helper&quot;
+rescue NameError =&gt; e
+  raise e unless e.missing_name? &quot;#{module_name}Helper&quot;
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/name_error.rb</tt>.</p></div>
+
+<h3 id="extensions-to-loaderror">Расширения для <tt>LoadError</tt></h3>
+<p>Active Support добавляет <tt>is_missing?</tt> к <tt>LoadError</tt>, а также назначает этот класс константе <tt>MissingSourceFile</tt> для обеспечения обратной совместимости.</p>
+<p>Для заданного имени пути <tt>is_missing?</tt> тестирует, будет ли вызвано исключение из-за определенного файла (за исключением файлов с расширением&#8220;.rb&#8221;).</p>
+<p>Например, когда вызывается экшн <tt>PostsController</tt>, Rails пытается загрузить <tt>posts_helper.rb</tt>, но этот файл может не существовать. Это нормально, модуль хелпера не обязателен, поэтому Rails умалчивает ошибку загрузки. Но может быть случай, что модуль хелпера существует, и в свою очередь требует другую библиотеку, которая отсутствует. В этом случае Rails должен перевызвать исключение. Метод <tt>is_missing?</tt> предоставляет способ проведения различия в этих двух случаях:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def default_helper_module!
+  module_name = name.sub(/Controller$/, '')
+  module_path = module_name.underscore
+  helper module_path
+rescue MissingSourceFile =&gt; e
+  raise e unless e.is_missing? &quot;helpers/#{module_path}_helper&quot;
+rescue NameError =&gt; e
+  raise e unless e.missing_name? &quot;#{module_name}Helper&quot;
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/load_error.rb</tt>.</p></div>

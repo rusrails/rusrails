@@ -1,0 +1,156 @@
+h1. Сессия
+
+<p>У вашего приложения есть сессия для каждого пользователя в которой можно хранить небольшие порции данных, которые будут сохранены между запросами. Сессия доступна только в контроллере и во вьюхе, и может использоваться одним из нескольких механизмов хранения:</p>
+<ul>
+	<li>CookieStore &#8211; все хранится на клиенте.</li>
+	<li>DRbStore &#8211; данные хранятся на сервере DRbr.</li>
+	<li>MemCacheStore &#8211; Данные хранятся в оперативной памяти.</li>
+	<li>ActiveRecordStore &#8211; данные хранятся в базе данных с использованием Active Record.</li>
+</ul>
+<p>Все сессии используют куки для хранения уникального ID для каждой сессии (вы обязаны использовать куки, Rails не позволяет передавать ID сессии в <span class="caps">URL</span>, так как это не безопасно).</p>
+<p>Для большинства способов хранения этот ID используется для поиска данных сессии на сервере, в т.ч. в таблице базы данных. Имеется одно исключение, это дефолтное и рекомендуемое хранение сессии &#8211; CookieStore &#8211; которое хранит все данные сессии в куки (ID остается доступным, если он вам нужен). Преимущества этого в легкости, отсутствии настройки для нового приложения в порядке использования сессий. Данные в куки криптографически подписаны, что делает их защищенными от взлома, но не зашифрованы, таким образом любой получивший к ним доступ, может прочитать их содержимое, но не отредактировать их (Rails не примет их, если они были отредактированы).</p>
+<p>CookieStore могут хранить около 4kB данных &#8212; намного меньше, чем остальные &#8212; но этого обычно хватает. Хранение большего количества данных в сессии не рекомендуется, вне зависимости от того, как хранятся они в приложении. Следует специально избегать хранения в сессии сложных объектов (ничего, кроме простых объектов Ruby, например экземпляры моделей), так как сервер может не собрать их между запросами, что приведет к ошибке.</p>
+<p>Читайте подробнее о хранении сессий в <a href="/ruby-on-rails-security-guide">Руководстве по безопасности</a>.</p>
+<p>Если вы нуждаетесь в другом механизме хранения сессий, измените его в файле <tt>config/initializers/session_store.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Use the database for sessions instead of the cookie-based default,
+# which shouldn't be used to store highly confidential information
+# (create the session table with "script/rails g session_migration")
+# YourApp::Application.config.session_store :active_record_store
+</pre></div>
+<p>Rails настраивает ключ сессии (имя куки) при подписании данных сессии. Он также может быть изменен в <tt>config/initializers/session_store.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Be sure to restart your server when you modify this file.
+
+YourApp::Application.config.session_store :cookie_store, :key => '_your_app_session'
+</pre></div>
+
+<p>Можете также передать ключ <tt>:domain</tt> и определить имя домена для куки:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Be sure to restart your server when you modify this file.
+
+YourApp::Application.config.session_store :cookie_store, :key => '_your_app_session', :domain => ".example.com"
+</pre></div>
+<p>Rails настраивает (для CookieStore) секретный ключ, используемый для подписания данных сессии. Он может быть изменен в <tt>config/initializers/secret_token.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Be sure to restart your server when you modify this file.
+
+# Your secret key for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+YourApp::Application.config.secret_token = '49d3f3de9ed86c74b94ad6bd0...'
+</pre></div>
+<div class='note'><p>Изменение секретного ключа при использовании CookieStore делает все предыдущие сессии невалидными.</p></div>
+
+<h4 id="accessing-the-session">1. Доступ к сессии</h4>
+<p>В контроллере можно получить доступ к сессии с помощью метода экземпляра <tt>session</tt>.</p>
+<div class='note'><p>Сессии лениво загружаются. Если Вы не получаете доступ к сессиям в коде экшна, они не будут загружаться. Следовательно, никогда не нужно отключать сессии, просто не обращайтесь к ним, чтобы они не работали.</p></div>
+<p>Значение сессии храниться, используя пары ключ/значение, подобно хэшу:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+
+private
+
+  # Находим пользователя с ID, хранящимся в сессии с ключем
+  # :current_user_id Это обычный способ обрабатывать вход пользователя
+  # в приложении на Rails; вход устанавливает значение сессии, а
+  # выход убирает его.
+  def current_user
+    @_current_user ||= session[:current_user_id] &&
+      User.find_by_id(session[:current_user_id])
+  end
+end
+</pre></div>
+<p>Чтобы что-то хранить в сессии, просто присвойте это ключу, как в хэше:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class LoginsController &lt; ApplicationController
+  # &quot;Создаем&quot; логин (при входе пользователя)
+  def create
+    if user = User.authenticate(params[:username], params[:password])
+      # Сохраняем ID пользователя в сессии, так что он может быть использован
+      # в последующих запросах
+      session[:current_user_id] = user.id
+      redirect_to root_url
+    end
+  end
+end
+</pre></div>
+<p>Чтобы убрать что-то из сессии, присвойте этому ключу <tt>nil</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class LoginsController &lt; ApplicationController
+  # &quot;Удаляем&quot; логин (при выходе пользователя)
+  def destroy
+    # Убираем id пользователя из сессии
+    @_current_user = session[:current_user_id] = nil
+    redirect_to root_url
+  end
+end
+</pre></div>
+<p>Для сброса существующей сессии, используйте <tt>reset_session</tt>.</p>
+
+<h4 id="the-flash">2. Flash</h4>
+<p>Flash это специальная часть сессии, которая очищается с каждым запросом. Это означает, что значения хранятся там доступными только до следующего запроса, что полезно для хранения сообщений об ошибке и т.п. Доступ к нему можно получить так же, как к сессии, подобно хэшу. Давайте посмотрим действие логаута как пример. Контроллер может послать сообщение, которое будет отображено пользователю при следующем запросе:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class LoginsController &lt; ApplicationController
+  def destroy
+    session[:current_user_id] = nil
+    flash[:notice] = &quot;You have successfully logged out&quot;
+    redirect_to root_url
+  end
+end
+</pre></div>
+<p>Отметьте, что также возможно назначить сообщение флэш как часть перенаправления:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redirect_to root_url, :notice => "You have successfully logged out"
+</pre></div>
+<p>Экшн <tt>destroy</tt> перенаправляет на <tt>root_url</tt> приложения, где будет отображено сообщение. Отметьте, что от следующего экшна зависит полностью решить, будет или не будет он что-то делать с тем, что предыдущий экшн вложил во flash. Принято отображать возникающие ошибки или уведомления из flash в макете приложения:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;html&gt;
+  &lt;!-- &lt;head/&gt; --&gt;
+  &lt;body&gt;
+    &lt;% if flash[:notice] -%&gt;
+      &lt;p class=&quot;notice&quot;&gt;&lt;%= flash[:notice] %&gt;&lt;/p&gt;
+    &lt;% end -%&gt;
+    &lt;% if flash[:error] -%&gt;
+      &lt;p class=&quot;error&quot;&gt;&lt;%= flash[:error] %&gt;&lt;/p&gt;
+    &lt;% end -%&gt;
+    &lt;!-- more content --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>В этом случае, если экшн установил сообщение об ошибке или уведомление, макет отобразит это автоматически.</p>
+<p>Если хотите, чтобы значение flash было перенесено для другого запроса, используйте метод <tt>keep</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class MainController &lt; ApplicationController
+  # Давайте скажем этому экшну, соответствующему root_url, что хотим
+  # все запросы сюда перенаправить на UsersController#index. Если
+  # экшн установил flash и направил сюда, значения в нормальной ситуации
+  # будут потеряны, когда произойдет другой редирект, но Вы можете
+  # использовать 'keep', чтобы сделать доступным для другого запроса.
+  def index
+    # Сохранит все значения flash.
+    flash.keep
+
+    # Можете также использовать ключ для сохранения определенных значений. 
+    # flash.keep(:notice)
+    redirect_to users_url
+  end
+end
+</pre></div>
+
+<h5 id="flashnow">2.1 <tt>flash.now</tt></h5>
+<p>По умолчанию, добавление значений во flash делает их доступными для следующего запроса, но иногда хочется иметь доступ к этим значениям в том же запросе. Например, если экшн <tt>create</tt> проваливается в сохранении ресурса, и вы рендерите макет <tt>new</tt> непосредственно тут, то не собираетесь передавать результат в новый запрос, но хотите отобразить сообщение, используя flash. Чтобы это сделать, используйте <tt>flash.now</tt> так же, как использовали нормальный <tt>flash</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ClientsController &lt; ApplicationController
+  def create
+    @client = Client.new(params[:client])
+    if @client.save
+      # ...
+    else
+      flash.now[:error] = &quot;Could not save client&quot;
+      render :action =&gt; &quot;new&quot;
+    end
+  end
+end
+</pre></div>

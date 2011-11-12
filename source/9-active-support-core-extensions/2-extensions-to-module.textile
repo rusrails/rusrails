@@ -1,0 +1,385 @@
+h1. Расширения для Module
+
+<h4 id="alias_method_chain">1. <tt>alias_method_chain</tt></h4>
+<p>Используя чистый Ruby можно обернуть методы в другие методы, это называется <em>сцепление псевдонимов (alias chaining)</em>.</p>
+<p>Например скажем, что вы хотите, чтобы params были строками в функциональных тестах, как и в реальных запросах, но также хотите удобно присваивать числа и другие типы значений. Чтобы это осуществить, следует обернуть <tt>ActionController::TestCase#process</tt> следующим образом в <tt>test/test_helper.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+ActionController::TestCase.class_eval do
+  # сохраняем ссылку на оригинальный метод process
+  alias_method :original_process, :process
+
+  # теперь переопределяем process и передаем в original_process
+  def process(action, params=nil, session=nil, flash=nil, http_method='GET')
+    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
+    original_process(action, params, session, flash, http_method)
+  end
+end
+</pre></div>
+<p>Таким образом передают работу методы <tt>get</tt>, <tt>post</tt> и т.д..</p>
+<p>В такой технике имеется риск, в случае если <tt>:original_process</tt> уже есть. Чтобы избежать коллизий, некоторые выбирают определенные метки, характеризующие то, что сцепление означает:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+ActionController::TestCase.class_eval do
+  def process_with_stringified_params(...)
+    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
+    process_without_stringified_params(action, params, session, flash, http_method)
+  end
+  alias_method :process_without_stringified_params, :process
+  alias_method :process, :process_with_stringified_params
+end
+</pre></div>
+<p>Метод <tt>alias_method_chain</tt> предоставляет ярлык для такого примера:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+ActionController::TestCase.class_eval do
+  def process_with_stringified_params(...)
+    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
+    process_without_stringified_params(action, params, session, flash, http_method)
+  end
+  alias_method_chain :process, :stringified_params
+end
+</pre></div>
+<p>Rails использует <tt>alias_method_chain</tt> во всем своем коде. Например, валидации добавляются в <tt>ActiveRecord::Base#save</tt> через оборачивания метода подобным образом в отдельный модуль, специализирующийся на валидациях.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/aliasing.rb</tt>.</p></div>
+
+<h4 id="attributes">2. Атрибуты</h4>
+
+<h5 id="alias_attribute">2.1 <tt>alias_attribute</tt></h5>
+<p>В атрибутах модели есть ридер (reader), райтер (writer), и условие (predicate). Можно создать псевдоним к атрибуту модели, имеющему соответствующие три метода, за раз. Как и в других создающих псевдоним методах, новое имя это первый аргумент, а старое имя второй (мое мнемоническое правило такое: они идут в том же порядке, как если бы делалось присваивание):</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User &lt; ActiveRecord::Base
+  # давайте назовем колонку email как &quot;login&quot;,
+  # что более значимо для аутентификационного кода
+  alias_attribute :login, :email
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/aliasing.rb</tt>.</p></div>
+
+<h5 id="attr_accessor_with_default">2.2 <tt>attr_accessor_with_default</tt></h5>
+<p>Метод <tt>attr_accessor_with_default</tt> служит тем же целям, что и макрос Ruby <tt>attr_accessor</tt>, но позволяет установить значение по умолчанию для атрибута:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Url
+  attr_accessor_with_default :port, 80
+end
+
+Url.new.port # =&gt; 80
+</pre></div>
+<p>Значение по умолчанию также может определяться в блоке, вызываемом в контексте соответствующего объекта:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User
+  attr_accessor :name, :surname
+  attr_accessor_with_default(:full_name) {
+	[name, surname].compact.join(&quot; &quot;)
+  }
+end
+
+u = User.new
+u.name = 'Xavier'
+u.surname = 'Noria'
+u.full_name # =&gt; &quot;Xavier Noria&quot;
+</pre></div>
+<p>Результат не кэшируется, блок вызывается при каждом вызове ридера.</p>
+<p>Можно переписать значение по умолчанию с помощью райтера:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+url = Url.new
+url.host # =&gt; 80
+url.host = 8080
+url.host # =&gt; 8080
+</pre></div>
+<p>Значение по умолчанию вызывается до тех пор, пока атрибут не установлен. Ридер не зависит от значения атрибута, чтобы узнать, сможет ли он вернуть значение по умолчанию. За этим смотрит райтер: если было хоть одно назначение, значение больше не рассматривается как не установленное.</p>
+<p>Active Resource использует этот макрос для установки значения по умолчанию для атрибута <tt>:primary_key</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+attr_accessor_with_default :primary_key, 'id'
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/attr_accessor_with_default.rb</tt>.</p></div>
+
+<h5 id="internal-attributes">2.3 Внутренние атрибуты</h5>
+<p>При определении атрибута в классе есть риск коллизий субклассовых имен. Это особенно важно для библиотек.</p>
+<p>Active Support определяет макросы <tt>attr_internal_reader</tt>, <tt>attr_internal_writer</tt> и <tt>attr_internal_accessor</tt>. Они ведут себя подобно встроенным в Ruby коллегам <tt>attr_*</tt>, за исключением того, что они именуют лежащую в основе переменную экземпляра способом, наиболее снижающим коллизии.</p>
+<p>Макрос <tt>attr_internal</tt> это синомим для <tt>attr_internal_accessor</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# библиотека
+class ThirdPartyLibrary::Crawler
+  attr_internal :log_level
+end
+
+# код клиента
+class MyCrawler &lt; ThirdPartyLibrary::Crawler
+  attr_accessor :log_level
+end
+</pre></div>
+<p>В предыдущем примере мог быть случай, что <tt>:log_level</tt> не принадлежит публичному интерфейсу библиотеки и используется только для разработки. Код клиента, не знающий о потенциальных конфликтах, субклассифицирует и определяет свой собственный <tt>:log_level</tt>. Благодаря <tt>attr_internal</tt> здесь нет коллизий.</p>
+<p>По умолчанию внутренняя переменная экземпляра именуется с предшествующим подчеркиванием, <tt>@_log_level</tt> в примере выше. Это настраивается через <tt>Module.attr_internal_naming_format</tt>, куда можно передать любую строку в формате <tt>sprintf</tt> с предшествующим <tt>@</tt> и <tt>%s</tt> в любом месте, которая означает место, куда вставляется имя. По умолчанию <tt>"@_%s"</tt>.</p>
+<p>Rails использует внутренние атрибуты в некоторых местах, например для вьюх:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module ActionView
+  class Base
+    attr_internal :captures
+    attr_internal :request, :layout
+    attr_internal :controller, :template
+  end
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/attr_internal.rb</tt>.</p></div>
+
+<h5 id="module-attributes">2.4 Атрибуты модуля</h5>
+<p>Макросы <tt>mattr_reader</tt>, <tt>mattr_writer</tt> и <tt>mattr_accessor</tt> это аналоги макросам <tt>cattr_*</tt>, определенным для класса. Смотрите <a href="/active-support-core-extensions/extensions-to-class#class-attributes">Атрибуты класса </a>.</p>
+<p>Например, их использует механизм зависимостей:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module ActiveSupport
+  module Dependencies
+    mattr_accessor :warnings_on_first_load
+    mattr_accessor :history
+    mattr_accessor :loaded
+    mattr_accessor :mechanism
+    mattr_accessor :load_paths
+    mattr_accessor :load_once_paths
+    mattr_accessor :autoloaded_constants
+    mattr_accessor :explicitly_unloadable_constants
+    mattr_accessor :logger
+    mattr_accessor :log_activity
+    mattr_accessor :constant_watch_stack
+    mattr_accessor :constant_watch_stack_mutex
+  end
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/attribute_accessors.rb</tt>.</p></div>
+
+<h4 id="parents">3. Родители</h4>
+
+<h5 id="parent">3.1 <tt>parent</tt></h5>
+<p>Метод <tt>parent</tt> на вложенном именованном модуле возвращает модуль, содержащий его соответствующую константу:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module X
+  module Y
+    module Z
+    end
+  end
+end
+M = X::Y::Z
+
+X::Y::Z.parent # =&gt; X::Y
+M.parent       # =&gt; X::Y
+</pre></div>
+<p>Если модуль анонимный или относится к верхнему уровню, <tt>parent</tt> возвращает <tt>Object</tt>.</p>
+<div class='warning'><p>Отметьте, что в этом случае <tt>parent_name</tt> возвращает <tt>nil</tt>.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/introspection.rb</tt>.</p></div>
+
+<h5 id="parent_name">3.2 <tt>parent_name</tt></h5>
+<p>Метод <tt>parent_name</tt> на вложенном именованном модуле возвращает полное имя модуля, содержащего его соответствующую константу:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module X
+  module Y
+    module Z
+    end
+  end
+end
+M = X::Y::Z
+
+X::Y::Z.parent_name # =&gt; &quot;X::Y&quot;
+M.parent_name       # =&gt; &quot;X::Y&quot;
+</pre></div>
+<p>Для модулей верхнего уровня и анонимных <tt>parent_name</tt> возвращает <tt>nil</tt>.</p>
+<div class='warning'><p>Отметьте, что в этом случае <tt>parent</tt> возвращает <tt>Object</tt>.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/introspection.rb</tt>.</p></div>
+
+<h5 id="module-parents">3.3 <tt>parents</tt></h5>
+<p>Метод <tt>parents</tt> вызывает <tt>parent</tt> на получателе и выше, пока не достигнет <tt>Object</tt>. Цепочка возвращается в массиве, от низшего к высшему:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module X
+  module Y
+    module Z
+    end
+  end
+end
+M = X::Y::Z
+
+X::Y::Z.parents # =&gt; [X::Y, X, Object]
+M.parents       # =&gt; [X::Y, X, Object]
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/introspection.rb</tt>.</p></div>
+
+<h4 id="constants">4. Константы</h4>
+<p>Метод <tt>local_constants</tt> возвращает имена констант, которые были определены в модуле получателя:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module X
+  X1 = 1
+  X2 = 2
+  module Y
+    Y1 = :y1
+    X1 = :overrides_X1_above
+  end
+end
+
+X.local_constants    # =&gt; [&quot;X2&quot;, &quot;X1&quot;, &quot;Y&quot;], assumes Ruby 1.8
+X::Y.local_constants # =&gt; [&quot;X1&quot;, &quot;Y1&quot;], assumes Ruby 1.8
+</pre></div>
+<p>Имена возвращаются как строки в Ruby 1.8, и как символы в Ruby 1.9. Метод <tt>local_constant_names</tt> возвращает всегда строки.</p>
+<div class='warning'><p>Этот метод точен, если запущен под Ruby 1.9. В предыдущих версиях он мог пропускать некоторые константы, если их значения в некоторых предках хранят те же имена объектов, что и в получателе.</p></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/introspection.rb</tt>.</p></div>
+
+<h4 id="synchronization">5. Синхронизация</h4>
+<p>Макрос <tt>synchronize</tt> объявляет метод, который будет синхронизирован:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Counter
+  @@mutex = Mutex.new
+  attr_reader :value
+
+  def initialize
+    @value = 0
+  end
+
+  def incr
+    @value += 1 # non-atomic
+  end
+  synchronize :incr, :with =&gt; '@@mutex'
+end
+</pre></div>
+<p>Метод получает имя экшна и опцию <tt>:with</tt> с кодом. Код вычисляется в контексте получателя каждый раз, как применяется метод, и он должен определить переменную <tt>Mutex</tt> или любой другой объект, соответствующий <tt>synchronize</tt> и принимающий блок.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/synchronization.rb</tt>.</p></div>
+
+<h4 id="reachable">6. Reachable</h4>
+<p>Именнованный модуль является достижимым (reachable), если он храниться в своей соответствующей константе. Это означает, что можно связаться с объектом модуля через константу.</p>
+<p>Это то, что обычно происходит, если модуль называется &#8220;M&#8221;, существует константа <tt>M</tt> и содержит это:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module M
+end
+
+M.reachable? # =&gt; true
+</pre></div>
+<p>Но так как константы и модули в действительности являются разъединенными, объекты модуля могут стать недостижимыми:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module M
+end
+
+orphan = Object.send(:remove_const, :M)
+
+# Теперь объект модуля это orphan, но у него все еще есть имя.
+orphan.name # =&gt; &quot;M&quot;
+
+# Нельзя достич его через константу M, поскольку она даже не существует.
+orphan.reachable? # =&gt; false
+
+# Давайте определим модуль с именем &quot;M&quot; снова.
+module M
+end
+
+# Теперь константа M снова существует, и хранит объект
+# модуля с именем &quot;M&quot;, но это новый экземпляр.
+orphan.reachable? # =&gt; false
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/reachable.rb</tt>.</p></div>
+
+<h4 id="anonymous">7. Anonymous</h4>
+<p>Модуль может иметь или не иметь имени:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module M
+end
+M.name # =&gt; &quot;M&quot;
+
+N = Module.new
+N.name # =&gt; &quot;N&quot;
+
+Module.new.name # =&gt; &quot;&quot; в 1.8, nil в 1.9
+</pre></div>
+<p>Можно проверить, имеет ли модуль имя с помощью условия <tt>anonymous?</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module M
+end
+M.anonymous? # =&gt; false
+
+Module.new.anonymous? # =&gt; true
+</pre></div>
+<p>Отметьте, что быть недоступным не означает быть анонимным:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+module M
+end
+
+m = Object.send(:remove_const, :M)
+
+m.reachable? # =&gt; false
+m.anonymous? # =&gt; false
+</pre></div>
+<p>хотя анонимный модуль недоступен по определению.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/anonymous.rb</tt>.</p></div>
+
+<h4 id="method-delegation">8. Передача метода</h4>
+<p>Макрос <tt>delegate</tt> предлагает простой способ передать методы.</p>
+<p>Давайте представим, что у пользователей в неком приложении имеется информация о логинах в модели <tt>User</tt>, но имена и другие данные в отдельной модели <tt>Profile</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User &lt; ActiveRecord::Base
+  has_one :profile
+end
+</pre></div>
+<p>С такой конфигурацией имя пользователя получается через его профиль, <tt>user.profile.name</tt>, но можно обеспечить прямой доступ как к атрибуту:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User &lt; ActiveRecord::Base
+  has_one :profile
+
+  def name
+    profile.name
+  end
+end
+</pre></div>
+<p>Это как раз то, что делает <tt>delegate</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User &lt; ActiveRecord::Base
+  has_one :profile
+
+  delegate :name, :to =&gt; :profile
+end
+</code></div>
+<p>Это короче, и намерения более очевидные.</p>
+<p>Макрос принимает несколько методов:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+delegate :name, :age, :address, :twitter, :to =&gt; :profile
+</pre></div>
+<p>При интерполяции в строку опция <tt>:to</tt> должна стать выражением, применяемым к объекту, метод которого передается. Обычно строка или символ. Такое выражение вычисляется в контексте получателя:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# передает константу Rails
+delegate :logger, :to =&gt; :Rails
+
+# передает класс получателя
+delegate :table_name, :to =&gt; 'self.class'
+</pre></div>
+<div class='warning'><p>Если опция <tt>:prefix</tt> установлена <tt>true</tt> это менее характерно, смотрите ниже.</p></div>
+<p>По умолчанию, если передача вызывает <tt>NoMethodError</tt> и цель является <tt>nil</tt>, выводится исключение. Можно попросить, чтобы возвращался <tt>nil</tt> с помощью опции <tt>:allow_nil</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+delegate :name, :to =&gt; :profile, :allow_nil =&gt; true
+</pre></div>
+<p>С <tt>:allow_nil</tt> вызов <tt>user.name</tt> возвратит <tt>nil</tt>, если у пользователя нет профиля.</p>
+<p>Опция <tt>:prefix</tt>добавляет префикс к имени генерируемого метода. Это удобно, если хотите получить более хорошее название:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+delegate :street, :to =&gt; :address, :prefix =&gt; true
+</pre></div>
+<p>Предыдущий пример создаст <tt>address_street</tt>, а не <tt>street</tt>.</p>
+<div class='warning'><p>Поскольку в этом случае имя создаваемого метода составляется из имен целевого объекта и целевого метода, опция <tt>:to</tt> должна быть именем метода.</p></div>
+<p>Также может быть настроен произвольный префикс:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+delegate :size, :to =&gt; :attachment, :prefix =&gt; :avatar
+</pre></div>
+<p>В предыдущем примере макрос создаст <tt>avatar_size</tt>, а не <tt>size</tt>.</p>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/delegation.rb</tt></p></div>
+
+<h4 id="method-names">9. Имена методов</h4>
+<p>Встроенные методы <tt>instance_methods</tt> и <tt>methods</tt> возвращают имена методов как строки или символы, в зависимости от версии Ruby. Active Support определяет <tt>instance_method_names</tt> и <tt>method_names</tt> как их соответственные эквиваленты, но всегда возвращающие строки.</p>
+<p>Например, <tt>ActionView::Helpers::FormBuilder</tt> будет работать независимо от версии Ruby:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+self.field_helpers = (FormHelper.instance_method_names - ['form_for'])
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/method_names.rb</tt></p></div>
+
+<h4 id="redefining-methods">10. Переопределение методов</h4>
+<p>Бывают ситуации, когда нужно определить метод с помощью <tt>define_method</tt>, но вы не знаете, существует ли уже метод с таким именем. Если так, то выдается предупреждение, если оно включено. Ничего страшного, но так чище работа.</p>
+<p>Метод <tt>redefine_method</tt> предотвращает такое потенциальное предупреждение, предварительно убирая существующий метод, если нужно. Rails использует это в некоторых метсах, к примеру когда он создает <span class="caps">API</span> по связям:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redefine_method(&quot;#{reflection.name}=&quot;) do |new_value|
+  association = association_instance_get(reflection.name)
+
+  if association.nil? || association.target != new_value
+    association = association_proxy_class.new(self, reflection)
+  end
+
+  association.replace(new_value)
+  association_instance_set(reflection.name, new_value.nil? ? nil : association)
+end
+</pre></div>
+<div class='note'><p>Определено в <tt>active_support/core_ext/module/remove_method.rb</tt></p></div>

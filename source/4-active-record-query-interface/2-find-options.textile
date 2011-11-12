@@ -1,0 +1,211 @@
+h1. Опции поиска
+
+<h4 id="ordering">1. Сортировка</h4>
+<p>Чтобы получить записи из базы данных в определенном порядке, можете определить использовать метод <tt>order</tt>.</p>
+<p>Например, если вы получаете ряд записей и хотите упорядочить их в порядке возрастания поля <tt>created_at</tt> в таблице:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.order(&quot;created_at&quot;)
+</pre></div>
+<p>Также можете определить <tt>ASC</tt> или <tt>DESC</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.order(&quot;created_at DESC&quot;)
+# ИЛИ
+Client.order(&quot;created_at ASC&quot;)
+</pre></div>
+<p>Или сортировку по нескольким полям:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.order(&quot;orders_count ASC, created_at DESC&quot;)
+</pre></div>
+
+<h4 id="selecting-specific-fields">2. Выбор определенных полей</h4>
+<p>По умолчанию <tt>Model.find</tt> выбирает все множество полей результата, используя <tt>select *</tt>.</p>
+<p>Чтобы выбрать подмножество полей из всего множества, можете определить его, используя метод <tt>select</tt>.</p>
+<div class='note'><p>Если используется метод <tt>select</tt>, все возвращаемые объекты будут доступны <a href="#readonly-objects">только для чтения</a>.</p></div>
+<p>Например, чтобы выбрать только столбцы <tt>viewable_by</tt> и <tt>locked</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.select(&quot;viewable_by, locked&quot;)
+</pre></div>
+<p>Используемый для этого запрос <span class="caps">SQL</span> будет иметь подобный вид:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT viewable_by, locked FROM clients
+</pre></div>
+<p>Будьте осторожны, поскольку это также означает, что будет инициализирован объект модели только с теми полями, которые Вы выбрали. Если Вы попытаетесь обратиться к полям, которых нет в инициализированной записи, то получите:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+ActiveRecord::MissingAttributeError: missing attribute: &lt;attribute&gt;
+</pre></div>
+<p>Где <tt>&lt;attribute&gt;</tt> это атрибут, который был запрошен. Метод <tt>id</tt> не вызывает <tt>ActiveRecord::MissingAttributeError</tt>, поэтому будьте аккуратны при работе со связями, так как они нуждаются в методе <tt>id</tt> для правильной работы.</p>
+<p>Также можно вызывать функции <span class="caps">SQL</span> внутри опции select. Например, если хотите получить единственную запись для уникального значения в определенном поле, используя функцию <tt>DISTINCT</tt>, можете сделать это так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.select(&quot;DISTINCT(name)&quot;)
+</pre></div>
+
+<h4 id="limit-and-offset">3. Ограничение и смещение</h4>
+<p>Чтобы применить <tt>LIMIT</tt> к <span class="caps">SQL</span>, запущенному с помощью <tt>Model.find</tt>, нужно определить <tt>LIMIT</tt>, используя методы <tt>limit</tt> и <tt>offset</tt> на relation.</p>
+<p>Используйте limit для определения количества записей, которые будут получены, а offset числа записей, которые будут пропущены до начала возврата записей. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.limit(5)
+</pre></div>
+<p>возвратит максимум 5 клиентов, и, поскольку не определено смещение, будут возвращены первые 5 клиентов в таблице. Запускаемый <span class="caps">SQL</span> будет выглядеть подобным образом:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM clients LIMIT 5
+</pre></div>
+<p>Добавление <tt>offset</tt> к этому</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.limit(5).offset(30)
+</pre></div>
+<p>Возвратит максимум 5 клиентов, начиная с 31-го. <span class="caps">SQL</span> выглядит так:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM clients LIMIT 5, 5
+</pre></div>
+
+<h4 id="group">4. Группировка</h4>
+<p>Чтобы применить условие <tt>GROUP BY</tt> к <span class="caps">SQL</span>, запущенному поиском, можете определить метод <tt>group</tt> на нем.</p>
+<p>Например, если хотите найти коллекцию дат, в которые были созданы заказы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Order.select("date(created_at) as ordered_date, sum(price) as total_price").group("date(created_at)")
+</pre></div>
+<p>Это даст Вам отдельный объект <tt>Order</tt> для каждой даты, в которой были заказы в базе данных.</p>
+<p><span class="caps">SQL</span>, который будет выполнен, будет выглядеть так:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT date(created_at) as ordered_date, sum(price) as total_price FROM orders GROUP BY date(created_at)
+</pre></div>
+
+<h4 id="having">5. Владение</h4>
+<p><span class="caps">SQL</span> использует условие <tt>HAVING</tt> для определения условий для полей, указанных в <tt>GROUP BY</tt>. Условие <tt>HAVING</tt>, определенное в <span class="caps">SQL</span>, запускается в <tt>Model.find</tt> с использованием опции <tt>:having</tt> для поиска.</p>
+<p>Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Order.select("date(created_at) as ordered_date, sum(price) as total_price").group("date(created_at)").having("sum(price) > ?", 100)
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен, выглядит так:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT date(created_at) as ordered_date, sum(price) as total_price FROM orders GROUP BY date(created_at) HAVING sum(price) > 100
+</pre></div>
+<p>Это возвратит отдельные объекты order для каждого дня, но только те, которые заказаны более чем на 100$ в день.</p>
+
+<h4 id="overriding-conditions">6. Переопределяющие условия</h4>
+
+<h5>6.1. <tt>except</tt></h5>
+<p>Можете указать определенные условия, которые будут исключены, используя метод <tt>except</tt>. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Post.where('id > 10').limit(20).order('id asc').except(:order)
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM posts WHERE id > 10 LIMIT 20
+</pre></div>
+
+<h5>6.2. <tt>only</tt></h5>
+<p>Также можете переопределить условия, используя метод <tt>only</tt>. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Post.where('id > 10').limit(20).order('id desc').only(:order, :where)
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM posts WHERE id > 10 ORDER BY id DESC
+</pre></div>
+
+<h5>6.3. <tt>reorder</tt></h5>
+<p>Метод <tt>reorder</tt> переопределяет сортировку скоупа по умолчанию. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Post < ActiveRecord::Base
+  ..
+  ..
+  has_many :comments, :order => 'posted_at DESC'
+end
+
+Post.find(10).comments.reorder('name')
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM posts WHERE id = 10 ORDER BY name
+</pre></div>
+<p>В случае, если бы условие <tt>reorder</tt> не было бы использовано, запущенный SQL был бы:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM posts WHERE id = 10 ORDER BY posted_at DESC
+</pre></div>
+
+<h5>6.4. <tt>reverse_order</tt></h5>
+<p>Метод <tt>reverse_order</tt> меняет направление условия сортировки, если оно определено:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.where("orders_count > 10").order(:name).reverse_order
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM clients WHERE orders_count > 10 ORDER BY name DESC
+</pre></div>
+
+<p>Если условие сортировки не было определено в запросе, <tt>reverse_order</tt> сортирует по первичному ключу в обратном порядке:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.where("orders_count > 10").reverse_order
+</pre></div>
+<p><span class="caps">SQL</span>, который будет выполнен:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM clients WHERE orders_count > 10 ORDER BY clients.id DESC
+</pre></div>
+<p>Этот метод не принимает аргументы.</p>
+
+<h4 id="readonly-objects">7. Объекты только для чтения</h4>
+<p>Active Record представляет метод <tt>readonly</tt> у relation для явного запрета изменения/уничтожения любого возвращаемого объекта. Любые попытки изменить или уничтожить объект только для чтения будет неудачной, вызвав исключение <tt>ActiveRecord::ReadOnlyRecord</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+client = Client.readonly.first
+client.visits += 1
+client.save
+</pre></div>
+<p>Так как <tt>client</tt> явно указан как объект только для чтения, вызов вышеуказанного кода вызовет исключение <tt>ActiveRecord::ReadOnlyRecord</tt> при вызове <tt>client.save</tt> с обновленным значением <tt>visits</tt>.</p>
+
+<h4 id="locking-records-for-update">8. Блокировка записей для обновления</h4>
+<p>Блокировка полезна для предотвращения гонки условий при обновлении записей в базе данных и обеспечения атомарного обновления.</p>
+<p>Active Record предоставляет два механизма блокировки:</p>
+<ul>
+	<li>Оптимистичная блокировка</li>
+	<li>Пессимистичная блокировка</li>
+</ul>
+
+<h5 id="optimistic-locking">8.1 Оптимистичная блокировка</h5>
+<p>Оптимистичная блокировка позволяет нескольким пользователям обращаться к одной и той же записи для редактирования и предполагает минимум конфликтов с данными. Она осуществляется с помощью проверки, сделал ли другой процесс изменения в записи, с тех пор как она была открыта. Если это происходит, вызывается исключение <tt>ActiveRecord::StaleObjectError</tt>, и обновление игнорируется.</p>
+<p><strong>Столбец оптимистичной блокировки</strong></p>
+<p>Чтобы начать использовать оптимистичную блокировку, таблица должна иметь столбец, называющийся <tt>lock_version</tt>. Каждый раз, когда запись обновляется, Active Record увеличивает значение <tt>lock_version</tt>, и средства блокирования обеспечивают, что для записи, вызванной дважды, та, которая первая успеет будет сохранена, а для второй будет вызвано исключение <tt>ActiveRecord::StaleObjectError</tt>. Пример:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+c1 = Client.find(1)
+c2 = Client.find(1)
+
+c1.name = &quot;Michael&quot;
+c1.save
+
+c2.name = &quot;should fail&quot;
+c2.save # Вызывает ActiveRecord::StaleObjectError
+</pre></div>
+<p>Вы ответственны за разрешение конфликта с помощью обработки исключения и либо отката, либо объединения, либо применения бизнес-логики, необходимой для разрешения конфликта.</p>
+<div class='note'><p>Вы должны убедиться, что в схеме базы данных для стобца <tt>lock_version</tt> значением по умолчанию является <tt>0</tt>.</p></div>
+<p>Это поведение может быть отключено, если установить <tt>ActiveRecord::Base.lock_optimistically = false</tt>.</p>
+<p>Для переопределения имени столбца <tt>lock_version</tt>, <tt>ActiveRecord::Base</tt> предоставляет метод класса, называющийся <tt>set_locking_column</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Client &lt; ActiveRecord::Base
+  set_locking_column :lock_client_column
+end
+</pre></div>
+
+<h5 id="pessimistic-locking">8.2 Пессимистичная блокировка</h5>
+<p>Пессимистичная блокировка использует механизм блокировки, предоставленный лежащей в основе базой данных. Использование  <tt>lock</tt> при построении relation применяет эксклюзивную блокировку на выделенные строки. Relation использует <tt>lock</tt> обычно упакованный внутри transaction для предотвращения условий взаимной блокировки (дедлока).</p>
+<p>Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Item.transaction do
+  i = Item.lock.first
+  i.name = 'Jones'
+  i.save
+end
+</pre></div>
+<p>Вышеописанная сессия осуществляет следующие <span class="caps">SQL</span> для бэкенда MySQL:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SQL (0.2ms)   BEGIN
+Item Load (0.3ms)   SELECT * FROM `items` LIMIT 1 FOR UPDATE
+Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `name` = 'Jones' WHERE `id` = 1
+SQL (0.8ms)   COMMIT
+</pre></div>
+<p>Можете передать чистый <span class="caps">SQL</span> в опцию <tt>:lock</tt> для разрешения различных типов блокировок. Например, MySQL имеет выражение, называющееся <tt>LOCK IN SHARE MODE</tt>, которым можно заблокировать запись, но разрешить другим запросам читать ее. Для указания этого выражения, просто передайте его как опцию блокировки:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Item.transaction do
+  i = Item.lock("LOCK IN SHARE MODE").find(1)
+  i.increment!(:views)
+end
+</pre></div>

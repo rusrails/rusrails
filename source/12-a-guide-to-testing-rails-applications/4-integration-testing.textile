@@ -1,0 +1,151 @@
+h1. Интеграционное тестирование
+
+<p>Интеграционные тесты используются для тестирования взаимодействия любого числа контроллеров. Они в основном используются для тестирования важных рабочих процессов в вашем приложении.</p>
+<p>В отличие от юнит- и функциональных тестов, интеграционные тесты должны быть явно созданы в папке &#8216;test/integration&#8217; вашего приложения. Rails предоставляет вам генератор для создания скелета интеграционного теста.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ rails generate integration_test user_flows
+      exists  test/integration/
+      create  test/integration/user_flows_test.rb
+</pre></div>
+<p>Вот как выглядит вновь созданный интеграционный тест:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+
+class UserFlowsTest &lt; ActionController::IntegrationTest
+  fixtures :all
+
+  # Replace this with your real tests.
+  test &quot;the truth&quot; do
+    assert true
+  end
+end
+</pre></div>
+<p>Интеграционные тесты унаследованы от <tt>ActionController::IntegrationTest</tt>. Это делает доступным несколько дополнительных хелперов для использования в ваших интеграционных тестах. Также необходимо явно включать фикстуры, чтобы сделать их доступными для теста.</p>
+
+<h4 id="helpers-available-for-integration-tests">1. Хелперы, доступные для интеграционных тестов</h4>
+<p>В дополнение к стандартным хелперам тестирования, есть несколько дополнительных хелперов, доступных для интеграционных тестов:</p>
+<table class="inner_table">
+	<tr>
+		<th>Хелпер                                                                           </th>
+		<th>Цель</th>
+	</tr>
+	<tr>
+		<td><tt>https?</tt>                                                                           </td>
+		<td>Возвращает <tt>true</tt>, если сессия имитирует безопасный запрос <span class="caps">HTTPS</span>.</td>
+	</tr>
+	<tr>
+		<td><tt>https!</tt>                                                                           </td>
+		<td>Позволяет имитировать безопасный запрос <span class="caps">HTTPS</span>.</td>
+	</tr>
+	<tr>
+		<td><tt>host!</tt>                                                                            </td>
+		<td>Позволяет установить имя хоста для использовании в следующем запросе.</td>
+	</tr>
+	<tr>
+		<td><tt>redirect?</tt>                                                                        </td>
+		<td>Возвращает <tt>true</tt>, если последний запрос был перенаправлением.</td>
+	</tr>
+	<tr>
+		<td><tt>follow_redirect!</tt>                                                                 </td>
+		<td>Отслеживает одиночный перенаправляющий отклик.</td>
+	</tr>
+	<tr>
+		<td><tt>request_via_redirect(http_method, path, [parameters], [headers])</tt>                 </td>
+		<td>Позволяет сделать <span class="caps">HTTP</span> запрос и отследить любые последующие перенаправления.</td>
+	</tr>
+	<tr>
+		<td><tt>post_via_redirect(path, [parameters], [headers])</tt>                                 </td>
+		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">POST</span> и отследить любые последующие перенаправления.</td>
+	</tr>
+	<tr>
+		<td><tt>get_via_redirect(path, [parameters], [headers])</tt>                                  </td>
+		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">GET</span> и отследить любые последующие перенаправления.</td>
+	</tr>
+	<tr>
+		<td><tt>put_via_redirect(path, [parameters], [headers])</tt>                                  </td>
+		<td>AПозволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">PUT</span> и отследить любые последующие перенаправления.</td>
+	</tr>
+	<tr>
+		<td><tt>delete_via_redirect(path, [parameters], [headers])</tt>                               </td>
+		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">DELETE</span> и отследить любые последующие перенаправления.</td>
+	</tr>
+	<tr>
+		<td><tt>open_session</tt>                                                                     </td>
+		<td>Открывает экземпляр новой сессии.</td>
+	</tr>
+</table>
+
+<h4 id="integration-testing-examples">2 Примеры интеграционного тестирования</h4>
+<p>Простой интеграционный тест, использующий несколько контроллеров:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+
+class UserFlowsTest &lt; ActionController::IntegrationTest
+  fixtures :users
+
+  test &quot;login and browse site&quot; do
+    # login via https
+    https!
+    get &quot;/login&quot;
+    assert_response :success
+
+    post_via_redirect &quot;/login&quot;, :username =&gt; users(:avs).username, :password =&gt; users(:avs).password
+    assert_equal '/welcome', path
+    assert_equal 'Welcome avs!', flash[:notice]
+
+    https!(false)
+    get &quot;/posts/all&quot;
+    assert_response :success
+    assert assigns(:products)
+  end
+end
+</pre></div>
+<p>Как видите, интеграционный тест вовлекает несколько контроллеров и использует весь стек от базы данных до отправителя. В дополнение можете иметь несколько экземпляров сессии, открытых одновременно в тесте, и расширить эти экземпляры с помощью методов контроля для создания очень мощного тестирующего <span class="caps">DSL</span> (Предметно-ориентированного языка программирования) только для Вашего приложения.</p>
+<p>Вот пример нескольких сессий и собственного <span class="caps">DSL</span> в общем тесте</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+
+class UserFlowsTest &lt; ActionController::IntegrationTest
+  fixtures :users
+
+  test &quot;login and browse site&quot; do
+
+    # User avs logs in
+    avs = login(:avs)
+    # User guest logs in
+    guest = login(:guest)
+
+    # Both are now available in different sessions
+    assert_equal 'Welcome avs!', avs.flash[:notice]
+    assert_equal 'Welcome guest!', guest.flash[:notice]
+
+    # User avs can browse site
+    avs.browses_site
+    # User guest can browse site as well
+    guest.browses_site
+
+    # Continue with other assertions
+  end
+
+  private
+
+  module CustomDsl
+    def browses_site
+      get &quot;/products/all&quot;
+      assert_response :success
+      assert assigns(:products)
+    end
+  end
+
+  def login(user)
+    open_session do |sess|
+      sess.extend(CustomDsl)
+      u = users(user)
+      sess.https!
+      sess.post &quot;/login&quot;, :username =&gt; u.username, :password =&gt; u.password
+      assert_equal '/welcome', path
+      sess.https!(false)
+    end
+  end
+end
+</pre></div>

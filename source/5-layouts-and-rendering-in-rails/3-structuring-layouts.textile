@@ -1,0 +1,199 @@
+h1. Структурирование макетов (часть первая)
+
+<p>Когда Rails рендерит вьюху как отклик, он делает это путем объединения вьюхи с текущим макетом (используя правила для нахождения текущего макета, которые мы рассмотрели ранее). В макетах у Вас есть доступ к трем инструментам объединения различных кусочков результата для формирования общего отклика:</p>
+<ul>
+	<li>Тэги ресурсов</li>
+	<li><tt>yield</tt> и <tt>content_for</tt></li>
+	<li>Партиалы</li>
+</ul>
+<p>В этой части мы рассмотрим тэги ресурсов. Во <a href="/layouts-and-rendering-in-rails/structuring-layouts-2">второй части</a> <tt>yield</tt> и <tt>content_for</tt>. И в <a href="/layouts-and-rendering-in-rails/structuring-layouts-3">третьей части</a>, соответственно, партиалы и вложенные макеты.</p>
+<h4 id="asset-tags">1. Тэги ресурсов</h4>
+<p>Тэги ресурсов представляют методы для создания <span class="caps">HTML</span>, связывающие вьюхи с ресурсами, такими как каналы, Javascript, таблицы стилей, изображения, видео и аудио. Есть шесть типов тэгов ресурсов:</p>
+<ul>
+	<li>auto_discovery_link_tag</li>
+	<li>javascript_include_tag</li>
+	<li>stylesheet_link_tag</li>
+	<li>image_tag</li>
+	<li><tt>video_tag</tt></li>
+	<li><tt>audio_tag</tt></li>
+</ul>
+<p>Эти тэги можно использовать в макетах или других вьюхах, хотя тэги, иные чем <tt>image_tag</tt>, как правило используются в разделе <tt>&lt;head&gt;</tt> макета.</p>
+<div class='warning'><p>Тэги ресурсов <em>не</em> проверяют существование ресурсов по определенному месту положения; они просто предполагают, что вы знаете, что делаете, и создают ссылку.</p></div>
+
+<h5 id="linking-to-feeds-with-auto-discovery-link-tag">1.1 Присоединение каналов с помощью <tt>auto_discovery_link_tag</tt></h5>
+<p>Хелпер <tt>auto_discovery_link_tag</tt> создает <span class="caps">HTML</span>, который многие браузеры и ньюзгруппы могут использовать для определения наличия каналов <span class="caps">RSS</span> или <span class="caps">ATOM</span>. Он принимает тип ссылки (<tt>:rss</tt> или <tt>:atom</tt>), хэш опций, которые передаются через url_for, и хэш опций для тэга:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= auto_discovery_link_tag(:rss, {:action =&gt; &quot;feed&quot;}, 
+  {:title =&gt; &quot;RSS Feed&quot;}) %&gt;
+</pre></div>
+<p>Вот три опции тэга, доступные для <tt>auto_discovery_link_tag</tt>:</p>
+<ul>
+	<li><tt>:rel</tt> определяет значение <tt>rel</tt> в ссылке (по умолчанию &#8220;alternate&#8221;)</li>
+	<li><tt>:type</tt> определяет явный тип <span class="caps">MIME</span>. Rails генерирует подходящий тип <span class="caps">MIME</span> автоматически</li>
+	<li><tt>:title</tt> определяет заголовок ссылки</li>
+</ul>
+
+<h5 id="linking-to-javascript-files-with-javascript-include-tag">1.2 Присоединение файлов Javascript с помощью <tt>javascript_include_tag</tt></h5>
+<p>Хелпер <tt>javascript_include_tag</tt> возвращает <span class="caps">HTML</span> тэг <tt>script</tt> для каждого предоставленного источника. Rails ищет эти файлы в <tt>public/javascripts</tt> по умолчанию, но вы можете определить полный путь, относительно корневого, или <span class="caps">URL</span>, если предпочитаете. Например, чтобы включить <tt>public/javascripts/main.js</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;main&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>public/javascripts/main.js</tt> и <tt>public/javascripts/columns.js</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;main&quot;, &quot;columns&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>public/javascripts/main.js</tt> и <tt>public/photos/columns.js</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;main&quot;, &quot;/photos/columns&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>http://example.com/main.js</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;http://example.com/main.js&quot; %&gt;
+</pre></div>
+<p>Если приложение не использует трубу ресурсов (asset pipeline) <tt>defaults</tt> загружает библиотеки jQuery по умолчанию:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag :defaults %&gt;
+</pre></div>
+<p>Разумеется, можно переопределить этот список в <tt>config/application.rb</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+config.action_view.javascript_expansions[:defaults] = %w(foo.js bar.js)
+</pre></div>
+<p>При использовании <tt>:defaults</tt>, если файл <tt>application.js</tt> существует в <tt>public/javascripts</tt>, он также будет включен в самом конце.</p>
+<p>Также, опция <tt>all</tt> загружает каждый файл javascript в <tt>public/javascripts</tt>:</p>
+<div class="code_container"><code class="html">
+&lt;%= javascript_include_tag :all %&gt;
+</code></div>
+<p>Отметьте, что сначала будут включены выбранные по умолчанию, поскольку они могут требоваться во всех последующих файлах.</p>
+<p>Также можете применить опцию <tt>:recursive</tt> для загрузки файлов в подпапках <tt>public/javascripts</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag :all, :recursive =&gt; true %&gt;
+</pre></div>
+<p>Если Вы загружаете несколько файлов javascript, то можете объединить несколько файлов в единую загрузку. Чтобы сделать это, определите <tt>:cache => true</tt> в Вашем <tt>javascript_include_tag</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;main&quot;, &quot;columns&quot;, :cache =&gt; true %&gt;
+</pre></div>
+<p>По умолчанию, объединенный файл будет доставлен как <tt>javascripts/all.js</tt>. Вместо него Вы можете определить расположение для кэшированного активного файла:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= javascript_include_tag &quot;main&quot;, &quot;columns&quot;, 
+  :cache =&gt; 'cache/main/display' %&gt;
+</pre></div>
+<p>Можно даже использовать динамические пути, такие как <tt>cache/#{current_site}/main/display</tt>.</p>
+
+<h5 id="linking-to-css-files-with-stylesheet-link-tag">1.3 Присоединение файлов <span class="caps">CSS</span> с помощью <tt>stylesheet_link_tag</tt></h5>
+<p>Хелпер <tt>stylesheet_link_tag</tt> возвращает <span class="caps">HTML</span> тэг <tt><link></tt> для каждого предоставленного источника. Rails ищет эти файлы в <tt>public/stylesheets</tt> по умолчанию, но Вы можете определить полный путь, относительно корневого, или <span class="caps">URL</span>, если предпочитаете. Например, чтобы включить <tt>public/stylesheets/main.css</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>public/stylesheets/main.css</tt> и <tt>public/stylesheets/columns.css</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main&quot;, &quot;columns&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>public/stylesheets/main.css</tt> и <tt>public/photos/columns.css</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main&quot;, &quot;/photos/columns&quot; %&gt;
+</pre></div>
+<p>Чтобы включить <tt>http://example.com/main.css</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;http://example.com/main.cs&quot; %&gt;
+</pre></div>
+<p>По умолчанию <tt>stylesheet_link_tag</tt> создает ссылки с <tt>media="screen" rel="stylesheet" type="text/css"</tt>. Можно переопределить любое из этих дефолтных значений, указав соответствующую опцию (:media, :rel, or :type):</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main_print&quot;, media =&gt; &quot;print&quot; %&gt;
+</pre></div>
+<p>Опция <tt>all</tt> делает ссылки на каждый файл <span class="caps">CSS</span> в <tt>public/stylesheets</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag :all %&gt;
+</pre></div>
+<p>Также можете применить опцию <tt>:recursive</tt> для загрузки файлов в подпапках  <tt>public/stylesheets</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag :all, :recursive =&gt; true %&gt;
+</pre></div>
+<p>Если Вы загружаете несколько файлов <span class="caps">CSS</span>, то можете объединить несколько файлов в единую загрузку. Чтобы сделать это, определите. Чтобы сделать это, определите <tt>:cache => true</tt> в Вашем <tt>stylesheet_link_tag</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main&quot;, &quot;columns&quot;, :cache =&gt; true %&gt;
+</pre></div>
+<p>По умолчанию, объединенный файл будет доставлен как <tt>stylesheets/all.css</tt>. Вместо него Вы можете определить расположение для кэшированного активного файла:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= stylesheet_link_tag &quot;main&quot;, &quot;columns&quot;, 
+  :cache =&gt; 'cache/main/display' %&gt;
+</pre></div>
+<p>Можно даже использовать динамические пути, такие как <tt>cache/#{current_site}/main/display</tt>.</p>
+
+<h5 id="linking-to-images-with-image-tag">1.4 Присоединение изображений с помощью <tt>image_tag</tt></h5>
+<p>Хелпер <tt>image_tag</tt> создает <span class="caps">HTML</span> тэг <tt>&lt;img /&gt;</tt> для определенного файла. По умолчанию файлы загружаются из <tt>public/images</tt>, отметьте, Вы должны определить расширение, прежние версии Rails позволяли вызвать всего лишь имя изображения и добавляли <tt>.png</tt>, если расширение не было задано, Rails 3.0 так не делает.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;header.png&quot; %&gt;
+</pre></div>
+<p>Вы можете предоставить путь к изображению, если желаете:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;icons/delete.gif&quot; %&gt;
+</pre></div>
+<p>Вы можете предоставить хэш дополнительных опций <span class="caps">HTML</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;icons/delete.gif&quot;, {:height =&gt; 45} %&gt;
+</pre></div>
+<p>Можете предоставить альтернативное изображение для отображения по наведению мыши:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;home.gif&quot;, :onmouseover =&gt; &quot;menu/home_highlight.gif&quot; %&gt;
+</pre></div>
+<p>Или альтернативный текст, если пользователь отключил показ изображений в браузере, если вы не определили явно тег alt, по умолчанию будет указано имя файла с большой буквы и без расширения, например, эти два тега изображения возвратят одинаковый код:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;home.gif&quot; %&gt;
+&lt;%= image_tag &quot;home.gif&quot;, :alt =&gt; &quot;Home&quot; %&gt;
+</pre></div>
+<p>Можете указать специальный тэг size в формате &#8220;{width}x{height}&#8221;:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;home.gif&quot;, :size =&gt; &quot;50x20&quot; %&gt;
+</pre></div>
+<p>В дополнение к вышеописанным специальным тегам, можно предоставить итоговый хэш стандартных опций <span class="caps">HTML</span>, таких как <tt>:class</tt>, или <tt>:id</tt>, или <tt>:name</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= image_tag &quot;home.gif&quot;, :alt =&gt; &quot;Go Home&quot;,
+                          :id =&gt; &quot;HomeImage&quot;,
+                          :class =&gt; 'nav_bar' %&gt;
+</pre></div>
+
+<h5 id="linking-to-videos-with-video_tag">1.5 Присоединение видео с помощью <tt>video_tag</tt></h5>
+<p>Хелпер <tt>video_tag</tt> создает тег <span class="caps">HTML</span> 5 <tt>&lt;video&gt;</tt> для определенного файла. По умолчанию файлы загружаются из <tt>public/videos</tt>.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= video_tag &quot;movie.ogg&quot; %&gt;
+</pre></div>
+<p>Создаст</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;video src=&quot;/videos/movie.ogg&quot; /&gt;
+</pre></div>
+<p>Подобно <tt>image_tag</tt>, можно предоставить путь или абсолютный, или относительный к директории <tt>public/videos</tt>.  Дополнительно можно определить опцию <tt>:size => "#{width}x#{height}"</tt>, как и в <tt>image_tag</tt>.  Теги видео также могут иметь любые опции <span class="caps">HTML</span>, определенные в конце (<tt>id</tt>, <tt>class</tt> и др.).</p>
+<p>Тег видео также поддерживает все <span class="caps">HTML</span> опции <tt>&lt;video&gt;</tt> <span class="caps">HTML</span> с помощью хэша <span class="caps">HTML</span> опций, включая:</p>
+<ul>
+	<li><tt>:poster => 'image_name.png'</tt>, предоставляет изображение для размещения вместо видео до того, как оно начнет проигрываться.</li>
+	<li><tt>:autoplay => true</tt>, запускает проигрывание по загрузке страницы.</li>
+	<li><tt>:loop => true</tt>, запускает видео сначала, как только оно достигает конца.</li>
+	<li><tt>:controls => true</tt>, предоставляет пользователю поддерживаемые браузером средства управления для взаимодействия с видео.</li>
+	<li><tt>:autobuffer => true</tt>, файл видео предварительно загружается для пользователя по загрузке страницы.</li>
+</ul>
+<p>Также можно определить несколько видео для проигрывания, передав массив видео в <tt>video_tag</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= video_tag [&quot;trailer.ogg&quot;, &quot;movie.ogg&quot;] %&gt;
+</pre></div>
+<p>Это создаст:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;video&gt;&lt;source src=&quot;trailer.ogg&quot; /&gt;&lt;source src=&quot;movie.ogg&quot; /&gt;&lt;/video&gt;
+</pre></div>
+
+<h5 id="linking-to-audio-files-with-audio_tag">1.6 Присоединение аудиофайлов с помощью <tt>audio_tag</tt></h5>
+<p>Хелпер <tt>audio_tag</tt> создает тег <span class="caps">HTML</span> 5 <tt>&lt;audio&gt;</tt> для определенного файла. По умолчанию файлы загружаются из <tt>public/audios</tt>.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= audio_tag &quot;music.mp3&quot; %&gt;
+</pre></div>
+<p>Если хотите, можете предоставить путь к аудио файлу:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= audio_tag &quot;music/first_song.mp3&quot; %&gt;
+</pre></div>
+<p>Также можно предоставить хэш дополнительных опций, таких как <tt>:id</tt>, <tt>:class</tt> и т.д.</p>
+<p>Подобно <tt>video_tag</tt>, <tt>audio_tag</tt> имеет специальные опции:</p>
+<ul>
+	<li><tt>:autoplay => true</tt>, начинает воспроизведение аудио по загрузке страницы</li>
+	<li><tt>:controls => true</tt>, предоставляет пользователю поддерживаемые браузером средства управления для взаимодействия с аудио.</li>
+	<li><tt>:autobuffer => true</tt>, файл аудио предварительно загружается для пользователя по загрузке страницы.</li>
+</ul>
+
+<p><a href="/layouts-and-rendering-in-rails/structuring-layouts-2">Продолжение...</a></p>

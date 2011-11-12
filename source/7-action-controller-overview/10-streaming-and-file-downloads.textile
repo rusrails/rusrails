@@ -1,0 +1,70 @@
+h1. Потоки и загрузка файлов
+
+<p>Иногда хочется послать пользователю файл вместо рендеринга страницы <span class="caps">HTML</span>. Все контроллеры в Rails имеют методы <tt>send_data</tt> и <tt>send_file</tt>, которые направляют данные на клиент. <tt>send_file</tt> это удобный метод, который позволяет представить имя файла на диске, и он направит вам содержимое этого файла.</p>
+<p>Чтобы направить данные на клиент, используйте <tt>send_data</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require &quot;prawn&quot;
+class ClientsController &lt; ApplicationController
+  # Создает документ PDF с информацией на клиента и возвращает 
+  # его. Пользователь получает PDF как загрузку файла.
+  def download_pdf
+    client = Client.find(params[:id])
+    send_data(generate_pdf, 
+              :filename =&gt; &quot;#{client.name}.pdf&quot;,
+              :type =&gt; &quot;application/pdf&quot;)
+  end
+
+private
+
+  def generate_pdf(client)
+    Prawn::Document.new do
+      text client.name, :align =&gt; :center
+      text &quot;Address: #{client.address}&quot;
+      text &quot;Email: #{client.email}&quot;
+    end.render
+  end
+end
+</pre></div>
+<p>Экшн <tt>download_pdf</tt> в примере вызовет private метод, который фактически создаст документ <span class="caps">PDF</span> и возвратит его как строку. Эта строка будет направлена клиенту как загрузка файла, и пользователю будет предложено имя файла. Иногда при передаче файлов пользователю, вы можете не захотеть, чтобы их скачивали. Принятие изображений, к примеру, которое может быть внедрено в страницы <span class="caps">HTML</span>. Чтобы сказать браузеру, что файл не подразумевает быть скачанным, нужно установить опцию <tt>:disposition</tt> как &#8220;inline&#8221;. Противоположное и дефолтное значение этой опции &#8220;attachment&#8221;.</p>
+
+<h4 id="sending-files">1. Отправка файлов</h4>
+<p>Если хотите отправить файл, уже существующий на диске, используйте метод <tt>send_file</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ClientsController &lt; ApplicationController
+  # Передача файла, который уже был создан и сохранен на диск.
+  def download_pdf
+    client = Client.find(params[:id])
+    send_file("#{Rails.root}/files/clients/#{client.id}.pdf",
+              :filename => "#{client.name}.pdf",
+              :type => "application/pdf")
+  end
+end
+</pre></div>
+<p>Это прочтет и передаст файл блоками в 4kB за раз, что избегает загрузки целого файла в память единовременно. Можете отключить потоковость с помощью опции <tt>:stream</tt> или отрегулировать размер блока с помощью опции <tt>:buffer_size</tt>.</p>
+<div class='warning'><p>Будьте осторожны, когда используете данные, пришедшие с клиента (params, куки и т.д.), для обнаружения файла на диске, так как есть риск безопасности в том, что кто-то может получить доступ к файлам, которые они не должны видеть.</p></div>
+<div class='info'><p>Не рекомендуется передавать статичные файлы через Rails, если можно вместо этого разместить их в папке public на Вашем вебсервере. Более эффективно разрешить пользователям скачивать файлы напрямую, используя Apache или другой вебсервер, сохраняя запрос от ненужного прогона через весь стек Rails. Хотя, если нужен запрос к Rails по другой причине, можете установить опцию <tt>:x_sendfile</tt> в true, и Rails позволит вебсерверу управлять отправкой файла пользователю, освобождая Rails для других вещей. Отметьте, что вашему веб-серверу нужна поддержка заголовка <tt>X-Sendfile</tt> для этого.</p></div>
+
+<h4 id="restful-downloads">2. Загрузка RESTful</h4>
+<p>Хотя <tt>send_data</tt> работает прекрасно, если Вы создаете приложение на принципе RESTful, наличие отдельных экшнов для загрузок файла обычно не рекомендовано. В терминологии <span class="caps">REST</span>, файл <span class="caps">PDF</span> из примера выше можно считать еще одним представлением ресурса client. Rails предоставляет простой и совершенно гладкий способ осуществления &#8220;загрузок RESTful&#8221;. Вот как можно переписать пример так, что загрузка <span class="caps">PDF</span> является частью экшна <tt>show</tt>, без какой-либо потоковости:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ClientsController &lt; ApplicationController
+  # Пользователь может запросить получение этого ресурса как HTML или PDF.
+  def show
+    @client = Client.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.pdf { render :pdf =&gt; generate_pdf(@client) }
+    end
+  end
+end
+</pre></div>
+<p>Для того, чтобы этот пример заработал, нужно добавить <span class="caps">PDF</span> тип <span class="caps">MIME</span> в Rails. Это выполняется добавлением следующей строки в файл <tt>config/initializers/mime_types.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Mime::Type.register &quot;application/pdf&quot;, :pdf
+</pre></div>
+<div class='note'><p>Конфигурационные файлы не перезагружаются с каждым запросом, поэтому необходимо перезапустить сервер для того, чтобы изменения вступили в силу.</p></div>
+<p>Тепрь пользователь может запрашивать получение версии в <span class="caps">PDF</span>, просто добавив &#8220;.pdf&#8221; в <span class="caps">URL</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+GET /clients/1.pdf
+</pre></div>

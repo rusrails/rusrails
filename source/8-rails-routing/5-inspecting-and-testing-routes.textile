@@ -1,0 +1,55 @@
+h1. Осмотр и тестирование маршрутов
+
+<p>Rails предлагает инструменты для осмотра и тестирования маршрутов.</p>
+
+<h4 id="seeing-existing-routes-with-rake">1. Обзор существующих маршрутов с помощью <tt>rake</tt></h4>
+<p>Если нужен полный список всех доступных маршрутов Вашего приложения, запустите команду <tt>rake routes</tt>. Она напечатает все Ваши маршруты, в том же порядке, что они появляются в <tt>routes.rb</tt>. Для каждого маршрута Вы увидите:</p>
+<ul>
+	<li>Имя маршрута (если имеется)</li>
+	<li>Используемый метод <span class="caps">HTTP</span> (если маршрут не реагирует на все методы)</li>
+	<li>Шаблон <span class="caps">URL</span></li>
+	<li>Параметры роутинга для этого маршрута</li>
+</ul>
+<p>Например, вот небольшая часть результата команды <tt>rake routes</tt> для маршрута RESTful:</p>
+<pre>
+    users GET    /users(.:format)          users#index
+          POST   /users(.:format)          users#create
+ new_user GET    /users/new(.:format)      users#new
+edit_user GET    /users/:id/edit(.:format) users#edit
+</pre>
+<p>Можете ограничить перечень маршрутами, ведущими к определенному контроллеру, установкой переменной среды <tt>CONTROLLER</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+$ CONTROLLER=users rake routes
+</pre></div>
+<div class='info'><p>Результат команды <tt>rake routes</tt> более читаемый, если у вас в окне терминала прокрутка, а не перенос строк.</p></div>
+
+<h4 id="testing-routes">2. Тестирование маршрутов</h4>
+<p>Маршруты должны быть включены в вашу стратегию тестирования (так же, как и остальное в вашем приложении). Rails предлагает три <a href="http://api.rubyonrails.org/classes/ActionController/Assertions/RoutingAssertions.html">встроенных оператора контроля</a>, разработанных для того, чтобы сделать тестирование маршрутов проще:</p>
+<ul>
+	<li><tt>assert_generates</tt></li>
+	<li><tt>assert_recognizes</tt></li>
+	<li><tt>assert_routing</tt></li>
+</ul>
+
+<h5 id="the-assert-generates-assertion">2.1 Оператор контроля <tt>assert_generates</tt></h5>
+<p>Используйте <tt>assert_generates</tt> чтобы убедиться в том, что определенный набор опций создает конкретный путь. Можете использовать его с маршрутами по умолчанию или своими маршрутами</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_generates &quot;/photos/1&quot;, { :controller =&gt; &quot;photos&quot;, :action =&gt; &quot;show&quot;, :id =&gt; &quot;1&quot; }
+assert_generates &quot;/about&quot;, :controller =&gt; &quot;pages&quot;, :action =&gt; &quot;about&quot;
+</pre></div>
+
+<h5 id="the-assert-recognizes-assertion">2.2 Оператор контроля <tt>assert_recognizes</tt></h5>
+<p>Оператор контроля <tt>assert_recognizes</tt> это противоположность <tt>assert_generates</tt>. Он убеждается, что Rails распознает предложенный путь и маршрутизирует его в конкретную точку в Вашем приложении.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_recognizes { :controller =&gt; &quot;photos&quot;, :action =&gt; &quot;show&quot;, :id =&gt; &quot;1&quot; }, &quot;/photos/1&quot;
+</pre></div>
+<p>Можете задать аргумент <tt>:method</tt>, чтобы определить метод <span class="caps">HTTP</span>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_recognizes { :controller =&gt; &quot;photos&quot;, :action =&gt; &quot;create&quot; }, { :path =&gt; &quot;photos&quot;, :method =&gt; :post }
+</pre></div>
+
+<h5 id="the-assert-routing-assertion">2.3 Оператор контроля <tt>assert_routing</tt></h5>
+<p>Оператор контроля <tt>assert_routing</tt> проверяет маршрут с двух сторон: он тестирует, что путь генерирует опции, и что опции генерируют путь. Таким образом, он комбинирует функции <tt>assert_generates</tt> и <tt>assert_recognizes</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+assert_routing { :path =&gt; &quot;photos&quot;, :method =&gt; :post }, { :controller =&gt; &quot;photos&quot;, :action =&gt; &quot;create&quot; }
+</code></div>

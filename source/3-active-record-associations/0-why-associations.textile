@@ -1,0 +1,42 @@
+h1. Зачем нужны связи?
+
+<p>Зачем нам нужны связи между моделями? Затем, что они позволяют сделать код для обычных операций проще и легче. Например, рассмотрим простое приложение на Rails, которое включает модель для покупателей и модель для заказов. Каждый покупатель может иметь много заказов. Без связей объявление модели будет выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+end
+
+class Order &lt; ActiveRecord::Base
+end
+</pre></div>
+<p>Теперь, допустим, мы хотим добавить новый заказ для существующего покупателя. Нам нужно сделать так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order = Order.create(:order_date =&gt; Time.now,
+  :customer_id =&gt; @customer.id)
+</pre></div>
+<p>Или, допустим, удалим покупателя и убедимся, что все его заказы также будут удалены:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@orders = Order.find_by_customer_id(@customer.id)
+@orders.each do |order|
+  order.destroy
+end
+@customer.destroy
+</pre></div>
+<p>Со связями Active Record можно упростить эти и другие операции, декларативно сказав Rails, что имеется соединение между двумя моделями. Вот пересмотренный код для создания покупателей и заказов:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :dependent =&gt; :destroy
+end
+
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+end
+</pre></div>
+<p>С этими изменениями создание нового заказа для определенного покупателя проще:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order = @customer.orders.create(:order_date =&gt; Time.now)
+</pre></div>
+<p>Удаление покупателя и всех его заказов <em>намного</em> проще:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer.destroy
+</pre></div>
+<p>Чтобы узнать больше о различных типах связей, читайте следующий раздел руководства. Затем следуют некоторые полезные советы по работе со связями, а затем полное описание методов и опций для связей в Rails.</p>

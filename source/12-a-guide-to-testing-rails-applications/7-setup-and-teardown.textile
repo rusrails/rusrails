@@ -1,0 +1,83 @@
+h1. Setup и Teardown
+
+<p>Если хотите запустить блок кода до старта каждого теста и другой блок кода после окончания каждого теста, у Вас есть два специальных колбэка для этой цели. Давайте рассмотрим это на примере нашего функционального теста для контроллера <tt>Posts</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require 'test_helper'
+
+class PostsControllerTest &lt; ActionController::TestCase
+
+  # вызывается перед каждым отдельным тестом
+  def setup
+    @post = posts(:one)
+  end
+
+  # вызывается после каждого отдельного теста
+  def teardown
+    # так как мы пересоздаем @post перед каждым тестом,
+    # установка его в nil тут не обязательна, но, я надеюсь,
+    # Вы поняли, как использовать метод teardown 
+    @post = nil
+  end
+
+  test &quot;should show post&quot; do
+    get :show, :id =&gt; @post.id
+    assert_response :success
+  end
+
+  test &quot;should destroy post&quot; do
+    assert_difference('Post.count', -1) do
+      delete :destroy, :id =&gt; @post.id
+    end
+
+    assert_redirected_to posts_path
+  end
+
+end
+</pre></div>
+<p>В вышеприведенном, метод <tt>setup</tt> вызывается перед каждым тестом, таким образом <tt>@post</tt> доступна каждому из тестов. Rails выполняет <tt>setup</tt> и <tt>teardown</tt> как ActiveSupport::Callbacks. Что по существу означает, что можно использовать <tt>setup</tt> и <tt>teardown</tt> не только как методы в своих тестах. Можете определить их, используя :</p>
+<ul>
+	<li>блок</li>
+	<li>метод (как в вышеприведенном примере)</li>
+	<li>имя метода как символ</li>
+	<li>lambda</li>
+</ul>
+<p>Давайте рассмотрим предыдущий пример, определив колбэк <tt>setup</tt> указав имя метода как символ:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+require '../test_helper'
+
+class PostsControllerTest &lt; ActionController::TestCase
+
+  # called before every single test
+  setup :initialize_post
+
+  # called after every single test
+  def teardown
+    @post = nil
+  end
+
+  test &quot;should show post&quot; do
+    get :show, :id =&gt; @post.id
+    assert_response :success
+  end
+
+  test &quot;should update post&quot; do
+    put :update, :id =&gt; @post.id, :post =&gt; { }
+    assert_redirected_to post_path(assigns(:post))
+  end
+
+  test &quot;should destroy post&quot; do
+    assert_difference('Post.count', -1) do
+      delete :destroy, :id =&gt; @post.id
+    end
+
+    assert_redirected_to posts_path
+  end
+
+  private
+
+  def initialize_post
+    @post = posts(:one)
+  end
+
+end
+</pre></div>

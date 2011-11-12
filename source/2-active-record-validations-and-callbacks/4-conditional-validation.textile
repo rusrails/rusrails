@@ -1,0 +1,43 @@
+h1. Условная валидация
+
+<p>Иногда имеет смысл проводить валидацию объекта только при выполнении заданного условия. Это можно сделать, используя опции <tt>:if</tt> и <tt>:unless</tt>, которые принимают символ, строку или <tt>Proc</tt>. Опцию <tt>:if</tt> можно использовать, если вы хотите определить, когда валидация <strong>должна</strong> произойти. Если вы хотите определить, когда валидация <strong>не должна</strong> произойти, воспользуйтесь опцией <tt>:unless</tt>.</p>
+<h4 id="using-a-symbol-with-if-and-unless">1. Использование символа с <tt>:if</tt> и <tt>:unless</tt></h4>
+<p>Вы можете связать опции <tt>:if</tt> и <tt>:unless</tt> с символом, соответствующим имени метода, который будет вызван перед валидацией. Это наиболее часто используемый вариант.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Order &lt; ActiveRecord::Base
+  validates :card_number, :presence => true, :if => :paid_with_card?
+
+  def paid_with_card?
+    payment_type == &quot;card&quot;
+  end
+end
+</pre></div>
+
+<h4 id="using-a-string-with-if-and-unless">2. Использование строки с <tt>:if</tt> и <tt>:unless</tt></h4>
+<p>Также можно использовать строку, которая будет вычислена с использованием <tt>eval</tt>, и должна содержать валидный код Ruby. Этот вариант следует использовать, если строка содержит действительно короткое условие.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Person &lt; ActiveRecord::Base
+  validates :surname, :presence => true, :if => "name.nil?"
+end
+</pre></div>
+
+<h4 id="using-a-proc-with-if-and-unless">3. Использование Proc с <tt>:if</tt> и <tt>:unless</tt></h4>
+<p>Наконец, можно связать <tt>:if</tt> и <tt>:unless</tt> с объектом <tt>Proc</tt>, который будет вызван. Использование объекта <tt>Proc</tt> дает возможность написать встроенное условие вместо отдельного метода. Этот вариант лучше всего подходит для однострочного кода.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Account &lt; ActiveRecord::Base
+  validates :password, :confirmation => true,
+    :unless => Proc.new { |a| a.password.blank? }
+end
+</pre></div>
+
+<h4 id="grouping-conditional-validations">4. Группировка условных валидаций</h4>
+<p>Иногда полезно иметь несколько валидаций с одним условием, это легко достигается с использованием <tt>with_options</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User < ActiveRecord::Base
+  with_options :if => :is_admin? do |admin|
+    admin.validates :password, :length => { :minimum => 10 }
+    admin.validates :email, :presence => true
+  end
+end
+</pre></div>
+<p>Во все валидации внутри <tt>with_options</tt> будет автоматически передано условие <tt>:if => :is_admin?</tt>.</p>

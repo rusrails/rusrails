@@ -1,0 +1,91 @@
+h1. Понимание соглашений по именованию параметров
+
+<p>Как вы видели в предыдущих разделах, значения из форм могут быть в верхнем уровне хэша <tt>params</tt> или вложены в другой хэш. Например, в стандартном экшне <tt>create</tt> для модели Person, <tt>params[:model]</tt> будет обычно хэшем всех атрибутов для создания персоны. Хэш <tt>params</tt> может также содержать массивы, массивы хэшей и тому подобное.</p>
+<p>Фундаментально формы <span class="caps">HTML</span> не знают о какого-либо рода структурированных данных, все они создают пары имя-значение, где пары являются обычными строками. Массивы и хэши, которые видите в своем приложении это результат некоторых соглашений по именованию параметров, которые использует Rails.</p>
+<div class='info'><p>Есть способ пробовать примеры этого раздела быстрее, используя консоль для прямого вызова парсера параметров Rails. Например:</p></div>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+ActionController::UrlEncodedPairParser.parse_query_parameters "name=fred&phone=0123456789"
+# => {"name"=>"fred", "phone"=>"0123456789"}
+</pre></div>
+
+<h4 id="basic-structures">1. Основные структуры</h4>
+<p>Две основные структуры это массивы и хэши. Хэши отражают синтаксис, используемый для доступа к значению в <tt>params</tt>. Например, если форма содержит</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;person_name&quot; name=&quot;person[name]&quot; type=&quot;text&quot; value=&quot;Henry&quot;/&gt;
+</pre></div>
+<p>хэш <tt>params</tt> будет содержать</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+{'person' =&gt; {'name' =&gt; 'Henry'}}
+</pre></div>
+<p>и <tt>params[:person][:name]</tt> получит подтвержденное значение в контроллере.</p>
+<p>Хэши могут быть вложены на столько уровней, сколько требуется, например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;person_address_city&quot; name=&quot;person[address][city]&quot; type=&quot;text&quot; value=&quot;New York&quot;/&gt;
+</pre></div>
+<p>приведет к такому хэшу <tt>params</tt></p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{'person' =&gt; {'address' =&gt; {'city' =&gt; 'New York'}}}
+</pre></div>
+<p>Обычно Rails игнорирует дублирующиеся имена параметра. Если имя параметра содержит пустой набор квадратных скобок [], то они будут накоплены в массиве. Если хотите, чтобы люди могли оставлять несколько телефонных номеров, можете поместить это в форму:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input name=&quot;person[phone_number][]&quot; type=&quot;text&quot;/&gt;
+&lt;input name=&quot;person[phone_number][]&quot; type=&quot;text&quot;/&gt;
+&lt;input name=&quot;person[phone_number][]&quot; type=&quot;text&quot;/&gt;
+</pre></div>
+<p>Что приведет к тому, что <tt>params[:person][:phone_number]</tt> будет массивом.</p>
+
+<h4 id="combining-them">2. Комбинируем их</h4>
+<p>Можно смешивать и сочетать эти две концепции. Например, один элемент хэша может быть массивом, как в предыдущем примере, или можете иметь массив хэшей. Например, форма может позволить вам создать любое количество адресов, повторяя следующий фрагмент кода</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input name=&quot;addresses[][line1]&quot; type=&quot;text&quot;/&gt;
+&lt;input name=&quot;addresses[][line2]&quot; type=&quot;text&quot;/&gt;
+&lt;input name=&quot;addresses[][city]&quot; type=&quot;text&quot;/&gt;
+</pre></div>
+<p>Что приведет к тому, что <tt>params[:addresses]</tt> будет массивом хэшей с ключами <tt>line1</tt>, <tt>line2</tt> и <tt>city</tt>. Rails решает начать собирать значения в новый хэш, когда он встречает имя элемента ввода, уже существующее в текущем хэше.</p>
+<p>Однако, имеется ограничение, по которому хэши не могут быть вложены произвольно, является допустимым только один уровень &#8220;массивности&#8221;. Массивы обычно могут быть заменены хэшами, например, вместо массива объектов моделей можно иметь хэш объектов модели с ключами, равными их id, индексу массива или любому другому параметру.</p>
+<div class='warning'><p>Параметры в массиве не очень хорошо работают с хелпером <tt>check_box</tt>. В соответствии со спецификацией <span class="caps">HTML</span>, ненажатые чекбоксы не возвращают значения. Хелпер <tt>check_box</tt> обходит это, создавая второе скрытое поле с тем же именем. Если чекбокс не нажат, подтверждается только скрытое поле, и если он нажат, то они оба подтверждаются, но значение от чекбокса имеет преимущество. При работе с параметрами в массиве эти дублирующиеся подтверждения запутают Rails дублирующимися именами полей, и непонятно, как он решит, где начать новый элемент массива. Предпочтительнее использовать или <tt>check_box_tag</tt>, или хэши вместо массивов.</p></div>
+
+<h4 id="using-form-helpers">3. Использование хелперов форм</h4>
+<p>Предыдущие разделы совсем не использовали хелперы Rails. Хотя можно создавать имена полей самому и передавать их напрямую хелперам, таким как <tt>text_field_tag</tt>, Rails также предоставляет поддержку на более высоком уровне. В вашем распоряжении имеется два инструмента: параметр имени для <tt>form_for</tt> и <tt>fields_for</tt>, и опция <tt>:index</tt>, принимаемая этими хелперами.</p>
+<p>Вы возможно захотите рендерить форму с набором полей ввода для каждого адреса человека. Например:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= form_for @person do |person_form| %&gt;
+  &lt;%= person_form.text_field :name %&gt;
+  &lt;% for address in @person.addresses %&gt;
+    &lt;%= person_form.fields_for address, :index =&gt; address do |address_form|%&gt;
+      &lt;%= address_form.text_field :city %&gt;
+    &lt;% end %&gt;
+  &lt;% end %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>Предположим, у человека есть два адреса с id 23 и 45, это создаст что-то подобное:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/people/1" class="edit_person" id="edit_person_1" method="post">
+  <input id="person_name" name="person[name]" size="30" type="text" />
+  <input id="person_address_23_city" name="person[address][23][city]" size="30" type="text" />
+  <input id="person_address_45_city" name="person[address][45][city]" size="30" type="text" />
+</form>
+</pre></div>
+<p>Что приведет, что хэш <tt>params</tt> будет выглядеть так</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{'person' =&gt; {'name' =&gt; 'Bob', 'address' =&gt; {'23' =&gt; {'city' =&gt; 'Paris'}, '45' =&gt; {'city' =&gt; 'London'}}}}
+</pre></div>
+<p>Rails знает, что все эти поля должны быть частью хэша person, так как вы вызвали <tt>fields_for</tt> для первого form builder. Определяя опцию <tt>:index</tt>, Вы сообщаете Rails, что вместо именования полей <tt>person[address][city]</tt>, он должен вставить индекс, заключенный в [], между address и city. Если передать объект Active Record, как мы сделали, то Rails вызовет <tt>to_param</tt> для него, который по умолчанию возвращает id в базе данных. Это часто полезно, так как просто обнаружить, какая запись Address должна быть изменена. Можете передать числа с некоторыми другими значениями, строки или даже <tt>nil</tt> (который приведет к созданию параметра в массиве).</p>
+<p>Чтобы создать более замысловатые вложения, можете явно определить первую часть имени поля (<tt>person[address]</tt> в предыдущем примере), например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= fields_for 'person[address][primary]', address, :index =&gt; address do |address_form| %&gt;
+  &lt;%= address_form.text_field :city %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>создаст такие поля</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;person_address_primary_1_city&quot; name=&quot;person[address][primary][1][city]&quot; size=&quot;30&quot; type=&quot;text&quot; value=&quot;bologna&quot; /&gt;
+</pre></div>
+<p>По общему правилу конечное имя поля это сцепление имени, данного <tt>fields_for</tt>/<tt>form_for</tt>, значение индекса и имени атрибута. Можете также передать опцию <tt>:index</tt> прямо в хелперы, такие как <tt>text_field</tt>, но, как правило, будет меньше повторов, если определить это на уровне form builder, чем для отдельного элемента ввода.</p>
+<p>Как ярлык можете добавить [] к имени и опустить опцию <tt>:index</tt>. Это то же самое, что определение <tt>:index => address</tt>, таким образом</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= fields_for 'person[address][primary][]', address do |address_form| %&gt;
+  &lt;%= address_form.text_field :city %&gt;
+&lt;% end %&gt;
+</pre></div>
+<p>создаст абсолютно тот же результат, что и предыдущий пример.</p>

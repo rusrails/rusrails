@@ -1,0 +1,289 @@
+h1. Ресурсный роутинг (часть первая)
+
+<p>Ресурсный роутинг позволяет быстро объявлять все обычные маршруты для заданного ресурсного контроллера. Вместо объявления отдельных маршрутов для экшнов <tt>index</tt>, <tt>show</tt>, <tt>new</tt>, <tt>edit</tt>, <tt>create</tt>, <tt>update</tt> и <tt>destroy</tt>, ресурсный маршрут объявляет их в единственной строке кода.</p>
+
+<h4 id="resources-on-the-web">1. Ресурсы в вебе</h4>
+<p>Браузеры запрашивают страницы от Rails, выполняя запрос по <span class="caps">URL</span>, используя определенный метод <span class="caps">HTTP</span>, такой как <tt>GET</tt>, <tt>POST</tt>, <tt>PUT</tt> и <tt>DELETE</tt>. Каждый метод это запрос на выполнение операции с ресурсом. Ресурсный маршрут соединяет несколько родственных запросов с экшнами в одном контроллере.</p>
+<p>Когда приложение на Rails получает входящий запрос</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+DELETE /photos/17
+</pre></div>
+<p>оно просит роутер соединить его с экшном контроллера. Если первый соответствующий маршрут такой</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos
+</pre></div>
+<p>Rails переведет этот запрос в метод <tt>destroy</tt> контроллера <tt>photos</tt> с <tt>{ :id =&gt; &#8220;17&#8221; }</tt> в <tt>params</tt>.</p>
+
+<h4 id="crud-verbs-and-actions">2. <span class="caps">CRUD</span>, методы и экшны</h4>
+<p>В Rails ресурсный маршрут предоставляет соединение между методами <span class="caps">HTTP</span> и URL к экшнам контроллера. По соглашению, каждый экшн также соединяется с определенной операцией <span class="caps">CRUD</span> в базе данных. Одна запись в файле роутинга, такая как</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos
+</pre></div>
+<p>создает семь различных маршрутов в Вашем приложении, все соединенные с контроллером <tt>Photos</tt>:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь</th>
+		<th>Экшн</th>
+		<th>Использование</th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos         </td>
+		<td>index    </td>
+		<td>отображает список всех фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/new     </td>
+		<td>new      </td>
+		<td>возвращает форму <span class="caps">HTML</span> для создания нового фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>       </td>
+		<td>/photos         </td>
+		<td>create   </td>
+		<td>создает новое фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/1       </td>
+		<td>show     </td>
+		<td>отображает определенное фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/1/edit  </td>
+		<td>edit     </td>
+		<td>возвращает форму <span class="caps">HTML</span> для редактирования фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>        </td>
+		<td>/photos/1       </td>
+		<td>update   </td>
+		<td>обновляет определенное фото</td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>     </td>
+		<td>/photos/1       </td>
+		<td>destroy  </td>
+		<td>удаляет определенное фото</td>
+	</tr>
+</table>
+<div class='note'><p>Маршруты Rails сравниваются в том порядке, в котором они определены, поэтому, если имеется <tt>resources :photos</tt> до <tt>get 'photos/poll'</tt> маршрут для экшна <tt>show</tt> в строке <tt>resources</tt> совпадет до строки <tt>get</tt>. Чтобы это исправить, переместите строку <tt>get</tt> <strong>над</strong> строкой <tt>resources</tt>, чтобы она сравнивалась первой.</p></div>
+
+<h4 id="urls-and-paths">3. Пути и URL</h4>
+<p>Создание ресурсного маршрута также сделает доступными множество хелперов в контроллере вашего приложения. В случае с <tt>resources :photos</tt>:</p>
+<ul>
+	<li><tt>photos_path</tt> возвращает <tt>/photos</tt></li>
+	<li><tt>new_photo_path</tt> возвращает <tt>/photos/new</tt></li>
+	<li><tt>edit_photo_path(:id)</tt> возвращает <tt>/photos/:id/edit</tt> (например, <tt>edit_photo_path(10)</tt> возвращает <tt>/photos/10/edit</tt>)</li>
+	<li><tt>photo_path(:id)</tt> возвращает <tt>/photos/:id</tt> (например, <tt>photo_path(10)</tt> возвращает <tt>/photos/10</tt>)</li>
+</ul>
+<p>Каждый из этих хелперов имеет соответствующий хелпер <tt>_url</tt> (такой как <tt>photos_url</tt>), который возвращает тот же путь с добавленными текущими хостом, портом и префиксом пути.</p>
+<div class='note'><p>Поскольку роутер использует как метод <span class="caps">HTTP</span>, так и URL, четыре URL соединяют с семью различными экшнами.</p></div>
+
+<h4 id="defining-multiple-resources-at-the-same-time">4. Определение нескольких ресурсов одновременно</h4>
+<p>Если необходимо создать маршруты  для более чем одного ресурса, можете сократить ввод, определив их в одном вызове <tt>resources</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :books, :videos
+</pre></div>
+<p>Это приведет к такому же результату, как и</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos
+resources :books
+resources :videos
+</pre></div>
+
+<h4 id="singular-resources">5. Одиночные ресурсы</h4>
+<p>Иногда имеется ресурс, который клиенты всегда просматривают без ссылки на ID. Обычный пример, <tt>/profile</tt> всегда показывает профиль текущего вошедшего пользователя. Для этого можно использовать одиночный ресурс, чтобы связать <tt>/profile</tt> (а не <tt>/profile/:id</tt>) с экшном <tt>show</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+match &quot;profile&quot; =&gt; &quot;users#show&quot;
+</pre></div>
+<p>Этот ресурсный маршрут</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resource :geocoder
+</pre></div>
+<p>создаст шесть различных маршрутов в вашем приложении, все связанные с контроллером <tt>Geocoders</tt>:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь</th>
+		<th>Экшн</th>
+		<th>Использование</th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/geocoder/new   </td>
+		<td>new      </td>
+		<td>возвращает форму <span class="caps">HTML</span> для создания нового геокодера</td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>       </td>
+		<td>/geocoder       </td>
+		<td>create   </td>
+		<td>создает новый геокодер</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/geocoder       </td>
+		<td>show     </td>
+		<td>отображает один и только один ресурс геокодера</td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/geocoder/edit  </td>
+		<td>edit     </td>
+		<td>возвращает форму <span class="caps">HTML</span> для редактирования геокодера</td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>        </td>
+		<td>/geocoder       </td>
+		<td>update   </td>
+		<td>обновляет один и только один ресурс геокодера</td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>     </td>
+		<td>/geocoder       </td>
+		<td>destroy  </td>
+		<td>удаляет ресурс геокодера</td>
+	</tr>
+</table>
+<div class='note'><p>Поскольку вы можете захотеть использовать один и тот же контроллер и для одиночного маршрута (<tt>/account</tt>), и для множественного маршрута (<tt>/accounts/45</tt>), одиночные ресурсы ведут на множественные контроллеры.</p></div>
+<p>Одиночный ресурсный маршрут создает эти хелперы:</p>
+<ul>
+	<li><tt>new_geocoder_path</tt> возвращает <tt>/geocoder/new</tt></li>
+	<li><tt>edit_geocoder_path</tt> возвращает <tt>/geocoder/edit</tt></li>
+	<li><tt>geocoder_path</tt> возвращает <tt>/geocoder</tt></li>
+</ul>
+<p>Как и в случае с множественными ресурсами, те же хелперы, оканчивающиеся на <tt>_url</tt> также включают хост, порт и префикс пути.</p>
+
+<h4 id="controller-namespaces-and-routing">6. Пространство имен контроллера и роутинг</h4>
+<p>Возможно, вы захотите организовать группы контроллеров в пространство имен. Чаще всего группируют административные контроллеры в пространство имен <tt>Admin::</tt>. Следует поместить эти контроллеры в директорию <tt>app/controllers/admin</tt> и затем можно сгруппировать их вместе в роутере:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+namespace :admin do
+  resources :posts, :comments
+end
+</pre></div>
+<p>Это создаст ряд маршрутов для каждого контроллера <tt>posts</tt> и <tt>comments</tt>. Для <tt>Admin::PostsController</tt>, Rails создаст:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь</th>
+		<th>Экшн</th>
+		<th>Хелпер</th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/photos        </td>
+		<td>index    </td>
+		<td> admin_photos_path         </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/photos/new    </td>
+		<td>new      </td>
+		<td> new_admin_photos_path     </td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>    </td>
+		<td>/admin/photos        </td>
+		<td>create   </td>
+		<td> admin_photos_path         </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/photos/:id      </td>
+		<td>show     </td>
+		<td> admin_photo_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/photos/:id/edit </td>
+		<td>edit     </td>
+		<td> edit_admin_photo_path(:id) </td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>     </td>
+		<td>/admin/photos/:id      </td>
+		<td>update   </td>
+		<td> admin_photo_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>  </td>
+		<td>/admin/photos/:id      </td>
+		<td>destroy  </td>
+		<td> admin_photo_path(:id)      </td>
+	</tr>
+</table>
+<p>Если хотите маршрут <tt>/photos</tt> (без префикса <tt>/admin</tt>) к <tt>Admin::PostsController</tt>, можете использовать</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope :module =&gt; &quot;admin&quot; do
+  resources :posts, :comments
+end
+</pre></div>
+<p>или для отдельного случая</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :posts, :module =&gt; &quot;admin&quot;
+</pre></div>
+<p>Если хотите маршрут <tt>/admin/photos</tt> к <tt>PostsController</tt> (без префикса модуля <tt>Admin::</tt>), можно использовать</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope &quot;/admin&quot; do
+  resources :posts, :comments
+end
+</pre></div>
+<p>или для отдельного случая</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :posts, :path =&gt; &quot;/admin&quot;
+</pre></div>
+<p>В каждом из этих случаев, именнованные маршруты остаются теми же, что и без использования <tt>scope</tt>. В последнем случае, следующие пути соединят с <tt>PostsController</tt>:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь</th>
+		<th>Экшн</th>
+		<th>Хелпер</th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/posts        </td>
+		<td>index    </td>
+		<td> posts_path         </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/posts/new    </td>
+		<td>new      </td>
+		<td> new_post_path         </td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>    </td>
+		<td>/admin/posts        </td>
+		<td>create   </td>
+		<td> posts_path         </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/posts/:id      </td>
+		<td>show     </td>
+		<td> post_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/admin/posts/:id/edit </td>
+		<td>edit     </td>
+		<td> edit_post_path(:id) </td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>     </td>
+		<td>/admin/posts/:id      </td>
+		<td>update   </td>
+		<td> post_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>  </td>
+		<td>/admin/posts/:id      </td>
+		<td>destroy  </td>
+		<td> post_path(:id)      </td>
+	</tr>
+</table>

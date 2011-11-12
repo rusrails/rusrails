@@ -1,0 +1,161 @@
+h1. Настройка приложения на Rails для интернационализации
+
+<p>Лишь несколько шагов отделяют вас от получения и запуска поддержки I18n в вашем приложении.</p>
+
+<h4 id="configure-the-i18n-module">1. Конфигурирование модуля I18n</h4>
+<p>Следуя философии <em>соглашений над конфигурацией</em>, Rails настроит ваше приложение приемлемыми значениями по умолчанию. Если вам необходимы иные настройки, можете просто переписать их.</p>
+<p>Rails автоматически добавляет все файлы <tt>.rb</tt> и <tt>.yml</tt> из директории <tt>config/locales</tt> к вашему <strong>пути загрузки переводов.</strong></p>
+<p>Локаль по умолчанию <tt>en.yml</tt> в этой директории содержит образец строки перевода:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+en:
+  hello: &quot;Hello world&quot;
+</pre></div>
+<p>Это означает, что в локале <tt>:en</tt>, ключ <em>hello</em> связан со строкой <em>Hello world</em>. Каждая строка в Rails интернационализируется подобным образом, смотрите, к примеру, валидационные сообщения Active Record в файле <a href="http://github.com/rails/rails/blob/master/activerecord/lib/active_record/locale/en.yml"><tt>activerecord/lib/active_record/locale/en.yml</tt></a> или форматы времени и даты в файле <a href="http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml"><tt>activesupport/lib/active_support/locale/en.yml</tt></a>. Для хранения переводов в бэкенде по умолчанию (простом) можете использовать <span class="caps">YAML</span> или стандартные хэши Ruby.</p>
+<p>Библиотека I18n будет использовать <strong>английский</strong> как <strong>локаль по умолчанию</strong>, т.е., если не хотите установить иную локаль, при поиске переводов будет использоваться <tt>:en</tt>.</p>
+<div class='note'><p>В библиотеке i18n принят <strong>прагматичный подход</strong> к ключам локали (после <a href="http://groups.google.com/group/rails-i18n/browse_thread/thread/14dede2c7dbe9470/80eec34395f64f3c?hl=en">некоторых обсуждений</a>), включающий только  часть <em>локаль</em> (&#8220;язык&#8221;), наподобие <tt>:en</tt>, <tt>:pl</tt>, но не часть <em>регион</em>, подобно <tt>:en-US</tt> или <tt>:en-UK</tt>, как традиционно используется для разделения &#8220;языков&#8221; и &#8220;региональных настроек&#8221;, или &#8220;диалектов&#8221;. Многие международные приложения используют только элемент &#8220;язык&#8221; локали, такой как <tt>:cz</tt>, <tt>:th</tt> или <tt>:es</tt> (для Чехии, Тайланда и Испании).  Однако, также имеются региональные различия внутри языковой группы, которые могут быть важными. Например, в локали <tt>:en-US</tt> как символ валюты будет $, а в <tt>:en-UK</tt> будет £. Ничто не остановит вас от разделения региональных и других настроек следующим образом: предоставляете полную локаль &#8220;English &#8211; United Kingdom&#8221; в словаре <tt>:en-UK</tt>. Различные <a href="http://rails-i18n.org/wiki">плагины Rails I18n</a>, такие как <a href="http://github.com/joshmh/globalize2/tree/master">Globalize2</a> помогут это осуществить.</p></div>
+<p><strong>Путь загрузки переводов</strong> (<tt>I18n.load_path</tt>) это всего лишь Ruby-массив путей к вашим файлам перевода, которые будут загружены автоматически и будут доступны в вашем приложении. Так что можете подобрать такую схему директорий и именования файлов, которая вам подходит.</p>
+<div class='note'><p>Бэкенд лениво загружет эти переводы, когда ищет перевод в первый раз. Это дает возможность переключить бэкенд на что-то иное даже после того, как переводы были объявлены.</p></div>
+<p>В файлах <tt>application.rb</tt> по умолчанию есть инструкция, как добавлять локали из другой директории, и как настраивать другую локаль по умолчанию. Просто откомментируйте и отредактируйте определенные строки.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+# config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+# config.i18n.default_locale = :de
+</pre></div>
+
+<h4 id="optional-custom-i18n-configuration-setup">2. Опционально: Произвольная настройка конфигурации I18n</h4>
+<p>Для полноты картины, давайте отметим, что если не хочется по каким-то причинам использовать <tt>application.rb</tt>, также всегда можно все настроить вручную.</p>
+<p>Чтобы сообщить библиотеке I18n, где она может найти ваши произвольные файлы перевода, можете определить путь загрузки где угодно в вашем приложении &#8211; просто убедитесь, что это будет выполнено до того, как какие-либо переводы будут фактически искаться. Таким же образом можно изменить локаль по умолчанию. Самым простым будет поместить следующее в инициализатор:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# в config/initializers/locale.rb
+
+# говорим библиотеке I18n, где искать наши переводы
+I18n.load_path += Dir[Rails.root.join('lib', 'locale', '*.{rb,yml}')]
+
+# устанавливаем локаль по умолчанию на что-либо другое, чем :en
+I18n.default_locale = :ru
+</pre></div>
+
+<h4 id="setting-and-passing-the-locale">3. Назначение и передача локали</h4>
+<p>Если хотите перевести свое приложение на Rails на <strong>один язык, отличный от английского</strong> (локали по умолчанию), можете настроить I18n.default_locale на свою локаль в <tt>application.rb</tt> или инициализаторе, как показано выше, и это будет сохранено во всех запросах.</p>
+<p>Однако, вы можете захотеть <strong>предоставить поддержку для нескольких локалей</strong> в своем приложении. В этом случае нужно установить и передать локаль между запросами.</p>
+<div class='warning'><p>Вы можете попытаться хранить выбранную локаль в <em>сессии</em> или в <em>куки</em>. <strong>Не делайте так</strong>. Локаль должна быть понятной и являться частью <span class="caps">URL</span>. Таким образом вы не разрушите основные допущения людей о вебе: если посылаете <span class="caps">URL</span> некоторой страницы подруге, она увидит ту же страницу, то же содержимое. Может быть несколько исключений из этого правила, которые мы обсудим ниже.</p></div>
+<p><em>Назначающая часть</em> проста. Можно назначить локаль в <tt>before_filter</tt> в <tt>ApplicationController</tt>, как тут:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+before_filter :set_locale
+def set_locale
+  # Если params[:locale] равно nil, то будет использовано I18n.default_locale
+  I18n.locale = params[:locale]
+end
+</pre></div>
+<p>Это требует, чтобы вы передали локаль как параметр запроса <span class="caps">URL</span>, как в <tt>http://example.com/books?locale=pt</tt>. (Это, к примеру, подход Гугла.) Таким образом, <tt>http://localhost:3000?locale=pt</tt> загрузит португальскую локализацию, в то время как <tt>http://localhost:3000?locale=de</tt> загрузит немецкую локализацию, и так далее. Можете опустить следующий раздел и перейти к разделу <strong>Интернационализация вашего приложения</strong>, если хотите все пробовать с помощью ручной замены локали в <span class="caps">URL</span> и перезагрузки страницы.</p>
+<p>Конечно, вы не хотите вручную включать локаль в каждом <span class="caps">URL</span> своего приложения, или хотите, чтобы URL выглядел по-разному, т.е. <tt>http://example.com/pt/books</tt> против <tt>http://example.com/en/books</tt>. Давайте обсудим различные опции, которые у нас есть.</p>
+
+<h4 id="setting-the-locale-from-the-domain-name">4. Назначение локали из имени домена</h4>
+<p>Одним из вариантов, которым можно установить локаль, является доменное имя, на котором запущено ваше приложение. Например, мы хотим, чтобы <tt>www.example.com</tt> загружал английскую локаль (по умолчанию), а <tt>www.example.es</tt> загружал испанскую локаль. Таким образом, <em>доменное имя верхнего уровня</em> используется для установки локали. В этом есть несколько преимуществ:</p>
+<ul>
+	<li>Локаль является <em>явной</em> частью <span class="caps">URL</span>.</li>
+	<li>Люди интуитивно понимают, на каком языке будет отражено содержимое.</li>
+	<li>Это очень просто реализовать в Rails.</li>
+	<li>Поисковые движки любят, когда содержимое на различных языках живет на отдельных, взаимосвязанных доменах.</li>
+</ul>
+<p>Это осуществляется так в <tt>ApplicationController</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+before_filter :set_locale
+
+def set_locale
+  I18n.locale = extract_locale_from_tld
+end
+
+# Получаем локаль из домена верхнего уровня или возвращаем nil, если такая локаль недоступна
+# Вам следует поместить что-то наподобие этого:
+#   127.0.0.1 application.com
+#   127.0.0.1 application.it
+#   127.0.0.1 application.pl
+# в ваш файл /etc/hosts, чтобы попробовать это локально
+def extract_locale_from_tld
+  parsed_locale = request.host.split('.').last
+  I18n.available_locales.include?(parsed_locale.to_sym) ? parsed_locale  : nil
+end
+</pre></div>
+<p>Также можно назначить локаль из <em>поддомена</em> похожим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# Получаем код локали из поддомена запроса (подобно http://it.application.local:3000)
+# Следует поместить чтото вроде:
+#   127.0.0.1 gr.application.local
+# в ваш файл /etc/hosts, чтобы попробовать это локально
+def extract_locale_from_subdomain
+  parsed_locale = request.subdomains.first
+  I18n.available_locales.include?(parsed_locale.to_sym) ? parsed_locale  : nil
+end
+</pre></div>
+<p>Если ваше приложение включает меню переключения локали, вам следует иметь что-то вроде этого в нем:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+link_to(&quot;Deutsch&quot;, &quot;#{APP_CONFIG[:deutsch_website_url]}#{request.env['REQUEST_URI']}&quot;)
+</pre></div>
+<p>предполагая, что вы установили <tt>APP_CONFIG[:deutsch_website_url]</tt> в некоторое значение, наподобие <tt>http://www.application.de</tt>.</p>
+<p>У этого решения есть вышеупомянутые преимущества, однако возможно, что вам нельзя или вы не хотите предоставить разные локализации (&#8220;языковые версии&#8221;) на разные доменах. Наиболее очевидным решением является включить код локали в параметры <span class="caps">URL</span> (или пути запроса).</p>
+
+<h4 id="setting-the-locale-from-the-url-params">5. Назначение локали из параметров <span class="caps">URL</span></h4>
+<p>Наиболее обычным способом назначения (и передачи) локали будет включить ее в параметры <span class="caps">URL</span>, как мы делали в <tt>I18n.locale = params[:locale]</tt> в <em>before_filter</em> в первом примере. В этом случае нам нужны URL, такие как <tt>www.example.com/books?locale=ja</tt> или <tt>www.example.com/ja/books</tt>.</p>
+<p>В этом подходе есть почти тот же набор преимуществ, как и в назначении локали из имени домена, а именно то, что это RESTful и соответствует остальной части Всемирной паутины. Хотя внедрение этого потребует немного больше работы.</p>
+<p>Получение локали из <tt>params</tt> и соответственное назначение ее не сложно; включаете ее в каждый <span class="caps">URL</span>, и таким образом <strong>передаете ее через запросы</strong>. Конечно, включение явной опции в каждый <span class="caps">URL</span> (т.е. <tt>link_to( books_url(:locale => I18n.locale))</tt>) было бы утомительно и, вероятно, невозможно.</p>
+<p>Rails содержит инфраструктуру для &#8220;централизации динамических решений об URL&#8221; в его <a href="http://api.rubyonrails.org/classes/ActionController/Base.html#M000515"><tt>ApplicationController#default_url_options</tt></a>, что полезно в этом сценарии: он позволяет нам назначить &#8220;defaults&#8221; для <a href="http://api.rubyonrails.org/classes/ActionController/Base.html#M000503"><tt>url_for</tt></a> и методов хелпера, основанных на нем (с помощью применения/переопределения этого метода).</p>
+<p>Затем мы можем включить что-то наподобие этого в наш <tt>ApplicationController</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# app/controllers/application_controller.rb
+def default_url_options(options={})
+  logger.debug &quot;default_url_options is passed options: #{options.inspect}\n&quot;
+  { :locale =&gt; I18n.locale }
+end
+</pre></div>
+<p>Каждый метод хелпера, зависимый от <tt>url_for</tt> (т.е. хелперы для именнованных маршрутов, такие как <tt>root_path</tt> или <tt>root_url</tt>, ресурсные маршруты, такие как <tt>books_path</tt> или <tt>books_url</tt> и т.д.) теперь будут <strong>автоматически включать локаль в строку запроса</strong>, как тут: <tt>http://localhost:3001/?locale=ja</tt>.</p>
+<p>Это может быть достаточным. Хотя и влияет на читаемость URL, когда локаль &#8220;висит&#8221; в конце каждого <span class="caps">URL</span> вашего приложения. Более того, с точки зрения архитектуры, локаль иерархически выше остальных частей домена приложения: и URL должен отражать это.</p>
+<p>Вы, возможно, захотите, чтобы URL выглядел так: <tt>www.example.com/en/books</tt> (который загружает английскую локаль) и <tt>www.example.com/nl/books</tt> (который загружает голландскую локаль). Это достижимо с помощью такой же стратегии, как и с <tt>default_url_options</tt> выше: нужно настроить свои маршруты с помощью опции <a href="http://api.rubyonrails.org/classes/ActionController/Resources.html#M000354"><tt>path_prefix</tt></a> следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/routes.rb
+scope &quot;/:locale&quot; do
+  resources :books
+end
+</pre></div>
+<p>Теперь, когда вы вызовите метод <tt>books_path</tt>, то получите <tt>"/en/books"</tt> (для локали по умолчанию). <span class="caps">URL</span> подобный <tt>http://localhost:3001/nl/books</tt> загрузит голландскую локаль, и затем, последующий вызов <tt>books_path</tt> возвратит <tt>"/nl/books"</tt> (поскольку локаль изменилась).</p>
+<p>Если не хотите принудительно использовать локаль в своих маршрутах, можете использовать опциональную область пути (предоставленную в скобках) как здесь:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/routes.rb
+scope &quot;(:locale)&quot;, :locale =&gt; /en|nl/ do
+  resources :books
+end
+</pre></div>
+<p>С таким подходом вы не получите <tt>Routing Error</tt> при доступе к своим ресурсам как <tt>http://localhost:3001/books</tt> без локали. Это полезно, когда хочется использовать локаль по умолчанию, если она не определена.</p>
+<p>Конечно, нужно специально позаботиться о корневом <span class="caps">URL</span> (это обычно &#8220;домашняя страница&#8221; или &#8220;лицевая панель&#8221;) вашего приложения. <span class="caps">URL</span>, такой как <tt>http://localhost:3001/nl</tt> не заработает автоматически, так как объявление <tt>root :to => "books#index"</tt> в вашем <tt>routes.rb</tt> не принимает локаль во внимание. (И правильно делает: может быть только один &#8220;корневой&#8221; <span class="caps">URL</span>.)</p>
+<p>Вам, вероятно, потребуется связать URL так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# config/routes.rb
+match '/:locale' =&gt; 'dashboard#index'
+</pre></div>
+<p>Особенно побеспокойтесь относительно <strong>порядка ваших маршрутов</strong>, чтобы одно объявление маршрутов не &#8220;съело&#8221; другое. (Вы, возможно, захотите добавить его непосредственно перед объявлением <tt>root :to</tt>.)</p>
+<div class='warning'><p>У этого решения есть один довольно большой <strong>недостаток</strong>. Благодаря применению <em>default_url_options</em>, вам нужно указывать опцию <tt>:id</tt> явно, как тут: <tt>link_to 'Show', book_url(:id => book)</tt>, не зависимо от магии Rails в таком коде <tt>link_to 'Show', book</tt>. Если это будет проблемой, обратите внимание на два плагина, упрощающие работу с маршрутами в этом случае: Sven Fuchs&#8217;s <a href="http://github.com/svenfuchs/routing-filter/tree/master">routing_filter</a> и Raul Murciano&#8217;s <a href="http://github.com/raul/translate_routes/tree/master">translate_routes</a>. Также посмотрите страницу <a href="http://rails-i18n.org/wiki/wikipages/how-to-encode-the-current-locale-in-the-url">How to encode the current locale in the <span class="caps">URL</span></a> in the Rails i18n Wiki.</p></div>
+
+<h4 id="setting-the-locale-from-the-client-supplied-information">6. Указание локали из информации, предоставленной клиентом</h4>
+<p>В одельных случаях имеет смысл назначить локаль на основе информации, полученной от клиента, т.е. не из <span class="caps">URL</span>. Эта информация может исходить, например, от предпочитаемого пользователем языка (установленного в его браузере), может быть основана на географическом положении пользователя на основе его IP, или пользователи могут предоставить ее, просто указав локаль в своем интерфейсе приложения и сохранив ее в своем профиле. Этот подход более подходит для основанных на веб приложений или сервисов, а не для веб-сайтов &#8212; смотрите врезку о <em>сессиях</em>, <em>куки</em> и архитектуре RESTful, указанную выше.</p>
+
+<h5 id="using-accept-language">6.1 Использование <tt>Accept-Language</tt></h5>
+<p>Одним из источников информации о клиенте является <span class="caps">HTTP</span> заголовок <tt>Accept-Language</tt>. Люди могут <a href="http://www.w3.org/International/questions/qa-lang-priorities">настроить его в своем браузере</a> или другом клиенте (таком как <em>curl</em>).</p>
+<p>Обычной реализацией использования заголовка <tt>Accept-Language</tt> будет следующее:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+def set_locale
+  logger.debug &quot;* Accept-Language: #{request.env['HTTP_ACCEPT_LANGUAGE']}&quot;
+  I18n.locale = extract_locale_from_accept_language_header
+  logger.debug &quot;* Locale set to '#{I18n.locale}'&quot;
+end
+private
+def extract_locale_from_accept_language_header
+  request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+end
+</pre></div>
+<p>Конечно, в рабочей среде нужен более надежный код, можете использовать плагин, такой как Iain Hecker&#8217;s <a href="http://github.com/iain/http_accept_language/tree/master">http_accept_language</a> или даже промежуточное приложение Rack, такое как Ryan Tomayko&#8217;s <a href="http://github.com/rtomayko/rack-contrib/blob/master/lib/rack/locale.rb">locale</a>.</p>
+
+<h5 id="using-geoip-or-similar-database">6.2 Использование базы данных GeoIP (или подобной)</h5>
+<p>Другим способом выбора локали по клиентской информации может быть использование базы данных для связывания IP клиента с регионом, такой как <a href="http://www.maxmind.com/app/geolitecountry">GeoIP Lite Country</a>. Механизм кода будет очень поход на код выше &#8212; нужно запросить у базы данных пользовательский IP, и найти предпочитаемую локаль для возвращенных страны/региона/города.</p>
+
+<h5 id="user-profile">6.3 Профиль пользователя</h5>
+<p>Можно также предоставить пользователям приложения назначать (или менять) локаль в интерфейсе приложения. И снова, механизм этого подхода очень похож на код выше &#8212; вы, возможно, позволите пользователю выбрать локаль из списка и сохраните ее в его профиле в базе данных. Затем вы установите локаль в это значение.</p>

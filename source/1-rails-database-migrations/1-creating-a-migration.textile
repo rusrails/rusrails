@@ -1,0 +1,77 @@
+h1. Создание миграции
+
+<h4 id="creating-a-model">1. Создание модели</h4>
+<p>Генераторы модели и скаффолда создают соответстующие миграции для добавления новой модели. Эта миграция уже содержит инструкции для создания соответствующей таблицы. Если Вы сообщите Rails какие столбцы Вам нужны, выражения для их создания также будут добавлены. Например, запуск</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate model Product name:string description:text
+</pre></div>
+<p>создаст подобную миграцию</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class CreateProducts &lt; ActiveRecord::Migration
+  def change
+    create_table :products do |t|
+      t.string :name
+      t.text :description
+
+      t.timestamps
+    end
+  end
+end
+</pre></div>
+<p>Вы можете указать столько пар имя-столбца/тип, сколько хотите. По умолчанию строка <tt>t.timestamps</tt> (которая создает столбцы <tt>updated_at</tt> и <tt>created_at</tt>, автоматически заполняемые Active Record) тоже будет добавлена.</p>
+
+<h4 id="creating-a-standalone-migration">2. Создание автономной миграции</h4>
+<p>Если Вы хотите создать миграцию для других целей (например, добавить столбец в существующую таблицу), можно использовать генератор миграции:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate migration AddPartNumberToProducts
+</pre></div>
+<p>Это создат пустую, но правильно названную миграцию:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class AddPartNumberToProducts &lt; ActiveRecord::Migration
+  def change
+  end
+end
+</pre></div>
+<p>Если имя миграции имеет форму &#8220;AddXXXToYYY&#8221; или &#8220;RemoveXXXFromYYY&#8221; и далее следует перечень имен столбцов и их типов, то в миграции будут созданы соответствующие выражения <tt>add_column</tt> и <tt>remove_column</tt>.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate migration AddPartNumberToProducts part_number:string
+</pre></div>
+<p>создаст</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class AddPartNumberToProducts &lt; ActiveRecord::Migration
+  def change
+    add_column :products, :part_number, :string
+  end
+end
+</pre></div>
+<p>Аналогично,</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate migration RemovePartNumberFromProducts part_number:string
+</pre></div>
+<p>создаст</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class RemovePartNumberFromProducts &lt; ActiveRecord::Migration
+  def up
+    remove_column :products, :part_number
+  end
+
+  def down
+    add_column :products, :part_number, :string
+  end
+end
+</pre></div>
+<p>Вы не ограничены одним создаваемым столбцом, например</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+rails generate migration AddDetailsToProducts part_number:string price:decimal
+</pre></div>
+<p>создаст</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class AddDetailsToProducts &lt; ActiveRecord::Migration
+  def change
+    add_column :products, :part_number, :string
+    add_column :products, :price, :decimal
+  end
+end
+</pre></div>
+<p>Как всегда, то, что было сгенерировано, является всего лишь стартовой точкой. Вы можете добавлять и убирать строки, как считаете нужным.</p>
+<div class='note'><p>Генерируемый файл миграции для деструктивных миграций будет все еще по-старому использовать методы <tt>up</tt> и <tt>down</tt>. Это так, потому что Rails не может знать оригинальные типы данных, которые вы создали когда-то ранее.</p></div>

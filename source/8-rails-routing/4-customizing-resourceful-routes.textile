@@ -1,0 +1,268 @@
+h1. Настройка ресурсных маршрутов
+
+<p>Хотя маршруты и хелперы по умолчанию, созданные <tt>resources :posts</tt>, обычно нормально работают, вы, возможно, захотите их настроить некоторым образом. Rails позволяет настроить практически любую характерную часть ресурсных хелперов.</p>
+
+<h4 id="specifying-a-controller-to-use">1. Определение используемого контроллера</h4>
+<p>Опция <tt>:controller</tt> позволяет явно определить контроллер, используемый ресурсом. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :controller =&gt; &quot;images&quot;
+</pre></div>
+<p>распознает входящие пути, начинающиеся с <tt>/photo</tt>, но смаршрутизирует к контроллеру <tt>Images</tt>:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод HTTP</th>
+		<th>Путь         </th>
+		<th>Экшн </th>
+		<th>Именнованный хелпер </th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/photos        </td>
+		<td>index    </td>
+		<td>photos_path    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/photos/new    </td>
+		<td>new      </td>
+		<td>new_photo_path    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>    </td>
+		<td>/photos        </td>
+		<td>create   </td>
+		<td>photos_path    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/photos/:id      </td>
+		<td>show     </td>
+		<td>photo_path(:id)   </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>     </td>
+		<td>/photos/:id/edit </td>
+		<td>edit     </td>
+		<td>edit_photo_path(:id)    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>     </td>
+		<td>/photos/:id      </td>
+		<td>update   </td>
+		<td>photo_path(:id)   </td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>  </td>
+		<td>/photos/:id      </td>
+		<td>destroy  </td>
+		<td>photo_path(:id)   </td>
+	</tr>
+</table>
+<div class='note'><p>Используйте <tt>photos_path</tt>, <tt>new_photo_path</tt> и т.д. для создания путей для этого ресурса.</p></div>
+
+<h4 id="specifying-constraints">2. Опеределение ограничений</h4>
+<p>Можно использовать опцию <tt>:constraints</tt> для определения требуемого формата на неявном <tt>id</tt>. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :constraints =&gt; {:id =&gt; /[A-Z][A-Z][0-9]+/}
+</pre></div>
+<p>Это объявление ограничивает параметр <tt>:id</tt> соответствием предоставленному регулярному выражению. Итак, в этом случае роутер больше не будет сопоставлять <tt>/photos/1</tt> этому маршруту. Вместо этого будет соответствовать <tt>/photos/RR27</tt>.</p>
+<p>Можно определить одиночное ограничение, применив его к ряду маршрутов, используя блочную форму:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+constraints(:id =&gt; /[A-Z][A-Z][0-9]+/) do
+  resources :photos
+  resources :accounts
+end
+</pre></div>
+<div class='note'><p>Конечно, можете использовать более продвинутые ограничения, доступные в нересурсных маршрутах, в этом контексте</p></div>
+<div class='info'><p>По умолчанию параметр <tt>:id</tt> не принимает точки - так как точка используется как разделитель для формата маршрута. Если необходимо использовать точку в <tt>:id</tt>, добавьте ограничение, которое переопределит это - к примеру <tt>:id</tt> => /[^\/]+/ позволяет все, кроме слэша.</p></div>
+
+<h4 id="overriding-the-named-helpers">3. Переопределение именнованных хелперов</h4>
+<p>Опция <tt>:as</tt> позволяет переопределить нормальное именование для именнованных маршрутных хелперов. Например:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :as =&gt; &quot;images&quot;
+</pre></div>
+<p>распознает входящие пути, начинающиеся с <tt>/photos</tt> и смаршрутизирует запросы к <tt>PhotosController</tt>:</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод <span class="caps">HTTP</span></th>
+		<th>Путь          </th>
+		<th>Экшн </th>
+		<th>Именнованный хелпер   </th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos         </td>
+		<td>index    </td>
+		<td> images_path     </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/new     </td>
+		<td>new      </td>
+		<td> new_image_path  </td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>       </td>
+		<td>/photos         </td>
+		<td>create   </td>
+		<td> images_path     </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/:id       </td>
+		<td>show     </td>
+		<td> image_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/photos/:id/edit  </td>
+		<td>edit     </td>
+		<td> edit_image_path(:id) </td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>        </td>
+		<td>/photos/:id       </td>
+		<td>update   </td>
+		<td> image_path(:id)      </td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>     </td>
+		<td>/photos/:id       </td>
+		<td>destroy  </td>
+		<td> image_path(:id)      </td>
+	</tr>
+</table>
+
+<h4 id="overriding-the-new-and-edit-segments">4. Переопределение сегментов <tt>new</tt> и <tt>edit</tt></h4>
+<p>Опция <tt>:path_names</tt> позволяет переопределить автоматически создаваемые сегменты &#8220;new&#8221; и &#8220;edit&#8221; в путях:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :path_names =&gt; { :new =&gt; 'make', :edit =&gt; 'change' }
+</pre></div>
+<p>Это приведет к тому, что роутинг распознает пути, такие как</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+/photos/make
+/photos/1/change
+</pre></div>
+<div class='note'><p>Фактические имена экшнов не меняются этой опцией. Два показанных пути все еще ведут к экшнам <tt>new</tt> и <tt>edit</tt>.</p></div>
+<div class='info'><p>Если вдруг захотите изменить эту опцию одинаково для всех маршрутов, можно использовать scope:</p></div>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope :path_names =&gt; { :new =&gt; &quot;make&quot; } do
+  # остальные Ваши маршруты
+end
+</pre></div>
+
+<h4 id="prefixing-the-named-route-helpers">5. Префикс именнованных маршрутных хелперов</h4>
+<p>Можно использовать опцию <tt>:as</tt> для задания префикса именнованных маршрутных хелперов, создаваемых Rails для маршрута. Используйте эту опцию для предотвращения коллизий имен между маршрутами, используемыми пространство путей.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope &quot;admin&quot; do
+  resources :photos, :as =&gt; &quot;admin_photos&quot;
+end
+
+resources :photos
+</pre></div>
+<p>Это предоставит маршрутные хелперы такие как <tt>admin_photos_path</tt>, <tt>new_admin_photo_path</tt> и т.д.</p>
+<p>Для задания префикса группы маршрутов, используйте <tt>:as</tt> со <tt>scope</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope &quot;admin&quot;, :as =&gt; &quot;admin&quot; do
+  resources :photos, :accounts
+end
+
+resources :photos, :accounts
+</pre></div>
+<div class='note'><p>Пространство <tt>namespace</tt> автоматически добавляет <tt>:as</tt>, так же, как и префиксы <tt>:module</tt> и <tt>:path</tt>.</p></div>
+<p>Можно задать префикс маршрута именнованным параметром также так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope ":username" do
+  resources :posts
+end
+</pre></div>
+<p>Это предоставит URL, такие как <tt>/bob/posts/1</tt> и позволит обратиться к части пути <tt>username</tt> в контроллерах, хелперах и вьюхах как <tt>params[:username]</tt>.</p>
+
+<h4 id="restricting-the-routes-created">6. Ограничение создаваемых маршрутов</h4>
+<p>По умолчанию Rails создает маршруты для всех семи экшнов по умолчанию (index, show, new, create, edit, update, and destroy) для каждого маршрута RESTful Вашего приложения. Можно использовать опции <tt>:only</tt> и <tt>:except</tt> для точной настройки этого поведения. Опция <tt>:only</tt> говорит Rails создать только определенные маршруты:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :only =&gt; [:index, :show]
+</pre></div>
+<p>Теперь запрос <tt>GET</tt> к <tt>/photos</tt> будет успешным, а запрос <tt>POST</tt> к <tt>/photos</tt> (который обычно соединяется с экшном <tt>create</tt>) провалится.</p>
+<p>Опция <tt>:except</tt> определяет маршрут или перечень маршрутов, который Rails <em>не</em> должен создавать:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :photos, :except =&gt; :destroy
+</pre></div>
+<p>В этом случае Rails создаст все нормальные маршруты за исключением маршрута для <tt>destroy</tt> (запрос <tt>DELETE</tt> к <tt>/photos/:id</tt>).</p>
+<div class='info'><p>Если в Вашем приложении много маршрутов RESTful, использование <tt>:only</tt> и <tt>:except</tt> для создания только тех маршрутов, которые Вам фактически нужны, позволит снизить использование памяти и ускорить процесс роутинга.</p></div>
+
+<h4 id="translated-paths">7. Переведенные пути</h4>
+<p>Используя <tt>scope</tt>, можно изменить имена путей, создаваемых ресурсами:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+scope(:path_names =&gt; { :new =&gt; &quot;neu&quot;, :edit =&gt; &quot;bearbeiten&quot; }) do
+  resources :categories, :path =&gt; &quot;kategorien&quot;
+end
+</pre></div>
+<p>Rails теперь создаст маршруты к <tt>CategoriesControlleR</tt>.</p>
+<table class="inner_table">
+	<tr>
+		<th>Метод <span class="caps">HTTP</span></th>
+		<th>Путь                     </th>
+		<th>Экшн </th>
+		<th>Именнованный хелпер </th>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/kategorien                </td>
+		<td>index    </td>
+		<td>categories_path     </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/kategorien/neu            </td>
+		<td>new      </td>
+		<td>new_category_path    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">POST</span>       </td>
+		<td>/kategorien                </td>
+		<td>create   </td>
+		<td>categories_path    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/kategorien/:id              </td>
+		<td>show     </td>
+		<td>category_path(:id)    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">GET</span>        </td>
+		<td>/kategorien/:id/bearbeiten </td>
+		<td>edit     </td>
+		<td>edit_category_path(:id)     </td>
+	</tr>
+	<tr>
+		<td><span class="caps">PUT</span>        </td>
+		<td>/kategorien/:id              </td>
+		<td>update   </td>
+		<td>category_path(:id)    </td>
+	</tr>
+	<tr>
+		<td><span class="caps">DELETE</span>     </td>
+		<td>/kategorien/:id              </td>
+		<td>destroy  </td>
+		<td>category_path(:id)    </td>
+	</tr>
+</table>
+
+<h4 id="overriding-the-singular-form">8. Переопределение единственного числа</h4>
+<p>Если хотите определить единственное число ресурса, следует добавить дополнительные правила в <tt>Inflector</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.irregular 'tooth', 'teeth'
+end
+</pre></div>
+
+<h4 id="nested-names">9. Использование <tt>:as</tt> во вложенных ресурсах</h4>
+<p>Опция <tt>:as</tt> переопределяет автоматически создаваемое имя для ресурса в хелперах вложенного маршрута. Например,</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :magazines do
+  resources :ads, :as =&gt; 'periodical_ads'
+end
+</pre></div>
+<p>Это создаст маршрутные хелперы такие как <tt>magazine_periodical_ads_url</tt> и <tt>edit_magazine_periodical_ad_path</tt>.</p>

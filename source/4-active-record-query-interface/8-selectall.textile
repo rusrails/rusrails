@@ -1,0 +1,6 @@
+h1. select_all
+
+<p>У <tt>find_by_sql</tt> есть близкий родственник, называемый <tt>connection#select_all</tt>. <tt>select_all</tt> получит объекты из базы данных, используя произвольный <span class="caps">SQL</span>, как и в <tt>find_by_sql</tt>, но не создаст их экземпляры. Вместо этого, Вы получите массив хэшей, где каждый хэш указывает на запись.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.connection.select_all(&quot;SELECT * FROM clients WHERE id = '1'&quot;)
+</pre></div>

@@ -1,0 +1,56 @@
+h1. Вычисления
+
+<p>Этот раздел использует count для примера из <a href="/active-record-query-interface">преамбулы</a>, но описанные опции применяются ко всем подразделам.</p>
+<p>Все методы вычисления работают прямо на модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.count
+# SELECT count(*) AS count_all FROM clients
+</pre></div>
+<p>Или на relation:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.where(:first_name => 'Ryan').count
+# SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
+</pre></div>
+<p>Можете также использовать различные методы поиска на relation для выполнения сложных вычислений:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.includes("orders").where(:first_name => 'Ryan', :orders => {:status => 'received'}).count
+</pre></div>
+<p>Что выполнит:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT count(DISTINCT clients.id) AS count_all FROM clients
+  LEFT OUTER JOIN orders ON orders.client_id = client.id WHERE
+  (clients.first_name = 'Ryan' AND orders.status = 'received')
+</pre></div>
+
+<h4 id="count">1. Count</h4>
+<p>Если хотите увидеть, сколько записей есть в таблице модели, можете вызвать <tt>Client.count</tt>, и он возвратит число. Если хотите быть более определенным и найти всех клиентов с присутствующим в базе данных возрастом, используйте <tt>Client.count(:age)</tt>.</p>
+<p>Про опции смотрите выше <a href="#">Вычисления</a>.</p>
+
+<h4 id="average">10.2 Average</h4>
+<p>Если хотите увидеть среднее значение опредененного показателя в одной из ваших таблиц, можно вызвать метод <tt>average</tt> для класса, относящемся к таблице. Вызов этого метода выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.average(&quot;orders_count&quot;)
+</pre></div>
+<p>Это возвратит число (возможно, с плавающей запятой, такое как 3.14159265), представляющее среднее значение поля.</p>
+<p>Про опции смотрите выше <a href="#">Вычисления</a>.</p>
+
+<h4 id="minimum">10.3 Minimum</h4>
+<p>Если хотите найти минимальное значение поля в таблице, можете вызвать метод <tt>minimum</tt> для класса, относящегося к таблице. Вызов этого метода выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.minimum(&quot;age&quot;)
+</pre></div>
+<p>Про опции смотрите выше <a href="#">Вычисления</a>.</p>
+
+<h4 id="maximum">10.4 Maximum</h4>
+<p>Если хотите найти максимальное значение поля в таблице, можете вызвать метод <tt>maximum</tt> для класса, относящегося к таблице. Вызов этого метода выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.maximum(&quot;age&quot;)
+</pre></div>
+<p>Про опции смотрите выше <a href="#">Вычисления</a>.</p>
+
+<h4 id="sum">10.5 Sum</h4>
+<p>Если хотите найти сумму полей для всех записей в таблице, можете вызвать метод <tt>sum</tt> для класса, относящегося к таблице. Вызов этого метода выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.sum(&quot;orders_count&quot;)
+</pre></div>
+<p>Про опции смотрите выше <a href="#">Вычисления</a>.</p>

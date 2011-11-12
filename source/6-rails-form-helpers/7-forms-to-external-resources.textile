@@ -1,0 +1,26 @@
+h1. Формы к внешним ресурсам
+
+<p>Если необходимо передать через post некоторые данные внешнему ресурсу, было бы здорово создать форму, используя хелперы форм rails. Но иногда этому ресурсу необходимо передать <tt>authenticity_token</tt>. Это можно осуществить, передав параметр <tt>:authenticity_token => 'your_external_token'</tt> в опциях <tt>form_tag</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_tag 'http://farfar.away/form', :authenticity_token => 'external_token') do %>
+  Form contents
+<% end %>
+</pre></div>
+<p>Иногда при отправке данных внешнему ресурсу, такому как платежный шлюз, поля, которые можно использовать в форме, ограничены внешним API. Поэтому, вам не хочется вообще создавать скрытое поле <tt>authenticity_token</tt>. Для этого нужно всего лишь передать <tt>false</tt> в опцию <tt>:authenticity_token</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_tag 'http://farfar.away/form', :authenticity_token => false) do %>
+  Form contents
+<% end %>
+</pre></div>
+<p>Та же техника доступна и для <tt>form_for</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_for @invoice, :url => external_url, :authenticity_token => 'external_token' do |f|
+  Form contents
+<% end %>
+</pre></div>
+<p>Или, если не хотите создавать поле <tt>authenticity_token</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_for @invoice, :url => external_url, :authenticity_token => false do |f|
+  Form contents
+<% end %>
+</pre></div>

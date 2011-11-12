@@ -1,0 +1,64 @@
+h1. Настройка Action Mailer
+
+<p>Следующие конфигурационные опции лучше всего делать в одном из файлов среды разработки (environment.rb, production.rb, и т.д&#8230;)</p>
+<table class="inner_table">
+	<tr>
+		<td>template_root</td>
+		<td>Определяет основу, от которой будут делаться ссылки на шаблоны.</td>
+	</tr>
+	<tr>
+		<td>logger</td>
+		<td>logger исользуется для создания информации на ходу, если возможно. Можно установить как nil для отсутствия логирования. Совместим как с логером Ruby, так и с логерами Log4r.</td>
+	</tr>
+	<tr>
+		<td>smtp_settings</td>
+		<td>Позволяет подробную настройку для метода доставки :smtp : <ul><li>:address &#8211; Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение &#8220;localhost&#8221;.  </li><li>:port  &#8211; В случае, если Ваш почтовый сервер не работает с 25 портом, можете изменить его.  </li><li>:domain &#8211; Если необходимо определить домен <span class="caps">HELO</span>, это можно сделать здесь.  </li><li>:user_name &#8211; Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.  </li><li>:password &#8211; Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. . </li><li>:authentication &#8211; Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов :plain, :login, :cram_md5.</li></ul></td>
+	</tr>
+	<tr>
+		<td>sendmail_settings</td>
+		<td>Позволяет переопределить опции для метода доставки :sendmail.  <ul><li>:location &#8211; Расположение исполняемого sendmail. По умолчанию /usr/sbin/sendmail.  </li><li>:arguments &#8211; Аргументы командной строки. По умолчанию -i -t.</li></ul></td>
+	</tr>
+	<tr>
+		<td>raise_delivery_errors</td>
+		<td>Должны ли быть вызваны ошибки, если email не может быть доставлен.</td>
+	</tr>
+	<tr>
+		<td>delivery_method</td>
+		<td>Определяет метод доставки. Возможные значения :smtp (по умолчанию), :sendmail и :test.</td>
+	</tr>
+	<tr>
+		<td>perform_deliveries</td>
+		<td>Определяет, должны ли методы deliver_* фактически выполняться. По умолчанию должны, но это можно отключить для функционального тестирования.</td>
+	</tr>
+	<tr>
+		<td>deliveries</td>
+		<td>Содержит массив всех электронных писем, отправленных через Action Mailer с помощью delivery_method :test. Очень полезно для юнит- и функционального тестирования.</td>
+	</tr>
+</table>
+
+<h4 id="example-action-mailer-configuration">1. Пример настройки Action Mailer</h4>
+<p>Примером может быть добавление следующего в подходящий файл <tt>config/environments/env.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+config.action_mailer.delivery_method = :sendmail
+# Defaults to:
+# config.action_mailer.sendmail_settings = {
+#   :location =&gt; '/usr/sbin/sendmail',
+#   :arguments =&gt; '-i -t'
+# }
+config.action_mailer.perform_deliveries = true
+config.action_mailer.raise_delivery_errors = true
+</pre></div>
+
+<h4 id="action-mailer-configuration-for-gmail">2. Настройка Action Mailer для GMail</h4>
+<p>Action Mailer теперь использует гем Mail, теперь это сделать просто, нужно добавить в файл <tt>config/environments/env.rb</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  :address              =&gt; &quot;smtp.gmail.com&quot;,
+  :port                 =&gt; 587,
+  :domain               =&gt; 'baci.lindsaar.net',
+  :user_name            =&gt; '&lt;username&gt;',
+  :password             =&gt; '&lt;password&gt;',
+  :authentication       =&gt; 'plain',
+  :enable_starttls_auto =&gt; true  }
+</pre></div>

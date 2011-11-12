@@ -1,0 +1,338 @@
+h1. Подробная информация по связи has_many
+
+<p>Связь <tt>has_many</tt> создает отношение один-ко-многим с другой моделью. В терминах базы данных эта связь говорит, что другой класс будет иметь внешний ключ, относящийся к экземплярам этого класса.</p>
+
+<h4 id="methods-added">1. Добавляемые методы</h4>
+<p>Когда объявляете связь <tt>has_many</tt>, объявляющий класс автоматически получает 14 методов, относящихся к связи:</p>
+<ul>
+	<li><tt><em>collection</em>(force_reload = false)</tt></li>
+	<li><tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></li>
+	<li><tt><em>collection</em>.delete(object, &#8230;)</tt></li>
+	<li><tt><em>collection</em>=objects</tt></li>
+	<li><tt><em>collection_singular</em>_ids</tt></li>
+	<li><tt><em>collection_singular</em>_ids=ids</tt></li>
+	<li><tt><em>collection</em>.clear</tt></li>
+	<li><tt><em>collection</em>.empty?</tt></li>
+	<li><tt><em>collection</em>.size</tt></li>
+	<li><tt><em>collection</em>.find(&#8230;)</tt></li>
+	<li><tt><em>collection</em>.where(&#8230;)</tt></li>
+	<li><tt><em>collection</em>.exist?(&#8230;)</tt></li>
+	<li><tt><em>collection</em>.build(attributes = {}, &#8230;)</tt></li>
+	<li><tt><em>collection</em>.create(attributes = {})</tt></li>
+</ul>
+<p>Во всех этих методах <tt><em>collection</em></tt> заменяется символом, переданным как первый аргумент в <tt>has_many</tt>, и <tt><em>collection_singular</em></tt> заменяется версией в единственном числе этого символа.. Например, имеем объявление:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</pre></div>
+<p>Каждый экземпляр модели customer будет иметь эти методы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+orders(force_reload = false)
+orders&lt;&lt;(object, ...)
+orders.delete(object, ...)
+orders=objects
+order_ids
+order_ids=ids
+orders.clear
+orders.empty?
+orders.size
+orders.find(...)
+orders.where(...)
+orders.exist?(...)
+orders.build(attributes = {}, ...)
+orders.create(attributes = {})
+</pre></div>
+
+<h5 id="ttemcollectionemforce-reload--falsett">1.1 <tt><em>collection</em>(force_reload = false)</tt></h5>
+<p>Метод <tt><em>collection</em></tt> возвращает массив всех связанных объектов. Если нет связанных объектов, он возвращает пустой массив.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@orders = @customer.orders
+</pre></div>
+
+<h5 id="ttemcollectionemobject-tt">1.2 <tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>&lt;&lt;</tt> добавляет один или более объектов в коллекцию, устанавливая их внешние ключи равными первичному ключу вызывающей модели.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer.orders &lt;&lt; @order1
+</pre></div>
+
+<h5 id="ttemcollectionemdeleteobject-tt">1.3 <tt><em>collection</em>.delete(object, &#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>.delete</tt> убирает один или более объектов из коллекции, установив их внешние ключи в  <tt>NULL</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@customer.orders.delete(@order1)
+</pre></div>
+<div class='warning'><p>Объекты будут в дополнение уничтожены, если связаны с <tt>:dependent => :destroy</tt>, и удалены, если они связаны с <tt>:dependent => :delete_all</tt>.</p></div>
+
+<h5 id="ttemcollectionemobjectstt">1.4 <tt><em>collection</em>=objects</tt></h5>
+<p>Метод <tt><em>collection</em>=</tt> делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.</p>
+
+<h5 id="ttemcollection-singularem-idstt">1.5 <tt><em>collection_singular</em>_ids</tt></h5>
+<p>Метод <tt><em>collection_singular</em>_ids</tt> возвращает массив id объектов в коллекции.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order_ids = @customer.order_ids
+</pre></div>
+
+<h5 id="ttemcollection-singularem-idsidstt">1.6 <tt><em>collection_singular</em>_ids=ids</tt></h5>
+<p>Метод <tt><em>collection_singular</em>_ids=</tt> делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.</p>
+
+<h5 id="ttemcollectionemcleartt">1.7 <tt><em>collection</em>.clear</tt></h5>
+<p>Метод <tt><em>collection</em>.clear</tt> убирает каждый объект из коллекции. Это уничтожает связанные объекты, если они связаны с <tt>:dependent => :destroy</tt>, удаляет их непосредственно из базы данных, если <tt>:dependent => :delete_all</tt>, и в противном случае устанавливает их внешние ключи в <tt>NULL</tt>.</p>
+
+<h5 id="ttemcollectionememptytt">1.8 <tt><em>collection</em>.empty?</tt></h5>
+<p>Метод <tt><em>collection</em>.empty?</tt> возвращает <tt>true</tt>, если коллекция не содержит каких-либо связанных объектов.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+&lt;% if @customer.orders.empty? %&gt;
+  No Orders Found
+&lt;% end %&gt;
+</pre></div>
+
+<h5 id="ttemcollectionemsizett">1.9 <tt><em>collection</em>.size</tt></h5>
+<p>Метод <tt><em>collection</em>.size</tt> возвращает количество объектов в коллекции.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order_count = @customer.orders.size
+</pre></div>
+
+<h5 id="ttemcollectionemfindtt">1.10 <tt><em>collection</em>.find(&#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>.find</tt> ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и <tt>ActiveRecord::Base.find</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@open_orders = @customer.orders.find(:all, :conditions =&gt; &quot;open = 1&quot;)
+</pre></div>
+
+<h5 id="ttemcollectionemfindtt">1.11 <tt><em>collection</em>.where(&#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>.where</tt> ищет объекты в коллекции, основываясь на переданных условиях, но объекты загружаются лениво, что означает, что база данных запрашивается только когда происходит доступ к объекту(-там).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@open_orders = @customer.orders.where(:open => true) # Пока нет запроса
+@open_order = @open_orders.first # Теперь база данных будет запрошена
+</pre></div>
+
+<h5 id="ttemcollectionemexisttt">1.12 <tt><em>collection</em>.exist?(&#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>.exist?</tt> проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и <tt>ActiveRecord::Base.exists?</tt>.</p>
+
+<h5 id="ttemcollectionembuildattributes---tt">1.13 <tt><em>collection</em>.build(attributes = {}, &#8230;)</tt></h5>
+<p>Метод <tt><em>collection</em>.build</tt> возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана ссылка через их внешние ключи, но связанные объекты <em>не</em> будут пока сохранены.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order = @customer.orders.build(:order_date =&gt; Time.now,
+  :order_number =&gt; &quot;A12345&quot;)
+</pre></div>
+
+<h5 id="ttemcollectionemcreateattributes--tt">1.14 <tt><em>collection</em>.create(attributes = {})</tt></h5>
+<p>Метод <tt><em>collection</em>.create</tt> возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет создана ссылка через его внешний ключ, и связанный объект <em>будет</em> сохранен (разумеется, если пройдет валидации).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+@order = @customer.orders.create(:order_date =&gt; Time.now,
+  :order_number =&gt; &quot;A12345&quot;)
+</pre></div>
+
+<h4 id="options-for-has-many">2. Опции для <tt>has_many</tt></h4>
+<p>Во многих случаях можно использовать стандартные возможности <tt>has_many</tt> без какой-либо настройки. Но можно изменить эти возможности разными способами. Этот раздел раскрывает опции, которые можно передать при создании связи <tt>has_many</tt>. Например, связь с несколькими опциями может выглядеть так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :dependent =&gt; :delete_all, :validate =&gt; :false
+end
+</pre></div>
+<p>Связь <tt>has_many</tt> поддерживает эти опции:</p>
+<ul>
+	<li><tt>:as</tt></li>
+	<li><tt>:autosave</tt></li>
+	<li><tt>:class_name</tt></li>
+	<li><tt>:conditions</tt></li>
+	<li><tt>:counter_sql</tt></li>
+	<li><tt>:dependent</tt></li>
+	<li><tt>:extend</tt></li>
+	<li><tt>:finder_sql</tt></li>
+	<li><tt>:foreign_key</tt></li>
+	<li><tt>:group</tt></li>
+	<li><tt>:include</tt></li>
+	<li><tt>:limit</tt></li>
+	<li><tt>:offset</tt></li>
+	<li><tt>:order</tt></li>
+	<li><tt>:primary_key</tt></li>
+	<li><tt>:readonly</tt></li>
+	<li><tt>:select</tt></li>
+	<li><tt>:source</tt></li>
+	<li><tt>:source_type</tt></li>
+	<li><tt>:through</tt></li>
+	<li><tt>:uniq</tt></li>
+	<li><tt>:validate</tt></li>
+</ul>
+
+<h5 id="as">2.1 <tt>:as</tt></h5>
+<p>Установка опции <tt>:as</tt> показывает, что это полиморфная связь. Полиморфные связи подробно рассматривались <a href="/active-record-associations/the-types-of-associations-2#polymorphic-associations">ранее</a>.</p>
+
+<h5 id="autosave">2.2 <tt>:autosave</tt></h5>
+<p>Если установить опцию <tt>:autosave</tt> в <tt>true</tt>, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда вы сохраните родительский объект.</p>
+
+<h5 id="class-name">2.3 <tt>:class_name</tt></h5>
+<p>Если имя другой модели не может быть произведено из имени связи, можете использовать опцию <tt>:class_name</tt> для предоставления имени модели. Например, если покупатель имеет много заказов, но фактическое имя модели, содержащей заказы это <tt>Transaction</tt>, можете установить это следующим образом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :class_name =&gt; &quot;Transaction&quot;
+end
+</pre></div>
+
+<h5 id="conditions">2.4 <tt>:conditions</tt></h5>
+<p>Опция <tt>:conditions</tt> позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>WHERE</tt>).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :confirmed_orders, :class_name =&gt; &quot;Order&quot;,
+    :conditions =&gt; &quot;confirmed = 1&quot;
+end
+</pre></div>
+<p>Также можно установить условия через хэш:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :confirmed_orders, :class_name =&gt; &quot;Order&quot;,
+    :conditions =&gt; { :confirmed =&gt; true }
+end
+</pre></div>
+<p>Если используете хэш в опции <tt>:conditions</tt>, то создание записи через эту связь автоматически будет подогнано, используя хэш. В нашем случае, использование <tt>@customer.confirmed_orders.create</tt> или <tt>@customer.confirmed_orders.build</tt> создаст заказы, где столбец confirmed имеет значение <tt>true</tt>.</p>
+<p>Если нужно вычислить условия динамически во время выполнения, можете использовать интерполяцию строки в одинарных кавычках:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :latest_orders, :class_name =&gt; &quot;Order&quot;,
+    :conditions =&gt; 'orders.created_at &gt; #{10.hours.ago.to_s(:db).inspect}'
+end
+</pre></div>
+<p>Убедитесь, что используете одинарные кавычки.</p>
+
+<h5 id="counter-sql">2.5 <tt>:counter_sql</tt></h5>
+<p>Обычно Rails автоматически создает подходящий <span class="caps">SQL</span> для счета связанных членов. С опцией <tt>:counter_sql</tt>,можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их счета.</p>
+<div class='note'><p>Если определите <tt>:finder_sql</tt>, но не <tt>:counter_sql</tt>, тогда счетчик <span class="caps">SQL</span> будет автоматически создан, подставив <tt>SELECT COUNT(*) FROM</tt> вместо выражения <tt>SELECT ... FROM</tt> Вашего выражения <tt>:finder_sql</tt>.</p></div>
+
+<h5 id="dependent">2.6 <tt>:dependent</tt></h5>
+<p>Если установите опцию <tt>:dependent</tt> как <tt>:destroy</tt>, то удаление этого объекта вызовет метод <tt>destroy</tt> для связанных объектов, для их удаления. Если установите опцию <tt>:dependent</tt> как <tt>:delete_all</tt>, то удаление этого объекта удалит связанные объекты <em>без</em> вызова их метода <tt>destroy</tt>. Если установите опцию <tt>:dependent</tt> как <tt>:nullify</tt>, то удаление этого объекта установит внешний ключ в связанных объектов в <tt>NULL</tt>.</p>
+<div class='note'><p>Эта опция игнорируется, если используете опцию <tt>:through</tt> для связи.</p></div>
+
+<h5 id="extend">2.7 <tt>:extend</tt></h5>
+<p>Опция <tt>:extend</tt> определяет именнованый модуль для расширения полномочий связи. Расширения связей будут детально обсуждены <a href="/active-record-associations/association-callbacks-and-extensions#association-extensions">позже в этом руководстве</a>.</p>
+
+<h5 id="finder-sql">2.8 <tt>:finder_sql</tt></h5>
+<p>Обычно Rails автоматически создает подходящий <span class="caps">SQL</span> для получения связанных членов. С опцией <tt>:finder_sql</tt> можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их получения. Это может быть необходимым, если получаемые объекты требуют сложный межтабличный <span class="caps">SQL</span>.</p>
+
+<h5 id="foreign-key">2.9 <tt>:foreign_key</tt></h5>
+<p>По соглашению Rails полагает, что столбец, используемый для хранения внешнего ключа в этой модели, имеет имя модели с добавленным суффиксом <tt>_id</tt>. Опция <tt>:foreign_key</tt> позволяет установить имя внешнего ключа прямо:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :foreign_key =&gt; &quot;cust_id&quot;
+end
+</pre></div>
+<div class='info'><p>В любом случае, Rails не создаст столбцы внешнего ключа за Вас. Вам необходимо явно определить их в своих миграциях.</p></div>
+
+<h5 id="group">2.10 <tt>:group</tt></h5>
+<p>Опция <tt>:group</tt> доставляет имя атрибута, по которому группируется результирующий набор, используя выражение <tt>GROUP BY</tt> в поисковом <span class="caps">SQL</span>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :line_items, :through =&gt; :orders, :group =&gt; &quot;orders.id&quot;
+end
+</pre></div>
+
+<h5 id="include">2.11 <tt>:include</tt></h5>
+<p>Можете использовать опцию <tt>:include</tt> для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class LineItem &lt; ActiveRecord::Base
+  belongs_to :order
+end
+</pre></div>
+<p>Если Вы часто получаете позиции прямо из покупателей (<tt>@customer.orders.line_items</tt>),тогда можете сделать свой код более эффективным, включив позиции в связь от покупателей к заказам:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :include =&gt; :line_items
+end
+
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class LineItem &lt; ActiveRecord::Base
+  belongs_to :order
+end
+</pre></div>
+
+<h5 id="limit">2.12 <tt>:limit</tt></h5>
+<p>Опция <tt>:limit</tt> позволяет ограничить общее количество объектов, которые будут выбраны через связь.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :recent_orders, :class_name =&gt; &quot;Order&quot;,
+    :order =&gt; &quot;order_date DESC&quot;, :limit =&gt; 100
+end
+</pre></div>
+
+<h5 id="offset">2.13 <tt>:offset</tt></h5>
+<p>Опция <tt>:offset</tt> позволяет определить начальное смещение для выбора объектов через связь. Например, если установите <tt>:offset => 11</tt>, она пропустит первые 11 записей.</p>
+
+<h5 id="order">2.14 <tt>:order</tt></h5>
+<p>Опция <tt>:order</tt> предписывает порядок, в котором связанные объекты будут получены (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>ORDER BY</tt>).</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Customer &lt; ActiveRecord::Base
+  has_many :orders, :order =&gt; &quot;date_confirmed DESC&quot;
+end
+</pre></div>
+
+<h5 id="primary-key">2.15 <tt>:primary_key</tt></h5>
+<p>По соглашению, Rails полагает, что столбец, используемый для хранения первичного ключа, это <tt>id</tt>. Вы можете переопределить это и явно определить первичный ключ с помощью опции <tt>:primary_key</tt>.</p>
+
+<h5 id="readonly">2.16 <tt>:readonly</tt></h5>
+<p>Если установите опцию <tt>:readonly</tt> в <tt>true</tt>, тогда связанные объекты будут доступны только для чтения, когда получены посредством связи.</p>
+
+<h5 id="select">2.17 <tt>:select</tt></h5>
+<p>Опция <tt>:select</tt> позволяет переопределить <span class="caps">SQL</span> условие <tt>SELECT</tt>, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.</p>
+<div class='warning'><p>Если укажете свой собственный <tt>:select</tt>, не забудьте включить столбцы первичного ключа и внешнего ключа в связанной модели. Если так не сделать, Rails выдаст ошибку.</p></div>
+
+<h5 id="source">2.18 <tt>:source</tt></h5>
+<p>Опция <tt>:source</tt> oпределяет имя источника связи для связи <tt>has_many :through</tt>. Эту опцию нужно использовать, только если имя источника связи не может быть автоматически выведено из имени связи.</p>
+
+<h5 id="source-type">2.19 <tt>:source_type</tt></h5>
+<p>Опция <tt>:source_type</tt> определяет тип источника связи для связи <tt>has_many :through</tt>, который действует при полиморфной связи.</p>
+
+<h5 id="through">2.20 <tt>:through</tt></h5>
+<p>Опция <tt>:through</tt> определяет соединительную модель, через которую выполняется запрос. Связи <tt>has_many :through</tt> предоставляют способ осуществления отношений многие-ко-многим, как обсуждалось <a href="/active-record-associations/the-types-of-associations-1#the-has-many-through-association">ранее в этом руководстве</a>.</p>
+
+<h5 id="uniq">2.21 <tt>:uniq</tt></h5>
+<p>Определите опцию <tt>:uniq => true</tt>, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией <tt>:through</tt>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Person &lt; ActiveRecord::Base
+  has_many :readings
+  has_many :posts, :through =&gt; :readings
+end
+
+person = Person.create(:name =&gt; 'john')
+post   = Post.create(:name =&gt; 'a1')
+person.posts &lt;&lt; post
+person.posts &lt;&lt; post
+person.posts.inspect # =&gt; [#&lt;Post id: 5, name: &quot;a1&quot;&gt;, #&lt;Post id: 5, name: &quot;a1&quot;&gt;]
+Reading.all.inspect  # =&gt; [#&lt;Reading id: 12, person_id: 5, post_id: 5&gt;, #&lt;Reading id: 13, person_id: 5, post_id: 5&gt;]
+</pre></div>
+<p>В вышеописанной задаче два reading, и <tt>person.posts</tt> выявляет их оба, даже хотя эти записи указывают на один и тот же post.</p>
+<p>Давайте установим <tt>:uniq</tt> в true:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Person
+  has_many :readings
+  has_many :posts, :through =&gt; :readings, :uniq =&gt; true
+end
+
+person = Person.create(:name =&gt; 'honda')
+post   = Post.create(:name =&gt; 'a1')
+person.posts &lt;&lt; post
+person.posts &lt;&lt; post
+person.posts.inspect # =&gt; [#&lt;Post id: 7, name: &quot;a1&quot;&gt;]
+Reading.all.inspect  # =&gt; [#&lt;Reading id: 16, person_id: 7, post_id: 7&gt;, #&lt;Reading id: 17, person_id: 7, post_id: 7&gt;]
+</pre></div>
+<p>В вышеописанной задаче все еще два reading. Однако <tt>person.posts</tt> показывает только один post, поскольку коллекция загружает только уникальные записи.</p>
+
+<h5 id="validate">2.22 <tt>:validate</tt></h5>
+<p>Если установите опцию <tt>:validate</tt> в <tt>false</tt>, тогда связанные объекты будут проходить валидацию всякий раз, когда Вы сохраняете этот объект. По умолчанию она равна <tt>true</tt>: связанные объекты проходят валидацию, когда этот объект сохраняется.</p>
+
+<h4 id="when-are-objects-saved">3. Когда сохраняются объекты?</h4>
+<p>Когда Вы назначаете объект связью <tt>has_many</tt>, этот объект автоматически сохраняется (для того, чтобы обновить его внешний ключ). Если назначаете несколько объектов в одном выражении, они все будут сохранены.</p>
+<p>Если одно из этих сохранений проваливается из-за ошибок валидации, тогда выражение назначения возвращает <tt>false</tt>, и само назначение отменяется.</p>
+<p>Если родительский объект (который объявляет связь <tt>has_many</tt>) является несохраненным (то есть <tt>new_record?</tt> возвращает <tt>true</tt>) тогда дочерние объекты не сохраняются при добавлении. Все несохраненные члены связи сохранятся автоматически, когда сохранится родительский объект.</p>
+<p>Если Вы хотите назначить объект связью <tt>has_many</tt> без сохранения объекта, используйте метод <tt><em>collection</em>.build</tt>.</p>

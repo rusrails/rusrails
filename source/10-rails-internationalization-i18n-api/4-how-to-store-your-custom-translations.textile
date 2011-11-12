@@ -1,0 +1,279 @@
+h1. Как хранить свои переводы
+
+<p>Простой бэкенд, поставляющийся вместе с Active Support, позволяет хранить переводы как в формате чистого Ruby, так и в <span class="caps">YAML</span>. (Другие бэкенды могут позволить или требовать использование иных форматов, например GetText позволяет использовать формат GetText.)</p>
+<p>Например, представляющий перевод хэш Ruby выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+{
+  :pt =&gt; {
+    :foo =&gt; {
+      :bar =&gt; &quot;baz&quot;
+    }
+  }
+}
+</pre></div>
+<p>Эквивалентный файл <span class="caps">YAML</span> выглядит так:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+pt:
+  foo:
+    bar: baz
+</pre></div>
+<p>Как видите, в обоих случаях ключ верхнего уровня является локалью. <tt>:foo</tt> это ключ пространства имен, а <tt>:bar</tt> это ключ для перевода &#8220;baz&#8221;.</p>
+<p>Вот &#8220;реальный&#8221; пример из <span class="caps">YAML</span> файла перевода Active Support <tt>en.yml</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+en:
+  date:
+    formats:
+      default: &quot;%Y-%m-%d&quot;
+      short: &quot;%b %d&quot;
+      long: &quot;%B %d, %Y&quot;
+</pre></div>
+<p>Таким образом, все из нижеследующих эквивалентов возвратит короткий (<tt>:short</tt>) формат даты <tt>"%B %d"</tt>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+I18n.t 'date.formats.short'
+I18n.t 'formats.short', :scope =&gt; :date
+I18n.t :short, :scope =&gt; 'date.formats'
+I18n.t :short, :scope =&gt; [:date, :formats]
+</pre></div>
+<p>Как правило мы рекомендуем использовать <span class="caps">YAML</span> как формат хранения переводов. Хотя имеются случаи, когда хочется хранить лямбда-функции Ruby как часть данных локали, например, для специальных форматов дат.</p>
+
+<h4 id="translations-for-active-record-models">1. Переводы для моделей Active Record</h4>
+<p>Можете использовать методы <tt>Model.human_name</tt> и <tt>Model.human_attribute_name(attribute)</tt> для прозрачного поиска переводов для ваших моделей и имен атрибутов.</p>
+<p>Например, когда добавляем следующие переводы:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+en:
+  activerecord:
+    models:
+      user: Dude
+    attributes:
+      user:
+        login: &quot;Handle&quot;
+      # переведет атрибут User &quot;login&quot; как &quot;Handle&quot;
+</pre></div>
+<p>Тогда <tt>User.human_name</tt> возвратит &#8220;Dude&#8221;, а <tt>User.human_attribute_name("login")</tt> возвратит &#8220;Handle&#8221;.</p>
+
+<h5 id="error-message-scopes">1.1 Пространства имен сообщений об ошибке</h5>
+<p>Сообщение об ошибке валидации Active Record также может быть легко переведено. Active Record предоставляет ряд пространств имен, куда можно поместить ваши переводы для передачи различных сообщений и переводы для определенных моделей, аттрибутов и/или валидаций. Также учитывается одиночное наследование таблицы (single table inheritance).</p>
+<p>Это дает довольно мощное средство для гибкой настройки ваших сообщений в соответствии с потребностями приложения.</p>
+<p>Рассмотрим модель User с валидацией <tt>validates_presence_of</tt> для атрибута name, подобную следующей:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class User &lt; ActiveRecord::Base
+  validates :name, :presence => true
+end
+</pre></div>
+<p>Ключом для сообщения об ошибке в этом случае будет <tt>:blank</tt>. Active Record будет искать этот ключ в пространствах имен:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+activerecord.errors.models.[model_name].attributes.[attribute_name]
+activerecord.errors.models.[model_name]
+activerecord.errors.messages
+errors.attributes.[attribute_name]
+errors.messages
+</pre></div>
+<p>Таким образом, в нашем примере он будет перебирать следующие ключи в указанном порядке и возвратит первый полученный результат:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+activerecord.errors.models.user.attributes.name.blank
+activerecord.errors.models.user.blank
+activerecord.errors.messages.blank
+errors.attributes.name.blank
+errors.messages.blank
+</pre></div>
+<p>Когда ваши модели дополнительно используют наследование, тогда сообщения ищутся в цепочке наследования.</p>
+<p>Например, у вас может быть модель Admin, унаследованная от User:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Admin &lt; User
+  validates :name, :presence => true
+end
+</pre></div>
+<p>Тогда Active Record будет искать сообщения в этом порядке:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+activerecord.errors.models.admin.attributes.title.blank
+activerecord.errors.models.admin.blank
+activerecord.errors.models.user.attributes.title.blank
+activerecord.errors.models.user.blank
+activerecord.errors.messages.blank
+errors.attributes.title.blank
+errors.messages.blank
+</pre></div>
+<p>Таким образом можно предоставить специальные переводы для различных сообщений об ошибке в различных местах цепочки наследования моделей и в атрибутах, моделях и пространствах имен по умолчанию.</p>
+
+<h5 id="error-message-interpolation">1.2 Интерполяция сообщения об ошибке</h5>
+<p>Переведенное имя модели, переведенное имя атрибута и значение всегда доступны для интерполяции.</p>
+<p>Так, к примеру, вместо сообщения об ошибке по умолчанию <tt>"can not be blank"</tt> можете использовать имя атрибута как тут: <tt>"Please fill in your %{attribute}"</tt>.</p>
+<ul>
+	<li>Где это возможно, <tt>count</tt> может быть использован для множественного числа, если оно существует:</li>
+</ul>
+<table class="inner_table">
+	<tr>
+		<th>валидация                 </th>
+		<th>с опцией              </th>
+		<th>сообщение                  </th>
+		<th>интерполяция</th>
+	</tr>
+	<tr>
+		<td> confirmation    </td>
+		<td> &#8211;                         </td>
+		<td> :confirmation             </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> acceptance      </td>
+		<td> &#8211;                         </td>
+		<td> :accepted                 </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> presence        </td>
+		<td> &#8211;                         </td>
+		<td> :blank                    </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> length          </td>
+		<td> :within, :in              </td>
+		<td> :too_short                </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> length         </td>
+		<td> :within, :in              </td>
+		<td> :too_long                 </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> length         </td>
+		<td> :is                       </td>
+		<td> :wrong_length             </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> length          </td>
+		<td> :minimum                  </td>
+		<td> :too_short                </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> length          </td>
+		<td> :maximum                  </td>
+		<td> :too_long                 </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> uniqueness      </td>
+		<td> &#8211;                         </td>
+		<td> :taken                    </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> format          </td>
+		<td> &#8211;                         </td>
+		<td> :invalid                  </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> inclusion       </td>
+		<td> &#8211;                         </td>
+		<td> :inclusion                </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> exclusion       </td>
+		<td> &#8211;                         </td>
+		<td> :exclusion                </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> associated         </td>
+		<td> &#8211;                         </td>
+		<td> :invalid                  </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> &#8211;                         </td>
+		<td> :not_a_number             </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> :greater_than             </td>
+		<td> :greater_than             </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> :greater_than_or_equal_to </td>
+		<td> :greater_than_or_equal_to </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> numericality   </td>
+		<td> :equal_to                 </td>
+		<td> :equal_to                 </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> :less_than                </td>
+		<td> :less_than                </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> :less_than_or_equal_to    </td>
+		<td> :less_than_or_equal_to    </td>
+		<td> count</td>
+	</tr>
+	<tr>
+		<td> numericality    </td>
+		<td> :odd                      </td>
+		<td> :odd                      </td>
+		<td> -</td>
+	</tr>
+	<tr>
+		<td> numericality   </td>
+		<td> :even                     </td>
+		<td> :even                     </td>
+		<td> -</td>
+	</tr>
+</table>
+
+<h5 id="translations-for-the-active-record-error_messages_for-helper">1.3 Переводы для хелпера Active Record <tt>error_messages_for</tt></h5>
+<p>Если используете хелпер Active Record <tt>error_messages_for</tt>, то, возможно, захотите добавить для него переводы.</p>
+<p>Rails поставляется со следующими переводами:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+en:
+  activerecord:
+    errors:
+      template:
+        header:
+          one:   &quot;1 error prohibited this %{model} from being saved&quot;
+          other: &quot;%{count} errors prohibited this %{model} from being saved&quot;
+        body:    &quot;There were problems with the following fields:&quot;
+</pre></div>
+
+<h4 id="overview-of-other-built-in-methods-that-provide-i18n-support">2. Обзор других встроенных методов, предоставляющих поддержку I18n</h4>
+<p>Rails использует фиксированные строки и другие локализации, такие как формат строки и другая информация о формате, в ряде хелперов. Вот краткий обзор.</p>
+
+<h5 id="action-view-helper-methods">2.1 Методы хелпера Action View</h5>
+<ul>
+	<li><tt>distance_of_time_in_words</tt> переводит и образует множественное число своего результата и интерполирует число секунд, минут, часов и т.д. Смотрите переводы <a href="http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L51">datetime.distance_in_words</a>.</li>
+</ul>
+<ul>
+	<li><tt>datetime_select</tt> и <tt>select_month</tt> используют переведенные имена месяцев для заполнения результирующего тега select. Смотрите переводы в <a href="http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L15">date.month_names</a>. <tt>datetime_select</tt> Также ищет опцию order из <a href="http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L18">date.order</a> (если вы передали эту опцию явно). Все хелперы выбора даты переводят prompt, используя переводы в пространстве имен <a href="http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L83">datetime.prompts</a>, если применимы.</li>
+</ul>
+<ul>
+	<li>Хелперы <tt>number_to_currency</tt>, <tt>number_with_precision</tt>, <tt>number_to_percentage</tt>, <tt>number_with_delimiter</tt> и <tt>number_to_human_size</tt> используют настройки формата чисел в пространстве имен <a href="http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L2">number</a>.</li>
+</ul>
+
+<h5 id="active-record-methods">2.2 Методы Active Record</h5>
+<ul>
+	<li><tt>human_name</tt> и <tt>human_attribute_name</tt> используют переводы для имен модели и имен аттрибутов, если они доступны в пространстве имен <a href="http://github.com/rails/rails/blob/master/activerecord/lib/active_record/locale/en.yml#L29">activerecord.models</a>. Они также предоставляют переводы для имен унаследованного класса (т.е. для использования вместе со <span class="caps">STI</span>), как уже объяснялось выше в &#8220;Области сообщения об ошибке&#8221;.</li>
+</ul>
+<ul>
+	<li><tt>ActiveRecord::Errors#generate_message</tt> (который используется валидациями Active Record, но также может быть использован вручную) использует <tt>human_name</tt> и <tt>human_attribute_name</tt> (смотрите выше). Он также переводит сообщение об ошибке и поддерживает переводы для имен унаследованного класса, как уже объяснялось выше в &#8220;Пространства имен сообщений об ошибке&#8221;.</li>
+</ul>
+<p>*<tt> ActiveRecord::Errors#full_messages</tt> добавляет имя атрибута к сообщению об ошибке, используя разделитель, который берется из <a href="http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L91">activerecord.errors.format.separator</a> (и по умолчанию равен <tt>'&nbsp;'</tt>).</p>
+
+<h5 id="active-support-methods">2.3 Методы Active Support</h5>
+<ul>
+	<li><tt>Array#to_sentence</tt> использует настройки формата, которые заданы в пространстве имен <a href="http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L30">support.array</a>.</li>
+</ul>

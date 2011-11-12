@@ -1,0 +1,51 @@
+h1. Структурирование макетов (часть вторая)
+
+<a href="/layouts-and-rendering-in-rails/structuring-layouts">&gt;&gt;&gt; Первая часть</a>
+
+<h4 id="understanding-yield">2. Понимание <tt>yield</tt></h4>
+<p>В контексте макета, <tt>yield</tt> определяет раздел, где должно быть вставлено содержимое из вьюхи. Самый простой способ его использования это иметь один <tt>yield</tt> там, куда вставится все содержимое вьюхи, которая в настоящий момент рендериться:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;%= yield %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Также можете создать макет с несколькими областями yield:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;%= yield :head %&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;%= yield %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Основное тело вьюхи всегда рендериться в неименнованный <tt>yield</tt>. Чтобы рендерить содержимое в именнованный <tt>yield</tt>, используйте метод <tt>content_for</tt>.</p>
+
+<h4 id="using-content-for">3. Использование <tt>content_for</tt></h4>
+<p>Метод <tt>content_for</tt> позволяет вставить содержимое в блок <tt>yield</tt> в вашем макете. <tt>content_for</tt> можно использовать только для вставки содержимого в именнованные yields. Например, эта вьюха будет работать с макетом, который вы только что видели:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;% content_for :head do %&gt;
+  &lt;title&gt;A simple page&lt;/title&gt;
+&lt;% end %&gt;
+
+&lt;p&gt;Hello, Rails!&lt;/p&gt;
+</pre></div>
+<p>Результат рендеринга этой страницы в макет будет таким <span class="caps">HTML</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;title&gt;A simple page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;p&gt;Hello, Rails!&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Метод <tt>content_for</tt> очень полезен, когда Ваш макет содержит отдельные области, такие как боковые панели или футеры, в которые нужно вставить свои блоки содержимого. Это также полезно при вставке тэгов, загружающих специфичные для страницы файлы javascript или css в head общего макета.</p>
+
+<p><a href="/layouts-and-rendering-in-rails/structuring-layouts-3">Продолжение..</a></p>

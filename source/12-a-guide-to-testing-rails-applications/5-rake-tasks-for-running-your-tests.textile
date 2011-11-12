@@ -1,0 +1,45 @@
+h1. Задачи Rake для запуска тестов
+
+<p>Не нужно настраивать и запускать ваши тесты вручную один за другим. Rails поставляется с несколькими задачами rake, помогающими в тестировании. Нижеследующая таблица перечисляет все задачи rake, которые идут в дефолтном Rakefile при создании нового проекта Rail.</p>
+<table class="inner_table">
+	<tr>
+		<th>Задачи                         </th>
+		<th>Описание</th>
+	</tr>
+	<tr>
+		<td><tt>rake test</tt>                     </td>
+		<td>Запускает все юнит-, функциональные и объединенные тесты. Также можете просто запустить <tt>rake</tt>, так как задание <em>test</em> идет по умолчанию.</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:benchmark</tt>           </td>
+		<td>Запускает тесты производительности в режиме бенчмаркинга</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:functionals</tt>         </td>
+		<td>Запускает все функциональные тесты из <tt>test/functional</tt></td>
+	</tr>
+	<tr>
+		<td><tt>rake test:integration</tt>         </td>
+		<td>Запускает все объединенные тесты из <tt>test/integration</tt></td>
+	</tr>
+	<tr>
+		<td><tt>rake test:plugins</tt>             </td>
+		<td>Запускает все тесты плагинов из <tt>vendor/plugins/*/**/test</tt> (или определите с помощью <tt>PLUGIN=_name_</tt>)</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:profile</tt>             </td>
+		<td>Запускает тесты производительности в режиме профилирования</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:recent</tt>              </td>
+		<td>Тестирует последние изменения</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:uncommitted</tt>         </td>
+		<td>Выполняет все тесты, которые являются не отправленные в систему контроля версии. Поддерживается только Subversion</td>
+	</tr>
+	<tr>
+		<td><tt>rake test:units</tt>               </td>
+		<td>Запускает все юнит-тесты из  <tt>test/unit</tt></td>
+	</tr>
+</table>

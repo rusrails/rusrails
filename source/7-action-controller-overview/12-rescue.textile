@@ -1,0 +1,51 @@
+h1. Rescue
+
+<p>Скорее всего, ваше приложение будет содержать ошибки или, другими словами, вызывать исключения, которые нужно обработать. Например, если пользователь проходит по ссылке на ресурс, который больше не существует в базе данных, Active Record вызовет исключение <tt>ActiveRecord::RecordNotFound</tt>.</p>
+<p>Дефолтный обработчик исключений Rails отображает сообщение &#8220;500 Server Error&#8221; для всех исключений. Если запрос сделан локально, отображается прекрасная трассировка и некоторая дополнительная информация, так что можете выяснить, что пошло не так, и разобраться с этим. Если запрос был удаленным, Rails отобразит пользователю лишь простое сообщение &#8220;500 Server Error&#8221;, или &#8220;404 Not Found&#8221;, если была проблема с роутингом или запись была не найдена. Иногда Вы захотите настроить, как эти ошибки будут перехвачены, и как они будут отображены пользователю. В приложении на Rails доступны несколько уровней обработки исключений:</p>
+
+<h4 id="the-default-500-and-404-templates">1. Дефолтные шаблоны 500 и 404</h4>
+<p>По умолчанию приложение в среде production будет рендерить или 404, или 500 сообщение об ошибке. Эти сообщения содержатся в статичных файлах <span class="caps">HTML</span> в папке <tt>public</tt>, в <tt>404.html</tt> и <tt>500.html</tt> соответственно. Можете настроить эти файлы, добавив дополнительную информацию и разметку, но помните, что они статичны; т.е. нельзя использовать <span class="caps">RHTML</span> или макеты в них, только чистый <span class="caps">HTML</span>.</p>
+
+<h4 id="rescue-from">2. <tt>rescue_from</tt></h4>
+<p>Если хотите сделать нечто более сложное при перехвате ошибок, можете использовать <tt>rescue_from</tt>, которая управляет исключениями определенного типа (или нескольких типов) во всем контроллере и его субклассах.</p>
+<p>Когда происходит исключение, которое перехватывается директивой <tt>rescue_from</tt>, исключающийся объект передается в обработчик. Обработчик может быть методом или объектом <tt>Proc</tt>, переданным опции <tt>:with</tt>. Также можно использовать блок вместо заданного объекта <tt>Proc</tt>.</p>
+<p>Вот как можно использовать <tt>rescue_from</tt> для перехвата всех ошибок <tt>ActiveRecord::RecordNotFound</tt> и что-то с ними делать.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+  rescue_from ActiveRecord::RecordNotFound, :with =&gt; :record_not_found
+
+private
+  def record_not_found
+    render :text =&gt; &quot;404 Not Found&quot;, :status =&gt; 404
+  end
+end
+</pre></div>
+<p>Конечно, этот пример далеко не доработан, и ничуть не улучшает обработку исключений по умолчанию, но раз вы уже перехватили все эти исключения, то вольны делать с ними все, что хотите. Например, можете создать свои классы исключений, которые будут вызваны, когда у пользователя нет доступа в определенные разделы вашего приложения:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class ApplicationController &lt; ActionController::Base
+  rescue_from User::NotAuthorized, :with =&gt; :user_not_authorized
+
+private
+  def user_not_authorized
+    flash[:error] = &quot;You don't have access to this section.&quot;
+    redirect_to :back
+  end
+end
+
+class ClientsController &lt; ApplicationController
+  # Проверим, что пользователь имеет права доступа к клиентам.
+  before_filter :check_authorization
+
+  # Отметим как экшны не беспокоятся об авторизационных делах.
+  def edit
+    @client = Client.find(params[:id])
+  end
+
+private
+  # Если пользователь не авторизован, просто вызываем исключение.
+  def check_authorization
+    raise User::NotAuthorized unless current_user.admin?
+  end
+end
+</pre></div>
+<div class='note'><p>Некоторые исключения перехватываемы только из класса <tt>ApplicationController</tt>, так как они вызываются до того, как контроллер будет инициализирован, и экшны будут выполнены. Смотрите <a href="http://m.onkey.org/2008/7/20/rescue-from-dispatching">статью Pratik Naik</a> по этой теме.</p></div>

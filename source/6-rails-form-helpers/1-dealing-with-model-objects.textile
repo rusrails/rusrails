@@ -1,0 +1,120 @@
+h1. Работаем с объектами модели
+
+<h4 id="model-object-helpers">1. Хелперы объекта модели</h4>
+<p>Наиболее частыми задачами для форм являются редактирование или создание объекта модели. В то время как хелперы <tt>*_tag</tt>, конечно, могут быть использованы для этой задачи, они несколько многословны, так как для каждого тэга вам придется обеспечить использование правильного имени параметра и установку подходящего значения поля по умолчанию. Rails предоставляет методы, подогнанные под эту задачу. У этих хелперов отсутствует суффикс _tag, например, <tt>text_field</tt>, <tt>text_area</tt>.</p>
+<p>У этих хелперов первый аргумент это имя переменной экземпляра, а второй это имя метода (обычно атрибутного), вызываемого для этого объекта. Rails установит значение элемента управления равным возвращаемому значению метода объекта и установит подходящее имя поля. Если ваш контроллер определил <tt>@person</tt> и имя этой персоны Henry, тогда форма, содержащая:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;%= text_field(:person, :name) %&gt;
+</pre></div>
+<p>выдаст подобный результат</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+&lt;input id=&quot;person_name&quot; name=&quot;person[name]&quot; type=&quot;text&quot; value=&quot;Henry&quot;/&gt;
+</pre></div>
+<p>После подтверждения формы, значение, введенное пользователем, будет храниться в <tt>params[:person][:name]</tt>. Хэш <tt>params[:person]</tt> годен для передачи в <tt>Person.new</tt> или, если <tt>@person</tt> это экземпляр Person, в <tt>@person.update_attributes</tt>. Хотя имя атрибута очень распространенный второй параметр для этих хелперов, он не является обязательным. В вышеупомянутом примере, до тех пор пока объекты person имеют методы <tt>name</tt> и <tt>name=</tt>, Rails будет удовлетворен.</p>
+<div class='warning'><p>Необходимо передавать имя переменной экземпляра, т.е. <tt>:person</tt> или <tt>"person"</tt>, а не фактический экземпляр объекта вашей модели.</p></div>
+<p>Rails предоставляет хелперы для отображения ошибок валидации, связанных с объектом модели. Детально они раскрываются в руководстве <a href="/active-record-validations-and-callbacks/displaying-validation-errors-in-the-view">Отображение ошибок валидации во вьюхе</a>.</p>
+
+<h4 id="binding-a-form-to-an-object">2. Привязывание формы к объекту</h4>
+<p>Хотя комфортность несколько улучшилась, она еще далека от совершенства. Если у Person много атрибутов для редактирования, тогда мы должны повторить имя редактируемого объекта много раз. То, что мы хотим сделать, это как-то привязать форму к объекту модели, что как раз осуществляется с помощью <tt>form_for</tt>.</p>
+<p>Допустим у нас есть контроллер для работы со статьями <tt>articles_controller.rb</tt>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+def new
+  @article = Article.new
+end
+</pre></div>
+<p>Соответствующая вьюха <tt>articles/new.html.erb:</tt>, использующая <tt>form_for</tt>, выглядит так</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_for @article, :url => { :action => "create" }, :html => {:class => "nifty_form"} do |f| %>
+  <%= f.text_field :title %>
+  <%= f.text_area :body, :size => "60x12" %>
+  <%= f.submit "Create" %>
+<% end %>
+</pre></div>
+<p>Следует отметить несколько вещей:</p>
+<ol>
+	<li><tt>@article</tt> это фактический объект, который редактируется.</li>
+	<li>Здесь есть одиночный хэш опций. Опции маршрутизации передаются в хэше <tt>:url</tt>, опции <span class="caps">HTML</span> передаются в хэше <tt>:html</tt>.</li>
+	<li>Метод <tt>form_for</tt> предоставляет объект <strong>form builder</strong> (переменная <tt>f</tt>).</li>
+	<li>Методы создания элементов управления формой вызываются <strong>для</strong> объекта form builder <tt>f</tt></li>
+</ol>
+<p>Итоговый <span class="caps">HTML</span>:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/articles/create" method="post" class="nifty_form">
+  <input id="article_title" name="article[title]" size="30" type="text" />
+  <textarea id="article_body" name="article[body]" cols="60" rows="12"></textarea>
+  <input name="commit" type="submit" value="Create" />
+</form>
+</pre></div>
+<p>Имя, переданное в <tt>form_for</tt>, контролирует ключ, используемый в <tt>params</tt> для доступа к значениям формы. В примере имя <tt>article</tt>, таким образом, все поля формы имеют имена <tt>article[<em>attribute_name</em>]</tt>. Соответственно, в экшне <tt>create</tt> <tt>params[:article]</tt> будет хэшем с ключами <tt>:title</tt> и <tt>:body</tt>. О значимости имен полей ввода подробнее можно прочитать в разделе про имена параметров.</p>
+<p>Методы хелпера, вызываемые из form builder идентичны хелперам объекта модели, за исключением того, что не нужно указывать, какой объект будет редактироваться, так как это уже регулируется в form builder.</p>
+<p>Можно создать подобное привязывание без фактического создания тэга <tt>&lt;form&gt;</tt> с помощью хелпера <tt>fields_for</tt>. Это полезно для редактирования дополнительных объектов модели в той же форме. Например, если имеем модель Person со связанной моделью ContactDetail, Вы можете создать форму для создания обеих моделей подобным образом:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= form_for @person, :url => { :action => "create" } do |person_form| %>
+  <%= person_form.text_field :name %>
+  <%= fields_for @person.contact_detail do |contact_details_form| %>
+    <%= contact_details_form.text_field :phone_number %>
+  <% end %>
+<% end %>
+</pre></div>
+<p>которая выдаст такой результат:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/people/create" class="new_person" id="new_person" method="post">
+  <input id="person_name" name="person[name]" size="30" type="text" />
+  <input id="contact_detail_phone_number" name="contact_detail[phone_number]" size="30" type="text" />
+</form>
+&lt;/form&gt;
+</pre></div>
+<p>Объект, предоставляемый <tt>fields_for</tt>, это form builder, подобный тому, который предоставляется <tt>form_for</tt> (фактически <tt>form_for</tt> внутри себя вызывает <tt>fields_for</tt>).</p>
+
+<h4 id="relying-on-record-identification">3. Положитесь на идентификацию записи</h4>
+<p>Модель Article непосредственно доступна пользователям приложения, таким образом &#8212; следуя лучшим рекомендациям разработки на Rails &#8212; вы должены объявить ее как <strong>ресурс</strong>.</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+resources :articles
+</pre></div>
+<div class='info'><p>Объявление ресурса имеет несколько побочных эффектов. Смотрите <a href="/rails-routing">Роутинг в Rails</a> для подробностей по настройке и использованию ресурсов.</p></div>
+<p>Когда работаем с ресурсами RESTful, вызовы <tt>form_for</tt> могут стать значительно проще, если их основывать на <strong>идентификации записи</strong>. Вкратце, вы должны всего лишь передать экземпляр модели и позволить Rails выяснить имя модели и остальное:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+## Создание новой статьи
+# длинный стиль:
+form_for(@article, :url => articles_path)
+# то же самое, короткий стиль (используется идентификация записи):
+form_for(@article)
+
+## Редактирование существующей статьи
+# длинный стиль:
+form_for(@article, :url => article_path(@article), :html => { :method => "put" })
+# короткий стиль:
+form_for(@article)
+</pre></div>
+<p>Отметьте, как вызов короткого стиля <tt>form_for</tt> остается тем же самым, не зависимо от того, будет запись новой или существующей. Идентификация записи достаточно сообразительная, чтобы выяснить, новая ли запись, запрашивая <tt>record.new_record?</tt>. Она также выбирает правильный путь для подтверждения и имя, основывающееся на классе объекта.</p>
+<p>Rails также автоматически надлежаще установит <tt>class</tt> и <tt>id</tt> формы: форма, создающая статью, будет иметь <tt>id</tt> и <tt>class</tt> <tt>new_article</tt>. Если редактируется статья с id 23, <tt>class</tt> будет установлен как <tt>edit_article</tt>, и id как <tt>edit_article_23</tt>. Эти атрибуты будут опускаться для краткости далее в этом руководстве.</p>
+<div class='warning'><p>Когда используется <span class="caps">STI</span> (single-table inheritance, наследование с единой таблицей) с вашими моделями, нельзя полагаться на идентификацию записей субкласса, если только родительский класс определен ресурсом. Вы должны определить имя модели, <tt>:url</tt> и <tt>:method</tt> явно.</p></div>
+
+<h5 id="dealing-with-namespaces">3.1 Работаем с пространствами имен</h5>
+<p>Если вы создали пространство имен маршрутов, <tt>form_for</tt> также можно изящно сократить. Если у приложения есть пространство имен admin, то</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+form_for [:admin, @article]
+</pre></div>
+<p>создаст форму, которая передается контроллеру статей в пространстве имен admin (передача в <tt>admin_article_path(@article)</tt> в случае с обновлением). Если у вас несколько уровней пространства имен, тогда синтаксис подобный:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+form_for [:admin, :management, @article]
+</pre></div>
+<p>Более подробно о системе маршрутизации Rails и связанным соглашениям смотрите <a href="/rails-routing">Роутинг в Rails</a>.</p>
+
+<h4 id="how-do-forms-with-put-or-delete-methods-work">4. Как формы работают с методами <span class="caps">PUT</span> или <span class="caps">DELETE</span>?</h4>
+<p>Фреймворк Rails поддерживает дизайн RESTful в ваших приложениях, что означает частое использование запросов &#8220;<span class="caps">PUT</span>&#8221; и &#8220;<span class="caps">DELETE</span>&#8221; (помимо &#8220;<span class="caps">GET</span>&#8221; и &#8220;<span class="caps">POST</span>&#8221;). Однако, большинство браузеров <em>не поддерживают</em> методы, иные, чем &#8220;<span class="caps">GET</span>&#8221; и &#8220;<span class="caps">POST</span>&#8221;, когда они исходят от подтверждаемых форм.</p>
+<p>Rails работает с этой проблемой, эмулируя другие методы с помощью <span class="caps">POST</span> со скрытым полем, названным <tt>"_method"</tt>, который установлен для отражения желаемого метода:</p>
+<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+form_tag(search_path, :method =&gt; &quot;put&quot;)
+</pre></div>
+<p>результат:</p>
+<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<form accept-charset="UTF-8" action="/search" method="post">
+  <div style="margin:0;padding:0">
+    <input name="_method" type="hidden" value="put" />
+    <input name="utf8" type="hidden" value="&#x2713;" />
+    <input name="authenticity_token" type="hidden" value="f755bb0ed134b76c432144748a6d4b7a7ddf2b71" />
+  </div>
+  ...
+</pre></div>
+<p>При парсинге данных POST, Rails принимает в счет специальный параметр <tt>_method</tt> и действует с ним, как будто бы был определен этот метод <span class="caps">HTTP</span> (&#8220;<span class="caps">PUT</span>&#8221; в этом примере).</p>
