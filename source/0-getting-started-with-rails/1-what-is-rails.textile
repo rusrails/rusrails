@@ -53,7 +53,7 @@ h1. Что такое Rails?
 <p>Action View управляет представлениями в вашем приложении на Rails. На выходе по умолчанию создается <span class="caps">HTML</span> или <span class="caps">XML</span>. Action View управляет рендерингом шаблонов, включая вложенные и частичные шаблоны, и содержит встроенную поддержку <span class="caps">AJAX</span>. Шаблоны вьюх более детально раскрываются в другом руководстве, <a href="/layouts-and-rendering-in-rails">Макеты и рендеринг в Rails</a></p>
 
 <h6 id="action-dispatch">2.1.3 Action Dispatch</h6>
-<p>Action Dispatch управляет маршрутизацией веб запросов и рассылкой их так, как вы желаете, или к вашему приложению, или к любому другому приложению Rack. Приложения Rack - это продвинутая тема, раскрыта в отдельном руководстве, <a href="http://edgeguides.rubyonrails.org/rails_on_rack.html">Rails on Rack</a></p><div class ="hidden">TODO</div>
+<p>Action Dispatch управляет маршрутизацией веб запросов и рассылкой их так, как вы желаете, или к вашему приложению, или к любому другому приложению Rack. Приложения Rack - это продвинутая тема, раскрыта в отдельном руководстве, <a href="http://edgeguides.rubyonrails.org/rails_on_rack.html">Rails on Rack</a></p>
 
 <h5 id="action-mailer">2.2 Action Mailer</h5>
 <p>Action Mailer это фреймворк для встроенных служб e-mail. Action Mailer можно использовать, чтобы получать и обрабатывать входящую электронную почту, или чтобы рассылать простой текст или или сложные multipart электронные письма, основанные на гибких шаблонах.</p>

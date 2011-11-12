@@ -8,7 +8,8 @@ describe "categories/show.html.haml" do
     assign :category, @category
     @page1 = mock_model(Page, :name=>"Lady", :path => "category-1/lady").as_null_object
     @page2 = mock_model(Page, :name=>"Good", :path => "category-1/good").as_null_object
-    @category.stub(:pages).and_return [@page1, @page2]
+    @category.stub_chain(:pages, :enabled).and_return [@page1, @page2]
+    view.stub :page_cache_key
     render
   end
 

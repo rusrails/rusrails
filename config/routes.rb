@@ -7,7 +7,7 @@ Urrr::Application.routes.draw do
     resources :pages, :except => :show
     resources :discussions, :except => [:new, :create, :show]
     resources :says, :except => [:new, :create, :show]
-    root :to => "pages#index"
+    root :to => "says#index"
   end
 
   resources :discussions, :only => [:index, :show, :new, :create] do

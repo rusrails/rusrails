@@ -1,7 +1,7 @@
 - cache page_cache_key do
   %h1= @category.name
   != textile(@category.text)
-  - unless @category.pages.empty?
+  - unless @category.pages.enabled.empty?
     %ul
       - @category.pages.enabled.each do |page|
         %li= link_to page.name, page.path

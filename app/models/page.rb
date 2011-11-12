@@ -11,19 +11,19 @@ class Page < ActiveRecord::Base
     indexes :text
     has :enabled
   end
-  
-  scope :ordered, order("show_order DESC",:created_at)
+
+  scope :ordered, order(:show_order, :created_at)
   scope :enabled, where(:enabled=>true).ordered
   scope :without_text, select("id,name,url_match,category_id,enabled,show_order,created_at")
-  
+
   def self.matching url_match
     where(:url_match => url_match).first
   end
-  
+
   def path
     (category ? category.path : "") + "/" + url_match
   end
-  
+
   def validates_path
     require 'uri'
     uri = URI.parse path
@@ -31,7 +31,7 @@ class Page < ActiveRecord::Base
   rescue
     errors.add :url_match
   end
-  
+
   def homepage_not_belongs_category
     errors.add :url_match, "homepage belongs to category" if url_match=='home'&&category_id
   end
