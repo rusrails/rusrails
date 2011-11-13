@@ -10,6 +10,7 @@ gem 'nokogiri'
 gem 'haml'
 gem 'sass'
 gem 'RedCloth'
+gem 'rails_config'
 
 gem 'jquery-rails'
 gem 'capistrano'

@@ -112,6 +112,8 @@ GEM
       activesupport (= 3.0.10)
       bundler (~> 1.0)
       railties (= 3.0.10)
+    rails_config (0.2.5)
+      activesupport (>= 3.0)
     railties (3.0.10)
       actionpack (= 3.0.10)
       activesupport (= 3.0.10)
@@ -178,6 +180,7 @@ DEPENDENCIES
   nokogiri
   rack (= 1.2.3)
   rails (= 3.0.10)
+  rails_config
   rake (= 0.8.7)
   rspec-mocks
   rspec-rails
