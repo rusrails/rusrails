@@ -133,6 +133,11 @@ div#container {
   text-align: center;
 }
 
+#github_link {
+  color: #4183c4;
+  font-weight: bold;
+}
+
 #morsbox_link {
   color: #f00;
   font-weight: bold;
@@ -143,6 +148,11 @@ div#container {
   color: #33CCFF;
   font-weight: bold;
   padding: 0 100px;
+}
+
+#locum_link {
+  color: #206d82;
+  font-weight: bold;
 }
 
 /* content */
