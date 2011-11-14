@@ -6,6 +6,8 @@ gem 'rack', '1.2.3' # quick fix for locum
 gem 'mysql2', '= 0.2.7'     # version needed for rails 3.0
 gem 'thinking-sphinx'
 gem 'devise'
+gem "oa-oauth", :require => "omniauth/oauth"
+
 gem 'nokogiri'
 gem 'haml'
 gem 'sass'
