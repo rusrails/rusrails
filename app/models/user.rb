@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
     read_attribute(:name) || email.split('@').first
   end
 
-  def find_or_create_for_github(response)
+  def self.find_or_create_for_github(response)
     data = response['extra']['user_hash']
     if user = User.where(:oauth_id => data["id"], :oauth => 'github').first
       user
