@@ -4,3 +4,6 @@ oauth:
   github:
     key: key
     secret: secret
+  twitter:
+    key: key
+    secret: secret

@@ -26,4 +26,18 @@ class User < ActiveRecord::Base
       user
     end
   end
+
+  def self.find_or_create_for_twitter(response)
+    debugger
+    data = response['extra']['user_hash']
+    if user = User.where(:oauth_id => data["id"], :oauth => 'twitter').first
+      user
+    else
+      user = User.new :email => "#{data["id"]}@#{data['screen_name']}.twitter", :password => Devise.friendly_token[0,20], :name => data["name"]
+      user.oauth_id = data["id"]
+      user.oauth = 'twitter'
+      user.save
+      user
+    end
+  end
 end
