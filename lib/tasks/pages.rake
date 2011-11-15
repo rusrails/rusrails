@@ -73,6 +73,7 @@ namespace :pages do
     homepage.show_order = -1
     file_load File.join(Rails.root, "source", "home.textile"), homepage
 
+    ApplicationController.new.expire_fragment %r{.*}
     puts "complete"
   end
 end
