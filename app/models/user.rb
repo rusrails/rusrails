@@ -7,8 +7,6 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :name
 
-  validates :email, :uniqueness => {:scope => :oauth}
-
   has_many :discussions, :as => :author
   has_many :says, :as => :author
 
@@ -21,10 +19,9 @@ class User < ActiveRecord::Base
     if user = User.where(:oauth_id => data["id"], :oauth => 'github').first
       user
     else
-      user = User.new(:email => data["email"], :password => Devise.friendly_token[0,20])
+      user = User.new :email => "#{data["email"]}.github", :password => Devise.friendly_token[0,20], :name => data["name"]
       user.oauth_id = data["id"]
       user.oauth = 'github'
-      user.name = data["name"]
       user.save
       user
     end
