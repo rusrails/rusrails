@@ -49,7 +49,4 @@ private
   rescue ActiveRecord::RecordNotFound
     render_404
   end
-
-  def get_categories
-  end
 end

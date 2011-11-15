@@ -256,6 +256,12 @@ div.code_container {
   width: 80%;
 }
 
+#oauth_panel{
+  margin-top:20px;
+  padding:5px 0;
+  background: #fffefe;
+}
+
 /* discussions */
 
 .discussion_title {
