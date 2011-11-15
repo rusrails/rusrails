@@ -11,7 +11,8 @@ module ApplicationHelper
   end
 
   def menu
-    return if @categories.nil? or @categories.empty?
+    @categories ||= Category.enabled
+    return if @categories.empty?
     builder = Nokogiri::HTML::Builder.new do |doc|
       doc.ul :class => "menu" do
         @categories.each do |cat|

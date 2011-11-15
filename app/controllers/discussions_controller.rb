@@ -3,7 +3,6 @@ class DiscussionsController < ApplicationController
 
   def index
     @discussions = Discussion.enabled
-    @categories = Category.enabled
   end
 
   def new
@@ -28,6 +27,5 @@ class DiscussionsController < ApplicationController
 
   def show
     @discussion = Discussion.enabled.find params[:id]
-    @categories = Category.enabled
   end
 end

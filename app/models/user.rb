@@ -14,6 +14,15 @@ class User < ActiveRecord::Base
     read_attribute(:name) || email.split('@').first
   end
 
+  def update_with_password(params={})
+    if oauth
+      params.except! :current_password, :email, :password, :password_confirmation
+      update_without_password params
+    else
+      super
+    end
+  end
+
   def self.find_or_create_for_github(response)
     data = response['extra']['user_hash']
     if user = User.where(:oauth_id => data["id"], :oauth => 'github').first
@@ -28,7 +37,6 @@ class User < ActiveRecord::Base
   end
 
   def self.find_or_create_for_twitter(response)
-    debugger
     data = response['extra']['user_hash']
     if user = User.where(:oauth_id => data["id"], :oauth => 'twitter').first
       user

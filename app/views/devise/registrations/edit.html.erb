@@ -3,22 +3,26 @@
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
   <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
+  <% unless resource.try :oauth %>
+    <div><%= f.label :email %><br />
+    <%= f.email_field :email %></div>
+  <% end %>
 
   <% if resource_name == :user %>
     <div><%= f.label :name %><br />
     <%= f.text_field :name %></div>
   <% end %>
 
-  <div><%= f.label :password %> <i>(оставьте пустым, если не хотите его менять)</i><br />
-  <%= f.password_field :password %></div>
+  <% unless resource.try :oauth %>
+    <div><%= f.label :password %> <i>(оставьте пустым, если не хотите его менять)</i><br />
+    <%= f.password_field :password %></div>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
+    <div><%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation %></div>
 
-  <div><%= f.label :current_password %> <i>(нам нужен ваш текущий пароль для подтверждения изменений)</i><br />
-  <%= f.password_field :current_password %></div>
+    <div><%= f.label :current_password %> <i>(нам нужен ваш текущий пароль для подтверждения изменений)</i><br />
+    <%= f.password_field :current_password %></div>
+  <% end %>
 
   <div><%= f.submit "Обновить" %></div>
 <% end %>
