@@ -60,7 +60,7 @@ namespace :deploy do
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} db:seed"
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:import"
   end
-  after "deploy:migrate", "deploy:seed_database"
+  # after "deploy:migrate", "deploy:seed_database"
 
   desc "Start application"
   task :start, :roles => :app do
@@ -80,6 +80,8 @@ namespace :deploy do
   task :restart_ts, :roles => :app do
     thinking_sphinx.rebuild
   end
+
+  after "deploy:migrate", "deploy:restart_ts"
   after "deploy:seed_database", "deploy:restart_ts"
 end
 
