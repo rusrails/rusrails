@@ -7,3 +7,6 @@ oauth:
   twitter:
     key: key
     secret: secret
+  google:
+    key: key
+    secret: secret
