@@ -30,6 +30,6 @@ Devise.setup do |config|
 
   config.omniauth :github, Settings.oauth.github.key, Settings.oauth.github.secret
   config.omniauth :twitter, Settings.oauth.twitter.key, Settings.oauth.twitter.secret
-  config.omniauth :google_oauth2, Settings.oauth.google.key, Settings.oauth.google.secret
+  config.omniauth :google_oauth2, Settings.oauth.google.key, Settings.oauth.google.secret, :name => 'google'
 
 end

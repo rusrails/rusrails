@@ -49,13 +49,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  def self.find_or_create_for_google_oauth2(response)
+  def self.find_or_create_for_google(response)
     data = response['user_info']
-    if user = User.where(:oauth_id => data["id"], :oauth => 'google').first
+    if user = User.where(:oauth_id => data["email"], :oauth => 'google').first
       user
     else
-      user = User.new :email => "#{data['email']}.google", :password => Devise.friendly_token[0,20], :name => data["name"]
-      user.oauth_id = data["id"]
+      user = User.new :email => "#{data['email']}.google", :password => Devise.friendly_token[0,20]
+      user.oauth_id = data["email"]
       user.oauth = 'google'
       user.save
       user
