@@ -28,4 +28,8 @@ class DiscussionsController < ApplicationController
   def show
     @discussion = Discussion.enabled.find params[:id]
   end
+
+  def preview
+    render :layout => false
+  end
 end

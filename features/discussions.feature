@@ -34,8 +34,8 @@ Feature: Discussion interesting questions
 
     When I go to the new discussion page
     And I fill in the following:
-      | discussion_title                  | Have question |
-      | discussion_says_attributes_0_text | My question   |
+      | discussion_title | Have question |
+      | say_text         | My question   |
     And I press "discussion_submit"
     Then I should be on the discussion "Have question" page
     And I should see element ".notice"

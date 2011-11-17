@@ -302,6 +302,16 @@ div.code_container {
   color: #a10f15;
 }
 
+#preview {
+  background: #eee;
+  padding: 0 10px;
+}
+
+#preview_link {
+  display: block;
+  margin-bottom: 15px;
+}
+
 /* secret */
 
 #admin_panel {

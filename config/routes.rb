@@ -15,7 +15,9 @@ Rusrails::Application.routes.draw do
 
   resources :discussions, :only => [:index, :show, :new, :create] do
     resources :says, :only => :create
+    get :preview, :on => :collection
   end
+
   resource :search, :only => :show, :controller => :search
 
   root :to => "pages#index"

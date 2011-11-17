@@ -6,7 +6,7 @@ $(function() {
     'xml xhtml xslt html    /javascripts/shBrushXml.js'
   );
   SyntaxHighlighter.all();
-  
+
   var text = "Поиск..";
   $("#search").focus(function() {
     $(this).addClass("active");
@@ -21,4 +21,13 @@ $(function() {
   $('#category_filter_form #section_id').change(function(){
     $('#category_filter_form').submit()
   });
+});
+
+$(function() {
+  $('#preview_link').click(function(){
+    $.get($(this).attr('href'), {text: $('#say_text').val()}, function(data){
+      $('#preview').html(data)
+    });
+    return false;
+  })
 });
