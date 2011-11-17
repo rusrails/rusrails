@@ -6,10 +6,14 @@
 
 - @discussions.each do |discussion|
   .discussion_title
-    %div.title
+    .title
       = link_to discussion.title, discussion_path(discussion)
       = "(#{discussion.says.enabled.count} высказываний)"
-    %div.author
+    - if discussion.subject
+      .subject
+        к теме
+        = link_to "'#{discussion.subject.name}'", discussion.subject.path
+    .author
       автор
       = author_of(discussion)
       = ","

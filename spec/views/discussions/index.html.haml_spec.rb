@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "discussions/index.html.haml" do
   let(:author){ mock_model User, :name => "Steve" }
   let(:says){ double "says" }
-  let(:discussion){ mock_model Discussion, :title => "New question", :author => author, :says => says, :updated_at => Time.now }
+  let(:discussion){ mock_model Discussion, :title => "New question", :author => author, :says => says, :updated_at => Time.now, :subject => nil }
   before do
     view.stub :current_author => true
     says.stub_chain(:enabled, :count).and_return 10

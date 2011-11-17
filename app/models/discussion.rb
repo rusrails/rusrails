@@ -5,7 +5,7 @@ class Discussion < ActiveRecord::Base
 
   validates :title, :presence => true, :length => { :maximum => 250 }
 
-  attr_accessible :title, :says_attributes
+  attr_accessible :title, :says_attributes, :subject_id, :subject_type
 
   accepts_nested_attributes_for :says
 

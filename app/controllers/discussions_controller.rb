@@ -6,7 +6,7 @@ class DiscussionsController < ApplicationController
   end
 
   def new
-    @discussion = Discussion.new
+    @discussion = Discussion.new params[:discussion]
     @say = @discussion.says.build
   end
 

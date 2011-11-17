@@ -189,6 +189,10 @@ div.code_container {
 
 .note tt, .info tt {border:none; background: none; padding: 0;}
 
+#links{
+  height:50px;
+}
+
 #prev_link{
   float:left;
 }
@@ -210,6 +214,12 @@ div.code_container {
   background: url('/images/arrow_right.png') no-repeat right top;
   padding:35px 0 15px;
   min-width:35px;
+}
+
+div.discussions {
+  margin: 10px 0 0 85px;
+  padding-top:10px;
+  border-top: 1px solid red;
 }
 
 /* search */
@@ -268,6 +278,10 @@ div.code_container {
   margin-top: 15px;
   padding: 5px 10px;
   background: #eee;
+}
+
+.discussion_title .subject {
+  font-style: oblique;
 }
 
 .discussion_title .title a {

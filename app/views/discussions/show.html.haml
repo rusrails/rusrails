@@ -1,4 +1,8 @@
 %h1= @discussion.title
+- if @discussion.subject
+  %h3
+    к теме
+    = link_to "'#{@discussion.subject.name}'", @discussion.subject.path
 - @discussion.says.enabled.each do |say|
   .say
     .name= author_of say
@@ -16,7 +20,7 @@
           = link_to "Textile", "http://textile.thresholdstate.com/", :target => "_blank"
       .right_value
         = f.text_area :text
-        = link_to "Предварительный просмотр", preview_discussions_path, :id => :preview_link
+        = preview_link
     %div
       .right_value= f.submit "Отправить"
 - else

@@ -4,7 +4,7 @@ describe "discussions/show.html.haml" do
   let(:say1){ mock_model Say, :text => "Some questions", :updated_at => Time.now - 10.days, :author => mock_model(User, :name => "Steve") }
   let(:say2){ mock_model Say, :text => "I answer you", :updated_at => Time.now, :author => mock_model(User, :name => "Bill") }
   let(:says){ [say1, say2] }
-  let(:discussion){ mock_model Discussion, :title => "New question", :updated_at => Time.now }
+  let(:discussion){ mock_model Discussion, :title => "New question", :updated_at => Time.now, :subject => nil }
   before do
     view.stub :current_author => false
     discussion.stub_chain(:says, :enabled).and_return says
