@@ -30,10 +30,10 @@ set :unicorn_start_cmd, "rvm use 1.9.3 do bundle exec unicorn_rails -Dc #{unicor
 # - for unicorn - #
 namespace :deploy do
   task :copy_configuration do
-    run "cp #{shared_path}/config/database.yml #{current_path}/config/database.yml"
-    run "cp #{shared_path}/config/production.yml #{current_path}/config/settings/production.yml"
+    run "cp #{shared_path}/config/database.yml #{current_release}/config/database.yml"
+    run "cp #{shared_path}/config/production.yml #{current_release}/config/settings/production.yml"
   end
-  after "deploy:symlink", "deploy:copy_configuration"
+  before "deploy:assets:precompile", "deploy:copy_configuration"
 
   task :migrate, :roles => :db do
     rake = fetch(:rake, "rake")
@@ -51,7 +51,7 @@ namespace :deploy do
     run "cd #{directory}; #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:migrate"
   end
 
-  after "deploy:copy_configuration", "deploy:migrate"
+  after "deploy:symlink", "deploy:migrate"
 
   desc "Seed the database with the required data"
   task :seed_database do

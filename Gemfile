@@ -18,6 +18,7 @@ gem 'capistrano'
 
 gem 'execjs'
 gem 'therubyracer'
+gem 'unicorn'
 
 group :assets do
   gem 'sass-rails', " ~> 3.1.0"
