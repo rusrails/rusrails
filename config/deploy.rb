@@ -1,5 +1,6 @@
 require "bundler/capistrano"
 require 'thinking_sphinx/deploy/capistrano'
+load 'deploy/assets'
 
 set :application, "rusrails"
 

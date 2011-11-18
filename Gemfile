@@ -16,6 +16,9 @@ gem 'rails_config'
 gem 'jquery-rails'
 gem 'capistrano'
 
+gem 'execjs'
+gem 'therubyracer'
+
 group :assets do
   gem 'sass-rails', " ~> 3.1.0"
   gem 'coffee-rails', " ~> 3.1.0"
