@@ -1,3 +1,4 @@
+# encoding: utf-8
 Given /^a user with email "([^"]*)" and password "([^"]*)"$/ do |email, password|
   Factory :user, :email => email, :password => password
 end
@@ -15,7 +16,7 @@ When /^I sign in as user "(.*)\/(.*)"$/ do |email, password|
   step %{I go to the sign in as user page}
   step %{I fill in "user_email" with "#{email}"}
   step %{I fill in "user_password" with "#{password}"}
-  step %{I press "user_submit"}
+  step %{I press "Войти"}
 end
 
 When /^I return next time as user$/ do

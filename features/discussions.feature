@@ -36,14 +36,14 @@ Feature: Discussion interesting questions
     And I fill in the following:
       | discussion_title | Have question |
       | say_text         | My question   |
-    And I press "discussion_submit"
+    And I press "Начать обсуждение"
     Then I should be on the discussion "Have question" page
     And I should see element ".notice"
     And I should see "Have question"
     And I should see "My question"
 
     When I go to the new discussion page
-    And I press "discussion_submit"
+    And I press "Начать обсуждение"
     Then I should be on the discussions page
     And I should see element ".alert"
 

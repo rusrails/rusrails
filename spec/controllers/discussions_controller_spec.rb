@@ -32,7 +32,7 @@ describe DiscussionsController do
     end
 
     it "finds enabled discussion" do
-      Discussion.enabled.should_receive(:find).with 10
+      Discussion.enabled.should_receive(:find).with "10"
       get :show, :id => 10
     end
 
