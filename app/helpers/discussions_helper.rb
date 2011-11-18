@@ -1,3 +1,4 @@
+# encoding: utf-8
 module DiscussionsHelper
   def author_of(resource)
     author = resource.author

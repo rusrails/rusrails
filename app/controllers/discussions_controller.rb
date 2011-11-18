@@ -1,3 +1,4 @@
+# encoding: utf-8
 class DiscussionsController < ApplicationController
   before_filter :check_author, :only => [:new, :create]
 

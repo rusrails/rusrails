@@ -1,3 +1,4 @@
+# encoding: utf-8
 class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def github
     @user = User.find_or_create_for_github env["omniauth.auth"]
