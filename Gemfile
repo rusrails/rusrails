@@ -16,10 +16,6 @@ gem 'rails_config'
 gem 'jquery-rails'
 gem 'capistrano'
 
-group :production do
-  gem 'unicorn'
-end
-
 group :assets do
   gem 'sass-rails', " ~> 3.1.0"
   gem 'coffee-rails', " ~> 3.1.0"
