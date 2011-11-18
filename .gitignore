@@ -8,6 +8,7 @@ log/*.log
 log/*.pid
 public/system
 public/system/*
+public/assets
 tmp/**/*
 .bundle
 Capfile
