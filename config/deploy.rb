@@ -15,16 +15,16 @@ set :user, "hosting_mik-die"
 
 set :use_sudo, false
 set :deploy_to, dpath
-set :bundle_cmd, '/var/lib/gems/1.8/bin/bundle'
+set :bundle_cmd, 'rvm use 1.9.3 do bundle'
 set :bundle_flags, "--deployment"
 
 role :web, "hydrogen.locum.ru"
 role :app, "hydrogen.locum.ru"
 role :db,  "hydrogen.locum.ru", :primary => true
 
-set :unicorn_rails, "/var/lib/gems/1.8/bin/unicorn_rails"
 set :unicorn_conf, "/etc/unicorn/rusrails.mik-die.rb"
 set :unicorn_pid, "/var/run/unicorn/rusrails.mik-die.pid"
+set :unicorn_start_cmd, "rvm use 1.9.3 do bundle exec unicorn_rails -Dc #{unicorn_conf}"
 
 # - for unicorn - #
 namespace :deploy do
@@ -61,8 +61,6 @@ namespace :deploy do
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:import"
   end
   # after "deploy:migrate", "deploy:seed_database"
-
-  set :unicorn_start_cmd, "rvm use 1.9.3 do bundle exec unicorn_rails -Dc #{unicorn_conf}"
 
   desc "Start application"
   task :start, :roles => :app do
