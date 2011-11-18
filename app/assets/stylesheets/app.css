@@ -28,7 +28,7 @@ body {
 a#logo {
   display: block;
   height:119px;
-  background: url('../images/rusrails.png') center center no-repeat;
+  background: url('/assets/rusrails.png') center center no-repeat;
   width: 60%;
   float: left;
 }
@@ -162,26 +162,26 @@ div#container {
 }
 
 div.warning {
-  background: #f9d9d8 url(../images/tab_red.gif) no-repeat left top;
+  background: #f9d9d8 url('/assets/tab_red.gif') no-repeat left top;
   padding: 1em 1em 0.25em 48px;
   margin: 0.25em 0 1.5em 0;
 }
 
 div.code_container {
-  background: #EEE url(../images/tab_grey.gif) no-repeat left top;
+  background: #EEE url('/assets/tab_grey.gif') no-repeat left top;
   padding: 0.25em 1em 0.5em 48px;
   margin: 0.25em 0 1.5em 0;
 }
 
 .note {
-  background: #fff9d8 url(../images/tab_note.gif) no-repeat left top;
+  background: #fff9d8 url('/assets/tab_note.gif') no-repeat left top;
   border: none;
   padding: 1em 1em 0.25em 48px;
   margin: 0.25em 0 1.5em 0;
 }
 
 .info {
-  background: #d5e9f6 url(../images/tab_info.gif) no-repeat left top;
+  background: #d5e9f6 url('/assets/tab_info.gif') no-repeat left top;
   border: none;
   padding: 1em 1em 0.25em 48px;
   margin: 0.25em 0 1.5em 0;
@@ -199,7 +199,7 @@ div.code_container {
 
 #prev_link a {
   display:block;
-  background: url('/images/arrow_left.png') no-repeat left top;
+  background: url('/assets/arrow_left.png') no-repeat left top;
   padding:35px 0 15px;
   min-width:35px;
   margin-left:85px;
@@ -211,7 +211,7 @@ div.code_container {
 
 #next_link a {
   display:block;
-  background: url('/images/arrow_right.png') no-repeat right top;
+  background: url('/assets/arrow_right.png') no-repeat right top;
   padding:35px 0 15px;
   min-width:35px;
 }

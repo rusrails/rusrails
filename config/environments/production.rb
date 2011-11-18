@@ -47,5 +47,14 @@ Rusrails::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.action_mailer.default_url_options = {:host => "domain.com"}
+  config.action_mailer.default_url_options = {:host => "rusrails.ru"}
+
+  # Compress JavaScript and CSS
+  config.assets.compress = true
+
+  # Don't fallback to assets pipeline
+  config.assets.compile = false
+
+  # Generate digests for assets URLs
+  config.assets.digest = true
 end

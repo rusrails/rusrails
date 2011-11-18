@@ -16,6 +16,12 @@ gem 'rails_config'
 gem 'jquery-rails'
 gem 'capistrano'
 
+group :assets do
+  gem 'sass-rails', " ~> 3.1.0"
+  gem 'coffee-rails', " ~> 3.1.0"
+  gem 'uglifier'
+end
+
 group :development, :test do
   gem "rspec-rails"
   gem "cucumber-rails"
