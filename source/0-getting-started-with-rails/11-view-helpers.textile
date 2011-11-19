@@ -1,45 +1,49 @@
 h1. Хелперы вьюхи
 
-<p>Хелперы вьюхи обитают в <tt>app/helpers</tt> и представляют небольшие фрагменты повторно используемого кода для вьюх. В нашем случае, мы хотим метод, который заносит в строку несколько объектов вместе, используя их атрибуты имени и соединяя их запятыми. Так как это нужно для шаблона Post show, мы поместим код в PostsHelper.</p>
-<p>Откройте <tt>app/helpers/posts_helper.rb</tt> и добавьте следующее:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Хелперы вьюхи обитают в +app/helpers+ и представляют небольшие фрагменты повторно используемого кода для вьюх. В нашем случае, мы хотим метод, который заносит в строку несколько объектов вместе, используя их атрибуты имени и соединяя их запятыми. Так как это нужно для шаблона Post show, мы поместим код в PostsHelper.
+
+Откройте +app/helpers/posts_helper.rb+ и добавьте следующее:
+
+<erb>
 module PostsHelper
   def join_tags(post)
-    post.tags.map { |t| t.name }.join(&quot;, &quot;)
+    post.tags.map { |t| t.name }.join(", ")
   end
 end
-</pre></div>
-<p>Теперь можно отредактировать вьюху в <tt>app/views/posts/show.html.erb</tt>, чтобы она выглядела так:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+</erb>
 
-&lt;p&gt;
-  &lt;b&gt;Name:&lt;/b&gt;
-  &lt;%= @post.name %&gt;
-&lt;/p&gt;
+Теперь можно отредактировать вьюху в +app/views/posts/show.html.erb+, чтобы она выглядела так:
 
-&lt;p&gt;
-  &lt;b&gt;Title:&lt;/b&gt;
-  &lt;%= @post.title %&gt;
-&lt;/p&gt;
+<erb>
+<p class="notice"><%= notice %></p>
 
-&lt;p&gt;
-  &lt;b&gt;Content:&lt;/b&gt;
-  &lt;%= @post.content %&gt;
-&lt;/p&gt;
+<p>
+  <b>Name:</b>
+  <%= @post.name %>
+</p>
 
-&lt;p&gt;
-  &lt;b&gt;Tags:&lt;/b&gt;
-  &lt;%= join_tags(@post) %&gt;
-&lt;/p&gt;
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
 
-&lt;h2&gt;Comments&lt;/h2&gt;
-&lt;%= render @post.comments %&gt;
+<p>
+  <b>Content:</b>
+  <%= @post.content %>
+</p>
 
-&lt;h2&gt;Add a comment:&lt;/h2&gt;
-&lt;%= render &quot;comments/form&quot; %&gt;
+<p>
+  <b>Tags:</b>
+  <%= join_tags(@post) %>
+</p>
+
+<h2>Comments</h2>
+<%= render @post.comments %>
+
+<h2>Add a comment:</h2>
+<%= render "comments/form" %>
 
 
-&lt;%= link_to 'Edit Post', edit_post_path(@post) %&gt; |
-&lt;%= link_to 'Back to Posts', posts_path %&gt; |
-</pre></div>
+<%= link_to 'Edit Post', edit_post_path(@post) %> |
+<%= link_to 'Back to Posts', posts_path %> |
+</erb>

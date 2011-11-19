@@ -1,28 +1,35 @@
 h1. Добавляем вторую модель
 
-<p>Теперь, когда Вы увидели, что содержится в модели, построенной скаффолдом, настало время добавить вторую модель в приложение. Вторая модель будет управлять комментариями на публикации блога.</p>
+Теперь, когда вы увидели, что содержится в модели, построенной скаффолдом, настало время добавить вторую модель в приложение. Вторая модель будет управлять комментариями на публикации блога.
 
-<h4 id="generating-a-model">1. Генерируем модель</h4>
-<p>Модели в Rails используют имена в единственном числе, а их соответствующие таблицы базы данных используют имя во множественном числе. Для модели, содержащей комментарии, соглашением будет использовать имя Comment. Даже если Вы не хотите использовать существующий аппарат настройки с помощью скаффолда, большинство разработчиков на Rails все равно используют генераторы для создания моделей и контроллеров. Чтобы создать новую модель, запустите эту команду в своем терминале:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+h4. Генерируем модель
+
+Модели в Rails используют имена в единственном числе, а их соответствующие таблицы базы данных используют имя во множественном числе. Для модели, содержащей комментарии, соглашением будет использовать имя Comment. Даже если Вы не хотите использовать существующий аппарат настройки с помощью скаффолда, большинство разработчиков на Rails все равно используют генераторы для создания моделей и контроллеров. Чтобы создать новую модель, запустите эту команду в своем терминале:
+
+<shell>
 $ rails generate model Comment commenter:string body:text post:references
-</pre></div>
-<p>Эта команда создаст четыре файла:</p>
-<ul>
-	<li><tt>app/models/comment.rb</tt> &#8211; модель</li>
-	<li><tt>db/migrate/20100207235629_create_comments.rb</tt> &#8211; миграцию</li>
-	<li><tt>test/unit/comment_test.rb</tt> и <tt>test/fixtures/comments.yml</tt> &#8211; каркасы для тестирования.</li>
-</ul>
-<p>Сначала взглянем на <tt>comment.rb</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Comment &lt; ActiveRecord::Base
+</shell>
+
+Эта команда создаст четыре файла:
+
+* +app/models/comment.rb+ - модель
+* +db/migrate/20100207235629_create_comments.rb+ - миграцию
+* +test/unit/comment_test.rb+ и +test/fixtures/comments.yml+ - каркасы для тестирования.
+
+Сначала взглянем на +comment.rb+:
+
+<ruby>
+class Comment < ActiveRecord::Base
   belongs_to :post
 end
-</pre></div>
-<p>Это очень похоже на модель <tt>post.rb</tt>, которую мы видели ранее. Разница в строке <tt>belongs_to :post</tt>, которая устанавливает <em>связь</em> Active Record. Вы ознакомитесь со связями в следующем разделе руководства.</p>
-<p>В дополнение к модели, Rails также сделал миграцию для создания соответствующей таблицы базы данных:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class CreateComments &lt; ActiveRecord::Migration
+</ruby>
+
+Это очень похоже на модель +post.rb+, которую мы видели ранее. Разница в строке +belongs_to :post+, которая устанавливает _связь_ Active Record. Вы ознакомитесь со связями в следующем разделе руководства.
+
+В дополнение к модели, Rails также сделал миграцию для создания соответствующей таблицы базы данных:
+
+<ruby>
+class CreateComments < ActiveRecord::Migration
   def change
     create_table :comments do |t|
       t.string :commenter
@@ -35,169 +42,195 @@ class CreateComments &lt; ActiveRecord::Migration
     add_index :comments, :post_id
   end
 end
-</pre></div>
-<p>Строка <tt>t.references</tt> устанавливает столбец внешнего ключа для связи между двумя моделями. А строка <tt>add_index</tt> настраивает индексирование для этого столбца связи. Далее запускаем миграцию:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Строка +t.references+ устанавливает столбец внешнего ключа для связи между двумя моделями. А строка +add_index+ настраивает индексирование для этого столбца связи. Далее запускаем миграцию:
+
+<shell>
 $ rake db:migrate
-</pre></div>
-<p>Rails достаточно сообразителен, чтобы запускать только те миграции, которые еще не были запущены для текущей базы данных, в нашем случае Вы увидите:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+Rails достаточно сообразителен, чтобы запускать только те миграции, которые еще не были запущены для текущей базы данных, в нашем случае Вы увидите:
+
+<shell>
 ==  CreateComments: migrating =================================================
 -- create_table(:comments)
-   -&gt; 0.0017s
+   -> 0.0017s
 ==  CreateComments: migrated (0.0018s) ========================================
-</pre></div>
+</shell>
 
-<h4 id="associating-models">2. Связываем модели</h4>
-<p>Связи Active Record позволяют Вам легко объявлять отношения между двумя моделями. В случае с комментариями и публикациями, Вы можете описать отношения следующим образом:</p>
-<ul>
-	<li>Каждый комментарий принадлежит одной публикации</li>
-	<li>Одна публикация может иметь много комментариев</li>
-</ul>
-<p>Фактически, это очень близко к синтаксису, который использует Rails для объявления этой связи. Вы уже видели строку кода в модели Comment, которая делает каждый комментарий принадлежащим публикации:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Comment &lt; ActiveRecord::Base
+h4. Связываем модели
+
+Связи Active Record позволяют Вам легко объявлять отношения между двумя моделями. В случае с комментариями и публикациями, Вы можете описать отношения следующим образом:
+
+* Каждый комментарий принадлежит одной публикации
+* Одна публикация может иметь много комментариев
+
+Фактически, это очень близко к синтаксису, который использует Rails для объявления этой связи. Вы уже видели строку кода в модели Comment, которая делает каждый комментарий принадлежащим публикации:
+
+<ruby>
+class Comment < ActiveRecord::Base
   belongs_to :post
 end
-</pre></div>
-<p>Вам нужно отредактировать файл <tt>post.rb</tt>, добавив другую сторону связи:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Post &lt; ActiveRecord::Base
-  validates :name,  :presence =&gt; true
-  validates :title, :presence =&gt; true,
-                    :length =&gt; { :minimum =&gt; 5 }
+</ruby>
+
+Вам нужно отредактировать файл post.rb, добавив другую сторону связи:
+
+<ruby>
+class Post < ActiveRecord::Base
+  validates :name,  :presence => true
+  validates :title, :presence => true,
+                    :length => { :minimum => 5 }
 
   has_many :comments
 end
-</pre></div>
-<p>Эти два объявления автоматически делают доступным большое количество возможностей. Например, если у Вас есть переменная экземпляра <tt>@post</tt>, содержащая публикацию, Вы можете получить все комментарии, принадлежащие этой публикации, как массив <tt>@post.comments</tt>.</p>
-<div class='info'><p>Более подробно о связях Active Record смотрите руководство <a href="/active-record-associations">Связи Active Record</a>.</p></div>
+</ruby>
 
-<h4 id="adding-a-route">3. Добавляем маршрут для комментариев</h4>
-<p>Как в случае с контроллером <tt>home</tt>, нам нужно добавить маршрут, чтобы Rails знал, по какому адресу мы хотим пройти, чтобы увидеть <tt>комментарии</tt>. Снова открыв файл <tt>config/routes.rb</tt>, Вы увидите вхождение, добавленное автоматически для <tt>posts</tt> с помощью генератора скаффолда, <tt>resources :posts</tt>, отредактируйте его следующим образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Эти два объявления автоматически делают доступным большое количество возможностей. Например, если у Вас есть переменная экземпляра +@post+, содержащая публикацию, Вы можете получить все комментарии, принадлежащие этой публикации, как массив +@post.comments+.
+
+TIP: Более подробно о связях Active Record смотрите руководство "Связи Active Record":/active-record-associations.
+
+h4. Добавляем маршрут для комментариев
+
+Как в случае с контроллером +home+, нам нужно добавить маршрут, чтобы Rails знал, по какому адресу мы хотим пройти, чтобы увидеть +комментарии+. Снова открыв файл +config/routes.rb+, вы увидете вхождение, добавленное автоматически для posts с помощью генератора скаффолда, +resources :posts+, отредактируйте его следующим образом:
+
+<ruby>
 resources :posts do
   resources :comments
 end
-</pre></div>
-<p>Это создаст <tt>comments</tt> как <em>вложенный ресурс</em> в <tt>posts</tt>. Это другая сторона захвата иерархических отношений, существующих между публикациями и комментариями.</p>
-<div class='info'><p>Более подробно о роутинге написано в руководстве <a href="/rails-routing">Роутинг в Rails</a>.</p></div>
+</ruby>
 
-<h4 id="generating-a-controller">4. Генерируем контроллер</h4>
-<p>Имея модель, обратим свое снимание на создание соответствующего контроллера. Вот генератор для него:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Это создаст +comments+ как _вложенный ресурс_ в +posts+. Это другая сторона захвата иерархических отношений, существующих между публикациями и комментариями.
+
+TIP: Более подробно о роутинге написано в руководстве "Роутинг в Rails":/rails-routing.
+
+h4. Генерируем контроллер
+
+Имея модель, обратим свое снимание на создание соответствующего контроллера. Вот генератор для него:
+
+<shell>
 $ rails generate controller Comments
-</pre></div>
-<p>Создадутся шесть файлов и пустая директория:</p>
-<ul>
-	<li><tt>app/controllers/comments_controller.rb</tt> &#8211; контроллер</li>
-	<li><tt>app/helpers/comments_helper.rb</tt> &#8211; хелпер для вьюх</li>
-	<li><tt>test/functional/comments_controller_test.rb</tt> &#8211; функциональные тесты для контроллера</li>
-	<li><tt>test/unit/helpers/comments_helper_test.rb</tt> &#8211; Юнит-тесты для хелпера</li>
-	<li><tt>app/views/comments/</tt> &#8211; Вьюхи контроллера хранятся здесь</li>
-	<li><tt>app/assets/stylesheets/comment.css.scss</tt> &#8211; каскадная таблица стилей для контроллера</li>
-	<li><tt>app/assets/javascripts/comment.js.coffee</tt> &#8211; CoffeeScript для контроллера</li>
-</ul>
-<p>Как и в любом другом блоге, наши читатели будут создавать свои комментарии сразу после прочтения публикации, и после добавления комментария они будут направляться обратно на страницу отображения публикации и видеть, что их комментарий уже отражен. В связи с этим, наш <tt>CommentsController</tt> служит как средство создания комментариев и удаления <span class="caps">SPAM</span>-комментариев, если они будут.</p>
-<p>Сначала мы расширим шаблон Post show (<tt>/app/views/posts/show.html.erb</tt>), чтобы он позволял добавить новый комментарий:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+</shell>
 
-&lt;p&gt;
-  &lt;b&gt;Name:&lt;/b&gt;
-  &lt;%= @post.name %&gt;
-&lt;/p&gt;
+Создадутся шесть файлов и пустая директория:
 
-&lt;p&gt;
-  &lt;b&gt;Title:&lt;/b&gt;
-  &lt;%= @post.title %&gt;
-&lt;/p&gt;
+* +app/controllers/comments_controller.rb+ - контроллер
+* +app/helpers/comments_helper.rb+ - хелпер для вьюх
+* +test/functional/comments_controller_test.rb+ - функциональные тесты для контроллера
+* +test/unit/helpers/comments_helper_test.rb+ - Юнит-тесты для хелпера
+* +app/views/comments/+ - Вьюхи контроллера хранятся здесь
+* +app/assets/stylesheets/comment.css.scss+ - каскадная таблица стилей для контроллера
+* +app/assets/javascripts/comment.js.coffee+ - CoffeeScript для контроллера
 
-&lt;p&gt;
-  &lt;b&gt;Content:&lt;/b&gt;
-  &lt;%= @post.content %&gt;
-&lt;/p&gt;
+Как и в любом другом блоге, наши читатели будут создавать свои комментарии сразу после прочтения публикации, и после добавления комментария они будут направляться обратно на страницу отображения публикации и видеть, что их комментарий уже отражен. В связи с этим, наш +CommentsController+ служит как средство создания комментариев и удаления SPAM-комментариев, если они будут.
 
-&lt;h2&gt;Add a comment:&lt;/h2&gt;
-&lt;%= form_for([@post, @post.comments.build]) do |f| %&gt;
-  &lt;div class=&quot;field&quot;&gt;
-    &lt;%= f.label :commenter %&gt;&lt;br /&gt;
-    &lt;%= f.text_field :commenter %&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;field&quot;&gt;
-    &lt;%= f.label :body %&gt;&lt;br /&gt;
-    &lt;%= f.text_area :body %&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;actions&quot;&gt;
-    &lt;%= f.submit %&gt;
-  &lt;/div&gt;
-&lt;% end %&gt;
+Сначала мы расширим шаблон Post show ( +/app/views/posts/show.html.erb+ ), чтобы он позволял добавить новый комментарий:
 
-&lt;%= link_to 'Edit Post', edit_post_path(@post) %&gt; |
-&lt;%= link_to 'Back to Posts', posts_path %&gt; |
-</pre></div>
-<p>Это добавит форму на страницу отображения публикации, создающую новый комментарий, которая вызывает экшн <tt>create</tt> в <tt>CommentsController</tt>, давайте напишем его:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class CommentsController &lt; ApplicationController
+<erb>
+<p class="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @post.name %>
+</p>
+
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+
+<p>
+  <b>Content:</b>
+  <%= @post.content %>
+</p>
+
+<h2>Add a comment:</h2>
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <div class="field">
+    <%= f.label :commenter %><br />
+    <%= f.text_field :commenter %>
+  </div>
+  <div class="field">
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<%= link_to 'Edit Post', edit_post_path(@post) %> |
+<%= link_to 'Back to Posts', posts_path %> |
+</erb>
+
+Это добавит форму на страницу отображения публикации, создающую новый комментарий, которая вызывает экшн +create+ в +CommentsController+, давайте напишем его:
+
+<ruby>
+class CommentsController < ApplicationController
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.create(params[:comment])
     redirect_to post_path(@post)
   end
 end
-</pre></div>
-<p>Тут все немного сложнее, чем Вы видели в контроллере для публикаций. Это побочный эффект вложения, которое вы настроили; каждый запрос к комментарию отслеживает публикацию, к которой комментарий присоединен, таким образом сначала решаем вопрос с получением публикации, выполнив поиск модели Post.</p>
-<p>Кроме того, код пользуется преимуществом некоторых методов, доступных для связей. Мы используем метод <tt>create</tt> на <tt>@post.comments</tt>, чтобы создать и сохранить комментарий. Это автоматически связывает комментарий так, что он принадлежит к определенной публикации.</p>
-<p>Как только мы создали новый комментарий, мы возвращаем пользователя обратно на оригинальную публикацию, используя хелпер <tt>post_path(@post)</tt>. Как мы уже видели, он вызывает экшн <tt>show</tt> в <tt>PostsController</tt>, который, в свою очередь, рендерит шаблон <tt>show.html.erb</tt>. В этом месте мы хотим отображать комментарии, поэтому давайте добавим следующее в <tt>app/views/posts/show.html.erb</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p class=&quot;notice&quot;&gt;&lt;%= notice %&gt;&lt;/p&gt;
+</ruby>
 
-&lt;p&gt;
-  &lt;b&gt;Name:&lt;/b&gt;
-  &lt;%= @post.name %&gt;
-&lt;/p&gt;
+Тут все немного сложнее, чем вы видели в контроллере для публикаций. Это побочный эффект вложения, которое вы настроили; каждый запрос к комментарию отслеживает публикацию, к которой комментарий присоединен, таким образом сначала решаем вопрос с получением публикации, выполнив поиск модели Post.
 
-&lt;p&gt;
-  &lt;b&gt;Title:&lt;/b&gt;
-  &lt;%= @post.title %&gt;
-&lt;/p&gt;
+Кроме того, код пользуется преимуществом некоторых методов, доступных для связей. Мы используем метод +create+ на +@post.comments+, чтобы создать и сохранить комментарий. Это автоматически связывает комментарий так, что он принадлежит к определенной публикации.
 
-&lt;p&gt;
-  &lt;b&gt;Content:&lt;/b&gt;
-  &lt;%= @post.content %&gt;
-&lt;/p&gt;
+Как только мы создали новый комментарий, мы возвращаем пользователя обратно на оригинальную публикацию, используя хелпер +post_path(@post)+. Как мы уже видели, он вызывает экшн +show+ в +PostsController+, который, в свою очередь, рендерит шаблон +show.html.erb+. В этом месте мы хотим отображать комментарии, поэтому давайте добавим следующее в +app/views/posts/show.html.erb+.
 
-&lt;h2&gt;Comments&lt;/h2&gt;
-&lt;% @post.comments.each do |comment| %&gt;
-  &lt;p&gt;
-    &lt;b&gt;Commenter:&lt;/b&gt;
-    &lt;%= comment.commenter %&gt;
-  &lt;/p&gt;
+<erb>
+<p class="notice"><%= notice %></p>
 
-  &lt;p&gt;
-    &lt;b&gt;Comment:&lt;/b&gt;
-    &lt;%= comment.body %&gt;
-  &lt;/p&gt;
-&lt;% end %&gt;
+<p>
+  <b>Name:</b>
+  <%= @post.name %>
+</p>
 
-&lt;h2&gt;Add a comment:&lt;/h2&gt;
-&lt;%= form_for([@post, @post.comments.build]) do |f| %&gt;
-  &lt;div class=&quot;field&quot;&gt;
-    &lt;%= f.label :commenter %&gt;&lt;br /&gt;
-    &lt;%= f.text_field :commenter %&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;field&quot;&gt;
-    &lt;%= f.label :body %&gt;&lt;br /&gt;
-    &lt;%= f.text_area :body %&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;actions&quot;&gt;
-    &lt;%= f.submit %&gt;
-  &lt;/div&gt;
-&lt;% end %&gt;
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
 
-&lt;br /&gt;
+<p>
+  <b>Content:</b>
+  <%= @post.content %>
+</p>
 
-&lt;%= link_to 'Edit Post', edit_post_path(@post) %&gt; |
-&lt;%= link_to 'Back to Posts', posts_path %&gt; |
-</pre></div>
-<p>Теперь в Вашем блоге можно добавлять публикации и комментарии и отображать их в нужных местах.</p>
+<h2>Comments</h2>
+<% @post.comments.each do |comment| %>
+  <p>
+    <b>Commenter:</b>
+    <%= comment.commenter %>
+  </p>
+
+  <p>
+    <b>Comment:</b>
+    <%= comment.body %>
+  </p>
+<% end %>
+
+<h2>Add a comment:</h2>
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <div class="field">
+    <%= f.label :commenter %><br />
+    <%= f.text_field :commenter %>
+  </div>
+  <div class="field">
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<br />
+
+<%= link_to 'Edit Post', edit_post_path(@post) %> |
+<%= link_to 'Back to Posts', posts_path %> |
+</erb>
+
+Теперь в вашем блоге можно добавлять публикации и комментарии и отображать их в нужных местах.
