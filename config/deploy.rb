@@ -54,14 +54,14 @@ namespace :deploy do
   after "deploy:symlink", "deploy:migrate"
 
   desc "Seed the database with the required data"
-  task :seed_database do
+  task :seed do
     rake = fetch(:rake, "rake")
     rails_env = fetch(:rails_env, "production")
 
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} db:seed"
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:import"
   end
-  # after "deploy:migrate", "deploy:seed_database"
+  # after "deploy:migrate", "deploy:seed"
 
   desc "Start application"
   task :start, :roles => :app do
@@ -83,7 +83,7 @@ namespace :deploy do
   end
 
   after "deploy:migrate", "deploy:restart_ts"
-  after "deploy:seed_database", "deploy:restart_ts"
+  after "deploy:seed", "deploy:restart_ts"
 end
 
 set :keep_releases, 3

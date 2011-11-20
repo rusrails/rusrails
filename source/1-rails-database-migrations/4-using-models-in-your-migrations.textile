@@ -1,11 +1,16 @@
 h1. Использование моделей в ваших миграциях
 
-<p>При создании или обновлении данных зачастую хочется использовать одну из ваших моделей. Ведь они же существуют, чтобы облегчить доступ к лежащим в их основе данным. Это осуществимо, но с некоторыми предостережениями.</p>
-<p>Например, проблемы происходят, когда модель использует столбцы базы данных, которые (1) в текущий момент отсутствуют в базе данных и (2) будут созданы в этой или последующих миграциях.</p>
-<p>Рассмотрим пример, когда Алиса и Боб работают над одним и тем же участком кода, содержащим модель <tt>Product</tt></p>
-<p>Боб ушел в отпуск.</p>
-<p>Алиса создала миграцию для таблицы <tt>products</tt>, добавляющую новый столбец, и инициализировала его. Она также добавила в модели Product валидацию на новый столбец.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+При создании или обновлении данных зачастую хочется использовать одну из ваших моделей. Ведь они же существуют, чтобы облегчить доступ к лежащим в их основе данным. Это осуществимо, но с некоторыми предостережениями.
+
+Например, проблемы происходят, когда модель использует столбцы базы данных, которые (1) в текущий момент отсутствуют в базе данных и (2) будут созданы в этой или последующих миграциях.
+
+Рассмотрим пример, когда Алиса и Боб работают над одним и тем же участком кода, содержащим модель +Product+
+
+Боб ушел в отпуск.
+
+Алиса создала миграцию для таблицы +products+, добавляющую новый столбец, и инициализировала его. Она также добавила в модели Product валидацию на новый столбец.
+
+<ruby>
 # db/migrate/20100513121110_add_flag_to_product.rb
 
 class AddFlagToProduct < ActiveRecord::Migration
@@ -14,16 +19,19 @@ class AddFlagToProduct < ActiveRecord::Migration
     Product.all.each { |f| f.update_attributes!(:flag => 'false') }
   end
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+<ruby>
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
   validates_presence_of :flag
 end
-</pre></div>
-<p>Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице <tt>products</tt>, и снова добавила в модели Product валидацию на новый столбец.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице +products+, и снова добавила в модели Product валидацию на новый столбец.
+
+<ruby>
 # db/migrate/20100515121110_add_fuzz_to_product.rb
 
 class AddFuzzToProduct < ActiveRecord::Migration
@@ -32,33 +40,40 @@ class AddFuzzToProduct < ActiveRecord::Migration
     Product.all.each { |f| f.update_attributes! :fuzz => 'fuzzy' }
   end
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+<ruby>
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
   validates_presence_of :flag
   validates_presence_of :fuzz
 end
-</pre></div>
-<p>Обе миграции работают для Алисы.</p>
+</ruby>
 
-<p>Боб вернулся с отпуска, и:</p>
-<ol>
-<li>обновил исходники - содержащие обе миграции и последнюю версию модели Product.</li>
-<li>запустил невыполненные миграции с помощью <tt>rake db:migrate</tt>, включая обновляющие модель <tt>Product</tt>.</li>
-</ol>
-<p>Миграции не выполнятся, так как при попытке сохранения модели, она попытается валидировать второй добавленный столбец, отсутствующий в базе данных на момент запуска <u>первой</u> миграции.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Обе миграции работают для Алисы.
+
+Боб вернулся с отпуска, и:
+
+# обновил исходники - содержащие обе миграции и последнюю версию модели Product.
+# запустил невыполненные миграции с помощью +rake db:migrate+, включая обновляющие модель +Product+.
+
+Миграции не выполнятся, так как при попытке сохранения модели, она попытается валидировать второй добавленный столбец, отсутствующий в базе данных на момент запуска _первой_ миграции.
+
+<shell>
 rake aborted!
 An error has occurred, this and all later migrations canceled:
 
 undefined method `fuzz' for #<Product:0x000001049b14a0>
-</pre></div>
-<p>Это исправляется путем создания локальной модели внутри миграции. Это предохраняет rails от запуска валидаций, поэтому миграции проходят.</p>
-<p>При использовании искусственной модели неплохо бы вызвать <tt>Product.reset_column_information</tt> для обновления кэша ActiveRecord для модели Product до обновления данных в базе данных.</p>
-<p>Если бы Алиса сделала бы так, проблем бы не было:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</shell>
+
+Это исправляется путем создания локальной модели внутри миграции. Это предохраняет rails от запуска валидаций, поэтому миграции проходят.
+
+При использовании искусственной модели неплохо бы вызвать +Product.reset_column_information+ для обновления кэша ActiveRecord для модели Product до обновления данных в базе данных.
+
+Если бы Алиса сделала бы так, проблем бы не было:
+
+<ruby>
 # db/migrate/20100513121110_add_flag_to_product.rb
 
 class AddFlagToProduct < ActiveRecord::Migration
@@ -66,12 +81,13 @@ class AddFlagToProduct < ActiveRecord::Migration
   end
   def change
     add_column :products, :flag, :int
-    Product.reset_column_information  
+    Product.reset_column_information
     Product.all.each { |f| f.update_attributes!(:flag => false) }
   end
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+<ruby>
 # db/migrate/20100515121110_add_fuzz_to_product.rb
 
 class AddFuzzToProduct < ActiveRecord::Migration
@@ -83,4 +99,4 @@ class AddFuzzToProduct < ActiveRecord::Migration
     Product.all.each { |f| f.update_attributes! :fuzz => 'fuzzy' }
   end
 end
-</pre></div>
+</ruby>

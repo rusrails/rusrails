@@ -1,112 +1,142 @@
 h1. Написание миграции
 
-<p>Как только Вы создали свою миграцию, используя один из генераторов, пришло время поработать!</p>
+Как только вы создали свою миграцию, используя один из генераторов, пришло время поработать!
 
-<h4 id="creating-a-table">1. Создание таблицы</h4>
-<p>Метод <tt>create_table</tt> миграции будет одной из Ваших рабочих лошадок. Обычное использование такое</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Создание таблицы
+
+Метод +create_table+ миграции будет одной из ваших рабочих лошадок. Обычное использование такое
+
+<ruby>
 create_table :products do |t|
   t.string :name
 end
-</pre></div>
-<p>Это создаст таблицу <tt>products</tt> со столбцом <tt>name</tt> (и, как обсуждалось выше, подразумеваемым столбцом <tt>id</tt>).</p>
-<p>Объект, переданный в блок, позволяет Вам создавать столбцы в таблице. Есть два способа сделать это: первая (традиционная) форма выглядит так</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-create_table :products do |t|
-  t.column :name, :string, :null =&gt; false
-end
-</pre></div>
-<p>Вторая форма, так называемая &#8220;секси&#8221; миграция, опускает несколько избыточный метод <tt>column</tt>. Вместо этого, методы <tt>string</tt>, <tt>integer</tt>, и т.д. создают столбцы этого типа. Дополнительные параметры те же самые.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-create_table :products do |t|
-  t.string :name, :null =&gt; false
-end
-</pre></div>
-<p>По умолчанию <tt>create_table</tt> создаст первичный ключ, названный <tt>id</tt>. Вы можете изменить имя первичного ключа с помощью свойства <tt>:primary_key</tt> (не забудьте также обновить соответствующую модель), или, если вы вообще не хотите первичный ключ (например, соединительная таблица для связи <span class="caps">многие ко многим</span>), можно указать <tt>:id => false</tt>. Если нужно передать базе данных специфичные свойства, вы можете поместить фрагмент <span class="caps">SQL</span> в свойство <tt>:options</tt>. Например,</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-create_table :products, :options =&gt; &quot;ENGINE=BLACKHOLE&quot; do |t|
-  t.string :name, :null =&gt; false
-end
-</pre></div>
-<p>добавит <tt>ENGINE=BLACKHOLE</tt> к выражению <span class="caps">SQL</span>, используемому для создания таблицы (при использовании MySQL по умолчанию передается <tt>ENGINE=InnoDB</tt>).</p>
+</ruby>
 
-<h4 id="changing-tables">2. Изменение таблиц</h4>
-<p>Близкий родственник <tt>create_table</tt> это <tt>change_table</tt>, используемый для изменения существующих таблиц. Он используется подобно <tt>create_table</tt>, но у объекта, передаваемого в блок, больше методов. Например</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Это создаст таблицу +products+ со столбцом +name+ (и, как обсуждалось выше, подразумеваемым столбцом +id+).
+
+Объект, переданный в блок, позволяет вам создавать столбцы в таблице. Есть два способа сделать это: первая (традиционная) форма выглядит так
+
+<ruby>
+create_table :products do |t|
+  t.column :name, :string, :null => false
+end
+</ruby>
+
+Вторая форма, так называемая "секси" миграция, опускает несколько избыточный метод +column+. Вместо этого, методы +string+, +integer+, и т.д. создают столбцы этого типа. Дополнительные параметры те же самые.
+
+<ruby>
+create_table :products do |t|
+  t.string :name, :null => false
+end
+</ruby>
+
+По умолчанию +create_table+ создаст первичный ключ, названный +id+. Вы можете изменить имя первичного ключа с помощью свойства +:primary_key+ (не забудьте также обновить соответствующую модель), или, если вы вообще не хотите первичный ключ (например, соединительная таблица для связи _многие ко многим_), можно указать +:id => false+. Если нужно передать базе данных специфичные свойства, вы можете поместить фрагмент +SQL+ в свойство +:options+. Например,
+
+<ruby>
+create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
+  t.string :name, :null => false
+end
+</ruby>
+
+добавит +ENGINE=BLACKHOLE+ к выражению SQL, используемому для создания таблицы (при использовании MySQL по умолчанию передается +ENGINE=InnoDB+).
+
+h4. Изменение таблиц
+
+Близкий родственник +create_table+ это +change_table+, используемый для изменения существующих таблиц. Он используется подобно +create_table+, но у объекта, передаваемого в блок, больше методов. Например
+
+<ruby>
 change_table :products do |t|
   t.remove :description, :name
   t.string :part_number
   t.index :part_number
   t.rename :upccode, :upc_code
 end
-</pre></div>
-<p>удаляет столбцы <tt>description</tt> и <tt>name</tt>, создает столбец <tt>part_number</tt> и добавляет индекс на него. Наконец, он переименовывает столбец <tt>upccode</tt>. Это то же самое, что и такой код</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+удаляет столбцы +description+ и +name+, создает столбец +part_number+ и добавляет индекс на него. Наконец, он переименовывает столбец +upccode+. Это то же самое, что и такой код
+
+<ruby>
 remove_column :products, :description
 remove_column :products, :name
 add_column :products, :part_number, :string
 add_index :products, :part_number
 rename_column :products, :upccode, :upc_code
-</pre></div>
-<p>Вам не нужно повторять имя таблицы, если сгруппировать все выражения, относящиеся к модификации одной конкретной таблицы. Индивидуальные имена методов изменения становятся также короче, например, <tt>remove_column</tt> становится <tt>remove</tt>, и <tt>add_index</tt> становится просто <tt>index</tt>.</p>
+</ruby>
 
-<h4 id="special-helpers">3. Специальные хелперы</h4>
-<p>Active Record предоставляет некоторые ярлыки для обычной функциональности. Вот, например, обычно добавляются два столбца <tt>created_at</tt> и <tt>updated_at</tt>, поэтому есть метод, который делает непосредственно это:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Вам не нужно повторять имя таблицы, если сгруппировать все выражения, относящиеся к модификации одной конкретной таблицы. Индивидуальные имена методов изменения становятся также короче, например, +remove_column+ становится +remove+, и +add_index+ становится просто +index+.
+
+h4. Специальные хелперы
+
+Active Record предоставляет некоторые ярлыки для обычной функциональности. Вот, например, обычно добавляются два столбца +created_at+ и +updated_at+, поэтому есть метод, который делает непосредственно это:
+
+<ruby>
 create_table :products do |t|
   t.timestamps
 end
-</pre></div>
-<p>создает новую таблицу products с этими двумя столбцами (плюс столбец <tt>id</tt>), в то время как</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+создает новую таблицу products с этими двумя столбцами (плюс столбец +id+), в то время как
+
+<ruby>
 change_table :products do |t|
   t.timestamps
 end
-</pre></div>
-<p>добавляет эти столбцы в существующую таблицу.</p>
-<p>Другой хелпер называется <tt>references</tt> (также доступен как <tt>belongs_to</tt>). В простой форме он только добавляет немного читаемости кода</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+добавляет эти столбцы в существующую таблицу.
+
+Другой хелпер называется +references+ (также доступен как +belongs_to+). В простой форме он только добавляет немного читаемости кода
+
+<ruby>
 create_table :products do |t|
   t.references :category
 end
-</pre></div>
-<p>создаст столбец <tt>category_id</tt> подходящего типа. Отметьте, что Вы указали имя модели, а не имя столбца. Active Record добавил <tt>_id</tt> за Вас. Если у Вас есть полиморфные связи <tt>belongs_to</tt>, то <tt>references</tt> создаст оба требуемых столбца:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+создаст столбец +category_id+ подходящего типа. Отметьте, что вы указали имя модели, а не имя столбца. Active Record добавил +_id+ за вас. Если у вас есть полиморфные связи +belongs_to+, то +references+ создаст оба требуемых столбца:
+
+<ruby>
 create_table :products do |t|
-  t.references :attachment, :polymorphic =&gt; {:default =&gt; 'Photo'}
+  t.references :attachment, :polymorphic => {:default => 'Photo'}
 end
-</pre></div>
-<p>добавит столбец <tt>attachment_id</tt> и строковый столбец <tt>attachment_type</tt> со значением по умолчанию &#8216;Photo&#8217;.</p>
-<div class='note'><p>Хелпер <tt>references</tt> фактически не создает для вас внешний ключ как ограничение ссылочной целостности. Для этого нужно использовать <tt>execute</tt> или плагин, который предоставляет <a href="/rails-database-migrations/active-record-and-referential-integrity">поддержку внешних ключей</a>.</p></div>
-<p>Если Вам недостаточно хелперов, предоставленных Active Record, можете использовать функцию <tt>execute</tt> для запуска произвольного <span class="caps">SQL</span>.</p>
-<p>Больше подробностей и примеров отдельных методов содержится в документации по <span class="caps">API</span>, в частности, документация для <a href="http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html"><tt>ActiveRecord::ConnectionAdapters::SchemaStatements</tt></a> (который обеспечивает методы, доступные в методах <tt>up</tt> и <tt>down</tt>),  <a href="http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html"><tt>ActiveRecord::ConnectionAdapters::TableDefinition</tt></a> (который обеспечивает методы, доступные у объекта, переданного методом <tt>create_table</tt>) и <a href="http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html"><tt>ActiveRecord::ConnectionAdapters::Table</tt></a> (который обеспечивает методы, доступные у объекта, переданного методом <tt>change_table</tt>).</p>
+</ruby>
 
-<h4 id="writing-your-change-method">4. Пишем свой метод <tt>change</tt></h4>
+добавит столбец +attachment_id+ и строковый столбец +attachment_type+ со значением по умолчанию "Photo".
 
-<p>Метод <tt>change</tt> устраняет необходимость писать оба метода <tt>up</tt> и <tt>down</tt> в тех случаях, когда Rails знает, как обратить изменения автоматически. На текущий момент метод <tt>change</tt> поддерживает только эти определения миграции:</p>
-<ul>
-  <li><tt>add_column</tt></li>
-  <li><tt>add_index</tt></li>
-  <li><tt>add_timestamps</tt></li>
-  <li><tt>create_table</tt></li>
-  <li><tt>remove_timestamps</tt></li>
-  <li><tt>rename_column</tt></li>
-  <li><tt>rename_index</tt></li>
-  <li><tt>rename_table</tt></li>
-</ul>
-<p>Если собираетесь использовать иные методы, следует писать методы <tt>up</tt> и <tt>down</tt>.</p>
+NOTE. Хелпер +references+ фактически не создает для вас внешний ключ как ограничение ссылочной целостности. Для этого нужно использовать +execute+ или плагин, который предоставляет "поддержку внешних ключей":/rails-database-migrations/active-record-and-referential-integrity.
 
-<h4 id="writing-your-down-method">5. Пишем свой метод <tt>down</tt></h4>
-<p>Метод <tt>down</tt> Вашей миграции должен вернуть назад изменения, выполненные методом <tt>up</tt>. Другими словами, схема базы данных не должна измениться, если Вы выполните  <tt>up</tt>, а затем <tt>down</tt>. Например, если Вы создали таблицу в методе <tt>up</tt>, вы должны ее удалить в методе <tt>down</tt>. Благоразумно выполнять действия в обратном порядке методу <tt>up</tt>. Например,</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class ExampleMigration &lt; ActiveRecord::Migration
+Если вам недостаточно хелперов, предоставленных Active Record, можете использовать функцию +execute+ для запуска произвольного SQL.
+
+Больше подробностей и примеров отдельных методов содержится в документации по API, в частности, документация для "<tt>ActiveRecord::ConnectionAdapters::SchemaStatements</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (который обеспечивает методы, доступные в методах +up+ и +down+), "<tt>ActiveRecord::ConnectionAdapters::TableDefinition</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (который обеспечивает методы, доступные у объекта, переданного методом +create_table+) и "<tt>ActiveRecord::ConnectionAdapters::Table</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html (который обеспечивает методы, доступные у объекта, переданного методом +change_table+).
+
+h4. Пишем свой метод +change+
+
+Метод +change+ устраняет необходимость писать оба метода +up+ и +down+ в тех случаях, когда Rails знает, как обратить изменения автоматически. На текущий момент метод +change+ поддерживает только эти определения миграции:
+
+* +add_column+
+* +add_index+
+* +add_timestamps+
+* +create_table+
+* +remove_timestamps+
+* +rename_column+
+* +rename_index+
+* +rename_table+
+
+Если собираетесь использовать иные методы, следует писать методы +up+ и +down+.
+
+h4. Пишем свой метод +down+
+
+Метод +down+ вашей миграции должен вернуть назад изменения, выполненные методом +up+. Другими словами, схема базы данных не должна измениться, если вы выполните +up+, а затем +down+. Например, если вы создали таблицу в методе +up+, то должны ее удалить в методе +down+. Благоразумно выполнять действия в обратном порядке методу +up+. Например,
+
+<ruby>
+class ExampleMigration < ActiveRecord::Migration
 
   def up
     create_table :products do |t|
       t.references :category
     end
     #добавляем внешний ключ
-    execute &lt;&lt;-SQL
+    execute <<-SQL
       ALTER TABLE products
         ADD CONSTRAINT fk_products_categories
         FOREIGN KEY (category_id)
@@ -121,9 +151,10 @@ class ExampleMigration &lt; ActiveRecord::Migration
   def down
     rename_column :users, :email_address, :email
     remove_column :users, :home_page_url
-    execute &quot;ALTER TABLE products DROP FOREIGN KEY fk_products_categories&quot;
+    execute "ALTER TABLE products DROP FOREIGN KEY fk_products_categories"
     drop_table :products
   end
 end
-</pre></div>
-<p>Иногда Ваша миграция делает то, что невозможно отменить, например, уничтожает какую-либо информацию. В таких случаях, когда Вы не сможете отменить миграцию, Вы можете вызвать <tt>IrreversibleMigration</tt> из Вашего метода <tt>down</tt>. Если кто-либо попытается отменить Вышу миграцию, будет отображена ошибка, что это не может быть выполнено.</p>
+</ruby>
+
+Иногда ваша миграция делает то, что невозможно отменить, например, уничтожает какую-либо информацию. В таких случаях, когда вы не сможете отменить миграцию, можете вызвать +IrreversibleMigration+ из вашего метода +down+. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.

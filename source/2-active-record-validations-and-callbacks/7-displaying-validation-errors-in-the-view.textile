@@ -1,90 +1,114 @@
 h1. Отображение ошибок валидации во вьюхе
 
-<p>Rails поддерживает официальный плагин для отображения сообщений об ошибке ваших моделей в ваших шаблонах вьюх. Можно установить его как плагин или как гем.</p>
+Rails поддерживает официальный плагин для отображения сообщений об ошибке ваших моделей в ваших шаблонах вьюх. Можно установить его как плагин или как гем.
 
-<h4 id="installing-as-a-plugin">1. Установка как плагин</h4>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+h4. Установка как плагин
+
+<shell>
 $ rails plugin install git://github.com/joelmoss/dynamic_form.git
-</pre></div>
+</shell>
 
-<h4 id="installing-as-a-gem">2. Установка как гем</h4>
-<p>Добавьте это в свой Gemfile:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Установка как гем
+
+Добавьте это в свой Gemfile:
+
+<ruby>
 gem "dynamic_form"
-</pre></div>
-<p>Теперь у вас есть доступ к этим двум методам в своих шаблонах вьюх.</p>
+</ruby>
 
-<h4 id="error-messages-and-error-messages-for">3. <tt>error_messages</tt> и <tt>error_messages_for</tt></h4>
-<p>При создании формы с помощью хелпера <tt>form_for</tt>, в нем можно использовать метод <tt>error_messages</tt> для отображения всех сообщений о проваленных валидациях для текущего экземпляра модели.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Product &lt; ActiveRecord::Base
+Теперь у вас есть доступ к этим двум методам в своих шаблонах вьюх.
+
+h4. +error_messages+ и +error_messages_for+
+
+При создании формы с помощью хелпера +form_for+, в нем можно использовать метод +error_messages+ для отображения всех сообщений о проваленных валидациях для текущего экземпляра модели.
+
+<ruby>
+class Product < ActiveRecord::Base
   validates :description, :value, :presence => true
   validates :value, :numericality => true, :allow_nil => true
 end
-</pre></div>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= form_for(@product) do |f| %&gt;
-  &lt;%= f.error_messages %&gt;
-  &lt;p&gt;
-    &lt;%= f.label :description %&gt;&lt;br /&gt;
-    &lt;%= f.text_field :description %&gt;
-  &lt;/p&gt;
-  &lt;p&gt;
-    &lt;%= f.label :value %&gt;&lt;br /&gt;
-    &lt;%= f.text_field :value %&gt;
-  &lt;/p&gt;
-  &lt;p&gt;
-    &lt;%= f.submit &quot;Create&quot; %&gt;
-  &lt;/p&gt;
-&lt;% end %&gt;
-</pre></div>
-<p>Теперь, если вы подтвердите форму с пустыми полями, Вы получите следующее (по умолчанию стилей не будет):</p>
-<p><img src="/system/images/error_messages30.png" title="Сообщения об ошибке" alt="Сообщения об ошибке" /></p>
-<p>Также можно использовать хелпер <tt>error_messages_for</tt> для отображения сообщений об ошибке от переданной в шаблон вьюхи модели. Это очень похоже на предыдущий пример и приведет к абсолютно тому же результату.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= error_messages_for :product %&gt;
-</pre></div>
-<p>Отображемый текст для каждого сообщения об ошибке всегда будет формироваться из имени атрибута, содержащего ошибку, с заглавной буквы, и последущим за ним собственно сообщения об ошибке.</p>
-<p>И хелпер <tt>form.error_messages</tt>, и хелпер <tt>error_messages_for</tt> принимают опции, позволяющие настроить элемент <tt>div</tt>, содержащий сообщения, изменить текст заголовка, сообщение после текста заголовка и тег, используемый для элемента, определяющего заголовок.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= f.error_messages :header_message =&gt; &quot;Invalid product!&quot;,
-  :message =&gt; &quot;You'll need to fix the following fields:&quot;,
-  :header_tag =&gt; :h3 %&gt;
-</pre></div>
-<p>Это приведет к следующему содержимому</p>
-<p><img src="/system/images/customized_error_messages.png" title="Настроенные сообщения об ошибках" alt="Настроенные сообщения об ошибках" /></p>
-<p>Если указать <tt>nil</tt> для любой из этих опций, это избавит от соответствующих секций <tt>div</tt>.</p>
+</ruby>
 
-<h4 id="customizing-the-error-messages-css">4. Настройка <span class="caps">CSS</span> сообщений об ошибке</h4>
-<p>Селекторы для настройки стилей сообщений об ошибке следующие:</p>
-<ul>
-	<li><tt>.fieldWithErrors</tt> &#8211; стиль для полей формы и label-ов с ошибками.</li>
-	<li><tt>#errorExplanation</tt> &#8211; стиль для элемента <tt>div</tt> с сообщениями об ошибках.</li>
-	<li><tt>#errorExplanation h2</tt> &#8211; стиль для заголовка элемента <tt>div</tt>.</li>
-	<li><tt>#errorExplanation p</tt> &#8211; стиль для параграфа, содержащего сообщение, который появляется сразу после заголовка элемента <tt>div</tt>.</li>
-	<li><tt>#errorExplanation ul li</tt> &#8211; стиль для элементов списка с отдельными сообщениями об ошибках.</li>
-</ul>
-<p>Для примера, скаффолд генерирует <tt>app/assets/stylesheets/scaffold.css.scss</tt>, который позже компилируется в <tt>app/assets/stylesheets/scaffold.css</tt> и определяет красный стиль, который Вы видели выше.</p>
-<p>Имя класса и id могут быть изменены опциями <tt>:class</tt> и <tt>:id</tt>, принимаемыми обоими хелперами.</p>
+<erb>
+<%= form_for(@product) do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :value %><br />
+    <%= f.text_field :value %>
+  </p>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+</erb>
 
-<h4 id="customizing-the-error-messages-html">5. Настройка <span class="caps">HTML</span> сообщений об ошибке</h4>
-<p>По умолчанию поля формы с ошибками отображаются заключенными в элемент <tt>div</tt> с классом <span class="caps">CSS</span> <tt>fieldWithErrors</tt>. Однако это возможно переопределить.</p>
-<p>Способ, с помощью которого обрабатываются поля формы с ошибками, определяется <tt>ActionView::Base.field_error_proc</tt>. Это <tt>Proc</tt> который получает два параметра:</p>
-<ul>
-	<li>Строку с тегом <span class="caps">HTML</span></li>
-	<li>Экземпляр <tt>ActionView::Helpers::InstanceTag</tt>.</li>
-</ul>
-<p>Вот простой пример, где мы изменим поведение Rails всегда отображать сообщения об ошибках в начале каждого поля формы с ошибками. Сообщения об ошибках будут содержаться в элементе <tt>span</tt> с <span class="caps">CSS</span> классом <tt>validation-error</tt>. Вокруг элемента <tt>input</tt> не будет никакого элемента <tt>div</tt>, тем самым мы избавимся от этой красной рамки вокруг текстового поля. Можете использовать <span class="caps">CSS</span> класс <tt>validation-error</tt> для стилизации, где только захотите.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Теперь, если вы подтвердите форму с пустыми полями, то получите следующее (по умолчанию стилей не будет):
+
+!/system/images/error_messages30.png(Сообщения об ошибке)!
+
+Также можно использовать хелпер +error_messages_for+ для отображения сообщений об ошибке от переданной в шаблон вьюхи модели. Это очень похоже на предыдущий пример и приведет к абсолютно тому же результату.
+
+<erb>
+<%= error_messages_for :product %>
+</erb>
+
+Отображемый текст для каждого сообщения об ошибке всегда будет формироваться из имени атрибута, содержащего ошибку, с заглавной буквы, и последущим за ним собственно сообщения об ошибке.
+
+И хелпер +form.error_messages+, и хелпер +error_messages_for+ принимают опции, позволяющие настроить элемент +div+, содержащий сообщения, изменить текст заголовка, сообщение после текста заголовка и тег, используемый для элемента, определяющего заголовок.
+
+<erb>
+<%= f.error_messages :header_message => "Invalid product!",
+  :message => "You'll need to fix the following fields:",
+  :header_tag => :h3 %>
+</erb>
+
+Это приведет к следующему содержимому
+
+!/system/images/customized_error_messages.png(Настроенные сообщения об ошибках)!
+
+Если указать +nil+ для любой из этих опций, это избавит от соответствующих секций +div+.
+
+h4. Настройка CSS сообщений об ошибке
+
+Селекторы для настройки стилей сообщений об ошибке следующие:
+
+* +.field_with_errors+ - стиль для полей формы и label-ов с ошибками.
+* +#errorExplanation+ - стиль для элемента <tt>div</tt> с сообщениями об ошибках.
+* +#errorExplanation h2+ - стиль для заголовка элемента +div+.
+* +#errorExplanation p+ - стиль для параграфа, содержащего сообщение, который появляется сразу после заголовка элемента +div+.
+* +#errorExplanation ul li+ - стиль для элементов списка с отдельными сообщениями об ошибках.
+
+Для примера, скаффолд генерирует +app/assets/stylesheets/scaffold.css.scss+, который позже компилируется в +app/assets/stylesheets/scaffold.css+ и определяет красный стиль, который вы видели выше.
+
+Имя класса и id могут быть изменены опциями +:class+ и +:id+, принимаемыми обоими хелперами.
+
+h4. Настройка HTML сообщений об ошибке
+
+По умолчанию поля формы с ошибками отображаются заключенными в элемент +div+ с классом CSS fieldWithErrors+. Однако это возможно переопределить.
+
+Способ, с помощью которого обрабатываются поля формы с ошибками, определяется +ActionView::Base.field_error_proc+. Это +Proc+ который получает два параметра:
+
+* Строку с тегом HTML
+* Экземпляр +ActionView::Helpers::InstanceTag+.
+
+Вот простой пример, где мы изменим поведение Rails всегда отображать сообщения об ошибках в начале каждого поля формы с ошибками. Сообщения об ошибках будут содержаться в элементе +span+ с CSS классом +validation-error+. Вокруг элемента +input+ не будет никакого элемента +div+, тем самым мы избавимся от этой красной рамки вокруг текстового поля. Можете использовать CSS класс +validation-error+ для стилизации, где только захотите.
+
+<ruby>
 ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
   if instance.error_message.kind_of?(Array)
-    %(#{html_tag}&lt;span class=&quot;validation-error&quot;&gt;&amp;nbsp;
-      #{instance.error_message.join(',')}&lt;/span&gt;)
+    %(#{html_tag}<span class="validation-error">&nbsp;
+      #{instance.error_message.join(',')}</span>).html_safe
   else
-    %(#{html_tag}&lt;span class=&quot;validation-error&quot;&gt;&amp;nbsp;
-      #{instance.error_message}&lt;/span&gt;)
+    %(#{html_tag}<span class="validation-error">&nbsp;
+      #{instance.error_message}</span>).html_safe
   end
 end
-</pre></div>
-<p>Это приведет примерно к подобному результату:</p>
-<p><img src="/system/images/validation_error_messages.png" title="Сообщения об ошибках валидации" alt="Сообщения об ошибках валидации" /></p>
+</ruby>
+
+Это приведет примерно к подобному результату:
+
+!/system/images/validation_error_messages.png(Сообщения об ошибках валидации)!

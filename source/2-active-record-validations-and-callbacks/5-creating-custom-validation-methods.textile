@@ -1,24 +1,27 @@
 h1. Выполнение собственных валидаций
 
-<p>Когда встроенных валидационных хелперов недостаточно для ваших нужд, можете написать свои собственные валидаторы или методы валидации.</p>
-<p>Собственные валидаторы это классы, расширяющие <tt>ActiveModel::Validator</tt>. Эти классы должны реализовать метод <tt>validate</tt>, принимающий запись как аргумент и выполняющий валидацию на ней. Собственный валидатор вызывается с использованием метода <tt>validates_with</tt>.</p>
+Когда встроенных валидационных хелперов недостаточно для ваших нужд, можете написать свои собственные валидаторы или методы валидации.
 
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Собственные валидаторы это классы, расширяющие +ActiveModel::Validator+. Эти классы должны реализовать метод +validate+, принимающий запись как аргумент и выполняющий валидацию на ней. Собственный валидатор вызывается с использованием метода +validates_with+.
+
+<ruby>
 class MyValidator < ActiveModel::Validator
   def validate(record)
-    if record.name.starts_with? 'X'
-      record.errors[:name] << 'Need a name starting with X please!'
+    if record.name.starts_with? ‘X’
+      record.errors[:name] << ‘Need a name starting with X please!’
     end
   end
 end
-
+ 
 class Person
   include ActiveModel::Validations
   validates_with MyValidator
 end
-</pre></div>
-<p>Простейшим способом добавить собственные валидаторы для валидации отдельных атрибутов является наследуемость от <tt>ActiveModel::EachValidator</tt>. В этом случае класс собственного валидатора должен реализовать метод <tt>validate_each</tt>, принимающий три аргумента: запись, атрибут и значение, соответсвующее экземпляру, соответственно атрибут тот, который будет проверяться и значение в переданном экземпляре:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Простейшим способом добавить собственные валидаторы для валидации отдельных атрибутов является наследуемость от +ActiveModel::EachValidator+. В этом случае класс собственного валидатора должен реализовать метод +validate_each+, принимающий три аргумента: запись, атрибут и значение, соответсвующее экземпляру, соответственно атрибут тот, который будет проверяться и значение в переданном экземпляре:
+
+<ruby>
 class EmailValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     unless value =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
@@ -26,44 +29,51 @@ class EmailValidator < ActiveModel::EachValidator
     end
   end
 end
+
 class Person < ActiveRecord::Base
   validates :email, :presence => true, :email => true
 end
-</pre></div>
-<p>Как показано в примере, можно объединять стандартные валидации со своими произвольными валидаторами.</p>
+</ruby>
 
-<h4>1. Собственные методы</h4>
-<p>Также возможно создать методы, проверяющие состояние ваших моделей и добавляющие сообщения в коллекцию <tt>errors</tt>, когда они невалидны. Затем эти методы следует зарегистрировать, используя один или более из методов класса <tt>validate</tt>, <tt>validate_on_create</tt> или <tt>validate_on_update</tt>, передав символьные имена валидационных методов.</p>
-<p>Можно передать более одного символа для каждого метода класса, и соответствующие валидации будут запущены в том порядке, в котором они зарегистрированы.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Как показано в примере, можно объединять стандартные валидации со своими произвольными валидаторами.
+
+h4. Собственные методы
+
+Также возможно создать методы, проверяющие состояние ваших моделей и добавляющие сообщения в коллекцию +errors+, когда они невалидны. Затем эти методы следует зарегистрировать, используя один или более из методов класса +validate+, +validate_on_create+ или +validate_on_update+, передав символьные имена валидационных методов.
+
+Можно передать более одного символа для каждого метода класса, и соответствующие валидации будут запущены в том порядке, в котором они зарегистрированы.
+
+<ruby>
 class Invoice < ActiveRecord::Base
   validate :expiration_date_cannot_be_in_the_past,
     :discount_cannot_be_greater_than_total_value
 
   def expiration_date_cannot_be_in_the_past
-    if !expiration_date.blank? and expiration_date < Date.today
-      errors.add(:expiration_date, "can't be in the past")
-    end
+    errors.add(:expiration_date, "can't be in the past") if
+      !expiration_date.blank? and expiration_date < Date.today
   end
 
   def discount_cannot_be_greater_than_total_value
-    if discount > total_value
-      errors.add(:discount, "can't be greater than total value")
-    end
+    errors.add(:discount, "can't be greater than total value") if
+      discount > total_value
   end
 end
-</pre></div>
-<p>Можно даже создать собственные валидационные хелперы и использовать их в нескольких различных моделях. Для примера, в приложении, управляющим исследованиями, может быть полезным указать, что определенное поле соответствует ряду значений:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Можно даже создать собственные валидационные хелперы и использовать их в нескольких различных моделях. Для примера, в приложении, управляющим исследованиями, может быть полезным указать, что определенное поле соответствует ряду значений:
+
+<ruby>
 ActiveRecord::Base.class_eval do
   def self.validates_as_choice(attr_name, n, options={})
     validates attr_name, :inclusion => { {:in => 1..n}.merge(options) }
   end
 end
-</pre></div>
-<p>Просто переоткройте <tt>ActiveRecord::Base</tt> и определите подобный этому метод класса. Такой код обычно располагают где-нибудь в <tt>config/initializers</tt>. Теперь Вы можете использовать этот хелпер таким образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Просто переоткройте +ActiveRecord::Base+ и определите подобный этому метод класса. Такой код обычно располагают где-нибудь в +config/initializers+. Теперь Вы можете использовать этот хелпер таким образом:
+
+<ruby>
 class Movie < ActiveRecord::Base
   validates_as_choice :rating, 5
 end
-</pre></div>
+</ruby>

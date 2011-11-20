@@ -1,12 +1,15 @@
 h1. Колбэки
 
-<h3 id="callbacks-overview">1 Обзор колбэков</h3>
-<p>Колбэки это методы, которые вызываются в определенные моменты жизненного цикла объекта. С колбэками возможно написать код, который будет запущен, когда объект Active Record создается, сохраняется, обновляется, удаляется, проходит валидацию или загружается из базы данных.</p>
+h3. Обзор колбэков
 
-<h4 id="callback-registration">1.1 Регистрация колбэков</h4>
-<p>Для того, чтобы использовать доступные колбэки, их нужно зарегистрировать. Это можно сделать, реализуя их как обычные методы, а затем используя макро-методы класса для их регистрации как колбэков.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
+Колбэки это методы, которые вызываются в определенные моменты жизненного цикла объекта. С колбэками возможно написать код, который будет запущен, когда объект Active Record создается, сохраняется, обновляется, удаляется, проходит валидацию или загружается из базы данных.
+
+h4. Регистрация колбэков
+
+Для того, чтобы использовать доступные колбэки, их нужно зарегистрировать. Это можно сделать, реализуя их как обычные методы, а затем используя макро-методы класса для их регистрации как колбэков.
+
+<ruby>
+class User < ActiveRecord::Base
   validates :login, :email, :presence => true
 
   before_validation :ensure_login_has_a_value
@@ -18,133 +21,150 @@ class User &lt; ActiveRecord::Base
     end
   end
 end
-</pre></div>
-<p>Макро-методы класса также могут получать блок. Это можно использовать, если код внутри блока такой короткий, что помещается в одну строку.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
+</ruby>
+
+Макро-методы класса также могут получать блок. Это можно использовать, если код внутри блока такой короткий, что помещается в одну строку.
+
+<ruby>
+class User < ActiveRecord::Base
   validates :login, :email, :presence => true
 
-  before_create {|user| user.name = user.login.capitalize if user.name.blank?}
+  before_create do |user|
+    user.name = user.login.capitalize if user.name.blank?
+  end
 end
-</pre></div>
-<p>Считается хорошей практикой объявлять методы колбэков как protected или private. Если их оставить public, они могут быть вызваны извне модели и нарушить принципы инкапсуляции объекта.</p>
+</ruby>
 
-<h3 id="available-callbacks">2. Доступные колбэки</h3>
-<p>Вот список всех доступных колбэков Active Record, перечисленных в том порядке, в котором они вызываются в течение соответственных операций:</p>
-<h4 id="creating-an-object">2.1 Создание объекта</h4>
-<ul>
-	<li><tt>before_validation</tt></li>
-	<li><tt>after_validation</tt></li>
-	<li><tt>before_save</tt></li>
-	<li><tt>before_create</tt></li>
-	<li><tt>around_create</tt></li>
-	<li><tt>after_create</tt></li>
-	<li><tt>after_save</tt></li>
-</ul>
-<h4 id="updating-an-object">2.2 Обновление объекта</h4>
-<ul>
-	<li><tt>before_validation</tt></li>
-	<li><tt>after_validation</tt></li>
-	<li><tt>before_save</tt></li>
-	<li><tt>before_update</tt></li>
-	<li><tt>around_update</tt></li>
-	<li><tt>after_update</tt></li>
-	<li><tt>after_save</tt></li>
-</ul>
-<h4 id="destroying-an-object">2.3 Уничтожение объекта</h4>
-<ul>
-	<li><tt>before_destroy</tt></li>
-	<li><tt>after_destroy</tt></li>
-	<li><tt>around_destroy</tt></li>
-</ul>
-<div class='warning'><p><tt>after_save</tt> запускается и при создании, и при обновлении, но всегда <em>после</em> более специфичных колбэков <tt>after_create</tt> и <tt>after_update</tt>, не зависимо от порядка, в котором запускаются макро-вызовы.</p></div>
+Считается хорошей практикой объявлять методы колбэков как protected или private. Если их оставить public, они могут быть вызваны извне модели и нарушить принципы инкапсуляции объекта.
 
-<h4 id="after-initialize-and-after-find">2.4 <tt>after_initialize</tt> и <tt>after_find</tt></h4>
-<p>Колбэк <tt>after_initialize</tt> вызывается всякий раз, когда возникает экземпляр объекта Active Record, или непосредственно при использовании <tt>new</tt>, или когда запись загружается из базы данных. Он необходим, чтобы избежать необходимости непосредственно переопределять метод Active Record <tt>initialize</tt>.</p>
-<p>Колбэк <tt>after_find</tt> будет вызван всякий раз, когда Active Record загружает запись из базы данных. <tt>after_find</tt> вызывается перед <tt>after_initialize</tt>, если они оба определены.</p>
-<p>Колбэки <tt>after_initialize</tt> и <tt>after_find</tt> немного отличаются от остальных. У них нет пары <tt>before_*</tt>, и единственный способ зарегистрировать их  - через регулярные методы. Если попытаться зарегистрировать <tt>after_initialize</tt> или <tt>after_find</tt> с использованием макро-методов класса, они будут просто проигнорированы. Такое поведение установлено по причине производительности, так как если  <tt>after_initialize</tt> и <tt>after_find</tt> будут вызываться для каждой записи, найденной в базе данных, это значительно замедлит запросы.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
+h3. Доступные колбэки
+
+Вот список всех доступных колбэков Active Record, перечисленных в том порядке, в котором они вызываются в течение соответственных операций:
+
+h4. Создание объекта
+
+* +before_validation+
+* +after_validation+
+* +before_save+
+* +before_create+
+* +around_create+
+* +after_create+
+* +after_save+
+
+h4. Обновление объекта
+
+* +before_validation+
+* +after_validation+
+* +before_save+
+* +before_update+
+* +around_update+
+* +after_update+
+* +after_save+
+
+h4. Уничтожение объекта
+
+* +before_destroy+
+* +after_destroy+
+* +around_destroy+
+
+WARNING. +after_save+ запускается и при создании, и при обновлении, но всегда _после_ более специфичных колбэков +after_create+ и +after_update+, не зависимо от порядка, в котором запускаются макро-вызовы.
+
+h4. +after_initialize+ и +after_find+
+
+Колбэк +after_initialize+ вызывается всякий раз, когда возникает экземпляр объекта Active Record, или непосредственно при использовании +new+, или когда запись загружается из базы данных. Он необходим, чтобы избежать необходимости непосредственно переопределять метод Active Record +initialize+.
+
+Колбэк +after_find+ будет вызван всякий раз, когда Active Record загружает запись из базы данных. +after_find+ вызывается перед +after_initialize+, если они оба определены.
+
+Колбэки +after_initialize+ и +after_find+ немного отличаются от остальных. У них нет пары +before_*+, и единственный способ зарегистрировать их  - через регулярные методы. Если попытаться зарегистрировать +after_initialize+ или +after_find+ с использованием макро-методов класса, они будут просто проигнорированы. Такое поведение установлено по причине производительности, так как если +after_initialize+ и +after_find+ будут вызываться для каждой записи, найденной в базе данных, это значительно замедлит запросы.
+
+<ruby>
+class User < ActiveRecord::Base
   def after_initialize
-    puts &quot;You have initialized an object!&quot;
+    puts "You have initialized an object!"
   end
 
   def after_find
-    puts &quot;You have found an object!&quot;
+    puts "You have found an object!"
   end
 end
 
-&gt;&gt; User.new
+>> User.new
 You have initialized an object!
-=&gt; #&lt;User id: nil&gt;
+=> #<User id: nil>
 
-&gt;&gt; User.first
+>> User.first
 You have found an object!
 You have initialized an object!
-=&gt; #&lt;User id: 1&gt;
-</pre></div>
+=> #<User id: 1>
+</ruby>
 
-<h3 id="running-callbacks">3 Запуск колбэков</h3>
-<p>Следующие методы запускают колбэки:</p>
-<ul>
-	<li><tt>create</tt></li>
-	<li><tt>create!</tt></li>
-	<li><tt>decrement!</tt></li>
-	<li><tt>destroy</tt></li>
-	<li><tt>destroy_all</tt></li>
-	<li><tt>increment!</tt></li>
-	<li><tt>save</tt></li>
-	<li><tt>save!</tt></li>
-	<li><tt>save(false)</tt></li>
-	<li><tt>toggle!</tt></li>
-	<li><tt>update</tt></li>
-	<li><tt>update_attribute</tt></li>
-	<li><tt>update_attributes</tt></li>
-	<li><tt>update_attributes!</tt></li>
-	<li><tt>valid?</tt></li>
-</ul>
-<p>Дополнительно, колбэк <tt>after_find</tt> запускается следующими поисковыми методами:</p>
-<ul>
-	<li><tt>all</tt></li>
-	<li><tt>first</tt></li>
-	<li><tt>find</tt></li>
-	<li><tt>find_all_by_<em>attribute</em></tt></li>
-	<li><tt>find_by_<em>attribute</em></tt></li>
-	<li><tt>find_by_<em>attribute</em>!</tt></li>
-	<li><tt>last</tt></li>
-</ul>
-<p>Колбэк <tt>after_initialize</tt> запускается всякий раз, когда инициализируется новый объект класса.</p>
+h3. Запуск колбэков
 
-<h3 id="skipping-callbacks">4 Пропуск колбэков</h3>
-<p>Подобно валидациям, также возможно пропустить колбэки. Однако, эти методы нужно использовать осторожно, поскольку важные бизнес-правила и логика приложения могут содержаться в колбэках. Пропуск их без понимания возможных последствий может привести к невалидным данным.</p>
-<ul>
-	<li><tt>decrement</tt></li>
-	<li><tt>decrement_counter</tt></li>
-	<li><tt>delete</tt></li>
-	<li><tt>delete_all</tt></li>
-	<li><tt>find_by_sql</tt></li>
-	<li><tt>increment</tt></li>
-	<li><tt>increment_counter</tt></li>
-	<li><tt>toggle</tt></li>
-	<li><tt>touch</tt></li>
-	<li><tt>update_column</tt></li>
-	<li><tt>update_all</tt></li>
-	<li><tt>update_counters</tt></li>
-</ul>
+Следующие методы запускают колбэки:
 
-<h3 id="halting-execution">5 Прерывание выполнения</h3>
-<p>Как только Вы зарегистрировали новые колбэки в своих моделях, они будут поставлены в очередь на выполнение. Эта очередь включает все валидации Вашей модели, зарегистрированные колбэки и операции с базой данных для выполнения.</p>
-<p>Вся цепочка колбэков упаковывается в операцию. Если любой метод <em>before</em> колбэков возвращает <tt>false</tt> или вызывает исключение, выполняемая цепочка прерывается и запускается <span class="caps">ROLLBACK</span>; Колбэки <em>after</em> могут достичь этого, только вызвав исключение.</p>
-<div class='warning'><p>Вызов произвольного исключения может прервать код, который предполагает, что <tt>save</tt> и тому подобное не будут провалены подобным образом. Исключение <tt>ActiveRecord::Rollback</tt> чуть точнее сообщает Active Record, что происходит откат. Он подхватывается изнутри, но не перевызывает исключение.</p></div>
+* +create+
+* +create!+
+* +decrement!+
+* +destroy+
+* +destroy_all+
+* +increment!+
+* +save+
+* +save!+
+* +save(false)+
+* +toggle!+
+* +update+
+* +update_attribute+
+* +update_attributes+
+* +update_attributes!+
+* +valid?+
 
-<h3 id="relational-callbacks">6 Относительные колбэки</h3>
-<p>Колбэки работают с отношениями между моделями, и даже могут быть определены ими. Рассмотрим пример, где пользователь имеет много публикаций. В нашем примере публикации пользователя должны быть уничтожены, если уничтожается пользователь. Таким образом, мы добавляем колбэк <tt>after_destroy</tt> в модель <tt>User</tt> через ее отношения с моделью <tt>Post</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
-  has_many :posts, :dependent =&gt; :destroy    
+Дополнительно, колбэк +after_find+ запускается следующими поисковыми методами:
+
+* +all+
+* +first+
+* +find+
+* +find_all_by_<em>attribute</em>+
+* +find_by_<em>attribute</em>+
+* +find_by_<em>attribute</em>!+
+* +last+
+
+Колбэк +after_initialize+ запускается всякий раз, когда инициализируется новый объект класса.
+
+h3. Пропуск колбэков
+
+Подобно валидациям, также возможно пропустить колбэки. Однако, эти методы нужно использовать осторожно, поскольку важные бизнес-правила и логика приложения могут содержаться в колбэках. Пропуск их без понимания возможных последствий может привести к невалидным данным.
+
+* +decrement+
+* +decrement_counter+
+* +delete+
+* +delete_all+
+* +find_by_sql+
+* +increment+
+* +increment_counter+
+* +toggle+
+* +touch+
+* +update_column+
+* +update_all+
+* +update_counters+
+
+h3. Прерывание выполнения
+
+Как только  вы зарегистрировали новые колбэки в своих моделях, они будут поставлены в очередь на выполнение. Эта очередь включает все валидации вашей модели, зарегистрированные колбэки и операции с базой данных для выполнения.
+
+Вся цепочка колбэков упаковывается в операцию. Если любой метод _before_ колбэков возвращает +false+ или вызывает исключение, выполняемая цепочка прерывается и запускается ROLLBACK; Колбэки _after_ могут достичь этого, только вызвав исключение.
+
+WARNING. Вызов произвольного исключения может прервать код, который предполагает, что +save+ и тому подобное не будут провалены подобным образом. Исключение +ActiveRecord::Rollback+ чуть точнее сообщает Active Record, что происходит откат. Он подхватывается изнутри, но не перевызывает исключение.
+
+h3. Относительные колбэки
+
+Колбэки работают с отношениями между моделями, и даже могут быть определены ими. Рассмотрим пример, где пользователь имеет много публикаций. В нашем примере публикации пользователя должны быть уничтожены, если уничтожается пользователь. Таким образом, мы добавляем колбэк +after_destroy+ в модель +User+ через ее отношения с моделью +Post+.
+
+<ruby>
+class User < ActiveRecord::Base
+  has_many :posts, :dependent => :destroy
 end
 
-class Post &lt; ActiveRecord::Base
+class Post < ActiveRecord::Base
   after_destroy :log_destroy_action
 
   def log_destroy_action
@@ -152,84 +172,101 @@ class Post &lt; ActiveRecord::Base
   end
 end
 
-&gt;&gt; user = User.first
-=&gt; #&lt;User id: 1&gt;
-&gt;&gt; user.posts.create!
-=&gt; #&lt;Post id: 1, user_id: 1&gt;
-&gt;&gt; user.destroy
+>> user = User.first
+=> #<User id: 1>
+>> user.posts.create!
+=> #<Post id: 1, user_id: 1>
+>> user.destroy
 Post destroyed
-=&gt; #&lt;User id: 1&gt;
-</pre></div>
+=> #<User id: 1>
+</ruby>
 
-<h3 id="conditional-callbacks">6 Условные колбэки</h3>
-<p>Подобно валидациям, возможно сделать наши колбэки условными, вызывая их тогда, когда удовлетворяется заданное условие. Это осуществляется при использовании опций <tt>:if</tt> и <tt>:unless</tt>, которые могут принимать символ, строку или <tt>Proc</tt>. Опцию <tt>:if</tt> следует использовать, если Вы хотите определить, когда колбэк <strong>должен</strong> быть вызван. Если Вы хотите определить, когда колбэк <strong>не должен</strong> быть вызван, используйте опцию <tt>:unless</tt>.</p>
+h3. Условные колбэки
 
-<h4 id="using-if-and-unless-with-a-symbol">6.1 Использование <tt>:if</tt> и <tt>:unless</tt> с символом</h4>
-<p>Опции <tt>:if</tt> и <tt>:unless</tt> можно связать с символом, соответствующим имени метода, который будет вызван непосредственно перед вызовом колбэка. Если метод возвратит <tt>false</tt>, колбэк не будет выполнен. Это самый распространенный вариант. При использовании этой формы регистрации, также возможно зарегистрировать несколько различных методов, которые будут вызваны для проверки, должен ли запуститься колбэк.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Order &lt; ActiveRecord::Base
-  before_save :normalize_card_number, :if =&gt; :paid_with_card?
+Подобно валидациям, возможно сделать наши колбэки условными, вызывая их тогда, когда удовлетворяется заданное условие. Это осуществляется при использовании опций +:if+ и +:unless+, которые могут принимать символ, строку или +Proc+. Опцию +:if+ следует использовать, если вы хотите определить, когда колбэк *должен* быть вызван. Если вы хотите определить, когда колбэк *не должен* быть вызван, используйте опцию +:unless+.
+
+h4. Использование +:if+ и +:unless+ с символом
+
+Опции +:if+ и +:unless+ можно связать с символом, соответствующим имени метода, который будет вызван непосредственно перед вызовом колбэка. Если метод возвратит +false+, колбэк не будет выполнен. Это самый распространенный вариант. При использовании этой формы регистрации, также возможно зарегистрировать несколько различных методов, которые будут вызваны для проверки, должен ли запуститься колбэк.
+
+<ruby>
+class Order < ActiveRecord::Base
+  before_save :normalize_card_number, :if => :paid_with_card?
 end
-</pre></div>
+</ruby>
 
-<h4 id="using-if-and-unless-with-a-string">6.2 Использование <tt>:if</tt> и <tt>:unless</tt> со строкой</h4>
-<p>Также возможно использование строки, которя будет вычислена с помощью <tt>eval</tt>, и должна содержать валидный код Ruby. Этот вариант следует использовать только тогда, когда строка представляет действительно короткое условие.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Order &lt; ActiveRecord::Base
-  before_save :normalize_card_number, :if =&gt; &quot;paid_with_card?&quot;
+h4. Использование +:if+ и +:unless+ со строкой
+
+Также возможно использование строки, которя будет вычислена с помощью +eval+, и должна содержать валидный код Ruby. Этот вариант следует использовать только тогда, когда строка представляет действительно короткое условие.
+
+<ruby>
+class Order < ActiveRecord::Base
+  before_save :normalize_card_number, :if => "paid_with_card?"
 end
-</pre></div>
+</ruby>
 
-<h4 id="using-if-and-unless-with-a-proc">6.3 Использование <tt>:if</tt> и <tt>:unless</tt> с Proc</h4>
-<p>Наконец, можно связать <tt>:if</tt> и <tt>:unless</tt> с объектом <tt>Proc</tt>. Этот вариант более всего подходит при написании коротких методов, обычно в одну строку.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Order &lt; ActiveRecord::Base
+h4. Использование +:if+ и +:unless+ с Proc
+
+Наконец, можно связать +:if+ и +:unless+ с объектом +Proc+. Этот вариант более всего подходит при написании коротких методов, обычно в одну строку.
+
+<ruby>
+class Order < ActiveRecord::Base
   before_save :normalize_card_number,
-    :if =&gt; Proc.new { |order| order.paid_with_card? }
+    :if => Proc.new { |order| order.paid_with_card? }
 end
-</pre></div>
+</ruby>
 
-<h4 id="multiple-conditions-for-callbacks">6.4 Составные условия для колбэков</h4>
-<p>При написании условных колбэков, возможно смешивание <tt>:if</tt> и <tt>:unless</tt> в одном объявлении колбэка.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Comment &lt; ActiveRecord::Base
-  after_create :send_email_to_author, :if =&gt; :author_wants_emails?,
-    :unless =&gt; Proc.new { |comment| comment.post.ignore_comments? }
+h4. Составные условия для колбэков
+
+При написании условных колбэков, возможно смешивание +:if+ и +:unless+ в одном объявлении колбэка.
+
+<ruby>
+class Comment < ActiveRecord::Base
+  after_create :send_email_to_author, :if => :author_wants_emails?,
+    :unless => Proc.new { |comment| comment.post.ignore_comments? }
 end
-</pre></div>
+</ruby>
 
-<h3 id="callback-classes">7 Классы колбэков</h3>
-<p>Иногда написанные вами методы колбэков достаточно полезны для повторного использования в других моделях. Active Record делает возможным создавать классы, включающие методы колбэка, так, что становится очень легко использовать их повторно.</p>
-<p>Вот пример, где создается класс с колбэком <tt>after_destroy</tt> для модели <tt>PictureFile</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h3. Классы колбэков
+
+Иногда написанные вами методы колбэков достаточно полезны для повторного использования в других моделях. Active Record делает возможным создавать классы, включающие методы колбэка, так, что становится очень легко использовать их повторно.
+
+Вот пример, где создается класс с колбэком +after_destroy+ для модели +PictureFile+.
+
+<ruby>
 class PictureFileCallbacks
   def after_destroy(picture_file)
-    if File.exists?(picture_file.filepath)
-      File.delete(picture_file.filepath)
-    end
+    File.delete(picture_file.filepath)
+      if File.exists?(picture_file.filepath)
   end
 end
-</pre></div>
-<p>При объявлении внутри класса, метод колбэка получает объект модели как параметр. Его можно использовать следующим образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class PictureFile &lt; ActiveRecord::Base
+</ruby>
+
+При объявлении внутри класса, метод колбэка получает объект модели как параметр. Его можно использовать следующим образом:
+
+<ruby>
+class PictureFile < ActiveRecord::Base
   after_destroy PictureFileCallbacks.new
 end
-</pre></div>
-<p>Заметьте, что нам нужно создать экземпляр нового объекта <tt>PictureFileCallbacks</tt>, после того, как объявили наш колбэк как отдельный метод. Иногда более подходящим является иметь его как метод класса.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Заметьте, что нам нужно создать экземпляр нового объекта +PictureFileCallbacks+, после того, как объявили наш колбэк как отдельный метод. Иногда более подходящим является иметь его как метод класса.
+
+<ruby>
 class PictureFileCallbacks
   def self.after_destroy(picture_file)
-    if File.exists?(picture_file.filepath)
-      File.delete(picture_file.filepath)
-    end
+    File.delete(picture_file.filepath)
+      if File.exists?(picture_file.filepath)
   end
 end
-</pre></div>
-<p>Если метод колбэка  объявляется таким образом, нет необходимости создавать экземпляр объекта <tt>PictureFileCallbacks</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class PictureFile &lt; ActiveRecord::Base
+</ruby>
+
+Если метод колбэка  объявляется таким образом, нет необходимости создавать экземпляр объекта +PictureFileCallbacks+.
+
+<ruby>
+class PictureFile < ActiveRecord::Base
   after_destroy PictureFileCallbacks
 end
-</pre></div>
-<p>Внутри своего колбэк-класса можно создать сколько угодно колбэков.</p>
+</ruby>
+
+Внутри своего колбэк-класса можно создать сколько угодно колбэков.

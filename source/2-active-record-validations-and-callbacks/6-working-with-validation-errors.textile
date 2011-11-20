@@ -1,123 +1,138 @@
 h1. Работаем с ошибками валидации
 
-<p>В дополнение к методам <tt>valid?</tt> и <tt>invalid?</tt>, раскрытым ранее, Rails предоставляет ряд методов для работы с коллекцией <tt>errors</tt> и исследования валидности объектов.</p>
-<p>Предлагаем список наиболее часто используемых методов. Если хотите увидеть список всех доступных методов, обратитесь к документации по <tt>ActiveRecord::Errors</tt>.</p>
+В дополнение к методам +valid?+ и +invalid?+, раскрытым ранее, Rails предоставляет ряд методов для работы с коллекцией +errors+ и исследования валидности объектов.
 
-<h4 id="working_with_validation_errors-errors">1. <tt>errors</tt></h4>
-<p>Возвращает OrderedHash со всеми ошибками. Каждый ключ это имя атрибута и значение это массив строк со всеми ошибками.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+Предлагаем список наиболее часто используемых методов. Если хотите увидеть список всех доступных методов, обратитесь к документации по +ActiveRecord::Errors+.
+
+h4(#working_with_validation_errors-errors). +errors+
+
+Возвращает OrderedHash со всеми ошибками. Каждый ключ это имя атрибута и значение это массив строк со всеми ошибками.
+
+<ruby>
+class Person < ActiveRecord::Base
   validates :name, :presence => true, :length => { :minimum => 3 }
 end
 
 person = Person.new
-person.valid? # =&gt; false
+person.valid? # => false
 person.errors
- # =&gt; {:name =&gt; [&quot;can't be blank&quot;, &quot;is too short (minimum is 3 characters)&quot;]}
+ # => {:name => ["can't be blank", "is too short (minimum is 3 characters)"]}
 
-person = Person.new(:name =&gt; &quot;John Doe&quot;)
-person.valid? # =&gt; true
-person.errors # =&gt; []
-</pre></div>
+person = Person.new(:name => "John Doe")
+person.valid? # => true
+person.errors # => []
+</ruby>
 
-<h4 id="working_with_validation_errors-errors-2">2. <tt>errors[]</tt></h4>
-<p><tt>errors[]</tt> используется, когда вы хотите проверить сообщения об ошибке для определенного атрибута. Он возвращает массив строк со всеми сообщениями об ошибке для заданного атрибута, каждая строка с одним сообщением об ошибке. Если нет ошибок, относящихся к атрибуту, возвратится пустой массив.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+h4(#working_with_validation_errors-errors-2). +errors[]+
+
++errors[]+ используется, когда вы хотите проверить сообщения об ошибке для определенного атрибута. Он возвращает массив строк со всеми сообщениями об ошибке для заданного атрибута, каждая строка с одним сообщением об ошибке. Если нет ошибок, относящихся к атрибуту, возвратится пустой массив.
+
+<ruby>
+class Person < ActiveRecord::Base
   validates :name, :presence => true, :length => { :minimum => 3 }
 end
 
-person = Person.new(:name =&gt; &quot;John Doe&quot;)
-person.valid? # =&gt; true
-person.errors[:name] # =&gt; []
+person = Person.new(:name => "John Doe")
+person.valid? # => true
+person.errors[:name] # => []
 
-person = Person.new(:name =&gt; &quot;JD&quot;)
-person.valid? # =&gt; false
-person.errors[:name] # =&gt; [&quot;is too short (minimum is 3 characters)&quot;]
+person = Person.new(:name => "JD")
+person.valid? # => false
+person.errors[:name] # => ["is too short (minimum is 3 characters)"]
 
 person = Person.new
-person.valid? # =&gt; false
+person.valid? # => false
 person.errors[:name]
- # =&gt; [&quot;can't be blank&quot;, &quot;is too short (minimum is 3 characters)&quot;]
-</pre></div>
+ # => ["can't be blank", "is too short (minimum is 3 characters)"]
+</ruby>
 
-<h4 id="errorsadd">3. <tt>errors.add</tt></h4>
-<p>Метод <tt>add</tt> позволяет вручную добавлять сообщения, которые относятся к определенным атрибутам. Можно использовать методы <tt>errors.full_messages</tt> или <tt>errors.to_a</tt> для просмотра сообщения в форме, в которой они отображаются пользователю. Эти определенные сообщения получают предшествующим (и с прописной буквы) имя аттрибута. <tt>add</tt> получает имя атрибута, к которому вы хотите добавить сообщение, и само сообщение.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+h4. +errors.add+
+
+Метод +add+ позволяет вручную добавлять сообщения, которые относятся к определенным атрибутам. Можно использовать методы +errors.full_messages+ или +errors.to_a+ для просмотра сообщения в форме, в которой они отображаются пользователю. Эти определенные сообщения получают предшествующим (и с прописной буквы) имя аттрибута. +add+ получает имя атрибута, к которому вы хотите добавить сообщение, и само сообщение.
+
+<ruby>
+class Person < ActiveRecord::Base
   def a_method_used_for_validation_purposes
-    errors.add(:name, &quot;cannot contain the characters !@#%*()_-+=&quot;)
+    errors.add(:name, "cannot contain the characters !@#%*()_-+=")
   end
 end
 
-person = Person.create(:name =&gt; &quot;!@#&quot;)
+person = Person.create(:name => "!@#")
 
 person.errors[:name]
- # =&gt; &quot;cannot contain the characters !@#%*()_-+=&quot;
+ # => ["cannot contain the characters !@#%*()_-+="]
 
 person.errors.full_messages
- # =&gt; [&quot;Name cannot contain the characters !@#%*()_-+=&quot;]
-</pre></div>
-<p>Другой способ использования заключается в установлении <tt>[]=</tt></p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-  class Person &lt; ActiveRecord::Base
+ # => ["Name cannot contain the characters !@#%*()_-+="]
+</ruby>
+
+Другой способ использования заключается в установлении +[]=+
+
+<ruby>
+  class Person < ActiveRecord::Base
     def a_method_used_for_validation_purposes
-      errors[:name] = &quot;cannot contain the characters !@#%*()_-+=&quot;
+      errors[:name] = "cannot contain the characters !@#%*()_-+="
     end
   end
 
-  person = Person.create(:name =&gt; &quot;!@#&quot;)
+  person = Person.create(:name => "!@#")
 
   person.errors[:name]
-   # =&gt; [&quot;cannot contain the characters !@#%*()_-+=&quot;]
+   # => ["cannot contain the characters !@#%*()_-+="]
 
   person.errors.to_a
-   # =&gt; [&quot;Name cannot contain the characters !@#%*()_-+=&quot;]
-</pre></div>
+   # => ["Name cannot contain the characters !@#%*()_-+="]
+</ruby>
 
-<h4 id="errorsadd-to-base">4. <tt>errors[:base]</tt></h4>
-<p>Можете добавлять сообщения об ошибках, которые относятся к состоянию объекта в целом, а не к отдельному аттрибуту. Этот метод можно использовать, если вы хотите сказать, что объект невалиден, независимо от значений его атрибутов. Поскольку <tt>errors[:base]</tt> массив, можете просто добавить строку к массиву и использовать ее как сообщение об ошибке.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+h4. +errors[:base]+
+
+Можете добавлять сообщения об ошибках, которые относятся к состоянию объекта в целом, а не к отдельному аттрибуту. Этот метод можно использовать, если вы хотите сказать, что объект невалиден, независимо от значений его атрибутов. Поскольку +errors[:base]+ массив, можете просто добавить строку к массиву и использовать ее как сообщение об ошибке.
+
+<ruby>
+class Person < ActiveRecord::Base
   def a_method_used_for_validation_purposes
-    errors[:base] &lt;&lt; &quot;This person is invalid because ...&quot;
+    errors[:base] << "This person is invalid because ..."
   end
 end
-</pre></div>
+</ruby>
 
-<h4 id="errorsclear">5. <tt>errors.clear</tt></h4>
-<p>Метод <tt>clear</tt> используется, когда Вы намеренно хотите очистить все сообщения в коллекции <tt>errors</tt>. Естественно, вызов <tt>errors.clear</tt> для невалидного объекта фактически не сделает его валидным: сейчас коллекция <tt>errors</tt> будет пуста, но в следующий раз, когда Вы вызовете <tt>valid?</tt> или любой метод, который пытается сохранить этот объект в базу данных, валидации выполнятся снова. Если любая из валидаций провалится, коллекция <tt>errors</tt> будет заполнена снова.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+h4. +errors.clear+
+
+Метод +clear+ используется, когда вы намеренно хотите очистить все сообщения в коллекции +errors+. Естественно, вызов +errors.clear+ для невалидного объекта фактически не сделает его валидным: сейчас коллекция +errors+ будет пуста, но в следующий раз, когда вы вызовете +valid?+ или любой метод, который пытается сохранить этот объект в базу данных, валидации выполнятся снова. Если любая из валидаций провалится, коллекция +errors+ будет заполнена снова.
+
+<ruby>
+class Person < ActiveRecord::Base
   validates :name, :presence => true, :length => { :minimum => 3 }
 end
 
 person = Person.new
-person.valid? # =&gt; false
+person.valid? # => false
 person.errors[:name]
- # =&gt; [&quot;can't be blank&quot;, &quot;is too short (minimum is 3 characters)&quot;]
+ # => ["can't be blank", "is too short (minimum is 3 characters)"]
 
 person.errors.clear
-person.errors.empty? # =&gt; true
+person.errors.empty? # => true
 
-p.save # =&gt; false
+p.save # => false
 
 p.errors[:name]
- # =&gt; [&quot;can't be blank&quot;, &quot;is too short (minimum is 3 characters)&quot;]
-</pre></div>
+ # => ["can't be blank", "is too short (minimum is 3 characters)"]
+</ruby>
 
-<h4 id="errorssize">6. <tt>errors.size</tt></h4>
-<p>Метод <tt>size</tt> возвращает количество сообщений об ошибке для объекта.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Person &lt; ActiveRecord::Base
+h4. +errors.size+
+
+Метод +size+ возвращает количество сообщений об ошибке для объекта.
+
+<ruby>
+class Person < ActiveRecord::Base
   validates :name, :presence => true, :length => { :minimum => 3 }
 end
 
 person = Person.new
-person.valid? # =&gt; false
-person.errors.size # =&gt; 3
+person.valid? # => false
+person.errors.size # => 3
 
-person = Person.new(:name =&gt; &quot;Andrea&quot;, :email =&gt; &quot;andrea @example.com&quot;)
-person.valid? # =&gt; true
-person.errors.size # =&gt; 0
-</pre></div>
+person = Person.new(:name => "Andrea", :email => "andrea@example.com")
+person.valid? # => true
+person.errors.size # => 0
+</ruby>
