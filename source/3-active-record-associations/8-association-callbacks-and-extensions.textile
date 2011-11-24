@@ -1,30 +1,36 @@
 h1. Подробная информация по колбэкам и расширениям связи
 
-<h4 id="association-callbacks">1. Колбэки связи</h4>
-<p>Обычно колбэки прицепляются к жизненному циклу объектов Active Record, позволяя Вам работать с этими объектами в различных точках. Например, можете использовать колбэк <tt>:before_save</tt>, чтобы вызвать что-то перед тем, как объект будет сохранен.</p>
-<p>Колбэки связи похожи на обычные колбэки, но они включаются событиями в жизненном цикле коллекции. Доступны четыре колбэка связи:</p>
-<ul>
-	<li><tt>before_add</tt></li>
-	<li><tt>after_add</tt></li>
-	<li><tt>before_remove</tt></li>
-	<li><tt>after_remove</tt></li>
-</ul>
-<p>Колбэки связи объявляются с помощью добавления опций в объявление связи. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Customer &lt; ActiveRecord::Base
-  has_many :orders, :before_add =&gt; :check_credit_limit
+h4. Колбэки связи
+
+Обычно колбэки прицепляются к жизненному циклу объектов Active Record, позволяя Вам работать с этими объектами в различных точках. Например, можете использовать колбэк +:before_save+, чтобы вызвать что-то перед тем, как объект будет сохранен.
+
+Колбэки связи похожи на обычные колбэки, но они включаются событиями в жизненном цикле коллекции. Доступны четыре колбэка связи:
+
+* +before_add+
+* +after_add+
+* +before_remove+
+* +after_remove+
+
+Колбэки связи объявляются с помощью добавления опций в объявление связи. Например:
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :orders, :before_add => :check_credit_limit
 
   def check_credit_limit(order)
     ...
   end
 end
-</pre></div>
-<p>Rails передает добавляемый или удаляемый объект в колбэк.</p>
-<p>Можете помещать колбэки в очередь на отдельное событие, передав их как массив:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Customer &lt; ActiveRecord::Base
+</ruby>
+
+Rails передает добавляемый или удаляемый объект в колбэк.
+
+Можете помещать колбэки в очередь на отдельное событие, передав их как массив:
+
+<ruby>
+class Customer < ActiveRecord::Base
   has_many :orders,
-    :before_add =&gt; [:check_credit_limit, :calculate_shipping_charges]
+    :before_add => [:check_credit_limit, :calculate_shipping_charges]
 
   def check_credit_limit(order)
     ...
@@ -34,46 +40,53 @@ class Customer &lt; ActiveRecord::Base
     ...
   end
 end
-</pre></div>
-<p>Если колбэк <tt>before_add</tt> вызывает исключение, объект не будет добавлен в коллекцию. Подобным образом, если колбэк <tt>before_remove</tt> вызывает исключение, объект не убирается из коллекции.</p>
+</ruby>
 
-<h4 id="association-extensions">2. Расширения связи</h4>
-<p>Вы не ограничены функциональностью, которую Rails автоматически встраивает в выданные по связи объекты. Можете расширять эти объекты через анонимные модули, добавления новых методов поиска, создания и иных методов. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Customer &lt; ActiveRecord::Base
+Если колбэк +before_add+ вызывает исключение, объект не будет добавлен в коллекцию. Подобным образом, если колбэк +before_remove+ вызывает исключение, объект не убирается из коллекции.
+
+h4(#association-extensions). Расширения связи
+
+Вы не ограничены функциональностью, которую Rails автоматически встраивает в выданные по связи объекты. Можете расширять эти объекты через анонимные модули, добавления новых методов поиска, создания и иных методов. Например:
+
+<ruby>
+class Customer < ActiveRecord::Base
   has_many :orders do
     def find_by_order_prefix(order_number)
       find_by_region_id(order_number[0..2])
     end
   end
 end
-</pre></div>
-<p>Если имеется расширение, которое должно быть распространено на несколько связей, можете использовать именнованный модуль расширения. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Если имеется расширение, которое должно быть распространено на несколько связей, можете использовать именнованный модуль расширения. Например:
+
+<ruby>
 module FindRecentExtension
   def find_recent
-    find(:all, :conditions =&gt; [&quot;created_at &gt; ?&quot;, 5.days.ago])
+    where("created_at > ?", 5.days.ago)
   end
 end
 
-class Customer &lt; ActiveRecord::Base
-  has_many :orders, :extend =&gt; FindRecentExtension
+class Customer < ActiveRecord::Base
+  has_many :orders, :extend => FindRecentExtension
 end
 
-class Supplier &lt; ActiveRecord::Base
-  has_many :deliveries, :extend =&gt; FindRecentExtension
+class Supplier < ActiveRecord::Base
+  has_many :deliveries, :extend => FindRecentExtension
 end
-</pre></div>
-<p>Чтобы включить более одного модуля расширения в одну связь, определите массив модулей:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Customer &lt; ActiveRecord::Base
+</ruby>
+
+Чтобы включить более одного модуля расширения в одну связь, определите массив модулей:
+
+<ruby>
+class Customer < ActiveRecord::Base
   has_many :orders,
-    :extend =&gt; [FindRecentExtension, FindActiveExtension]
+    :extend => [FindRecentExtension, FindActiveExtension]
 end
-</pre></div>
-<p>Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя эти три метода доступа:</p>
-<ul>
-	<li><tt>proxy_owner</tt> возвращает объект, в котором объявлена связь.</li>
-	<li><tt>proxy_reflection</tt> возвращает объект reflection, описывающий связь.</li>
-	<li><tt>proxy_target</tt> возвращает связанный объект для <tt>belongs_to</tt> или <tt>has_one</tt>, или коллекцию связанных объектов для <tt>has_many</tt> или <tt>has_and_belongs_to_many</tt>.</li>
-</ul>
+</ruby>
+
+Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя эти три метода доступа:
+
+* +proxy_owner+ возвращает объект, в котором объявлена связь.
+* +proxy_reflection+ возвращает объект reflection, описывающий связь.
+* +proxy_target+ возвращает связанный объект для +belongs_to+ или +has_one+, или коллекцию связанных объектов для +has_many+ или +has_and_belongs_to_many+.

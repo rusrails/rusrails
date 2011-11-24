@@ -1,35 +1,39 @@
 h1. Подробная информация по связи has_and_belongs_to_many
 
-<p>Связь <tt>has_and_belongs_to_many</tt> создает отношение один-ко-многим с другой моделью. В терминах базы данных это связывает два класса через промежуточную соединительную таблицу, которая включает внешние ключи, относящиеся к каждому классу.</p>
+Связь +has_and_belongs_to_many+ создает отношение один-ко-многим с другой моделью. В терминах базы данных это связывает два класса через промежуточную соединительную таблицу, которая включает внешние ключи, относящиеся к каждому классу.
 
-<h4 id="methods-added">1. Добавляемые методы</h4>
-<p>Когда объявляете связь <tt>has_and_belongs_to_many</tt>, объявляющий класс автоматически получает 14 методов, относящихся к связи:</p>
-<ul>
-	<li><tt><em>collection</em>(force_reload = false)</tt></li>
-	<li><tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></li>
-	<li><tt><em>collection</em>.delete(object, &#8230;)</tt></li>
-	<li><tt><em>collection</em>=objects</tt></li>
-	<li><tt><em>collection_singular</em>_ids</tt></li>
-	<li><tt><em>collection_singular</em>_ids=ids</tt></li>
-	<li><tt><em>collection</em>.clear</tt></li>
-	<li><tt><em>collection</em>.empty?</tt></li>
-	<li><tt><em>collection</em>.size</tt></li>
-	<li><tt><em>collection</em>.find(&#8230;)</tt></li>
-	<li><tt><em>collection</em>.where(&#8230;)</tt></li>
-	<li><tt><em>collection</em>.exist?(&#8230;)</tt></li>
-	<li><tt><em>collection</em>.build(attributes = {})</tt></li>
-	<li><tt><em>collection</em>.create(attributes = {})</tt></li>
-</ul>
-<p>Во всех этих методах <tt><em>collection</em></tt> заменяется символом, переданным как первый аргумент в <tt>has_and_belongs_to_many</tt>, а <tt><em>collection_singular</em></tt> заменяется версией в единственном числе этого символа. Например, имеем объявление:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Part &lt; ActiveRecord::Base
+h4. Добавляемые методы
+
+Когда объявляете связь +has_and_belongs_to_many+, объявляющий класс автоматически получает 14 методов, относящихся к связи:
+
+* <tt><em>collection</em>(force_reload = false)</tt>
+* <tt><em>collection</em><<(object, ...)</tt>
+* <tt><em>collection</em>.delete(object, ...)</tt>
+* <tt><em>collection</em>=objects</tt>
+* <tt><em>collection_singular</em>_ids</tt>
+* <tt><em>collection_singular</em>_ids=ids</tt>
+* <tt><em>collection</em>.clear</tt>
+* <tt><em>collection</em>.empty?</tt>
+* <tt><em>collection</em>.size</tt>
+* <tt><em>collection</em>.find(...)</tt>
+* <tt><em>collection</em>.where(...)</tt>
+* <tt><em>collection</em>.exists?(...)</tt>
+* <tt><em>collection</em>.build(attributes = {})</tt>
+* <tt><em>collection</em>.create(attributes = {})</tt>
+
+Во всех этих методах <tt><em>collection</em></tt> заменяется символом, переданным как первый аргумент в +has_and_belongs_to_many+, а <tt><em>collection_singular</em></tt> заменяется версией в единственном числе этого символа. Например, имеем объявление:
+
+<ruby>
+class Part < ActiveRecord::Base
   has_and_belongs_to_many :assemblies
 end
-</pre></div>
-<p>Каждый экземпляр модели part model будет иметь эти методы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Каждый экземпляр модели part model будет иметь эти методы:
+
+<ruby>
 assemblies(force_reload = false)
-assemblies&lt;&lt;(object, ...)
+assemblies<<(object, ...)
 assemblies.delete(object, ...)
 assemblies=objects
 assembly_ids
@@ -39,239 +43,305 @@ assemblies.empty?
 assemblies.size
 assemblies.find(...)
 assemblies.where(...)
-assemblies.exist?(...)
+assemblies.exists?(...)
 assemblies.build(attributes = {}, ...)
 assemblies.create(attributes = {})
-</pre></div>
+</ruby>
 
-<h5 id="additional-column-methods">1.1 Дополнительные методы столбцов</h5>
-<p>Если соединительная таблица для связи <tt>has_and_belongs_to_many</tt> имеет дополнительные столбцы, кроме двух внешних ключей, эти столбцы будут добавлены как атрибуты к записям, получаемым посредством связи. Записи, возвращаемые с дополнительными атрибутами, будут всегда только для чтения, поскольку Rails не может сохранить значения этих атрибутов.</p>
-<div class='warning'><p>Использование дополнительных атрибутов в соединительной таблице в связи <tt>has_and_belongs_to_many</tt> устарело. Если требуется этот тип сложного поведения таблицы, соединяющей две модели в отношениях многие-ко-многим, следует использовать связь <tt>has_many :through</tt> вместо <tt>has_and_belongs_to_many</tt>.</p></div>
+h5. Дополнительные методы столбцов
 
-<h5 id="ttemcollectionemforce-reload--falsett">1.2 <tt><em>collection</em>(force_reload = false)</tt></h5>
-<p>Метод <tt><em>collection</em></tt> возвращает массив всех связанных объектов. Если нет связанных объектов, он возвращает пустой массив.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Если соединительная таблица для связи +has_and_belongs_to_many+ имеет дополнительные столбцы, кроме двух внешних ключей, эти столбцы будут добавлены как атрибуты к записям, получаемым посредством связи. Записи, возвращаемые с дополнительными атрибутами, будут всегда только для чтения, поскольку Rails не может сохранить значения этих атрибутов.
+
+WARNING: Использование дополнительных атрибутов в соединительной таблице в связи has_and_belongs_to_many устарело. Если требуется этот тип сложного поведения таблицы, соединяющей две модели в отношениях многие-ко-многим, следует использовать связь +has_many :through+ вместо +has_and_belongs_to_many+.
+
+h5(#has_and_belongs_to_many-collection). <tt><em>collection</em>(force_reload = false)</tt>
+
+Метод <tt><em>collection</em></tt> возвращает массив всех связанных объектов. Если нет связанных объектов, он возвращает пустой массив.
+
+<ruby>
 @assemblies = @part.assemblies
-</pre></div>
+</ruby>
 
-<h5 id="ttemcollectionemobject-tt">1.3 <tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></h5>
-<p>Метод <tt><em>collection</em>&lt;&lt;</tt> добавляет один или более объектов в коллекцию, создавая записи в соединительной таблице.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-@part.assemblies &lt;&lt; @assembly1
-</pre></div>
-<div class='note'><p>This method is aliased as <tt><em>collection</em>.concat</tt> and <tt><em>collection</em>.push</tt>.</p></div>
+h5(#has_and_belongs_to_many-collection-lt_lt). <tt><em>collection</em><<(object, ...)</tt>
 
-<h5 id="ttemcollectionemdeleteobject-tt">1.4 <tt><em>collection</em>.delete(object, &#8230;)</tt></h5>
-<p>Метод <tt><em>collection</em>.delete</tt> убирает один или более объектов из коллекции, удаляя записи в соединительной таблице. Это не уничтожает объекты.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод <tt><em>collection</em>&lt;&lt;</tt> добавляет один или более объектов в коллекцию, создавая записи в соединительной таблице.
+
+<ruby>
+@part.assemblies << @assembly1
+</ruby>
+
+NOTE: This method is aliased as <tt><em>collection</em>.concat</tt> and <tt><em>collection</em>.push</tt>.
+
+h5(#has_and_belongs_to_many-collection-delete). <tt><em>collection</em>.delete(object, ...)</tt>
+
+Метод <tt><em>collection</em>.delete</tt> убирает один или более объектов из коллекции, удаляя записи в соединительной таблице. Это не уничтожает объекты.
+
+<ruby>
 @part.assemblies.delete(@assembly1)
-</pre></div>
+</ruby>
 
-<h5 id="ttemcollectionemobjectstt">1.5 <tt><em>collection</em>=objects</tt></h5>
-<p>Метод <tt><em>collection</em>=</tt> делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.</p>
+h5(#has_and_belongs_to_many-collection-equal). <tt><em>collection</em>=objects</tt>
 
-<h5 id="ttemcollection-singularem-idstt">1.6 <tt><em>collection_singular</em>_ids</tt></h5>
-<p>Метод <tt><em>collection_singular</em>_ids</tt> возвращает массив id объектов в коллекции.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод <tt><em>collection</em>=</tt> делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.
+
+h5(#has_and_belongs_to_many-collection_singular). <tt><em>collection_singular</em>_ids</tt>
+
+Метод <tt><em>collection_singular</em>_ids</tt> возвращает массив id объектов в коллекции.
+
+<ruby>
 @assembly_ids = @part.assembly_ids
-</pre></div>
+</ruby>
 
-<h5 id="ttemcollection-singularem-idsidstt">1.7 <tt><em>collection_singular</em>_ids=ids</tt></h5>
-<p>Метод <tt><em>collection_singular</em>_ids=</tt> делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.</p>
+h5(#has_and_belongs_to_many-collection_singular_ids_ids). <tt><em>collection_singular</em>_ids=ids</tt>
 
-<h5 id="ttemcollectionemcleartt">1.8 <tt><em>collection</em>.clear</tt></h5>
-<p>Метод <tt><em>collection</em>.clear</tt> убирает каждый объект из коллекции, удаляя строки из соединительной таблицы. Это не уничтожает связанные объекты.</p>
+Метод <tt><em>collection_singular</em>_ids=</tt> делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.
 
-<h5 id="ttemcollectionememptytt">1.9 <tt><em>collection</em>.empty?</tt></h5>
-<p>Метод <tt><em>collection</em>.empty?</tt> возвращает <tt>true</tt>, если коллекция не содержит каких-либо связанных объектов.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&lt;% if @part.assemblies.empty? %&gt;
+h5(#has_and_belongs_to_many-collection-clear). <tt><em>collection</em>.clear</tt>
+
+Метод <tt><em>collection</em>.clear</tt> убирает каждый объект из коллекции, удаляя строки из соединительной таблицы. Это не уничтожает связанные объекты.
+
+h5(#has_and_belongs_to_many-collection-empty). <tt><em>collection</em>.empty?</tt>
+
+Метод <tt><em>collection</em>.empty?</tt> возвращает +true+, если коллекция не содержит каких-либо связанных объектов.
+
+<ruby>
+<% if @part.assemblies.empty? %>
   This part is not used in any assemblies
-&lt;% end %&gt;
-</pre></div>
+<% end %>
+</ruby>
 
-<h5 id="ttemcollectionemsizett">1.10 <tt><em>collection</em>.size</tt></h5>
-<p>Метод <tt><em>collection</em>.size</tt> возвращает количество объектов в коллекции.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5(#has_and_belongs_to_many-collection-size). <tt><em>collection</em>.size</tt>
+
+Метод <tt><em>collection</em>.size</tt> возвращает количество объектов в коллекции.
+
+<ruby>
 @assembly_count = @part.assemblies.size
-</pre></div>
+</ruby>
 
-<h5 id="ttemcollectionemfindtt">1.11 <tt><em>collection</em>.find(&#8230;)</tt></h5>
-<p>Метод <tt><em>collection</em>.find</tt> ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и <tt>ActiveRecord::Base.find</tt>. Он также добавляет дополнительное условие, что объект должен быть в коллекции.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-@new_assemblies = @part.assemblies.find(:all,
-  :conditions =&gt; [&quot;created_at &gt; ?&quot;, 2.days.ago])
-</pre></div>
-<div class='note'><p>Начиная с  Rails 3, передача опций в метод <tt>ActiveRecord::Base.find</tt> не рекомендована. Вместо этого используйте <tt><em>collection</em>.where</tt>, когда хотите передать условия.</p></div>
+h5(#has_and_belongs_to_many-collection-find). <tt><em>collection</em>.find(...)</tt>
 
-<h5 id="ttemcollectionemfindtt">1.12 <tt><em>collection</em>.where(&#8230;)</tt></h5>
-<p>Метод <tt><em>collection</em>.where</tt> ищет объекты в коллекции, основываясь на переданных условиях, но объекты загружаются лениво, что означает, что база данных запрашивается только когда происходит доступ к объекту(-там). Он также добавляет дополнительное условие, что объект должен быть в коллекции.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод <tt><em>collection</em>.find</tt> ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и +ActiveRecord::Base.find+. Он также добавляет дополнительное условие, что объект должен быть в коллекции.
+
+<ruby>
+@new_assemblies = @part.assemblies.all(
+  :conditions => ["created_at > ?", 2.days.ago])
+</ruby>
+
+NOTE: Начиная с Rails 3, передача опций в метод +ActiveRecord::Base.find+ не рекомендована. Вместо этого используйте <tt><em>collection</em>.where</tt>, когда хотите передать условия.
+
+h5(#has_and_belongs_to_many-collection-where). <tt><em>collection</em>.where(...)</tt>
+
+Метод <tt><em>collection</em>.where</tt> ищет объекты в коллекции, основываясь на переданных условиях, но объекты загружаются лениво, что означает, что база данных запрашивается только когда происходит доступ к объекту(-там). Он также добавляет дополнительное условие, что объект должен быть в коллекции.
+
+<ruby>
 @new_assemblies = @part.assemblies.where("created_at > ?", 2.days.ago)
-</pre></div>
+</ruby>
 
-<h5 id="ttemcollectionemexisttt">1.13 <tt><em>collection</em>.exist?(&#8230;)</tt></h5>
-<p>Метод <tt><em>collection</em>.exist?</tt> проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и <tt>ActiveRecord::Base.exists?</tt>.</p>
+h5(#has_and_belongs_to_many-collection-exists). <tt><em>collection</em>.exists?(...)</tt>
 
-<h5 id="ttemcollectionembuildattributes--tt">1.14 <tt><em>collection</em>.build(attributes = {})</tt></h5>
-<p>Метод <tt><em>collection</em>.build</tt> возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, и будет создана связь через соединительную таблицу, но связанный объект <em>не</em> будет пока сохранен.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод <tt><em>collection</em>.exist?</tt> проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и +ActiveRecord::Base.exists?+.
+
+h5(#has_and_belongs_to_many-collection-build). <tt><em>collection</em>.build(attributes = {})</tt>
+
+Метод <tt><em>collection</em>.build</tt> возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, и будет создана связь через соединительную таблицу, но связанный объект _не_ будет пока сохранен.
+
+<ruby>
 @assembly = @part.assemblies.build(
-  {:assembly_name =&gt; &quot;Transmission housing&quot;})
-</pre></div>
+  {:assembly_name => "Transmission housing"})
+</ruby>
 
-<h5 id="ttemcollectionemcreateattributes--tt">1.15 <tt><em>collection</em>.create(attributes = {})</tt></h5>
-<p>Метод <tt><em>collection</em>.create</tt> возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана связь через соединительную таблицу, и связанный объект <em>будет</em> сохранен (разумеется, если пройдет валидации).</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5(#has_and_belongs_to_many-create-attributes). <tt><em>collection</em>.create(attributes = {})</tt>
+
+Метод <tt><em>collection</em>.create</tt> возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана связь через соединительную таблицу, и связанный объект _будет_ сохранен (разумеется, если пройдет валидации).
+
+<ruby>
 @assembly = @part.assemblies.create(
-  {:assembly_name =&gt; &quot;Transmission housing&quot;})
-</pre></div>
+  {:assembly_name => "Transmission housing"})
+</ruby>
 
-<h4 id="options-for-has-and-belongs-to-many">2. Опции для <tt>has_and_belongs_to_many</tt></h4>
-<p>Во многих случаях можно использовать стандартные возможности <tt>has_and_belongs_to_many</tt> без какой-либо настройки. Но можно изменить эти возможности разными способами. Этот раздел раскрывает опции, которые можно передать при создании связи <tt>has_and_belongs_to_many</tt>. Например, связь с несколькими опциями может выглядеть так:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :uniq =&gt; true,
-    :read_only =&gt; true
+h4. Опции для +has_and_belongs_to_many+
+
+Во многих случаях можно использовать стандартные возможности +has_and_belongs_to_many+ без какой-либо настройки. Но можно изменить эти возможности разными способами. Этот раздел раскрывает опции, которые можно передать при создании связи +has_and_belongs_to_many+. Например, связь с несколькими опциями может выглядеть так:
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, :uniq => true,
+    :read_only => true
 end
-</pre></div>
-<p>Связь <tt>has_and_belongs_to_many</tt> поддерживает эти опции:</p>
-<ul>
-	<li><tt>:association_foreign_key</tt></li>
-	<li><tt>:autosave</tt></li>
-	<li><tt>:class_name</tt></li>
-	<li><tt>:conditions</tt></li>
-	<li><tt>:counter_sql</tt></li>
-	<li><tt>:delete_sql</tt></li>
-	<li><tt>:extend</tt></li>
-	<li><tt>:finder_sql</tt></li>
-	<li><tt>:foreign_key</tt></li>
-	<li><tt>:group</tt></li>
-	<li><tt>:include</tt></li>
-	<li><tt>:insert_sql</tt></li>
-	<li><tt>:join_table</tt></li>
-	<li><tt>:limit</tt></li>
-	<li><tt>:offset</tt></li>
-	<li><tt>:order</tt></li>
-	<li><tt>:readonly</tt></li>
-	<li><tt>:select</tt></li>
-	<li><tt>:uniq</tt></li>
-	<li><tt>:validate</tt></li>
-</ul>
+</ruby>
 
-<h5 id="association-foreign-key">2.1 <tt>:association_foreign_key</tt></h5>
-<p>По соглашению Rails полагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на другую модель, является именем этой модели с добавленным суффиксом <tt>_id</tt>. Опция <tt>:association_foreign_key</tt> позволяет установить имя внешнего ключа напрямую:</p>
-<div class='info'>Опции <p>The <tt>:foreign_key</tt> и <tt>:association_foreign_key</tt> полезны при настройке самоприсоединения многие-ко-многим. Например:</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
-  has_and_belongs_to_many :friends, :class_name =&gt; &quot;User&quot;,
-    :foreign_key =&gt; &quot;this_user_id&quot;,
-    :association_foreign_key =&gt; &quot;other_user_id&quot;
+Связь +has_and_belongs_to_many+ поддерживает эти опции:
+
+* +:association_foreign_key+
+* +:autosave+
+* +:class_name+
+* +:conditions+
+* +:counter_sql+
+* +:delete_sql+
+* +:extend+
+* +:finder_sql+
+* +:foreign_key+
+* +:group+
+* +:include+
+* +:insert_sql+
+* +:join_table+
+* +:limit+
+* +:offset+
+* +:order+
+* +:readonly+
+* +:select+
+* +:uniq+
+* +:validate+
+
+h5(#has_and_belongs_to_many-association_foreign_key). +:association_foreign_key+
+
+По соглашению Rails полагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на другую модель, является именем этой модели с добавленным суффиксом +_id+. Опция +:association_foreign_key+ позволяет установить имя внешнего ключа явно:
+
+TIP: Опции +:foreign_key+ и +:association_foreign_key+ полезны при настройке самоприсоединения многие-ко-многим. Например:
+
+<ruby>
+class User < ActiveRecord::Base
+  has_and_belongs_to_many :friends, :class_name => "User",
+    :foreign_key => "this_user_id",
+    :association_foreign_key => "other_user_id"
 end
-</pre></div>
+</ruby>
 
-<h5 id="autosave">2.2 <tt>:autosave</tt></h5>
-<p>Если установить опцию <tt>:autosave</tt> в <tt>true</tt>, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда Вы сохраните родительский объектt.</p>
+h5(#has_and_belongs_to_many-autosave). +:autosave+
 
-<h5 id="class-name">2.3 <tt>:class_name</tt></h5>
-<p>Если имя другой модели не может быть произведено из имени связи, можете использовать опцию <tt>:class_name</tt> для предоставления имени модели. Например, если часть имеет много узлов, но фактическое имя модели, содержащей узлы это <tt>Gadget</tt>, можете установить это следующим образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :class_name =&gt; &quot;Gadget&quot;
+Если установить опцию +:autosave+ в +true+, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда Вы сохраните родительский объектt.
+
+h5(#has_and_belongs_to_many-class_name). +:class_name+
+
+Если имя другой модели не может быть произведено из имени связи, можете использовать опцию +:class_name+ для предоставления имени модели. Например, если часть имеет много узлов, но фактическое имя модели, содержащей узлы это +Gadget+, можете установить это следующим образом:
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, :class_name => "Gadget"
 end
-</pre></div>
+</ruby>
 
-<h5 id="conditions">2.4 <tt>:conditions</tt></h5>
-<p>Опция <tt>:conditions</tt> позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>WHERE</tt>).</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
+h5(#has_and_belongs_to_many-conditions). +:conditions+
+
+Опция +:conditions+ позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе SQL, используемом в условии +WHERE+).
+
+<ruby>
+class Parts < ActiveRecord::Base
   has_and_belongs_to_many :assemblies,
-    :conditions =&gt; &quot;factory = 'Seattle'&quot;
+    :conditions => "factory = 'Seattle'"
 end
-</pre></div>
-<p>Также можно установить условия через хэш:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
+</ruby>
+
+Также можно установить условия через хэш:
+
+<ruby>
+class Parts < ActiveRecord::Base
   has_and_belongs_to_many :assemblies,
-    :conditions =&gt; { :factory =&gt; 'Seattle' }
+    :conditions => { :factory => 'Seattle' }
 end
-</pre></div>
-<p>Если используете хэш в опции <tt>:conditions</tt>, то создание записи через эту связь автоматически будет подогнано, используя хэш. В нашем случае, использование <tt>@parts.assemblies.create</tt> или <tt>@parts.assemblies.build</tt> создаст узлы, где столбец <tt>factory</tt> имеет значение &#8220;Seattle&#8221;.</p>
+</ruby>
 
-<h5 id="counter-sql">2.5 <tt>:counter_sql</tt></h5>
-<p>Обычно Rails автоматически создает подходящий <span class="caps">SQL</span> для счета связанных членов. С опцией <tt>:counter_sql</tt> можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их счета.</p>
-<div class='note'><p>Если определите <tt>:finder_sql</tt>, но не <tt>:counter_sql</tt>, тогда счетчик <span class="caps">SQL</span> будет автоматически создан, подставив <tt>SELECT COUNT(*) FROM</tt> вместо выражения <tt>SELECT ... FROM</tt> Вашего выражения <tt>:finder_sql</tt>.</p></div>
+Если используете хэш в опции +:conditions+, то создание записи через эту связь автоматически будет подогнано, используя хэш. В нашем случае, использование +@parts.assemblies.create+ или +@parts.assemblies.build+ создаст узлы, где столбец +factory+ имеет значение "Seattle".
 
-<h5 id="delete-sql">2.6 <tt>:delete_sql</tt></h5>
-<p>бычно Rails автоматически создает подходящий <span class="caps">SQL</span> для удаления ссылок между связанными классами. С помощью опции <tt>:delete_sql</tt> можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их удаления.</p>
+h5(#has_and_belongs_to_many-counter_sql). +:counter_sql+
 
-<h5 id="extend">2.7 <tt>:extend</tt></h5>
-<p>Опция <tt>:extend</tt> определяет именнованый модуль для расширения полномочий связи. Расширения связей будут детально обсуждены <a href="./active-record-associations/association-callbacks-and-extensions#association-extensions">позже в этом руководстве</a>.</p>
+Обычно Rails автоматически создает подходящий SQL для счета связанных членов. С опцией +:counter_sql+ можете самостоятельно определить полное выражение SQL для их счета.
 
-<h5 id="finder-sql">2.8 <tt>:finder_sql</tt></h5>
-<p>Обычно Rails автоматически создает подходящий <span class="caps">SQL</span> для получения связанных членов. С опцией <tt>:finder_sql</tt> можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их получения. Это может быть необходимым, если получаемые объекты требуют сложный межтабличный <span class="caps">SQL</span>.</p>
+NOTE: Если определите +:finder_sql+, но не +:counter_sql+, тогда счетчик SQL будет автоматически создан, подставив +SELECT COUNT(*) FROM+ вместо выражения +SELECT ... FROM+ Вашего выражения +:finder_sql+.
 
-<h5 id="foreign-key">2.9 <tt>:foreign_key</tt></h5>
-<p>По соглашению Rails полагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на эту модель, имеет имя модели с добавленным суффиксом <tt>_id</tt>. Опция <tt>:foreign_key</tt> позволяет установить имя внешнего ключа прямо:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class User &lt; ActiveRecord::Base
-  has_and_belongs_to_many :friends, :class_name =&gt; &quot;User&quot;,
-    :foreign_key =&gt; &quot;this_user_id&quot;,
-    :association_foreign_key =&gt; &quot;other_user_id&quot;
+h5(#has_and_belongs_to_many-delete_sql). +:delete_sql+
+
+Обычно Rails автоматически создает подходящий SQL для удаления ссылок между связанными классами. С помощью опции :delete_sql можете самостоятельно определить полное выражение SQL для их удаления.
+
+h5(#has_and_belongs_to_many-extend). +:extend+
+
+Опция +:extend+ определяет именнованый модуль для расширения полномочий связи. Расширения связей будут детально обсуждены "позже в этом руководстве":/active-record-associations/association-callbacks-and-extensions#association-extensions.
+
+h5(#has_and_belongs_to_many-finder_sql). +:finder_sql+
+
+Обычно Rails автоматически создает подходящий SQL для получения связанных членов. С опцией +:finder_sql+ можете самостоятельно определить полное выражение <SQL для их получения. Это может быть необходимым, если получаемые объекты требуют сложный межтабличный SQL.
+
+h5(#has_and_belongs_to_many-foreign_key). +:foreign_key+
+
+По соглашению Rails полагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на эту модель, имеет имя модели с добавленным суффиксом +_id+. Опция +:foreign_key+ позволяет установить имя внешнего ключа явно:
+
+<ruby>
+class User < ActiveRecord::Base
+  has_and_belongs_to_many :friends, :class_name => "User",
+    :foreign_key => "this_user_id",
+    :association_foreign_key => "other_user_id"
 end
-</pre></div>
+</ruby>
 
-<h5 id="group">2.10 <tt>:group</tt></h5>
-<p>Опция <tt>:group</tt> доставляет имя атрибута, по которому группируется результирующий набор, используя выражение <tt>GROUP BY</tt> в поисковом <span class="caps">SQL</span>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :group =&gt; &quot;factory&quot;
+h5(#has_and_belongs_to_many-group). +:group+
+
+Опция +:group+ доставляет имя атрибута, по которому группируется результирующий набор, используя выражение +GROUP BY+ в поисковом SQL.
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, :group => "factory"
 end
-</pre></div>
+</ruby>
 
-<h5 id="include">2.11 <tt>:include</tt></h5>
-<p>Можете использовать опцию <tt>:include</tt> для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. </p>
+h5(#has_and_belongs_to_many-include). +:include+
 
-<h5 id="insert-sql">2.12 <tt>:insert_sql</tt></h5>
-<p>Обычно Rails автоматически создает подходящий <span class="caps">SQL</span> для создания связей между связанными классами. С помощью опции <tt>:insert_sql</tt> можете самостоятельно определить полное выражение <span class="caps">SQL</span> для их вставки.</p>
+Можете использовать опцию +:include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется.
 
-<h5 id="join-table">2.13 <tt>:join_table</tt></h5>
-<p>Если имя соединительной таблицы по умолчанию, основанное на алфавитном порядке, это не то, что Вам нужно, используйте опцию <tt>:join_table</tt>, чтобы переопределить его.</p>
+h5(#has_and_belongs_to_many-insert_sql). +:insert_sql+
 
-<h5 id="limit">2.14 <tt>:limit</tt></h5>
-<p>Опция <tt>:limit</tt> позволяет ограничить общее количество объектов, которые будут выбраны через связь.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order =&gt; &quot;created_at DESC&quot;,
-    :limit =&gt; 50
+Обычно Rails автоматически создает подходящий SQL для создания связей между связанными классами. С помощью опции +:insert_sql+ можете самостоятельно определить полное выражение SQL для их вставки.
+
+h5(#has_and_belongs_to_many-join_table). +:join_table+
+
+Если имя соединительной таблицы по умолчанию, основанное на алфавитном порядке, это не то, что вам нужно, используйте опцию +:join_table+, чтобы переопределить его.
+
+h5(#has_and_belongs_to_many-limit). +:limit+
+
+Опция +:limit+ позволяет ограничить общее количество объектов, которые будут выбраны через связь.
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, :order => "created_at DESC",
+    :limit => 50
 end
-</pre></div>
+</ruby>
 
-<h5 id="offset">2.15 <tt>:offset</tt></h5>
-<p>Опция <tt>:offset</tt> позволяет определить начальное смещение для выбора объектов через связь. Например, если установите <tt>:offset => 11</tt>, она пропустит первые 11 записей.</p>
+h5(#has_and_belongs_to_many-offset). +:offset+
 
-<h5 id="order">2.16 <tt>:order</tt></h5>
-<p>Опция <tt>:order</tt> предписывает порядок, в котором связанные объекты будут получены (в синтаксисе <span class="caps">SQL</span>, используемом в условии <tt>ORDER BY</tt>).</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Parts &lt; ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order =&gt; &quot;assembly_name ASC&quot;
+Опция +:offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, если установите +:offset => 11+, она пропустит первые 11 записей.
+
+h5(#has_and_belongs_to_many-order). +:order+
+
+Опция +:order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, :order => "assembly_name ASC"
 end
-</pre></div>
+</ruby>
 
-<h5 id="readonly">2.17 <tt>:readonly</tt></h5>
-<p>Если установите опцию <tt>:readonly</tt> в <tt>true</tt>, тогда связанные объекты будут доступны только для чтения, когда получены посредством связи.</p>
+h5(#has_and_belongs_to_many-readonly). +:readonly+
 
-<h5 id="select">2.18 <tt>:select</tt></h5>
-<p>Опция <tt>:select</tt> позволяет переопределить <span class="caps">SQL</span> условие <tt>SELECT</tt>, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.</p>
+Если установите опцию +:readonly+ в +true+, тогда связанные объекты будут доступны только для чтения, когда получены посредством связи.
 
-<h5 id="uniq">2.19 <tt>:uniq</tt></h5>
-<p>Определите опцию <tt>:uniq => true</tt>, чтобы убирать дубликаты из коллекции.</p>
+h5(#has_and_belongs_to_many-select). +:select+
 
-<h5 id="validate">2.20 <tt>:validate</tt></h5>
-<p>Если установите опцию <tt>:validate</tt> в <tt>false</tt>, t тогда связанные объекты будут проходить валидацию всякий раз, когда Вы сохраняете этот объект. По умолчанию она равна <tt>true</tt>: связанные объекты проходят валидацию, когда этот объект сохраняется.</p>
+Опция +:select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
 
-<h4 id="when-are-objects-saved">3. Когда сохраняются объекты?</h4>
-<p>Когда Вы назначаете объект связью <tt>has_and_belongs_to_many</tt> этот объект автоматически сохраняется (в порядке обновления соединительной таблицы). Если назначаете несколько объектов в одном выражении, они все будут сохранены.</p>
-<p>Если одно из этих сохранений проваливается из-за ошибок валидации, тогда выражение назначения возвращает <tt>false</tt>, aи само назначение отменяется.</p>
-<p>Если родительский объект (который объявляет связь <tt>has_and_belongs_to_many</tt>) является несохраненным (то есть <tt>new_record?</tt> возвращает <tt>true</tt>) тогда дочерние объекты не сохраняются при добавлении. Все несохраненные члены связи сохранятся автоматически, когда сохранится родительский объект.</p>
-<p>Если Вы хотите назначить объект связью <tt>has_and_belongs_to_many</tt> без сохранения объекта, используйте метод <tt><em>collection</em>.build</tt>.</p>
+h5(#has_and_belongs_to_many-uniq). +:uniq+
+
+Определите опцию +:uniq => true+, чтобы убирать дубликаты из коллекции.
+
+h5(#has_and_belongs_to_many-validate). +:validate+
+
+Если установите опцию +:validate+ в +false+, тогда связанные объекты будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
+
+h4. Когда сохраняются объекты?
+
+Когда вы назначаете объект связью +has_and_belongs_to_many+ этот объект автоматически сохраняется (в порядке обновления соединительной таблицы). Если назначаете несколько объектов в одном выражении, они все будут сохранены.
+
+Если одно из этих сохранений проваливается из-за ошибок валидации, тогда выражение назначения возвращает +false+, a само назначение отменяется.
+
+Если родительский объект (который объявляет связь +has_and_belongs_to_many+) является несохраненным (то есть +new_record?+ возвращает +true+) тогда дочерние объекты не сохраняются при добавлении. Все несохраненные члены связи сохранятся автоматически, когда сохранится родительский объект.
+
+Если вы хотите назначить объект связью +has_and_belongs_to_many+ без сохранения объекта, используйте метод <tt><em>collection</em>.build</tt>.
