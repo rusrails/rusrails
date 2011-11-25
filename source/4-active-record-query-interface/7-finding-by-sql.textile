@@ -1,9 +1,11 @@
 h1. Поиск с помощью SQL
 
-<p>Если вы предпочитаете использовать собственные запросы <span class="caps">SQL</span> для поиска записей в таблице, можете использовать <tt>find_by_sql</tt>. Метод <tt>find_by_sql</tt> возвратит массив объектов, даже если лежащий в основе запрос вернет всего лишь одну запись. Например, можете запустить такой запрос:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.find_by_sql(&quot;SELECT * FROM clients 
-  INNER JOIN orders ON clients.id = orders.client_id 
-  ORDER clients.created_at desc&quot;)
-</pre></div>
-<p><tt>find_by_sql</tt> предоставляет простой способ создания произвольных запросов к базе данных и получения экземпляров объектов.</p>
+Если вы предпочитаете использовать собственные запросы SQL для поиска записей в таблице, можете использовать +find_by_sql+. Метод +find_by_sql+ возвратит массив объектов, даже если лежащий в основе запрос вернет всего лишь одну запись. Например, можете запустить такой запрос:
+
+<ruby>
+Client.find_by_sql("SELECT * FROM clients
+  INNER JOIN orders ON clients.id = orders.client_id
+  ORDER clients.created_at desc")
+</ruby>
+
++find_by_sql+ предоставляет простой способ создания произвольных запросов к базе данных и получения экземпляров объектов.

@@ -1,81 +1,116 @@
 h1. Условия
 
-<p>Метод <tt>where</tt> позволяет определить условия для ограничения возвращаемых записей, которые представляют <tt>WHERE</tt>-часть выражения <span class="caps">SQL</span>. Условия могут быть заданы как строка, массив или хэш.</p>
+Метод +where+ позволяет определить условия для ограничения возвращаемых записей, которые представляют +WHERE+-часть выражения SQL. Условия могут быть заданы как строка, массив или хэш.
 
-<h4 id="pure-string-conditions">1. Чисто строковые условия</h4>
-<p>Если вы хотите добавить условия в свой поиск, можете просто определить их там, подобно <tt>Client.where("orders_count = '2'")</tt>. Это найдет всех клиентов, где значение поля <tt>orders_count</tt> равно 2.</p>
-<div class='warning'><p>Создание условий в чистой строке подвергает Вас риску <span class="caps">SQL</span> инъекций. Например, <tt>Client.where("first_name LIKE '%#{params[:first_name]}%'")</tt> не безопасно. Смотрите следующий раздел для более предпочтительного способа обработки условий с использованием массива.</p></div>
+h4(#pure-string-conditions). Чисто строковые условия
 
-<h4 id="array-conditions">2. Условия с использованием массива</h4>
-<p>Что если количество может изменяться, скажем, как аргумент извне, возможно даже от пользователя? Поиск тогда становится таким:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where([&quot;orders_count = ?&quot;, params[:orders]])
-</pre></div>
-<p>Active Record проходит через первый элемент в переданных условиях, подставляя остальные элементы вместо знаков вопроса <tt>(?)</tt> в первом элементе.</p>
-<p>Если Вы хотите определить два условия, можете сделать так:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where([&quot;orders_count = ? AND locked = ?&quot;, params[:orders], false])
-</pre></div>
-<p>В этом примере первый знак вопроса будет заменен на значение в <tt>params[:orders]</tt> и второй будет заменен <span class="caps">SQL</span> аналогом <tt>false</tt>, который зависит от адаптера.</p>
-<p>Причина писать такой код:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where([&quot;orders_count = ?&quot;, params[:orders]])
-</pre></div>
-<p>вместо такого:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where(&quot;orders_count = #{params[:orders]}&quot;)
-</pre></div>
-<p>заключается в безопасности. Помещение переменной прямо в строку условий передает переменную в базу данных <strong>как есть</strong>. Это означает, что неэкранированная переменная, переданная пользователем, может иметь злой умысел. Если так сделать, вы подвергаете базу данных риску, так как если пользователь обнаружит, что он может использовать вашу базу данных, то он сможет сделать с ней что угодно. Никогда не помещайте аргументы прямо в строку условий!</p>
-<div class='info'><p>Больше об опасности <span class="caps">SQL</span> инъекций можно узнать из <a href="/ruby-on-rails-security-guide">Руководства Ruby On Rails по безопасности</a>.</p></div>
+Если вы хотите добавить условия в свой поиск, можете просто определить их там, подобно +Client.where("orders_count = '2'")+. Это найдет всех клиентов, где значение поля +orders_count+ равно 2.
 
-<h5 id="placeholder-conditions">2.1 Символы-заполнители в условиях</h5>
-<p>Подобно тому, как <tt>(?)</tt> заменяют параметры, можно использовать хэш ключей/параметров в условиях с использованием массива:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where(
-  [&quot;created_at &gt;= :start_date AND created_at &lt;= :end_date&quot;, { :start_date =&gt; params[:start_date], :end_date =&gt; params[:end_date] }])
-</pre></div>
-<p>Читаемость улучшится, в случае если вы используете большое количество переменных в условиях.</p>
+WARNING: Создание условий в чистой строке подвергает вас риску SQL инъекций. Например, +Client.where("first_name LIKE '%#{params[:first_name]}%'")+ не безопасно. Смотрите следующий раздел для более предпочтительного способа обработки условий с использованием массива.
 
-<h5 id="range-conditions">2.2 Интервальные условия</h5>
-<p>Если вы ищете интервал в таблице (например, пользователей, созданных в определенный промежуток времени), можно использовать опцию условий, связанную с <tt>IN</tt> в выражении <span class="caps">SQL</span>.Если имеются две даты, поступившие от контроллера, можно сделать так для поиска интервала:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4(#array-conditions). Условия с использованием массива
+
+Что если количество может изменяться, скажем, как аргумент извне, возможно даже от пользователя? Поиск тогда становится таким:
+
+<ruby>
+Client.where("orders_count = ?", params[:orders])
+</ruby>
+
+Active Record проходит через первый элемент в переданных условиях, подставляя остальные элементы вместо знаков вопроса +(?)+ в первом элементе.
+
+Если хотите определить два условия, можете сделать так:
+
+<ruby>
+Client.where("orders_count = ? AND locked = ?", params[:orders], false)
+</ruby>
+
+В этом примере первый знак вопроса будет заменен на значение в +params[:orders]+ и второй будет заменен SQL аналогом +false+, который зависит от адаптера.
+
+Причина писать такой код:
+
+<ruby>
+Client.where("orders_count = ?", params[:orders])
+</ruby>
+
+вместо такого:
+
+<ruby>
+Client.where("orders_count = #{params[:orders]}")
+</ruby>
+
+заключается в безопасности. Помещение переменной прямо в строку условий передает переменную в базу данных _как есть_. Это означает, что неэкранированная переменная, переданная пользователем, может иметь злой умысел. Если так сделать, вы подвергаете базу данных риску, так как если пользователь обнаружит, что он может использовать вашу базу данных, то он сможет сделать с ней что угодно. Никогда не помещайте аргументы прямо в строку условий!
+
+TIP: Подробнее об опасности SQL инъекций можно узнать из "Руководства Ruby On Rails по безопасности":/ruby-on-rails-security-guide.
+
+h5. Символы-заполнители в условиях
+
+Подобно тому, как +(?)+ заменяют параметры, можно использовать хэш ключей/параметров в условиях с использованием массива:
+
+<ruby>
+Client.where("created_at >= :start_date AND created_at <= :end_date",
+  {:start_date => params[:start_date], :end_date => params[:end_date]})
+</ruby>
+
+Читаемость улучшится, в случае если вы используете большое количество переменных в условиях.
+
+h5. Интервальные условия
+
+Если вы ищете интервал в таблице (например, пользователей, созданных в определенный промежуток времени), можно использовать опцию условий, связанную с +IN+ в выражении SQL>.Если имеются две даты, поступившие от контроллера, можно сделать так для поиска интервала:
+
+<ruby>
 Client.where(:created_at => (params[:start_date].to_date)..(params[:end_date].to_date))
-</pre></div>
-<p>Этот запрос сгенерирует что-то похожее на следующий SQL.</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+</ruby>
+
+Этот запрос сгенерирует что-то похожее на следующий SQL.
+
+<sql>
   SELECT "clients".* FROM "clients" WHERE ("clients"."created_at" BETWEEN '2010-09-29' AND '2010-11-30')
-</pre></div>
+</sql>
 
-<h4 id="hash-conditions">3. Условия с использованием хэша</h4>
-<p>Active Record также позволяет передавать условия в хэше, что улучшает читаемость синтаксиса условий. В этом случае передается хэш с ключами, равными полям, к которым применяются условия, и с значениями, указывающим каким образом Вы хотите применить к ним условия:</p>
-<div class='note'><p>Хэшем можно передать условия проверки только равенства, интервала и подмножества.</p></div>
+h4(#hash-conditions). Условия с использованием хэша
 
-<h5 id="equality-conditions">3.1 Условия равенства</h5>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where({ :locked =&gt; true })
-</pre></div>
-<p>Имя поля также может быть строкой, а не символом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where({ 'locked' =&gt; true })
-</pre></div>
+Active Record также позволяет передавать условия в хэше, что улучшает читаемость синтаксиса условий. В этом случае передается хэш с ключами, равными полям, к которым применяются условия, и с значениями, указывающим каким образом вы хотите применить к ним условия:
 
-<h5 id="range-conditions">3.2 Интервальные условия</h5>
-<p>Замечательной вещью является то, что можно передавать интервалы для полей без создания больших запросов, таких как показанный в преамбуле к разделу.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where({ :created_at =&gt; (Time.now.midnight - 1.day)..Time.now.midnight})
-</pre></div>
-<p>Это найдет всех клиентов, созданных вчера, с использованием <span class="caps">SQL</span> выражения <tt>BETWEEN</tt>:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+NOTE: Хэшем можно передать условия проверки только равенства, интервала и подмножества.
+
+h5. Условия равенства
+
+<ruby>
+Client.where(:locked => true)
+</ruby>
+
+Имя поля также может быть строкой, а не символом:
+
+<ruby>
+Client.where('locked' => true)
+</ruby>
+
+h5(#hash-range_conditions). Интервальные условия
+
+Замечательной вещью является то, что можно передавать интервалы для полей без создания больших запросов, таких как показанный в преамбуле к разделу.
+
+<ruby>
+Client.where(:created_at => (Time.now.midnight - 1.day)..Time.now.midnight)
+</ruby>
+
+Это найдет всех клиентов, созданных вчера, с использованием SQL выражения +BETWEEN+:
+
+<sql>
 SELECT * FROM clients WHERE (clients.created_at BETWEEN '2008-12-21 00:00:00' AND '2008-12-22 00:00:00')
-</pre></div>
-<p>Это была демонстрация более короткого синтаксиса для примеров в <a href="#array-conditions">Условия с использованием массива</a></p>
+</sql>
 
-<h5 id="subset-conditions">3.3 Условия подмножества</h5>
-<p>Если хотите найти записи, используя выражение <tt>IN</tt>, можете передать массив в хэш условия:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Client.where({ :orders_count =&gt; [1,3,5] })
-</pre></div>
-<p>Этот код создаст подобный <span class="caps">SQL</span>:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+Это была демонстрация более короткого синтаксиса для примеров в "Условия с использованием массива":#array-conditions
+
+h5. Условия подмножества
+
+Если хотите найти записи, используя выражение +IN+, можете передать массив в хэш условия:
+
+<ruby>
+Client.where(:orders_count => [1,3,5])
+</ruby>
+
+Этот код создаст подобный SQL:
+
+<sql>
 SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
-</pre></div>
+</sql>

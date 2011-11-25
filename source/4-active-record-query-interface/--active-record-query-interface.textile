@@ -1,39 +1,46 @@
 h1. Интерфейс запросов Active Record
 
-<p>Это руководство раскрывает различные способы получения данных из базы данных, используя Active Record. Изучив его, вы сможете:</p>
-<ul>
-	<li>Искать записи, используя различные методы и условия</li>
-	<li>Определять порядок, получаемые атрибуты, группировку и другие свойства поиска записей</li>
-	<li>Использовать нетерпеливую загрузку (eager loading) для уменьшения числа запросов к базе данных, необходимых для получения данных</li>
-	<li>Использовать методы динамического поиска</li>
-	<li>Проверять существование отдельных записей</li>
-	<li>Выполнять различные вычисления в моделях Active Record</li>
-</ul>
+Это руководство раскрывает различные способы получения данных из базы данных, используя Active Record. Изучив его, вы сможете:
 
-<div class='warning'><p>Это руководство основано на Rails 3.0. Часть кода, показанного здесь, не будет работать для более ранних версий Rails. Руководство по интерфейсу запросов Active Record, основанное на Rails 2.3 Вы можете просмотреть <a href="http://archive.rusrails.ru/rails23-archive/23-active-record-query-interface">в архиве</a></p></div>
-<p>Если вы использовали чистый <span class="caps">SQL</span> для поиска записей в базе данных, то скорее всего обнаружите, что в Rails есть лучшие способы выполнения тех же операций. Active Record ограждает вас от необходимости использования <span class="caps">SQL</span> во многих случаях.</p>
-<p>Примеры кода далее в этом руководстве будут относиться к некоторым из этих моделей:</p>
-<div class='info'><p>Все модели используют <tt>id</tt> как первичный ключ, если не указано иное.</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Client &lt; ActiveRecord::Base
+* Искать записи, используя различные методы и условия
+* Определять порядок, получаемые атрибуты, группировку и другие свойства поиска записей
+* Использовать нетерпеливую загрузку (eager loading) для уменьшения числа запросов к базе данных, необходимых для получения данных
+* Использовать методы динамического поиска
+* Проверять существование отдельных записей
+* Выполнять различные вычисления в моделях Active Record
+
+WARNING. Это руководство основано на Rails 3.0. Часть кода, показанного здесь, не будет работать для более ранних версий Rails. Руководство по интерфейсу запросов Active Record, основанное на Rails 2.3 Вы можете просмотреть "в архиве":http://archive.rusrails.ru/rails23-archive/23-active-record-query-interface
+
+Если вы использовали чистый SQL для поиска записей в базе данных, то скорее всего обнаружите, что в Rails есть лучшие способы выполнения тех же операций. Active Record ограждает вас от необходимости использования SQL во многих случаях.
+
+Примеры кода далее в этом руководстве будут относиться к некоторым из этих моделей:
+
+TIP: Все модели используют +id+ как первичный ключ, если не указано иное.
+
+<ruby>
+class Client < ActiveRecord::Base
   has_one :address
   has_many :orders
   has_and_belongs_to_many :roles
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Address &lt; ActiveRecord::Base
+</ruby>
+
+<ruby>
+class Address < ActiveRecord::Base
   belongs_to :client
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Order &lt; ActiveRecord::Base
-  belongs_to :client, :counter_cache =&gt; true
+</ruby>
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :client, :counter_cache => true
 end
-</pre></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Role &lt; ActiveRecord::Base
+</ruby>
+
+<ruby>
+class Role < ActiveRecord::Base
   has_and_belongs_to_many :clients
 end
-</pre></div>
-<p>Active Record выполнит запросы в базу данных за вас, он совместим с большинством СУБД (MySQL, PostgreSQL и SQLite это только некоторые из них). Независимо от того, какая используется СУБД, формат методов Active Record будет всегда одинаковый.</p>
+</ruby>
+
+Active Record выполнит запросы в базу данных за вас, он совместим с большинством СУБД (MySQL, PostgreSQL и SQLite это только некоторые из них). Независимо от того, какая используется СУБД, формат методов Active Record будет всегда одинаковый.

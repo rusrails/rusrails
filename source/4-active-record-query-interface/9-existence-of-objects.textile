@@ -1,26 +1,36 @@
 h1. Существование объектов
 
-<p>Если вы просто хотите проверить существование объекта, есть метод, называемый <tt>exists?</tt>. Этот метод запрашивает базу данных, используя тот же запрос, что и <tt>find</tt>, но вместо возврата объекта или коллекции объектов, он возвращает или <tt>true</tt>, или <tt>false</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Если вы просто хотите проверить существование объекта, есть метод, называемый +exists?+. Этот метод запрашивает базу данных, используя тот же запрос, что и +find+, но вместо возврата объекта или коллекции объектов, он возвращает или +true+, или +false+.
+
+<ruby>
 Client.exists?(1)
-</pre></div>
-<p>Метод <tt>exists?</tt> также принимает несколько id, при этом возвращает true, если хотя бы хотя бы одна запись из них существует.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Метод +exists?+ также принимает несколько id, при этом возвращает true, если хотя бы хотя бы одна запись из них существует.
+
+<ruby>
 Client.exists?(1,2,3)
-# или
+#или
 Client.exists?([1,2,3])
-</pre></div>
-<p>Более того, <tt>exists</tt> принимает опцию <tt>conditions</tt> подобно этому:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Более того, +exists+ принимает опцию +conditions+ подобно этому:
+
+<ruby>
 Client.where(:first_name => 'Ryan').exists?
-</pre></div>
-<p>Даже возможно использовать <tt>exists?</tt> без аргументов:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Даже возможно использовать +exists?+ без аргументов:
+
+<ruby>
 Client.exists?
-</pre></div>
-<p>Это возвратит <tt>false</tt>, если таблица <tt>clients</tt> пустая, и <tt>true</tt> в противном случае.</p>
-<p>Для проверки на существование также можно использовать <tt>any?</tt> и <tt>many?</tt>на модели или relation.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Это возвратит +false+, если таблица +clients+ пустая, и +true+ в противном случае.
+
+Для проверки на существование также можно использовать +any?+ и +many?+ на модели или relation.
+
+<ruby>
 # на модели
 Post.any?
 Post.many?
@@ -36,4 +46,4 @@ Post.where(:published => true).many?
 # на связи
 Post.first.categories.any?
 Post.first.categories.many?
-</pre></div>
+</ruby>

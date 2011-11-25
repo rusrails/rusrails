@@ -1,100 +1,133 @@
 h1. Соединительные таблицы
 
-<p><tt>Model.find</tt> предоставляет метод поиска с именем <tt>joins</tt> для определения условия <tt>JOIN</tt> в результирующем <span class="caps">SQL</span>. Есть разные способы определить метод <tt>joins</tt>:</p>
+Active Record предоставляет метод поиска с именем +joins+ для определения условия +JOIN+ в результирующем SQL. Есть разные способы определить метод +joins+:
 
-<h4 id="using-a-string-sql-fragment">1. Использование строчного фрагмента <span class="caps">SQL</span></h4>
-<p>Можете просто дать чистый <span class="caps">SQL</span>, определяющий условие <tt>JOIN</tt> в <tt>joins</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Использование строчного фрагмента SQL
+
+Можете просто дать чистый SQL, определяющий условие +JOIN+ в +joins+.
+
+<ruby>
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
-</pre></div>
-<p>Это приведет к следующему <span class="caps">SQL</span>:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
-SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-</pre></div>
+</ruby>
 
-<h4 id="using-arrayhash-of-named-associations">2. Использование массива/хэша именнованных связей</h4>
-<div class='warning'><p>Этот метод работает только с <tt>INNER JOIN</tt>.</p></div>
-<p>Active Record позволяет использовать имена <a href="/active-record-associations">связей</a>, определенных в модели, как ярлыки для определения для определения условия <tt>JOIN</tt> для этих связей при использовании метода <tt>joins</tt>.</p>
-<p>Например, рассмотрим следующие модели <tt>Category</tt>, <tt>Post</tt>, <tt>Comments</tt> и <tt>Guest</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Category &lt; ActiveRecord::Base
+Это приведет к следующему SQL:
+
+<sql>
+SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
+</sql>
+
+h4. Использование массива/хэша именнованных связей
+
+WARNING: Этот метод работает только с +INNER JOIN+.
+
+Active Record позволяет использовать имена "связей":/active-record-associations, определенных в модели, как ярлыки для определения для определения условия +JOIN+ для этих связей при использовании метода +joins+.
+
+Например, рассмотрим следующие модели +Category+, +Post+, +Comments+ и +Guest+:
+
+<ruby>
+class Category < ActiveRecord::Base
   has_many :posts
 end
 
-class Post &lt; ActiveRecord::Base
+class Post < ActiveRecord::Base
   belongs_to :category
   has_many :comments
   has_many :tags
 end
 
-class Comments &lt; ActiveRecord::Base
+class Comment < ActiveRecord::Base
   belongs_to :post
   has_one :guest
 end
 
-class Guest &lt; ActiveRecord::Base
+class Guest < ActiveRecord::Base
   belongs_to :comment
 end
-</pre></div>
-<p>Сейчас все нижеследующее создаст ожидаемые соединительные запросы с использованием <tt>INNER JOIN</tt>:</p>
 
-<h5 id="joining-a-single-association">2.1 Соединение одиночной связи</h5>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+class Tag < ActiveRecord::Base
+  belongs_to :post
+end
+</ruby>
+
+Сейчас все нижеследующее создаст ожидаемые соединительные запросы с использованием +INNER JOIN+:
+
+h5. Соединение одиночной связи
+
+<ruby>
 Category.joins(:posts)
-</pre></div>
-<p>Это создаст:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+</ruby>
+
+Это создаст:
+
+<sql>
 SELECT categories.* FROM categories
   INNER JOIN posts ON posts.category_id = categories.id
-</pre></div>
-<p>Или, по-русски, "возвратить объект Category для всех категорий с публикациями". Отметьте, что будут дублирующиеся категории, если имеется более одной публикации в одной категории. Если нужны уникальные категории, можно использовать Category.joins(:post).select("distinct(categories.id)").</p>
+</sql>
 
-<h5 id="joining-multiple-associations">2.2 Соединение нескольких связей</h5>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Или, по-русски, "возвратить объект Category для всех категорий с публикациями". Отметьте, что будут дублирующиеся категории, если имеется более одной публикации в одной категории. Если нужны уникальные категории, можно использовать Category.joins(:post).select("distinct(categories.id)").
+
+h5. Соединение нескольких связей
+
+<ruby>
 Post.joins(:category, :comments)
-</pre></div>
-<p>Это создаст:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
-SELECT posts.* FROM posts 
+</ruby>
+
+Это создаст:
+
+<sql>
+SELECT posts.* FROM posts
   INNER JOIN categories ON posts.category_id = categories.id
   INNER JOIN comments ON comments.post_id = posts.id
-</pre></div>
-<p>Или, по-русски, "возвратить все публикации, у которых есть категория и как минимум один комментарий". Отметьте, что публикации с несколькими комментариями будут показаны несколько раз.</p>
+</sql>
 
-<h5 id="joining-nested-associations-single-level">2.3 Соединение вложенных связей (одного уровня)</h5>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Post.joins(:comments =&gt; :guest)
-</pre></div>
-<p>Это создаст:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+Или, по-русски, "возвратить все публикации, у которых есть категория и как минимум один комментарий". Отметьте, что публикации с несколькими комментариями будут показаны несколько раз.
+
+h5. Соединение вложенных связей (одного уровня)
+
+<ruby>
+Post.joins(:comments => :guest)
+</ruby>
+
+Это создаст:
+
+<sql>
 SELECT posts.* FROM posts
   INNER JOIN comments ON comments.post_id = posts.id
   INNER JOIN guests ON guests.comment_id = comments.id
-</pre></div>
-<p>Или, по-русски, "возвратить все публикации, имеющие комментарий, сделанный гостем".</p>
+</sql>
 
-<h5 id="joining-nested-associations-multiple-level">2.4 Соединение вложенных связей (разных уровней)</h5>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Category.joins(:posts =&gt; [{:comments =&gt; :guest}, :tags])
-</pre></div>
-<p>Это создаст:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+Или, по-русски, "возвратить все публикации, имеющие комментарий, сделанный гостем".
+
+h5. Соединение вложенных связей (разных уровней)
+
+<ruby>
+Category.joins(:posts => [{:comments => :guest}, :tags])
+</ruby>
+
+Это создаст:
+
+<sql>
 SELECT categories.* FROM categories
   INNER JOIN posts ON posts.category_id = categories.id
   INNER JOIN comments ON comments.post_id = posts.id
   INNER JOIN guests ON guests.comment_id = comments.id
   INNER JOIN tags ON tags.post_id = posts.id
-</pre></div>
+</sql>
 
-<h4 id="specifying-conditions-on-the-joined-tables">3. Определение условий в соединительных таблицах</h4>
-<p>В соединительных таблицах можно определить условия, используя надлежащие <a href="/active-record-query-interface/conditions#array-conditions">массивные</a> и <a href="/active-record-query-interface/conditions#pure-string-conditions">строчные</a> условия. <a href="/active-record-query-interface/conditions#hash-conditions">Условия с использованием хэша</a> предоставляют специальный синтаксис для определения условий в соединительных таблицах:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Определение условий в соединительных таблицах
+
+В соединительных таблицах можно определить условия, используя надлежащие "массивные":/active-record-query-interface/conditions#array-conditions и "строчные":/active-record-query-interface/conditions#pure-string-conditions условия. "Условия с использованием хэша":/active-record-query-interface/conditions#hash-conditions предоставляют специальный синтаксис для определения условий в соединительных таблицах:
+
+<ruby>
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-Client.joins(:orders).where('orders.created_at' =&gt; time_range)
-</pre></div>
-<p>Альтернативный и более чистый синтаксис для этого - вложенные хэш-условия:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Client.joins(:orders).where('orders.created_at' => time_range)
+</ruby>
+
+Альтернативный и более чистый синтаксис для этого - вложенные хэш-условия:
+
+<ruby>
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-Client.joins(:orders).where(:orders =&gt; {:created_at =&gt; time_range})
-</pre></div>
-<p>Будут найдены все клиенты, имеющие созданные вчера заказы, снова используя выражение <span class="caps">SQL</span> <tt>BETWEEN</tt>.</p>
+Client.joins(:orders).where(:orders => {:created_at => time_range})
+</ruby>
+
+Будут найдены все клиенты, имеющие созданные вчера заказы, снова используя выражение SQL +BETWEEN+.

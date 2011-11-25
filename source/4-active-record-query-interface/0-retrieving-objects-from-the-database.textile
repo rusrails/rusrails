@@ -1,155 +1,206 @@
 h1. Получение объектов из базы данных
 
-<p>Для получения объектов из базы данных, Active Record предоставляет несколько методов поиска. В каждый метод поиска можно передавать аргументы для выполнения определенных запросов в базу данных без необходимости писать на чистом <span class="caps">SQL</span>.</p>
-<p>Методы следующие:</p>
-<ul>
-	<li><tt>where</tt></li>
-	<li><tt>select</tt></li>
-	<li><tt>group</tt></li>
-	<li><tt>order</tt></li>
-	<li><tt>reorder</tt></li>
-	<li><tt>reverse_order</tt></li>
-	<li><tt>limit</tt></li>
-	<li><tt>offset</tt></li>
-	<li><tt>joins</tt></li>
-	<li><tt>includes</tt></li>
-	<li><tt>lock</tt></li>
-	<li><tt>readonly</tt></li>
-	<li><tt>from</tt></li>
-	<li><tt>having</tt></li>
-</ul>
-<p>Все эти методы возвращают экземпляр <tt>ActiveRecord::Relation</tt>.</p>
-<p>Вкратце основные операции <tt>Model.find(options)</tt> таковы:</p>
-<ul>
-	<li>Преобразовать предоставленные опции в эквивалентный запрос <span class="caps">SQL</span>.</li>
-	<li>Выполнить запрос <span class="caps">SQL</span> и получить соответствующие результаты из базы данных.</li>
-	<li>Создать экземпляр эквивалентного объекта Ruby подходящей модели для каждой строки результата запроса.</li>
-	<li>Запустить колбэки <tt>after_find</tt>, если таковые имеются.</li>
-</ul>
++Для получения объектов из базы данных, Active Record предоставляет несколько методов поиска. В каждый метод поиска можно передавать аргументы для выполнения определенных запросов в базу данных без необходимости писать на чистом SQL.
 
-<h4 id="retrieving-a-single-object">1. Получение одиночного объекта</h4>
-<p>Active Record позволяет получить одиночный объект пятью разными способами.</p>
+Методы следующие:
+* +where+
+* +select+
+* +group+
+* +order+
+* +reorder+
+* +reverse_order+
+* +limit+
+* +offset+
+* +joins+
+* +includes+
+* +lock+
+* +readonly+
+* +from+
+* +having+
 
-<h5 id="using-a-primary-key">1.1 Использование первичного ключа</h5>
-<p>Используя <tt>Model.find(primary_key, options = nil)</tt>, можно получить объект, соответствующий предоставленному первичному ключу (<em>primary key</em>) и предоставленным опциям (если таковые имеются). Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-# Найти клиента с первичным ключом (id) 10.
+Все эти методы возвращают экземпляр +ActiveRecord::Relation+.
+
+Вкратце основные операции +Model.find(options)+ таковы:
+
+* Преобразовать предоставленные опции в эквивалентный запрос SQL.
+* Выполнить запрос SQL и получить соответствующие результаты из базы данных.
+* Создать экземпляр эквивалентного объекта Ruby подходящей модели для каждой строки результата запроса.
+* Запустить колбэки +after_find+, если таковые имеются.
+
+h4. Получение одиночного объекта
+
+Active Record позволяет получить одиночный объект пятью разными способами.
+
+h5. Использование первичного ключа
+
+Используя +Model.find(primary_key, options = nil)+, можно получить объект, соответствующий предоставленному первичному ключу (_primary key_) и предоставленным опциям (если таковые имеются). Например:
+
+<ruby>
+# Find the client with primary key (id) 10.
 client = Client.find(10)
-=&gt; #&lt;Client id: 10, name: =&gt; &quot;Ryan&quot;&gt;
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+=> #<Client id: 10, first_name: => "Ryan">
+</ruby>
+
+SQL эквивалент этого такой:
+
+<sql>
 SELECT * FROM clients WHERE (clients.id = 10)
-</pre></div>
-<p><tt>Model.find(primary_key)</tt> вызывает исключение <tt>ActiveRecord::RecordNotFound</tt>, если соответствующей записи не было найдено.</p>
+</sql>
 
-<h5 id="first">1.2 <tt>first</tt></h5>
-<p><tt>Model.first</tt> находит первую запись, соответствующую предоставленным опциям. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<tt>Model.find(primary_key)</tt> вызывает исключение +ActiveRecord::RecordNotFound+, если соответствующей записи не было найдено.
+
+h5. +first+
+
+<tt>Model.first</tt> находит первую запись, соответствующую предоставленным опциям. Например:
+
+<ruby>
 client = Client.first
-=&gt; #&lt;Client id: 1, name: =&gt; &quot;Lifo&quot;&gt;
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+=> #<Client id: 1, first_name: "Lifo">
+</ruby>
+
+SQL эквивалент этого такой:
+
+<sql>
 SELECT * FROM clients LIMIT 1
-</pre></div>
-<p><tt>Model.first</tt> возвращает <tt>nil</tt>, если не найдено соответствующей записи. Исключения не вызываются.</p>
+</sql>
 
-<h5 id="last">1.3 <tt>last</tt></h5>
-<p><tt>Model.last</tt> находит последнюю запись, соответствующую предоставленным опциям. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<tt>Model.first</tt> возвращает +nil+, если не найдено соответствующей записи. Исключения не вызываются.
+
+h5. +last+
+
+<tt>Model.last</tt> находит последнюю запись, соответствующую предоставленным опциям. Например:
+
+<ruby>
 client = Client.last
-=&gt; #&lt;Client id: 221, name: =&gt; &quot;Russel&quot;&gt;
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
-SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
-</pre></div>
-<p><tt>Model.last</tt> возвращает <tt>nil</tt>, если не найдено соответствующей записи. Исключения не вызываются.</p>
+=> #<Client id: 221, first_name: "Russel">
+</ruby>
 
-<h5 id="first">1.4 <tt>first!</tt></h5>
-<p><tt>Model.first!</tt> находит первую запись. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+SQL эквивалент этого такой:
+
+<sql>
+SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
+</sql>
+
+<tt>Model.last</tt> возвращает +nil+, если не найдено соответствующей записи. Исключения не вызываются.
+
+h5. +first!+
+
+<tt>Model.first!</tt> находит первую запись. Например:
+
+<ruby>
 client = Client.first!
 => #<Client id: 1, first_name: "Lifo">
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
-SELECT * FROM clients LIMIT 1
-</pre></div>
-<p><tt>Model.first</tt> вызывает <tt>RecordNotFound</tt>, если не найдено соответствующей записи.</p>
+</ruby>
 
-<h5 id="last">1.5 <tt>last!</tt></h5>
-<p><tt>Model.last!</tt> находит последнюю запись. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+SQL эквивалент этого такой:
+
+<sql>
+SELECT * FROM clients LIMIT 1
+</sql>
+
+<tt>Model.first</tt> вызывает +RecordNotFound+, если не найдено соответствующей записи.
+
+h5. +last!+
+
+<tt>Model.last!</tt> находит последнюю запись. Например:
+
+<ruby>
 client = Client.last!
 => #<Client id: 221, first_name: "Russel">
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
+</ruby>
+
+SQL эквивалент этого такой:
+
+<sql>
 SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
-</pre></div>
-<p><tt>Model.last</tt> вызывает <tt>RecordNotFound</tt>, если не найдено соответствующей записи.</p>
+</sql>
 
-<h4 id="retrieving-multiple-objects">2. Получение нескольких объектов</h4>
+<tt>Model.last</tt> вызывает +RecordNotFound+, если не найдено соответствующей записи.
 
-<h5 id="using-multiple-primary-keys">2.1 Использование нескольких первичных ключей</h5>
-<p><tt>Model.find(array_of_primary_key)</tt> принимает также массив <em>первичных ключей</em>. Возвращается массив всех соответствующих записей для предоставленных <em>первичных ключей</em>. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Получение нескольких объектов
+
+h5. Использование нескольких первичных ключей
+
+<tt>Model.find(array_of_primary_key)</tt> принимает также массив _первичных ключей_. Возвращается массив всех соответствующих записей для предоставленных _первичных ключей_. Например:
+
+<ruby>
 # Найти клиентов с первичными ключами 1 и 10.
 client = Client.find(1, 10) # Или даже Client.find([1, 10])
-=&gt; [#&lt;Client id: 1, name: =&gt; &quot;Lifo&quot;&gt;, #&lt;Client id: 10, name: =&gt; &quot;Ryan&quot;&gt;]
-</pre></div>
-<p><span class="caps">SQL</span> эквивалент этого такой:</p>
-<div class="code_container"><pre class="brush: sql; gutter: false; toolbar: false">
-SELECT * FROM clients WHERE (clients.id IN (1,10))
-</pre></div>
-<div class="warning"><p><tt>Model.find(array_of_primary_key)</tt> вызывает исключение <tt>ActiveRecord::RecordNotFound</tt>, если не найдено соответствующих записей для <strong>всех</strong> предоставленных первичных ключей.</p></div>
+=> [#<Client id: 1, first_name: => "Lifo">, #<Client id: 10, first_name: => "Ryan">]
+</ruby>
 
-<h4 id="retrieving-multiple-objects-in-batches">3. Получение нескольких объектов пакетами</h4>
-<p>Иногда необходимо перебрать огромный набор записей. Например, чтобы разослать письма всем пользователям, импортировать некоторые данные и так далее.</p>
-<p>Для начала подойдет такой код:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+SQL эквивалент этого такой:
+
+<sql>
+SELECT * FROM clients WHERE (clients.id IN (1,10))
+</sql>
+
+WARNING: <tt>Model.find(array_of_primary_key)</tt> вызывает исключение +ActiveRecord::RecordNotFound+, если не найдено соответствующих записей для <strong>всех</strong> предоставленных первичных ключей.
+
+h4. Получение нескольких объектов пакетами
+
+Иногда необходимо перебрать огромный набор записей. Например, чтобы разослать письма всем пользователям, импортировать некоторые данные и так далее.
+
+Для начала подойдет такой код:
+
+<ruby>
 # Очень неэффективно, когда в таблице users тысячи строк.
 User.all.each do |user|
   NewsLetter.weekly_deliver(user)
 end
-</pre></div>
-<p>Но если количество строк в таблице будет очень большим, вышеуказанный подход может быть непроизводительным, вплоть до просто невозможного.</p>
-<p>Это происходит потому, что <tt>User.all.each</tt> заставляет Active Record извлечь <em>таблицу полностью</em>, создать объект модели для каждой строки и держать этот массив в памяти. Иногда получается слишком много объектов, и это требует слишком много памяти.</p>
+</ruby>
 
-<h5 id="find-each">3.1 <tt>find_each</tt></h5>
-<p>Для эффективного перебора в большой таблице Active Record предоставляет метод пакетного поиска, названный <tt>find_each</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Но если количество строк в таблице будет очень большим, вышеуказанный подход может быть непроизводительным, вплоть до просто невозможного.
+
+Это происходит потому, что +User.all.each+ заставляет Active Record извлечь _таблицу полностью_, создать объект модели для каждой строки и держать этот массив в памяти. Иногда получается слишком много объектов, и это требует слишком много памяти.
+
+h5. +find_each+
+
+Для эффективного перебора в большой таблице Active Record предоставляет метод пакетного поиска, названный +find_each+:
+
+<ruby>
 User.find_each do |user|
   NewsLetter.weekly_deliver(user)
 end
-</pre></div>
-<p><strong>Конфигурирование размера пакета</strong></p>
-<p>За кулисами, <tt>find_each</tt> извлекает строки пакетами по <tt>1000 штук</tt> и выдает их один за другим. Размер лежащих в основе пакетов настраивается с помощью опции <tt>:batch_size</tt>.</p>
-<p>Для извлечения записей <tt>User</tt> в пакете размером <tt>5000</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-User.find_each(:batch_size =&gt; 5000) do |user|
-  NewsLetter.weekly_deliver(user)
-end
-</pre></div>
-<p><strong>Как начать поиск пакета, начиная с определенного первичного ключа</strong></p>
-<p>Записи извлекаются в порядке увеличения первичного ключа, который должен быть числом. Опция <tt>:start</tt> позволяет вам настроить первый ID последовательности, если из меньших Вам ничего не нужно. Это полезно, например, для возможности возобновить прерванный процесс пакетирования, если сохранять последний обработанный ID как контрольную точку.</p>
-<p>Чтобы выслать письма только пользователям с первичным ключом, начинающимся от <tt>2000</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-User.find_each(:batch_size =&gt; 5000, :start =&gt; 2000) do |user|
-  NewsLetter.weekly_deliver(user)
-end
-</pre></div>
-<p><strong>Дополнительные опции</strong></p>
-<p><tt>find_each</tt> принимает те же опции, что и обычный метод <tt>find</tt>. Однако, <tt>:order</tt> и <tt>:limit</tt> необходимы внутренне, поэтому не могут быть указаны явно.</p>
+</ruby>
 
-<h5 id="find-in-batches">3.2 <tt>find_in_batches</tt></h5>
-<p>Можно также работать с кусками, а не строка за строкой, используя <tt>find_in_batches</tt>. Этот метод аналогичен <tt>find_each</tt>, но вместо него он дает массив моделей:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-# Works in chunks of 1000 invoices at a time.
-Invoice.find_in_batches(:include =&gt; :invoice_lines) do |invoices|
+*Конфигурирование размера пакета*
+
+За кулисами, +find_each+ извлекает строки пакетами по +1000 штук+ и выдает их один за другим. Размер лежащих в основе пакетов настраивается с помощью опции +:batch_size+.
+
+Для извлечения записей +User+ в пакете размером +5000+:
+
+<ruby>
+User.find_each(:batch_size => 5000) do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+*Как начать поиск пакета, начиная с определенного первичного ключа*
+
+Записи извлекаются в порядке увеличения первичного ключа, который должен быть числом. Опция +:start+ позволяет вам настроить первый ID последовательности, если из меньших вам ничего не нужно. Это полезно, например, для возможности возобновить прерванный процесс пакетирования, если сохранять последний обработанный ID как контрольную точку.
+
+Чтобы выслать письма только пользователям с первичным ключом, начинающимся от +2000+:
+
+<ruby>
+User.find_each(:batch_size => 5000, :start => 2000) do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+*Дополнительные опции*
+
++find_each+ принимает те же опции, что и обычный метод +find+. Однако, +:order+ и +:limit+ необходимы внутренне, поэтому не могут быть указаны явно.
+
+h5. +find_in_batches+
+
+Можно также работать с кусками, а не строка за строкой, используя +find_in_batches+. Этот метод аналогичен +find_each+, но вместо него он дает массив моделей:
+
+<ruby>
+# Работает с кусками по 1000 счетов за раз.
+Invoice.find_in_batches(:include => :invoice_lines) do |invoices|
   export.add_invoices(invoices)
 end
-</pre></div>
-<p>Это будет выдавать в блок по <tt>1000</tt> счетов каждый раз.</p>
+</ruby>
+
+Это будет выдавать в блок по +1000+ счетов каждый раз.
