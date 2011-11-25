@@ -1,189 +1,235 @@
 h1. Структурирование макетов (часть третья)
 
-<p><a href="/layouts-and-rendering-in-rails/structuring-layouts">&gt;&gt;&gt; Первая часть</a><br />
-<a href="/layouts-and-rendering-in-rails/structuring-layouts-2">&gt;&gt;&gt; Вторая часть</a></p>
+"&gt;&gt;&gt; Первая часть":/layouts-and-rendering-in-rails/structuring-layouts
+<br />
+"&gt;&gt;&gt; Вторая часть":/layouts-and-rendering-in-rails/structuring-layouts-2
 
-<h4 id="using-partials">4. Использование партиалов</h4>
-<p>Частичные шаблоны &#8211; также называемые &#8220;партиалы&#8221; &#8211; являются еще одним устройством для раскладывания процесса рендеринга на более управляемые части. С партиалами можно перемещать код для рендеринга определенных кусков отклика в свои отдельные файлы.</p>
+h4. Использование партиалов
 
-<h5 id="naming-partials">4.1 Именование партиалов</h5>
-<p>Чтобы отрендерить партиал как часть вьюхи, используем метод <tt>render</tt> внутри вьюхи и включаем опцию <tt>:partial</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&lt;%= render &quot;menu&quot; %&gt;
-</pre></div>
-<p>Это отрендерит файл, названный <tt>_menu.html.erb</tt> в этом месте при рендеринге вьюхи. Отметьте начальный символ подчеркивания: файлы партиалов начинаются со знака подчеркивания для отличия их от обычных вьюх, хотя в вызове они указаны без подчеркивания. Это справедливо даже тогда, когда партиалы вызываются из другой папки:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&lt;%= render &quot;shared/menu&quot; %&gt;
-</pre></div>
-<p>Этот код затянет партиал из <tt>app/views/shared/_menu.html.erb</tt>.</p>
+Частичные шаблоны - также называемые "партиалы" - являются еще одним устройством для раскладывания процесса рендеринга на более управляемые части. С партиалами можно перемещать код для рендеринга определенных кусков отклика в свои отдельные файлы.
 
-<h5 id="using-partials-to-simplify-views">4.2 Использование партиалов для упрощения вьюх</h5>
-<p>Партиалы могут использоваться как эквивалент подпрограмм: способ убрать подробности из вьюхи так, чтобы можно было легче понять, что там происходит. Например, у Вас может быть такая вьюха:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render &quot;shared/ad_banner&quot; %&gt;
+h5. Именование партиалов
 
-&lt;h1&gt;Products&lt;/h1&gt;
+Чтобы отрендерить партиал как часть вьюхи, используем метод +render+ внутри вьюхи и включаем опцию +:partial+:
 
-&lt;p&gt;Here are a few of our fine products:&lt;/p&gt;
+<ruby>
+<%= render "menu" %>
+</ruby>
+
+Это отрендерит файл, названный +_menu.html.erb+ в этом месте при рендеринге вьюхи. Отметьте начальный символ подчеркивания: файлы партиалов начинаются со знака подчеркивания для отличия их от обычных вьюх, хотя в вызове они указаны без подчеркивания. Это справедливо даже тогда, когда партиалы вызываются из другой папки:
+
+<ruby>
+<%= render "shared/menu" %>
+</ruby>
+
+Этот код затянет партиал из +app/views/shared/_menu.html.erb+.
+
+h5. Использование партиалов для упрощения вьюх
+
+Партиалы могут использоваться как эквивалент подпрограмм: способ убрать подробности из вьюхи так, чтобы можно было легче понять, что там происходит. Например, у вас может быть такая вьюха:
+
+<erb>
+<%= render "shared/ad_banner" %>
+
+<h1>Products</h1>
+
+<p>Here are a few of our fine products:</p>
 ...
 
-&lt;%= render &quot;shared/footer&quot; %&gt;
-</pre></div>
-<p>Здесь партиалы <tt>_ad_banner.html.erb</tt> и <tt>_footer.html.erb</tt> могут содержать контент, размещенный на многих страницах Вашего приложения. Вам не нужно видеть подробностей этих разделов, когда Вы сосредотачиваетесь на определенной странице.</p>
-<div class='info'><p>Для содержимого, располагаемого на всех страницах Вашего приложения, можете использовать партиалы прямо в макетах.</p></div>
+<%= render "shared/footer" %>
+</erb>
 
-<h5 id="partial-layouts">4.3 Частичные макеты</h5>
-<p>Партиал может использовать свой собственный файл макета, подобно тому, как вьюха может использовать макет. Например, можете вызвать подобный партиал:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render &quot;link_area&quot;, :layout =&gt; &quot;graybar&quot; %&gt;
-</pre></div>
-<p>Это найдет партиал с именем <tt>_link_area.html.erb</tt> и отрендерит его, используя макет <tt>_graybar.html.erb</tt>. Отметьте, что макеты для партиалов также начинаются с подчеркивания, как и обычные партиалы, и размещаются в той же папке с партиалами, которым они принадлежат (не в основной папке <tt>layouts</tt>).</p>
-<p>Также отметьте, что явное указание <tt>partial</tt> необходимо, когда передаются дополнительные опции, такие как <tt>layout</tt></p>
+Здесь партиалы +_ad_banner.html.erb+ и +_footer.html.erb+ могут содержать контент, размещенный на многих страницах вашего приложения. Вам не нужно видеть подробностей этих разделов, когда вы сосредотачиваетесь на определенной странице.
 
-<h5 id="passing-local-variables">4.4 Передача локальных переменных</h5>
-<p>В партиалы также можно передавать локальные переменные, что делает их более мощными и гибкими. Например, можете использовать такую технику для уменьшения дублирования между страницами new и edit, сохранив немного различающееся содержимое:</p>
-<ul>
-	<li><tt>new.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;New zone&lt;/h1&gt;
-&lt;%= error_messages_for :zone %&gt;
-&lt;%= render :partial =&gt; &quot;form&quot;, :locals =&gt; { :zone =&gt; @zone } %&gt;
-</pre></div>
-<ul>
-	<li><tt>edit.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;Editing zone&lt;/h1&gt;
-&lt;%= error_messages_for :zone %&gt;
-&lt;%= render :partial =&gt; &quot;form&quot;, :locals =&gt; { :zone =&gt; @zone } %&gt;
-</pre></div>
-<ul>
-	<li><tt>_form.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= form_for(zone) do |f| %&gt;
-  &lt;p&gt;
-    &lt;b&gt;Zone name&lt;/b&gt;&lt;br /&gt;
-    &lt;%= f.text_field :name %&gt;
-  &lt;/p&gt;
-  &lt;p&gt;
-    &lt;%= f.submit %&gt;
-  &lt;/p&gt;
-&lt;% end %&gt;
-</pre></div>
-<p>Хотя тот же самый партиал будет рендерен в обоих вьюхах, хелпер Action View’s submit возвратит “Create Zone” для экшна new и “Update Zone” для экшна edit.</p>
-<p>Каждый партиал также имеет локальную переменную с именем, как у партиала (без подчеркивания). Можете передать объект в эту локальную переменную через опцию <tt>:object</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render :partial =&gt; &quot;customer&quot;, :object =&gt; @new_customer %&gt;
-</pre></div>
-<p>В партиале <tt>customer</tt> переменная <tt>customer</tt> будет указывать на <tt>@new_customer</tt> из родительской вьюхи.</p>
-<div class='warning'><p>В предыдущих версиях Rails, дефолтная локальная переменная будет искать переменную экземпляра с тем же именем, как у партиала, в родителе. Эта возможность устарела в Rails 2.2 и была убрана в Rails 3.0.</p></div>
-<p>Если имеете экземпляр модели для рендера в партиале, можете использовать краткий синтаксис:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render @customer %&gt;
-</pre></div>
-<p>Предположим, что переменная <tt>@customer</tt> содержит экземпляр модели <tt>Customer</tt>, это использует <tt>_customer.html.erb</tt> для ее рендера и передаст локальную переменную <tt>customer</tt> в партиал, к которой будет присвоена переменная экземпляра <tt>@customer</tt> в родительской вьюхе.</p>
+TIP: Для содержимого, располагаемого на всех страницах вашего приложения, можете использовать партиалы прямо в макетах.
 
-<h5 id="rendering-collections">4.5 Рендеринг коллекций</h5>
-<p>Партиалы часто полезны для рендеринга коллекций. Когда коллекция передается в партиал через опцию <tt>:collection</tt>, партиал будет вставлен один раз для каждого члена коллекции:</p>
-<ul>
-	<li><tt>index.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;Products&lt;/h1&gt;
-&lt;%= render :partial =&gt; &quot;product&quot;, :collection =&gt; @products %&gt;
-</pre></div>
-<ul>
-	<li><tt>_product.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p&gt;Product Name: &lt;%= product.name %&gt;&lt;/p&gt;
-</pre></div>
-<p>Когда партиал вызывается с коллекцией во множественном числе, то каждый отдельный экземпляр партиала имеет доступ к члену коллекции, подлежащей рендеру, через переменную с именем партиала. В нашем случает партиал <tt>_product</tt>, и в партиале <tt>_product</tt> можете обращаться к <tt>product</tt> для получения экземпляра, который рендериться.</p>
-<p>В Rails 3.0 имеется также сокращения для этого, предположив, что <tt>@posts</tt> является коллекцией экземпляров <tt>post</tt>, можете просто сделать так в <tt>index.html.erb</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;Products&lt;/h1&gt;
-&lt;%= render @products %&gt;
-</pre></div>
-<p>Что приведет к такому же результату.</p>
-<p>Rails определяет имя партиала, изучая имя модели в коллекции. Фактически можете даже создать неоднородную коллекцию и рендерить таким образом, и Rails подберет подходящий партиал для каждого члена коллекции:</p>
-<ul>
-	<li><tt>index.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;Contacts&lt;/h1&gt;
-&lt;%= render [customer1, employee1, customer2, employee2] %&gt;
-</pre></div>
-<ul>
-	<li><tt>_customer.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p&gt;Customer: &lt;%= customer.name %&gt;&lt;/p&gt;
-</pre></div>
-<ul>
-	<li><tt>_employee.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;p&gt;Employee: &lt;%= employee.name %&gt;&lt;/p&gt;
-</pre></div>
-<p>В этом случае Rails использует партиалы customer или employee по мере необходимости для каждого члена коллекции.</p>
+h5. Макет партиалов
 
-<h5 id="local-variables">4.6 Локальные переменные</h5>
-<p>Чтобы использовать пользовательские имена локальных переменных в партиале, определите опцию <tt>:as</tt> в вызове партиала:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render :partial =&gt; &quot;product&quot;, :collection =&gt; @products, :as =&gt; :item %&gt;
-</pre></div>
-<p>С этим изменением можете получить доступ к экземпляру коллекции <tt>@products</tt> через локальную переменную <tt>item</tt> в партиале.</p>
-<p>Также можно передавать произвольные локальные переменные в любой партиал, который Вы рендерите с помощью опции <tt>:locals => {}</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render :partial =&gt; 'products', :collection =&gt; @products,
-           :as =&gt; :item, :locals =&gt; {:title =&gt; &quot;Products Page&quot;} %&gt;
-</pre></div>
-<p>Отрендерит партиал <tt>_products.html.erb</tt> один на каждый экземпляр <tt>product</tt> в переменной экземпляра <tt>@products</tt>, передав экземпляр в партиал как локальную переменную по имени <tt>item</tt>, и для каждого партиала сделает доступной локальную переменную <tt>title</tt> со значением <tt>Products Page</tt>.</p>
-<div class='info'><p>Rails также создает доступную переменную счетчика в партиале, вызываемом коллекцией, названную по имени члена коллекции с добавленным <tt>_counter</tt>. Например, если рендерите <tt>@products</tt>, в партиале можете обратиться к <tt>product_counter</tt>, который говорит, сколько раз партиал был рендерен. Это не работает в сочетании с опцией <tt>:as => :value</tt>.</p></div>
-<p>Также можете определить второй партиал, который будет рендерен между экземплярами главного партиала, используя опцию <tt>:spacer_template</tt>:</p>
+Партиал может использовать свой собственный файл макета, подобно тому, как вьюха может использовать макет. Например, можете вызвать подобный партиал:
 
-<h5 id="spacer-templates">4.7 Промежуточные шаблоны</h5>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render @products, :spacer_template =&gt; &quot;product_ruler&quot; %&gt;
-</pre></div>
-<p>Rails отрендерит партиал <tt>_product_ruler</tt> (без переданных в него данных) между каждой парой партиалов <tt>_product</tt>.</p>
+<erb>
+<%= render :partial => "link_area", :layout => "graybar" %>
+</erb>
 
-<h4 id="using-nested-layouts">5. Использование вложенных макетов</h4>
-<p>Возможно, Ваше приложение потребует макет, немного отличающийся от обычного макета приложения, для поддержки одного определенного контроллера. Вместо повторения главного макета и редактирования его, можете выполнить это с помощью вложенных макетов (иногда называемых подшаблонами). Вот пример:</p>
-<p>Предположим, имеется макет <tt>ApplicationController</tt>:</p>
-<ul>
-	<li><tt>app/views/layouts/application.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;html&gt;
-&lt;head&gt;
-  &lt;title&gt;&lt;%= @page_title or 'Page Title' %&gt;&lt;/title&gt;
-  &lt;%= stylesheet_link_tag 'layout' %&gt;
-  &lt;style type=&quot;text/css&quot;&gt;&lt;%= yield :stylesheets %&gt;&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div id=&quot;top_menu&quot;&gt;Top menu items here&lt;/div&gt;
-  &lt;div id=&quot;menu&quot;&gt;Menu items here&lt;/div&gt;
-  &lt;div id=&quot;content&quot;&gt;&lt;%= content_for?(:content) ? yield(:content) : yield %&gt;&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</pre></div>
-<p>На страницах, создаваемых <tt>NewsController</tt>, Вы хотите спрятать верхнее меню и добавить правое меню:</p>
-<ul>
-	<li><tt>app/views/layouts/news.html.erb</tt></li>
-</ul>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;% content_for :stylesheets do %&gt;
+Это найдет партиал с именем +_link_area.html.erb+ и отрендерит его, используя макет +_graybar.html.erb+. Отметьте, что макеты для партиалов также начинаются с подчеркивания, как и обычные партиалы, и размещаются в той же папке с партиалами, которым они принадлежат (не в основной папке +layouts+).
+
+Также отметьте, что явное указание +partial+ необходимо, когда передаются дополнительные опции, такие как +layout+
+
+h5. Передача локальных переменных
+
+В партиалы также можно передавать локальные переменные, что делает их более мощными и гибкими. Например, можете использовать такую технику для уменьшения дублирования между страницами new и edit, сохранив немного различающееся содержимое:
+
+* +new.html.erb+
+
+<erb>
+<h1>New zone</h1>
+<%= error_messages_for :zone %>
+<%= render :partial => "form", :locals => { :zone => @zone } %>
+</erb>
+
+* +edit.html.erb+
+
+<erb>
+<h1>Editing zone</h1>
+<%= error_messages_for :zone %>
+<%= render :partial => "form", :locals => { :zone => @zone } %>
+</erb>
+
+* +_form.html.erb+
+
+<erb>
+<%= form_for(zone) do |f| %>
+  <p>
+    <b>Zone name</b><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+</erb>
+
+Хотя тот же самый партиал будет рендерен в обоих вьюхах, хелпер Action View’s submit возвратит “Create Zone” для экшна new и “Update Zone” для экшна edit.
+
+Каждый партиал также имеет локальную переменную с именем, как у партиала (без подчеркивания). Можете передать объект в эту локальную переменную через опцию +:object+:
+
+<erb>
+<%= render :partial => "customer", :object => @new_customer %>
+</erb>
+
+В партиале +customer+ переменная +customer+ будет указывать на +@new_customer+ из родительской вьюхи.
+
+WARNING: В предыдущих версиях Rails, дефолтная локальная переменная будет искать переменную экземпляра с тем же именем, как у партиала, в родителе. Эта возможность устарела в Rails 2.2 и была убрана в Rails 3.0.
+
+Если имеете экземпляр модели для рендера в партиале, можете использовать краткий синтаксис:
+
+<erb>
+<%= render @customer %>
+</erb>
+
+Предположим, что переменная +@customer+ содержит экземпляр модели +Customer+, это использует +_customer.html.erb+ для ее рендера и передаст локальную переменную +customer+ в партиал, к которой будет присвоена переменная экземпляра +@customer+ в родительской вьюхе.
+
+h5. Рендеринг коллекций
+
+Партиалы часто полезны для рендеринга коллекций. Когда коллекция передается в партиал через опцию +:collection+, партиал будет вставлен один раз для каждого члена коллекции:
+
+* +index.html.erb+
+
+<erb>
+<h1>Products</h1>
+<%= render :partial => "product", :collection => @products %>
+</erb>
+
+* +_product.html.erb+
+
+<erb>
+<p>Product Name: <%= product.name %></p>
+</erb>
+
+Когда партиал вызывается с коллекцией во множественном числе, то каждый отдельный экземпляр партиала имеет доступ к члену коллекции, подлежащей рендеру, через переменную с именем партиала. В нашем случает партиал +_product+, и в партиале +_product+ можете обращаться к +product+ для получения экземпляра, который рендериться.
+
+В Rails 3.0 имеется также сокращения для этого, предположив, что +@posts+ является коллекцией экземпляров +post+, можете просто сделать так в +index.html.erb+:
+
+<erb>
+<h1>Products</h1>
+<%= render @products %>
+</erb>
+
+Что приведет к такому же результату.
+
+Rails определяет имя партиала, изучая имя модели в коллекции. Фактически можете даже создать неоднородную коллекцию и рендерить таким образом, и Rails подберет подходящий партиал для каждого члена коллекции:
+
+* +index.html.erb+
+
+<erb>
+<h1>Contacts</h1>
+<%= render [customer1, employee1, customer2, employee2] %>
+</erb>
+
+* +customers/_customer.html.erb+
+
+<erb>
+<p>Customer: <%= customer.name %></p>
+</erb>
+
+* +employees/_employee.html.erb+
+
+<erb>
+<p>Employee: <%= employee.name %></p>
+</erb>
+
+В этом случае Rails использует партиалы customer или employee по мере необходимости для каждого члена коллекции.
+
+h5. Локальные переменные
+
+Чтобы использовать пользовательские имена локальных переменных в партиале, определите опцию +:as+ в вызове партиала:
+
+<erb>
+<%= render :partial => "product", :collection => @products, :as => :item %>
+</erb>
+
+С этим изменением можете получить доступ к экземпляру коллекции +@products+ через локальную переменную +item+ в партиале.
+
+Также можно передавать произвольные локальные переменные в любой партиал, который Вы рендерите с помощью опции +:locals => {}+:
+
+<erb>
+<%= render :partial => 'products', :collection => @products,
+           :as => :item, :locals => {:title => "Products Page"} %>
+</erb>
+
+Отрендерит партиал +_products.html.erb+ один на каждый экземпляр +product+ в переменной экземпляра +@products+, передав экземпляр в партиал как локальную переменную по имени +item+, и для каждого партиала сделает доступной локальную переменную +title+ со значением +Products Page+.
+
+TIP: Rails также создает доступную переменную счетчика в партиале, вызываемом коллекцией, названную по имени члена коллекции с добавленным +_counter+. Например, если рендерите +@products+, в партиале можете обратиться к +product_counter+, который говорит, сколько раз партиал был рендерен. Это не работает в сочетании с опцией +:as => :value+.
+
+Также можете определить второй партиал, который будет рендерен между экземплярами главного партиала, используя опцию +:spacer_template+:
+
+h5. Промежуточные шаблоны
+
+<erb>
+<%= render @products, :spacer_template => "product_ruler" %>
+</erb>
+
+Rails отрендерит партиал +_product_ruler+ (без переданных в него данных) между каждой парой партиалов +_product+.
+
+h4. Использование вложенных макетов
+
+Возможно, ваше приложение потребует макет, немного отличающийся от обычного макета приложения, для поддержки одного определенного контроллера. Вместо повторения главного макета и редактирования его, можете выполнить это с помощью вложенных макетов (иногда называемых подшаблонами). Вот пример:
+
+Предположим, имеется макет +ApplicationController+:
+
+* +app/views/layouts/application.html.erb+
+
+<erb>
+<html>
+<head>
+  <title><%= @page_title or 'Page Title' %></title>
+  <%= stylesheet_link_tag 'layout' %>
+  <style type="text/css"><%= yield :stylesheets %></style>
+</head>
+<body>
+  <div id="top_menu">Top menu items here</div>
+  <div id="menu">Menu items here</div>
+  <div id="content"><%= content_for?(:content) ? yield(:content) : yield %></div>
+</body>
+</html>
+</erb>
+
+На страницах, создаваемых NewsController, вы хотите спрятать верхнее меню и добавить правое меню:
+
+* +app/views/layouts/news.html.erb+
+
+<erb>
+<% content_for :stylesheets do %>
   #top_menu {display: none}
   #right_menu {float: right; background-color: yellow; color: black}
-&lt;% end %&gt;
-&lt;% content_for :content do %&gt;
-  &lt;div id=&quot;right_menu&quot;&gt;Right menu items here&lt;/div&gt;
-  &lt;%= yield(:news_content) or yield %&gt;
-&lt;% end %&gt;
-&lt;%= render :file =&gt; 'layouts/application' %&gt;
-</pre></div>
-<p>Вот и все. Вьюхи News будут использовать новый макет, прячущий верхнее меню и добавляющий новое правое меню в &#8220;content&#8221; div.</p>
-<p>Имеется несколько способов получить похожие результаты с различными подшаблонными схемами, используя эту технику. Отметьте, что нет ограничений на уровень вложенности. Можно использовать метод <tt>ActionView::render</tt> через <tt>render :file => 'layouts/news'</tt>, чтобы основать новый макет на основе макета News. Если кто-то думает, что не будет подшаблонить макет <tt>News</tt>, может заменить часть <tt>yield(:news_content) или yield</tt> простым <tt>yield</tt>.</p>
+<% end %>
+<% content_for :content do %>
+  <div id="right_menu">Right menu items here</div>
+  <%= yield(:news_content) or yield %>
+<% end %>
+<%= render :template => 'layouts/application' %>
+</erb>
+
+Вот и все. Вьюхи News будут использовать новый макет, прячущий верхнее меню и добавляющий новое правое меню в "content" div.
+
+Имеется несколько способов получить похожие результаты с различными подшаблонными схемами, используя эту технику. Отметьте, что нет ограничений на уровень вложенности. Можно использовать метод +ActionView::render+ через +render :file => 'layouts/news'+, чтобы основать новый макет на основе макета News. Если кто-то думает, что не будет подшаблонить макет +News+, может заменить часть +yield(:news_content) or yield+ простым +yield+.</p>
