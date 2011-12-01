@@ -1,89 +1,122 @@
 h1. Легкое создание списков выбора
 
-<p>Списки выбора в <span class="caps">HTML</span> требуют значительной верстки (один элемент <tt>OPTION</tt> для каждого варианта выбора), поэтому имеет большой смысл создавать их динамически.</p>
-<p>Вот как может выглядеть верстка:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;select name=&quot;city_id&quot; id=&quot;city_id&quot;&gt;
-  &lt;option value=&quot;1&quot;&gt;Lisbon&lt;/option&gt;
-  &lt;option value=&quot;2&quot;&gt;Madrid&lt;/option&gt;
+Списки выбора в HTML требуют значительной верстки (один элемент +OPTION+ для каждого варианта выбора), поэтому имеет большой смысл создавать их динамически.
+
+Вот как может выглядеть верстка:
+
+<html>
+<select name="city_id" id="city_id">
+  <option value="1">Lisbon</option>
+  <option value="2">Madrid</option>
   ...
-  &lt;option value=&quot;12&quot;&gt;Berlin&lt;/option&gt;
-&lt;/select&gt;
-</pre></div>
-<p>Тут мы имеем перечень городов, имена которых представлены пользователю. Самому приложению для обработки нужен только их ID, поэтому он используются как атрибут value варианта выбора. Давайте посмотрим, как Rails может нам помочь.</p>
+  <option value="12">Berlin</option>
+</select>
+</html>
 
-<h4 id="the-select-and-option-tags">1. Тэги Select и Option</h4>
-<p>Наиболее простой хелпер это <tt>select_tag</tt>, который &#8212; как следует из имени &#8212; просто создает тэг <tt>SELECT</tt>, инкапсулирующий строку опций:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= select_tag(:city_id, '&lt;option value=&quot;1&quot;&gt;Lisbon&lt;/option&gt;...') %&gt;
-</pre></div>
-<p>Это начинает, но не создает динамически тэги вариантов выбора. Вы можете создать тэги option с помощью хелпера <tt>options_for_select</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= options_for_select([['Lisbon', 1], ['Madrid', 2], ...]) %&gt;
+Тут мы имеем перечень городов, имена которых представлены пользователю. Самому приложению для обработки нужен только их ID, поэтому он используются как атрибут value варианта выбора. Давайте посмотрим, как Rails может нам помочь.
 
-результат:
+h4. Тэги Select и Option
 
-&lt;option value=&quot;1&quot;&gt;Lisbon&lt;/option&gt;
-&lt;option value=&quot;2&quot;&gt;Madrid&lt;/option&gt;
-...
-</pre></div>
-<p>Первый аргумент для <tt>options_for_select</tt> это вложенный массив, в котором каждый элемент содержит два элемента: текст варианта (название города) и значение варианта (id города). Значение варианта это то, что будет подтверждено для вашего контроллера. Часто это бывает id соответствующего объекта базы данных, но это не всегда так.</p>
-<p>Зная это, можете комбинировать <tt>select_tag</tt> и <tt>options_for_select</tt> для достижения желаемой полной верстки:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= select_tag(:city_id, options_for_select(...)) %&gt;
-</pre></div>
-<tt>options_for_select</tt> позволяет вам предварительно выбрать вариант, передав его значение.
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= options_for_select([['Lisbon', 1], ['Madrid', 2], ...], 2) %&gt;
+Наиболее простой хелпер это +select_tag+, который - как следует из имени - просто создает тэг +SELECT+, инкапсулирующий строку опций:
+
+<erb>
+<%= select_tag(:city_id, '<option value="1">Lisbon</option>...') %>
+</erb>
+
+Это начинает, но не создает динамически тэги вариантов выбора. Вы можете создать тэги option с помощью хелпера +options_for_select+:
+
+<erb>
+<%= options_for_select([['Lisbon', 1], ['Madrid', 2], ...]) %>
 
 результат:
 
-&lt;option value=&quot;1&quot;&gt;Lisbon&lt;/option&gt;
-&lt;option value=&quot;2&quot; selected=&quot;selected&quot;&gt;Madrid&lt;/option&gt;
+<option value="1">Lisbon</option>
+<option value="2">Madrid</option>
 ...
-</pre></div>
-<p>Всякий раз, когда Rails видит внутреннее значение создаваемого варианта, соответствующего этому значению, он добавит атрибут <tt>selected</tt> к нему.</p>
-<div class='info'><p>Второй аргумент для <tt>options_for_select</tt> должен быть точно равен желаемому внутреннему значению. В частности, если значение число 2, вы не можете передать &#8220;2&#8221; в <tt>options_for_select</tt> &#8212; вы должны передать 2. Имейте это в виду при использовании значений, извлеченных из хэша <tt>params</tt>, так как они всегда строчные.</p></div>
+</erb>
 
-<h4 id="select-boxes-for-dealing-with-models">2. Списки выбора для работы с моделями</h4>
-<p>В большинстве случаев элементы управления формой будут связаны с определенной моделью базы данных, и, как вы наверное и ожидали, Rails предоставляет хелперы, предназначенные для этой цели. Как в случае с другими хелперами форм, когда работаете с моделями, суффикс <tt>_tag</tt> отбрасывается от <tt>select_tag</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Первый аргумент для +options_for_select+ это вложенный массив, в котором каждый элемент содержит два элемента: текст варианта (название города) и значение варианта (id города). Значение варианта это то, что будет подтверждено для вашего контроллера. Часто это бывает id соответствующего объекта базы данных, но это не всегда так.
+
+Зная это, можете комбинировать +select_tag+ и +options_for_select+ для достижения желаемой полной верстки:
+
+<erb>
+<%= select_tag(:city_id, options_for_select(...)) %>
+</erb>
+
++options_for_select+ позволяет вам предварительно выбрать вариант, передав его значение.
+
+<erb>
+<%= options_for_select([['Lisbon', 1], ['Madrid', 2], ...], 2) %>
+
+результат:
+
+<option value="1">Lisbon</option>
+<option value="2" selected="selected">Madrid</option>
+...
+</erb>
+
+Всякий раз, когда Rails видит внутреннее значение создаваемого варианта, соответствующего этому значению, он добавит атрибут +selected+ к нему.
+
+TIP: Второй аргумент для +options_for_select+ должен быть точно равен желаемому внутреннему значению. В частности, если значение число 2, вы не можете передать "2" в +options_for_select+ - вы должны передать 2. Имейте это в виду при использовании значений, извлеченных из хэша +params+, так как они всегда строчные.
+
+h4. Списки выбора для работы с моделями
+
+В большинстве случаев элементы управления формой будут связаны с определенной моделью базы данных, и, как вы наверное и ожидали, Rails предоставляет хелперы, предназначенные для этой цели. Как в случае с другими хелперами форм, когда работаете с моделями, суффикс +_tag+ отбрасывается от +select_tag+:
+
+<ruby>
 # контроллер:
-@person = Person.new(:city_id =&gt; 2)
-</pre></div>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+@person = Person.new(:city_id => 2)
+</ruby>
+
+<erb>
 # вьюха:
-&lt;%= select(:person, :city_id, [['Lisbon', 1], ['Madrid', 2], ...]) %&gt;
-</pre></div>
-<p>Отметьте, что третий параметр, массив опций, это тот же самый тип аргумента, что мы передавали в <tt>options_for_select</tt>. Преимущество в том, что не стоит беспокоиться об предварительном выборе правильного города, если пользователь уже выбрал его &#8212; Rails сделает это за вас, прочитав из атрибута <tt>@person.city_id</tt>.</p>
-<p>Как и в других хелперах, если хотите использовать хелпер <tt>select</tt> в form builder с областью видимостью объекта <tt>@person</tt>, синтаксис будет такой:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+<%= select(:person, :city_id, [['Lisbon', 1], ['Madrid', 2], ...]) %>
+</erb>
+
+Отметьте, что третий параметр, массив опций, это тот же самый тип аргумента, что мы передавали в +options_for_select+. Преимущество в том, что не стоит беспокоиться об предварительном выборе правильного города, если пользователь уже выбрал его - Rails сделает это за вас, прочитав из атрибута +@person.city_id+.
+
+Как и в других хелперах, если хотите использовать хелпер +select+ в form builder с областью видимостью объекта +@person+, синтаксис будет такой:
+
+<erb>
 # select в form builder
-&lt;%= f.select(:city_id, ...) %&gt;
-</pre></div>
-<div class='warning'><p>При использовании <tt>select</tt> (или подобного хелпера, такого как <tt>collection_select</tt>, <tt>select_tag</tt>), чтобы установить связь <tt>belongs_to</tt>, вы должны передасть имя внешнего ключа (в примере выше <tt>city_id</tt>), а не само имя связи. Если определите <tt>city</tt> вместо <tt>city_id</tt>, Active Record вызовет ошибку в строке <tt> ActiveRecord::AssociationTypeMismatch: City(#17815740) expected, got String(#1138750) </tt>, когда вы передадите хэш <tt>params</tt> в <tt>Person.new</tt> или <tt>update_attributes</tt>. Можно взглянуть на это по другому, что хелперы форм редактируют только атрибуты. Также вам стоит знать о потенциальных последствиях безопасности, если разрешить пользователям редактировать внешние ключи напрямую. Возможно вы захотите использовть <tt>attr_protected</tt> и <tt>attr_accessible</tt>. Более подробно об этом читайте в <a href="/ruby-on-rails-security-guide/mass-assignment">Руководстве Ruby On Rails по безопасности</a>.</p></div>
+<%= f.select(:city_id, ...) %>
+</erb>
 
-<h4 id="option-tags-from-a-collection-of-arbitrary-objects">3. Тэги варианта выбора из коллекции произвольных объектов</h4>
-<p>Создание тегов вариантов с помощью <tt>options_for_select</tt> требует, чтобы вы создали массив, содержащий текст и значение для каждого варианта. Но что, если мы имеем модель City (возможно даже модель Active Record) и хотим создать тэги вариантов их коллекции этих объектов? Одно из решений сделать вложенный массив - с помощью итераций:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;% cities_array = City.all.map { |city| [city.name, city.id] } %&gt;
-&lt;%= options_for_select(cities_array) %&gt;
-</pre></div>
-<p>Хотя это и валидное решение, но Rails предоставляет менее многословную альтернативу: <tt>options_from_collection_for_select</tt>. Этот хелпер принимает коллекцию произвольных объектов и два дополнительных аргумента: имена методов для считывания опций <strong>value</strong> и <strong>text</strong>, соответственно:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= options_from_collection_for_select(City.all, :id, :name) %&gt;
-</pre></div>
-<p>Как следует из имени, это генерирует только тэги option. Для генерации работающего списка выбора его необходимо использовать в сочетании с <tt>select_tag</tt>, как это делалось для <tt>options_for_select</tt>. Когда работаем с объектами модели, так же, как <tt>select</tt> комбинирует <tt>select_tag</tt> и <tt>options_for_select</tt>, <tt>collection_select</tt> комбинирует <tt>select_tag</tt> с <tt>options_from_collection_for_select</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= collection_select(:person, :city_id, City.all, :id, :name) %&gt;
-</pre></div>
-<p>Напомним, что <tt>options_from_collection_for_select</tt> в <tt>collection_select</tt> то же самое, что <tt>options_for_select</tt> в <tt>select</tt>.</p>
-<div class='note'><p>Пары, переданные в <tt>options_for_select</tt> должны сперва иметь имя, затем id, однако для <tt>options_from_collection_for_select</tt> первый аргумент это метод значения, а второй аргумент - метод текста.</p></div>
+WARNING: При использовании +select+ (или подобного хелпера, такого как +collection_select+, +select_tag+), чтобы установить связь +belongs_to+, вы должны передасть имя внешнего ключа (в примере выше +city_id+), а не само имя связи. Если определите +city+ вместо +city_id+, Active Record вызовет ошибку в строке +ActiveRecord::AssociationTypeMismatch: City(#17815740) expected, got String(#1138750)+, когда вы передадите хэш +params+ в +Person.new+ или +update_attributes+. Можно взглянуть на это по другому, что хелперы форм редактируют только атрибуты. Также вам стоит знать о потенциальных последствиях безопасности, если разрешить пользователям редактировать внешние ключи напрямую. Возможно вы захотите использовть +attr_protected+ и +attr_accessible+. Более подробно об этом читайте в "Руководстве Ruby On Rails по безопасности":/ruby-on-rails-security-guide/mass-assignment.
 
-<h4 id="time-zone-and-country-select">4. Выбор часового пояса и страны</h4>
-<p>Для управления поддержкой часовых поясов в Rails, можете спрашивать своих пользователей, в какой зоне они находятся.  Это потребует создать варианты выбора из списка предопределенных объектов TimeZone, используя <tt>collection_select</tt>, но вы можете просто использовать хелпер <tt>time_zone_select</tt>, который уже все это содержит:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= time_zone_select(:person, :time_zone) %&gt;
-</pre></div>
-<p>Также есть хелпер <tt>time_zone_options_for_select</tt> для более ручного (поэтому более настраиваемого) способа осуществления этого. Читайте документацию по <span class="caps">API</span>, чтобы узнать о доступных аргументах для этих двух методов.</p>
-<p>Rails <em>раньше</em> имел хелпер <tt>country_select</tt> для выбора стран, но сейчас он вынесен во внешний <a href="http://github.com/rails/country_select/tree/master">плагин country_select</a>. При его использовании убедитесь, что включение или исключение определенных имен из списка может быть несколько спорным (это и послужило причиной извлечения этой функциональности из Rails).</p>
+h4. Тэги варианта выбора из коллекции произвольных объектов
+
+Создание тегов вариантов с помощью +options_for_select+ требует, чтобы вы создали массив, содержащий текст и значение для каждого варианта. Но что, если мы имеем модель City (возможно даже модель Active Record) и хотим создать тэги вариантов их коллекции этих объектов? Одно из решений сделать вложенный массив - с помощью итераций:
+
+<erb>
+<% cities_array = City.all.map { |city| [city.name, city.id] } %>
+<%= options_for_select(cities_array) %>
+</erb>
+
+Хотя это и валидное решение, но Rails предоставляет менее многословную альтернативу: +options_from_collection_for_select+. Этот хелпер принимает коллекцию произвольных объектов и два дополнительных аргумента: имена методов для считывания опций *value* и *text*, соответственно:
+
+<erb>
+<%= options_from_collection_for_select(City.all, :id, :name) %>
+</erb>
+
+Как следует из имени, это генерирует только тэги option. Для генерации работающего списка выбора его необходимо использовать в сочетании с +select_tag+, как это делалось для +options_for_select+. Когда работаем с объектами модели, так же, как +select+ комбинирует +select_tag+ и +options_for_select+, +collection_select+ комбинирует +select_tag с +options_from_collection_for_select+.
+
+<erb>
+<%= collection_select(:person, :city_id, City.all, :id, :name) %>
+</erb>
+
+Напомним, что +options_from_collection_for_select+ в +collection_select+ то же самое, что +options_for_select+ в +select+.
+
+NOTE: Пары, переданные в +options_for_select+ должны сперва иметь имя, затем id, однако для +options_from_collection_for_select+ первый аргумент это метод значения, а второй аргумент - метод текста.
+
+h4. Выбор часового пояса и страны
+
+Для управления поддержкой часовых поясов в Rails, можете спрашивать своих пользователей, в какой зоне они находятся. Это потребует создать варианты выбора из списка предопределенных объектов TimeZone, используя +collection_select+, но вы можете просто использовать хелпер +time_zone_select+, который уже все это содержит:
+
+<erb>
+<%= time_zone_select(:person, :time_zone) %>
+</erb>
+
+Также есть хелпер +time_zone_options_for_select+ для более ручного (поэтому более настраиваемого) способа осуществления этого. Читайте документацию по API, чтобы узнать о доступных аргументах для этих двух методов.
+
+Rails _раньше_ имел хелпер +country_select+ для выбора стран, но сейчас он вынесен во внешний "плагин country_select":http://github.com/rails/country_select/tree/master. При его использовании убедитесь, что включение или исключение определенных имен из списка может быть несколько спорным (это и послужило причиной извлечения этой функциональности из Rails).

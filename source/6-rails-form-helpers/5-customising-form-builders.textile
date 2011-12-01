@@ -1,28 +1,37 @@
 h1. Настройка Form Builder
 
-<p>Как ранее упоминалось, объект, который передается от <tt>form_for</tt> и <tt>fields_for</tt>, это экземпляр FormBuilder (или его субкласса). Form builder инкапсулирует намерение отобразить элементы формы для отдельного объекта. Хотя, конечно, можно писать хелперы для своих форм обычным способом, вы также можете объявить субкласс FormBuilder и добавить хелперы туда. Например</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= form_for @person do |f| %&gt;
-  &lt;%= text_field_with_label f, :first_name %&gt;
-&lt;% end %&gt;
-</pre></div>
-<p>может быть заменено этим</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= form_for @person, :builder =&gt; LabellingFormBuilder do |f| %&gt;
-  &lt;%= f.text_field :first_name %&gt;
-&lt;% end %&gt;
-</pre></div>
-<p>через определение класса LabellingFormBuilder подобным образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class LabellingFormBuilder &lt; ActionView::Helpers::FormBuilder
+Как ранее упоминалось, объект, который передается от +form_for+ и +fields_for+, это экземпляр FormBuilder (или его субкласса). Form builder инкапсулирует намерение отобразить элементы формы для отдельного объекта. Хотя, конечно, можно писать хелперы для своих форм обычным способом, вы также можете объявить субкласс FormBuilder и добавить хелперы туда. Например
+
+<erb>
+<%= form_for @person do |f| %>
+  <%= text_field_with_label f, :first_name %>
+<% end %>
+</erb>
+
+может быть заменено этим
+
+<erb>
+<%= form_for @person, :builder => LabellingFormBuilder do |f| %>
+  <%= f.text_field :first_name %>
+<% end %>
+</erb>
+
+через определение класса LabellingFormBuilder подобным образом:
+
+<ruby>
+class LabellingFormBuilder < ActionView::Helpers::FormBuilder
   def text_field(attribute, options={})
     label(attribute) + super
   end
 end
-</pre></div>
-<p>Если это используется часто, можно определить хелпер <tt>labeled_form_for</tt> который автоматически определяет опцию <tt>:builder => LabellingFormBuilder</tt>.</p>
-<p>Form builder также определяет, что произойдет, если вы сделаете</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= render :partial =&gt; f %&gt;
-</pre></div>
-<p>Если <tt>f</tt> это экземпляр FormBuilder, тогда это отрендерит партиал <tt>form</tt>, установив объект партиала как form builder. Если form builder класса LabellingFormBuilder, тогда вместо этого будет отрендерен партиал <tt>labelling_form</tt>.</p>
+</ruby>
+
+Если это используется часто, можно определить хелпер +labeled_form_for+ который автоматически определяет опцию +:builder => LabellingFormBuilder+.
+
+Form builder также определяет, что произойдет, если вы сделаете
+
+<erb>
+<%= render :partial => f %>
+</erb>
+
+Если +f+ это экземпляр FormBuilder, тогда это отрендерит партиал +form+, установив объект партиала как form builder. Если form builder класса LabellingFormBuilder, тогда вместо этого будет отрендерен партиал +labelling_form+.
