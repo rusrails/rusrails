@@ -1,34 +1,40 @@
 h1. Аутентификации HTTP
 
-<p>Rails поставляется с двумя встроенными механизмами аутентификации <span class="caps">HTTP</span>:</p>
-<ul>
-	<li>Простая аутентификация</li>
-	<li>Digest аутентификация</li>
-</ul>
+Rails поставляется с двумя встроенными механизмами аутентификации HTTP:
 
-<h4 id="http-basic-authentication">1. Простая аутентификация <span class="caps">HTTP</span></h4>
-<p>Простая аутентификация <span class="caps">HTTP</span> это аутентификационная схема, поддерживаемая большинством браузеров и других клиентов <span class="caps">HTTP</span>. Как пример, рассмотрим административный раздел, который доступен только при вводе имени пользователя и пароля в основном диалоговом окне браузера. Использование встроенной аутентификации достаточно простое, и требует использования одного метода <tt>http_basic_authenticate_with</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+* Простая аутентификация
+* Digest аутентификация
+
+h4. Простая аутентификация HTTP
+
+Простая аутентификация HTTP это аутентификационная схема, поддерживаемая большинством браузеров и других клиентов HTTP. Как пример, рассмотрим административный раздел, который доступен только при вводе имени пользователя и пароля в основном диалоговом окне браузера. Использование встроенной аутентификации достаточно простое, и требует использования одного метода +http_basic_authenticate_with+.
+
+<ruby>
 class AdminController < ApplicationController
   http_basic_authenticate_with :name => "humbaba", :password => "5baa61e4"
 end
-</pre></div>
-<p>Разместив это, можете создавать именнованные контроллеры, наследуемые от <tt>AdminController</tt>. Таким образом, предварительный фильтр будет запущен для всех экшнов в этих контроллерах, защищая их с помощью основной аутентификации <span class="caps">HTTP</span>.</p>
+</ruby>
 
-<h4 id="http-digest-authentication">2. Digest аутентификация <span class="caps">HTTP</span></h4>
-<p>Digest аутентификация <span class="caps">HTTP</span> превосходит простую аутентификацию, так как она не требует от клиента посылать незашифрованный пароль по сети (хотя простая аутентификация <span class="caps">HTTP</span> безопасна через <span class="caps">HTTPS</span>). Использовать digest аутентификацию с Rails просто, и требует только один метод <tt>authenticate_or_request_with_http_digest</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class AdminController &lt; ApplicationController
-  USERS = { &quot;lifo&quot; =&gt; &quot;world&quot; }
+Разместив это, можете создавать именнованные контроллеры, наследуемые от +AdminController+. Таким образом, предварительный фильтр будет запущен для всех экшнов в этих контроллерах, защищая их с помощью основной аутентификации +HTTP+.
+
+h4. Digest аутентификация HTTP
+
+Digest аутентификация HTTP превосходит простую аутентификацию, так как она не требует от клиента посылать незашифрованный пароль по сети (хотя простая аутентификация HTTP безопасна через HTTPS). Использовать digest аутентификацию с Rails просто, и требует только один метод +authenticate_or_request_with_http_digest+.
+
+<ruby>
+class AdminController < ApplicationController
+  USERS = { "lifo" => "world" }
 
   before_filter :authenticate
 
-private
+  private
+
   def authenticate
     authenticate_or_request_with_http_digest do |username|
       USERS[username]
     end
   end
 end
-</pre></div>
-<p>Как мы видим из примера, блок <tt>authenticate_or_request_with_http_digest</tt> принимает только один аргумент &#8211; имя пользователя. И блок возвращает пароль. Возврат <tt>false</tt> или <tt>nil</tt> из <tt>authenticate_or_request_with_http_digest</tt> вызовет провал аутентификации.</p>
+</ruby>
+
+Как мы видим из примера, блок +authenticate_or_request_with_http_digest+ принимает только один аргумент - имя пользователя. И блок возвращает пароль. Возврат +false+ или +nil+ из +authenticate_or_request_with_http_digest+ вызовет провал аутентификации.
