@@ -37,7 +37,9 @@ module TextileExtensions
       when 'ruby', 'sql', 'plain'
         code_type
       when 'erb'
-        'ruby; html-script: true'
+        # TODO: fix mixing with html
+        # 'ruby; html-script: true'
+        'ruby'
       when 'html'
         'xml' # html is understood, but there are .xml rules in the CSS
       else

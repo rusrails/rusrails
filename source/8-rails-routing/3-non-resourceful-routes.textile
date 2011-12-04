@@ -1,112 +1,159 @@
 h1. Нересурсные маршруты
 
-<p>В дополнению к ресурсному роутингу, Rails поддерживает роутинг произвольных URL к экшнам. Тут не будет групп маршрутов, создаваемых автоматически ресурсным роутингом. Вместо этого вы должны настроить каждый маршрут вашего приложения отдельно.</p>
-<p>Хотя обычно следует пользоваться ресурсным роутингом, есть много мест, где более подходит простой роутинг. Не стоит пытаться заворачивать каждый кусочек своего приложения в ресурсные рамки, если он плохо поддается.</p>
-<p>В частности, простой роутинг облегчает привязку наследуемых URL к новым экшнам Rails.</p>
+В дополнению к ресурсному роутингу, Rails поддерживает роутинг произвольных URL к экшнам. Тут не будет групп маршрутов, создаваемых автоматически ресурсным роутингом. Вместо этого вы должны настроить каждый маршрут вашего приложения отдельно.
 
-<h4 id="bound-parameters">1. Обязательные параметры</h4>
-<p>При настройке обычного маршрута Вы предоставляете ряд символов, которые Rails связывает с частями входящего запроса <span class="caps">HTTP</span>. Два из этих символов специальные: <tt>:controller</tt> связывает с именем контроллера в приложении, и <tt>:action</tt> связывает с именем экшна в контроллере. Например, рассмотрим один из дефолтных маршрутов Rails:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Хотя обычно следует пользоваться ресурсным роутингом, есть много мест, где более подходит простой роутинг. Не стоит пытаться заворачивать каждый кусочек своего приложения в ресурсные рамки, если он плохо поддается.
+
+В частности, простой роутинг облегчает привязку наследуемых URL к новым экшнам Rails.
+
+h4. Обязательные параметры
+
+При настройке обычного маршрута вы предоставляете ряд символов, которые Rails связывает с частями входящего запроса HTTP. Два из этих символов специальные: +:controller+ связывает с именем контроллера в приложении, и +:action+ связывает с именем экшна в контроллере. Например, рассмотрим один из дефолтных маршрутов Rails:
+
+<ruby>
 match ':controller(/:action(/:id))'
-</pre></div>
-<p>Если входящий запрос <tt>/photos/show/1</tt> обрабатывается этим маршрутом (так как не встретил какого-либо соответствующего маршрута в файле до этого), то результатом будет вызов экшна <tt>show</tt> в <tt>PhotosController</tt>, и результирующий параметр (1) будет доступен как <tt>params[:id]</tt>. Этот маршрут также свяжет входящий запрос <tt>/photos</tt> с <tt>PhotosController</tt>, поскольку <tt>:action</tt> и <tt>:id</tt> необязательные параметры, обозначенные скобками.</p>
+</ruby>
 
-<h4 id="wildcard-components">2. Динамические сегменты</h4>
-<p>Можете настроить сколько угодно динамических сегментов в обычном маршруте. Всё, кроме <tt>:controller</tt> или <tt>:action</tt>, будет доступно для соответствующего экшна как часть хэша params. Таким образом, если настроите такой маршрут:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Если входящий запрос +/photos/show/1+ обрабатывается этим маршрутом (так как не встретил какого-либо соответствующего маршрута в файле до этого), то результатом будет вызов экшна +show+ в +PhotosController+, и результирующий параметр (1) будет доступен как +params[:id]+. Этот маршрут также свяжет входящий запрос +/photos+ с +PhotosController+, поскольку +:action+ и +:id+ необязательные параметры, обозначенные скобками.
+
+h4. Динамические сегменты
+
+Можете настроить сколько угодно динамических сегментов в обычном маршруте. Всё, кроме +:controller+ или +:action+, будет доступно для соответствующего экшна как часть хэша params. Таким образом, если настроите такой маршрут:
+
+<ruby>
 match ':controller/:action/:id/:user_id'
-</pre></div>
-<p>Входящий <span class="caps">URL</span> <tt>/photos/show/1/2</tt> будет направлен на экшн <tt>show</tt> <tt>PhotosController</tt>. <tt>params[:id]</tt> будет установлен как "1", и <tt>params[:user_id]</tt> будет установлен как "2".</p>
-<div class='note'><p>Нельзя использовать <tt>namespace</tt> или <tt>:module</tt> вместе с сегментом пути <tt>:controller</tt>. Если это нужно, используйте ограничение на :controller, которое соответствует требуемому пространству имен, т.е.:</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match ':controller(/:action(/:id))', :controller =&gt; /admin\/[^\/]+/
-</pre></div>
+</ruby>
 
-<h4 id="static-text">3. Статичные сегменты</h4>
-<p>Можете определить статичные сегменты при создании маршрута:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Входящий URL +/photos/show/1/2+ будет направлен на экшн +show+ в +PhotosController+. +params[:id]+ будет установлен как "1", и +params[:user_id]+ будет установлен как "2".
+
+NOTE: Нельзя использовать +namespace+ или +:module+ вместе с сегментом пути +:controller+. Если это нужно, используйте ограничение на :controller, которое соответствует требуемому пространству имен, т.е.:
+
+<ruby>
+match ':controller(/:action(/:id))', :controller => /admin\/[^\/]+/
+</ruby>
+
+h4. Статичные сегменты
+
+Можете определить статичные сегменты при создании маршрута:
+
+<ruby>
 match ':controller/:action/:id/with_user/:user_id'
-</pre></div>
-<p>Этот маршрут соответствует путям, таким как <tt>/photos/show/1/with_user/2</tt>. В этом случае <tt>params</tt> будет <tt>{ :controller =&gt; &#8220;photos&#8221;, :action =&gt; &#8220;show&#8221;, :id =&gt; &#8220;1&#8221;, :user_id =&gt; &#8220;2&#8221; }</tt>.</p>
+</ruby>
 
-<h4 id="querystring-parameters">4. Параметры строки запроса</h4>
-<p><tt>params</tt> также включает любые параметры из строки запроса. Например, с таким маршрутом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Этот маршрут соответствует путям, таким как +/photos/show/1/with_user/2+. В этом случае +params+ будет <tt>{ :controller => "photos", :action => "show", :id => "1", :user_id => "2" }</tt>.
+
+h4. Параметры строки запроса
+
++params+ также включает любые параметры из строки запроса. Например, с таким маршрутом:
+
+<ruby>
 match ':controller/:action/:id'
-</pre></div>
-<p>Входящий путь <tt>/photos/show/1?user_id=2</tt> будет направлен на экшн <tt>show</tt> контроллера <tt>Photos</tt>. <tt>params</tt> будет <tt>{ :controller =&gt; &#8220;photos&#8221;, :action =&gt; &#8220;show&#8221;, :id =&gt; &#8220;1&#8221;, :user_id =&gt; &#8220;2&#8221; }</tt>.</p>
+</ruby>
 
-<h4 id="defining-defaults">5. Определение значений по умолчанию</h4>
-<p>В маршруте не обязательно явно использовать символы <tt>:controller</tt> и <tt>:action</tt>. Можете предоставить их как значения по умолчанию:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'photos/:id' =&gt; 'photos#show'
-</pre></div>
-<p>С этим маршрутом Rails направит входящий путь <tt>/photos/12</tt> на экшн <tt>show</tt> в <tt>PhotosController</tt>.</p>
-<p>Также можете определить другие значения по умолчанию в маршруте, предоставив хэш для опции <tt>:defaults</tt>. Это также относится к параметрам, которые не определены как динамические сегменты. Например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'photos/:id' =&gt; 'photos#show', :defaults =&gt; { :format =&gt; 'jpg' }
-</pre></div>
-<p>Rails направит <tt>photos/12</tt> в экшн <tt>show</tt> <tt>PhotosController</tt>, и установит <tt>params[:format]</tt> как <tt>jpg</tt>.</p>
+Входящий путь +/photos/show/1?user_id=2+ будет направлен на экшн +show+ контроллера +Photos+. +params+ будет <tt>{ :controller => "photos", :action => "show", :id => "1", :user_id => "2" }</tt>.
 
-<h4 id="named-routes">6. Именование маршрутов</h4>
-<p>Можно определить имя для любого маршрута, используя опцию <tt>:as</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'exit' =&gt; 'sessions#destroy', :as =&gt; :logout
-</pre></div>
-<p>Это создаст <tt>logout_path</tt> и <tt>logout_url</tt> как именнованные хелперы в Вашем приложении. Вызов <tt>logout_path</tt> вернет <tt>/logout</tt></p>
+h4. Определение значений по умолчанию
 
-<h4>7. Ограничения метода HTTP</h4>
-<p>Можете использовать опцию <tt>:via</tt> для ограничения запроса одним или несколькими методами HTTP:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+В маршруте не обязательно явно использовать символы +:controller+ и +:action+. Можете предоставить их как значения по умолчанию:
+
+<ruby>
+match 'photos/:id' => 'photos#show'
+</ruby>
+
+С этим маршрутом Rails направит входящий путь +/photos/12+ на экшн +show+ в +PhotosController+.
+
+Также можете определить другие значения по умолчанию в маршруте, предоставив хэш для опции +:defaults+. Это также относится к параметрам, которые не определены как динамические сегменты. Например:
+
+<ruby>
+match 'photos/:id' => 'photos#show', :defaults => { :format => 'jpg' }
+</ruby>
+
+Rails направит +photos/12+ в экшн +show+ +PhotosController+, и установит +params[:format]+ как +jpg+.
+
+h4. Именование маршрутов
+
+Можно определить имя для любого маршрута, используя опцию +:as+.
+
+<ruby>
+match 'exit' => 'sessions#destroy', :as => :logout
+</ruby>
+
+Это создаст +logout_path+ и +logout_url+ как именнованные хелперы в вашем приложении. Вызов +logout_path+ вернет +/logout+
+
+h4. Ограничения метода HTTP
+
+Можете использовать опцию +:via+ для ограничения запроса одним или несколькими методами HTTP:
+
+<ruby>
 match 'photos/show' => 'photos#show', :via => :get
-</pre></div>
-<p>Также имеется короткая версия этого:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Также имеется короткая версия этого:
+
+<ruby>
 get 'photos/show'
-</pre></div>
-<p>Также можно разрешить более одного метода в одном маршруте:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Также можно разрешить более одного метода в одном маршруте:
+
+<ruby>
 match 'photos/show' => 'photos#show', :via => [:get, :post]
-</pre></div>
+</ruby>
 
-<h4 id="segment-constraints">8. Ограничения сегмента</h4>
-<p>Можно использовать опцию <tt>:constraints</tt> для соблюдения формата динамического сегмента:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'photos/:id' =&gt; 'photos#show', :constraints =&gt; { :id =&gt; /[A-Z]\d{5}/ }
-</pre></div>
-<p>Этот маршрут соответствует путям, таким как <tt>/photos/A12345</tt>. Можно выразить более кратко тот же маршрут следующим образом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'photos/:id' =&gt; 'photos#show', :id =&gt; /[A-Z]\d{5}/
-</pre></div>
-<p><tt>:constraints</tt> принимает регулярное выражение c ограничением, что якоря regexp не могут использоваться. Например, следующий маршрут не работает:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match '/:id' =&gt; 'posts#show', :constraints =&gt; {:id =&gt; /^\d/}
-</pre></div>
-<p>Однако отметьте, что нет необходимости использовать якоря, поскольку все маршруты заякорены изначально.</p>
-<p>Например, следующие маршруты приведут к  <tt>posts</tt> со значениямм <tt>to_param</tt> такими как <tt>1-hello-world</tt>, которые всегда начинаются с цифры, к <tt>users</tt> со значениями <tt>to_param</tt> такими как <tt>david</tt>, никогда не начинающимися с цифры, разделенные в корневом пространстве имен:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match '/:id' =&gt; 'posts#show', :constraints =&gt; { :id =&gt; /\d.+/ }
-match '/:username' =&gt; 'users#show'
-</pre></div>
+h4. Ограничения сегмента
 
-<h4 id="request-based-constraints">9. Ограничения, основанные на запросе</h4>
-<p>Также можно ограничить маршрут, основываясь на любом методе в объекте <a href="/action-controller-overview/the-request-and-response-objects">Request</a>, который возвращает <tt>String</tt>.</p>
-<p>Ограничение, основанное на запросе, определяется так же, как и сегментное ограничение:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match &quot;photos&quot;, :constraints =&gt; {:subdomain =&gt; &quot;admin&quot;}
-</pre></div>
-<p>Также можно определить ограничения в форме блока:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-namespace &quot;admin&quot; do
-  constraints :subdomain =&gt; &quot;admin&quot; do
+Можно использовать опцию +:constraints+ для соблюдения формата динамического сегмента:
+
+<ruby>
+match 'photos/:id' => 'photos#show', :constraints => { :id => /[A-Z]\d{5}/ }
+</ruby>
+
+Этот маршрут соответствует путям, таким как +/photos/A12345+. Можно выразить более кратко тот же маршрут следующим образом:
+
+<ruby>
+match 'photos/:id' => 'photos#show', :id => /[A-Z]\d{5}/
+</ruby>
+
++:constraints+ принимает регулярное выражение c ограничением, что якоря regexp не могут использоваться. Например, следующий маршрут не работает:
+
+<ruby>
+match '/:id' => 'posts#show', :constraints => {:id => /^\d/}
+</ruby>
+
+Однако отметьте, что нет необходимости использовать якоря, поскольку все маршруты заякорены изначально.
+
+Например, следующие маршруты приведут к +posts+ со значениямм +to_param+ такими как +1-hello-world+, которые всегда начинаются с цифры, к +users+ со значениями +to_param+ такими как +david+, никогда не начинающимися с цифры, разделенные в корневом пространстве имен:
+
+<ruby>
+match '/:id' => 'posts#show', :constraints => { :id => /\d.+/ }
+match '/:username' => 'users#show'
+</ruby>
+
+h4. Ограничения, основанные на запросе
+
+Также можно ограничить маршрут, основываясь на любом методе в объекте "Request":/action-controller-overview/the-request-and-response-objects, который возвращает +String+.
+
+Ограничение, основанное на запросе, определяется так же, как и сегментное ограничение:
+
+<ruby>
+match "photos", :constraints => {:subdomain => "admin"}
+</ruby>
+
+Также можно определить ограничения в форме блока:
+
+<ruby>
+namespace :admin do
+  constraints :subdomain => "admin" do
     resources :photos
   end
 end
-</pre></div>
+</ruby>
 
-<h4 id="advanced-constraints">10. Продвинутые ограничения</h4>
-<p>Если имеется более продвинутое ограничение, можете предоставить объект, отвечающий на <tt>matches?</tt>, который будет использовать Rails. Скажем, вы хотите направить всех пользователей через черный список в <tt>BlacklistController</tt>. Можно сделать так:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Продвинутые ограничения
+
+Если имеется более продвинутое ограничение, можете предоставить объект, отвечающий на +matches?+, который будет использовать Rails. Скажем, вы хотите направить всех пользователей через черный список в +BlacklistController+. Можно сделать так:
+
+<ruby>
 class BlacklistConstraint
   def initialize
     @ips = Blacklist.retrieve_ips
@@ -118,63 +165,90 @@ class BlacklistConstraint
 end
 
 TwitterClone::Application.routes.draw do
-  match &quot;*path&quot; =&gt; &quot;blacklist#index&quot;,
-    :constraints =&gt; BlacklistConstraint.new
+  match "*path" => "blacklist#index",
+    :constraints => BlacklistConstraint.new
 end
-</pre></div>
+</ruby>
 
-<h4 id="route-globbing">11. Подстановка маршрутов</h4>
-<p>Подстановка маршрутов это способ указать, что определенные параметры должны соответствовать остальным частям маршрута. Например</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'photos/*other' =&gt; 'photos#unknown'
-</pre></div>
-<p>Этот маршрут будет соответствовать <tt>photos/12</tt> или <tt>/photos/long/path/to/12</tt>, установив <tt>params[:other]</tt> как <tt>"12"</tt>, или <tt>"long/path/to/12"</tt>.</p>
-<p>Динамические сегменты могут быть где угодно в маршруте. Например</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match 'books/*section/:title' =&gt; 'books#show'
-</pre></div>
-<p>будет соответствовать <tt>books/some/section/last-words-a-memoir</tt> с <tt>params[:section]</tt> равным <tt>"some/section"</tt>, и <tt>params[:title]</tt> равным <tt>"last-words-a-memoir"</tt>.</p>
-<p>На самом деле технически маршрут может иметь более одного динамического сегмента, matcher назначает параметры интуитивным образом. Для примера</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match '*a/foo/*b' =&gt; 'test#index'
-</pre></div>
-<p>будет соответствовать <tt>zoo/woo/foo/bar/baz</tt> с <tt>params[:a]</tt> равным <tt>"zoo/woo"</tt>, и <tt>params[:b]</tt> равным <tt>"bar/baz"</tt>.</p>
-<div class='note'><p>Начиная с Rails 3.1, динамические маршруты всегда будут соответствовать опциональному формату сегмента по умолчанию. Например, если есть такой маршрут:</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Подстановка маршрутов
+
+Подстановка маршрутов это способ указать, что определенные параметры должны соответствовать остальным частям маршрута. Например
+
+<ruby>
+match 'photos/*other' => 'photos#unknown'
+</ruby>
+
+Этот маршрут будет соответствовать +photos/12+ или +/photos/long/path/to/12+, установив +params[:other]+ как +"12"+, или +"long/path/to/12"+.
+
+Динамические сегменты могут быть где угодно в маршруте. Например
+
+<ruby>
+match 'books/*section/:title' => 'books#show'
+</ruby>
+
+будет соответствовать +books/some/section/last-words-a-memoir+ с +params[:section]+ равным +"some/section"+, и +params[:title]+ равным +"last-words-a-memoir"+.
+
+На самом деле технически маршрут может иметь более одного динамического сегмента, matcher назначает параметры интуитивным образом. Для примера
+
+<ruby>
+match '*a/foo/*b' => 'test#index'
+</ruby>
+
+будет соответствовать +zoo/woo/foo/bar/baz+ с +params[:a]+ равным +"zoo/woo"+, и +params[:b]+ равным +"bar/baz"+.
+
+NOTE: Начиная с Rails 3.1, динамические маршруты всегда будут соответствовать опциональному формату сегмента по умолчанию. Например, если есть такой маршрут:
+
+<ruby>
 match '*pages' => 'pages#show'
-</pre></div>
-<div class='note'><p>Запросив <tt>"/foo/bar.json"+, ваш <tt>params[:pages]</tt> будет равен <tt>"foo/bar"</tt> с форматом запроса JSON. Если вам нужно вернуть старое поведение 3.0.x, можете предоставить <tt>:format => false</tt> вот так:</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+NOTE: Запросив +"/foo/bar.json"+, ваш +params[:pages]+ будет равен +"foo/bar"+ с форматом запроса JSON. Если вам нужно вернуть старое поведение 3.0.x, можете предоставить +:format => false+ вот так:
+
+<ruby>
 match '*pages' => 'pages#show', :format => false
-</pre></div>
+</ruby>
 
-<h4 id="redirection">12. Перенаправление</h4>
-<p>Можно перенаправить любой путь на другой путь, используя хелпер <tt>redirect</tt> в вашем роутере:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match &quot;/stories&quot; =&gt; redirect(&quot;/posts&quot;)
-</pre></div>
-<p>Также можно повторно использовать динамические сегменты для соответствия пути, на который перенаправляем:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match &quot;/stories/:name&quot; =&gt; redirect(&quot;/posts/%{name}&quot;)
-</pre></div>
-<p>Также можно предоставить блок для перенаправления, который получает params и (опционально) объект request:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match &quot;/stories/:name&quot; =&gt; redirect {|params| &quot;/posts/#{params[:name].pluralize}&quot; }
-match &quot;/stories&quot; =&gt; redirect {|p, req| &quot;/posts/#{req.subdomain}&quot; }
-</pre></div>
-<p>Во всех этих случаях, если не предоставить предшествующий хост (<tt>http://www.example.com</tt>), Rails возьмет эти детали из текущего запроса.</p>
+h4. Перенаправление
 
-<h4 id="routing-to-rack-applications">13. Роутинг к приложениям Rack</h4>
-<p>Вместо String, подобной <tt>"posts#index"</tt>, соответствующей экшну <tt>index</tt> в <tt>PostsController</tt>, можно определить любое  <a href="http://guides.rubyonrails.org/rails_on_rack.html">приложение Rack</a> как конечную точку совпадения.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-match &quot;/application.js&quot; =&gt; Sprockets
-</pre></div>
-<p>Пока <tt>Sprockets</tt> отвечает на <tt>call</tt> и возвращает <tt>[status, headers, body]</tt>, роутер не будет различать приложение Rack и экшн.</p>
-<div class='note'><p>Для любопытства, <tt>"posts#index"</tt> фактически расширяется до <tt>PostsController.action(:index)</tt>, который возвращает валидное приложение Rack.</p></div>
+Можно перенаправить любой путь на другой путь, используя хелпер +redirect+ в вашем роутере:
 
-<h4 id="using-root">14. Использование <tt>root</tt></h4>
-<p>Можно определить, с чем Rails должен связать <tt>"/"</tt> с помощью метода <tt>root</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-root :to =&gt; 'pages#main'
-</pre></div>
-<p>Следует поместить маршрут <tt>root</tt> в конец файла. Также необходимо удалить файл <tt>public/index.html</tt>, чтобы корневой маршрут заработал.</p>
+<ruby>
+match "/stories" => redirect("/posts")
+</ruby>
+
+Также можно повторно использовать динамические сегменты для соответствия пути, на который перенаправляем:
+
+<ruby>
+match "/stories/:name" => redirect("/posts/%{name}")
+</ruby>
+
+Также можно предоставить блок для перенаправления, который получает params и (опционально) объект request:
+
+<ruby>
+match "/stories/:name" => redirect {|params| "/posts/#{params[:name].pluralize}" }
+match "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
+</ruby>
+
+Во всех этих случаях, если не предоставить предшествующий хост (+http://www.example.com+), Rails возьмет эти детали из текущего запроса.
+
+h4. Роутинг к приложениям Rack
+
+Вместо String, подобной +"posts#index"+, соответствующей экшну +index+ в +PostsController+, можно определить любое "приложение Rack":http://guides.rubyonrails.org/rails_on_rack.html как конечную точку совпадения.
+
+<ruby>
+match "/application.js" => Sprockets
+</ruby>
+
+Пока +Sprockets+ отвечает на +call+ и возвращает +[status, headers, body]+, роутер не будет различать приложение Rack и экшн.
+
+NOTE: Для любопытства, +"posts#index"+ фактически расширяется до +PostsController.action(:index)+, который возвращает валидное приложение Rack.
+
+h4. Использование +root+
+
+Можно определить, с чем Rails должен связать +"/"+ с помощью метода +root+:
+
+<ruby>
+root :to => 'pages#main'
+</ruby>
+
+Следует поместить маршрут +root+ в конец файла. Также необходимо удалить файл +public/index.html+, чтобы корневой маршрут заработал.
