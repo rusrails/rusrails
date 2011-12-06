@@ -1,198 +1,272 @@
 h1. Расширения для Date
 
-<h4 id="calculations">1. Вычисления</h4>
-<div class='note'><p>Все следующие методы определены в <tt>active_support/core_ext/date/calculations.rb</tt>.</p></div>
-<div class='info'><p>В следующих методах вычисления имеют крайний случай октября 1582 года, когда дней с 5 по 14 просто не существовало. Это руководство не документирует поведение около этих дней для краткости, достаточно сказать, что они делают то, что от них следует ожидать. Скажем, <tt>Date.new(1582, 10, 4).tomorrow</tt> возвратит <tt>Date.new(1582, 10, 15)</tt>, и так далее. Смотрите <tt>test/core_ext/date_ext_test.rb</tt> в тестовом наборе Active Support, чтобы понять ожидаемое поведение.</p></div>
+h4. Вычисления
 
-<h5 id="date-current">1.1 <tt>Date.current</tt></h5>
-<p>Active Support определяет <tt>Date.current</tt> как сегодняшний день в текущей временной зоне. Он похож на <tt>Date.today</tt>, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет <tt>Date.yesterday</tt> и <tt>Date.tomorrow</tt>, и условия экземпляра <tt>past?</tt>, <tt>today?</tt> и <tt>future?</tt>, все они зависят относительно <tt>Date.current</tt>.</p>
+NOTE: Все следующие методы определены в +active_support/core_ext/date/calculations.rb.
 
-<h5 id="named-dates">1.2 Именнованные даты</h5>
+INFO: В следующих методах вычисления имеют крайний случай октября 1582 года, когда дней с 5 по 14 просто не существовало. Это руководство не документирует поведение около этих дней для краткости, достаточно сказать, что они делают то, что от них следует ожидать. Скажем, +Date.new(1582, 10, 4).tomorrow+ возвратит +Date.new(1582, 10, 15)+, и так далее. Смотрите +test/core_ext/date_ext_test.rb+ в тестовом наборе Active Support, чтобы понять ожидаемое поведение.
 
-<h6 id="prev_year-next_year">1.2.1 <tt>prev_year</tt>, <tt>next_year</tt></h6>
-<p>В Ruby 1.9 <tt>prev_year</tt> и <tt>next_year</tt> возвращают дату с тем же днем/месяцем в предыдущем или следующем году:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 8) # =&gt; Sat, 08 May 2010
-d.prev_year              # =&gt; Fri, 08 May 2009
-d.next_year              # =&gt; Sun, 08 May 2011
-</pre></div>
-<p>Если датой является 29 февраля високосного года, возвратися 28-е:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2000, 2, 29) # =&gt; Tue, 29 Feb 2000
-d.prev_year               # =&gt; Sun, 28 Feb 1999
-d.next_year               # =&gt; Wed, 28 Feb 2001
-</pre></div>
-<p>Active Support определяет эти методы также для Ruby 1.8.</p>
+h5. +Date.current+
 
-<h6 id="prev_month-next_month">1.2.2 <tt>prev_month</tt>, <tt>next_month</tt></h6>
-<p>В Ruby 1.9 <tt>prev_month</tt> и <tt>next_month</tt> возвращает дату с тем же днем в предыдущем или следующем месяце:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 8) # =&gt; Sat, 08 May 2010
-d.prev_month             # =&gt; Thu, 08 Apr 2010
-d.next_month             # =&gt; Tue, 08 Jun 2010
-</pre></div>
-<p>Если такой день не существует, возвращается последний день соответствующего месяца:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2000, 5, 31).prev_month # =&gt; Sun, 30 Apr 2000
-Date.new(2000, 3, 31).prev_month # =&gt; Tue, 29 Feb 2000
-Date.new(2000, 5, 31).next_month # =&gt; Fri, 30 Jun 2000
-Date.new(2000, 1, 31).next_month # =&gt; Tue, 29 Feb 2000
-</pre></div>
-<p>Active Support определяет эти методы также для Ruby 1.8.</p>
+Active Support определяет +Date.current+ как сегодняшний день в текущей временной зоне. Он похож на +Date.today+, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет +Date.yesterday+ и +Date.tomorrow+, и условия экземпляра +past?+, +today?+ и +future?+, все они зависят относительно +Date.current+.
 
-<h6 id="beginning_of_week-end_of_week">1.2.3 <tt>beginning_of_week</tt>, <tt>end_of_week</tt></h6>
-<p>Методы <tt>beginning_of_week</tt> и <tt>end_of_week</tt> возвращают даты для начала и конца недели, исходя из допущения, что недели начинаются с понедельника:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 8) # =&gt; Sat, 08 May 2010
-d.beginning_of_week      # =&gt; Mon, 03 May 2010
-d.end_of_week            # =&gt; Sun, 09 May 2010
-</pre></div>
-<p>У <tt>beginning_of_week</tt> есть псевдонимы <tt>monday</tt> и <tt>at_beginning_of_week</tt>. У <tt>end_of_week</tt> есть псевдонимы <tt>sunday</tt> и <tt>at_end_of_week</tt>.</p>
+h5. Именнованные даты
 
-<h6 id="next_week">1.2.4 <tt>prev_week</tt>, <tt>next_week</tt></h6>
-<p><tt>next_week</tt> принимает символ с днем недели на английском (в нижнем регистре, по умолчанию <tt>:monday</tt>) и возвращает дату, соответствующую этому дню на следующей неделе:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 9) # =&gt; Sun, 09 May 2010
-d.next_week              # =&gt; Mon, 10 May 2010
-d.next_week(:saturday)   # =&gt; Sat, 15 May 2010
-</pre></div>
-<p><tt>prev_week</tt> работает аналогично:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h6. +prev_year+, +next_year+
+
+В Ruby 1.9 +prev_year+ и +next_year+ возвращают дату с тем же днем/месяцем в предыдущем или следующем году:
+
+<ruby>
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.prev_year              # => Fri, 08 May 2009
+d.next_year              # => Sun, 08 May 2011
+</ruby>
+
+Если датой является 29 февраля високосного года, возвратится 28-е:
+
+<ruby>
+d = Date.new(2000, 2, 29) # => Tue, 29 Feb 2000
+d.prev_year               # => Sun, 28 Feb 1999
+d.next_year               # => Wed, 28 Feb 2001
+</ruby>
+
+Active Support определяет эти методы также для Ruby 1.8.
+
+h6. +prev_month+, +next_month+
+
+В Ruby 1.9 +prev_month+ и +next_month+ возвращает дату с тем же днем в предыдущем или следующем месяце:
+
+<ruby>
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.prev_month             # => Thu, 08 Apr 2010
+d.next_month             # => Tue, 08 Jun 2010
+</ruby>
+
+Если такой день не существует, возвращается последний день соответствующего месяца:
+
+<ruby>
+Date.new(2000, 5, 31).prev_month # => Sun, 30 Apr 2000
+Date.new(2000, 3, 31).prev_month # => Tue, 29 Feb 2000
+Date.new(2000, 5, 31).next_month # => Fri, 30 Jun 2000
+Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
+</ruby>
+
+Active Support определяет эти методы также для Ruby 1.8.
+
+h6. +beginning_of_week+, +end_of_week+
+
+Методы +beginning_of_week+ и +end_of_week+ возвращают даты для начала и конца недели, исходя из допущения, что недели начинаются с понедельника:
+
+<ruby>
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.beginning_of_week      # => Mon, 03 May 2010
+d.end_of_week            # => Sun, 09 May 2010
+</ruby>
+
+У +beginning_of_week+ есть псевдонимы +monday+ и +at_beginning_of_week+. У +end_of_week+ есть псевдонимы +sunday+ и +at_end_of_week+.
+
+h6. +prev_week+, +next_week+
+
++next_week+ принимает символ с днем недели на английском (в нижнем регистре, по умолчанию +:monday+) и возвращает дату, соответствующую этому дню на следующей неделе:
+
+<ruby>
+d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
+d.next_week              # => Mon, 10 May 2010
+d.next_week(:saturday)   # => Sat, 15 May 2010
+</ruby>
+
++prev_week+ работает аналогично:
+
+<ruby>
 d.prev_week              # => Mon, 26 Apr 2010
 d.prev_week(:saturday)   # => Sat, 01 May 2010
 d.prev_week(:friday)     # => Fri, 30 Apr 2010
-</pre></div>
+</ruby>
 
-<h6 id="beginning_of_month-end_of_month">1.2.5 <tt>beginning_of_month</tt>, <tt>end_of_month</tt></h6>
-<p>Методы <tt>beginning_of_month</tt> и <tt>end_of_month</tt> возвращают даты для начала и конца месяца:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 9) # =&gt; Sun, 09 May 2010
-d.beginning_of_month     # =&gt; Sat, 01 May 2010
-d.end_of_month           # =&gt; Mon, 31 May 2010
-</pre></div>
-<p>У <tt>beginning_of_month</tt> есть псевдоним <tt>at_beginning_of_month</tt>, а у <tt>end_of_month</tt> есть  псевдоним <tt>at_end_of_month</tt>.</p>
+h6. +beginning_of_month+, +end_of_month+
 
-<h6 id="beginning_of_quarter-end_of_quarter">1.2.6 <tt>beginning_of_quarter</tt>, <tt>end_of_quarter</tt></h6>
-<p>Методы <tt>beginning_of_quarter</tt> и <tt>end_of_quarter</tt> возвращают даты начала и конца квартала календарного года получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 9) # =&gt; Sun, 09 May 2010
-d.beginning_of_quarter   # =&gt; Thu, 01 Apr 2010
-d.end_of_quarter         # =&gt; Wed, 30 Jun 2010
-</pre></div>
-<p>У <tt>beginning_of_quarter</tt> есть псевдоним <tt>at_beginning_of_quarter</tt>, а у <tt>end_of_quarter</tt> есть псевдоним <tt>at_end_of_quarter</tt>.</p>
+Методы +beginning_of_month+ и +end_of_month+ возвращают даты для начала и конца месяца:
 
-<h6 id="beginning_of_year-end_of_year">1.2.7 <tt>beginning_of_year</tt>, <tt>end_of_year</tt></h6>
-<p>Методы <tt>beginning_of_year</tt> и <tt>end_of_year</tt> возвращают даты начала и конца года:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d = Date.new(2010, 5, 9) # =&gt; Sun, 09 May 2010
-d.beginning_of_year      # =&gt; Fri, 01 Jan 2010
-d.end_of_year            # =&gt; Fri, 31 Dec 2010
-</pre></div>
-<p>У <tt>beginning_of_year</tt> есть псевдоним <tt>at_beginning_of_year</tt>, а у <tt>end_of_year</tt> есть псевдоним <tt>at_end_of_year</tt>.</p>
+<ruby>
+d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
+d.beginning_of_month     # => Sat, 01 May 2010
+d.end_of_month           # => Mon, 31 May 2010
+</ruby>
 
-<h5 id="other-date-computations">1.3 Другие вычисления дат</h5>
+У +beginning_of_month+ есть псевдоним +at_beginning_of_month+, а у +end_of_month+ есть псевдоним +at_end_of_month+.
 
-<h6 id="years_ago-years_since">1.3.1 <tt>years_ago</tt>, <tt>years_since</tt></h6>
-<p>Метод <tt>years_ago</tt> получает число лет и возвращает ту же дату, но на столько лет назад:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h6. +beginning_of_quarter+, +end_of_quarter+
+
+Методы +beginning_of_quarter+ и +end_of_quarter+ возвращают даты начала и конца квартала календарного года получателя:
+
+<ruby>
+d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
+d.beginning_of_quarter   # => Thu, 01 Apr 2010
+d.end_of_quarter         # => Wed, 30 Jun 2010
+</ruby>
+
+У +beginning_of_quarter+ есть псевдоним +at_beginning_of_quarter+, а у +end_of_quarter+ есть псевдоним +at_end_of_quarter+.
+
+h6. +beginning_of_year+, +end_of_year+
+
+Методы +beginning_of_year+ и +end_of_year+ возвращают даты начала и конца года:
+
+<ruby>
+d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
+d.beginning_of_year      # => Fri, 01 Jan 2010
+d.end_of_year            # => Fri, 31 Dec 2010
+</ruby>
+
+У +beginning_of_year+ есть псевдоним +at_beginning_of_year+, а у +end_of_year+ есть псевдоним +at_end_of_year+.
+
+h5. Другие вычисления дат
+
+h6. +years_ago+, +years_since+
+
+Метод +years_ago+ получает число лет и возвращает ту же дату, но на столько лет назад:
+
+<ruby>
 date = Date.new(2010, 6, 7)
-date.years_ago(10) # =&gt; Wed, 07 Jun 2000
-</pre></div>
-<p><tt>years_since</tt> перемещает вперед по времени:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+date.years_ago(10) # => Wed, 07 Jun 2000
+</ruby>
+
++years_since+ перемещает вперед по времени:
+
+<ruby>
 date = Date.new(2010, 6, 7)
-date.years_since(10) # =&gt; Sun, 07 Jun 2020
-</pre></div>
-<p>Если такая дата не найдена, возвращается последний день соответствующего месяца:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2012, 2, 29).years_ago(3)     # =&gt; Sat, 28 Feb 2009
-Date.new(2012, 2, 29).years_since(3)   # =&gt; Sat, 28 Feb 2015
-</pre></div>
+date.years_since(10) # => Sun, 07 Jun 2020
+</ruby>
 
-<h6 id="months_ago-months_since">1.3.2 <tt>months_ago</tt>, <tt>months_since</tt></h6>
-<p>Методы <tt>months_ago</tt> и <tt>months_since</tt> работают аналогично, но для месяцев:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 4, 30).months_ago(2)   # =&gt; Sun, 28 Feb 2010
-Date.new(2010, 4, 30).months_since(2) # =&gt; Wed, 30 Jun 2010
-</pre></div>
-<p>Если такой день не существует, возвращается последний день соответствующего месяца:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 4, 30).months_ago(2)    # =&gt; Sun, 28 Feb 2010
-Date.new(2009, 12, 31).months_since(2) # =&gt; Sun, 28 Feb 2010
-</pre></div>
+Если такая дата не найдена, возвращается последний день соответствующего месяца:
 
-<h6 id="advance">1.3.3 <tt>advance</tt></h6>
-<p>Более обычным способом перепрыгнуть на другие дни является <tt>advance</tt>. Этот метод получает хэш с ключами <tt>:years</tt>, <tt>:months</tt>, <tt>:weeks</tt>, <tt>:days</tt>, и возвращает дату, передвинутую на столько, сколько указывают существующие ключи:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<ruby>
+Date.new(2012, 2, 29).years_ago(3)     # => Sat, 28 Feb 2009
+Date.new(2012, 2, 29).years_since(3)   # => Sat, 28 Feb 2015
+</ruby>
+
+h6. +months_ago+, +months_since+
+
+Методы +months_ago+ и +months_since+ работают аналогично, но для месяцев:
+
+<ruby>
+Date.new(2010, 4, 30).months_ago(2)   # => Sun, 28 Feb 2010
+Date.new(2010, 4, 30).months_since(2) # => Wed, 30 Jun 2010
+</ruby>
+
+Если такой день не существует, возвращается последний день соответствующего месяца:
+
+<ruby>
+Date.new(2010, 4, 30).months_ago(2)    # => Sun, 28 Feb 2010
+Date.new(2009, 12, 31).months_since(2) # => Sun, 28 Feb 2010
+</ruby>
+
+h6. +weeks_ago+
+
+Метод +weeks_ago+ работает аналогично для недель:
+
+<ruby>
+Date.new(2010, 5, 24).weeks_ago(1)    # => Mon, 17 May 2010
+Date.new(2010, 5, 24).weeks_ago(2)    # => Mon, 10 May 2010
+</ruby>
+
+h6. +advance+
+
+Более обычным способом перепрыгнуть на другие дни является +advance+. Этот метод получает хэш с ключами +:years+, +:months+, +:weeks+, +:days+, и возвращает дату, передвинутую на столько, сколько указывают существующие ключи:
+
+<ruby>
 date = Date.new(2010, 6, 6)
-date.advance(:years =&gt; 1, :weeks =&gt; 2)  # =&gt; Mon, 20 Jun 2011
-date.advance(:months =&gt; 2, :days =&gt; -2) # =&gt; Wed, 04 Aug 2010
-</pre></div>
-<p>Отметьте в предыдущем примере, что приросты могут быть отрицательными.</p>
-<p>Для выполнения вычисления метод сначала приращивает года, затем месяцы, затем недели, и наконец дни. Порядок важен применительно к концам месяцев. Скажем, к примеру, мы в конце февраля 2010 и хотим переместиться на один месяц и один день вперед.</p>
-<p>Метод <tt>advance</tt> передвигает сначала на один месяц, и затем на один день, результат такой:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 2, 28).advance(:months =&gt; 1, :days =&gt; 1)
-# =&gt; Sun, 29 Mar 2010
-</pre></div>
-<p>Если бы мы делали по другому, результат тоже был бы другой:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 2, 28).advance(:days =&gt; 1).advance(:months =&gt; 1)
-# =&gt; Thu, 01 Apr 2010
-</pre></div>
+date.advance(:years => 1, :weeks => 2)  # => Mon, 20 Jun 2011
+date.advance(:months => 2, :days => -2) # => Wed, 04 Aug 2010
+</ruby>
 
-<h5 id="changing-components">1.4 Изменяющиеся компоненты</h5>
-<p>Метод <tt>change</tt> позволяет получить новую дату, которая идентична получателю, за исключением заданного года, месяца или дня:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 12, 23).change(:year =&gt; 2011, :month =&gt; 11)
-# =&gt; Wed, 23 Nov 2011
-</pre></div>
-<p>Метод не толерантен к несуществующим датам, если изменение невалидно, вызывается <tt>ArgumentError</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Date.new(2010, 1, 31).change(:month =&gt; 2)
-# =&gt; ArgumentError: invalid date
-</pre></div>
+Отметьте в предыдущем примере, что приросты могут быть отрицательными.
 
-<h5 id="date-durations">1.5 Длительности</h5>
-<p>Длительности могут добавляться и вычитаться из дат:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Для выполнения вычисления метод сначала приращивает года, затем месяцы, затем недели, и наконец дни. Порядок важен применительно к концам месяцев. Скажем, к примеру, мы в конце февраля 2010 и хотим переместиться на один месяц и один день вперед.
+
+Метод +advance+ передвигает сначала на один месяц, и затем на один день, результат такой:
+
+<ruby>
+Date.new(2010, 2, 28).advance(:months => 1, :days => 1)
+# => Sun, 29 Mar 2010
+</ruby>
+
+Если бы мы делали по другому, результат тоже был бы другой:
+
+<ruby>
+Date.new(2010, 2, 28).advance(:days => 1).advance(:months => 1)
+# => Thu, 01 Apr 2010
+</ruby>
+
+h5. Изменяющиеся компоненты
+
+Метод +change+ позволяет получить новую дату, которая идентична получателю, за исключением заданного года, месяца или дня:
+
+<ruby>
+Date.new(2010, 12, 23).change(:year => 2011, :month => 11)
+# => Wed, 23 Nov 2011
+</ruby>
+
+Метод не толерантен к несуществующим датам, если изменение невалидно, вызывается +ArgumentError+:
+
+<ruby>
+Date.new(2010, 1, 31).change(:month => 2)
+# => ArgumentError: invalid date
+</ruby>
+
+h5(#date-durations). Длительности
+
+Длительности могут добавляться и вычитаться из дат:
+
+<ruby>
 d = Date.current
-# =&gt; Mon, 09 Aug 2010
+# => Mon, 09 Aug 2010
 d + 1.year
-# =&gt; Tue, 09 Aug 2011
+# => Tue, 09 Aug 2011
 d - 3.hours
-# =&gt; Sun, 08 Aug 2010 21:00:00 UTC +00:00
-</pre></div>
-<p>Это переводится в вызовы <tt>since</tt> или <tt>advance</tt>. Для примера мы получем правильный прыжок в реформе календаря:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# => Sun, 08 Aug 2010 21:00:00 UTC +00:00
+</ruby>
+
+Это переводится в вызовы +since+ или +advance+. Для примера мы получем правильный прыжок в реформе календаря:
+
+<ruby>
 Date.new(1582, 10, 4) + 1.day
-# =&gt; Fri, 15 Oct 1582
-</pre></div>
+# => Fri, 15 Oct 1582
+</ruby>
 
-<h5 id="timestamps">1.6 Временные метки</h5>
-<div class='info'><p>Следующие методы возвращают объект <tt>Time</tt>, если возможно, в противном случае <tt>DateTime</tt>. Если установлено, учитывается временная зона пользователя.</p></div>
+h5. Временные метки
 
-<h6 id="beginning_of_day-end_of_day">1.6.1 <tt>beginning_of_day</tt>, <tt>end_of_day</tt></h6>
-<p>Метод <tt>beginning_of_day</tt> возвращает временную метку для начала дня (00:00:00):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+INFO: Следующие методы возвращают объект +Time+, если возможно, в противном случае +DateTime+. Если установлено, учитывается временная зона пользователя.
+
+h6. +beginning_of_day+, +end_of_day+
+
+Метод +beginning_of_day+ возвращает временную метку для начала дня (00:00:00):
+
+<ruby>
 date = Date.new(2010, 6, 7)
-date.beginning_of_day # =&gt; Sun Jun 07 00:00:00 +0200 2010
-</pre></div>
-<p>Метод <tt>end_of_day</tt> возвращает временную метку для конца дня (23:59:59):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-date = Date.new(2010, 6, 7)
-date.end_of_day # =&gt; Sun Jun 06 23:59:59 +0200 2010
-</pre></div>
-<p>У <tt>beginning_of_day</tt> есть псевдонимы <tt>at_beginning_of_day</tt>, <tt>midnight</tt>, <tt>at_midnight</tt>.</p>
+date.beginning_of_day # => Sun Jun 07 00:00:00 +0200 2010
+</ruby>
 
-<h6 id="ago-since">1.6.2 <tt>ago</tt>, <tt>since</tt></h6>
-<p>Метод <tt>ago</tt> получает количество секунд как аргумент и возвращает временную метку, имеющую столько секунд до полуночи:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-date = Date.current # =&gt; Fri, 11 Jun 2010
-date.ago(1)         # =&gt; Thu, 10 Jun 2010 23:59:59 EDT -04:00
-</pre></div>
-<p>Подобным образом <tt>since</tt> двигается вперед:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-date = Date.current # =&gt; Fri, 11 Jun 2010
-date.since(1)       # =&gt; Fri, 11 Jun 2010 00:00:01 EDT -04:00
-</pre></div>
+Метод +end_of_day+ возвращает временную метку для конца дня (23:59:59):
+
+<ruby>
+date = Date.new(2010, 6, 7)
+date.end_of_day # => Sun Jun 06 23:59:59 +0200 2010
+</ruby>
+
+У +beginning_of_day+ есть псевдонимы +at_beginning_of_day+, +midnight+, +at_midnight+.
+
+h6. +ago+, +since+
+
+Метод +ago+ получает количество секунд как аргумент и возвращает временную метку, имеющую столько секунд до полуночи:
+
+<ruby>
+date = Date.current # => Fri, 11 Jun 2010
+date.ago(1)         # => Thu, 10 Jun 2010 23:59:59 EDT -04:00
+</ruby>
+
+Подобным образом +since+ двигается вперед:
+
+<ruby>
+date = Date.current # => Fri, 11 Jun 2010
+date.since(1)       # => Fri, 11 Jun 2010 00:00:01 EDT -04:00
+</ruby>

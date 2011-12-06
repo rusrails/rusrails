@@ -1,86 +1,105 @@
 h1. Расширения для Class
 
-<h4 id="class-attributes">1. Атрибуты класса</h4>
+h4. Атрибуты класса
 
-<h5 id="class_attribute">1.1 <tt>class_attribute</tt></h5>
-<p>Метод <tt>class_attribute</tt> объявляет один или более наследуемых атрибутов класса, которые могут быть переопределены на низшем уровне в иерархии:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5. +class_attribute+
+
+Метод +class_attribute+ объявляет один или более наследуемых атрибутов класса, которые могут быть переопределены на низшем уровне в иерархии:
+
+<ruby>
 class A
   class_attribute :x
 end
 
-class B &lt; A; end
+class B < A; end
 
-class C &lt; B; end
+class C < B; end
 
 A.x = :a
-B.x # =&gt; :a
-C.x # =&gt; :a
+B.x # => :a
+C.x # => :a
 
 B.x = :b
-A.x # =&gt; :a
-C.x # =&gt; :b
+A.x # => :a
+C.x # => :b
 
 C.x = :c
-A.x # =&gt; :a
-B.x # =&gt; :b
-</pre></div>
-<p>Например, <tt>ActionMailer::Base</tt> определяет:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+A.x # => :a
+B.x # => :b
+</ruby>
+
+Например, +ActionMailer::Base+ определяет:
+
+<ruby>
 class_attribute :default_params
 self.default_params = {
-  :mime_version =&gt; &quot;1.0&quot;,
-  :charset      =&gt; &quot;UTF-8&quot;,
-  :content_type =&gt; &quot;text/plain&quot;,
-  :parts_order  =&gt; [ &quot;text/plain&quot;, &quot;text/enriched&quot;, &quot;text/html&quot; ]
+  :mime_version => "1.0",
+  :charset      => "UTF-8",
+  :content_type => "text/plain",
+  :parts_order  => [ "text/plain", "text/enriched", "text/html" ]
 }.freeze
-</pre></div>
-<p>К ним также есть доступ, и они могут быть переопределены на уровне экземпляра:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+К ним также есть доступ, и они могут быть переопределены на уровне экземпляра:
+
+<ruby>
 A.x = 1
 
 a1 = A.new
 a2 = A.new
 a2.x = 2
 
-a1.x # =&gt; 1, comes from A
-a2.x # =&gt; 2, overridden in a2
-</pre></div>
-<p>Создание райтер-метода экземпляра может быть отключено установлением опции <tt>:instance_writer</tt> в false, как в</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-module AcitveRecord
+a1.x # => 1, приходит из A
+a2.x # => 2, переопределено в a2
+</ruby>
+
+Создание райтер-метода экземпляра может быть отключено установлением опции +:instance_writer+ в false, как в
+
+<ruby>
+module ActiveRecord
   class Base
-    class_attribute :table_name_prefix, :instance_writer =&gt; false
-    self.table_name_prefix = &quot;&quot;
+    class_attribute :table_name_prefix, :instance_writer => false
+    self.table_name_prefix = ""
   end
 end
-</pre></div>
-<p>В модели такая опция может быть полезной как способ предотвращения массового назначения для установки атрибута.</p>
-<p>Для удобства <tt>class_attribute</tt> определяет также условие экземпляра, являющееся двойным отрицанием того, что возвращает ридер экземпляра. В вышеописанном примере оно может вызываться <tt>x?</tt>.</p>
-<p>Когда <tt>instance_reader</tt> равен <tt>false</tt>, условие экземпляра возвратит <tt>NoMethodError</tt>, как и метод ридера.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/class/attribute.rb</tt></p></div>
+</ruby>
 
-<h5 id="cattr_reader-cattr_writer-and-cattr_accessor">1.2 <tt>cattr_reader</tt>, <tt>cattr_writer</tt> и <tt>cattr_accessor</tt></h5>
-<p>Макросы <tt>cattr_reader</tt>, <tt>cattr_writer</tt> и <tt>cattr_accessor</tt> являются аналогами их коллег <tt>attr_*</tt>, но для классов. Они инициализируют переменную класса как <tt>nil</tt>, если она уже существует, и создают соответствующие методы класса для доступа к ней:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class MysqlAdapter &lt; AbstractAdapter
+В модели такая опция может быть полезной как способ предотвращения массового назначения для установки атрибута.
+
+Для удобства +class_attribute+ определяет также условие экземпляра, являющееся двойным отрицанием того, что возвращает ридер экземпляра. В вышеописанном примере оно может вызываться +x?+.
+
+Когда +instance_reader+ равен +false+, условие экземпляра возвратит +NoMethodError+, как и метод ридера.
+
+NOTE: Определено в +active_support/core_ext/class/attribute.rb+
+
+h5. +cattr_reader+, +cattr_writer+ и +cattr_accessor+
+
+Макросы +cattr_reader+, +cattr_writer+ и +cattr_accessor+ являются аналогами их коллег +attr_*+, но для классов. Они инициализируют переменную класса как +nil+, если она уже существует, и создают соответствующие методы класса для доступа к ней:
+
+<ruby>
+class MysqlAdapter < AbstractAdapter
   # Generates class methods to access @@emulate_booleans.
   cattr_accessor :emulate_booleans
   self.emulate_booleans = true
 end
-</pre></div>
-<p>Методы экземпляра также создаются для удобства, они всего лишь прокси к атрибуту класса. Таким образом, экземпляры могут менять атрибут класса, но не могут переопределить его, как это происходит в случае с <tt>class_attribute</tt> (смотрите выше). К примеру, задав</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Методы экземпляра также создаются для удобства, они всего лишь прокси к атрибуту класса. Таким образом, экземпляры могут менять атрибут класса, но не могут переопределить его, как это происходит в случае с +class_attribute+ (смотрите выше). К примеру, задав
+
+<ruby>
 module ActionView
   class Base
     cattr_accessor :field_error_proc
     @@field_error_proc = Proc.new{ ... }
   end
 end
-</pre></div>
-<p>мы получим доступ к <tt>field_error_proc</tt> во вьюхах.</p> 
-<p>Создание ридер-метода экземпляра предотвращается установкой <tt>:instance_reader</tt> в <tt>false</tt> и создание райтер-метода экземпляра предотвращается установкой <tt>:instance_writer</tt> в <tt>false</tt>. Создание обоих методов предотвращается установкой <tt>:instance_accessor</tt> в <tt>false</tt>. Во всех случаях, должно быть не любое ложное значение, а именно <tt>false</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+мы получим доступ к +field_error_proc+ во вьюхах.
+
+Создание ридер-метода экземпляра предотвращается установкой +:instance_reader+ в +false+ и создание райтер-метода экземпляра предотвращается установкой +:instance_writer+ в +false+. Создание обоих методов предотвращается установкой +:instance_accessor+ в +false+. Во всех случаях, должно быть не любое ложное значение, а именно +false+:
+
+<ruby>
 module A
   class B
     # No first_name instance reader is generated.
@@ -91,14 +110,19 @@ module A
     cattr_accessor :surname, :instance_accessor => false
   end
 end
-</pre></div>
-<p>В модели может быть полезным установить <tt>:instance_accessor</tt> в <tt>false</tt> как способ предотвращения массового назначения для установки атрибута.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/class/attribute_accessors.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="class-inheritable-attributes">2. Наследуемые атрибуты класса</h4>
-<div class='warning'><p>Наследуемые атрибуты класса устарели. Рекомендовано использовать вместо них <tt>Class#class_attribute</tt>.</p></div>
-<p>Переменные класса передаются вниз по дереву наследования. Переменные экземпляра класса не передаются, но и не наследуются. Макросы <tt>class_inheritable_reader</tt>, <tt>class_inheritable_writer</tt> и <tt>class_inheritable_accessor</tt> предоставляют средства доступа к данным на уровне класса, которые наследуются, но не передаются детям:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+В модели может быть полезным установить +:instance_accessor+ в +false+ как способ предотвращения массового назначения для установки атрибута.
+
+NOTE: Определено в +active_support/core_ext/class/attribute_accessors.rb+.
+
+h4. Наследуемые атрибуты класса
+
+WARNING: Наследуемые атрибуты класса устарели. Рекомендовано использовать вместо них +Class#class_attribute+.
+
+Переменные класса передаются вниз по дереву наследования. Переменные экземпляра класса не передаются, но и не наследуются. Макросы +class_inheritable_reader+, +class_inheritable_writer+ и +class_inheritable_accessor+ предоставляют средства доступа к данным на уровне класса, которые наследуются, но не передаются детям:
+
+<ruby>
 module ActionController
   class Base
     # FIXME: REVISE/SIMPLIFY THIS COMMENT.
@@ -108,60 +132,77 @@ module ActionController
     class_inheritable_accessor :allow_forgery_protection
   end
 end
-</pre></div>
-<p>Они осуществляют это с помощью переменных экземпляра класса и клонирования их в субклассы, тут не вовлекаются переменные класса. Клонирование выполняется с помощью <tt>dup</tt> до тех пор, пока значение дублируемое.</p>
-<p>Имеется несколько вариантов, специализирующихся на массивах и хэшах:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Они осуществляют это с помощью переменных экземпляра класса и клонирования их в субклассы, тут не вовлекаются переменные класса. Клонирование выполняется с помощью +dup+ до тех пор, пока значение дублируемое.
+
+Имеется несколько вариантов, специализирующихся на массивах и хэшах:
+
+<ruby>
 class_inheritable_array
 class_inheritable_hash
-</pre></div>
-<p>Эти райтеры принимают во внимание любой наследуемый массив или хэш и расширяют, а не перезаписывают их.</p>
-<p>Как и чистые средства доступа к атрибуту класса, эти макросы создают удобные методы экземпляра для чтения и записи. Создание райтер-метода экземпляра можно отключить установив <tt>:instance_writer</tt> в <tt>false</tt> (не любое ложное значение, а именно <tt>false</tt>):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Эти райтеры принимают во внимание любой наследуемый массив или хэш и расширяют, а не перезаписывают их.
+
+Как и чистые средства доступа к атрибуту класса, эти макросы создают удобные методы экземпляра для чтения и записи. Создание райтер-метода экземпляра можно отключить установив +:instance_writer+ в +false+ (не любое ложное значение, а именно +false+):
+
+<ruby>
 module ActiveRecord
   class Base
-    class_inheritable_accessor :default_scoping, :instance_writer =&gt; false
+    class_inheritable_accessor :default_scoping, :instance_writer => false
   end
 end
-</pre></div>
-<p>Так как значения копируются, когда определяется субкласс, если основной класс изменяет атрибут после этого, субкласс не видит новое значение. Вот в чем вопрос.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/class/inheritable_attributes.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="subclasses-descendants">3. Субклассы и потомки</h4>
+Так как значения копируются, когда определяется субкласс, если основной класс изменяет атрибут после этого, субкласс не видит новое значение. Вот в чем вопрос.
 
-<h5 id="subclasses">3.1 <tt>subclasses</tt></h5>
-<p>Метод <tt>subclasses</tt> возвращает субклассы получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/class/inheritable_attributes.rb+.
+
+h4. Субклассы и потомки
+
+h5. +subclasses+
+
+Метод +subclasses+ возвращает субклассы получателя:
+
+<ruby>
 class C; end
-C.subclasses # =&gt; []
+C.subclasses # => []
 
-class B &lt; C; end
-C.subclasses # =&gt; [B]
+class B < C; end
+C.subclasses # => [B]
 
-class A &lt; B; end
-C.subclasses # =&gt; [B]
+class A < B; end
+C.subclasses # => [B]
 
-class D &lt; C; end
-C.subclasses # =&gt; [B, D]
-</pre></div>
-<p>Порядок, в котором эти классы возвращаются, неопределен.</p>
-<div class='warning'><p>Этот метод переопределяет некоторые основные классы Rails, но все это должно стать совместимым в Rails 3.1.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/class/subclasses.rb</tt>.</p></div>
+class D < C; end
+C.subclasses # => [B, D]
+</ruby>
 
-<h5 id="descendants">3.2 <tt>descendants</tt></h5>
-<p>Метод <tt>descendants</tt> возвращает все классы, которые являются <tt>&lt;</tt> к его получателю:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Порядок, в котором эти классы возвращаются, неопределен.
+
+WARNING: Этот метод переопределяет некоторые основные классы Rails, но все это должно стать совместимым в Rails 3.1.
+
+NOTE: Определено в +active_support/core_ext/class/subclasses.rb+.
+
+h5. +descendants+
+
+Метод +descendants+ возвращает все классы, которые являются <tt>&lt;</tt> к его получателю:
+
+<ruby>
 class C; end
-C.descendants # =&gt; []
+C.descendants # => []
 
-class B &lt; C; end
-C.descendants # =&gt; [B]
+class B < C; end
+C.descendants # => [B]
 
-class A &lt; B; end
-C.descendants # =&gt; [B, A]
+class A < B; end
+C.descendants # => [B, A]
 
-class D &lt; C; end
-C.descendants # =&gt; [B, A, D]
-</pre></div>
-<p>Порядок, в котором эти классы возвращаются, неопределен.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/class/subclasses.rb</tt>.</p></div>
+class D < C; end
+C.descendants # => [B, A, D]
+</ruby>
+
+Порядок, в котором эти классы возвращаются, неопределен.
+
+NOTE: Определено в +active_support/core_ext/class/subclasses.rb+.

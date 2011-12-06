@@ -1,126 +1,182 @@
 h1. Расширения для String
 
-<h4 id="output-safety">1. Безопасность вывода</h4>
+h4. Безопасность вывода
 
-<h5>1.1 Мотивация</h5>
-<p>Вставка данных в шаблоны <span class="caps">HTML</span> требует дополнительной заботы. Например, нельзя просто вставить <tt>@review.title</tt> на страницу <span class="caps">HTML</span>. С одной стороны, если заголовок рецензии &#8220;Flanagan &amp; Matz rules!&#8221; результат не будет правильным, поскольку амперсанд был экранирован как &#8220;&amp;amp;&#8221;. С другой стороны, в зависимости от вашего приложения может быть большая дыра в безопасности, поскольку пользователи могут внедрить злонамеренный <span class="caps">HTML</span>, устанавливающий специально изготовленный заголовок рецензии. Посмотрите <a href="/ruby-on-rails-security-guide/injection#cross-site-scripting-xss">раздел о межсайтовом скриптинге в Руководстве по безопасности</a> для подробной информации о рисках.</p>
+h5. Мотивация
 
-<h5>1.2 Безопасные строки</h5>
-<p>В Active Support есть концепция <i>(html) безопасных</i> строк, начиная с Rails 3. Безопасная строка это та, которая помечена как подлежащая вставке в <span class="caps">HTML</span> как есть. Ей доверяется, независимо от того, была она экранирована или нет.</p>
-<p>Строки рассматриваются как <i>небезопасные</i> по умолчанию:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;&quot;.html_safe? # =&gt; false
-</pre></div>
-<p>Можно получить безопасную строку из заданной с помощью метода <tt>html_safe</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-s = &quot;&quot;.html_safe
-s.html_safe? # =&gt; true
-</pre></div>
-<p>Важно понять, что <tt>html_safe</tt> не выполняет какого бы то не было экранирования, это всего лишь утверждение:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-s = &quot;&lt;script&gt;...&lt;/script&gt;&quot;.html_safe
-s.html_safe? # =&gt; true
-s            # =&gt; &quot;&lt;script&gt;...&lt;/script&gt;&quot;
-</pre></div>
-<p>Вы ответственны за обеспечение вызова <tt>html_safe</tt> на подходящей строке.</p>
-<p>При присоединении к безопасной строке или с помощью <tt>concat</tt>/<tt>&lt;&lt;</tt>, или с помощью <tt>+</tt>, результат будет безопасной строкой. Небезопасные аргументы экранируются:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;&quot;.html_safe + &quot;&lt;&quot; # =&gt; &quot;&amp;lt;&quot;
-</pre></div>
-<p>Безопасные аргументы непосредственно присоединяются:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;&quot;.html_safe + &quot;&lt;&quot;.html_safe # =&gt; &quot;&lt;&quot;
-</pre></div>
-<p>Эти методы не должны использоваться в обычных вьюхах. В Rails 3 небезопасные значения автоматически экранируются:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= @review.title %&gt; &lt;%# прекрасно в Rails 3, экранируется,  если нужно %&gt;
-</pre></div>
-<p>Чтобы вставить что-либо дословно, используйте хелпер <tt>raw</tt> вместо вызова <tt>html_safe</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;%= raw @cms.current_template %&gt; &lt;%# вставляет @cms.current_template как есть %&gt;
-</pre></div>
-<p>Хелпер <tt>raw</tt> вызывает за вас хелпер <tt>html_safe</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Вставка данных в шаблоны HTML требует дополнительной заботы. Например, нельзя просто вставить +@review.title+ на страницу HTML. С одной стороны, если заголовок рецензии "Flanagan & Matz rules!" результат не будет правильным, поскольку амперсанд был экранирован как "&amp;amp;". С другой стороны, в зависимости от вашего приложения может быть большая дыра в безопасности, поскольку пользователи могут внедрить злонамеренный HTML, устанавливающий специально изготовленный заголовок рецензии. Посмотрите подробную информацию о рисках в "раздел о межсайтовом скриптинге в Руководстве по безопасности":/ruby-on-rails-security-guide/injection#cross-site-scripting-xss.
+
+h5. Безопасные строки
+
+В Active Support есть концепция <i>(html) безопасных</i> строк, начиная с Rails 3. Безопасная строка это та, которая помечена как подлежащая вставке в HTML как есть. Ей доверяется, независимо от того, была она экранирована или нет.
+
+Строки рассматриваются как <i>небезопасные</i> по умолчанию:
+
+<ruby>
+"".html_safe? # => false
+</ruby>
+
+Можно получить безопасную строку из заданной с помощью метода +html_safe+:
+
+<ruby>
+s = "".html_safe
+s.html_safe? # => true
+</ruby>
+
+Важно понять, что +html_safe+ не выполняет какого бы то не было экранирования, это всего лишь утверждение:
+
+<ruby>
+s = "<script>...</script>".html_safe
+s.html_safe? # => true
+s            # => "<script>...</script>"
+</ruby>
+
+Вы ответственны за обеспечение вызова +html_safe+ на подходящей строке.
+
+При присоединении к безопасной строке или с помощью +concat+/<tt><<</tt>, или с помощью <tt>+</tt>, результат будет безопасной строкой. Небезопасные аргументы экранируются:
+
+<ruby>
+"".html_safe + "<" # => "&lt;"
+</ruby>
+
+Безопасные аргументы непосредственно присоединяются:
+
+<ruby>
+"".html_safe + "<".html_safe # => "<"
+</ruby>
+
+Эти методы не должны использоваться в обычных вьюхах. В Rails 3 небезопасные значения автоматически экранируются:
+
+<erb>
+<%= @review.title %> <%# прекрасно в Rails 3, экранируется,  если нужно %>
+</erb>
+
+Чтобы вставить что-либо дословно, используйте хелпер +raw+ вместо вызова +html_safe+:
+
+<erb>
+<%= raw @cms.current_template %> <%# вставляет @cms.current_template как есть %>
+</erb>
+
+или эквивалентно используйте <tt><%==</tt>:
+
+<erb>
+<%== @cms.current_template %> <%# вставляет @cms.current_template как есть %>
+</erb>
+
+Хелпер +raw+ вызывает за вас хелпер +html_safe+:
+
+<ruby>
 def raw(stringish)
   stringish.to_s.html_safe
 end
-</pre></div>
-<div class='note'><p>Определенео в <tt>active_support/core_ext/string/output_safety.rb</tt>.</p></div>
+</ruby>
 
-<h5>1.3 Преобразование</h5>
-<p>Как правило, за исключением разве что соединения, объясненного выше, любой метод, который может изменить строку, даст вам небезопасную строку. Это <tt>donwcase</tt>, <tt>gsub</tt>, <tt>strip</tt>, <tt>chomp</tt>, <tt>underscore</tt> и т.д.</p>
-<p>В случае встроенного преобразования, такого как <tt>gsub!</tt>, получатель сам становится небезопансый the receiver itself becomes unsafe.</p>
-<div class='note'><p>Бит безопасности всегда теряется, независимо от того, изменило ли что-то преобразование или нет.</p></div>
+NOTE: Определенео в +active_support/core_ext/string/output_safety.rb+.
 
-<h5>1.4 Конверсия и принуждение</h5>
-<p>Вызов <tt>to_s</tt> на безопасной строке возвратит безопасную строку, но принуждение с помощью <tt>to_str</tt> возвратит небезопасную строку.</p>
+h5. Преобразование
 
-<h5>1.5 Копирование</h5>
-<p>Вызов <tt>dup</tt> или <tt>clone</tt> на безопасной строке создаст безопасные строки.</p>
+Как правило, за исключением разве что соединения, объясненного выше, любой метод, который может изменить строку, даст вам небезопасную строку. Это +donwcase+, +gsub+, +strip+, +chomp+, +underscore+ и т.д.
 
-<h4 id="squish">2. <tt>squish</tt></h4>
-<p>Метод <tt>String#squish</tt> отсекает начальные и конечные пробелы и заменяет каждый ряд пробелов единственным пробелом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot; \n  foo\n\r \t bar \n&quot;.squish # =&gt; &quot;foo bar&quot;
-</pre></div>
-<p>Также имеется разрушительная версия <tt>String#squish!</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/filters.rb</tt>.</p></div>
+В случае встроенного преобразования, такого как +gsub!+, получатель сам становится небезопасным.
 
-<h4 id="truncate">3. <tt>truncate</tt></h4>
-<p>Метод <tt>truncate</tt> возвращает копию получателя, сокращенную после заданной <tt>длины</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Oh dear! Oh dear! I shall be late!&quot;.truncate(20)
-# =&gt; &quot;Oh dear! Oh dear!...&quot;
-</pre></div>
-<p>Многоточие может быть настроено с помощью опции <tt>:omission</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Oh dear! Oh dear! I shall be late!&quot;.truncate(20, :omission =&gt; '&amp;hellip;')
-# =&gt; &quot;Oh dear! Oh &amp;hellip;&quot;
-</pre></div>
-<p>Отметьте, что сокращение берет в счет длину строки omission.</p>
-<p>Передайте <tt>:separator</tt> для сокращения строки по естественным разрывам:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Oh dear! Oh dear! I shall be late!&quot;.truncate(18)
-# =&gt; &quot;Oh dear! Oh dea...&quot;
-&quot;Oh dear! Oh dear! I shall be late!&quot;.truncate(18, :separator =&gt; ' ')
-# =&gt; &quot;Oh dear! Oh...&quot;
-</pre></div>
-<p>В вышеуказанном примере &#8220;dear&#8221; обрезается сначала, а затем <tt>:separator</tt> предотвращает это.</p>
-<div class='warning'><p>Опция <tt>:separator</tt> не может быть регулярным выражением.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/filters.rb</tt>.</p></div>
+INFO: Бит безопасности всегда теряется, независимо от того, изменило ли что-то преобразование или нет.
 
-<h4>4. <tt>inquiry</tt></h4>
+h5. Конверсия и принуждение
 
-<p>Метод <tt>inquiry</tt> конвертирует строку в объект <tt>StringInquirer</tt>, позволяя красивые проверки.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Вызов +to_s+ на безопасной строке возвратит безопасную строку, но принуждение с помощью +to_str+ возвратит небезопасную строку.
+
+h5. Копирование
+
+Вызов +dup+ или +clone+ на безопасной строке создаст безопасные строки.
+
+h4. +squish+
+
+Метод String#squish+ отсекает начальные и конечные пробелы и заменяет каждый ряд пробелов единственным пробелом:
+
+<ruby>
+" \n  foo\n\r \t bar \n".squish # => "foo bar"
+</ruby>
+
+Также имеется разрушительная версия +String#squish!+.
+
+NOTE: Определено в +active_support/core_ext/string/filters.rb+.
+
+h4. +truncate+
+
+Метод +truncate+ возвращает копию получателя, сокращенную после заданной +длины+:
+
+<ruby>
+"Oh dear! Oh dear! I shall be late!".truncate(20)
+# => "Oh dear! Oh dear!..."
+</ruby>
+
+Многоточие может быть настроено с помощью опции +:omission+:
+
+<ruby>
+"Oh dear! Oh dear! I shall be late!".truncate(20, :omission => '&hellip;')
+# => "Oh dear! Oh &hellip;"
+</ruby>
+
+Отметьте, что сокращение берет в счет длину строки omission.
+
+Передайте +:separator+ для сокращения строки по естественным разрывам:
+
+<ruby>
+"Oh dear! Oh dear! I shall be late!".truncate(18)
+# => "Oh dear! Oh dea..."
+"Oh dear! Oh dear! I shall be late!".truncate(18, :separator => ' ')
+# => "Oh dear! Oh..."
+</ruby>
+
+В вышеуказанном примере "dear" обрезается сначала, а затем +:separator+ предотвращает это.
+
+WARNING: Опция +:separator+ не может быть регулярным выражением.
+
+NOTE: Определено в +active_support/core_ext/string/filters.rb+.
+
+h4. +inquiry+
+
+Метод +inquiry+ конвертирует строку в объект +StringInquirer+, позволяя красивые проверки.
+
+<ruby>
 "production".inquiry.production? # => true
 "active".inquiry.inactive?       # => false
-</pre></div>
+</ruby>
 
-<h4 id="key-based-interpolation">5. Ключевая интерполяция</h4>
-<p>В Ruby 1.9 оператор строки <tt>%</tt> поддерживает ключевую интерполяцию, и форматированную, и неформатированную:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Total is %&lt;total&gt;.02f&quot; % {:total =&gt; 43.1}  # =&gt; Total is 43.10
-&quot;I say %{foo}&quot; % {:foo =&gt; &quot;wadus&quot;}          # =&gt; &quot;I say wadus&quot;
-&quot;I say %{woo}&quot; % {:foo =&gt; &quot;wadus&quot;}          # =&gt; KeyError
-</pre></div>
-<p>Active Support добавляет эту функциональность <tt>%</tt> в предыдущие версии Ruby.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/interpolation.rb</tt>.</p></div>
+h4. Ключевая интерполяция
 
-<h4 id="starts_with-and-ends_width">6. <tt>starts_with?</tt> и <tt>ends_width?</tt></h4>
-<p>Active Support определяет псевдонимы <tt>String#start_with?</tt> и <tt>String#end_with?</tt> (в связи с особенностями английской морфологии, изменяет глаголы в форму 3 лица):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;foo&quot;.starts_with?(&quot;f&quot;) # =&gt; true
-&quot;foo&quot;.ends_with?(&quot;o&quot;)   # =&gt; true
-</pre></div>
-<div class='note'><p>Определены в <tt>active_support/core_ext/string/starts_ends_with.rb</tt>.</p></div>
+В Ruby 1.9 оператор строки +%+ поддерживает ключевую интерполяцию, и форматированную, и неформатированную:
 
-<h4 id="strip_heredoc">7. <tt>strip_heredoc</tt></h4>
-<p>Метод <tt>strip_heredoc</tt> обрезает отступы в heredoc-ах.</p>
-<p>Для примера в</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<ruby>
+"Total is %<total>.02f" % {:total => 43.1}  # => Total is 43.10
+"I say %{foo}" % {:foo => "wadus"}          # => "I say wadus"
+"I say %{woo}" % {:foo => "wadus"}          # => KeyError
+</ruby>
+
+Active Support добавляет эту функциональность +%+ в предыдущие версии Ruby.
+
+NOTE: Определено в +active_support/core_ext/string/interpolation.rb+.
+
+h4. +starts_with?+ и +ends_with?+
+
+Active Support определяет псевдонимы +String#start_with?+ и +String#end_with?+ (в связи с особенностями английской морфологии, изменяет глаголы в форму 3 лица):
+
+<ruby>
+"foo".starts_with?("f") # => true
+"foo".ends_with?("o")   # => true
+</ruby>
+
+NOTE: Определены в +active_support/core_ext/string/starts_ends_with.rb+.
+
+h4. +strip_heredoc+
+
+Метод +strip_heredoc+ обрезает отступы в heredoc-ах.
+
+Для примера в
+
+<ruby>
 if options[:usage]
-  puts &lt;&lt;-USAGE.strip_heredoc
+  puts <<-USAGE.strip_heredoc
     This command does such and such.
 
     Supported options are:
@@ -128,102 +184,135 @@ if options[:usage]
       ...
   USAGE
 end
-</pre></div>
-<p>пользователь увидит используемое сообщение, выровненное по левому краю.</p>
-<p>Технически это выглядит как выделение красной строки в отдельную строку и удаление всех впереди идущих пробелов.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/strip.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="access">8. Доступ</h4>
+пользователь увидит используемое сообщение, выровненное по левому краю.
 
-<h5 id="at-position">8.1 <tt>at(position)</tt></h5>
-<p>Возвращает символ строки на позиции <tt>position</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;hello&quot;.at(0)  # =&gt; &quot;h&quot;
-&quot;hello&quot;.at(4)  # =&gt; &quot;o&quot;
-&quot;hello&quot;.at(-1) # =&gt; &quot;o&quot;
-&quot;hello&quot;.at(10) # =&gt; ERROR если &lt; 1.9, nil в 1.9
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/access.rb</tt>.</p></div>
+Технически это выглядит как выделение красной строки в отдельную строку и удаление всех впереди идущих пробелов.
 
-<h5 id="from-position">8.2 <tt>from(position)</tt></h5>
-<p>Возвращает подстроку строки, начинающуюся с позиции <tt>position</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;hello&quot;.from(0)  # =&gt; &quot;hello&quot;
-&quot;hello&quot;.from(2)  # =&gt; &quot;llo&quot;
-&quot;hello&quot;.from(-2) # =&gt; &quot;lo&quot;
-&quot;hello&quot;.from(10) # =&gt; &quot;&quot; если &lt; 1.9, nil в 1.9
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/access.rb</tt>.</p></div>
+NOTE: Определено в +active_support/core_ext/string/strip.rb+.
 
-<h5 id="to-position">8.3 <tt>to(position)</tt></h5>
-<p>Возвращает подстроку строки с начала до позиции <tt>position</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;hello&quot;.to(0)  # =&gt; &quot;h&quot;
-&quot;hello&quot;.to(2)  # =&gt; &quot;hel&quot;
-&quot;hello&quot;.to(-2) # =&gt; &quot;hell&quot;
-&quot;hello&quot;.to(10) # =&gt; &quot;hello&quot;
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/access.rb</tt>.</p></div>
+h4. Доступ
 
-<h5 id="first-limit-1">8.4 <tt>first(limit = 1)</tt></h5>
-<p>Вызов <tt>str.first(n)</tt> эквивалентен <tt>str.to(n-1)</tt>, если <tt>n</tt> &gt; 0, и возвращает пустую строку для <tt>n</tt> == 0.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/access.rb</tt>.</p></div>
+h5. +at(position)+
 
-<h5 id="last-limit-1">8.5 <tt>last(limit = 1)</tt></h5>
-<p>Вызов <tt>str.last(n)</tt> эквивалентен <tt>str.from(-n)</tt>, если <tt>n</tt> &gt; 0, и возвращает пустую строку для <tt>n</tt> == 0.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/access.rb</tt>.</p></div>
+Возвращает символ строки на позиции +position+:
 
-<h4 id="inflections">9. Изменения слов</h4>
+<ruby>
+"hello".at(0)  # => "h"
+"hello".at(4)  # => "o"
+"hello".at(-1) # => "o"
+"hello".at(10) # => ERROR если < 1.9, nil в 1.9
+</ruby>
 
-<h5 id="pluralize">9.1 <tt>pluralize</tt></h5>
-<p>Метод <tt>pluralize</tt> возвращает множественное число его получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;table&quot;.pluralize     # =&gt; &quot;tables&quot;
-&quot;ruby&quot;.pluralize      # =&gt; &quot;rubies&quot;
-&quot;equipment&quot;.pluralize # =&gt; &quot;equipment&quot;
-</pre></div>
-<p>Как показывает предыдущий пример, Active Support знает некоторые неправильные множественные числа и неисчислимые существительные. Встроенные правила могут быть расширены в <tt>config/initializers/inflections.rb</tt>. Этот файл создается командой <tt>rails</tt> и имеет инструкции в комментариях.</p>
-<p>Active Record использует этот метод для вычисления имени таблицы по умолчанию, соответствующей модели:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/access.rb+.
+
+h5. +from(position)+
+
+Возвращает подстроку строки, начинающуюся с позиции +position+:
+
+<ruby>
+"hello".from(0)  # => "hello"
+"hello".from(2)  # => "llo"
+"hello".from(-2) # => "lo"
+"hello".from(10) # => "" если < 1.9, nil в 1.9
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/string/access.rb.
+
+h5. +to(position)+
+
+Возвращает подстроку строки с начала до позиции +position+:
+
+<ruby>
+"hello".to(0)  # => "h"
+"hello".to(2)  # => "hel"
+"hello".to(-2) # => "hell"
+"hello".to(10) # => "hello"
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/string/access.rb+.
+
+h5. +first(limit = 1)+
+
+Вызов +str.first(n)+ эквивалентен +str.to(n-1)+, если +n+ > 0, и возвращает пустую строку для +n+ == 0.
+
+NOTE: Определено в +active_support/core_ext/string/access.rb+.
+
+h5. +last(limit = 1)+
+
+Вызов +str.last(n)+ эквивалентен +str.from(-n)+, если +n+ > 0, и возвращает пустую строку для +n+ == 0.
+
+NOTE: Определено в +active_support/core_ext/string/access.rb+.
+
+h4. Изменения слов
+
+h5. +pluralize+
+
+Метод +pluralize+ возвращает множественное число его получателя:
+
+<ruby>
+"table".pluralize     # => "tables"
+"ruby".pluralize      # => "rubies"
+"equipment".pluralize # => "equipment"
+</ruby>
+
+Как показывает предыдущий пример, Active Support знает некоторые неправильные множественные числа и неисчислимые существительные. Встроенные правила могут быть расширены в +config/initializers/inflections.rb+. Этот файл создается командой +rails+ и имеет инструкции в комментариях.
+
+Active Record использует этот метод для вычисления имени таблицы по умолчанию, соответствующей модели:
+
+<ruby>
 # active_record/base.rb
 def undecorated_table_name(class_name = base_class.name)
   table_name = class_name.to_s.demodulize.underscore
   table_name = table_name.pluralize if pluralize_table_names
   table_name
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="singularize">9.2 <tt>singularize</tt></h5>
-<p>Противоположность <tt>pluralize</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;tables&quot;.singularize    # =&gt; &quot;table&quot;
-&quot;rubies&quot;.singularize    # =&gt; &quot;ruby&quot;
-&quot;equipment&quot;.singularize # =&gt; &quot;equipment&quot;
-</pre></div>
-<p>Связи вычисляют имя соответствующего связанного класса по умолчанию используя этот метод:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +singularize+
+
+Противоположность +pluralize+:
+
+<ruby>
+"tables".singularize    # => "table"
+"rubies".singularize    # => "ruby"
+"equipment".singularize # => "equipment"
+</ruby>
+
+Связи вычисляют имя соответствующего связанного класса по умолчанию используя этот метод:
+
+<ruby>
 # active_record/reflection.rb
 def derive_class_name
   class_name = name.to_s.camelize
   class_name = class_name.singularize if collection?
   class_name
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="camelize">9.3 <tt>camelize</tt></h5>
-<p>Метод <tt>camelize</tt> возвращает его получателя в стиле CamelCase:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;product&quot;.camelize    # =&gt; &quot;Product&quot;
-&quot;admin_user&quot;.camelize # =&gt; &quot;AdminUser&quot;
-</pre></div>
-<p>Как правило, об этом методе думают, как о преобразующем пути в классы Ruby или имена модулей, где слэши разделяют пространства имен:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;backoffice/session&quot;.camelize # =&gt; &quot;Backoffice::Session&quot;
-</pre></div>
-<p>Например, Action Pack использует этот метод для загрузки класса, предоставляющего определенное хранилище сессии:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +camelize+
+
+Метод +camelize+ возвращает его получателя в стиле CamelCase:
+
+<ruby>
+"product".camelize    # => "Product"
+"admin_user".camelize # => "AdminUser"
+</ruby>
+
+Как правило, об этом методе думают, как о преобразующем пути в классы Ruby или имена модулей, где слэши разделяют пространства имен:
+
+<ruby>
+"backoffice/session".camelize # => "Backoffice::Session"
+</ruby>
+
+Например, Action Pack использует этот метод для загрузки класса, предоставляющего определенное хранилище сессии:
+
+<ruby>
 # action_controller/metal/session_management.rb
 def session_store=(store)
   if store == :active_record_store
@@ -234,40 +323,56 @@ def session_store=(store)
       store
   end
 end
-</pre></div>
-<p><tt>camelize</tt> принимает необязательный аргумент, он может быть <tt>:upper</tt> (по умолчанию) или <tt>:lower</tt>. С последним первая буква остается прописной:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;visual_effect&quot;.camelize(:lower) # =&gt; &quot;visualEffect&quot;
-</pre></div>
-<p>Это удобно для вычисления имен методов в языке, следующем такому соглашению, например JavaScript.</p>
-<div class='info'><p>Как правило можно рассматривать <tt>camelize</tt> как противоположность <tt>underscore</tt>, хотя имеются случаи, когда это не так: <tt>&#8220;SSLError&#8221;.underscore.camelize</tt> возвратит <tt>&#8220;SslError&#8221;</tt>. Для поддержки случаев, подобного этому, Active Support предлагает определить акронимы в <tt>config/initializers/inflections.rb</tt></p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
++camelize+ принимает необязательный аргумент, он может быть +:upper+ (по умолчанию) или +:lower+. С последним первая буква остается прописной:
+
+<ruby>
+"visual_effect".camelize(:lower) # => "visualEffect"
+</ruby>
+
+Это удобно для вычисления имен методов в языке, следующем такому соглашению, например JavaScript.
+
+INFO: Как правило можно рассматривать +camelize+ как противоположность +underscore+, хотя имеются случаи, когда это не так: <tt>"SSLError".underscore.camelize</tt> возвратит <tt>"SslError"</tt>. Для поддержки случаев, подобного этому, Active Support предлагает определить акронимы в +config/initializers/inflections.rb+
+
+<ruby>
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'SSL'
 end
 
 "SSLError".underscore.camelize #=> "SSLError"
-</pre></div>
-<p><tt>camelize</tt> имеет псевдоним <tt>camelcase</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="underscore">9.4 <tt>underscore</tt></h5>
-<p>Метод <tt>underscore</tt> идет обратным путем, от CamelCase к путям:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Product&quot;.underscore   # =&gt; &quot;product&quot;
-&quot;AdminUser&quot;.underscore # =&gt; &quot;admin_user&quot;
-</pre></div>
-<p>Также преобразует &#8220;::&#8221; обратно в &#8220;/&#8221;:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Backoffice::Session&quot;.underscore # =&gt; &quot;backoffice/session&quot;
-</pre></div>
-<p>и понимает строки, начинающиеся с прописной буквы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;visualEffect&quot;.underscore # =&gt; &quot;visual_effect&quot;
-</pre></div>
-<p>хотя <tt>underscore</tt> не принимает никакие аргументы.</p>
-<p>Автозагрузка классов и модулей Rails использует <tt>underscore</tt> для вывода относительного пути без расширения файла, определяющего заданную отсутствующую константу:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
++camelize+ имеет псевдоним +camelcase+.
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +underscore+
+
+Метод +underscore+ идет обратным путем, от CamelCase к путям:
+
+<ruby>
+"Product".underscore   # => "product"
+"AdminUser".underscore # => "admin_user"
+</ruby>
+
+Также преобразует "::" обратно в "/":
+
+<ruby>
+"Backoffice::Session".underscore # => "backoffice/session"
+</ruby>
+
+и понимает строки, начинающиеся с прописной буквы:
+
+<ruby>
+"visualEffect".underscore # => "visual_effect"
+</ruby>
+
+хотя +underscore+ не принимает никакие аргументы.
+
+Автозагрузка классов и модулей Rails использует +underscore+ для вывода относительного пути без расширения файла, определяющего заданную отсутствующую константу:
+
+<ruby>
 # active_support/dependencies.rb
 def load_missing_constant(from_mod, const_name)
   ...
@@ -275,205 +380,275 @@ def load_missing_constant(from_mod, const_name)
   path_suffix = qualified_name.underscore
   ...
 end
-</pre></div>
-<div class='info'><p>Как правило, рассматривайте <tt>underscore</tt> как противоположность <tt>camelize</tt>, хотя имеются случаи, когда это не так. Например, <tt>&#8220;SSLError&#8221;.underscore.camelize</tt> возвратит <tt>&#8220;SslError&#8221;</tt>.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="titleize">9.5 <tt>titleize</tt></h5>
-<p>Метод <tt>titleize</tt> озаглавит слова в получателе:</p>
-<div class="code_container"><code class="ruby">
-&quot;alice in wonderland&quot;.titleize # =&gt; &quot;Alice In Wonderland&quot;
-&quot;fermat's enigma&quot;.titleize     # =&gt; &quot;Fermat's Enigma&quot;
-</code></div>
-<p><tt>titleize</tt> имеет псевдоним <tt>titlecase</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+INFO: Как правило, рассматривайте +underscore+ как противоположность +camelize+, хотя имеются случаи, когда это не так. Например, <tt>"SSLError".underscore.camelize</tt> возвратит <tt>"SslError"</tt>.
 
-<h5 id="dasherize">9.6 <tt>dasherize</tt></h5>
-<p>Метод <tt>dasherize</tt> заменяет подчеркивания в получателе дефисами:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;name&quot;.dasherize         # =&gt; &quot;name&quot;
-&quot;contact_data&quot;.dasherize # =&gt; &quot;contact-data&quot;
-</pre></div>
-<p>Сериализатор <span class="caps">XML</span> моделей использует этот метод для форматирования имен узлов:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +titleize+
+
+Метод +titleize+ озаглавит слова в получателе:
+
+<ruby>
+"alice in wonderland".titleize # => "Alice In Wonderland"
+"fermat's enigma".titleize     # => "Fermat's Enigma"
+</ruby>
+
++titleize+ имеет псевдоним +titlecase+.
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +dasherize+
+
+Метод +dasherize+ заменяет подчеркивания в получателе дефисами:
+
+<ruby>
+"name".dasherize         # => "name"
+"contact_data".dasherize # => "contact-data"
+</ruby>
+
+Сериализатор XML моделей использует этот метод для форматирования имен узлов:
+
+<ruby>
 # active_model/serializers/xml.rb
 def reformat_name(name)
   name = name.camelize if camelize?
   dasherize? ? name.dasherize : name
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="demodulize">9.7 <tt>demodulize</tt></h5>
-<p>Для заданной строки с правильным выражением ссылки на константу, <tt>demodulize</tt> возвращает само имя константы, то есть правой части этого:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Product&quot;.demodulize                        # =&gt; &quot;Product&quot;
-&quot;Backoffice::UsersController&quot;.demodulize    # =&gt; &quot;UsersController&quot;
-&quot;Admin::Hotel::ReservationUtils&quot;.demodulize # =&gt; &quot;ReservationUtils&quot;
-</pre></div>
-<p>Active Record к примеру, использует этот метод для вычисления имени столбца кэширования счетчика:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +demodulize+
+
+Для заданной строки с правильным выражением ссылки на константу, +demodulize+ возвращает само имя константы, то есть правой части этого:
+
+<ruby>
+"Product".demodulize                        # => "Product"
+"Backoffice::UsersController".demodulize    # => "UsersController"
+"Admin::Hotel::ReservationUtils".demodulize # => "ReservationUtils"
+</ruby>
+
+Active Record к примеру, использует этот метод для вычисления имени столбца кэширования счетчика:
+
+<ruby>
 # active_record/reflection.rb
 def counter_cache_column
   if options[:counter_cache] == true
-    &quot;#{active_record.name.demodulize.underscore.pluralize}_count&quot;
+    "#{active_record.name.demodulize.underscore.pluralize}_count"
   elsif options[:counter_cache]
     options[:counter_cache]
   end
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="parameterize">9.8 <tt>parameterize</tt></h5>
-<p>Метод <tt>parameterize</tt> нормализует получателя способом, который может использоваться в красивых URL.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;John Smith&quot;.parameterize # =&gt; &quot;john-smith&quot;
-&quot;Kurt Gödel&quot;.parameterize # =&gt; &quot;kurt-godel&quot;
-</pre></div>
-<p>Фактически результирующая строка оборачивается в экземпляр <tt>ActiveSupport::Multibyte::Chars</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
 
-<h5 id="tableize">9.9 <tt>tableize</tt></h5>
-<p>Метод <tt>tableize</tt> это <tt>underscore</tt> следующий за <tt>pluralize</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Person&quot;.tableize      # =&gt; &quot;people&quot;
-&quot;Invoice&quot;.tableize     # =&gt; &quot;invoices&quot;
-&quot;InvoiceLine&quot;.tableize # =&gt; &quot;invoice_lines&quot;
-</pre></div>
-<p>как правило, <tt>tableize</tt> возвращает имя таблицы, соответствующей заданной модели для простых случаев. В действительности фактическое применение в Active Record не является прямым <tt>tableize</tt>, так как он также демодулизирует имя класса и проверяет несколько опций, которые могут повлиять на возвращаемую строку.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+h5. +parameterize+
 
-<h5 id="classify">9.10 <tt>classify</tt></h5>
-<p>Метод <tt>classify</tt> является противоположностью <tt>tableize</tt>. Он выдает имя класса, соответствующего имени таблицы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;people&quot;.classify        # =&gt; &quot;Person&quot;
-&quot;invoices&quot;.classify      # =&gt; &quot;Invoice&quot;
-&quot;invoice_lines&quot;.classify # =&gt; &quot;InvoiceLine&quot;
-</pre></div>
-<p>Метод понимает правильные имена таблицы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;highrise_production.companies&quot;.classify # =&gt; &quot;Company&quot;
-</pre></div>
-<p>Отметьте, что <tt>classify</tt> возвращает имя класса как строку. Можете получить фактический объект класса, вызвав <tt>constantize</tt> на ней, как объяснено далее.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+Метод +parameterize+ нормализует получателя способом, который может использоваться в красивых URL.
 
-<h5 id="constantize">9.11 <tt>constantize</tt></h5>
-<p>Метод <tt>constantize</tt> решает выражение, ссылающееся на константу, в его получателе:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;Fixnum&quot;.constantize # =&gt; Fixnum
+<ruby>
+"John Smith".parameterize # => "john-smith"
+"Kurt Gödel".parameterize # => "kurt-godel"
+</ruby>
+
+Фактически результирующая строка оборачивается в экземпляр +ActiveSupport::Multibyte::Chars+.
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +tableize+
+
+Метод +tableize+ это +underscore+ следующий за +pluralize+.
+
+<ruby>
+"Person".tableize      # => "people"
+"Invoice".tableize     # => "invoices"
+"InvoiceLine".tableize # => "invoice_lines"
+</ruby>
+
+Как правило, +tableize+ возвращает имя таблицы, соответствующей заданной модели для простых случаев. В действительности фактическое применение в Active Record не является прямым +tableize+, так как он также демодулизирует имя класса и проверяет несколько опций, которые могут повлиять на возвращаемую строку.
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +classify+
+
+Метод +classify+ является противоположностью +tableize+. Он выдает имя класса, соответствующего имени таблицы:
+
+<ruby>
+"people".classify        # => "Person"
+"invoices".classify      # => "Invoice"
+"invoice_lines".classify # => "InvoiceLine"
+</ruby>
+
+Метод понимает правильные имена таблицы:
+
+<ruby>
+"highrise_production.companies".classify # => "Company"
+</ruby>
+
+Отметьте, что +classify+ возвращает имя класса как строку. Можете получить фактический объект класса, вызвав +constantize+ на ней, как объяснено далее.
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +constantize+
+
+Метод +constantize+ решает выражение, ссылающееся на константу, в его получателе:
+
+<ruby>
+"Fixnum".constantize # => Fixnum
 
 module M
   X = 1
 end
-&quot;M::X&quot;.constantize # =&gt; 1
-</pre></div>
-<p>Если строка определяет неизвестную константу, или ее содержимое даже не является валидным именем константы, <tt>constantize</tt> вызывает <tt>NameError</tt>.</p>
-<p>Анализ имени константы с помощью <tt>constantize</tt> начинается всегда с верхнего уровня <tt>Object</tt>, даже если нет предшествующих &#8220;::&#8221;.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+"M::X".constantize # => 1
+</ruby>
+
+Если строка определяет неизвестную константу, или ее содержимое даже не является валидным именем константы, +constantize+ вызывает +NameError+.
+
+Анализ имени константы с помощью +constantize+> начинается всегда с верхнего уровня +Object+, даже если нет предшествующих "::".
+
+<ruby>
 X = :in_Object
 module M
   X = :in_M
 
-  X                 # =&gt; :in_M
-  &quot;::X&quot;.constantize # =&gt; :in_Object
-  &quot;X&quot;.constantize   # =&gt; :in_Object (!)
+  X                 # => :in_M
+  "::X".constantize # => :in_Object
+  "X".constantize   # => :in_Object (!)
 end
-</pre></div>
-<p>Таким образом, в общем случае это не эквивалентно тому, что Ruby сделал бы в том же месте, когда вычислял настоящую константу.</p>
-<p>Тестовые случаи рассыльщика получают тестируемый рассыльщик из имени класса теста, используя <tt>constantize</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Таким образом, в общем случае это не эквивалентно тому, что Ruby сделал бы в том же месте, когда вычислял настоящую константу.
+
+Тестовые случаи рассыльщика получают тестируемый рассыльщик из имени класса теста, используя +constantize+:
+
+<ruby>
 # action_mailer/test_case.rb
 def determine_default_mailer(name)
   name.sub(/Test$/, '').constantize
-rescue NameError =&gt; e
+rescue NameError => e
   raise NonInferrableMailerError.new(name)
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="humanize">9.12 <tt>humanize</tt></h5>
-<p>Метод <tt>humanize</tt> дает осмысленное имя для отображения имени атрибута. Для этого он заменяет подчеркивания пробелами, убирает любой суффикс &#8220;_id&#8221; и озаглавливает первое слово:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;name&quot;.humanize           # =&gt; &quot;Name&quot;
-&quot;author_id&quot;.humanize      # =&gt; &quot;Author&quot;
-&quot;comments_count&quot;.humanize # =&gt; &quot;Comments count&quot;
-</pre></div>
-<p>Метод хелпера <tt>full_messages</tt> использует <tt>humanize</tt> как резервный способ для включения имен атрибутов:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +humanize+
+
+Метод +humanize+ дает осмысленное имя для отображения имени атрибута. Для этого он заменяет подчеркивания пробелами, убирает любой суффикс "_id" и озаглавливает первое слово:
+
+<ruby>
+"name".humanize           # => "Name"
+"author_id".humanize      # => "Author"
+"comments_count".humanize # => "Comments count"
+</ruby>
+
+Метод хелпера +full_messages+ использует +humanize+ как резервный способ для включения имен атрибутов:
+
+<ruby>
 def full_messages
   full_messages = []
 
   each do |attribute, messages|
     ...
     attr_name = attribute.to_s.gsub('.', '_').humanize
-    attr_name = @base.class.human_attribute_name(attribute, :default =&gt; attr_name)
+    attr_name = @base.class.human_attribute_name(attribute, :default => attr_name)
     ...
   end
 
   full_messages
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="foreign_key">9.13 <tt>foreign_key</tt></h5>
-<p>Метод <tt>foreign_key</tt> дает имя столбца внешнего ключа из имени класса. Для этого он демодулизирует, подчеркивает и добавляет &#8220;_id&#8221;:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;User&quot;.foreign_key           # =&gt; &quot;user_id&quot;
-&quot;InvoiceLine&quot;.foreign_key    # =&gt; &quot;invoice_line_id&quot;
-&quot;Admin::Session&quot;.foreign_key # =&gt; &quot;session_id&quot;
-</pre></div>
-<p>Передайте аргуемент false, если не хотите подчеркивание в &#8220;_id&#8221;:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;User&quot;.foreign_key(false) # =&gt; &quot;userid&quot;
-</pre></div>
-<p>Связи используют этот метод для вывода внешних ключей, например <tt>has_one</tt> и <tt>has_many</tt> делают так:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +foreign_key+
+
+Метод +foreign_key+ дает имя столбца внешнего ключа из имени класса. Для этого он демодулизирует, подчеркивает и добавляет "_id":
+
+<ruby>
+"User".foreign_key           # => "user_id"
+"InvoiceLine".foreign_key    # => "invoice_line_id"
+"Admin::Session".foreign_key # => "session_id"
+</ruby>
+
+Передайте аргуемент false, если не хотите подчеркивание в "_id":
+
+<ruby>
+"User".foreign_key(false) # => "userid"
+</ruby>
+
+Связи используют этот метод для вывода внешних ключей, например +has_one+ и +has_many+ делают так:
+
+<ruby>
 # active_record/associations.rb
 foreign_key = options[:foreign_key] || reflection.active_record.name.foreign_key
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/inflections.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="string-conversions">10. Конвертирование</h4>
+NOTE: Определено в +active_support/core_ext/string/inflections.rb.
 
-<h5 id="ord">10.1 <tt>ord</tt></h5>
-<p>Ruby 1.9 определяет <tt>ord</tt> как кодовую точку (codepoint) первого символа получателя. Active Support портирует <tt>ord</tt> для однобайтовой кодировки, подобной <span class="caps">ASCII</span> или <span class="caps">ISO</span>-8859-1, в Ruby 1.8:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;a&quot;.ord # =&gt; 97
-&quot;à&quot;.ord # =&gt; 224, in ISO-8859-1
-</pre></div>
-<p>В Ruby 1.8 <tt>ord</tt> не работает в целом в строках UTF8, используйте мультибайтную поддержку в Active Support для этого:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;a&quot;.mb_chars.ord # =&gt; 97
-&quot;à&quot;.mb_chars.ord # =&gt; 224, in UTF8
-</pre></div>
-<p>Отметьте, что 224 различное в обоих примерах. В <span class="caps">ISO</span>-8859-1 &#8220;à&#8221; представлен как отдельный байт, 224. Его односимвольное представление в UTF8 имеет два байта, названных 195 и 160, но его кодовая точка в Unicode 224. Если вызвать <tt>ord</tt> на строке UTF8 &#8220;à&#8221; вернувшимся значением будет 195 в Ruby 1.8. Это не ошибка, поскольку UTF8 не поддерживается, сам вызов будет фиктивным.</p>
-<div class='info'><p><tt>ord</tt> это эквивалент <tt>getbyte(0)</tt>.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/conversions.rb</tt>.</p></div>
+h4. Конвертирование
 
-<h5 id="getbyte">10.2 <tt>getbyte</tt></h5>
-<p>Active Support портирует <tt>getbyte</tt> из Ruby 1.9:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;foo&quot;.getbyte(0)  # =&gt; 102, same as &quot;foo&quot;.ord
-&quot;foo&quot;.getbyte(1)  # =&gt; 111
-&quot;foo&quot;.getbyte(9)  # =&gt; nil
-&quot;foo&quot;.getbyte(-1) # =&gt; 111
-</pre></div>
-<div class='info'><p><tt>getbyte</tt> это эквивалент <tt>[]</tt>.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/conversions.rb</tt>.</p></div>
+h5. +ord+
 
-<h5 id="to_date-to_time-to_datetime">10.3 <tt>to_date</tt>, <tt>to_time</tt>, <tt>to_datetime</tt></h5>
-<p>Методы <tt>to_date</tt>, <tt>to_time</tt> и <tt>to_datetime</tt> в основном удобные обертки около <tt>Date._parse</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;2010-07-27&quot;.to_date              # =&gt; Tue, 27 Jul 2010
-&quot;2010-07-27 23:37:00&quot;.to_time     # =&gt; Tue Jul 27 23:37:00 UTC 2010
-&quot;2010-07-27 23:37:00&quot;.to_datetime # =&gt; Tue, 27 Jul 2010 23:37:00 +0000
-</pre></div>
-<p><tt>to_time</tt> получает необязательный аргумент <tt>:utc</tt> или <tt>:local</tt>, для указания, в какой временной зоне вы хотите время:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-&quot;2010-07-27 23:42:00&quot;.to_time(:utc)   # =&gt; Tue Jul 27 23:42:00 UTC 2010
-&quot;2010-07-27 23:42:00&quot;.to_time(:local) # =&gt; Tue Jul 27 23:42:00 +0200 2010
-</pre></div>
-<p>По умолчанию <tt>:utc</tt>.</p>
-<p>Пожалуйста, обратитесь к документации по <tt>Date._parse</tt> для детальных подробностей.</p>
-<div class='info'><p>Все три возвратят <tt>nil</tt> для пустых получателей.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/string/conversions.rb</tt>.</p></div>
+Ruby 1.9 определяет +ord+ как кодовую точку (codepoint) первого символа получателя. Active Support портирует +ord+ для однобайтовой кодировки, подобной ASCII или ISO-8859-1, в Ruby 1.8:
+
+<ruby>
+"a".ord # => 97
+"à".ord # => 224, in ISO-8859-1
+</ruby>
+
+В Ruby 1.8 +ord+ не работает в целом в строках UTF8, используйте мультибайтную поддержку в Active Support для этого:
+
+<ruby>
+"a".mb_chars.ord # => 97
+"à".mb_chars.ord # => 224, in UTF8
+</ruby>
+
+Отметьте, что 224 различное в обоих примерах. В ISO-8859-1 "à" представлен как отдельный байт, 224. Его односимвольное представление в UTF8 имеет два байта, названных 195 и 160, но его кодовая точка в Unicode 224. Если вызвать +ord+ на строке UTF8 "à" вернувшимся значением будет 195 в Ruby 1.8. Это не ошибка, поскольку UTF8 не поддерживается, сам вызов будет фиктивным.
+
+INFO: +ord+ это эквивалент +getbyte(0)+.
+
+NOTE: Определено в +active_support/core_ext/string/conversions.rb+.
+
+h5. +getbyte+
+
+Active Support портирует +getbyte+ из Ruby 1.9:
+
+<ruby>
+"foo".getbyte(0)  # => 102, same as "foo".ord
+"foo".getbyte(1)  # => 111
+"foo".getbyte(9)  # => nil
+"foo".getbyte(-1) # => 111
+</ruby>
+
+INFO: +getbyte+ это эквивалент +[]+.
+
+NOTE: Определено в +active_support/core_ext/string/conversions.rb+.
+
+h5. +to_date+, +to_time+, +to_datetime+
+
+Методы +to_date+, +to_time+ и +to_datetime+ в основном удобные обертки около +Date._parse+:
+
+<ruby>
+"2010-07-27".to_date              # => Tue, 27 Jul 2010
+"2010-07-27 23:37:00".to_time     # => Tue Jul 27 23:37:00 UTC 2010
+"2010-07-27 23:37:00".to_datetime # => Tue, 27 Jul 2010 23:37:00 +0000
+</ruby>
+
++to_time+ получает необязательный аргумент +:utc+ или +:local+, для указания, в какой временной зоне вы хотите время:
+
+<ruby>
+"2010-07-27 23:42:00".to_time(:utc)   # => Tue Jul 27 23:42:00 UTC 2010
+"2010-07-27 23:42:00".to_time(:local) # => Tue Jul 27 23:42:00 +0200 2010
+</ruby>
+
+По умолчанию +:utc+.
+
+Пожалуйста, обратитесь к документации по +Date._parse+ для детальных подробностей.
+
+INFO: Все три возвратят +nil+ для пустых получателей.
+
+NOTE: Определено в +active_support/core_ext/string/conversions.rb+.

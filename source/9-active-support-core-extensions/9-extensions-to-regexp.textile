@@ -1,22 +1,27 @@
 h1. Расширения для Regexp
 
-<h4 id="multiline">1. <tt>multiline?</tt></h4>
-<p>Метод <tt>multiline?</tt> говорит, имеет ли регулярное выражение установленный флаг <tt>/m</tt>, то есть соответствует ли точка новым строкам.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%r{.}.multiline?  # =&gt; false
-%r{.}m.multiline? # =&gt; true
+h4. +multiline?+
 
-Regexp.new('.').multiline?                    # =&gt; false
-Regexp.new('.', Regexp::MULTILINE).multiline? # =&gt; true
-</pre></div>
-<p>Rails использует этот метод в одном месте, в коде маршрутизации. Регулярные выражения  Multiline недопустимы для маршрутных требований, и этот флаг облегчает обеспечение этого ограничения.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод +multiline?+ говорит, имеет ли регулярное выражение установленный флаг +/m+, то есть соответствует ли точка новым строкам.
+
+<ruby>
+%r{.}.multiline?  # => false
+%r{.}m.multiline? # => true
+
+Regexp.new('.').multiline?                    # => false
+Regexp.new('.', Regexp::MULTILINE).multiline? # => true
+</ruby>
+
+Rails использует этот метод в одном месте, в коде маршрутизации. Регулярные выражения Multiline недопустимы для маршрутных требований, и этот флаг облегчает обеспечение этого ограничения.
+
+<ruby>
 def assign_route_options(segments, defaults, requirements)
   ...
   if requirement.multiline?
-    raise ArgumentError, &quot;Regexp multiline option not allowed in routing requirements: #{requirement.inspect}&quot;
+    raise ArgumentError, "Regexp multiline option not allowed in routing requirements: #{requirement.inspect}"
   end
   ...
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/regexp.rb</tt>.</p></div>
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/regexp.rb+.

@@ -60,13 +60,19 @@ h1. ИСТОРИЯ
 4. 23/07/11
 5. Закончено
 
+1. Расширения ядра Active Support
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_support_core_extensions.textile
+3. 66b4d112363f3786ecfe
+4. 24/07/11
+5. Закончено
+
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
 3. 66b4d112363f3786ecfe
 4. 24/07/11
 5. Закончено
 
-1. Руководство по тестированию приложений на Rails 
+1. Руководство по тестированию приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
 3. 2eac4e2e2ff3a740c712
 4. 23/06/11
@@ -76,12 +82,6 @@ h1. ИСТОРИЯ
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
 3. 662a71b09f025016db22
 4. 24/06/11
-5. Закончено
-
-1. Расширения ядра Active Support
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_support_core_extensions.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
 5. Закончено
 
 1. API интернационализации Rails (I18n)

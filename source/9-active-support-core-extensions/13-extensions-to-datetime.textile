@@ -1,11 +1,14 @@
 h1. Расширения для DateTime
 
-<div class='warning'><p><tt>DateTime</tt> не знает о правилах <span class="caps">DST</span> (переходов на летнее время) и некоторые из этих методов сталкиваются с крайними случаями, когда переход на и с летнего времени имеет место. К примеру, <tt>seconds_since_midnight</tt> может не возвратить настоящее значение для таких дней.</p></div>
+WARNING: +DateTime+ не знает о правилах DST (переходов на летнее время) и некоторые из этих методов сталкиваются с крайними случаями, когда переход на и с летнего времени имеет место. К примеру, +seconds_since_midnight может не возвратить настоящее значение для таких дней.
 
-<h4 id="calculations-datetime">1. Вычисления</h4>
-<div class='note'><p>Все нижеследующие методы определены в <tt>active_support/core_ext/date_time/calculations.rb</tt>.</p></div>
-<p>Класс <tt>DateTime</tt> является подклассом <tt>Date</tt>, поэтому загрузив <tt>active_support/core_ext/date/calculations.rb</tt> вы унаследуете эти методы и их псевдонимы, за исключением того, что они будут всегда возвращать дату и время:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Вычисления
+
+NOTE: Все нижеследующие методы определены в +active_support/core_ext/date_time/calculations.rb+.
+
+Класс +DateTime+ является подклассом +Date+, поэтому загрузив +active_support/core_ext/date/calculations.rb+ вы унаследуете эти методы и их псевдонимы, за исключением того, что они будут всегда возвращать дату и время:
+
+<ruby>
 yesterday
 tomorrow
 beginning_of_week (monday, at_beginning_of_week)
@@ -27,105 +30,136 @@ years_ago
 years_since
 prev_year
 next_year
-</pre></div>
-<p>Следующие методы переопределены, поэтому <strong>не</strong> нужно загружать <tt>active_support/core_ext/date/calculations.rb</tt> для них:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Следующие методы переопределены, поэтому *не* нужно загружать +active_support/core_ext/date/calculations.rb+ для них:
+
+<ruby>
 beginning_of_day (midnight, at_midnight, at_beginning_of_day)
 end_of_day
 ago
 since (in)
-</pre></div>
-<p>С другой стороны, <tt>advance</tt> и <tt>change</tt> также определяются и поддерживают больше опций, чем было сказано <a href="/active-support-core-extensions/extensions-to-date#advance">ранее</a>.</p>
+</ruby>
 
-<h5 id="named-datetimes">1.1 Именнованные Datetime</h5>
+С другой стороны, +advance+ и +change+ также определяются и поддерживают больше опций, чем было сказано "ранее":/active-support-core-extensions/extensions-to-date#advance.
 
-<h6 id="datetime-current">1.1.1 <tt>DateTime.current</tt></h6>
-<p>Active Support определяет <tt>DateTime.current</tt> похожим на <tt>Time.now.to_datetime</tt>, за исключением того, что он учитывает временную зону пользователя, если она определна. Он также определяет условия экземпляра <tt>past?</tt> и <tt>future?</tt> относительно <tt>DateTime.current</tt>.</p>
+h5. Именнованные Datetime
 
-<h5 id="other-extensions">1.2 Другие расширения</h5>
+h6. +DateTime.current+
 
-<h6 id="seconds_since_midnight">1.2.1 <tt>seconds_since_midnight</tt></h6>
-<p>Метод <tt>seconds_since_midnight</tt> возвращает число секунд, прошедших с полуночи:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now = DateTime.current     # =&gt; Mon, 07 Jun 2010 20:26:36 +0000
-now.seconds_since_midnight # =&gt; 73596
-</pre></div>
+Active Support определяет +DateTime.current+ похожим на +Time.now.to_datetime+, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет условия экземпляра +past?+ и +future?+ относительно +DateTime.current+.
 
-<h6 id="utc-datetime">1.2.2 <tt>utc</tt></h6>
-<p>Метод <tt>utc</tt> выдает те же дату и время получателя, выраженную в <span class="caps">UTC</span>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now = DateTime.current # =&gt; Mon, 07 Jun 2010 19:27:52 -0400
-now.utc                # =&gt; Mon, 07 Jun 2010 23:27:52 +0000
-</pre></div>
-<p>У этого метода также есть псевдоним <tt>getutc</tt>.</p>
+h5. Другие расширения
 
-<h6 id="utc">1.2.3 <tt>utc?</tt></h6>
-<p>Условие <tt>utc?</tt> говорит, имеет ли получатель <span class="caps">UTC</span> как его временную зону:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now = DateTime.now # =&gt; Mon, 07 Jun 2010 19:30:47 -0400
-now.utc?           # =&gt; false
-now.utc.utc?       # =&gt; true
-</pre></div>
+h6. +seconds_since_midnight+
 
-<h6 id="datetime-advance">1.2.4 <tt>advance</tt></h6>
-<p>Более обычным способом перейти к другим дате и времени является <tt>advance</tt>. Этот метод получает хэш с ключами <tt>:years</tt>, <tt>:months</tt>, <tt>:weeks</tt>, <tt>:days</tt>, <tt>:hours</tt>, <tt>:minutes</tt> и <tt>:seconds</tt>, и возвращает дату и время, передвинутые на столько, на сколько указывают существующие ключи.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Метод +seconds_since_midnight+ возвращает число секунд, прошедших с полуночи:
+
+<ruby>
+now = DateTime.current     # => Mon, 07 Jun 2010 20:26:36 +0000
+now.seconds_since_midnight # => 73596
+</ruby>
+
+h6(#utc-datetime). +utc+
+
+Метод +utc+ выдает те же дату и время получателя, выраженную в UTC.
+
+<ruby>
+now = DateTime.current # => Mon, 07 Jun 2010 19:27:52 -0400
+now.utc                # => Mon, 07 Jun 2010 23:27:52 +0000
+</ruby>
+
+У этого метода также есть псевдоним +getutc+.
+
+h6. +utc?+
+
+Условие +utc?+ говорит, имеет ли получатель UTC как его временную зону:
+
+<ruby>
+now = DateTime.now # => Mon, 07 Jun 2010 19:30:47 -0400
+now.utc?           # => false
+now.utc.utc?       # => true
+</ruby>
+
+h6(#datetime-advance). +advance+
+
+Более обычным способом перейти к другим дате и времени является +advance+. Этот метод получает хэш с ключами +:years+, +:months+, +:weeks+, +:days+, +:hours+, +:minutes+ и +:seconds+, и возвращает дату и время, передвинутые на столько, на сколько указывают существующие ключи.
+
+<ruby>
 d = DateTime.current
-# =&gt; Thu, 05 Aug 2010 11:33:31 +0000
-d.advance(:years =&gt; 1, :months =&gt; 1, :days =&gt; 1, :hours =&gt; 1, :minutes =&gt; 1, :seconds =&gt; 1)
-# =&gt; Tue, 06 Sep 2011 12:34:32 +0000
-</pre></div>
-<p>Этот метод сначала вычисляет дату назначения, передавая <tt>:years</tt>, <tt>:months</tt>, <tt>:weeks</tt> и <tt>:days</tt> в <tt>Date#advance</tt>, описанный <a href="/active-support-core-extensions/extensions-to-date#advance">ранее</a>. После этого, он корректирует время, вызвав <tt>since</tt> с количеством секунд, на которое нужно передвинуть. Этот порядок обоснован, другой порядок мог бы дать другие дату и время в некоторых крайних случаях. Применим пример в <tt>Date#advance</tt>, и расширим его, показав обоснованность порядка, применимого к битам времени.</p>
-<p>Если сначала передвинуть биты даты (относительный порядок вычисления, показанный ранее), а затем биты времени, мы получим для примера следующее вычисление:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# => Thu, 05 Aug 2010 11:33:31 +0000
+d.advance(:years => 1, :months => 1, :days => 1, :hours => 1, :minutes => 1, :seconds => 1)
+# => Tue, 06 Sep 2011 12:34:32 +0000
+</ruby>
+
+Этот метод сначала вычисляет дату назначения, передавая +:years+, +:months+, +:weeks+ и +:days+ в +Date#advance+, описанный "ранее":/active-support-core-extensions/extensions-to-date#advance. После этого, он корректирует время, вызвав +since+ с количеством секунд, на которое нужно передвинуть. Этот порядок обоснован, другой порядок мог бы дать другие дату и время в некоторых крайних случаях. Применим пример в +Date#advance+, и расширим его, показав обоснованность порядка, применимого к битам времени.
+
+Если сначала передвинуть биты даты (относительный порядок вычисления, показанный ранее), а затем биты времени, мы получим для примера следующее вычисление:
+
+<ruby>
 d = DateTime.new(2010, 2, 28, 23, 59, 59)
-# =&gt; Sun, 28 Feb 2010 23:59:59 +0000
-d.advance(:months =&gt; 1, :seconds =&gt; 1)
-# =&gt; Mon, 29 Mar 2010 00:00:00 +0000
-</pre></div>
-<p>но если мы вычисляем обратным способом, результат будет иным:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-d.advance(:seconds =&gt; 1).advance(:months =&gt; 1)
-# =&gt; Thu, 01 Apr 2010 00:00:00 +0000
-</pre></div>
-<div class='warning'><p>Поскольку <tt>DateTime</tt> не знает о переходе на летнее время, можно получить несуществующий момент времени без каких либо предупреждений или ошибок об этом.</p></div>
+# => Sun, 28 Feb 2010 23:59:59 +0000
+d.advance(:months => 1, :seconds => 1)
+# => Mon, 29 Mar 2010 00:00:00 +0000
+</ruby>
 
-<h5 id="datetime-changing-components">1.3 Изменение компонентов</h5>
-<p>Метод <tt>change</tt> позволяет получить новые дату и время, которая идентична получателю, за исключением заданных опций, включающих <tt>:year</tt>, <tt>:month</tt>, <tt>:day</tt>, <tt>:hour</tt>, <tt>:min</tt>, <tt>:sec</tt>, <tt>:offset</tt>, <tt>:start</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now = DateTime.current
-# =&gt; Tue, 08 Jun 2010 01:56:22 +0000
-now.change(:year =&gt; 2011, :offset =&gt; Rational(-6, 24))
-# =&gt; Wed, 08 Jun 2011 01:56:22 -0600
-</pre></div>
-<p>Если часы обнуляются, то минуты и секунды тоже (если у них не заданы значения):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now.change(:hour =&gt; 0)
-# =&gt; Tue, 08 Jun 2010 00:00:00 +0000
-</pre></div>
-<p>Аналогично, если минуты обнуляются, то секунды тоже(если у них не задано значение):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-now.change(:min =&gt; 0)
-# =&gt; Tue, 08 Jun 2010 01:00:00 +0000
-</pre></div>
-<p>Этот метод нетолерантен к несуществующим датам, если изменение невалидно, вызывается <tt>ArgumentError</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-DateTime.current.change(:month =&gt; 2, :day =&gt; 30)
-# =&gt; ArgumentError: invalid date
-</pre></div>
+но если мы вычисляем обратным способом, результат будет иным:
 
-<h5 id="datetime-durations">1.4 Длительности</h5>
-<p>Длительности могут добавляться и вычитаться из даты и времени:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<ruby>
+d.advance(:seconds => 1).advance(:months => 1)
+# => Thu, 01 Apr 2010 00:00:00 +0000
+</ruby>
+
+WARNING: Поскольку +DateTime+ не знает о переходе на летнее время, можно получить несуществующий момент времени без каких либо предупреждений или ошибок об этом.
+
+h5. Изменение компонентов
+
+Метод +change+ позволяет получить новые дату и время, которая идентична получателю, за исключением заданных опций, включающих +:year+, +:month+, +:day+, +:hour+, +:min+, +:sec+, +:offset+, +:start+:
+
+<ruby>
 now = DateTime.current
-# =&gt; Mon, 09 Aug 2010 23:15:17 +0000
+# => Tue, 08 Jun 2010 01:56:22 +0000
+now.change(:year => 2011, :offset => Rational(-6, 24))
+# => Wed, 08 Jun 2011 01:56:22 -0600
+</ruby>
+
+Если часы обнуляются, то минуты и секунды тоже (если у них не заданы значения):
+
+<ruby>
+now.change(:hour => 0)
+# => Tue, 08 Jun 2010 00:00:00 +0000
+</ruby>
+
+Аналогично, если минуты обнуляются, то секунды тоже(если у них не задано значение):
+
+<ruby>
+now.change(:min => 0)
+# => Tue, 08 Jun 2010 01:00:00 +0000
+</ruby>
+
+Этот метод нетолерантен к несуществующим датам, если изменение невалидно, вызывается +ArgumentError+:
+
+<ruby>
+DateTime.current.change(:month => 2, :day => 30)
+# => ArgumentError: invalid date
+</ruby>
+
+h5(#datetime-durations). Длительности
+
+Длительности могут добавляться и вычитаться из даты и времени:
+
+<ruby>
+now = DateTime.current
+# => Mon, 09 Aug 2010 23:15:17 +0000
 now + 1.year
-# =&gt; Tue, 09 Aug 2011 23:15:17 +0000
+# => Tue, 09 Aug 2011 23:15:17 +0000
 now - 1.week
-# =&gt; Mon, 02 Aug 2010 23:15:17 +0000
-</pre></div>
-<p>Это переводится в вызовы <tt>since</tt> или <tt>advance</tt>. Для примера выполним корректный переход во время календарной реформы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# => Mon, 02 Aug 2010 23:15:17 +0000
+</ruby>
+
+Это переводится в вызовы +since+ или +advance+. Для примера выполним корректный переход во время календарной реформы:
+
+<ruby>
 DateTime.new(1582, 10, 4, 23) + 1.hour
-# =&gt; Fri, 15 Oct 1582 00:00:00 +0000
-</pre></div>
+# => Fri, 15 Oct 1582 00:00:00 +0000
+</ruby>

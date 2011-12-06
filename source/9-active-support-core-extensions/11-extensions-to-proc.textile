@@ -1,23 +1,33 @@
 h1. Расширения для Proc
 
-<h4 id="bind">1. <tt>bind</tt></h4>
-<p>Как известно, в Ruby имеется класс <tt>UnboundMethod</tt>, экземпляры которого являются методами, принадлежащими неопределенным методам без self. Метод <tt>Module#instance_method</tt> возвращает несвязанный метод, например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Hash.instance_method(:delete) # =&gt; #&lt;UnboundMethod: Hash#delete&gt;
-</pre></div>
-<p>Несвязанный метод нельзя вызвать как есть, необходимо сначала связать его с объектом с помощью <tt>bind</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. +bind+
+
+Как известно, в Ruby имеется класс +UnboundMethod+, экземпляры которого являются методами, принадлежащими неопределенным методам без self. Метод +Module#instance_method+ возвращает несвязанный метод, например:
+
+<ruby>
+Hash.instance_method(:delete) # => #<UnboundMethod: Hash#delete>
+</ruby>
+
+Несвязанный метод нельзя вызвать как есть, необходимо сначала связать его с объектом с помощью +bind+:
+
+<ruby>
 clear = Hash.instance_method(:clear)
-clear.bind({:a =&gt; 1}).call # =&gt; {}
-</pre></div>
-<p>Active Support определяет <tt>Proc#bind</tt> с аналогичным назначением:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Proc.new { size }.bind([]).call # =&gt; 0
-</pre></div>
-<p>Как видите, это вызывается и привязывается к аргументу, возвращаемое значение действительно <tt>Method</tt>.</p>
-<div class='note'><p>Для этого <tt>Proc#bind</tt> фактически создает метод внутри. Если вдруг увидите метод со странным именем, подобным <tt>__bind_1256598120_237302</tt>, в трассировке стека, знайте откуда это взялось.</p></div>
-<p>Action Pack использует эту хитрость в <tt>rescue_from</tt>, к примеру, который принимает имя метода, а также proc в качестве колбэков для заданного избавляемого исключения. Они должны вызваться в любом случае, поэтому связанный метод возвращается от <tt>handler_for_rescue</tt>, вот сокращенный код вызова:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+clear.bind({:a => 1}).call # => {}
+</ruby>
+
+Active Support определяет +Proc#bind+ с аналогичным назначением:
+
+<ruby>
+Proc.new { size }.bind([]).call # => 0
+</ruby>
+
+Как видите, это вызывается и привязывается к аргументу, возвращаемое значение действительно +Method+.
+
+NOTE: Для этого +Proc#bind+ фактически создает метод внутри. Если вдруг увидите метод со странным именем, подобным +__bind_1256598120_237302+, в трассировке стека, знайте откуда это взялось.
+
+Action Pack использует эту хитрость в +rescue_from+, к примеру, который принимает имя метода, а также proc в качестве колбэков для заданного избавляемого исключения. Они должны вызваться в любом случае, поэтому связанный метод возвращается от +handler_for_rescue+, вот сокращенный код вызова:
+
+<ruby>
 def handler_for_rescue(exception)
   _, rescuer = Array(rescue_handlers).reverse.detect do |klass_name, handler|
     ...
@@ -30,5 +40,6 @@ def handler_for_rescue(exception)
     rescuer.bind(self)
   end
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/proc.rb</tt>.</p></div>
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/proc.rb+.

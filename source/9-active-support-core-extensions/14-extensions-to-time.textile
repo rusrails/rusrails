@@ -1,9 +1,12 @@
 h1. Расширения для Time
 
-<h4 id="time-calculations">1. Вычисления</h4>
-<div class='note'><p>Все следующие методы определены в <tt>active_support/core_ext/date_time/calculations.rb</tt>.</p></div>
-<p>Active Support добавляет к <tt>Time</tt> множество методов, доступных для <tt>DateTime</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Вычисления
+
+NOTE: Все следующие методы определены в +active_support/core_ext/date_time/calculations.rb+.
+
+Active Support добавляет к +Time+ множество методов, доступных для +DateTime+:
+
+<ruby>
 past?
 today?
 future?
@@ -35,41 +38,46 @@ years_ago
 years_since
 prev_year
 next_year
-</pre></div>
+</ruby>
 
-<p>Это аналоги. Обратитесь к их документации в предыдущих разделах, но примите во внимание следующие различия:</p>
-<ul>
-	<li><tt>change</tt> принимает дополнительную опцию <tt>:usec</tt>.</li>
-	<li><tt>Time</tt> понимает летнее время (<span class="caps">DST</span>), поэтому вы получите правильные вычисления времени как тут:</li>
-</ul>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Это аналоги. Обратитесь к их документации в предыдущих разделах, но примите во внимание следующие различия:
+
+* +change+ принимает дополнительную опцию +:usec+.
+* +Time+ понимает летнее время (DST), поэтому вы получите правильные вычисления времени как тут:
+
+<ruby>
 Time.zone_default
-# =&gt; #&lt;ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name=&quot;Madrid&quot;, ...&gt;
+# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
 
 # В Барселоне, 2010/03/28 02:00 +0100 становится 2010/03/28 03:00 +0200 благодаря переходу на летнее время.
 t = Time.local_time(2010, 3, 28, 1, 59, 59)
-# =&gt; Sun Mar 28 01:59:59 +0100 2010
-t.advance(:seconds =&gt; 1)
-# =&gt; Sun Mar 28 03:00:00 +0200 2010
-</pre></div>
-<ul>
-	<li>Если <tt>since</tt> или <tt>ago</tt> перепрыгивает на время, которое не может быть выражено с помощью <tt>Time</tt>, вместо него возвращается объект <tt>DateTime</tt>.</li>
-</ul>
+# => Sun Mar 28 01:59:59 +0100 2010
+t.advance(:seconds => 1)
+# => Sun Mar 28 03:00:00 +0200 2010
+</ruby>
 
-<h5>1.1 <tt>Time.current</tt></h5>
-<p>Active Support определяет <tt>Time.current</tt> как сегодняшний день в текущей временной зоне. Он похож на <tt>Time.now</tt>, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет <tt>Time.yesterday</tt> и <tt>Time.tomorrow</tt>, и условия экзеппляра <tt>past?</tt>, <tt>today?</tt> и <tt>future?</tt>, все они относительны к <tt>Time.current</tt>.</p>
-<p>При осуществлении сравнения Time с использованием методов, учитывающих временную зону пользователя, убедитесь, что используете <tt>Time.current</tt>, а не <tt>Time.now</tt>. Есть случаи, когда временная зона пользователя может быть в будущем по сравнению с временной зоной системы, в которой по умолчанию используется <tt>Time.today</tt>. Это означает, что <tt>Time.now</tt> может быть равным <tt>Time.yesterday</tt>.</p>
+* Если +since+ или +ago+ перепрыгивает на время, которое не может быть выражено с помощью +Time+, вместо него возвращается объект +DateTime+.
 
-<h5>1.2 <tt>all_day</tt>, <tt>all_week</tt>, <tt>all_month</tt>, <tt>all_quarter</tt> and <tt>all_year</tt></h5>
-<p>Метод <tt>all_day</tt> возвращает интервал, представляющий целый день для текущего времени.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5. +Time.current+
+
+Active Support определяет +Time.current+ как сегодняшний день в текущей временной зоне. Он похож на +Time.now+, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет +Time.yesterday+ и +Time.tomorrow+, и условия экзеппляра +past?, +today?+ и +future?+, все они относительны к +Time.current+.
+
+При осуществлении сравнения Time с использованием методов, учитывающих временную зону пользователя, убедитесь, что используете +Time.current+, а не +Time.now+. Есть случаи, когда временная зона пользователя может быть в будущем по сравнению с временной зоной системы, в которой по умолчанию используется +Time.today+. Это означает, что +Time.now+ может быть равным +Time.yesterday+.
+
+h5. +all_day+, +all_week+, +all_month+, +all_quarter+ и +all_year+
+
+Метод +all_day+ возвращает интервал, представляющий целый день для текущего времени.
+
+<ruby>
 now = Time.current
 # => Mon, 09 Aug 2010 23:20:05 UTC +00:00
 now.all_day
 # => Mon, 09 Aug 2010 00:00:00 UTC +00:00..Mon, 09 Aug 2010 23:59:59 UTC +00:00
-</pre></div>
-<p>Аналогично <tt>all_week</tt>, <tt>all_month</tt>, <tt>all_quarter</tt> и <tt>all_year</tt> служат целям создания временных интервалов.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Аналогично +all_week+, +all_month+, +all_quarter+ и +all_year+ служат целям создания временных интервалов.
+
+<ruby>
 now = Time.current
 # => Mon, 09 Aug 2010 23:20:05 UTC +00:00
 now.all_week
@@ -80,46 +88,59 @@ now.all_quarter
 # => Thu, 01 Jul 2010 00:00:00 UTC +00:00..Thu, 30 Sep 2010 23:59:59 UTC +00:00
 now.all_year
 # => Fri, 01 Jan 2010 00:00:00 UTC +00:00..Fri, 31 Dec 2010 23:59:59 UTC +00:00
-</pre></div>
+</ruby>
 
-<h4 id="time-constructors">2. Конструкторы Time</h4>
-<p>Active Support определяет <tt>Time.current</tt> как <tt>Time.zone.now</tt>, если у пользователя определена временная зона, а иначе <tt>Time.now</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Конструкторы Time
+
+Active Support определяет +Time.current+ как +Time.zone.now+, если у пользователя определена временная зона, а иначе +Time.now+:
+
+<ruby>
 Time.zone_default
-# =&gt; #&lt;ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name=&quot;Madrid&quot;, ...&gt;
+# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
 Time.current
-# =&gt; Fri, 06 Aug 2010 17:11:58 CEST +02:00
-</pre></div>
-<p>Как и у <tt>DateTime</tt>, условия <tt>past?</tt> и <tt>future?</tt> выполняются относительно <tt>Time.current</tt>.</p>
-<p>Используйте метод класса <tt>local_time</tt>, чтобы создать объекты времени, учитывающие временную зону пользователя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Time.zone_default
-# =&gt; #&lt;ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name=&quot;Madrid&quot;, ...&gt;
-Time.local_time(2010, 8, 15)
-# =&gt; Sun Aug 15 00:00:00 +0200 2010
-</pre></div>
-<p>Метод класса <tt>utc_time</tt> возвращает время в <span class="caps">UTC</span>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Time.zone_default
-# =&gt; #&lt;ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name=&quot;Madrid&quot;, ...&gt;
-Time.utc_time(2010, 8, 15)
-# =&gt; Sun Aug 15 00:00:00 UTC 2010
-</pre></div>
-<p>И <tt>local_time</tt>, и <tt>utc_time</tt> принимают до семи позиционных аргументов: year, month, day, hour, min, sec, usec. Year обязателен, month и day принимаются по умолчанию как 1, остальное по умолчанию 0.</p>
-<p>Если время, подлежащее конструированию лежит за рамками, поддерживаемыми <tt>Time</tt> на запущенной платформе, usecs отбрасываются и вместо этого возвращается объект <tt>DateTime</tt>.</p>
+# => Fri, 06 Aug 2010 17:11:58 CEST +02:00
+</ruby>
 
-<h5 id="time-durations">2.1 Длительности</h5>
-<p>Длительности могут быть добавлены и вычтены из объектов времени:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Как и у +DateTime+, условия +past?+ и +future?+ выполняются относительно +Time.current+.
+
+Используйте метод класса +local_time+, чтобы создать объекты времени, учитывающие временную зону пользователя:
+
+<ruby>
+Time.zone_default
+# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
+Time.local_time(2010, 8, 15)
+# => Sun Aug 15 00:00:00 +0200 2010
+</ruby>
+
+Метод класса +utc_time+ возвращает время в UTC:
+
+<ruby>
+Time.zone_default
+# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
+Time.utc_time(2010, 8, 15)
+# => Sun Aug 15 00:00:00 UTC 2010
+</ruby>
+
+И +local_time+, и +utc_time+ принимают до семи позиционных аргументов: year, month, day, hour, min, sec, usec. Year обязателен, month и day принимаются по умолчанию как 1, остальное по умолчанию 0.
+
+Если время, подлежащее конструированию лежит за рамками, поддерживаемыми +Time+ на запущенной платформе, usecs отбрасываются и вместо этого возвращается объект +DateTime+.
+
+h5. Длительности
+
+Длительности могут быть добавлены и вычтены из объектов времени:
+
+<ruby>
 now = Time.current
-# =&gt; Mon, 09 Aug 2010 23:20:05 UTC +00:00
+# => Mon, 09 Aug 2010 23:20:05 UTC +00:00
 now + 1.year
-#  =&gt; Tue, 09 Aug 2011 23:21:11 UTC +00:00
+#  => Tue, 09 Aug 2011 23:21:11 UTC +00:00
 now - 1.week
-# =&gt; Mon, 02 Aug 2010 23:21:11 UTC +00:00
-</pre></div>
-<p>Это преводится в вызовы <tt>since</tt> или <tt>advance</tt>. Для примера выполним корректный переход во время календарной реформы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+# => Mon, 02 Aug 2010 23:21:11 UTC +00:00
+</ruby>
+
+Это преводится в вызовы +since+ или +advance+. Для примера выполним корректный переход во время календарной реформы:
+
+<ruby>
 Time.utc_time(1582, 10, 3) + 5.days
-# =&gt; Mon Oct 18 00:00:00 UTC 1582
-</pre></div>
+# => Mon Oct 18 00:00:00 UTC 1582
+</ruby>

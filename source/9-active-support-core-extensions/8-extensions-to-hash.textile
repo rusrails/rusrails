@@ -1,205 +1,255 @@
 h1. Расширения для Hash
 
-<h4 id="hash-conversions">1. Конверсия</h4>
+h4. Конверсия
 
-<h5 id="hash-to-xml">1.1 <tt>to_xml</tt></h5>
-<p>Метод <tt>to_xml</tt> возвращает строку, содержащую представление <span class="caps">XML</span> его получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{&quot;foo&quot; =&gt; 1, &quot;bar&quot; =&gt; 2}.to_xml
-# =&gt;
-# &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-# &lt;hash&gt;
-#   &lt;foo type=&quot;integer&quot;&gt;1&lt;/foo&gt;
-#   &lt;bar type=&quot;integer&quot;&gt;2&lt;/bar&gt;
-# &lt;/hash&gt;
-</pre></div>
-<p>Для этого метод в цикле проходит пары и создает узлы, зависимые от <em>value</em>. Для заданной пары <tt>key</tt>, <tt>value</tt>:</p>
-<ul>
-	<li>Если <tt>value</tt> хэш, происходит рекурсивный вызов с <tt>key</tt> как <tt>:root</tt>.</li>
-</ul>
-<ul>
-	<li>Если <tt>value</tt> массив, происходит рекурсивный вызов с <tt>key</tt> как <tt>:root</tt> и <tt>key</tt> в единственном числе как <tt>:children</tt>.</li>
-</ul>
-<ul>
-	<li>Если <tt>value</tt> вызываемый объект, он должен ожидать один или два аргумента. В зависимости от ситуации, вызываемый объект вызывается с помощью хэша <tt>options</tt> в качестве первого аргумента с <tt>key</tt> как <tt>:root</tt>, и <tt>key</tt> в единственном числе в качестве второго аргумента. Возвращенное значение становится новым узлом.</li>
-</ul>
-<ul>
-	<li>Если <tt>value</tt> откликается на <tt>to_xml</tt>, метод вызывается с <tt>key</tt> как <tt>:root</tt>.</li>
-</ul>
-<ul>
-	<li>В иных случаях, создается узел с <tt>key</tt> в качестве тега, со строковым представлением <tt>value</tt> в качестве текстового узла. Если <tt>value</tt> является <tt>nil</tt>, добавляется атрибут &#8220;nil&#8221;, установленный в &#8220;true&#8221;. Кроме случаев, когда существует опция <tt>:skip_types</tt>, являющаяся true, добавляется атрибут &#8220;type&#8221;, соответствующий следующему преобразованию:</li>
-</ul>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5(#hash-to-xml). +to_xml+
+
+Метод +to_xml+ возвращает строку, содержащую представление XML его получателя:
+
+<ruby>
+{"foo" => 1, "bar" => 2}.to_xml
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <hash>
+#   <foo type="integer">1</foo>
+#   <bar type="integer">2</bar>
+# </hash>
+</ruby>
+
+Для этого метод в цикле проходит пары и создает узлы, зависимые от _value_. Для заданной пары +key+, +value+:
+
+* Если +value+ хэш, происходит рекурсивный вызов с +key+ как +:root+.
+* Если +value+ массив, происходит рекурсивный вызов с +key+ как +:root+ и +key+ в единственном числе как +:children+.
+* Если +value+ вызываемый объект, он должен ожидать один или два аргумента. В зависимости от ситуации, вызываемый объект вызывается с помощью хэша +options+ в качестве первого аргумента с +key+ как +:root+, и +key+ в единственном числе в качестве второго аргумента. Возвращенное значение становится новым узлом.
+* Если +value+ откликается на +to_xml+, метод вызывается с +key+ как +:root+.
+* В иных случаях, создается узел с +key+ в качестве тега, со строковым представлением +value+ в качестве текстового узла. Если +value+ является +nil+, добавляется атрибут "nil", установленный в "true". Кроме случаев, когда существует опция +:skip_types", являющаяся true, добавляется атрибут "type", соответствующий следующему преобразованию:
+
+<ruby>
 XML_TYPE_NAMES = {
-  &quot;Symbol&quot;     =&gt; &quot;symbol&quot;,
-  &quot;Fixnum&quot;     =&gt; &quot;integer&quot;,
-  &quot;Bignum&quot;     =&gt; &quot;integer&quot;,
-  &quot;BigDecimal&quot; =&gt; &quot;decimal&quot;,
-  &quot;Float&quot;      =&gt; &quot;float&quot;,
-  &quot;TrueClass&quot;  =&gt; &quot;boolean&quot;,
-  &quot;FalseClass&quot; =&gt; &quot;boolean&quot;,
-  &quot;Date&quot;       =&gt; &quot;date&quot;,
-  &quot;DateTime&quot;   =&gt; &quot;datetime&quot;,
-  &quot;Time&quot;       =&gt; &quot;datetime&quot;
+  "Symbol"     => "symbol",
+  "Fixnum"     => "integer",
+  "Bignum"     => "integer",
+  "BigDecimal" => "decimal",
+  "Float"      => "float",
+  "TrueClass"  => "boolean",
+  "FalseClass" => "boolean",
+  "Date"       => "date",
+  "DateTime"   => "datetime",
+  "Time"       => "datetime"
 }
-</pre></div>
-<p>По умолчанию корневым узлом является &#8220;hash&#8221;, но это настраивается с помощью опции <tt>:root</tt>.</p>
-<p>По умолчанию билдер <span class="caps">XML</span> является новым экземпляром <tt>Builder::XmlMarkup</tt>. Можно настроить свой собственный билдер с помощью опции <tt>:builder</tt>. Метод также принимает опции, такие как <tt>:dasherize</tt> со товарищи, они перенаправляются в билдер.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/conversions.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="merging">2. Объединение</h4>
-<p>В Ruby имеется встроенный метод <tt>Hash#merge</tt>, объединяющий два хэша:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1, :b =&gt; 1}.merge(:a =&gt; 0, :c =&gt; 2)
-# =&gt; {:a =&gt; 0, :b =&gt; 1, :c =&gt; 2}
-</pre></div>
-<p>Active Support определяет больше способов объединения хэшей, которые могут быть полезными.</p>
+По умолчанию корневым узлом является "hash", но это настраивается с помощью опции +:root+.
 
-<h5 id="reverse_merge-and-reverse_merge">2.1 <tt>reverse_merge</tt> и <tt>reverse_merge!</tt></h5>
-<p>В случае коллизии, в <tt>merge</tt> побеждает ключ в хэше аргумента. Можно компактно предоставить хэш опций со значением по умолчанию с помощью такой идиомы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-options = {:length =&gt; 30, :omission =&gt; &quot;...&quot;}.merge(options)
-</pre></div>
-<p>Active Support определяет <tt>reverse_merge</tt> в случае, если нужна альтернативная запись:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-options = options.reverse_merge(:length =&gt; 30, :omission =&gt; &quot;...&quot;)
-</pre></div>
-<p>И восклицательная версия <tt>reverse_merge!</tt>, выполняющая объединение на месте:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-options.reverse_merge!(:length =&gt; 30, :omission =&gt; &quot;...&quot;)
-</pre></div>
-<div class='warning'><p>Обратите внимание, что <tt>reverse_merge!</tt> может изменить хэш в вызывающем методе, что может как быть, так и не быть хорошей идеей.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/reverse_merge.rb</tt>.</p></div>
+По умолчанию билдер XML является новым экземпляром +Builder::XmlMarkup+. Можно настроить свой собственный билдер с помощью опции +:builder+. Метод также принимает опции, такие как +:dasherize+ со товарищи, они перенаправляются в билдер.
 
-<h5 id="reverse_update">2.2 <tt>reverse_update</tt></h5>
-<p>Метод <tt>reverse_update</tt> это псевдоним для <tt>reverse_merge!</tt>, описанного выше.</p>
-<div class='warning'><p>Отметьте, что у <tt>reverse_update</tt> нет восклицательного знака.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/reverse_merge.rb</tt>.</p></div>
+NOTE: Определено в +active_support/core_ext/hash/conversions.rb+.
 
-<h5 id="deep_merge-and-deep_merge">2.3 <tt>deep_merge</tt> и <tt>deep_merge!</tt></h5>
-<p>Как видите в предыдущем примере, если ключ обнаруживается в обоих хэшах, один из аргументов побеждает.</p>
-<p>Active Support определяет <tt>Hash#deep_merge</tt>. В углубленном объединении, если обнаруживается ключ в обоих хэшах, и их значения также хэши, то их <em>merge</em> становиться значением в результирующем хэше:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; {:b =&gt; 1}}.deep_merge(:a =&gt; {:c =&gt; 2})
-# =&gt; {:a =&gt; {:b =&gt; 1, :c =&gt; 2}}
-</pre></div>
-<p>Метод <tt>deep_merge!</tt> выполняет углубленное объединение на месте.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/deep_merge.rb</tt>.</p></div>
+h4. Объединение
 
-<h4 id="diffing">3. Определение различий</h4>
-<p>Метод <tt>diff</tt> возвращает хэш, представляющий разницу между получателем и аргументом, с помощью следующей логики:</p>
-<ul>
-	<li>Пары <tt>key</tt>, <tt>value</tt>, существующие в обоих хэшах, не принадлежат хэшу различий.</li>
-</ul>
-<ul>
-	<li>Если оба хэша имеют <tt>key</tt>, но с разными значениями, побеждает пара в получателе.</li>
-</ul>
-<ul>
-	<li>Остальное просто объединяется.</li>
-</ul>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1}.diff(:a =&gt; 1)
-# =&gt; {}, первое правило
+В Ruby имеется встроенный метод +Hash#merge+, объединяющий два хэша:
 
-{:a =&gt; 1}.diff(:a =&gt; 2)
-# =&gt; {:a =&gt; 1}, второе правило
+<ruby>
+{:a => 1, :b => 1}.merge(:a => 0, :c => 2)
+# => {:a => 0, :b => 1, :c => 2}
+</ruby>
 
-{:a =&gt; 1}.diff(:b =&gt; 2)
-# =&gt; {:a =&gt; 1, :b =&gt; 2}, третье правило
+Active Support определяет больше способов объединения хэшей, которые могут быть полезными.
 
-{:a =&gt; 1, :b =&gt; 2, :c =&gt; 3}.diff(:b =&gt; 1, :c =&gt; 3, :d =&gt; 4)
-# =&gt; {:a =&gt; 1, :b =&gt; 2, :d =&gt; 4}, все правила
+h5. +reverse_merge+ и +reverse_merge!+
 
-{}.diff({})        # =&gt; {}
-{:a =&gt; 1}.diff({}) # =&gt; {:a =&gt; 1}
-{}.diff(:a =&gt; 1)   # =&gt; {:a =&gt; 1}
-</pre></div>
-<p>Важным свойством этого хэша различий является то, что можно получить оригинальный хэш, применив <tt>diff</tt> дважды:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+В случае коллизии, в +merge+ побеждает ключ в хэше аргумента. Можно компактно предоставить хэш опций со значением по умолчанию с помощью такой идиомы:
+
+<ruby>
+options = {:length => 30, :omission => "..."}.merge(options)
+</ruby>
+
+Active Support определяет +reverse_merge+ в случае, если нужна альтернативная запись:
+
+<ruby>
+options = options.reverse_merge(:length => 30, :omission => "...")
+</ruby>
+
+И восклицательная версия +reverse_merge!+, выполняющая объединение на месте:
+
+<ruby>
+options.reverse_merge!(:length => 30, :omission => "...")
+</ruby>
+
+WARNING. Обратите внимание, что +reverse_merge!+ может изменить хэш в вызывающем методе, что может как быть, так и не быть хорошей идеей.
+
+NOTE: Определено в +active_support/core_ext/hash/reverse_merge.rb+.
+
+h5. +reverse_update+
+
+Метод +reverse_update+ это псевдоним для +reverse_merge!+, описанного выше.
+
+WARNING. Отметьте, что у +reverse_update+ нет восклицательного знака.
+
+NOTE: Определено в +active_support/core_ext/hash/reverse_merge.rb+.
+
+h5. +deep_merge+ и +deep_merge!+
+
+Как видите в предыдущем примере, если ключ обнаруживается в обоих хэшах, один из аргументов побеждает.
+
+Active Support определяет +Hash#deep_merge+. В углубленном объединении, если обнаруживается ключ в обоих хэшах, и их значения также хэши, то их _merge_ становиться значением в результирующем хэше:
+
+<ruby>
+{:a => {:b => 1}}.deep_merge(:a => {:c => 2})
+# => {:a => {:b => 1, :c => 2}}
+</ruby>
+
+Метод +deep_merge!+ выполняет углубленное объединение на месте.
+
+NOTE: Определено в +active_support/core_ext/hash/deep_merge.rb+.
+
+h4. Определение различий
+
+Метод +diff+ возвращает хэш, представляющий разницу между получателем и аргументом, с помощью следующей логики:
+
+* Пары +key+, +value+, существующие в обоих хэшах, не принадлежат хэшу различий.
+* Если оба хэша имеют +key+, но с разными значениями, побеждает пара в получателе.
+* Остальное просто объединяется.
+
+<ruby>
+{:a => 1}.diff(:a => 1)
+# => {}, первое правило
+
+{:a => 1}.diff(:a => 2)
+# => {:a => 1}, второе правило
+
+{:a => 1}.diff(:b => 2)
+# => {:a => 1, :b => 2}, третье правило
+
+{:a => 1, :b => 2, :c => 3}.diff(:b => 1, :c => 3, :d => 4)
+# => {:a => 1, :b => 2, :d => 4}, все правила
+
+{}.diff({})        # => {}
+{:a => 1}.diff({}) # => {:a => 1}
+{}.diff(:a => 1)   # => {:a => 1}
+</ruby>
+
+Важным свойством этого хэша различий является то, что можно получить оригинальный хэш, применив +diff+ дважды:
+
+<ruby>
 hash.diff(hash2).diff(hash2) == hash
-</pre></div>
-<p>Хэши различий могут быть полезны, к примеру, для сообщений об ошибке, относящихся к ожидаемым хэшам опций.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/diff.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="working-with-keys">4. Работа с ключами</h4>
+Хэши различий могут быть полезны, к примеру, для сообщений об ошибке, относящихся к ожидаемым хэшам опций.
 
-<h5 id="except-and-except">4.1 <tt>except</tt> и <tt>except!</tt></h5>
-<p>Метод <tt>except</tt> возвращает хэш с убранными ключами, содержащимися в перечне аргументов, если они существуют:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1, :b =&gt; 2}.except(:a) # =&gt; {:b =&gt; 2}
-</pre></div>
-<p>Если получатель откликается на <tt>convert_key</tt>, метод вызывается на каждом из аргументов. Это позволяет <tt>except</tt> хорошо обращаться с хэшами с индифферентым доступом, например:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1}.with_indifferent_access.except(:a)  # =&gt; {}
-{:a =&gt; 1}.with_indifferent_access.except(&quot;a&quot;) # =&gt; {}
-</pre></div>
-<p>Метод <tt>except</tt> может прийти на помощь, например, когда хотите защитить некоторый параметр, который не может быть глобально защищен с помощью <tt>attr_protected</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/hash/diff.rb+.
+
+h4. Работа с ключами
+
+h5. +except+ и +except!+
+
+Метод +except+ возвращает хэш с убранными ключами, содержащимися в перечне аргументов, если они существуют:
+
+<ruby>
+{:a => 1, :b => 2}.except(:a) # => {:b => 2}
+</ruby>
+
+Если получатель откликается на +convert_key+, метод вызывается на каждом из аргументов. Это позволяет +except+ хорошо обращаться с хэшами с индифферентым доступом, например:
+
+<ruby>
+{:a => 1}.with_indifferent_access.except(:a)  # => {}
+{:a => 1}.with_indifferent_access.except("a") # => {}
+</ruby>
+
+Метод +except+ может прийти на помощь, например, когда хотите защитить некоторый параметр, который не может быть глобально защищен с помощью +attr_protected+:
+
+<ruby>
 params[:account] = params[:account].except(:plan_id) unless admin?
 @account.update_attributes(params[:account])
-</pre></div>
-<p>Также имеется восклицательный вариант <tt>except!</tt>, который убирает ключи в самом получателе.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/except.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="stringify_keys-and-stringify_keys">4.2 <tt>stringify_keys</tt> и <tt>stringify_keys!</tt></h5>
-<p>Метод <tt>stringify_keys</tt> возвращает хэш, в котором ключи получателя приведены к строке. Это выполняется с помощью применения к ним <tt>to_s</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{nil =&gt; nil, 1 =&gt; 1, :a =&gt; :a}.stringify_keys
-# =&gt; {&quot;&quot; =&gt; nil, &quot;a&quot; =&gt; :a, &quot;1&quot; =&gt; 1}
-</pre></div>
-<p>Результат в случае коллизии неопределен:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{&quot;a&quot; =&gt; 1, :a =&gt; 2}.stringify_keys
-# =&gt; {&quot;a&quot; =&gt; 2}, в моем тесте, хотя на этот результат нельзя полагаться
-</pre></div>
-<p>Метод может быть полезным, к примеру, для простого принятия и символов, и строк как опций. Например, <tt>ActionView::Helpers::FormHelper</tt> определяет:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-def to_check_box_tag(options = {}, checked_value = &quot;1&quot;, unchecked_value = &quot;0&quot;)
+Также имеется восклицательный вариант +except!+, который убирает ключи в самом получателе.
+
+NOTE: Определено в +active_support/core_ext/hash/except.rb+.
+
+h5. +stringify_keys+ и +stringify_keys!+
+
+Метод +stringify_keys+ возвращает хэш, в котором ключи получателя приведены к строке. Это выполняется с помощью применения к ним +to_s+:
+
+<ruby>
+{nil => nil, 1 => 1, :a => :a}.stringify_keys
+# => {"" => nil, "a" => :a, "1" => 1}
+</ruby>
+
+Результат в случае коллизии неопределен:
+
+<ruby>
+{"a" => 1, :a => 2}.stringify_keys
+# => {"a" => 2}, в моем тесте, хотя на этот результат нельзя полагаться
+</ruby>
+
+Метод может быть полезным, к примеру, для простого принятия и символов, и строк как опций. Например, +ActionView::Helpers::FormHelper+ определяет:
+
+<ruby>
+def to_check_box_tag(options = {}, checked_value = "1", unchecked_value = "0")
   options = options.stringify_keys
-  options[&quot;type&quot;] = &quot;checkbox&quot;
+  options["type"] = "checkbox"
   ...
 end
-</pre></div>
-<p>Вторая строка может безопасно обращаться к ключу &#8220;type&#8221; и позволяет пользователю передавать или <tt>:type</tt>, или &#8220;type&#8221;.</p>
-<p>Также имеется восклицательный вариант <tt>stringify_keys!</tt>, который приводит к строке ключи в самом получателе.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/keys.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="symbolize_keys-and-symbolize_keys">4.3 <tt>symbolize_keys</tt> и <tt>symbolize_keys!</tt></h5>
-<p>Метод <tt>symbolize_keys</tt> возвращает хэш, в котором ключи получателя приведены к символам там, где это возможно. Это выполняется с помощью применения к ним <tt>to_sym</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{nil =&gt; nil, 1 =&gt; 1, &quot;a&quot; =&gt; &quot;a&quot;}.symbolize_keys
-# =&gt; {1 =&gt; 1, nil =&gt; nil, :a =&gt; &quot;a&quot;}
-</pre></div>
-<div class='warning'><p>Отметьте в предыдущем примере, что только один ключ был приведен к символу.</p></div>
-<p>Результат в случае коллизии неопределен:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{&quot;a&quot; =&gt; 1, :a =&gt; 2}.symbolize_keys
-# =&gt; {:a =&gt; 2}, в моем тесте, хотя на этот результат нельзя полагаться
-</pre></div>
-<p>Метод может быть полезным, к примеру, для простого принятия и символов, и строк как опций. Например, <tt>ActionController::UrlRewriter</tt> определяет</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Вторая строка может безопасно обращаться к ключу "type" и позволяет пользователю передавать или +:type+, или "type".
+
+Также имеется восклицательный вариант +stringify_keys!+, который приводит к строке ключи в самом получателе.
+
+NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
+
+h5. +symbolize_keys+ и +symbolize_keys!+
+
+Метод +symbolize_keys+ возвращает хэш, в котором ключи получателя приведены к символам там, где это возможно. Это выполняется с помощью применения к ним +to_sym+:
+
+<ruby>
+{nil => nil, 1 => 1, "a" => "a"}.symbolize_keys
+# => {1 => 1, nil => nil, :a => "a"}
+</ruby>
+
+WARNING. Отметьте в предыдущем примере, что только один ключ был приведен к символу.
+
+Результат в случае коллизии неопределен:
+
+<ruby>
+{"a" => 1, :a => 2}.symbolize_keys
+# => {:a => 2}, в моем тесте, хотя на этот результат нельзя полагаться
+</ruby>
+
+Метод может быть полезным, к примеру, для простого принятия и символов, и строк как опций. Например, +ActionController::UrlRewriter+ определяет
+
+<ruby>
 def rewrite_path(options)
   options = options.symbolize_keys
   options.update(options[:params].symbolize_keys) if options[:params]
   ...
 end
-</pre></div>
-<p>Вторая строка может безопасно обращаться к ключу <tt>:params</tt> и позволяет пользователю передавать или <tt>:params</tt>, или &#8220;params&#8221;.</p>
-<p>Также имеется восклицательный вариант <tt>symbolize_keys!</tt>, который приводит к символу ключи в самом получателе.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/keys.rb</tt>.</p></div>
+</ruby>
 
-<h5 id="to_options-and-to_options">4.4 <tt>to_options</tt> и <tt>to_options!</tt></h5>
-<p>Методы <tt>to_options</tt> и <tt>to_options!</tt> соответствующие псевдонимы <tt>symbolize_keys</tt> и <tt>symbolize_keys!</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/keys.rb</tt>.</p></div>
+Вторая строка может безопасно обращаться к ключу +:params+ и позволяет пользователю передавать или +:params+, или "params".
 
-<h5 id="assert_valid_keys">4.5 <tt>assert_valid_keys</tt></h5>
-<p>Метод <tt>assert_valid_keys</tt> получает определенное число аргументов и проверяет, имеет ли получатель хоть один ключ вне этого белого списка. Если имеет, вызывается <tt>ArgumentError</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1}.assert_valid_keys(:a)  # passes
-{:a =&gt; 1}.assert_valid_keys(&quot;a&quot;) # ArgumentError
-</pre></div>
-<p>Active Record не принимает незнакомые опции при создании связей, к примеру. Он реализует такой контроль через <tt>assert_valid_keys</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Также имеется восклицательный вариант +symbolize_keys!+, который приводит к символу ключи в самом получателе.
+
+NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
+
+h5. +to_options+ и +to_options!+
+
+Методы +to_options+ и +to_options!+ соответствующие псевдонимы +symbolize_keys+ и +symbolize_keys!+.
+
+NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
+
+h5. +assert_valid_keys+
+
+Метод +assert_valid_keys+ получает определенное число аргументов и проверяет, имеет ли получатель хоть один ключ вне этого белого списка. Если имеет, вызывается +ArgumentError+.
+
+<ruby>
+{:a => 1}.assert_valid_keys(:a)  # passes
+{:a => 1}.assert_valid_keys("a") # ArgumentError
+</ruby>
+
+Active Record не принимает незнакомые опции при создании связей, к примеру. Он реализует такой контроль через +assert_valid_keys+:
+
 mattr_accessor :valid_keys_for_has_many_association
 @@valid_keys_for_has_many_association = [
   :class_name, :table_name, :foreign_key, :primary_key,
@@ -213,39 +263,51 @@ mattr_accessor :valid_keys_for_has_many_association
   :validate, :inverse_of
 ]
 
-def create_has_many_reflection(association_id, options, &amp;extension)
+def create_has_many_reflection(association_id, options, &extension)
   options.assert_valid_keys(valid_keys_for_has_many_association)
   ...
 end
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/keys.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="slicing">5. Вырезание (slicing)</h4>
-<p>В Ruby есть встроенная поддержка для вырезания строк или массивов. Active Support расширяет вырезание на хэши:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1, :b =&gt; 2, :c =&gt; 3}.slice(:a, :c)
-# =&gt; {:c =&gt; 3, :a =&gt; 1}
+NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
 
-{:a =&gt; 1, :b =&gt; 2, :c =&gt; 3}.slice(:b, :X)
-# =&gt; {:b =&gt; 2} # несуществующие ключи игнорируются
-</pre></div>
-<p>Если получатель откликается на <tt>convert_key</tt>, ключи нормализуются:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1, :b =&gt; 2}.with_indifferent_access.slice(&quot;a&quot;)
-# =&gt; {:a =&gt; 1}
-</pre></div>
-<div class='note'><p>Вырезание может быть полезным для экранизации хэшей опций с помощью белого списка ключей.</p></div>
-<p>Также есть <tt>slice!</tt>, который  выполняет вырезание на месте, возвращая то, что было убрано:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-hash = {:a =&gt; 1, :b =&gt; 2}
-rest = hash.slice!(:a) # =&gt; {:b =&gt; 2}
-hash                   # =&gt; {:a =&gt; 1}
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/slice.rb</tt>.</p></div>
+h4. Вырезание (slicing)
 
-<h4 id="indifferent-access">6. Индифферентный доступ</h4>
-<p>Метод <tt>with_indifferent_access</tt> возвращает <tt>ActiveSupport::HashWithIndifferentAccess</tt> его получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-{:a =&gt; 1}.with_indifferent_access[&quot;a&quot;] # =&gt; 1
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/hash/indifferent_access.rb</tt>.</p></div>
+В Ruby есть встроенная поддержка для вырезания строк или массивов. Active Support расширяет вырезание на хэши:
+
+<ruby>
+{:a => 1, :b => 2, :c => 3}.slice(:a, :c)
+# => {:c => 3, :a => 1}
+
+{:a => 1, :b => 2, :c => 3}.slice(:b, :X)
+# => {:b => 2} # несуществующие ключи игнорируются
+</ruby>
+
+Если получатель откликается на +convert_key+, ключи нормализуются:
+
+<ruby>
+{:a => 1, :b => 2}.with_indifferent_access.slice("a")
+# => {:a => 1}
+</ruby>
+
+NOTE. Вырезание может быть полезным для экранизации хэшей опций с помощью белого списка ключей.
+
+Также есть +slice!+, который выполняет вырезание на месте, возвращая то, что было убрано:
+
+<ruby>
+hash = {:a => 1, :b => 2}
+rest = hash.slice!(:a) # => {:b => 2}
+hash                   # => {:a => 1}
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/hash/slice.rb+.
+
+h4. Индифферентный доступ
+
+Метод +with_indifferent_access+ возвращает +ActiveSupport::HashWithIndifferentAccess+ его получателя:
+
+<ruby>
+{:a => 1}.with_indifferent_access["a"] # => 1
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/hash/indifferent_access.rb+.

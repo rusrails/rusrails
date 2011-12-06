@@ -1,288 +1,358 @@
 h1. Расширения для  Array
 
-<h4 id="accessing">1. Доступ</h4>
-<p>Active Support расширяет <span class="caps">API</span> массивов для облегчения различных путей доступа к ним. Например, <tt>to</tt> возвращает подмассив элементов от первого до переданного индекса:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w(a b c d).to(2) # =&gt; %w(a b c)
-[].to(7)          # =&gt; []
-</pre></div>
-<p>Подобным образом <tt>from</tt> возвращает хвост массива от элемента с переданным индексом:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w(a b c d).from(2)  # =&gt; %w(c d)
-%w(a b c d).from(10) # =&gt; nil
-[].from(0)           # =&gt; []
-</pre></div>
-<p>Методы <tt>second</tt>, <tt>third</tt>, <tt>fourth</tt> и <tt>fifth</tt> возвращают соответствующие элементы (<tt>first</tt> является встроенным). Благодаря социальной мудрости и всеобщей позитивной конструктивности, <tt>forty_two</tt> также доступен.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/access.rb</tt>.</p></div>
+h4. Доступ
 
-<h4 id="random-access">2. Случайный доступ</h4>
-<p>Active Support портирует <tt>sample</tt> из Ruby 1.9:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+Active Support расширяет API массивов для облегчения различных путей доступа к ним. Например, +to+ возвращает подмассив элементов от первого до переданного индекса:
+
+<ruby>
+%w(a b c d).to(2) # => %w(a b c)
+[].to(7)          # => []
+</ruby>
+
+Подобным образом +from+ возвращает хвост массива от элемента с переданным индексом:
+
+<ruby>
+%w(a b c d).from(2)  # => %w(c d)
+%w(a b c d).from(10) # => []
+[].from(0)           # => []
+</ruby>
+
+Методы +second+, +third+, +fourth+ и +fifth+ возвращают соответствующие элементы (+first+ является встроенным). Благодаря социальной мудрости и всеобщей позитивной конструктивности, +forty_two+ также доступен.
+
+<ruby>
+%w(a b c d).third # => c
+%w(a b c d).fifth # => nil
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/array/access.rb+.
+
+h4. Случайный доступ
+
+Active Support портирует +sample+ из Ruby 1.9:
+
+<ruby>
 shape_type = [Circle, Square, Triangle].sample
-# =&gt; Square, for example
+# => Square, for example
 
 shape_types = [Circle, Square, Triangle].sample(2)
-# =&gt; [Triangle, Circle], for example
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/random_access.rb</tt>.</p></div>
+# => [Triangle, Circle], for example
+</ruby>
 
-<h4 id="options-extraction">3. Извлечение опций</h4>
-<p>Когда первый элемент в вызове метода является хэшем, за исключением, пожалуй, аргумента <tt>&block</tt>, Ruby позволяет опустить скобки:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-User.exists?(:email =&gt; params[:email])
-</pre></div>
-<p>Этот синтаксический сахар часто используется в Rails для избежания позиционных аргументов там, где их не слишком много, предлагая вместо них интерфейсы, эмулирующие именнованные параметры. В частности, очень характерно использовать такой хэш для опций.</p>
-<p>Если метод ожидает различное количество аргументов и использует <tt>*</tt> в своем объявлении, однако хэш опций завершает их и является последним элементом массива аргументов, тогда тип теряет свою роль.</p>
-<p>В этих случаях можно задать хэшу опций отличительную трактовку с помощью <tt>extract_options!</tt>. Метод проверяет тип последнего элемента массива. Если это хэш, он вырезает его и возвращает, в противном случае возвращает пустой хэш.</p>
-<p>Давайте рассмотрим пример определения макроса контроллера <tt>caches_action</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/array/random_access.rb+.
+
+h4. Извлечение опций
+
+Когда первый элемент в вызове метода является хэшем, за исключением, пожалуй, аргумента +&block+, Ruby позволяет опустить скобки:
+
+<ruby>
+User.exists?(:email => params[:email])
+</ruby>
+
+Этот синтаксический сахар часто используется в Rails для избежания позиционных аргументов там, где их не слишком много, предлагая вместо них интерфейсы, эмулирующие именнованные параметры. В частности, очень характерно использовать такой хэш для опций.
+
+Если метод ожидает различное количество аргументов и использует +*+ в своем объявлении, однако хэш опций завершает их и является последним элементом массива аргументов, тогда тип теряет свою роль.
+
+В этих случаях можно задать хэшу опций отличительную трактовку с помощью +extract_options!+. Метод проверяет тип последнего элемента массива. Если это хэш, он вырезает его и возвращает, в противном случае возвращает пустой хэш.
+
+Давайте рассмотрим пример определения макроса контроллера +caches_action+:
+
+<ruby>
 def caches_action(*actions)
   return unless cache_configured?
   options = actions.extract_options!
   ...
 end
-</pre></div>
-<p>Этот метод получает определенное число имен экшнов и необязательный хэш опций как последний аргумент. Вызвав <tt>extract_options!</tt> получаем хэш опций и убираем его из <tt>actions</tt> просто и ясно.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/extract_options.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="array-conversions">4. Конвертирование</h4>
+Этот метод получает определенное число имен экшнов и необязательный хэш опций как последний аргумент. Вызвав +extract_options!+ получаем хэш опций и убираем его из +actions+ просто и ясно.
 
-<h5 id="to_sentence">4.1 <tt>to_sentence</tt></h5>
-<p>Метод <tt>to_sentence</tt> превращает массив в строку, содержащую выражение, перечисляющее его элементы:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w().to_sentence                # =&gt; &quot;&quot;
-%w(Earth).to_sentence           # =&gt; &quot;Earth&quot;
-%w(Earth Wind).to_sentence      # =&gt; &quot;Earth and Wind&quot;
-%w(Earth Wind Fire).to_sentence # =&gt; &quot;Earth, Wind, and Fire&quot;
-</pre></div>
-<p>Этот метод принимает три опции:</p>
-<ul>
-	<li><tt>:two_words_connector</tt>: Что используется для массивов с длиной 2. По умолчанию &quot; and &quot;.</li>
-	<li><tt>:words_connector</tt>: Что используется для соединения элементов массивов с 3 и более элементами, кроме последних двух. По умолчанию &quot;, &quot;.</li>
-	<li><tt>:last_word_connector</tt>: Что используется для соединения последних элементов массива из 3 и более элементов. По умолчанию &quot;, and &quot;.</li>
-</ul>
-<p>Умолчания для этих опций могут быть локализованы, их ключи следующие:</p>
-<table class="inner_table">
-	<tr>
-		<th>Опция                      </th>
-		<th>Ключ I18n                                 </th>
-	</tr>
-	<tr>
-		<td> <tt>:two_words_connector</tt> </td>
-		<td> <tt>support.array.two_words_connector</tt> </td>
-	</tr>
-	<tr>
-		<td> <tt>:words_connector</tt>     </td>
-		<td> <tt>support.array.words_connector</tt>     </td>
-	</tr>
-	<tr>
-		<td> <tt>:last_word_connector</tt> </td>
-		<td> <tt>support.array.last_word_connector</tt> </td>
-	</tr>
-</table>
-<p>Опции <tt>:connector</tt> и <tt>:skip_last_comma</tt> устарели.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/conversions.rb</tt>.</p></div>
+NOTE: Определено в +active_support/core_ext/array/extract_options.rb+.
 
-<h5 id="to_formatted_s">4.2 <tt>to_formatted_s</tt></h5>
-<p>Метод <tt>to_formatted_s</tt> по умолчанию работает как <tt>to_s</tt>.</p>
-<p>Однако, если массив содержит элементы, откликающиеся на <tt>id</tt>, он может передать символ <tt>:db</tt> как аргумент. Это обычно используется с коллекциями AR, хотя на самом деле технически любой объект в Ruby 1.8 может откликаться на <tt>id</tt>. Возвращаемые строки следующие:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[].to_formatted_s(:db)            # =&gt; &quot;null&quot;
-[user].to_formatted_s(:db)        # =&gt; &quot;8456&quot;
-invoice.lines.to_formatted_s(:db) # =&gt; &quot;23,567,556,12&quot;
-</pre></div>
-<p>Цифры в примере выше предполагаются пришедшими от соответствующих вызовов <tt>id</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/conversions.rb</tt>.</p></div>
+h4. Конвертирование
 
-<h5 id="to_xml">4.3 <tt>to_xml</tt></h5>
-<p>Метод <tt>to_xml</tt> возвращает строку, содержащую представление <span class="caps">XML</span> его получателя:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Contributor.all(:limit =&gt; 2, :order =&gt; 'rank ASC').to_xml
-# =&gt;
-# &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-# &lt;contributors type=&quot;array&quot;&gt;
-#   &lt;contributor&gt;
-#     &lt;id type=&quot;integer&quot;&gt;4356&lt;/id&gt;
-#     &lt;name&gt;Jeremy Kemper&lt;/name&gt;
-#     &lt;rank type=&quot;integer&quot;&gt;1&lt;/rank&gt;
-#     &lt;url-id&gt;jeremy-kemper&lt;/url-id&gt;
-#   &lt;/contributor&gt;
-#   &lt;contributor&gt;
-#     &lt;id type=&quot;integer&quot;&gt;4404&lt;/id&gt;
-#     &lt;name&gt;David Heinemeier Hansson&lt;/name&gt;
-#     &lt;rank type=&quot;integer&quot;&gt;2&lt;/rank&gt;
-#     &lt;url-id&gt;david-heinemeier-hansson&lt;/url-id&gt;
-#   &lt;/contributor&gt;
-# &lt;/contributors&gt;
-</pre></div>
-<p>Чтобы это сделать, он посылает <tt>to_xml</tt> к каждому элементу за раз и собирает результаты в корневом узле. Все элементы должны откликаться на <tt>to_xml</tt>, иначе будет вызвано исключение.</p>
-<p>По умолчанию имя корневого элемента будет версией имени класса первого элемента во множественном числе, подчеркиваниями и дефисами, при условии что остальные элементы принадлежат этому типу (проверяется с помощью <tt>is_a?</tt>) и они не хэши. В примере выше это &#8220;contributors&#8221;.</p>
-<p>Если имеется любой элемент, не принадлежащий типу первого, корневой узел становится &#8220;records&#8221;:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h5. +to_sentence+
+
+Метод +to_sentence+ превращает массив в строку, содержащую выражение, перечисляющее его элементы:
+
+<ruby>
+%w().to_sentence                # => ""
+%w(Earth).to_sentence           # => "Earth"
+%w(Earth Wind).to_sentence      # => "Earth and Wind"
+%w(Earth Wind Fire).to_sentence # => "Earth, Wind, and Fire"
+</ruby>
+
+Этот метод принимает три опции:
+
+* +:two_words_connector+: Что используется для массивов с длиной 2. По умолчанию " and ".
+* +:words_connector+: Что используется для соединения элементов массивов с 3 и более элементами, кроме последних двух. По умолчанию ", ".
+* +:last_word_connector+: Что используется для соединения последних элементов массива из 3 и более элементов. По умолчанию ", and ".
+
+Умолчания для этих опций могут быть локализованы, их ключи следующие:
+
+|_. Опция                       |_. Ключ I18n                                |
+| <tt>:two_words_connector</tt> | <tt>support.array.two_words_connector</tt> |
+| <tt>:words_connector</tt>     | <tt>support.array.words_connector</tt>     |
+| <tt>:last_word_connector</tt> | <tt>support.array.last_word_connector</tt> |
+
+Опции +:connector+ и +:skip_last_comma+ устарели.
+
+NOTE: Определено в +active_support/core_ext/array/conversions.rb+.
+
+h5. +to_formatted_s+
+
+Метод +to_formatted_s+ по умолчанию работает как +to_s+.
+
+Однако, если массив содержит элементы, откликающиеся на +id+, он может передать символ +:db+ как аргумент. Это обычно используется с коллекциями AR, хотя на самом деле технически любой объект в Ruby 1.8 может откликаться на +id+. Возвращаемые строки следующие:
+
+<ruby>
+[].to_formatted_s(:db)            # => "null"
+[user].to_formatted_s(:db)        # => "8456"
+invoice.lines.to_formatted_s(:db) # => "23,567,556,12"
+</ruby>
+
+Цифры в примере выше предполагаются пришедшими от соответствующих вызовов +id+.
+
+NOTE: Определено в +active_support/core_ext/array/conversions.rb+.
+
+h5. +to_xml+
+
+Метод +to_xml+ возвращает строку, содержащую представление XML его получателя:
+
+<ruby>
+Contributor.limit(2).order(:rank).to_xml
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <contributors type="array">
+#   <contributor>
+#     <id type="integer">4356</id>
+#     <name>Jeremy Kemper</name>
+#     <rank type="integer">1</rank>
+#     <url-id>jeremy-kemper</url-id>
+#   </contributor>
+#   <contributor>
+#     <id type="integer">4404</id>
+#     <name>David Heinemeier Hansson</name>
+#     <rank type="integer">2</rank>
+#     <url-id>david-heinemeier-hansson</url-id>
+#   </contributor>
+# </contributors>
+</ruby>
+
+Чтобы это сделать, он посылает +to_xml+ к каждому элементу за раз и собирает результаты в корневом узле. Все элементы должны откликаться на +to_xml+, иначе будет вызвано исключение.
+
+По умолчанию имя корневого элемента будет версией имени класса первого элемента во множественном числе, подчеркиваниями и дефисами, при условии что остальные элементы принадлежат этому типу (проверяется с помощью +is_a?+) и они не хэши. В примере выше это "contributors".
+
+Если имеется любой элемент, не принадлежащий типу первого, корневой узел становится "records":
+
+<ruby>
 [Contributor.first, Commit.first].to_xml
-# =&gt;
-# &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-# &lt;records type=&quot;array&quot;&gt;
-#   &lt;record&gt;
-#     &lt;id type=&quot;integer&quot;&gt;4583&lt;/id&gt;
-#     &lt;name&gt;Aaron Batalion&lt;/name&gt;
-#     &lt;rank type=&quot;integer&quot;&gt;53&lt;/rank&gt;
-#     &lt;url-id&gt;aaron-batalion&lt;/url-id&gt;
-#   &lt;/record&gt;
-#   &lt;record&gt;
-#     &lt;author&gt;Joshua Peek&lt;/author&gt;
-#     &lt;authored-timestamp type=&quot;datetime&quot;&gt;2009-09-02T16:44:36Z&lt;/authored-timestamp&gt;
-#     &lt;branch&gt;origin/master&lt;/branch&gt;
-#     &lt;committed-timestamp type=&quot;datetime&quot;&gt;2009-09-02T16:44:36Z&lt;/committed-timestamp&gt;
-#     &lt;committer&gt;Joshua Peek&lt;/committer&gt;
-#     &lt;git-show nil=&quot;true&quot;&gt;&lt;/git-show&gt;
-#     &lt;id type=&quot;integer&quot;&gt;190316&lt;/id&gt;
-#     &lt;imported-from-svn type=&quot;boolean&quot;&gt;false&lt;/imported-from-svn&gt;
-#     &lt;message&gt;Kill AMo observing wrap_with_notifications since ARes was only using it&lt;/message&gt;
-#     &lt;sha1&gt;723a47bfb3708f968821bc969a9a3fc873a3ed58&lt;/sha1&gt;
-#   &lt;/record&gt;
-# &lt;/records&gt;
-</pre></div>
-<p>Если получатель является массивом хэшей, корневой узел по умолчанию также &#8220;records&#8221;:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[{:a =&gt; 1, :b =&gt; 2}, {:c =&gt; 3}].to_xml
-# =&gt;
-# &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-# &lt;records type=&quot;array&quot;&gt;
-#   &lt;record&gt;
-#     &lt;b type=&quot;integer&quot;&gt;2&lt;/b&gt;
-#     &lt;a type=&quot;integer&quot;&gt;1&lt;/a&gt;
-#   &lt;/record&gt;
-#   &lt;record&gt;
-#     &lt;c type=&quot;integer&quot;&gt;3&lt;/c&gt;
-#   &lt;/record&gt;
-# &lt;/records&gt;
-</pre></div>
-<div class='warning'><p>Если коллекция пустая, корневой элемент по умолчанию &#8220;nil-classes&#8221;. Пример для понимания, корневой элемент для вышеописанного списка распространителей не будет &#8220;contributors&#8221;, если коллекция пустая, а &#8220;nil-classes&#8221;. Можно использовать опцию <tt>:root</tt>, чтобы обеспечить то, что будет соответствовать корневому элементу.</p></div>
-<p>Имя дочерних узлов по умолчанию является именем корневого узла в единственном числе. В вышеописанных примерах мы видели &#8220;contributor&#8221; и &#8220;record&#8221;. Опция <tt>:children</tt> позволяет установить эти имена узлов.</p>
-<p>По умолчанию билдер <span class="caps">XML</span> является свежим экземпляром <tt>Builder::XmlMarkup</tt>. Можно сконфигурировать свой собственный билдер через опцию <tt>:builder</tt>. Метод также принимает опции, такие как <tt>:dasherize</tt> со товарищи, они перенаправляются в билдер:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Contributor.all(:limit =&gt; 2, :order =&gt; 'rank ASC').to_xml(:skip_types =&gt; true)
-# =&gt;
-# &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-# &lt;contributors&gt;
-#   &lt;contributor&gt;
-#     &lt;id&gt;4356&lt;/id&gt;
-#     &lt;name&gt;Jeremy Kemper&lt;/name&gt;
-#     &lt;rank&gt;1&lt;/rank&gt;
-#     &lt;url-id&gt;jeremy-kemper&lt;/url-id&gt;
-#   &lt;/contributor&gt;
-#   &lt;contributor&gt;
-#     &lt;id&gt;4404&lt;/id&gt;
-#     &lt;name&gt;David Heinemeier Hansson&lt;/name&gt;
-#     &lt;rank&gt;2&lt;/rank&gt;
-#     &lt;url-id&gt;david-heinemeier-hansson&lt;/url-id&gt;
-#   &lt;/contributor&gt;
-# &lt;/contributors&gt;
-</pre></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/conversions.rb</tt>.</p></div>
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <records type="array">
+#   <record>
+#     <id type="integer">4583</id>
+#     <name>Aaron Batalion</name>
+#     <rank type="integer">53</rank>
+#     <url-id>aaron-batalion</url-id>
+#   </record>
+#   <record>
+#     <author>Joshua Peek</author>
+#     <authored-timestamp type="datetime">2009-09-02T16:44:36Z</authored-timestamp>
+#     <branch>origin/master</branch>
+#     <committed-timestamp type="datetime">2009-09-02T16:44:36Z</committed-timestamp>
+#     <committer>Joshua Peek</committer>
+#     <git-show nil="true"></git-show>
+#     <id type="integer">190316</id>
+#     <imported-from-svn type="boolean">false</imported-from-svn>
+#     <message>Kill AMo observing wrap_with_notifications since ARes was only using it</message>
+#     <sha1>723a47bfb3708f968821bc969a9a3fc873a3ed58</sha1>
+#   </record>
+# </records>
+</ruby>
 
-<h4 id="wrapping">5. Оборачивание</h4>
-<p>Метод <tt>Array.wrap</tt> оборачивает свои аргументы в массив, кроме случая, когда это уже массив (или подобно массиву).</p>
-<p>А именно:</p>
-<ul>
-	<li>Если аргумент <tt>nil</tt>, возвращается пустой перечень.</li>
-	<li>В противном случае, если аргумент откликается на <tt>to_ary</tt>, он вызывается, и, если значение <tt>to_ary</tt> не <tt>nil</tt>, оно возвращается.</li>
-	<li>В противном случае, возвращается массив с аргументом в качестве его первого элемента.</li>
-</ul>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Array.wrap(nil)       # =&gt; []
-Array.wrap([1, 2, 3]) # =&gt; [1, 2, 3]
-Array.wrap(0)         # =&gt; [0]
-</pre></div>
-<p>Этот метод похож на <tt>Kernel#Array</tt>, но с некоторыми отличиями:</p>
-<ul>
-	<li>Если аргумент откликается на <tt>to_ary</tt>, метод вызывается. <tt>Kernel#Array</tt> начинает пробовать <tt>to_a</tt>, если вернувшееся значение <tt>nil</tt>, а <tt>Arraw.wrap</tt> возвращает этот <tt>nil</tt> в любом случае.</li>
-	<li>Если возвращаемое значение от <tt>to_ary</tt> и не <tt>nil</tt>, и не объект <tt>Array</tt>, <tt>Kernel#Array</tt> вызывает исключение, в то время как <tt>Array.wrap</tt> нет, он просто возвращает значение.</li>
-	<li>Он не вызывает <tt>to_a</tt> на аргументе, хотя в особенных случае с <tt>nil</tt> возвращает пустой массив.</li>
-</ul>
-<p>Следующий пункт особненно заметен для некоторых enumerables:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-Array.wrap(:foo =&gt; :bar) # =&gt; [{:foo =&gt; :bar}]
-Array(:foo =&gt; :bar)      # =&gt; [[:foo, :bar]]
+Если получатель является массивом хэшей, корневой узел по умолчанию также "records":
 
-Array.wrap(&quot;foo\nbar&quot;)   # =&gt; [&quot;foo\nbar&quot;]
-Array(&quot;foo\nbar&quot;)        # =&gt; [&quot;foo\n&quot;, &quot;bar&quot;], in Ruby 1.8
-</pre></div>
-<p>Также имеется связанная идиома, использующая оператор расплющивания:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+<ruby>
+[{:a => 1, :b => 2}, {:c => 3}].to_xml
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <records type="array">
+#   <record>
+#     <b type="integer">2</b>
+#     <a type="integer">1</a>
+#   </record>
+#   <record>
+#     <c type="integer">3</c>
+#   </record>
+# </records>
+</ruby>
+
+WARNING. Если коллекция пустая, корневой элемент по умолчанию "nil-classes". Пример для понимания, корневой элемент для вышеописанного списка распространителей не будет "contributors", если коллекция пустая, а "nil-classes". Можно использовать опцию +:root+, чтобы обеспечить то, что будет соответствовать корневому элементу.
+
+Имя дочерних узлов по умолчанию является именем корневого узла в единственном числе. В вышеописанных примерах мы видели "contributor" и "record'. Опция +:children+ позволяет установить эти имена узлов.
+
+По умолчанию билдер XML является свежим экземпляром +Builder::XmlMarkup+. Можно сконфигурировать свой собственный билдер через опцию +:builder+. Метод также принимает опции, такие как +:dasherize+ со товарищи, они перенаправляются в билдер:
+
+<ruby>
+Contributor.limit(2).order(:rank).to_xml(:skip_types => true)
+# =>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <contributors>
+#   <contributor>
+#     <id>4356</id>
+#     <name>Jeremy Kemper</name>
+#     <rank>1</rank>
+#     <url-id>jeremy-kemper</url-id>
+#   </contributor>
+#   <contributor>
+#     <id>4404</id>
+#     <name>David Heinemeier Hansson</name>
+#     <rank>2</rank>
+#     <url-id>david-heinemeier-hansson</url-id>
+#   </contributor>
+# </contributors>
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/array/conversions.rb+.
+
+h4. Оборачивание
+
+Метод +Array.wrap+ оборачивает свои аргументы в массив, кроме случая, когда это уже массив (или подобно массиву).
+
+А именно:
+
+* Если аргумент +nil+, возвращается пустой список.
+* В противном случае, если аргумент откликается на +to_ary+, он вызывается, и, если значение +to_ary+ не +nil+, оно возвращается.
+* В противном случае, возвращается массив с аргументом в качестве его первого элемента.
+
+<ruby>
+Array.wrap(nil)       # => []
+Array.wrap([1, 2, 3]) # => [1, 2, 3]
+Array.wrap(0)         # => [0]
+</ruby>
+
+Этот метод похож на +Kernel#Array+, но с некоторыми отличиями:
+
+* Если аргумент откликается на +to_ary+, метод вызывается. +Kernel#Array+ начинает пробовать +to_a+, если вернувшееся значение +nil+, а +Arraw.wrap+ возвращает этот +nil+ в любом случае.
+* Если возвращаемое значение от +to_ary+ и не +nil+, и не объект +Array+, +Kernel#Array+ вызывает исключение, в то время как +Array.wrap+ нет, он просто возвращает значение.
+* Он не вызывает +to_a+ на аргументе, хотя в особенных случае с +nil+ возвращает пустой массив.
+
+Следующий пункт особненно заметен для некоторых enumerables:
+
+<ruby>
+Array.wrap(:foo => :bar) # => [{:foo => :bar}]
+Array(:foo => :bar)      # => [[:foo, :bar]]
+
+Array.wrap("foo\nbar")   # => ["foo\nbar"]
+Array("foo\nbar")        # => ["foo\n", "bar"], in Ruby 1.8
+</ruby>
+
+Также имеется связанная идиома, использующая оператор расплющивания:
+
+<ruby>
 [*object]
-</pre></div>
-<p>который в Ruby 1.8 возвращает <tt>[nil]</tt> для <tt>nil</tt>, а в противном случае вызывает <tt>Array(object)</tt>. (Точное поведение в 1.9 пока непонятно)</p>
-<p>Таким образом, в этом случае поведение различается для <tt>nil</tt>, а описанная выше разница с <tt>Kernel#Array</tt> применима к остальным <tt>object</tt>.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/wrap.rb</tt>.</p></div>
+</ruby>
 
-<h4 id="grouping">6. Группировка</h4>
+который в Ruby 1.8 возвращает +[nil]+ для +nil+, а в противном случае вызывает +Array(object)+. (Точное поведение в 1.9 пока непонятно)
 
-<h5 id="in_groups_of-number-fill_with-nil">6.1 <tt>in_groups_of(number, fill_with = nil)</tt></h5>
-<p>Метод <tt>in_groups_of</tt> разделяет массив на последовательные группы определенного размера. Он возвращает массив с группами:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[1, 2, 3].in_groups_of(2) # =&gt; [[1, 2], [3, nil]]
-</code></div>
-<p>или вкладывает их по очереди в блок, если он задан:</p>
-<div class="code_container"><code class="ruby">
-&lt;% sample.in_groups_of(3) do |a, b, c| %&gt;
-  &lt;tr&gt;
-    &lt;td&gt;&lt;%=h a %&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;%=h b %&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;%=h c %&gt;&lt;/td&gt;
-  &lt;/tr&gt;
-&lt;% end %&gt;
-</pre></div>
-<p>Первый пример показывает, как <tt>in_groups_of</tt> заполняет последнюю группу столькими элементами <tt>nil</tt>, сколько нужно, чтобы получить требуемый размер. Можно изменить это набивочное значение используя второй необязательный аргумент:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[1, 2, 3].in_groups_of(2, 0) # =&gt; [[1, 2], [3, 0]]
-</pre></div>
-<p>Наконец, можно сказать методу не заполнять последнюю группу, передав <tt>false</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[1, 2, 3].in_groups_of(2, false) # =&gt; [[1, 2], [3]]
-</pre></div>
-<p>Как следствие <tt>false</tt> не может использоваться как набивочное значение.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/grouping.rb</tt>.</p></div>
+Таким образом, в этом случае поведение различается для +nil+, а описанная выше разница с +Kernel#Array+ применима к остальным +object+.
 
-<h5 id="in_groups-number-fill_with-nil">6.2 <tt>in_groups(number, fill_with = nil)</tt></h5>
-<p>Метод <tt>in_groups</tt> разделяет массив на определенное количество групп. Метод возвращает массив с группами:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+NOTE: Определено в +active_support/core_ext/array/wrap.rb+.
+
+h4. Группировка
+
+h5. +in_groups_of(number, fill_with = nil)+
+
+Метод +in_groups_of+ разделяет массив на последовательные группы определенного размера. Он возвращает массив с группами:
+
+<ruby>
+[1, 2, 3].in_groups_of(2) # => [[1, 2], [3, nil]]
+</ruby>
+
+или вкладывает их по очереди в блок, если он задан:
+
+<ruby>
+<% sample.in_groups_of(3) do |a, b, c| %>
+  <tr>
+    <td><%=h a %></td>
+    <td><%=h b %></td>
+    <td><%=h c %></td>
+  </tr>
+<% end %>
+</ruby>
+
+Первый пример показывает, как +in_groups_of+ заполняет последнюю группу столькими элементами +nil+, сколько нужно, чтобы получить требуемый размер. Можно изменить это набивочное значение используя второй необязательный аргумент:
+
+<ruby>
+[1, 2, 3].in_groups_of(2, 0) # => [[1, 2], [3, 0]]
+</ruby>
+
+Наконец, можно сказать методу не заполнять последнюю группу, передав +false+:
+
+<ruby>
+[1, 2, 3].in_groups_of(2, false) # => [[1, 2], [3]]
+</ruby>
+
+Как следствие +false+ не может использоваться как набивочное значение.
+
+NOTE: Определено в +active_support/core_ext/array/grouping.rb+.
+
+h5. +in_groups(number, fill_with = nil)+
+
+Метод +in_groups+ разделяет массив на определенное количество групп. Метод возвращает массив с группами:
+
+<ruby>
 %w(1 2 3 4 5 6 7).in_groups(3)
-# =&gt; [[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;], [&quot;4&quot;, &quot;5&quot;, nil], [&quot;6&quot;, &quot;7&quot;, nil]]
-</pre></div>
-<p>или вкладывает их по очереди в блок, если он передан:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w(1 2 3 4 5 6 7).in_groups(3) {|group| p group}
-[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
-[&quot;4&quot;, &quot;5&quot;, nil]
-[&quot;6&quot;, &quot;7&quot;, nil]
-</pre></div>
-<p>Примеры выше показывают, что <tt>in_groups</tt> заполняет некоторые группы с помощью заключительного элемента <tt>nil</tt>, если необходимо. Группа может получить не более одного из этих дополнительных элементов, если он будет, то будет стоять справа. Группы, получившие его, будут всегда последние.</p>
-<p>Можно изменить это набивочное значение, используя второй необязательный аргумент:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w(1 2 3 4 5 6 7).in_groups(3, &quot;0&quot;)
-# =&gt; [[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;], [&quot;4&quot;, &quot;5&quot;, &quot;0&quot;], [&quot;6&quot;, &quot;7&quot;, &quot;0&quot;]]
-</pre></div>
-<p>Также можно сказать методу не заполнять меньшие группы, передав <tt>false</tt>:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-%w(1 2 3 4 5 6 7).in_groups(3, false)
-# =&gt; [[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;], [&quot;4&quot;, &quot;5&quot;], [&quot;6&quot;, &quot;7&quot;]]
-</pre></div>
-<p>Как следствие <tt>false</tt> не может быть набивочным значением.</p>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/grouping.rb</tt>.</p></div>
+# => [["1", "2", "3"], ["4", "5", nil], ["6", "7", nil]]
+</ruby>
 
-<h5 id="split-value-nil">6.3 <tt>split(value = nil)</tt></h5>
-<p>Метод <tt>split</tt> разделяет массив разделителем и возвращает получившиеся куски.</p>
-<p>Если передан блок, разделителями будут те элементы, для которых блок возвратит true:</p>
-<div class="code_container"><code class="ruby">
+или вкладывает их по очереди в блок, если он передан:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3) {|group| p group}
+["1", "2", "3"]
+["4", "5", nil]
+["6", "7", nil]
+</ruby>
+
+Примеры выше показывают, что +in_groups+ заполняет некоторые группы с помощью заключительного элемента +nil+, если необходимо. Группа может получить не более одного из этих дополнительных элементов, если он будет, то будет стоять справа. Группы, получившие его, будут всегда последние.
+
+Можно изменить это набивочное значение, используя второй необязательный аргумент:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3, "0")
+# => [["1", "2", "3"], ["4", "5", "0"], ["6", "7", "0"]]
+</ruby>
+
+Также можно сказать методу не заполнять меньшие группы, передав +false+:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3, false)
+# => [["1", "2", "3"], ["4", "5"], ["6", "7"]]
+</ruby>
+
+Как следствие +false+ не может быть набивочным значением.
+
+NOTE: Определено в +active_support/core_ext/array/grouping.rb+.
+
+h5. +split(value = nil)+
+
+Метод +split+ разделяет массив разделителем и возвращает получившиеся куски.
+
+Если передан блок, разделителями будут те элементы, для которых блок возвратит true:
+
+<ruby>
 (-5..5).to_a.split { |i| i.multiple_of?(4) }
-# =&gt; [[-5], [-3, -2, -1], [1, 2, 3], [5]]
-</code></div>
-<p>В противном случае, значение, полученное как аргумент, которое по умолчанию является <tt>nil</tt>, будет разделителем:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-[0, 1, -5, 1, 1, &quot;foo&quot;, &quot;bar&quot;].split(1)
-# =&gt; [[0], [-5], [], [&quot;foo&quot;, &quot;bar&quot;]]
-</pre></div>
-<div class='info'><p>Отметьте в предыдущем примере, что последовательные разделители приводят к пустым массивам.</p></div>
-<div class='note'><p>Определено в <tt>active_support/core_ext/array/grouping.rb</tt>.</p></div>
+# => [[-5], [-3, -2, -1], [1, 2, 3], [5]]
+</ruby>
+
+В противном случае, значение, полученное как аргумент, которое по умолчанию является +nil+, будет разделителем:
+
+<ruby>
+[0, 1, -5, 1, 1, "foo", "bar"].split(1)
+# => [[0], [-5], [], ["foo", "bar"]]
+</ruby>
+
+TIP: Отметьте в предыдущем примере, что последовательные разделители приводят к пустым массивам.
+
+NOTE: Определено в +active_support/core_ext/array/grouping.rb+.
