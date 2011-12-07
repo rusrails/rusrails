@@ -25,7 +25,7 @@ role :db,  "hydrogen.locum.ru", :primary => true
 
 set :unicorn_conf, "/etc/unicorn/rusrails.mik-die.rb"
 set :unicorn_pid, "/var/run/unicorn/rusrails.mik-die.pid"
-set :unicorn_start_cmd, "rvm use 1.9.3 do bundle exec unicorn_rails -Dc #{unicorn_conf}"
+set :unicorn_start_cmd, "cd #{dpath}/current && rvm use 1.9.3 do bundle exec unicorn_rails -Dc #{unicorn_conf}"
 
 # - for unicorn - #
 namespace :deploy do

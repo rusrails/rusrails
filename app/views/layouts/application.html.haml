@@ -36,6 +36,7 @@
               = submit_tag :search, :class => :hidden
         - cache "menu_#{page_cache_key}" do
           = menu
+        = render "layouts/rsya"
       #content= yield
       .clear
       #footer
