@@ -1,21 +1,33 @@
 / Яндекс.Директ
+#yandex_ad"
 :javascript
-  yandex_partner_id = 79573;
-  yandex_site_bg_color = 'FFFFFF';
-  yandex_site_charset = 'utf-8';
-  yandex_ad_format = 'direct';
-  yandex_font_size = 1;
-  yandex_direct_type = 'vertical';
-  yandex_direct_border_type = 'block';
-  yandex_direct_limit = 4;
-  yandex_direct_title_font_size = 3;
-  yandex_direct_header_bg_color = 'FEEAC7';
-  yandex_direct_bg_color = 'FFF9F0';
-  yandex_direct_border_color = 'FBE5C0';
-  yandex_direct_title_color = '0000CC';
-  yandex_direct_url_color = '006600';
-  yandex_direct_all_color = '0000CC';
-  yandex_direct_text_color = '000000';
-  yandex_direct_hover_color = '0066FF';
-  yandex_direct_favicon = true;
-  document.write('<sc'+'ript type="text/javascript" src="http://an.yandex.ru/system/context.js"></sc'+'ript>');
+  (function(w, d, n, s, t) {
+    w[n] = w[n] || [];
+    w[n].push(function() {
+      Ya.Direct.insertInto(79573, "yandex_ad", {
+        site_charset: "utf-8",
+        ad_format: "direct",
+        font_size: 1,
+        type: "vertical",
+        border_type: "block",
+        limit: 4,
+        title_font_size: 3,
+        site_bg_color: "FFFFFF",
+        header_bg_color: "FEEAC7",
+        bg_color: "FFF9F0",
+        border_color: "FBE5C0",
+        title_color: "0000CC",
+        url_color: "006600",
+        all_color: "0000CC",
+        text_color: "000000",
+        hover_color: "0066FF",
+        favicon: true
+      });
+    });
+    t = d.documentElement.firstChild;
+    s = d.createElement("script");
+    s.type = "text/javascript";
+    s.src = "http://an.yandex.ru/system/context.js";
+    s.setAttribute("async", "true");
+    t.insertBefore(s, t.firstChild);
+  })(window, document, "yandex_context_callbacks");

@@ -66,6 +66,12 @@ h1. ИСТОРИЯ
 4. 24/07/11
 5. Закончено
 
+1. API интернационализации Rails (I18n)
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
+3. 71012eafb6916d270b78
+4. 30/07/11
+5. Закончено
+
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
 3. 66b4d112363f3786ecfe
@@ -83,12 +89,6 @@ h1. ИСТОРИЯ
 3. 662a71b09f025016db22
 4. 24/06/11
 5. Закончено
-
-1. API интернационализации Rails (I18n)
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
-3. 71012eafb6916d270b78
-4. 30/07/11
-5. Обновляется
 
 1. Отладка приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/debugging_rails_applications.textile
