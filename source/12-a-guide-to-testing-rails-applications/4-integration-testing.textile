@@ -1,114 +1,88 @@
 h1. Интеграционное тестирование
 
-<p>Интеграционные тесты используются для тестирования взаимодействия любого числа контроллеров. Они в основном используются для тестирования важных рабочих процессов в вашем приложении.</p>
-<p>В отличие от юнит- и функциональных тестов, интеграционные тесты должны быть явно созданы в папке &#8216;test/integration&#8217; вашего приложения. Rails предоставляет вам генератор для создания скелета интеграционного теста.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Интеграционные тесты используются для тестирования взаимодействия любого числа контроллеров. Они в основном используются для тестирования важных рабочих процессов в вашем приложении.
+
+В отличие от юнит- и функциональных тестов, интеграционные тесты должны быть явно созданы в папке 'test/integration' вашего приложения. Rails предоставляет вам генератор для создания скелета интеграционного теста.
+
+<shell>
 $ rails generate integration_test user_flows
       exists  test/integration/
       create  test/integration/user_flows_test.rb
-</pre></div>
-<p>Вот как выглядит вновь созданный интеграционный тест:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</shell>
+
+Вот как выглядит вновь созданный интеграционный тест:
+
+<ruby>
 require 'test_helper'
 
-class UserFlowsTest &lt; ActionController::IntegrationTest
+class UserFlowsTest < ActionDispatch::IntegrationTest
   fixtures :all
 
   # Replace this with your real tests.
-  test &quot;the truth&quot; do
+  test "the truth" do
     assert true
   end
 end
-</pre></div>
-<p>Интеграционные тесты унаследованы от <tt>ActionController::IntegrationTest</tt>. Это делает доступным несколько дополнительных хелперов для использования в ваших интеграционных тестах. Также необходимо явно включать фикстуры, чтобы сделать их доступными для теста.</p>
+</ruby>
 
-<h4 id="helpers-available-for-integration-tests">1. Хелперы, доступные для интеграционных тестов</h4>
-<p>В дополнение к стандартным хелперам тестирования, есть несколько дополнительных хелперов, доступных для интеграционных тестов:</p>
-<table class="inner_table">
-	<tr>
-		<th>Хелпер                                                                           </th>
-		<th>Цель</th>
-	</tr>
-	<tr>
-		<td><tt>https?</tt>                                                                           </td>
-		<td>Возвращает <tt>true</tt>, если сессия имитирует безопасный запрос <span class="caps">HTTPS</span>.</td>
-	</tr>
-	<tr>
-		<td><tt>https!</tt>                                                                           </td>
-		<td>Позволяет имитировать безопасный запрос <span class="caps">HTTPS</span>.</td>
-	</tr>
-	<tr>
-		<td><tt>host!</tt>                                                                            </td>
-		<td>Позволяет установить имя хоста для использовании в следующем запросе.</td>
-	</tr>
-	<tr>
-		<td><tt>redirect?</tt>                                                                        </td>
-		<td>Возвращает <tt>true</tt>, если последний запрос был перенаправлением.</td>
-	</tr>
-	<tr>
-		<td><tt>follow_redirect!</tt>                                                                 </td>
-		<td>Отслеживает одиночный перенаправляющий отклик.</td>
-	</tr>
-	<tr>
-		<td><tt>request_via_redirect(http_method, path, [parameters], [headers])</tt>                 </td>
-		<td>Позволяет сделать <span class="caps">HTTP</span> запрос и отследить любые последующие перенаправления.</td>
-	</tr>
-	<tr>
-		<td><tt>post_via_redirect(path, [parameters], [headers])</tt>                                 </td>
-		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">POST</span> и отследить любые последующие перенаправления.</td>
-	</tr>
-	<tr>
-		<td><tt>get_via_redirect(path, [parameters], [headers])</tt>                                  </td>
-		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">GET</span> и отследить любые последующие перенаправления.</td>
-	</tr>
-	<tr>
-		<td><tt>put_via_redirect(path, [parameters], [headers])</tt>                                  </td>
-		<td>AПозволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">PUT</span> и отследить любые последующие перенаправления.</td>
-	</tr>
-	<tr>
-		<td><tt>delete_via_redirect(path, [parameters], [headers])</tt>                               </td>
-		<td>Позволяет сделать <span class="caps">HTTP</span> запрос <span class="caps">DELETE</span> и отследить любые последующие перенаправления.</td>
-	</tr>
-	<tr>
-		<td><tt>open_session</tt>                                                                     </td>
-		<td>Открывает экземпляр новой сессии.</td>
-	</tr>
-</table>
+Интеграционные тесты унаследованы от +ActionController::IntegrationTest+. Это делает доступным несколько дополнительных хелперов для использования в ваших интеграционных тестах. Также необходимо явно включать фикстуры, чтобы сделать их доступными для теста.
 
-<h4 id="integration-testing-examples">2 Примеры интеграционного тестирования</h4>
-<p>Простой интеграционный тест, использующий несколько контроллеров:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Хелперы, доступные для интеграционных тестов
+
+В дополнение к стандартным хелперам тестирования, есть несколько дополнительных хелперов, доступных для интеграционных тестов:
+
+|_.Хелпер                                                                           |_.Цель|
+|+https?+                                                                           |Возвращает +true+, если сессия имитирует безопасный запрос HTTPS.|
+|+https!+                                                                           |Позволяет имитировать безопасный запрос HTTPS.|
+|+host!+                                                                            |Позволяет установить имя хоста для использовании в следующем запросе.|
+|+redirect?+                                                                        |Возвращает +true+, если последний запрос был перенаправлением.|
+|+follow_redirect!+                                                                 |Отслеживает одиночный перенаправляющий отклик.|
+|+request_via_redirect(http_method, path, [parameters], [headers])+                 |Позволяет сделать HTTP запрос и отследить любые последующие перенаправления.|
+|+post_via_redirect(path, [parameters], [headers])+                                 |Позволяет сделать HTTP запрос POST и отследить любые последующие перенаправления.|
+|+get_via_redirect(path, [parameters], [headers])+                                  |Позволяет сделать HTTP запрос GET и отследить любые последующие перенаправления.|
+|+put_via_redirect(path, [parameters], [headers])+                                  |Позволяет сделать HTTP запрос PUT и отследить любые последующие перенаправления.|
+|+delete_via_redirect(path, [parameters], [headers])+                               |Позволяет сделать HTTP запрос DELETE и отследить любые последующие перенаправления.|
+|+open_session+                                                                     |Открывает экземпляр новой сессии.|
+
+h4. Примеры интеграционного тестирования
+
+Простой интеграционный тест, использующий несколько контроллеров:
+
+<ruby>
 require 'test_helper'
 
-class UserFlowsTest &lt; ActionController::IntegrationTest
+class UserFlowsTest < ActionDispatch::IntegrationTest
   fixtures :users
 
-  test &quot;login and browse site&quot; do
+  test "login and browse site" do
     # login via https
     https!
-    get &quot;/login&quot;
+    get "/login"
     assert_response :success
 
-    post_via_redirect &quot;/login&quot;, :username =&gt; users(:avs).username, :password =&gt; users(:avs).password
+    post_via_redirect "/login", :username => users(:avs).username, :password => users(:avs).password
     assert_equal '/welcome', path
     assert_equal 'Welcome avs!', flash[:notice]
 
     https!(false)
-    get &quot;/posts/all&quot;
+    get "/posts/all"
     assert_response :success
     assert assigns(:products)
   end
 end
-</pre></div>
-<p>Как видите, интеграционный тест вовлекает несколько контроллеров и использует весь стек от базы данных до отправителя. В дополнение можете иметь несколько экземпляров сессии, открытых одновременно в тесте, и расширить эти экземпляры с помощью методов контроля для создания очень мощного тестирующего <span class="caps">DSL</span> (Предметно-ориентированного языка программирования) только для Вашего приложения.</p>
-<p>Вот пример нескольких сессий и собственного <span class="caps">DSL</span> в общем тесте</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Как видите, интеграционный тест вовлекает несколько контроллеров и использует весь стек от базы данных до отправителя. В дополнение можете иметь несколько экземпляров сессии, открытых одновременно в тесте, и расширить эти экземпляры с помощью методов контроля для создания очень мощного тестирующего DSL (Предметно-ориентированного языка программирования) только для вашего приложения.
+
+Вот пример нескольких сессий и собственного DSL в общем тесте
+
+<ruby>
 require 'test_helper'
 
-class UserFlowsTest &lt; ActionController::IntegrationTest
+class UserFlowsTest < ActionDispatch::IntegrationTest
   fixtures :users
 
-  test &quot;login and browse site&quot; do
+  test "login and browse site" do
 
     # User avs logs in
     avs = login(:avs)
@@ -131,7 +105,7 @@ class UserFlowsTest &lt; ActionController::IntegrationTest
 
   module CustomDsl
     def browses_site
-      get &quot;/products/all&quot;
+      get "/products/all"
       assert_response :success
       assert assigns(:products)
     end
@@ -142,10 +116,10 @@ class UserFlowsTest &lt; ActionController::IntegrationTest
       sess.extend(CustomDsl)
       u = users(user)
       sess.https!
-      sess.post &quot;/login&quot;, :username =&gt; u.username, :password =&gt; u.password
+      sess.post "/login", :username => u.username, :password => u.password
       assert_equal '/welcome', path
       sess.https!(false)
     end
   end
 end
-</pre></div>
+</ruby>

@@ -1,107 +1,115 @@
 h1. Юнит-тестирование ваших моделей
 
-<p>В Rails юнит-тесты это то, что вы пишете, чтобы протестировать свои модели.</p>
-<p>Для этого руководства мы будем использовать <em>скаффолдинг</em> Rails. Он создает модель, миграцию, контроллер и вьюхи для нового ресурса в одной операции. Он также создает полный набор для тестирования, следуя лучшей практике Rails. Мы будем использовать примеры из этого созданного кода и будем добавлять к нему дополнительные примеры по необходимости.</p>
-<div class='note'><p>Чтобы узнать больше о <em>скаффолдинге</em> Rails, обратитесь к <a href="/getting-started-with-rails">Rails для начинающих</a></p></div>
-<p>При использовании <tt>rails generate scaffold</tt> для ресурса, среди прочего, создается незаконченный тест в папке <tt>test/unit</tt>:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-$ script/generate scaffold post title:string body:text
+В Rails юнит-тесты это то, что вы пишете, чтобы протестировать свои модели.
+
+Для этого руководства мы будем использовать _скаффолдинг_ Rails. Он создает модель, миграцию, контроллер и вьюхи для нового ресурса в одной операции. Он также создает полный набор для тестирования, следуя лучшей практике Rails. Мы будем использовать примеры из этого созданного кода и будем добавлять к нему дополнительные примеры по необходимости.
+
+NOTE: Чтобы узнать больше о _скаффолдинге_ Rails, обратитесь к "Rails для начинающих":/getting-started-with-rails
+
+При использовании +rails generate scaffold+ для ресурса, среди прочего, создается незаконченный тест в папке +test/unit+:
+
+<shell>
+$ rails generate scaffold post title:string body:text
 ...
 create  app/models/post.rb
 create  test/unit/post_test.rb
 create  test/fixtures/posts.yml
 ...
-</pre></div>
-<p>Незаконченный тест по умолчанию в <tt>test/unit/post_test.rb</tt> выглядит так:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</shell>
+
+Незаконченный тест по умолчанию в +test/unit/post_test.rb+ выглядит так:
+
+<ruby>
 require 'test_helper'
 
-class PostTest &lt; ActiveSupport::TestCase
+class PostTest < ActiveSupport::TestCase
   # Replace this with your real tests.
-  test &quot;the truth&quot; do
+  test "the truth" do
     assert true
   end
 end
-</pre></div>
-<p>Построчное изучение этого файла поможет вам ориентироваться в коде тестирования и терминологии Rails.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Построчное изучение этого файла поможет вам ориентироваться в коде тестирования и терминологии Rails.
+
+<ruby>
 require 'test_helper'
-</pre></div>
-<p>Как вы уже знаете, <tt>test_helper.rb</tt> определяет конфигурацию по умолчанию для запуска наших тестов. Эта строка включается во все тесты, таким образом все методы, добавленные в этот файл, доступны всем вашим тестам.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class PostTest &lt; ActiveSupport::TestCase
-</pre></div>
-<p>Класс <tt>PostTest</tt> определяет <em>тестовый случай (test case)</em>, поскольку он унаследован от <tt>ActiveSupport::TestCase</tt>. Поэтому <tt>PostTest</tt> имеет все методы, доступные в <tt>ActiveSupport::TestCase</tt>. Об этих методах вы узнаете немного позже.</p>
-<p>Любой метод, определенный в тестовом случае <tt>Test::Unit</tt>, начинающийся с <tt>test</tt> (чувствительно к регистру), просто вызывает тест. Таким образом, <tt>test_password</tt>, <tt>test_valid_password</tt> и <tt>testValidPassword</tt> это правильные имена тестов, и запустятся автоматически при запуске тестового случая.</p>
-<p>Rails добавляет метод <tt>test</tt>, который принимает имя теста и блок. Он создает обычный тест <tt>Test::Unit</tt> с именем метода, начинающегося с <tt>test_</tt>, поэтому:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Как вы уже знаете, +test_helper.rb+ определяет конфигурацию по умолчанию для запуска наших тестов. Эта строка включается во все тесты, таким образом все методы, добавленные в этот файл, доступны всем вашим тестам.
+
+<ruby>
+class PostTest < ActiveSupport::TestCase
+</ruby>
+
+Класс +PostTest+ определяет _тестовый случай (test case)_, поскольку он унаследован от +ActiveSupport::TestCase+. Поэтому +PostTest+ имеет все методы, доступные в +ActiveSupport::TestCase+. Об этих методах вы узнаете немного позже.
+
+Любой метод, определенный в тестовом случае +Test::Unit+, начинающийся с +test+ (чувствительно к регистру), просто вызывает тест. Таким образом, +test_password+, +test_valid_password+ и +testValidPassword+ это правильные имена тестов, и запустятся автоматически при запуске тестового случая.
+
+Rails добавляет метод +test+, который принимает имя теста и блок. Он создает обычный тест +Test::Unit+ с именем метода, начинающегося с +test_+, поэтому:
+
+<ruby>
 test "the truth" do
   assert true
 end
-</pre></div>
-<p>Работает так же, как если бы написали:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Работает так же, как если бы написали:
+
+<ruby>
 def test_the_truth
   assert true
 end
-</pre></div>
-<p>Только макрос <tt>test</tt> делает имена тестов более читаемыми. Хотя можете использовать и обычные определения метода.</p>
-<div class='note'><p>Имя метода создается, заменяя пробелы на подчеркивания. Хотя результат не должен быть валидным идентификатором Ruby, имя может содержать знаки пунктуации и т.д. Это связано с тем, что в Ruby технически любая строка может быть именем метода. Необычность заключается в вызовах <tt>define_method</tt> и <tt>send</tt>, но формально ограничений нет.</p></div>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-assert true
-</pre></div>
-<p>Эта строка кода называется <em>оператор контроля</em>. Оператор контроля это строка кода, которая вычисляет объект (или выражение) для ожидаемых результатов. Например, оператор контроля может проверить:</p>
-<ul>
-	<li>является ли это значение = тому значению?</li>
-	<li>является ли этот объект nil?</li>
-	<li>вызывает ли эта строка кода исключение?</li>
-	<li>является ли пароль пользователя больше, чем 5 символов?</li>
-</ul>
-<p>Каждый тест содержит один или более операторов контроля. Только когда все операторы контроля успешны, тест проходит.</p>
+</ruby>
 
-<h4 id="preparing-your-application-for-testing">1. Подготовка вашего приложения для тестирования</h4>
-<p>До того, как вы сможете запустить свои тесты, следует убедиться, что структура тестовой базы данных соответствует текущей. Для этого следует использовать такую команду rake:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Только макрос +test+ делает имена тестов более читаемыми. Хотя можете использовать и обычные определения метода.
+
+NOTE: Имя метода создается, заменяя пробелы на подчеркивания. Хотя результат не должен быть валидным идентификатором Ruby, имя может содержать знаки пунктуации и т.д. Это связано с тем, что в Ruby технически любая строка может быть именем метода. Необычность заключается в вызовах +define_method+ и +send+, но формально ограничений нет.
+
+<ruby>
+assert true
+</ruby>
+
+Эта строка кода называется _оператор контроля_. Оператор контроля это строка кода, которая вычисляет объект (или выражение) для ожидаемых результатов. Например, оператор контроля может проверить:
+
+* является ли это значение = тому значению?
+* является ли этот объект nil?
+* вызывает ли эта строка кода исключение?
+* является ли пароль пользователя больше, чем 5 символов?
+
+Каждый тест содержит один или более операторов контроля. Только когда все операторы контроля успешны, тест проходит.
+
+h4. Подготовка вашего приложения для тестирования
+
+До того, как вы сможете запустить свои тесты, следует убедиться, что структура тестовой базы данных соответствует текущей. Для этого следует использовать такую команду rake:
+
+<shell>
 $ rake db:migrate
 ...
 $ rake db:test:load
-</pre></div>
-<p>Вышеупомянутая <tt>rake db:migrate</tt> запускает любые незагруженные миграции в среде <em>development</em> и обновляет <tt>db/schema.rb</tt>. <tt>rake db:test:load</tt> пересоздает тестовую базу данных из текущего db/schema.rb. В следующий раз можете сначала запускать <tt>db:test:prepare</tt>, так как она сначала проверяет незагруженные миграции и надлежаще предупреждает вас.</p>
-<div class='note'><p><tt>db:test:prepare</tt> провалится, если отсутствует db/schema.rb.</p></div>
+</shell>
 
-<h5 id="rake-tasks-for-preparing-your-application-for-testing">1.1 Задачи Rake для подготовки вашего приложения для тестирования</h5>
-<table class="inner_table">
-	<tr>
-		<th>Задачи                         </th>
-		<th>Описание</th>
-	</tr>
-	<tr>
-		<td><tt>rake db:test:clone</tt>            </td>
-		<td>Пересоздает тестовую базу данных из схемы базы данных текущей среды</td>
-	</tr>
-	<tr>
-		<td><tt>rake db:test:clone_structure</tt>  </td>
-		<td>Пересоздает тестовую базу данных из структуры development</td>
-	</tr>
-	<tr>
-		<td><tt>rake db:test:load</tt>             </td>
-		<td>Пересоздает тестовую базу данных из текущего <tt>schema.rb</tt></td>
-	</tr>
-	<tr>
-		<td><tt>rake db:test:prepare</tt>          </td>
-		<td>Проверяет незагруженные миграции и загружает тестовую схему</td>
-	</tr>
-	<tr>
-		<td><tt>rake db:test:purge</tt>            </td>
-		<td>Очищает тестовую базу данных.</td>
-	</tr>
-</table>
-<div class='info'><p>Все эти команды rake и их описание можно увидеть, запустив <tt>rake --tasks --describe</tt></p></div>
+Вышеупомянутая +rake db:migrate+ запускает любые незагруженные миграции в среде _development_ и обновляет +db/schema.rb+. +rake db:test:load+ пересоздает тестовую базу данных из текущего db/schema.rb. В следующий раз можете сначала запускать +db:test:prepare+, так как она сначала проверяет незагруженные миграции и надлежаще предупреждает вас.
 
-<h4 id="running-tests">2. Запуск тестов</h4>
-<p>Запуск теста так же прост, как вызов файла, содержащего тестовый случай, с помощью Ruby:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-$ ruby -Itest text/unit/post_test.rb
+NOTE: +db:test:prepare+ провалится, если отсутствует db/schema.rb.
+
+h5. Задачи Rake для подготовки вашего приложения для тестирования
+
+|_.Задачи                        |_.Описание|
+|+rake db:test:clone+            |Пересоздает тестовую базу данных из схемы базы данных текущей среды|
+|+rake db:test:clone_structure+  |Пересоздает тестовую базу данных из структуры development|
+|+rake db:test:load+             |Пересоздает тестовую базу данных из текущего +schema.rb+|
+|+rake db:test:prepare+          |Проверяет незагруженные миграции и загружает тестовую схему|
+|+rake db:test:purge+            |Очищает тестовую базу данных.|
+
+TIP: Все эти команды rake и их описание можно увидеть, запустив +rake --tasks --describe+
+
+h4. Запуск тестов
+
+Запуск теста так же прост, как вызов файла, содержащего тестовый случай, с помощью Ruby:
+
+<shell>
+$ ruby -Itest test/unit/post_test.rb
 
 Loaded suite unit/post_test
 Started
@@ -109,10 +117,13 @@ Started
 Finished in 0.023513 seconds.
 
 1 tests, 1 assertions, 0 failures, 0 errors
-</pre></div>
-<p>Это запустит все тестовые методы в тестовом случае. Отметьте, что <tt>test_helper.rb</tt> находится в директории <tt>test</tt>, поэтому она должна быть добавлена в путь загрузки с использованием переключателя <tt>-I</tt>.</p>
-<p>Также можете запустить определенный тестовый метод из тестового случая, используя переключатель <tt>-n</tt> с <tt>именем тестового метода</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+Это запустит все тестовые методы в тестовом случае. Отметьте, что +test_helper.rb+ находится в директории +test+, поэтому она должна быть добавлена в путь загрузки с использованием переключателя +-I+.
+
+Также можете запустить определенный тестовый метод из тестового случая, используя переключатель +-n+ с +именем тестового метода+.
+
+<shell>
 $ ruby -Itest test/unit/post_test.rb -n test_the_truth
 
 Loaded suite unit/post_test
@@ -121,17 +132,22 @@ Started
 Finished in 0.023513 seconds.
 
 1 tests, 1 assertions, 0 failures, 0 errors
-</pre></div>
-<p>Точка <tt>.</tt> обозначает прошедший тест. Когда тест проваливается, вы увидите <tt>F</tt>; когда тест вызывает ошибку, вы увидите <tt>E</tt> в этом месте. Последняя строка результата это итоги.</p>
-<p>Чтобы увидеть, как сообщается при провале, давайте добавим проваливающийся тест в тестовом случае <tt>post_test.rb</tt>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-test &quot;should not save post without title&quot; do
+</shell>
+
+Точка +.+ обозначает прошедший тест. Когда тест проваливается, вы увидите +F+; когда тест вызывает ошибку, вы увидите +E+ в этом месте. Последняя строка результата это итоги.
+
+Чтобы увидеть, как сообщается при провале, давайте добавим проваливающийся тест в тестовом случае +post_test.rb+.
+
+<ruby>
+test "should not save post without title" do
   post = Post.new
   assert !post.save
 end
-</pre></div>
-<p>Давайте запустим только что добавленный тест.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Давайте запустим только что добавленный тест.
+
+<shell>
 $ ruby unit/post_test.rb -n test_should_not_save_post_without_title
 Loaded suite -e
 Started
@@ -140,32 +156,40 @@ Finished in 0.102072 seconds.
 
   1) Failure:
 test_should_not_save_post_without_title(PostTest) [/test/unit/post_test.rb:6]:
-&lt;false&gt; is not true.
+<false> is not true.
 
 1 tests, 1 assertions, 1 failures, 0 errors
-</pre></div>
-<p>В результате <tt>F</tt> обозначает провал. Можете увидеть соответствующую трассировку под <tt>1)</tt> вместе с именем провалившегося теста. Следующие несколько строк содержат трассировку стека, затем сообщение, где упомянуто фактическое значение и ожидаемое оператором контроля значение. Сообщение оператора контроля об ошибке предоставляет достаточно информации, чтобы помочь выявить ошибку. Чтобы сделать сообщение о провале оператора контроля более читаемым, каждый оператор контроля предоставляет опциональный параметр сообщения, как показано тут:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-test &quot;should not save post without title&quot; do
+</shell>
+
+В результате +F+ обозначает провал. Можете увидеть соответствующую трассировку под +1)+ вместе с именем провалившегося теста. Следующие несколько строк содержат трассировку стека, затем сообщение, где упомянуто фактическое значение и ожидаемое оператором контроля значение. Сообщение оператора контроля об ошибке предоставляет достаточно информации, чтобы помочь выявить ошибку. Чтобы сделать сообщение о провале оператора контроля более читаемым, каждый оператор контроля предоставляет опциональный параметр сообщения, как показано тут:
+
+<ruby>
+test "should not save post without title" do
   post = Post.new
-  assert !post.save, &quot;Saved the post without a title&quot;
+  assert !post.save, "Saved the post without a title"
 end
-</pre></div>
-<p>Запуск этого теста покажет более дружелюбное контрольное сообщение:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Запуск этого теста покажет более дружелюбное контрольное сообщение:
+
+<shell>
   1) Failure:
 test_should_not_save_post_without_title(PostTest) [/test/unit/post_test.rb:6]:
 Saved the post without a title.
-&lt;false&gt; is not true.
-</pre></div>
-<p>Теперь, чтобы этот тест прошел, можно добавить валидацию на уровне модели для поля <em>title</em>.</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class Post &lt; ActiveRecord::Base
+<false> is not true.
+</shell>
+
+Теперь, чтобы этот тест прошел, можно добавить валидацию на уровне модели для поля _title_.
+
+<ruby>
+class Post < ActiveRecord::Base
   validates :title, :presence => true
 end
-</pre></div>
-<p>Теперь тест пройдет. Давайте убедимся в этом, запустив его снова:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+</ruby>
+
+Теперь тест пройдет. Давайте убедимся в этом, запустив его снова:
+
+<shell>
 $ ruby unit/post_test.rb -n test_should_not_save_post_without_title
 Loaded suite unit/post_test
 Started
@@ -173,19 +197,25 @@ Started
 Finished in 0.193608 seconds.
 
 1 tests, 1 assertions, 0 failures, 0 errors
-</pre></div>
-<p>Теперь вы увидели, что мы сначала написали тест, который не прошел для желаемой функциональности, затем мы написали некоторый код, добавляющий функциональность, и наконец мы убедились, что наш тест прошел. Этот подход к разработке программного обеспечения упоминается как <em>Разработка через тестирование, Test-Driven Development</em> (<span class="caps">TDD</span>).</p>
-<div class='info'><p>Многие разработчики на Rails практикуют <em>разработку через тестирование</em> (<span class="caps">TDD</span>). Это отличный способ создать набор тестов, который использует каждую часть вашего приложения. <span class="caps">TDD</span> выходит за рамки этого руководства, если хотите им заниматься, можете начать с <a href="http://andrzejonsoftware.blogspot.com/2007/05/15-tdd-steps-to-create-rails.html">15 <span class="caps">TDD</span> steps to create a Rails application</a>.</p></div>
-<p>Чтобы увидеть, как сообщается об ошибке, вот тест, содержащий ошибку:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-test &quot;should report error&quot; do
+</shell>
+
+Теперь вы увидели, что мы сначала написали тест, который не прошел для желаемой функциональности, затем мы написали некоторый код, добавляющий функциональность, и наконец мы убедились, что наш тест прошел. Этот подход к разработке программного обеспечения упоминается как _Разработка через тестирование, Test-Driven Development_ (TDD).
+
+TIP: Многие разработчики на Rails практикуют _разработку через тестирование_ (TDD). Это отличный способ создать набор тестов, который использует каждую часть вашего приложения. TDD выходит за рамки этого руководства, если хотите им заниматься, можете начать с "15 TDD steps to create a Rails application":http://andrzejonsoftware.blogspot.com/2007/05/15-tdd-steps-to-create-rails.html.
+
+Чтобы увидеть, как сообщается об ошибке, вот тест, содержащий ошибку:
+
+<ruby>
+test "should report error" do
   # some_undefined_variable is not defined elsewhere in the test case
   some_undefined_variable
   assert true
 end
-</code></div>
-<p>Теперь вы увидите чуть больше результата в консоли от запуска тестов:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Теперь вы увидите чуть больше результата в консоли от запуска тестов:
+
+<shell>
 $ ruby unit/post_test.rb -n test_should_report_error
 Loaded suite -e
 Started
@@ -194,144 +224,65 @@ Finished in 0.082603 seconds.
 
   1) Error:
 test_should_report_error(PostTest):
-NameError: undefined local variable or method `some_undefined_variable' for #&lt;PostTest:0x249d354&gt;
+NameError: undefined local variable or method `some_undefined_variable' for #<PostTest:0x249d354>
     /test/unit/post_test.rb:6:in `test_should_report_error'
 
 1 tests, 0 assertions, 0 failures, 1 errors
-</pre></div>
-<p>Отметьте &#8216;E&#8217; в результате. Она отмечает тест с ошибкой.</p>
-<div class='note'><p>Запуск каждого тестового метода останавливается как только случается любая ошибка или провал оператора контроля, и набор тестов продолжается со следующего метода. Все тестовые методы запускаются в алфавитном порядке.</p></div>
+</shell>
 
-<h4 id="what-to-include-in-your-unit-tests">3. Что включить в ваши юнит-тесты</h4>
-<p>В идеале хотелось бы включить тест для всего, что может возможно сломаться. Хорошая практика иметь как минимум один тест на каждую валидацию и как минимум один тест на каждый метод в модели.</p>
+Отметьте 'E' в результате. Она отмечает тест с ошибкой.
 
-<h4 id="assertions-available">4. Доступные операторы контроля</h4>
-<p>К этому моменту вы уже увидели некоторые из имеющихся операторов контроля. Операторы контроля это рабочие лошадки тестирования. Они единственные, кто фактически выполняет проверки, чтобы убедиться, что все работает как задумано.</p>
-<p>Имеется множество различных типов операторов контроля, которые вы можете использовать. Вот полный перечень операторов контроля, которые поставляются с <tt>test/unit</tt>, библиотекой тестирования, используемой Rails. Параметр <tt>[msg]</tt> это опциональное строковое сообщение, которое можно определить, чтобы сделать сообщение о провале вашего теста яснее. Он не обязательный.</p>
-<table class="inner_table">
-	<tr>
-		<th>Оператор контроля                                                       </th>
-		<th>Назначение</th>
-	</tr>
-	<tr>
-		<td><tt>assert( boolean, [msg] )</tt>                                        </td>
-		<td>Обеспечивает, что объект/выражение равен true.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_equal( obj1, obj2, [msg] )</tt>                               </td>
-		<td>Обеспечивает, что <tt>obj1 == obj2</tt> равно true.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_not_equal( obj1, obj2, [msg] )</tt>                           </td>
-		<td>Обеспечивает, что <tt>obj1 == obj2</tt> равно false.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_same( obj1, obj2, [msg] )</tt>			                       </td>
-		<td>Обеспечивает, что <tt>obj1.equal?(obj2)</tt> равно true.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_not_same( obj1, obj2, [msg] )</tt>                            </td>
-		<td>Обеспечивает, что <tt>obj1.equal?(obj2)</tt> равно false.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_nil( obj, [msg] )</tt>                                        </td>
-		<td>Обеспечивает, что <tt>obj.nil?</tt> равно true.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_not_nil( obj, [msg] )</tt>                                    </td>
-		<td>Обеспечивает, что <tt>obj.nil?</tt> равно false.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_match( regexp, string, [msg] )</tt>                           </td>
-		<td>Обеспечивает, что строка соответствует регулярному выражению.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_no_match( regexp, string, [msg] )</tt>                        </td>
-		<td>Обеспечивает, что строка не соответствует регулярному выражению.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_in_delta( expecting, actual, delta, [msg] )</tt>              </td>
-		<td>Обеспечивает, что числа <tt>expecting</tt> и <tt>actual</tt> в пределах <tt>delta</tt> друг от друга.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_throws( symbol, [msg] ) { block }</tt>                        </td>
-		<td>Обеспечивает, что данный блок возвращает symbol.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_raise( exception1, exception2, ... ) { block }</tt>          </td>
-		<td>Обеспечивает, что данный блок вызывает одно из данных исключений.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_nothing_raised( exception1, exception2, ... ) { block }</tt>  </td>
-		<td>Обеспечивает, что данный блок не вызывает одно из данных исключений.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_instance_of( class, obj, [msg] )</tt>                         </td>
-		<td>Обеспечивает, что <tt>obj</tt> типа <tt>class</tt>.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_kind_of( class, obj, [msg] )</tt>                             </td>
-		<td>Обеспечивает, что <tt>obj</tt> является или наследуется от <tt>class</tt>.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_respond_to( obj, symbol, [msg] )</tt>                         </td>
-		<td>Обеспечивает, что <tt>obj</tt> имеет метод, названный <tt>symbol</tt>.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_operator( obj1, operator, obj2, [msg] )</tt>                  </td>
-		<td>Обеспечивает, что <tt>obj1.operator(obj2)</tt> равен true.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_send( array, [msg] )</tt>                                     </td>
-		<td>Обеспечивает, что запуск метода, расположенного в  <tt>array[1]</tt> на объекте в <tt>array[0]</tt> с параметрами <tt>array[2 и выше]</tt> равен true. Этот метод странный, ага?</td>
-	</tr>
-	<tr>
-		<td><tt>flunk( [msg] )</tt>                                                  </td>
-		<td>Обеспечивает провал. Это полезно для явной отметки незаконченных пока тестов.</td>
-	</tr>
-</table>
-<p>В силу модульной природы фреймворка тестирования, возможно создать свои собственные операторы контроля. Фактически Rails так и делает. Он включает некоторые специализированные операторы контроля, чтобы сделать жизнь разработчика проще.</p>
-<div class='note'><p>Создание собственных операторов контроля это особый разговор, которого мы касаться не будем.</p></div>
+NOTE: Запуск каждого тестового метода останавливается как только случается любая ошибка или провал оператора контроля, и набор тестов продолжается со следующего метода. Все тестовые методы запускаются в алфавитном порядке.
 
-<h4 id="rails-specific-assertions">5. Специфичные операторы контроля Rails</h4>
-<p>Rails добавляет некоторые свои операторы контроля в фреймворк <tt>test/unit</tt>:</p>
-<div class='note'><p><tt>assert_valid(record)</tt> устарел. Пожалуйста, используйте вместо него <tt>assert(record.valid?)</tt>.</p></div>
-<table class="inner_table">
-	<tr>
-		<th>Оператор контроля                                                                        </th>
-		<th>Назначение</th>
-	</tr>
-	<tr>
-		<td><tt>assert_valid(record)</tt>                                                             </td>
-		<td>Обеспечивает, что переданная запись валидна по стандартам Active Record, и возвращает сообщение об ошибке, если нет.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_difference(expressions, difference = 1, message = nil) {...}</tt>           </td>
-		<td>Тестирует числовую разницу между возвращаемым значением expression и результатом вычисления в данном блоке.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_no_difference(expressions, message = nil, &block)</tt>                         </td>
-		<td>Обеспечивает, что числовой результат вычисления expression не изменяется до и после применения переданного в блоке.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_recognizes(expected_options, path, extras={}, message=nil)</tt>                </td>
-		<td>Обеспечивает, что роутинг данного path был правильно обработан, и что проанализированные опции (заданные в хэше expected_options) соответствуют path. По существу он утверждает, что Rails распознает маршрут, заданный в expected_options.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)</tt>  </td>
-		<td>Утверждает, что предоставленные options могут быть использованы для создания предоставленного пути. Это противоположность assert_recognizes. Параметр extras используется, чтобы сообщить запросу имена и значения дополнительных параметров запроса, которые могут быть в строке запроса. Параметр message позволяет определить свое сообщение об ошибке при провале оператора контроля.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_response(type, message = nil)</tt>                                             </td>
-		<td>Утверждает, что отклик идет с определенным кодом статуса. Можете определить <tt>:success</tt> для обозначения 200,  <tt>:redirect</tt> для обозначения 300-399, <tt>:missing</tt> для обозначения 404, или <tt>:error</tt> для соответствия диапазону 500-599</td>
-	</tr>
-	<tr>
-		<td><tt>assert_redirected_to(options = {}, message=nil)</tt>                                  </td>
-		<td>Утверждает, что опции перенаправления передаются в соответствии с вызовами перенаправления в последнем экшне. Это соответствие может быть частичным, так <tt>assert_redirected_to(:controller => "weblog")</tt> будет также соответствовать перенаправлению <tt>redirect_to(:controller => "weblog", :action => "show")</tt> и тому подобное.</td>
-	</tr>
-	<tr>
-		<td><tt>assert_template(expected = nil, message=nil)</tt>                                     </td>
-		<td>Утверждает, что запрос был ренедерен с подходящим файлом шаблона.</td>
-	</tr>
-</table>
-<p>Вы увидите использование некоторых из этих операторов контроля в следующей части.</p>
+h4. Что включить в ваши юнит-тесты
+
+В идеале хотелось бы включить тест для всего, что может возможно сломаться. Хорошая практика иметь как минимум один тест на каждую валидацию и как минимум один тест на каждый метод в модели.
+
+h4. Доступные операторы контроля
+
+К этому моменту вы уже увидели некоторые из имеющихся операторов контроля. Операторы контроля это рабочие лошадки тестирования. Они единственные, кто фактически выполняет проверки, чтобы убедиться, что все работает как задумано.
+
+Имеется множество различных типов операторов контроля, которые вы можете использовать. Вот полный перечень операторов контроля, которые поставляются с +test/unit+, библиотекой тестирования, используемой Rails. Параметр +[msg]+ это опциональное строковое сообщение, которое можно определить, чтобы сделать сообщение о провале вашего теста яснее. Он не обязательный.
+
+|_.Оператор контроля                                               |_.Назначение|
+|+assert( boolean, [msg] )+                                        |Обеспечивает, что объект/выражение равен true.|
+|+assert_equal( obj1, obj2, [msg] )+                               |Обеспечивает, что +obj1 == obj2+ равно true.|
+|+assert_not_equal( obj1, obj2, [msg] )+                           |Обеспечивает, что +obj1 == obj2+ равно false.|
+|+assert_same( obj1, obj2, [msg] )+                                |Обеспечивает, что +obj1.equal?(obj2)+ равно true.|
+|+assert_not_same( obj1, obj2, [msg] )+                            |Обеспечивает, что +obj1.equal?(obj2)+ равно false.|
+|+assert_nil( obj, [msg] )+                                        |Обеспечивает, что +obj.nil?+ равно true.|
+|+assert_not_nil( obj, [msg] )+                                    |Обеспечивает, что +obj.nil?+ равно false.|
+|+assert_match( regexp, string, [msg] )+                           |Обеспечивает, что строка соответствует регулярному выражению.|
+|+assert_no_match( regexp, string, [msg] )+                        |Обеспечивает, что строка не соответствует регулярному выражению.|
+|+assert_in_delta( expecting, actual, delta, [msg] )+              |Обеспечивает, что числа +expecting+ и +actual+ в пределах +delta+ друг от друга.|
+|+assert_throws( symbol, [msg] ) { block }+                        |Обеспечивает, что данный блок возвращает symbol.|
+|+assert_raise( exception1, exception2, ... ) { block }+           |Обеспечивает, что данный блок вызывает одно из данных исключений.|
+|+assert_nothing_raised( exception1, exception2, ... ) { block }+  |Обеспечивает, что данный блок не вызывает одно из данных исключений.|
+|+assert_instance_of( class, obj, [msg] )+                         |Обеспечивает, что +obj+ типа +class+.|
+|+assert_kind_of( class, obj, [msg] )+                             |Обеспечивает, что +obj+ является или наследуется от +class+.|
+|+assert_respond_to( obj, symbol, [msg] )+                         |Обеспечивает, что +obj+ имеет метод, названный +symbol+.|
+|+assert_operator( obj1, operator, obj2, [msg] )+                  |Обеспечивает, что +obj1.operator(obj2)+ равен true.|
+|+assert_send( array, [msg] )+                                     |Обеспечивает, что запуск метода, расположенного в +array[1]+ на объекте в +array[0]+ с параметрами +array[2 и выше]+ равен true. Этот метод странный, ага?|
+|+flunk( [msg] )+                                                  |Обеспечивает провал. Это полезно для явной отметки незаконченных пока тестов.|
+
+В силу модульной природы фреймворка тестирования, возможно создать свои собственные операторы контроля. Фактически Rails так и делает. Он включает некоторые специализированные операторы контроля, чтобы сделать жизнь разработчика проще.
+
+NOTE: Создание собственных операторов контроля это особый разговор, которого мы касаться не будем.
+
+h4. Специфичные операторы контроля Rails
+
+Rails добавляет некоторые свои операторы контроля в фреймворк +test/unit+:
+
+NOTE: +assert_valid(record)+ устарел. Пожалуйста, используйте вместо него +assert(record.valid?)+.
+
+|_.Оператор контроля                                                                |_.Назначение|
+|+assert_valid(record)+                                                             |Обеспечивает, что переданная запись валидна по стандартам Active Record, и возвращает сообщение об ошибке, если нет.|
+|+assert_difference(expressions, difference = 1, message = nil) {...}+              |Тестирует числовую разницу между возвращаемым значением expression и результатом вычисления в данном блоке.|
+|+assert_no_difference(expressions, message = nil, &amp;block)+                     |Обеспечивает, что числовой результат вычисления expression не изменяется до и после применения переданного в блоке.|
+|+assert_recognizes(expected_options, path, extras={}, message=nil)+                |Обеспечивает, что роутинг данного path был правильно обработан, и что проанализированные опции (заданные в хэше expected_options) соответствуют path. По существу он утверждает, что Rails распознает маршрут, заданный в expected_options.|
+|+assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)+  |Утверждает, что предоставленные options могут быть использованы для создания предоставленного пути. Это противоположность assert_recognizes. Параметр extras используется, чтобы сообщить запросу имена и значения дополнительных параметров запроса, которые могут быть в строке запроса. Параметр message позволяет определить свое сообщение об ошибке при провале оператора контроля.|
+|+assert_response(type, message = nil)+                                             |Утверждает, что отклик идет с определенным кодом статуса. Можете определить +:success+ для обозначения 200, +:redirect+ для обозначения 300-399, +:missing+ для обозначения 404, или +:error+ для соответствия диапазону 500-599|
+|+assert_redirected_to(options = {}, message=nil)+                                  |Утверждает, что опции перенаправления передаются в соответствии с вызовами перенаправления в последнем экшне. Это соответствие может быть частичным, так +assert_redirected_to(:controller => "weblog")+ будет также соответствовать перенаправлению +redirect_to(:controller => "weblog", :action => "show")+ и тому подобное.|
+|+assert_template(expected = nil, message=nil)+                                     |Утверждает, что запрос был ренедерен с подходящим файлом шаблона.|
+
+Вы увидите использование некоторых из этих операторов контроля в следующей части.
