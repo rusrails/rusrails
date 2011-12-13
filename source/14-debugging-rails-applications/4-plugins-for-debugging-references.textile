@@ -1,26 +1,25 @@
 h1. Плагины для отладки и полезные ссылки
 
-<h3>Плагины для отладки</h3>
-<p>Имеются некоторые плагины Rails, помогающие в поиске ошибок и отладке вашего приложения. Вот список полезных плагинов для отладки:</p>
-<ul>
-<li><a href="https://github.com/josevalim/rails-footnotes">Footnotes</a>: У каждой страницы Rails есть сноска, дающая информацию о запросе и ссылку на исходный код через TextMate.</li>
-<li><a href="https://github.com/ntalbott/query_trace/tree/master">Query Trace</a>: Добавляет трассировку запросов в ваши логи.</li>
-<li><a href="https://github.com/dan-manges/query_stats/tree/master">Query Stats</a>: Плагин Rails для отслеживания запросов в базу данных.</li>
-<li><a href="http://code.google.com/p/query-reviewer/">Query Reviewer</a>: Этот плагин rails не только запускает "EXPLAIN" перед каждым из ваших запросов select в development, но и представляет небольшой DIV в отрендеренном результате каждой страницы со сводкой предупреждений по каждому проанализированному запросу.</li>
-<li><a href="https://github.com/smartinez87/exception_notification/tree/master">Exception Notifier</a>: Предоставляет объект рассыльщика и набор шаблонов по умолчанию для отправки уведомлений по email, когда происходят ошибки в приложении на Rails.</li>
-<li><a href="https://github.com/defunkt/exception_logger/tree/master">Exception Logger</a>: Логирует исключения Rails в базе данных и предоставляет красивый веб-интерфейс для управления ими.</li>
-</ul>
+h3. Плагины для отладки
 
-<h3>Ссылки</h3>
-<ul>
-<li><a href="http://www.datanoise.com/ruby-debug">Домашняя страница ruby-debug</a></li>
-<li><a href="http://www.sitepoint.com/article/debug-rails-app-ruby-debug/">Статья: Debugging a Rails application with ruby-debug</a></li>
-<li><a href="http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/">Скринкаст ruby-debug Basics</a></li>
-<li><a href="http://railscasts.com/episodes/54-debugging-with-ruby-debug">Скринкаст Ryan Bate's ruby-debug</a></li>
-<li><a href="http://railscasts.com/episodes/24-the-stack-trace">Скринкаст Ryan Bate's stack trace</a></li>
-<li><a href="http://railscasts.com/episodes/56-the-logger">Скринкаст Ryan Bate's logger</a></li>
-<li><a href="http://bashdb.sourceforge.net/ruby-debug.html">Debugging with ruby-debug</a></li>
-<li><a href="http://cheat.errtheblog.com/s/rdebug/">ruby-debug cheat sheet</a></li>
-<li><a href="http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging">Вики Ruby on Rails: How to Configure Logging</a></li>
-<li><a href="http://blog.evanweaver.com/files/doc/fauna/bleak_house/files/README.html">Документация по Bleak House</a></li>
-</ul>
+Имеются некоторые плагины Rails, помогающие в поиске ошибок и отладке вашего приложения. Вот список полезных плагинов для отладки:
+
+* "Footnotes":https://github.com/josevalim/rails-footnotes: У каждой страницы Rails есть сноска, дающая информацию о запросе и ссылку на исходный код через TextMate.
+* "Query Trace":https://github.com/ntalbott/query_trace/tree/master: Добавляет трассировку запросов в ваши логи.
+* "Query Stats":https://github.com/dan-manges/query_stats/tree/master: Плагин Rails для отслеживания запросов в базу данных.
+* "Query Reviewer":http://code.google.com/p/query-reviewer/: Этот плагин rails не только запускает "EXPLAIN" перед каждым из ваших запросов select в development, но и представляет небольшой DIV в отрендеренном результате каждой страницы со сводкой предупреждений по каждому проанализированному запросу.
+* "Exception Notifier":https://github.com/smartinez87/exception_notification/tree/master: Предоставляет объект рассыльщика и набор шаблонов по умолчанию для отправки уведомлений по email, когда происходят ошибки в приложении в Rails.
+* "Exception Logger":https://github.com/defunkt/exception_logger/tree/master: Логирует исключения Rails в базе данных и предоставляет красивый веб-интерфейс для управления ими.
+
+h3. Ссылки
+
+* "Домашняя страница ruby-debug":http://www.datanoise.com/ruby-debug
+* "Статья: Debugging a Rails application with ruby-debug":http://www.sitepoint.com/article/debug-rails-app-ruby-debug/
+* "Скринкаст ruby-debug Basics":http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/
+* "Скринкаст Ryan Bate's ruby-debug":http://railscasts.com/episodes/54-debugging-with-ruby-debug
+* "Скринкаст Ryan Bate's stack trace":http://railscasts.com/episodes/24-the-stack-trace
+* "Скринкаст Ryan Bate's logger":http://railscasts.com/episodes/56-the-logger
+* "Debugging with ruby-debug":http://bashdb.sourceforge.net/ruby-debug.html
+* "ruby-debug cheat sheet":http://cheat.errtheblog.com/s/rdebug/
+* "Вики Ruby on Rails: How to Configure Logging":http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging
+* "Документация по Bleak House":http://blog.evanweaver.com/files/doc/fauna/bleak_house/files/README.html

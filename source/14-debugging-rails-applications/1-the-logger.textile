@@ -1,76 +1,94 @@
 h1. Логгер
 
-<p>Также может быть полезным сохранять информацию в файл лога в процессе выполнения. Rails поддерживает отдельный файл лога для каждой среды запуска.</p>
+Также может быть полезным сохранять информацию в файл лога в процессе выполнения. Rails поддерживает отдельный файл лога для каждой среды запуска.
 
-<h4 id="what-is-the-logger">1. Что такое Логгер?</h4>
-<p>Rails использует стандартный <tt>logger</tt> Ruby для записи информации в лог. Вы также можете заменить его другим логгером, таким как <tt>Log4R</tt>, если хотите.</p>
-<p>Альтернативный логгер можно определить в Вашем <tt>environment.rb</tt> или любом файле среды:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-ActiveRecord::Base.logger = Logger.new(STDOUT)
-ActiveRecord::Base.logger = Log4r::Logger.new(&quot;Application Log&quot;)
-</pre></div>
-<p>Или в разделе <tt>Initializer</tt> добавьте <em>одно из</em> следующего</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+h4. Что такое Логгер?
+
+Rails использует стандартный +logger+ Ruby для записи информации в лог. Вы также можете заменить его другим логгером, таким как +Log4R+, если хотите.
+
+Альтернативный логгер можно определить в вашем +environment.rb+ или любом файле среды:
+
+<ruby>
+Rails.logger = Logger.new(STDOUT)
+Rails.logger = Log4r::Logger.new("Application Log")
+</ruby>
+
+Или в разделе +Initializer+ добавьте _одно из_ следующего
+
+<ruby>
 config.logger = Logger.new(STDOUT)
-config.logger = Log4r::Logger.new(&quot;Application Log&quot;)
-</pre></div>
-<div class='info'><p>По умолчанию каждый лог создается в <tt>RAILS_ROOT/log/</tt> с именем файла лога <tt>environment_name.log</tt>.</p></div>
+config.logger = Log4r::Logger.new("Application Log")
+</ruby>
 
-<h4 id="log-levels">2. Уровни лога</h4>
-<p>Когда что-то логируется, оно записывается в соответствующий лог, если уровень лога сообщения равен или выше чем настроенный уровень лога. Если хотите узнать текущий уровень лога, вызовите метод <tt>ActiveRecord::Base.logger.level</tt>.</p>
-<p>Доступные уровни лога следующие: <tt>:debug</tt>, <tt>:info</tt>, <tt>:warn</tt>, <tt>:error</tt> и <tt>:fatal</tt>, соответствующие номерам уровня лога от 0 до 4 соответственно. Чтобы изменить уровень лога по умолчанию, используйте</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
+TIP: По умолчанию каждый лог создается в +RAILS_ROOT/log/+ с именем файла лога +environment_name.log+.
+
+h4. Уровни лога
+
+Когда что-то логируется, оно записывается в соответствующий лог, если уровень лога сообщения равен или выше чем настроенный уровень лога. Если хотите узнать текущий уровень лога, вызовите метод +ActiveRecord::Base.logger.level+.
+
+Доступные уровни лога следующие: +:debug+, +:info+, +:warn+, +:error+ и +:fatal+, соответствующие номерам уровня лога от 0 до 4 соответственно. Чтобы изменить уровень лога по умолчанию, используйте
+
+<ruby>
 config.log_level = :warn # В любом инициализаторе среды, или
 ActiveRecord::Base.logger.level = 0 # в любое время
-</pre></div>
-<p>Это полезно, когда вы хотите логировать при разработке или установке, но не хотите замусорить рабочий лог ненужной информацией.</p>
-<div class='info'><p>Уровень лога Rails по умолчанию это <tt>info</tt> в рабочем режиме и <tt>debug</tt> в режиме разработки и тестирования.</p></div>
+</ruby>
 
-<h4 id="sending-messages">3. Отправка сообщений</h4>
-<p>Чтобы писать в текущий лог, используйте метод <tt>logger.(debug|info|warn|error|fatal)</tt> внутри контроллера, модели или рассыльщика:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-logger.debug &quot;Person attributes hash: #{@person.attributes.inspect}&quot;
-logger.info &quot;Processing the request...&quot;
-logger.fatal &quot;Terminating application, raised unrecoverable error!!!&quot;
-</pre></div>
-<p>Вот пример метода, оборудованного дополнительным логированием:</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class PostsController &lt; ApplicationController
+Это полезно, когда вы хотите логировать при разработке или установке, но не хотите замусорить рабочий лог ненужной информацией.
+
+TIP: Уровень лога Rails по умолчанию это +info+ в рабочем режиме и +debug+ в режиме разработки и тестирования.
+
+h4. Отправка сообщений
+
+Чтобы писать в текущий лог, используйте метод +logger.(debug|info|warn|error|fatal)+ внутри контроллера, модели или рассыльщика:
+
+<ruby>
+logger.debug "Person attributes hash: #{@person.attributes.inspect}"
+logger.info "Processing the request..."
+logger.fatal "Terminating application, raised unrecoverable error!!!"
+</ruby>
+
+Вот пример метода, оборудованного дополнительным логированием:
+
+<ruby>
+class PostsController < ApplicationController
   # ...
 
   def create
     @post = Post.new(params[:post])
-    logger.debug &quot;New post: #{@post.attributes.inspect}&quot;
-    logger.debug &quot;Post should be valid: #{@post.valid?}&quot;
+    logger.debug "New post: #{@post.attributes.inspect}"
+    logger.debug "Post should be valid: #{@post.valid?}"
 
     if @post.save
       flash[:notice] = 'Post was successfully created.'
-      logger.debug &quot;The post was saved and now is the user is going to be redirected...&quot;
+      logger.debug "The post was saved and now the user is going to be redirected..."
       redirect_to(@post)
     else
-      render :action =&gt; &quot;new&quot;
+      render :action => "new"
     end
   end
 
   # ...
 end
-</pre></div>
-<p>Вот пример лога, созданного этим методом:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Вот пример лога, созданного этим методом:
+
+<shell>
 Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
   Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
 vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
-  Parameters: {&quot;commit&quot;=&gt;&quot;Create&quot;, &quot;post&quot;=&gt;{&quot;title&quot;=&gt;&quot;Debugging Rails&quot;,
- &quot;body&quot;=&gt;&quot;I'm learning how to print in logs!!!&quot;, &quot;published&quot;=&gt;&quot;0&quot;},
- &quot;authenticity_token&quot;=&gt;&quot;2059c1286e93402e389127b1153204e0d1e275dd&quot;, &quot;action&quot;=&gt;&quot;create&quot;, &quot;controller&quot;=&gt;&quot;posts&quot;}
-New post: {&quot;updated_at&quot;=&gt;nil, &quot;title&quot;=&gt;&quot;Debugging Rails&quot;, &quot;body&quot;=&gt;&quot;I'm learning how to print in logs!!!&quot;,
- &quot;published&quot;=&gt;false, &quot;created_at&quot;=&gt;nil}
+  Parameters: {"commit"=>"Create", "post"=>{"title"=>"Debugging Rails",
+ "body"=>"I'm learning how to print in logs!!!", "published"=>"0"},
+ "authenticity_token"=>"2059c1286e93402e389127b1153204e0d1e275dd", "action"=>"create", "controller"=>"posts"}
+New post: {"updated_at"=>nil, "title"=>"Debugging Rails", "body"=>"I'm learning how to print in logs!!!",
+ "published"=>false, "created_at"=>nil}
 Post should be valid: true
-  Post Create (0.000443)   INSERT INTO &quot;posts&quot; (&quot;updated_at&quot;, &quot;title&quot;, &quot;body&quot;, &quot;published&quot;,
- &quot;created_at&quot;) VALUES('2008-09-08 14:52:54', 'Debugging Rails',
+  Post Create (0.000443)   INSERT INTO "posts" ("updated_at", "title", "body", "published",
+ "created_at") VALUES('2008-09-08 14:52:54', 'Debugging Rails',
  'I''m learning how to print in logs!!!', 'f', '2008-09-08 14:52:54')
-The post was saved and now is the user is going to be redirected...
-Redirected to #&lt;Post:0x20af760&gt;
+The post was saved and now the user is going to be redirected...
+Redirected to #<Post:0x20af760>
 Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
-</pre></div>
-<p>Добавление дополнительного логирования, подобного этому, облегчает поиск неожиданного или необычного поведения в ваших логах. Если добавляете дополнительное логирование, убедитесь в разумном использовании уровней лога, для избежания заполнения ваших рабочих логов ненужными мелочами.</p>
+</shell>
+
+Добавление дополнительного логирования, подобного этому, облегчает поиск неожиданного или необычного поведения в ваших логах. Если добавляете дополнительное логирование, убедитесь в разумном использовании уровней лога, для избежания заполнения ваших рабочих логов ненужными мелочами.
