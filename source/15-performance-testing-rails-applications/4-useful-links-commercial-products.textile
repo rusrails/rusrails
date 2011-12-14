@@ -1,32 +1,30 @@
 h1. Полезные ссылки и коммерческие продукты
 
-<h3 id="useful-links">Полезные ссылки</h3>
+h3. Полезные ссылки
 
-<h4 id="rails-plugins-and-gems">1. Плагины и гемы Rails</h4>
-<ul>
-	<li><a href="http://rails-analyzer.rubyforge.org">Rails Analyzer</a></li>
-	<li><a href="http://www.flyingmachinestudios.com/programming/announcing-palmist">Palmist</a></li>
-	<li><a href="https://github.com/josevalim/rails-footnotes/tree/master">Rails Footnotes</a></li>
-	<li><a href="https://github.com/dsboulder/query_reviewer/tree/master">Query Reviewer</a></li>
-</ul>
+h4. Плагины и гемы Rails
 
-<h4 id="generic-tools">2. Инструменты</h4>
-<ul>
-	<li><a href="http://www.hpl.hp.com/research/linux/httperf/">httperf</a></li>
-	<li><a href="http://httpd.apache.org/docs/2.2/programs/ab.html">ab</a></li>
-	<li><a href="http://jakarta.apache.org/jmeter/">JMeter</a></li>
-	<li><a href="http://kcachegrind.sourceforge.net/html/Home.html">kcachegrind</a></li>
-</ul>
+* "Rails Analyzer":http://rails-analyzer.rubyforge.org
+* "Palmist":http://www.flyingmachinestudios.com/programming/announcing-palmist
+* "Rails Footnotes":https://github.com/josevalim/rails-footnotes/tree/master
+* "Query Reviewer":https://github.com/dsboulder/query_reviewer/tree/master
 
-<h4 id="tutorials-and-documentation">3. Самоучители и документация</h4>
-<ul>
-	<li><a href="http://ruby-prof.rubyforge.org">ruby-prof <span class="caps">API</span> Documentation</a></li>
-	<li><a href="http://railscasts.com/episodes/98-request-profiling">Request Profiling Railscast</a> &#8211; Устарело, но полезно для понимания графов</li>
-</ul>
+h4. Инструменты
 
-<h3 id="commercial-products">Коммерческие продукты</h3>
-<p>Rails повезло, что есть компании, предоставляющие инструменты измерения производительности Rails. Вот некоторые из них:</p>
-<ul>
-	<li><a href="http://www.newrelic.com">New Relic</a></li>
-	<li><a href="http://scoutapp.com">Scout</a></li>
-</ul>
+* "httperf":http://www.hpl.hp.com/research/linux/httperf/
+* "ab":http://httpd.apache.org/docs/2.2/programs/ab.html
+* "JMeter":http://jakarta.apache.org/jmeter/
+* "kcachegrind":http://kcachegrind.sourceforge.net/html/Home.html
+
+h4. Самоучители и документация
+
+* "ruby-prof API Documentation":http://ruby-prof.rubyforge.org
+* "Request Profiling Railscast":http://railscasts.com/episodes/98-request-profiling - Устарело, но полезно для понимания графов
+
+
+h3. Коммерческие продукты
+
+Rails повезло, что есть компании, предоставляющие инструменты измерения производительности Rails. Вот некоторые из них:
+
+* "New Relic":http://www.newrelic.com
+* "Scout":http://scoutapp.com
