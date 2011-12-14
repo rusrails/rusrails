@@ -3,14 +3,15 @@ Rusrails::Application.routes.draw do
     get '/users/auth/:provider' => 'omniauth_callbacks#passthru'
   end
 
-  devise_for :admins, :controllers => {:registrations => "admin/registrations" }
+  devise_for :admins, :controllers => {:registrations => "admins/registrations" }
 
   namespace "admin" do
-    resources :categories, :except => :show
-    resources :pages, :except => :show
-    resources :discussions, :except => [:new, :create, :show]
-    resources :says, :except => [:new, :create, :show]
-    root :to => "says#index"
+    resources :categories
+    resources :pages
+    resources :users
+    resources :discussions
+    resources :says
+    root :to => "dashboard#index"
   end
 
   resources :discussions, :only => [:index, :show, :new, :create] do

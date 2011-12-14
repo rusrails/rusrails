@@ -1,3 +1,12 @@
+GIT
+  remote: git://github.com/puffer/puffer.git
+  revision: 981d9c22b5ea4f8787f40b8bc859d110b8ff689b
+  specs:
+    puffer (0.1.0)
+      kaminari
+      orm_adapter
+      rails (~> 3.1.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -96,6 +105,8 @@ GEM
       thor (~> 0.14)
     json (1.6.1)
     json_pure (1.6.1)
+    kaminari (0.12.4)
+      rails (>= 3.0.0)
     kgio (2.6.0)
     libv8 (3.3.10.4)
     mail (2.3.0)
@@ -235,6 +246,7 @@ DEPENDENCIES
   mysql2
   nokogiri
   oa-oauth
+  puffer!
   rails (= 3.1.2)
   rails_config
   rspec-rails

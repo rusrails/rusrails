@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.1.2'
-#gem 'rack', '1.2.3' # quick fix for locum
+gem 'puffer', :git => 'git://github.com/puffer/puffer.git'
+
 gem 'mysql2'
 gem 'thinking-sphinx'
 gem 'devise', '= 1.4.9'     # Something broken in 1.5.0, wait for next

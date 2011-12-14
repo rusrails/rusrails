@@ -13,4 +13,8 @@ class Admin < ActiveRecord::Base
   def name
     "Admin"
   end
+
+  def has_role?(role)
+    true
+  end
 end

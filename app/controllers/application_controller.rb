@@ -17,8 +17,8 @@ protected
     redirect_to new_user_session_path unless current_author
   end
 
-  def method_missing method_name, *args
-    render_404
+  def current_puffer_user
+    current_admin
   end
 
   def render_404
