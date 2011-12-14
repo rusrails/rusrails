@@ -1,8 +1,10 @@
 h1. Rake
 
-<p>Rake означает Ruby Make, отдельная утилита Ruby, заменяющая утилиту Unix &#8216;make&#8217;, и использующая файлы &#8216;Rakefile&#8217; и <tt>.rake</tt> для построения списка задач. В Rails Rake используется для обычных административных задач, особенно таких, которые зависят друг от друга.</p>
-<p>Можно получить список доступных задач Rake, который часто зависит от вашей текущей директории, написав <tt>rake --tasks</tt>. У кажой задачи есть описание, помогающее найти то, что вам необходимо.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Rake означает Ruby Make, отдельная утилита Ruby, заменяющая утилиту Unix "make", и использующая файлы "Rakefile" и +.rake+ для построения списка задач. В Rails Rake используется для обычных административных задач, особенно таких, которые зависят друг от друга.
+
+Можно получить список доступных задач Rake, который часто зависит от вашей текущей директории, написав +rake --tasks+. У кажой задачи есть описание, помогающее найти то, что вам необходимо.
+
+<shell>
 $ rake --tasks
 (in /home/foobar/commandsapp)
 rake db:abort_if_pending_migrations       # Raises an error if there are pending migrations
@@ -14,11 +16,13 @@ rake db:create                            # Create the database defined in confi
 rake tmp:pids:clear                       # Clears all files in tmp/pids
 rake tmp:sessions:clear                   # Clears all files in tmp/sessions
 rake tmp:sockets:clear                    # Clears all files in tmp/sockets
-</pre></div>
+</shell>
 
-<h4 id="about">1. <tt>about</tt></h4>
-<p><tt>rake about</tt> предоставляет информацию о номерах версий Ruby, RubyGems, Rails, подкомпонентов Rails, папке вашего приложения, имени текущей среды Rails, адаптере базы данных вашего приложения и версии схемы. Это полезно, когда нужно попросить помощь, проверить патч безопасности, который может повлиять на вас, или просто хотите узнать статистику о текущей инсталляции Rails.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+h4. +about+
+
+<tt>rake about</tt> предоставляет информацию о номерах версий Ruby, RubyGems, Rails, подкомпонентов Rails, папке вашего приложения, имени текущей среды Rails, адаптере базы данных вашего приложения и версии схемы. Это полезно, когда нужно попросить помощь, проверить патч безопасности, который может повлиять на вас, или просто хотите узнать статистику о текущей инсталляции Rails.
+
+<shell>
 $ rake about
 About your application's environment
 Ruby version              1.8.7 (x86_64-linux)
@@ -30,33 +34,36 @@ Action Pack version       3.1.0
 Active Resource version   3.1.0
 Action Mailer version     3.1.0
 Active Support version    3.1.0
-Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::RemoteIp, ActionDispatch::Callbacks, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::MethodOverride, ActionDispatch::Head
+Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::RemoteIp, Rack::Sendfile, ActionDispatch::Callbacks, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::MethodOverride, ActionDispatch::Head
 Application root          /home/foobar/commandsapp
 Environment               development
-Database adapter          sqlite3
-Database schema version   20110805173523
-</pre></div>
+</shell>
 
-<h4 id="assets">2. <tt>assets</tt></h4>
-<p>Можно предварительно компилировать ресурсы (ассеты) в <tt>app/assets</tt>, используя <tt>rake assets:precompile</tt>, и удалять эти скомпилированные ресурсы, используя <tt>rake assets:clean</tt>.</p>
+h4. +assets+
 
-<h4 id="db">3. <tt>db</tt></h4>
-<p>Самыми распространенными задачами пространства имен Rake <tt>db:</tt> являются <tt>migrate</tt> и <tt>create</tt>, но следует попробовать и остальные миграционные задачи rake (<tt>up</tt>, <tt>down</tt>, <tt>redo</tt>, <tt>reset</tt>). <tt>rake db:version</tt> полезна для решения проблем, показывая текущую версию базы данных.</p>
-<p>Более подробно о миграциях написано в руководстве <a href="/rails-database-migrations">Миграции</a>.</p>
+Можно предварительно компилировать ресурсы (ассеты) в +app/assets+, используя +rake assets:precompile+, и удалять эти скомпилированные ресурсы, используя +rake assets:clean+.
 
-<h4 id="doc">4. <tt>doc</tt></h4>
-<p>В пространстве имен <tt>doc:</tt> имеются инструменты для создания документации для вашего приложения, документации <span class="caps">API</span>, руководств. Документация также может вырезаться, что полезно для сокращения вашего кода, если вы пишите приложения Rails для встраимовой платформы.</p>
-<ul>
-	<li><tt>rake doc:app</tt> создает документацию для вашего приложения в <tt>doc/app</tt>.</li>
-	<li><tt>rake doc:guides</tt> создает руководства Rails в <tt>doc/guides</tt>.</li>
-	<li><tt>rake doc:rails</tt> создает документацию по <span class="caps">API</span> Rails в <tt>doc/api</tt>.</li>
-	<li><tt>rake doc:plugins</tt> создает документацию <span class="caps">API</span> для всех установленных в приложении плагинов в <tt>doc/plugins</tt>.</li>
-	<li><tt>rake doc:clobber_plugins</tt> убирает документаци, созданную для всех плагинов.</li>
-</ul>
+h4. +db+
 
-<h4 id="notes">5. <tt>notes</tt></h4>
-<p><tt>rake notes</tt> ищет в вашем коде комментарии, начинающиеся с <span class="caps">FIXME</span>, <span class="caps">OPTIMIZE</span> или <span class="caps">TODO</span>. Поиск выполняется только в файлах с разрешениями <tt>.builder</tt>, <tt>.rb</tt>, <tt>.rxml</tt>, <tt>.rhtml</tt> и <tt>.erb</tt> для аннотаций как по умолчанию, так и произвольных.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Самыми распространенными задачами пространства имен Rake +db:+ являются +migrate+ и +create+, но следует попробовать и остальные миграционные задачи rake (+up+, +down+, +redo+, +reset+). +rake db:version+ полезна для решения проблем, показывая текущую версию базы данных.
+
+Более подробно о миграциях написано в руководстве "Миграции":/rails-database-migrations.
+
+h4. +doc+
+
+В пространстве имен +doc:+ имеются инструменты для создания документации для вашего приложения, документации API, руководств. Документация также может вырезаться, что полезно для сокращения вашего кода, если вы пишите приложения Rails для встраимовой платформы.
+
+* +rake doc:app+ создает документацию для вашего приложения в +doc/app+.
+* +rake doc:guides+ создает руководства Rails в +doc/guides+.
+* +rake doc:rails+ создает документацию по API Rails в +doc/api+.
+* +rake doc:plugins+ создает документацию API для всех установленных в приложении плагинов в +doc/plugins+.
+* +rake doc:clobber_plugins+ убирает документаци, созданную для всех плагинов.
+
+h4. +notes+
+
++rake notes+ ищет в вашем коде комментарии, начинающиеся с FIXME, OPTIMIZE или TODO. Поиск выполняется только в файлах с разрешениями +.builder+, +.rb+, +.rxml+, +.rhtml+ и +.erb+ для аннотаций как по умолчанию, так и произвольных.
+
+<shell>
 $ rake notes
 (in /home/foobar/commandsapp)
 app/controllers/admin/users_controller.rb:
@@ -66,9 +73,11 @@ app/controllers/admin/users_controller.rb:
 app/model/school.rb:
   * [ 13] [OPTIMIZE] refactor this code to make it faster
   * [ 17] [FIXME]
-</pre></div>
-<p>Если ищете определенную аннотацию, скажем <span class="caps">FIXME</span>, используйте <tt>rake notes:fixme</tt>. Отметьте, что имя аннотации использовано в нижнем регистре.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+Если ищете определенную аннотацию, скажем FIXME, используйте +rake notes:fixme+. Отметьте, что имя аннотации использовано в нижнем регистре.
+
+<shell>
 $ rake notes:fixme
 (in /home/foobar/commandsapp)
 app/controllers/admin/users_controller.rb:
@@ -76,37 +85,42 @@ app/controllers/admin/users_controller.rb:
 
 app/model/school.rb:
   * [ 17]
-</pre></div>
+</shell>
 
-<p>Также можно использовать произвольные аннотации в своем коде и выводить их, используя <tt>rake notes:custom</tt>, определив аннотацию, используя переменную среды <tt>ANNOTATION</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Также можно использовать произвольные аннотации в своем коде и выводить их, используя +rake notes:custom+, определив аннотацию, используя переменную среды +ANNOTATION+.
+
+<shell>
 $ rake notes:custom ANNOTATION=BUG
 (in /home/foobar/commandsapp)
 app/model/post.rb:
   * [ 23] Have to fix this one before pushing!
-</pre></div>
-<div class='note'><p>При использовании определенных и произвольных аннотаций, имя аннотации (<span class="caps">FIXME</span>, <span class="caps">BUG</span> и т.д.) не отображается в строках результата.</p></div>
+</shell>
 
-<h4 id="routes">6. <tt>routes</tt></h4>
-<p><tt>rake routes</tt> отобразит список всех определенных маршрутов, что полезно для отслеживания проблем с роутингом в вашем приложении, или предоставления хорошего обзора URL приложения, с которым вы пытаетесь ознакомиться.</p>
+NOTE. При использовании определенных и произвольных аннотаций, имя аннотации (FIXME, BUG и т.д.) не отображается в строках результата.
 
-<h4 id="test">7. <tt>test</tt></h4>
-<div class='info'><p>Хорошее описание юнит-тестирования в Rails дано в <a href="/a-guide-to-testing-rails-applications">Руководстве по тестированию приложений на Rails</a></p></div>
-<p>Rails поставляется с набором тестов по имени <tt>Test::Unit</tt>. Rails сохраняет стабильность в связи с использованием тестов. Задачи, доступные в пространстве имен <tt>test:</tt> помогает с запуском различных тестов, которые вы, несомненно, напишите.</p>
+h4. +routes+
 
-<h4 id="tmp">8. <tt>tmp</tt></h4>
-<p>Директория <tt>Rails.root/tmp</tt> является, как любая *nix директория /tmp, местом для временных файлов, таких как сессии (если вы используете файловое хранение), файлы id процессов и кэшированные экшны.</p>
-<p>Задачи пространства имен <tt>tmp:</tt> поможет очистить директорию <tt>Rails.root/tmp</tt>:</p>
-<ul>
-	<li><tt>rake tmp:cache:clear</tt> очистит <tt>tmp/cache</tt>.</li>
-	<li><tt>rake tmp:sessions:clear</tt> очистит <tt>tmp/sessions</tt>.</li>
-	<li><tt>rake tmp:sockets:clear</tt> очистит <tt>tmp/sockets</tt>.</li>
-	<li><tt>rake tmp:clear</tt> очистит все три: кэша, сессий и сокетов.</li>
-</ul>
++rake routes+ отобразит список всех определенных маршрутов, что полезно для отслеживания проблем с роутингом в вашем приложении, или предоставления хорошего обзора URL приложения, с которым вы пытаетесь ознакомиться.
 
-<h4 id="miscellaneous">9. Прочее</h4>
-<ul>
-	<li><tt>rake stats</tt> великолепно для обзора статистики вашего кода, отображает такие вещи, как KLOCs (тысячи строк кода) и ваш код для тестирования показателей.</li>
-	<li><tt>rake secret</tt> даст псевдо-случайный ключ для использования в качестве секретного ключа сессии.</li>
-	<li><tt>rake time:zones:all</tt> перечислит все временные зоны, о которых знает Rails.</li>
-</ul>
+h4. +test+
+
+INFO: Хорошее описание юнит-тестирования в Rails дано в "Руководстве по тестированию приложений на Rails":/a-guide-to-testing-rails-applications
+
+Rails поставляется с набором тестов по имени +Test::Unit+. Rails сохраняет стабильность в связи с использованием тестов. Задачи, доступные в пространстве имен +test:+ помогает с запуском различных тестов, которые вы, несомненно, напишите.
+
+h4. +tmp+
+
+Директория +Rails.root/tmp+ является, как любая *nix директория /tmp, местом для временных файлов, таких как сессии (если вы используете файловое хранение), файлы id процессов и кэшированные экшны.
+
+Задачи пространства имен +tmp:+ поможет очистить директорию +Rails.root/tmp+:
+
+* +rake tmp:cache:clear+ очистит <tt>tmp/cache</tt>.
+* +rake tmp:sessions:clear+ очистит <tt>tmp/sessions</tt>.
+* +rake tmp:sockets:clear+ очистит <tt>tmp/sockets</tt>.
+* +rake tmp:clear+ очистит все три: кэша, сессий и сокетов.
+
+h4. Прочее
+
+* +rake stats+ великолепно для обзора статистики вашего кода, отображает такие вещи, как KLOCs (тысячи строк кода) и ваш код для тестирования показателей.
+* +rake secret+ даст псевдо-случайный ключ для использования в качестве секретного ключа сессии.
+* +rake time:zones:all+ перечислит все временные зоны, о которых знает Rails.

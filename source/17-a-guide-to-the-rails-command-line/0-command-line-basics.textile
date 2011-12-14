@@ -1,20 +1,23 @@
 h1. Основы командной строки
 
-<p>Имеется несколько команд, абсолютно критичных для повседневного использования в Rails. В порядке возможной частоты использования, они следующие:</p>
-<ul>
-	<li><tt>rails console</tt></li>
-	<li><tt>rails server</tt></li>
-	<li><tt>rake</tt></li>
-	<li><tt>rails generate</tt></li>
-	<li><tt>rails dbconsole</tt></li>
-	<li><tt>rails new app_name</tt></li>
-</ul>
-<p>Давайте создадим простое приложение на Rails, чтобы рассмотреть все эти команды в контексте.</p>
+Имеется несколько команд, абсолютно критичных для повседневного использования в Rails. В порядке возможной частоты использования, они следующие:
 
-<h4 id="rails">1. <tt>rails new</tt></h4>
-<p>Сперва мы хотим создать новое приложение на Rails, запустив команду <tt>rails new</tt> после установки Rails.</p>
-<div class='warning'><p>Гем rails можно установить, написав <tt>gem install rails</tt>, если его еще нет.</p></div>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+* <tt>rails console</tt>
+* <tt>rails server</tt>
+* <tt>rake</tt>
+* <tt>rails generate</tt>
+* <tt>rails dbconsole</tt>
+* <tt>rails new app_name</tt>
+
+Давайте создадим простое приложение на Rails, чтобы рассмотреть все эти команды в контексте.
+
+h4. +rails new+
+
+Сперва мы хотим создать новое приложение на Rails, запустив команду +rails new+ после установки Rails.
+
+WARNING: Гем rails можно установить, написав +gem install rails+, если его еще нет.
+
+<shell>
 $ rails new commandsapp
      create
      create  README
@@ -28,37 +31,49 @@ $ rails new commandsapp
      create  tmp/pids
      create  vendor/plugins
      create  vendor/plugins/.gitkeep
-</pre></div>
-<p>Rails создаст кучу всего с помощью такой маленькой команды! Теперь Вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.</p>
+</shell>
 
-<h4 id="server">2. <tt>rails server</tt></h4>
-<p>Команда <tt>rails server</tt> запускает небольшой веб сервер, названный WEBrick, поставляемый с Ruby. Его будем использовать всякий раз, когда захотим увидеть свою работу в веб браузере.</p>
-<div class='info'><p>WEBrick не единственный выбор для обслуживания Rails. Мы вернемся к этому в следующем разделе.</p></div>
-<p>Безо всякого принуждения, <tt>rails server</tt> запустит наше блестящее приложение на Rails:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
+
+h4. +rails server+
+
+Команда +rails server+ запускает небольшой веб сервер, названный WEBrick, поставляемый с Ruby. Его будем использовать всякий раз, когда захотим увидеть свою работу в веб браузере.
+
+INFO: WEBrick не единственный выбор для обслуживания Rails. Мы вернемся к этому в следующем разделе.
+
+Безо всякого принуждения, +rails server+ запустит наше блестящее приложение на Rails:
+
+<shell>
 $ cd commandsapp
 $ rails server
-=&gt; Booting WEBrick
-=&gt; Rails 3.1.0 application starting in development on http://0.0.0.0:3000
-=&gt; Call with -d to detach
-=&gt; Ctrl-C to shutdown server
+=> Booting WEBrick
+=> Rails 3.1.0 application starting in development on http://0.0.0.0:3000
+=> Call with -d to detach
+=> Ctrl-C to shutdown server
 [2010-04-18 03:20:33] INFO  WEBrick 1.3.1
 [2010-04-18 03:20:33] INFO  ruby 1.8.7 (2010-01-10) [x86_64-linux]
 [2010-04-18 03:20:33] INFO  WEBrick::HTTPServer#start: pid=26086 port=3000
-</pre></div>
-<p>Всего лишь тремя командами мы развернули сервер Rails, прослушивающий порт 3000. Перейдите в браузер и зайдите на <a href="http://localhost:3000">http://localhost:3000</a>, вы увидите простое приложение, запущенное на rails.</p>
-<p>Для запуска сервера также можно использовать псевдоним "s": <tt>rails s</tt>.</p>
-<p>Сервер может быть запущен на другом порту, при использовании опции <tt>-p</tt>. Среда по умолчанию может быть изменена с использованием <tt>-e</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-$ rails server -e production -p 4000
-</pre></div>
+</shell>
 
-<h4 id="generate">3. <tt>rails generate</tt></h4>
-<p>Команда <tt>rails generate</tt> использует шаблоны для создания целой кучи вещей. Запуск <tt>rails generate</tt> выдаст список доступных генераторов:</p>
-<p>Также можно использовать псевдоним "g" для вызова команды <tt>generate</tt>: <tt>rails g</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+Всего лишь тремя командами мы развернули сервер Rails, прослушивающий порт 3000. Перейдите в браузер и зайдите на "http://localhost:3000":http://localhost:3000, вы увидите простое приложение, запущенное на rails.
+
+Для запуска сервера также можно использовать псевдоним "s": +rails s+.
+
+Сервер может быть запущен на другом порту, при использовании опции +-p+. Среда по умолчанию может быть изменена с использованием +-e+.
+
+<shell>
+$ rails server -e production -p 4000
+</shell>
+
+h4. +rails generate+
+
+Команда +rails generate+ использует шаблоны для создания целой кучи вещей. Запуск +rails generate+ выдаст список доступных генераторов:
+
+Также можно использовать псевдоним "g" для вызова команды +generate+: +rails g+.
+
+<shell>
 $ rails generate
-Usage: rails generate generator [options] [args]
+Usage: rails generate GENERATOR [args] [options]
 
 ...
 ...
@@ -70,12 +85,17 @@ Rails:
   generator
   ...
   ...
-</pre></div>
-<div class='note'><p>Можно установить больше генераторов с помощью генераторных гемов, части плагинов, которые вы, несомненно, установите, и даже можете создать свой собственный!</p></div>
-<p>Использование генераторов поможет сэкономить много времени, написав за вас <strong>шаблонный код</strong> &#8212; необходимый для работы приложения.</p>
-<p>Давайте создадим свой собственный контроллер с помощью генератора контроллера. Какую же команду использовать? Давайте спросим у генератора:</p>
-<div class='info'><p>Все консольные утилиты Rails имеют текст помощи. Как и с большинством утилит *NIX, можно попробовать <tt>--help</tt> или <tt>-h</tt> в конце, например <tt>rails server --help</tt>.</p></div>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+NOTE: Можно установить больше генераторов с помощью генераторных гемов, части плагинов, которые вы, несомненно, установите, и даже можете создать свой собственный!
+
+Использование генераторов поможет сэкономить много времени, написав за вас *шаблонный код* -- необходимый для работы приложения.
+
+Давайте создадим свой собственный контроллер с помощью генератора контроллера. Какую же команду использовать? Давайте спросим у генератора:
+
+INFO: Все консольные утилиты Rails имеют текст помощи. Как и с большинством утилит *NIX, можно попробовать +--help+ или +-h+ в конце, например +rails server --help+.
+
+<shell>
 $ rails generate controller
 Usage: rails generate controller NAME [action action] [options]
 
@@ -99,9 +119,11 @@ Modules Example:
         Views:      app/views/admin/credit_card/debit.html.erb [...]
         Helper:     app/helpers/admin/credit_card_helper.rb
         Test:       test/functional/admin/credit_card_controller_test.rb
-</pre></div>
-<p>Генератор контроллера ожидает параметры в форме <tt>generate controller ControllerName action1 action2</tt>. Давайте создадим контроллер <tt>Greetings</tt> с экшном <strong>hello</strong>, который скажет нам что-нибудь приятное.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+Генератор контроллера ожидает параметры в форме +generate controller ControllerName action1 action2+. Давайте создадим контроллер +Greetings+ с экшном *hello*, который скажет нам что-нибудь приятное.
+
+<shell>
 $ rails generate controller Greetings hello
      create  app/controllers/greetings_controller.rb
       route  get "greetings/hello"
@@ -118,31 +140,44 @@ $ rails generate controller Greetings hello
      create    app/assets/javascripts/greetings.js
      invoke    css
      create      app/assets/stylesheets/greetings.css
-</pre></div>
-<p>Что создалось? Создался ряд директорий в нашем приложении, и создались файл контроллера, файл вьюхи, файл функционального теста, хелпер для вьюхи и файлы яваскрипта и таблицы стилей.</p>
-<p>Давайте проверим наш контроллер и немного его изменим (в <tt>app/controllers/greetings_controller.rb</tt>):</p>
-<div class="code_container"><pre class="brush: ruby; gutter: false; toolbar: false">
-class GreetingsController &lt; ApplicationController
+
+</shell>
+
+Что создалось? Создался ряд директорий в нашем приложении, и создались файл контроллера, файл вьюхи, файл функционального теста, хелпер для вьюхи и файлы яваскрипта и таблицы стилей.
+
+Давайте проверим наш контроллер и немного его изменим (в +app/controllers/greetings_controller.rb+):
+
+<ruby>
+class GreetingsController < ApplicationController
   def hello
     @message = "Hello, how are you today?"
   end
 end
-</pre></div>
-<p>Затем вьюху для отображения нашего сообщения (в <tt>app/views/greetings/hello.html.erb</tt>):</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-&lt;h1&gt;A Greeting for You!&lt;/h1&gt;
-&lt;p&gt;&lt;%= @message %&gt;&lt;/p&gt;
-</pre></div>
-<p>Запустим сервер с помощью <tt>rails server</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</ruby>
+
+Затем вьюху для отображения нашего сообщения (в +app/views/greetings/hello.html.erb+):
+
+<html>
+<h1>A Greeting for You!</h1>
+<p><%= @message %></p>
+</html>
+
+Запустим сервер с помощью +rails server+.
+
+<shell>
 $ rails server
-=&gt; Booting WEBrick...
-</pre></div>
-<div class='warning'><p>Убедитесь, что у Вас нет каких-либо &#8220;резервных тильда&#8221; файлов в <tt>app/views/(controller)</tt>, иначе WEBrick <em>не</em> покажет ожидаемый результат. Это скорее всего <strong>баг</strong> в Rails 2.3.0.</p></div>
-<p><span class="caps">URL</span> должен быть <a href="http://localhost:3000/greetings/hello">http://localhost:3000/greetings/hello</a>.</p>
-<div class='info'><p>В нормальном старом добром приложении на Rails, ваши URL будут создаваться по образцу http://(host)/(controller)/(action), и <span class="caps">URL</span>, подобный такому http://(host)/(controller), вызовет экшн <strong>index</strong> этого контроллера.</p></div>
-<p>В Rails также есть генератор для моделей данных.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+=> Booting WEBrick...
+</shell>
+
+WARNING: Убедитесь, что у вас нет каких-либо "резервных тильда" файлов в +app/views/(controller)+, иначе WEBrick _не_ покажет ожидаемый результат. Это скорее всего <strong>баг</strong> в Rails 2.3.0.
+
+URL должен быть "http://localhost:3000/greetings/hello":http://localhost:3000/greetings/hello.
+
+INFO: В нормальном старом добром приложении на Rails, ваши URL будут создаваться по образцу http://(host)/(controller)/(action), и URL, подобный такому http://(host)/(controller), вызовет экшн *index* этого контроллера.
+
+В Rails также есть генератор для моделей данных.
+
+<shell>
 $ rails generate model
 Usage: rails generate model NAME [field:type field:type] [options]
 
@@ -159,11 +194,15 @@ Examples:
     rails generate model post title:string body:text published:boolean
 
         Creates a Post model with a string title, text body, and published flag.
-</pre></div>
-<div class='note'><p>Список доступных типов полей можно узнать в <a href="http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html#method-i-column">документации API</a> для метода column класса <tt>TableDefinition</tt></p></div>
-<p>Но вместо создания модели непосредственно (что мы сделаем еще позже), давайте установим скаффолд. <strong>Скаффолд</strong> в Rails это полный набор из модели, миграции базы данных для этой модели, контроллер для воздействия на нее, вьюхи для просмотра и обращения с данными и тестовый набор для весего этого.</p>
-<p>Давайте настроим простой ресурс, названный &#8220;HighScore&#8221;, который будет отслеживать наши лучшие результаты в видеоиграх, в которые мы играли.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+NOTE: Список доступных типов полей можно узнать в "документации API":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html#method-i-column для метода column класса +TableDefinition+
+
+Но вместо создания модели непосредственно (что мы сделаем еще позже), давайте установим скаффолд. *Скаффолд* в Rails это полный набор из модели, миграции базы данных для этой модели, контроллер для воздействия на нее, вьюхи для просмотра и обращения с данными и тестовый набор для всего этого.
+
+Давайте настроим простой ресурс, названный "HighScore", который будет отслеживать наши лучшие результаты в видеоиграх, в которые мы играли.
+
+<shell>
 $ rails generate scaffold HighScore game:string score:integer
     exists  app/models/
     exists  app/controllers/
@@ -192,63 +231,85 @@ dependency  model
     create    test/fixtures/high_scores.yml
     exists    db/migrate
     create    db/migrate/20100209025147_create_high_scores.rb
-</pre></div>
-<p>Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит тестов, таблиц стилей, создал вьюхи, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу <tt>high_scores</tt> и поля), позаботился о маршруте для <strong>ресурса</strong>, и создал новые тесты для всего этого.</p>
-<p>Миграция требует, чтобы мы <strong>мигрировали ее</strong>, то есть запустили некоторый код Ruby (находящийся в этом <tt>20100209025147_create_high_scores.rb</tt>), чтобы изменить схему базы данных. Какой базы данных? Базы данных sqlite3, которую создаст Rails, когда мы запустим команду <tt>rake db:migrate</tt>. Поговорим о Rake чуть позже.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+</shell>
+
+Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит тестов, таблиц стилей, создал вьюхи, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу +high_scores+ и поля), позаботился о маршруте для *ресурса*, и создал новые тесты для всего этого.
+
+Миграция требует, чтобы мы *мигрировали ее*, то есть запустили некоторый код Ruby (находящийся в этом +20100209025147_create_high_scores.rb+), чтобы изменить схему базы данных. Какой базы данных? Базы данных sqlite3, которую создаст Rails, когда мы запустим команду +rake db:migrate+. Поговорим о Rake чуть позже.
+
+<shell>
 $ rake db:migrate
 (in /home/foobar/commandsapp)
 ==  CreateHighScores: migrating ===============================================
 -- create_table(:high_scores)
-   -&gt; 0.0026s
+   -> 0.0026s
 ==  CreateHighScores: migrated (0.0028s) ======================================
-</pre></div>
-<div class='info'><p>Давайте поговорим об юнит тестах. Юнит тесты это код, который тестирует и делает суждения о коде. В юнит тестировании мы берем часть кода, скажем, метод модели, и тестируем его входы и выходы. Юнит тесты ваши друзья. Чем раньше вы смиритесь с фактом, что качество жизни возрастет, когда станете юнит тестировать свой код, тем лучше. Серьезно. Мы сделаем один через мгновение.</p></div>
-<p>Давайте взглянем на интерфейс, который Rails создал для нас.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-$ rails server
-</pre></div>
-<p>Перейдите в браузер и откройте <a href="http://localhost:3000/high_scores">http://localhost:3000/high_scores</a>, теперь мы можем создать новый рекорд (55,160 в Space Invaders!)</p>
+</shell>
 
-<h4 id="console">4. <tt>rails console</tt></h4>
-<p>Команда <tt>console</tt> позволяет взаимодействовать с приложением на Rails из командной строки. В своей основе <tt>rails console</tt> использует <span class="caps">IRB</span>, поэтому, если вы когда-либо его использовали, то будете чувствовать себя уютно. Это полезно для тестирования быстрых идей с кодом и правки данных на сервере без затрагивания вебсайта.</p>
-<p>Для вызова консоли также можно использовать псевдоним "c": <tt>rails c</tt>.</p>
-<p>Если нужно протестировать некоторый код без изменения каких-либо данных, можно это сделать, вызвав <tt>rails console --sandbox</tt>.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+INFO: Давайте поговорим об юнит тестах. Юнит тесты это код, который тестирует и делает суждения о коде. В юнит тестировании мы берем часть кода, скажем, метод модели, и тестируем его входы и выходы. Юнит тесты ваши друзья. Чем раньше вы смиритесь с фактом, что качество жизни возрастет, когда станете юнит тестировать свой код, тем лучше. Серьезно. Мы сделаем один через мгновение.
+
+Давайте взглянем на интерфейс, который Rails создал для нас.
+
+<shell>
+$ rails server
+</shell>
+
+Перейдите в браузер и откройте "http://localhost:3000/high_scores":http://localhost:3000/high_scores, теперь мы можем создать новый рекорд (55,160 в Space Invaders!)
+
+h4. +rails console+
+
+Команда +console+ позволяет взаимодействовать с приложением на Rails из командной строки. В своей основе +rails console+ использует IRB, поэтому, если вы когда-либо его использовали, то будете чувствовать себя уютно. Это полезно для тестирования быстрых идей с кодом и правки данных на сервере без затрагивания вебсайта.
+
+Для вызова консоли также можно использовать псевдоним "c": +rails c+.
+
+Если нужно протестировать некоторый код без изменения каких-либо данных, можно это сделать, вызвав +rails console --sandbox+.
+
+<shell>
 $ rails console --sandbox
 Loading development environment in sandbox (Rails 3.1.0)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
-</pre></div>
+</shell>
 
-<h4 id="dbconsole">5. <tt>rails dbconsole</tt></h4>
-<p><tt>rails dbconsole</tt> определяет, какая база данных используется, и перемещает вас в такой интерфейс командной строки, в котором можно ее использовать (и также определяет параметры командной строки, которые нужно передать!). Она поддерживает MySQL, PostgreSQL, SQLite и SQLite3.</p>
-<p>Для вызова консоли базы данных также можно использовать псевдоним "db": <tt>rails db</tt>.</p>
+h4. +rails dbconsole+
 
-<h4 id="plugin">6. <tt>rails plugin</tt></h4>
-<p>Команда <tt>rails plugin</tt> упрощает управление плагинами. Плагины могут быть установлены по имени или URL их репозитория. Нужен установленный Git, если хотите установить плагин из репозитория Git. То же самое и в отношении Subversion.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
++rails dbconsole+ определяет, какая база данных используется, и перемещает вас в такой интерфейс командной строки, в котором можно ее использовать (и также определяет параметры командной строки, которые нужно передать!). Она поддерживает MySQL, PostgreSQL, SQLite и SQLite3.
+
+Для вызова консоли базы данных также можно использовать псевдоним "db": +rails db+.
+
+h4. +rails plugin+
+
+Команда +rails plugin+ упрощает управление плагинами. Плагины могут быть установлены по имени или URL их репозитория. Нужен установленный Git, если хотите установить плагин из репозитория Git. То же самое и в отношении Subversion.
+
+<shell>
 $ rails plugin install https://github.com/technoweenie/acts_as_paranoid.git
 + ./CHANGELOG
 + ./MIT-LICENSE
 ...
 ...
-</pre></div>
+</shell>
 
-<h4 id="runner">7. <tt>rails runner</tt></h4>
-<p><tt>runner</tt> запускает код Ruby в контексте неинтерактивности Rails. Для примера:</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
-$ rails runner &quot;Model.long_running_method&quot;
-</pre></div>
-<p>Можно также использовать псевдоним "r" для вызова runner: <tt>rails r</tt>.</p>
-<p>Можно определить среду, в которой будет работать команда <tt>runner</tt>, используя переключатель <tt>-e</tt> :</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+h4. +rails runner+
+
+<tt>runner</tt> запускает код Ruby в контексте неинтерактивности Rails. Для примера:
+
+<shell>
+$ rails runner "Model.long_running_method"
+</shell>
+
+Можно также использовать псевдоним "r" для вызова runner: +rails r+.
+
+Можно определить среду, в которой будет работать команда +runner+, используя переключатель +-e+:
+
+<shell>
 $ rails runner -e staging "Model.long_running_method"
-</pre></div>
+</shell>
 
-<h4 id="destroy">8. <tt>rails destroy</tt></h4>
-<p>Воспринимайте <tt>destroy</tt> как противоположность <tt>generate</tt>. Она выясняет, что было создано, и отменяет это.</p>
-<div class="code_container"><pre class="brush: plain; gutter: false; toolbar: false">
+h4. +rails destroy+
+
+Воспринимайте +destroy+ как противоположность +generate+. Она выясняет, что было создано, и отменяет это.
+
+<shell>
 $ rails generate model Oops
       exists  app/models/
       exists  test/unit/
@@ -271,4 +332,4 @@ $ rails destroy model Oops
     notempty  test
     notempty  app/models
     notempty  app
-</pre></div>
+</shell>
