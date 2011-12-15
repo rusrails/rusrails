@@ -83,6 +83,15 @@ div#container {
   margin-right:210px;
 }
 
+#main_page_banner {
+  float:right;
+  width:250px;
+  border:1px solid red;
+  background:#FFEEEE;
+  padding:5px;
+  margin:0 0 10px 10px
+}
+
 #right {
   width:190px;
   float:right;
