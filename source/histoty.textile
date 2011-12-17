@@ -119,3 +119,9 @@ h1. ИСТОРИЯ
 3. 14b9726ecd8635254c2a
 4. 23/07/11
 5. Закончено
+
+1. Asset Pipeline
+2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
+3. 74e46e51564b38ee0af70387634e0e4138c31742
+4. 13/12/11
+5. Перевод

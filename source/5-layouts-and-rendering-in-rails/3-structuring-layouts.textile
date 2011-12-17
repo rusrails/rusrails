@@ -64,7 +64,7 @@ h5. Присоединение файлов Javascript с помощью +javasc
 <%= javascript_include_tag "http://example.com/main.js" %>
 </erb>
 
-Если приложение не использует трубу ресурсов (asset pipeline) +defaults+ загружает библиотеки jQuery по умолчанию:
+Если приложение не использует файлопровод (asset pipeline) +defaults+ загружает библиотеки jQuery по умолчанию:
 
 <erb>
 <%= javascript_include_tag :defaults %>
