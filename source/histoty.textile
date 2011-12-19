@@ -124,4 +124,4 @@ h1. ИСТОРИЯ
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
 3. 74e46e51564b38ee0af70387634e0e4138c31742
 4. 13/12/11
-5. Перевод
+5. Закончено
