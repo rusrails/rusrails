@@ -21,3 +21,5 @@ Rails – фреймворк для веб-разработки, написан�
 * "Викиучебник по Ruby":http://ru.wikibooks.org/wiki/Ruby
 * "Руководство по Руби на 1 странице":http://www.linuxshare.ru/docs/devel/languages/ruby/ruby.html
 * "Учебник 'Учись программировать', автор Крис Пайн":http://www.shokhirev.com/mikhail/ruby/ltp/title.html
+
+Кроме того, код примера для этого руководства доступен в "репозитории rails на github":https://github.com/rails/rails в rails/railties/guides/code/getting_started.

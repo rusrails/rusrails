@@ -8,9 +8,9 @@ h1. ИСТОРИЯ
 
 1. Rails для начинающих
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/getting_started.textile
-3. fa159d317611d1fe5b48
-4. 27/07/11
-5. Закончено
+3. 0ae42311c6b77ded8eec7bbbb6c4fb72ff92bfee
+4. 20/12/11
+5. В процессе
 
 1. Миграции базы данных Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/migrations.textile
