@@ -10,12 +10,12 @@ h1. ИСТОРИЯ
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/getting_started.textile
 3. 0ae42311c6b77ded8eec7bbbb6c4fb72ff92bfee
 4. 20/12/11
-5. В процессе
+5. Закончено
 
 1. Миграции базы данных Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/migrations.textile
-3. 6734bc98e7a90dd7c4dc
-4. 25/07/11
+3. ff15c87ab9cd0046bc2010fe3227f2e86e1f05d7
+4. 19/12/11
 5. Закончено
 
 1. Валидации и колбэки Active Record

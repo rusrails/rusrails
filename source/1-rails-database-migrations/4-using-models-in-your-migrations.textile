@@ -15,8 +15,10 @@ h1. Использование моделей в ваших миграциях
 
 class AddFlagToProduct < ActiveRecord::Migration
   def change
-    add_column :products, :flag, :int
-    Product.all.each { |f| f.update_attributes!(:flag => 'false') }
+    add_column :products, :flag, :boolean
+    Product.all.each do |product|
+      product.update_attributes!(:flag => 'false')
+    end
   end
 end
 </ruby>
@@ -25,11 +27,11 @@ end
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
-  validates_presence_of :flag
+  validates :flag, :presence => true
 end
 </ruby>
 
-Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице +products+, и снова добавила в модели Product валидацию на новый столбец.
+Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице +products+, и снова добавила в модели +Product+ валидацию на новый столбец.
 
 <ruby>
 # db/migrate/20100515121110_add_fuzz_to_product.rb
@@ -37,7 +39,9 @@ end
 class AddFuzzToProduct < ActiveRecord::Migration
   def change
     add_column :products, :fuzz, :string
-    Product.all.each { |f| f.update_attributes! :fuzz => 'fuzzy' }
+    Product.all.each do |product|
+      product.update_attributes! :fuzz => 'fuzzy'
+    end
   end
 end
 </ruby>
@@ -46,8 +50,7 @@ end
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
-  validates_presence_of :flag
-  validates_presence_of :fuzz
+  validates :flag, :fuzz, :presence => true
 end
 </ruby>
 
@@ -55,21 +58,21 @@ end
 
 Боб вернулся с отпуска, и:
 
-# обновил исходники - содержащие обе миграции и последнюю версию модели Product.
-# запустил невыполненные миграции с помощью +rake db:migrate+, включая обновляющие модель +Product+.
+# Обновил исходники - содержащие обе миграции и последнюю версию модели Product.
+# Запустил невыполненные миграции с помощью +rake db:migrate+, включая обновляющие модель +Product+.
 
 Миграции не выполнятся, так как при попытке сохранения модели, она попытается валидировать второй добавленный столбец, отсутствующий в базе данных на момент запуска _первой_ миграции.
 
-<shell>
+<plain>
 rake aborted!
 An error has occurred, this and all later migrations canceled:
 
 undefined method `fuzz' for #<Product:0x000001049b14a0>
-</shell>
+</plain>
 
 Это исправляется путем создания локальной модели внутри миграции. Это предохраняет rails от запуска валидаций, поэтому миграции проходят.
 
-При использовании искусственной модели неплохо бы вызвать +Product.reset_column_information+ для обновления кэша ActiveRecord для модели Product до обновления данных в базе данных.
+При использовании искусственной модели неплохо бы вызвать +Product.reset_column_information+ для обновления кэша +ActiveRecord+ для модели +Product+ до обновления данных в базе данных.
 
 Если бы Алиса сделала бы так, проблем бы не было:
 
@@ -79,10 +82,13 @@ undefined method `fuzz' for #<Product:0x000001049b14a0>
 class AddFlagToProduct < ActiveRecord::Migration
   class Product < ActiveRecord::Base
   end
+
   def change
-    add_column :products, :flag, :int
+    add_column :products, :flag, :integer
     Product.reset_column_information
-    Product.all.each { |f| f.update_attributes!(:flag => false) }
+    Product.all.each do |product|
+      product.update_attributes!(:flag => false)
+    end
   end
 end
 </ruby>
@@ -93,10 +99,13 @@ end
 class AddFuzzToProduct < ActiveRecord::Migration
   class Product < ActiveRecord::Base
   end
+
   def change
     add_column :products, :fuzz, :string
     Product.reset_column_information
-    Product.all.each { |f| f.update_attributes! :fuzz => 'fuzzy' }
+    Product.all.each do |product|
+      product.update_attributes!(:fuzz => 'fuzzy')
+    end
   end
 end
 </ruby>
