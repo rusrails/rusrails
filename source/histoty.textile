@@ -20,8 +20,8 @@ h1. ИСТОРИЯ
 
 1. Валидации и колбэки Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_validations_callbacks.textile
-3. 52add05a6be58a675117
-4. 31/07/11
+3. bcd25e7576094a98dbc9f4b1ba2fb3451d13bf40
+4. 05/11/11
 5. Закончено
 
 1. Связи Active Record
