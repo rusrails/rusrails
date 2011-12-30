@@ -85,8 +85,8 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя эти три метода доступа:
+Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя эти три атрибута на методе доступа +proxy_association+:
 
-* +proxy_owner+ возвращает объект, в котором объявлена связь.
-* +proxy_reflection+ возвращает объект reflection, описывающий связь.
-* +proxy_target+ возвращает связанный объект для +belongs_to+ или +has_one+, или коллекцию связанных объектов для +has_many+ или +has_and_belongs_to_many+.
+* +proxy_association.owner+ возвращает объект, в котором объявлена связь.
+* +proxy_association.reflection+ возвращает объект reflection, описывающий связь.
+* +proxy_association.target+ возвращает связанный объект для +belongs_to+ или +has_one+, или коллекцию связанных объектов для +has_many+ или +has_and_belongs_to_many+.

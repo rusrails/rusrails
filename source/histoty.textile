@@ -26,8 +26,8 @@ h1. ИСТОРИЯ
 
 1. Связи Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/association_basics.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
+3. 1ffd5ec91069167043c8ecd0d949098f566d88eb
+4. 08/11/11
 5. Закончено
 
 1. Интерфейс запросов Active Record
