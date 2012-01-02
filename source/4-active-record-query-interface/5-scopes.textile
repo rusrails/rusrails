@@ -30,14 +30,14 @@ end
 Для вызова этого скоупа +published+, можно вызвать его либо на классе:
 
 <ruby>
-Post.published => [published posts]
+Post.published # => [published posts]
 </ruby>
 
 Либо на связи, состоящей из объектов +Post+:
 
 <ruby>
 category = Category.first
-category.posts.published => [published posts belonging to this category]
+category.posts.published # => [published posts belonging to this category]
 </ruby>
 
 h4. Работа со временем
@@ -58,7 +58,7 @@ h4. Передача аргумента
 
 <ruby>
 class Post < ActiveRecord::Base
-  scope :1_week_before, lambda { |time| where("created_at < ?", time)
+  scope :1_week_before, lambda { |time| where("created_at < ?", time) }
 end
 </ruby>
 

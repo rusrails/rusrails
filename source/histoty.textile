@@ -32,8 +32,8 @@ h1. ИСТОРИЯ
 
 1. Интерфейс запросов Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_querying.textile
-3. 573c6e6982224e681717
-4. 23/07/11
+3. 08f36451fc207c221169560238b539ae55c2d9e8
+4. 22/12/11
 5. Закончено
 
 1. Макеты и рендеринг в Rails
