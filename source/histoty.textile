@@ -38,8 +38,8 @@ h1. ИСТОРИЯ
 
 1. Макеты и рендеринг в Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/layouts_and_rendering.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
+3. b15e2be6b03811258fcaad5b827960273df88d4a
+4. 11/12/11
 5. Закончено
 
 1. Хелперы форм Rails

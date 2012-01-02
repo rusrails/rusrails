@@ -332,7 +332,7 @@ Proc.new { |html_tag, instance| %Q(<div class="field_with_errors">#{html_tag}</d
 
 * +config.action_view.erb_trim_mode+ задает режим обрезки, который будет использоваться ERB. По умолчанию +'-'+. Подробнее смотрите в "документации по ERB":http://www.ruby-doc.org/stdlib/libdoc/erb/rdoc/.
 
-* +config.action_view.javascript_expansions+ это хэш, содержащий расширения, используемые для тэга включения JavaScript. По умолчанию это определено так:
+* +config.action_view.javascript_expansions+ это хэш, содержащий расширения, используемые для тега включения JavaScript. По умолчанию это определено так:
 
 <ruby>
 config.action_view.javascript_expansions = { :defaults => %w(jquery jquery_ujs) }
