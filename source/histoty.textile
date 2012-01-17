@@ -50,8 +50,8 @@ h1. ИСТОРИЯ
 
 1. Обзор Action Controller
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_controller_overview.textile
-3. 732690589ed4f12d48bc
-4. 27/06/11
+3. 078b4b54a6ce655854bae5f9f931423410d46ff8
+4. 07/12/11
 5. Закончено
 
 1. Роутинг в Rails
