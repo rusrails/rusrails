@@ -56,8 +56,8 @@ h1. ИСТОРИЯ
 
 1. Роутинг в Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/routing.textile
-3. ace3723d2fcb1a96d51c
-4. 23/07/11
+3. 83bc2c27605db34be18f2e4f97890d04c4cc97e4
+4. 11/12/11
 5. Закончено
 
 1. Расширения ядра Active Support
