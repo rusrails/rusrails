@@ -12,7 +12,7 @@ Given /^I am not logged in as user$/ do
 end
 
 When /^I sign in as user "(.*)\/(.*)"$/ do |email, password|
-  step %{I am not logged in}
+  step %{I am not logged in as user}
   step %{I go to the sign in as user page}
   step %{I fill in "user_email" with "#{email}"}
   step %{I fill in "user_password" with "#{password}"}
