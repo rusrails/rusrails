@@ -1,12 +1,15 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
-gem 'puffer', :git => 'git://github.com/puffer/puffer.git'
+gem 'rails', " ~> 3.2.0"
+gem 'puffer', :git => 'git://github.com/morsbox/puffer.git'
 
 gem 'mysql2'
 gem 'thinking-sphinx'
-gem 'devise', '= 1.4.9'     # Something broken in 1.5.0, wait for next
-gem "oa-oauth", :require => "omniauth/oauth"
+gem 'devise'
+gem 'omniauth-openid'
+gem 'omniauth-github'
+gem 'omniauth-twitter'
+gem 'omniauth-google-oauth2'
 
 gem 'nokogiri'
 gem 'haml'
@@ -22,8 +25,8 @@ gem 'therubyracer'
 gem 'unicorn'
 
 group :assets do
-  gem 'sass-rails', " ~> 3.1.0"
-  gem 'coffee-rails', " ~> 3.1.0"
+  gem 'sass-rails', " ~> 3.2.0"
+  gem 'coffee-rails', " ~> 3.2.0"
   gem 'uglifier'
 end
 
