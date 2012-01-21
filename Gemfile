@@ -5,8 +5,11 @@ gem 'puffer', :git => 'git://github.com/puffer/puffer.git'
 
 gem 'mysql2'
 gem 'thinking-sphinx'
-gem 'devise', '= 1.4.9'     # Something broken in 1.5.0, wait for next
-gem "oa-oauth", :require => "omniauth/oauth"
+gem 'devise'
+gem 'omniauth-openid'
+gem 'omniauth-github'
+gem 'omniauth-twitter'
+gem 'omniauth-google-oauth2'
 
 gem 'nokogiri'
 gem 'haml'
