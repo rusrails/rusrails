@@ -259,6 +259,14 @@ h5. +pluralize+
 
 Как показывает предыдущий пример, Active Support знает некоторые неправильные множественные числа и неисчислимые существительные. Встроенные правила могут быть расширены в +config/initializers/inflections.rb+. Этот файл создается командой +rails+ и имеет инструкции в комментариях.
 
++pluralize+ также может принимать опциональный параметр +count+. Если <tt>count == 1</tt>, будет возвращена единственная форма. Для остальных значений +count+ будет возвращена множественная форма:
+
+<ruby>
+"dude".pluralize(0) # => "dudes"
+"dude".pluralize(1) # => "dude"
+"dude".pluralize(2) # => "dudes"
+</ruby>
+
 Active Record использует этот метод для вычисления имени таблицы по умолчанию, соответствующей модели:
 
 <ruby>
@@ -422,7 +430,7 @@ NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
 
 h5. +demodulize+
 
-Для заданной строки с правильным выражением ссылки на константу, +demodulize+ возвращает само имя константы, то есть правой части этого:
+Для заданной строки с полным именем константы, +demodulize+ возвращает само имя константы, то есть правой части этого:
 
 <ruby>
 "Product".demodulize                        # => "Product"
@@ -440,6 +448,31 @@ def counter_cache_column
   elsif options[:counter_cache]
     options[:counter_cache]
   end
+end
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
+
+h5. +deconstantize+
+
+У заданной строки с полным выражением ссылки на константу +deconstantize+ убирает самый правый сегмент, в основном оставляя имя контейнера константы:
+
+<ruby>
+"Product".deconstantize                        # => ""
+"Backoffice::UsersController".deconstantize    # => "Backoffice"
+"Admin::Hotel::ReservationUtils".deconstantize # => "Admin::Hotel"
+</ruby>
+
+Например, Active Support использует этот метод в +Module#qualified_const_set+:
+
+<ruby>
+def qualified_const_set(path, value)
+  QualifiedConstUtils.raise_if_absolute(path)
+
+  const_name = path.demodulize
+  mod_name = path.deconstantize
+  mod = mod_name.empty? ? self : qualified_const_get(mod_name)
+  mod.const_set(const_name, value)
 end
 </ruby>
 
@@ -590,43 +623,6 @@ foreign_key = options[:foreign_key] || reflection.active_record.name.foreign_key
 NOTE: Определено в +active_support/core_ext/string/inflections.rb.
 
 h4. Конвертирование
-
-h5. +ord+
-
-Ruby 1.9 определяет +ord+ как кодовую точку (codepoint) первого символа получателя. Active Support портирует +ord+ для однобайтовой кодировки, подобной ASCII или ISO-8859-1, в Ruby 1.8:
-
-<ruby>
-"a".ord # => 97
-"à".ord # => 224, in ISO-8859-1
-</ruby>
-
-В Ruby 1.8 +ord+ не работает в целом в строках UTF8, используйте мультибайтную поддержку в Active Support для этого:
-
-<ruby>
-"a".mb_chars.ord # => 97
-"à".mb_chars.ord # => 224, in UTF8
-</ruby>
-
-Отметьте, что 224 различное в обоих примерах. В ISO-8859-1 "à" представлен как отдельный байт, 224. Его односимвольное представление в UTF8 имеет два байта, названных 195 и 160, но его кодовая точка в Unicode 224. Если вызвать +ord+ на строке UTF8 "à" вернувшимся значением будет 195 в Ruby 1.8. Это не ошибка, поскольку UTF8 не поддерживается, сам вызов будет фиктивным.
-
-INFO: +ord+ это эквивалент +getbyte(0)+.
-
-NOTE: Определено в +active_support/core_ext/string/conversions.rb+.
-
-h5. +getbyte+
-
-Active Support портирует +getbyte+ из Ruby 1.9:
-
-<ruby>
-"foo".getbyte(0)  # => 102, same as "foo".ord
-"foo".getbyte(1)  # => 111
-"foo".getbyte(9)  # => nil
-"foo".getbyte(-1) # => 111
-</ruby>
-
-INFO: +getbyte+ это эквивалент +[]+.
-
-NOTE: Определено в +active_support/core_ext/string/conversions.rb+.
 
 h5. +to_date+, +to_time+, +to_datetime+
 

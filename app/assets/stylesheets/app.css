@@ -165,7 +165,7 @@ div#container {
 
 /* content */
 
-#content h4 {
+#content h4, #content h5 {
   font-weight: bold;
 }
 

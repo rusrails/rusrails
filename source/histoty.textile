@@ -4,124 +4,103 @@ h1. ИСТОРИЯ
 2. Ссылка на гитхаб
 3. Последний коммит (для https://github.com/lifo/docrails/compare)
 4. Дата внесения изменений
-5. Комментарии
 
 1. Rails для начинающих
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/getting_started.textile
 3. 0ae42311c6b77ded8eec7bbbb6c4fb72ff92bfee
 4. 20/12/11
-5. Закончено
 
 1. Миграции базы данных Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/migrations.textile
 3. ff15c87ab9cd0046bc2010fe3227f2e86e1f05d7
 4. 19/12/11
-5. Закончено
 
 1. Валидации и колбэки Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_validations_callbacks.textile
 3. bcd25e7576094a98dbc9f4b1ba2fb3451d13bf40
 4. 05/11/11
-5. Закончено
 
 1. Связи Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/association_basics.textile
 3. 1ffd5ec91069167043c8ecd0d949098f566d88eb
 4. 08/11/11
-5. Закончено
 
 1. Интерфейс запросов Active Record
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_record_querying.textile
 3. 08f36451fc207c221169560238b539ae55c2d9e8
 4. 22/12/11
-5. Закончено
 
 1. Макеты и рендеринг в Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/layouts_and_rendering.textile
 3. b15e2be6b03811258fcaad5b827960273df88d4a
 4. 11/12/11
-5. Закончено
 
 1. Хелперы форм Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/form_helpers.textile
 3. a72839bc9dc5fb3d56e79f7dc7f85975550d6fde
 4. 01/12/11
-5. Закончено
 
 1. Обзор Action Controller
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_controller_overview.textile
 3. 078b4b54a6ce655854bae5f9f931423410d46ff8
 4. 07/12/11
-5. Закончено
 
 1. Роутинг в Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/routing.textile
 3. 83bc2c27605db34be18f2e4f97890d04c4cc97e4
 4. 11/12/11
-5. Закончено
 
 1. Расширения ядра Active Support
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_support_core_extensions.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
-5. Закончено
+3. 16c18f00fbf1a4835c8e374939e94d7152c3c06c
+4. 13/01/12
 
 1. API интернационализации Rails (I18n)
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
 3. 71012eafb6916d270b78
 4. 30/07/11
-5. Закончено
 
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
 3. 66b4d112363f3786ecfe
 4. 24/07/11
-5. Закончено
 
 1. Руководство по тестированию приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
 3. 2eac4e2e2ff3a740c712
 4. 23/06/11
-5. Закончено
 
 1. Руководство Ruby On Rails по безопасности
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
 3. 662a71b09f025016db22
 4. 23/07/11
-5. Закончено
 
 1. Отладка приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/debugging_rails_applications.textile
 3. 5724625e81380d46ad0a
 4. 08/07/11
-5. Закончено
 
 1. Тестирование производительности приложений Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/performance_testing.textile
 3. 95f827f9109a6f5d9034
 4. 22/06/11
-5. Закончено
 
 1. Конфигурирование приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/configuring.textile
 3. 66b4d112363f3786ecfe
 4. 24/07/11
-5. Закончено
 
 1. Руководство по командной строке Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/command_line.textile
 3. ddbf3b6215d91c2c4657
 4. 06/08/11
-5. Закончено
 
 1. Кэширование с Rails: Обзор
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/caching_with_rails.textile
 3. 14b9726ecd8635254c2a
 4. 23/07/11
-5. Закончено
 
 1. Asset Pipeline
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
 3. 74e46e51564b38ee0af70387634e0e4138c31742
 4. 13/12/11
-5. Закончено

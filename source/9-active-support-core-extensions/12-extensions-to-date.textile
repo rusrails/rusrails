@@ -55,15 +55,27 @@ Active Support определяет эти методы также для Ruby 1
 
 h6. +beginning_of_week+, +end_of_week+
 
-Методы +beginning_of_week+ и +end_of_week+ возвращают даты для начала и конца недели, исходя из допущения, что недели начинаются с понедельника:
+Методы +beginning_of_week+ и +end_of_week+ возвращают даты для начала и конца недели соответственно. Предполагается, что неделя начинается с понедельника, но это может быть изменено переданным аргументом.
 
 <ruby>
-d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
-d.beginning_of_week      # => Mon, 03 May 2010
-d.end_of_week            # => Sun, 09 May 2010
+d = Date.new(2010, 5, 8)     # => Sat, 08 May 2010
+d.beginning_of_week          # => Mon, 03 May 2010
+d.beginning_of_week(:sunday) # => Sun, 02 May 2010
+d.end_of_week                # => Sun, 09 May 2010
+d.end_of_week(:sunday)       # => Sat, 08 May 2010
 </ruby>
 
-У +beginning_of_week+ есть псевдонимы +monday+ и +at_beginning_of_week+. У +end_of_week+ есть псевдонимы +sunday+ и +at_end_of_week+.
+У +beginning_of_week+ есть псевдоним +at_beginning_of_week+, а у +end_of_week+ есть псевдоним +at_end_of_week+.
+
+h6. +monday+, +sunday+
+
+Методы +monday+ и +sunday+ возвращают даты начала и конца недели, соответственно. Предполагается, что недели начинаются в понедельник.
+
+<ruby>
+d = Date.new(2010, 5, 8)     # => Sat, 08 May 2010
+d.monday                     # => Mon, 03 May 2010
+d.sunday                     # => Sun, 09 May 2010
+</ruby>
 
 h6. +prev_week+, +next_week+
 

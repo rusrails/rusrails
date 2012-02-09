@@ -26,19 +26,29 @@ Active Support расширяет API массивов для облегчени
 
 NOTE: Определено в +active_support/core_ext/array/access.rb+.
 
-h4. Случайный доступ
+h4. Добавление элементов
 
-Active Support портирует +sample+ из Ruby 1.9:
+h5. +prepend+
+
+Этот метод - псевдоним <tt>Array#unshift</tt>.
 
 <ruby>
-shape_type = [Circle, Square, Triangle].sample
-# => Square, for example
-
-shape_types = [Circle, Square, Triangle].sample(2)
-# => [Triangle, Circle], for example
+%w(a b c d).prepend('e')  # => %w(e a b c d)
+[].prepend(10)            # => [10]
 </ruby>
 
-NOTE: Определено в +active_support/core_ext/array/random_access.rb+.
+NOTE: Определено в +active_support/core_ext/array/prepend_and_append.rb+.
+
+h5. +append+
+
+Этот метод - псевдоним <tt>Array#<<</tt>.
+
+<ruby>
+%w(a b c d).append('e')  # => %w(a b c d e)
+[].append([1,2])         # => [[1,2]]
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/array/prepend_and_append.rb+.
 
 h4. Извлечение опций
 
@@ -242,9 +252,6 @@ Array.wrap(0)         # => [0]
 <ruby>
 Array.wrap(:foo => :bar) # => [{:foo => :bar}]
 Array(:foo => :bar)      # => [[:foo, :bar]]
-
-Array.wrap("foo\nbar")   # => ["foo\nbar"]
-Array("foo\nbar")        # => ["foo\n", "bar"], in Ruby 1.8
 </ruby>
 
 Также имеется связанная идиома, использующая оператор расплющивания:

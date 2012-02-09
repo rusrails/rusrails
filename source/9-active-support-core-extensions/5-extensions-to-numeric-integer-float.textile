@@ -1,4 +1,4 @@
-h1. Расширения для Numeric, Integer, Float
+h1. Расширения для Numeric, Integer
 
 h3. Расширения для +Numeric+
 
@@ -60,15 +60,3 @@ h4. +ordinalize+
 </ruby>
 
 NOTE: Определено в +active_support/core_ext/integer/inflections.rb+.
-
-h3. Расширения для +Float+
-
-h4. +round+
-
-Встроенный метод +Float#round+ округляет дробное число до ближайшего целого. Active Support добавляет дополнительный параметр, позволяющий определить точность:
-
-<ruby>
-Math::E.round(4) # => 2.7183
-</ruby>
-
-NOTE: Определено в +active_support/core_ext/float/rounding.rb+.

@@ -303,6 +303,18 @@ hash                   # => {:a => 1}
 
 NOTE: Определено в +active_support/core_ext/hash/slice.rb+.
 
+h4. Извлечение
+
+Метод +extract!+ убирает и возвращает пары ключ/значение, соответствующие заданным ключам.
+
+<ruby>
+hash = {:a => 1, :b => 2}
+rest = hash.extract!(:a) # => {:a => 1}
+hash                     # => {:b => 2}
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/hash/slice.rb+.
+
 h4. Индифферентный доступ
 
 Метод +with_indifferent_access+ возвращает +ActiveSupport::HashWithIndifferentAccess+ его получателя:

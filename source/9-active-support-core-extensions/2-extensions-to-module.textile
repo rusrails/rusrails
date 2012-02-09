@@ -261,39 +261,61 @@ module X
   end
 end
 
-X.local_constants    # => ["X2", "X1", "Y"], assumes Ruby 1.8
-X::Y.local_constants # => ["X1", "Y1"], assumes Ruby 1.8
+X.local_constants    # => [:X1, :X2, :Y]
+X::Y.local_constants # => [:Y1, :X1]
 </ruby>
 
-Имена возвращаются как строки в Ruby 1.8, и как символы в Ruby 1.9. Метод +local_constant_names+ возвращает всегда строки.
-
-WARNING: Этот метод точен, если запущен под Ruby 1.9. В предыдущих версиях он мог пропускать некоторые константы, если их значения в некоторых предках хранят те же имена объектов, что и в получателе.
+Имена возвращаются как символы. (Устаревший метод +local_constant_names+ возвращает строки.)
 
 NOTE: Определено в +active_support/core_ext/module/introspection.rb+.
 
-h4. Синхронизация
+h5. Qualified Constant Names
 
-Макрос +synchronize+ объявляет метод, который будет синхронизирован:
+Стандартные методы +const_defined?+, +const_get+ и +const_set+ принимают простые имена констант. Active Support расширяет это API на передачу полных имен констант.
+
+Новые методы это +qualified_const_defined?+, +qualified_const_get+ и +qualified_const_set+. Их аргументами предполагаются полные имена констант относительно получателя:
 
 <ruby>
-class Counter
-  @@mutex = Mutex.new
-  attr_reader :value
+Object.qualified_const_defined?("Math::PI")       # => true
+Object.qualified_const_get("Math::PI")            # => 3.141592653589793
+Object.qualified_const_set("Math::Phi", 1.618034) # => 1.618034
+</ruby>
 
-  def initialize
-    @value = 0
-  end
+Аргументы могут быть и простыми именами констант:
 
-  def incr
-    @value += 1 # non-atomic
+<ruby>
+Math.qualified_const_get("E") # => 2.718281828459045
+</ruby>
+
+Эти методы аналогичны их встроенным коллегам. В частности, +qualified_constant_defined?+ принимает опциональный второй аргумент, указывающий, хотите ли вы, чтобы этот метод искал в предках. Этот флажок учитывается для каждой константы в выражении во время прохода.
+
+Для примера, дано
+
+<ruby>
+module M
+  X = 1
+end
+
+module N
+  class C
+    include M
   end
-  synchronize :incr, :with => '@@mutex'
 end
 </ruby>
 
-Метод получает имя экшна и опцию +:with+ с кодом. Код вычисляется в контексте получателя каждый раз, как применяется метод, и он должен определить переменную +Mutex+ или любой другой объект, соответствующий +synchronize+ и принимающий блок.
++qualified_const_defined?+ ведет себя таким образом:
 
-NOTE: Определено в +active_support/core_ext/module/synchronization.rb+.
+<ruby>
+N.qualified_const_defined?("C::X", false) # => false
+N.qualified_const_defined?("C::X", true)  # => true
+N.qualified_const_defined?("C::X")        # => true
+</ruby>
+
+Как показывает последний пример, второй аргумент по умолчанию true, как и в +const_defined?+.
+
+Для согласованности со встроенными методами принимаются только относительные пути. абсолютные полные имена констант, такие как +::Math::PI+ вызывают +NameError+.
+
+NOTE: Определено в +active_support/core_ext/module/qualified_const.rb+.
 
 h4. Reachable
 
@@ -345,7 +367,7 @@ M.name # => "M"
 N = Module.new
 N.name # => "N"
 
-Module.new.name # => "" в 1.8, nil в 1.9
+Module.new.name # => nil
 </ruby>
 
 Можно проверить, имеет ли модуль имя с помощью условия +anonymous?+:
@@ -410,7 +432,9 @@ end
 
 Это короче, и намерения более очевидные.
 
-Макрос принимает несколько методов:
+Целевой метод должен быть публичным.
+
+Макрос +delegate+ принимает несколько методов:
 
 <ruby>
 delegate :name, :age, :address, :twitter, :to => :profile
@@ -455,18 +479,6 @@ delegate :size, :to => :attachment, :prefix => :avatar
 В предыдущем примере макрос создаст +avatar_size+, а не +size+.
 
 NOTE: Определено в +active_support/core_ext/module/delegation.rb+
-
-h4. Имена методов
-
-Встроенные методы +instance_methods+ и +methods+ возвращают имена методов как строки или символы, в зависимости от версии Ruby. Active Support определяет +instance_method_names+ и +method_names+ как их соответственные эквиваленты, но всегда возвращающие строки.
-
-Например, +ActionView::Helpers::FormBuilder+ будет работать независимо от версии Ruby:
-
-<ruby>
-self.field_helpers = (FormHelper.instance_method_names - ['form_for'])
-</ruby>
-
-NOTE: Определено в +active_support/core_ext/module/method_names.rb+
 
 h4. Переопределение методов
 

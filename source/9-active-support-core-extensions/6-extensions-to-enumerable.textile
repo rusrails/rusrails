@@ -1,19 +1,5 @@
 h1. Расширения для Enumerable
 
-h4. +group_by+
-
-Active Support переопределяет +group_by+ в Ruby 1.8.7 таким образом, что он возвращает упорядоченный хэш как в 1.9:
-
-<ruby>
-entries_by_surname_initial = address_book.group_by do |entry|
-  entry.surname.at(0).upcase
-end
-</ruby>
-
-Отдельный блок возвращает значения, добавляемые в хэш как они идут, таким образом это итоговый порядок.
-
-NOTE: Определено в +active_support/core_ext/enumerable.rb+.
-
 h4. +sum+
 
 Метод +sum+ складывает элементы перечисления:
@@ -58,32 +44,6 @@ def observed_subclasses
   observed_classes.sum([]) { |klass| klass.send(:subclasses) }
 end
 </ruby>
-
-NOTE: Определено в +active_support/core_ext/enumerable.rb+.
-
-h4. +each_with_object+
-
-Метод +inject+ предлагает итерацию с накоплением:
-
-<ruby>
-[2, 3, 4].inject(1) {|product, i| product*i } # => 24
-</ruby>
-
-От блока ожидается возврат значения сумматора для следующей итерации, это делает построение сложных объектов немного громоздким:
-
-<ruby>
-[1, 2].inject({}) {|h, i| h[i] = i**2; h} # => {1 => 1, 2 => 4}
-</ruby>
-
-Видите эти лишние "+; h+"?
-
-Active Support портирует +each_with_object+ из Ruby 1.9, который рассматривает такие задачи. Он перебирает коллекцию, передает сумматор и возвращает сумматор, когда закончит. Обычно сумматор изменяется на месте. Вышеописанный пример может быть переписан следующим образом:
-
-<ruby>
-[1, 2].each_with_object({}) {|i, h| h[i] = i**2} # => {1 => 1, 2 => 4}
-</ruby>
-
-WARNING. Отметьте, что элемент коллекции и сумматор идут в разном порядке в +inject+ и +each_with_object+.
 
 NOTE: Определено в +active_support/core_ext/enumerable.rb+.
 

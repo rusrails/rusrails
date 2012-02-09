@@ -1,10 +1,4 @@
-h1. Расширения для Process, File, Logger, NameError, LoadError
-
-h3. Расширения для +Process+
-
-h4. +daemon+
-
-Ruby 1.9 предоставил нам +Process.daemon+, а Active Support определил его для предыдушщих версий. Он принимает те же два аргумента, должен ли он перейти в корневую директорию (по умолчанию true), и должен ли наследовать стандартные дескрипторы файла (по умолчанию false).
+h1. Расширения для File, Logger, NameError, LoadError
 
 h3. Расширения для +File+
 
@@ -37,8 +31,8 @@ h4. +around_[level]+
 Принимает два аргумента, +before_message+ и +after_message+, и вызывает метод текущего уровня в экземпляре +Logger+, передавая +before_message+, затем определенное сообщение, затем +after_message+:
 
 <ruby>
-  logger = Logger.new("log/development.log")
-  logger.around_info("before", "after") { |logger| logger.info("during") }
+logger = Logger.new("log/development.log")
+logger.around_info("before", "after") { |logger| logger.info("during") }
 </ruby>
 
 h4. +silence+

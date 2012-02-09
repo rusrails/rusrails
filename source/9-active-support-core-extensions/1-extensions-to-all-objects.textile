@@ -102,19 +102,6 @@ end
 
 NOTE: Определено в +active_support/core_ext/object/try.rb+.
 
-h4. +singleton_class+
-
-Метод +singleton_class+ возвращает экземпляр (singleton) класса получателя:
-
-<ruby>
-String.singleton_class     # => #<Class:String>
-String.new.singleton_class # => #<Class:#<String:0x17a1d1c>>
-</ruby>
-
-WARNING: Fixnums и symbols не имеют экземпляров классов, +singleton_class+ вызывает +TypeError+ на них. Кроме того, экземплярами класса для +nil+, +true+ и +false+ являются +NilClass+, +TrueClass+ и +FalseClass+ соответственно.
-
-NOTE: Определено в +active_support/core_ext/kernel/singleton_class.rb+.
-
 h4. +class_eval(*args, &block)+
 
 Можно вычислить код в контексте экземпляра класса любого объекта, используя +class_eval+:
@@ -221,7 +208,7 @@ current_user.to_query('user') # => user=357-john-smith
 
 <ruby>
 account.to_query('company[name]')
-# => "company%5Bname%5D=Johnson+%26+Johnson"
+# => "company%5Bname%5D=Johnson<plus>%26<plus>Johnson"
 </ruby>
 
 поэтому результат готов для использования в строке запроса.
@@ -313,7 +300,7 @@ NOTE: Определено в +active_support/core_ext/object/instance_variables
 
 h5. +instance_values+
 
-Метод +instance_values+ возвращает хэш, который связывает имена переменных экземпляра без "@" с их соответствующими значениями. Ключи являются строками в Ruby 1.8 и 1.9:
+Метод +instance_values+ возвращает хэш, который связывает имена переменных экземпляра без "@" с их соответствующими значениями. Ключи являются строками:
 
 <ruby>
 class C
@@ -364,14 +351,16 @@ NOTE: Определено в +active_support/core_ext/kernel/reporting.rb+.
 
 h4. +in?+
 
-Условие +in?+ проверяет, включен ли объект в другой объект. Если переданный элемент не отвечает на +include?+, будет вызвано исключение +ArgumentError+.
+Условие +in?+ проверяет, включен ли объект в другой объект или список объектов. Если передан единственный элемент и он не отвечает на +include?+, будет вызвано исключение +ArgumentError+.
 
 Примеры +in?+:
 
 <ruby>
+1.in?(1,2)          # => true
 1.in?([1,2])        # => true
 "lo".in?("hello")   # => true
 25.in?(30..50)      # => false
+1.in?(1)            # => ArgumentError
 </ruby>
 
 NOTE: Определено в +active_support/core_ext/object/inclusion.rb+.

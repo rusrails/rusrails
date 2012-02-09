@@ -11,8 +11,10 @@ NOTE: Все нижеследующие методы определены в +ac
 <ruby>
 yesterday
 tomorrow
-beginning_of_week (monday, at_beginning_of_week)
-end_on_week (at_end_of_week)
+beginning_of_week (at_beginning_of_week)
+end_of_week (at_end_of_week)
+monday
+sunday
 weeks_ago
 prev_week
 next_week
