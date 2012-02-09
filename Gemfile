@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', " ~> 3.2.0"
-gem 'puffer', :git => 'git://github.com/morsbox/puffer.git'
+gem 'puffer'
 
 gem 'mysql2'
 gem 'thinking-sphinx'

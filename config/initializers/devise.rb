@@ -6,11 +6,11 @@ Devise.setup do |config|
   require 'devise/orm/active_record'
 
   config.case_insensitive_keys = [ :email ]
+  config.strip_whitespace_keys = [ :email ]
 
-  # ==> Configuration for :database_authenticatable
-  # For bcrypt, this is the cost for hashing the password and defaults to 10. If
-  # using other encryptors, it sets how many times you want the password re-encrypted.
-  config.stretches = 10
+  config.skip_session_storage = [:http_auth]
+
+  config.stretches = Rails.env.test? ? 1 : 10
 
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
@@ -32,4 +32,5 @@ Devise.setup do |config|
   config.omniauth :twitter, Settings.oauth.twitter.key, Settings.oauth.twitter.secret
   config.omniauth :google_oauth2, Settings.oauth.google.key, Settings.oauth.google.secret, :name => 'google'
 
+  config.router_name = :main_app
 end
