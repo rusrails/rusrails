@@ -127,7 +127,7 @@ class CreatePictures < ActiveRecord::Migration
 end
 </ruby>
 
-!/system/images/polymorphic.png(Диаграмма для полиморфной связи)!
+!/assets/guides/polymorphic.png(Диаграмма для полиморфной связи)!
 
 h4. Самоприсоединение
 

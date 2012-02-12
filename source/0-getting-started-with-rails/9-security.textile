@@ -35,4 +35,4 @@ class CommentsController < ApplicationController
 
 Теперь, если попытаетесь создать новую публикацию, то встретитесь с простым вызовом аутентификации HTTP
 
-!/system/images/challenge.png(Простой вызов аутентификации HTTP)!
+!/assets/guides/challenge.png(Простой вызов аутентификации HTTP)!

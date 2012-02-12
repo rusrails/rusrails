@@ -7,6 +7,7 @@ h1. Обзор особенностей I18n API
 * поиск переводов
 * интерполяция данных в переводы
 * множественное число у переводов
+* использование HTML-безопасных переводов
 * локализация дат, номеров, валют и т.п.
 
 h4. Поиск переводов
@@ -157,3 +158,24 @@ I18n.l Time.now, :locale => :de
 <ruby>
 I18n.default_locale = :de
 </ruby>
+
+h4. Использование HTML-безопасных переводов
+
+Ключи с суффиксом '_html' и ключами с именем 'html' помечаются как HTML-безопасные. Их можно использовать во вьюхах без экранирования.
+
+<ruby>
+# config/locales/en.yml
+en:
+  welcome: <b>welcome!</b>
+  hello_html: <b>hello!</b>
+  title:
+    html: <b>title!</b>
+
+# app/views/home/index.html.erb
+<div><%= t('welcome') %></div>
+<div><%= raw t('welcome') %></div>
+<div><%= t('hello_html') %></div>
+<div><%= t('title.html') %></div>
+</ruby>
+
+!/assets/guides/i18n_demo_html_safe.png(демонстрация html-безопасности в i18n)!

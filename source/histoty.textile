@@ -57,8 +57,8 @@ h1. ИСТОРИЯ
 
 1. API интернационализации Rails (I18n)
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
-3. 71012eafb6916d270b78
-4. 30/07/11
+3. 84bd203b39b0905723fc8be38bc9fd24f618e252
+4. 25/01/12ы
 
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile

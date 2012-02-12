@@ -40,7 +40,7 @@ end
 
 Если вы подтвердите форму с пустыми полями, результат будет похож на следующее:
 
-!/system/images/error_messages30.png(Сообщения об ошибке)!
+!/assets/guides/error_messages30.png(Сообщения об ошибке)!
 
 NOTE: Появившийся сгенерированный HTML будет отличаться от показанного, если не был использован скаффолдинг. Смотрите "Настройка CSS сообщений об ошибке":#customizing-error-messages-css.
 
@@ -62,7 +62,7 @@ NOTE: Появившийся сгенерированный HTML будет от
 
 приведет к
 
-!/system/images/customized_error_messages.png(Настроенные сообщения об ошибках)!
+!/assets/guides/customized_error_messages.png(Настроенные сообщения об ошибках)!
 
 Если указать +nil+ для любой из этих опций, это избавит от соответствующих секций +div+.
 
@@ -105,4 +105,4 @@ end
 
 Результат будет выглядеть так:
 
-!/system/images/validation_error_messages.png(Сообщения об ошибках валидации)!
+!/assets/guides/validation_error_messages.png(Сообщения об ошибках валидации)!

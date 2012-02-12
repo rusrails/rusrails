@@ -21,7 +21,7 @@ class Order < ActiveRecord::Base
 end
 </ruby>
 
-!/system/images/belongs_to.png(Диагармма для связи belongs_to)!
+!/assets/guides/belongs_to.png(Диагармма для связи belongs_to)!
 
 h4. Связь +has_one+
 
@@ -33,7 +33,7 @@ class Supplier < ActiveRecord::Base
 end
 </ruby>
 
-!/system/images/has_one.png(Диагармма для связи has_one)!
+!/assets/guides/has_one.png(Диагармма для связи has_one)!
 
 h4. Связь +has_many+
 
@@ -47,7 +47,7 @@ end
 
 NOTE: Имя другой модели указывается во множественном числе при объявлении связи +has_many+.
 
-!/system/images/has_many.png(Диагармма для связи has_many)!
+!/assets/guides/has_many.png(Диагармма для связи has_many)!
 
 h4(#the-has-many-through-association). Связь +has_many :through+
 
@@ -70,7 +70,7 @@ class Patient < ActiveRecord::Base
 end
 </ruby>
 
-!/system/images/has_many_through.png(Диагармма для связи has_many :through)!
+!/assets/guides/has_many_through.png(Диагармма для связи has_many :through)!
 
 Коллекция соединительных моделей может управляться с помощью API. Например, если вы присвоите:
 
@@ -126,7 +126,7 @@ class AccountHistory < ActiveRecord::Base
 end
 </ruby>
 
-!/system/images/has_one_through.png(Диагармма для связи has_one :through)!
+!/assets/guides/has_one_through.png(Диагармма для связи has_one :through)!
 
 h4. Связь +has_and_belongs_to_many+
 
@@ -142,6 +142,6 @@ class Part < ActiveRecord::Base
 end
 </ruby>
 
-!/system/images/habtm.png(Диагармма для связи has_and_belongs_to_many)!
+!/assets/guides/habtm.png(Диагармма для связи has_and_belongs_to_many)!
 
 В "следующей части":/active-record-associations/the-types-of-associations-2 будет рассказано о принципах выбора между +belongs_to+ и +has_one+, между +has_many :through+ и +has_and_belongs_to_many+, про полиморфные связи и самоприсоединения.
