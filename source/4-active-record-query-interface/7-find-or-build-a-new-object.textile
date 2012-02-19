@@ -38,7 +38,7 @@ Client.find_or_create_by_first_name(:first_name => "Andy", :locked => false)
 
 h4. +first_or_create!+
 
-Можно также использовать +first_or_create!+, чтобы вызвать исключение, если новая запись неваидна. Валидации не раскрываются в этом руководстве, но давайте на момент предположим, что вы временно добавили
+Можно также использовать +first_or_create!+, чтобы вызвать исключение, если новая запись невалидна. Валидации не раскрываются в этом руководстве, но давайте на момент предположим, что вы временно добавили
 
 <ruby>
 validates :orders_count, :presence => true
@@ -53,7 +53,7 @@ Client.where(:first_name => 'Andy').first_or_create!(:locked => false)
 
 h4. +first_or_initialize+
 
-Метод +first_or_initialize+ ротает похоже на +first_or_create+, но он вызывает не +create+, а +new+. Это означает, что новый экземпляр модели будет создан в памяти, но не будет сохранен в базу данных. Продолжая пример с +first_or_create+, теперь мы хотим клиента по имени 'Nick':
+Метод +first_or_initialize+ работает похоже на +first_or_create+, но он вызывает не +create+, а +new+. Это означает, что новый экземпляр модели будет создан в памяти, но не будет сохранен в базу данных. Продолжая пример с +first_or_create+, теперь мы хотим клиента по имени 'Nick':
 
 <ruby>
 nick = Client.where(:first_name => 'Nick').first_or_initialize(:locked => false)
