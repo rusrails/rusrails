@@ -1,10 +1,10 @@
 h1. Создание сложных форм
 
-Многие приложения вырастают из пределов простых форм, редактирующих одиночные объекты. Например, при создании Person вы, возможно, захотите позволить пользователю (в той же самой форме) создать несколько записей адресов (дом, работа и т.д.). Позже, редактируя этого человека, пользователю должно быть доступно добавление, удаление или правка адреса, по необходимости. Хотя настоящее руководство показало все частицы для управления всем этим, в Rails пока нет стандартного законченного способа выполнения такого, но многие разработали свои эффективные подходы. Они включают:
+Многие приложения вырастают из пределов простых форм, редактирующих одиночные объекты. Например, при создании Person вы, возможно, захотите позволить пользователю (в той же самой форме) создать несколько записей адресов (домашний, рабочий и т.д.). Позже, редактируя этого человека, пользователю должно быть доступно добавление, удаление или правка адреса, если необходимо. Хотя настоящее руководство показало все частицы для управления всем этим, в Rails пока нет стандартного законченного способа выполнения такого, но многие разработали свои эффективные подходы. Они включают:
 
 * Начиная с Rails 2.3, Rails включает "Nested Attributes":http://guides.rubyonrails.org/2_3_release_notes.html#nested-attributes и "Nested Object Forms":http://guides.rubyonrails.org/2_3_release_notes.html#nested-object-forms
 * Серия кастов от Ryan Bates по "complex forms":http://railscasts.com/episodes/75
 * Обработка нескольких моделей в одной форме от "Advanced Rails Recipes":http://media.pragprog.com/titles/fr_arr/multiple_models_one_form.pdf
-* Eloy Duran's "complex-forms-examples":https://github.com/alloy/complex-form-examples/ application
-* Lance Ivy's "nested_assignment":https://github.com/cainlevy/nested_assignment/tree/master plugin and "sample application":https://github.com/cainlevy/complex-form-examples/tree/cainlevy
-* James Golick's "attribute_fu":https://github.com/jamesgolick/attribute_fu plugin
+* "Примеры приложений":https://github.com/alloy/complex-form-examples/ со сложными формами от Eloy Duran's
+* Плагин "nested_assignment":https://github.com/cainlevy/nested_assignment/tree/master от Lance Ivy с "примерами":https://github.com/cainlevy/complex-form-examples/tree/cainlevy
+* Плагин "attribute_fu":https://github.com/jamesgolick/attribute_fu от James Golick
