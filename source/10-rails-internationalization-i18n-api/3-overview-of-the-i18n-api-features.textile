@@ -113,7 +113,7 @@ h4. Множественное число
 
 В английском только одна форма единственного числа, и одна множественного для заданной строки, т.е. "1 message" и "2 messages". В других языках ("русском":http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ru, "арабском":http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ar, "японском":http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html#ja и многих других) имеются различные правила грамматики, имеющие дополнительные или остутствующие "формы множественного числа":http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html. Таким образом, API I18n предоставляет гибкую возможность множественных форм.
 
-У переменной интерполяции +:count есть специальная роль в том, что она интерполируется для перевода, и используется для подбора множественного числа для перевода в соответствии с правилами множественного числа, определенными в CLDR:
+У переменной интерполяции +:count+ есть специальная роль в том, что она интерполируется для перевода, и используется для подбора множественного числа для перевода в соответствии с правилами множественного числа, определенными в CLDR:
 
 <ruby>
 I18n.backend.store_translations :en, :inbox => {
