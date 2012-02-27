@@ -8,7 +8,7 @@ h5. Мотивация
 
 h5. Безопасные строки
 
-В Active Support есть концепция <i>(html) безопасных</i> строк, начиная с Rails 3. Безопасная строка это та, которая помечена как подлежащая вставке в HTML как есть. Ей доверяется, независимо от того, была она экранирована или нет.
+В Active Support есть концепция <i>(html) безопасных</i> строк, начиная с Rails 3. Безопасная строка - это та, которая помечена как подлежащая вставке в HTML как есть. Ей доверяется, независимо от того, была она экранирована или нет.
 
 Строки рассматриваются как <i>небезопасные</i> по умолчанию:
 
@@ -71,7 +71,7 @@ def raw(stringish)
 end
 </ruby>
 
-NOTE: Определенео в +active_support/core_ext/string/output_safety.rb+.
+NOTE: Определено в +active_support/core_ext/string/output_safety.rb+.
 
 h5. Преобразование
 
@@ -91,7 +91,7 @@ h5. Копирование
 
 h4. +squish+
 
-Метод String#squish+ отсекает начальные и конечные пробелы и заменяет каждый ряд пробелов единственным пробелом:
+Метод +String#squish+ отсекает начальные и конечные пробелы и заменяет каждый ряд пробелов единственным пробелом:
 
 <ruby>
 " \n  foo\n\r \t bar \n".squish # => "foo bar"
@@ -218,7 +218,7 @@ h5. +from(position)+
 "hello".from(10) # => "" если < 1.9, nil в 1.9
 </ruby>
 
-NOTE: Определено в +active_support/core_ext/string/access.rb.
+NOTE: Определено в +active_support/core_ext/string/access.rb+.
 
 h5. +to(position)+
 
@@ -493,7 +493,7 @@ NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
 
 h5. +tableize+
 
-Метод +tableize+ это +underscore+ следующий за +pluralize+.
+Метод +tableize+ - это +underscore+ следующий за +pluralize+.
 
 <ruby>
 "Person".tableize      # => "people"
@@ -540,7 +540,7 @@ end
 
 Если строка определяет неизвестную константу, или ее содержимое даже не является валидным именем константы, +constantize+ вызывает +NameError+.
 
-Анализ имени константы с помощью +constantize+> начинается всегда с верхнего уровня +Object+, даже если нет предшествующих "::".
+Анализ имени константы с помощью +constantize+ начинается всегда с верхнего уровня +Object+, даже если нет предшествующих "::".
 
 <ruby>
 X = :in_Object
@@ -620,13 +620,13 @@ h5. +foreign_key+
 foreign_key = options[:foreign_key] || reflection.active_record.name.foreign_key
 </ruby>
 
-NOTE: Определено в +active_support/core_ext/string/inflections.rb.
+NOTE: Определено в +active_support/core_ext/string/inflections.rb+.
 
 h4. Конвертирование
 
 h5. +to_date+, +to_time+, +to_datetime+
 
-Методы +to_date+, +to_time+ и +to_datetime+ в основном удобные обертки около +Date._parse+:
+Методы +to_date+, +to_time+ и +to_datetime+ - в основном удобные обертки около +Date._parse+:
 
 <ruby>
 "2010-07-27".to_date              # => Tue, 27 Jul 2010
