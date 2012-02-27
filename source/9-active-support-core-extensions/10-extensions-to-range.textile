@@ -47,7 +47,7 @@ Active Support расширяет этот метод так, что аргум�
 
 WARNING: Оригинальный +Range#include?+ все еще псевдоним +Range#===+.
 
-NOTE: Определено в +active_support/core_ext/range/include_range.rb.
+NOTE: Определено в +active_support/core_ext/range/include_range.rb+.
 
 h4. +overlaps?+
 
