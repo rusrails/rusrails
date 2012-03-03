@@ -58,7 +58,7 @@ h1. ИСТОРИЯ
 1. API интернационализации Rails (I18n)
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile
 3. 84bd203b39b0905723fc8be38bc9fd24f618e252
-4. 25/01/12ы
+4. 25/01/12
 
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
@@ -67,8 +67,8 @@ h1. ИСТОРИЯ
 
 1. Руководство по тестированию приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
-3. 2eac4e2e2ff3a740c712
-4. 23/06/11
+3. 255d9c3d6bdee9d1d1692e4044f1e7f34ae230e7
+4. 05/02/12
 
 1. Руководство Ruby On Rails по безопасности
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
