@@ -77,8 +77,8 @@ h1. ИСТОРИЯ
 
 1. Отладка приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/debugging_rails_applications.textile
-3. 5724625e81380d46ad0a
-4. 08/07/11
+3. 23bd340a485d72b1a6d30ad55aeec7d3903e0d79
+4. 14/12/11
 
 1. Тестирование производительности приложений Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/performance_testing.textile
