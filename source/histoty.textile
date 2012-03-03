@@ -82,8 +82,8 @@ h1. ИСТОРИЯ
 
 1. Тестирование производительности приложений Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/performance_testing.textile
-3. 95f827f9109a6f5d9034
-4. 22/06/11
+3. fca655f391953a1ba02988cb8e74913d4efbcd3a
+4. 30/11/11
 
 1. Конфигурирование приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/configuring.textile
