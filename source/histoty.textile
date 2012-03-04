@@ -62,8 +62,8 @@ h1. ИСТОРИЯ
 
 1. Основы Action Mailer
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_mailer_basics.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
+3. dda6787f44a4e9a90cc28b3efee5b63c7d8cd023
+4. 19/11/11
 
 1. Руководство по тестированию приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
