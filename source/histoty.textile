@@ -87,8 +87,8 @@ h1. ИСТОРИЯ
 
 1. Конфигурирование приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/configuring.textile
-3. 66b4d112363f3786ecfe
-4. 24/07/11
+3. 4c5dc4ac0d26b9c5d97d27f7886ebc6327771895
+4. 04/02/12
 
 1. Руководство по командной строке Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/command_line.textile
