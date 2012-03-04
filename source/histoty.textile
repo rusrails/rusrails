@@ -92,8 +92,8 @@ h1. ИСТОРИЯ
 
 1. Руководство по командной строке Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/command_line.textile
-3. ddbf3b6215d91c2c4657
-4. 06/08/11
+3. 5c0aba238c37a71fce08f949bc2c6bdd9aab4f7b
+4. 26/02/12
 
 1. Кэширование с Rails: Обзор
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/caching_with_rails.textile

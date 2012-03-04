@@ -20,7 +20,7 @@ WARNING: Гем rails можно установить, написав +gem insta
 <shell>
 $ rails new commandsapp
      create
-     create  README
+     create  README.rdoc
      create  .gitignore
      create  Rakefile
      create  config.ru
@@ -29,8 +29,6 @@ $ rails new commandsapp
      ...
      create  tmp/cache
      create  tmp/pids
-     create  vendor/plugins
-     create  vendor/plugins/.gitkeep
 </shell>
 
 Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
@@ -64,6 +62,8 @@ $ rails server
 <shell>
 $ rails server -e production -p 4000
 </shell>
+
+Опция +-b+ привязывает Rails к определенному ip, по умолчанию это 0.0.0.0. Можете запустить сервер, как демона, передав опцию +-d+.
 
 h4. +rails generate+
 
@@ -277,18 +277,6 @@ h4. +rails dbconsole+
 
 Для вызова консоли базы данных также можно использовать псевдоним "db": +rails db+.
 
-h4. +rails plugin+
-
-Команда +rails plugin+ упрощает управление плагинами. Плагины могут быть установлены по имени или URL их репозитория. Нужен установленный Git, если хотите установить плагин из репозитория Git. То же самое и в отношении Subversion.
-
-<shell>
-$ rails plugin install https://github.com/technoweenie/acts_as_paranoid.git
-+ ./CHANGELOG
-+ ./MIT-LICENSE
-...
-...
-</shell>
-
 h4. +rails runner+
 
 <tt>runner</tt> запускает код Ruby в контексте неинтерактивности Rails. Для примера:
@@ -308,6 +296,8 @@ $ rails runner -e staging "Model.long_running_method"
 h4. +rails destroy+
 
 Воспринимайте +destroy+ как противоположность +generate+. Она выясняет, что было создано, и отменяет это.
+
+Также можно использовать псевдоним "d" для вызова команды destroy: <tt>rails d</tt>.
 
 <shell>
 $ rails generate model Oops
