@@ -3,7 +3,7 @@ class DiscussionsController < ApplicationController
   before_filter :check_author, :only => [:new, :create]
 
   def index
-    @discussions = Discussion.enabled
+    @discussions = Discussion.enabled.page(params[:page])
   end
 
   def new

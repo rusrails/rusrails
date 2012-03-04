@@ -18,3 +18,5 @@
       = author_of(discussion)
       = ","
       = "обновлено #{l discussion.updated_at, :format => :short}"
+
+= paginate @discussions
