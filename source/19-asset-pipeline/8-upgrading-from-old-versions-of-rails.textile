@@ -1,6 +1,6 @@
 h1. Обновление со старых версий Rails
 
-Имеются две проблемы при обновлении. Первая это перемещение файлов в новые места размещения. Смотрите "Организация ресурсов":/asset-pipeline/how-to-use-the-asset-pipeline ранее в руководстве для правильного размешения файлов разных типов.
+Имеются две проблемы при обновлении. Первая это перемещение файлов из +public/+ в новые места размещения. Смотрите "Организация ресурсов":/asset-pipeline/how-to-use-the-asset-pipeline ранее в руководстве для правильного размешения файлов разных типов.
 
 Вторая это обновление файлов различных сред с правильными значениями по умолчанию. Следующие изменения отражают значения по умолчанию в версии 3.1.0.
 
@@ -50,7 +50,7 @@ config.assets.digest = true
 # config.assets.precompile += %w( search.js )
 </erb>
 
-Для +test.rb+ нет изменений. По умолчанию в среде test: +config.assets.compile+ равно true и +config.assets.compress+, +config.assets.debug+ и +config.assets.digest+ равны false.
+Не нужно изменять +test.rb+. По умолчанию в среде test: +config.assets.compile+ равно true и +config.assets.compress+, +config.assets.debug+ и +config.assets.digest+ равны false.
 
 Следующее также должно быть добавлено в +Gemfile+:
 
@@ -75,7 +75,7 @@ if defined?(Bundler)
 end
 </ruby>
 
-Вместо старого из Rails 3.0
+Вместо старого из Rails версии 3.0
 
 <ruby>
 # If you have a Gemfile, require the gems listed there, including any gems

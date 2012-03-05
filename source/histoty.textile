@@ -102,5 +102,5 @@ h1. ИСТОРИЯ
 
 1. Asset Pipeline
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
-3. 74e46e51564b38ee0af70387634e0e4138c31742
-4. 13/12/11
+3. f097f5a51a35598dcf72d62f3bae63663a05182b
+4. 03/03/12
