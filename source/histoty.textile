@@ -104,3 +104,23 @@ h1. ИСТОРИЯ
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
 3. f097f5a51a35598dcf72d62f3bae63663a05182b
 4. 03/03/12
+
+-- Другие / план --
+
+3_0_release_notes.textile
+3_1_release_notes.textile
+3_2_release_notes.textile
+action_view_overview.textile
+active_model_basics.textile
+active_record_basics.textile
+active_resource_basics.textile
+ajax_on_rails.textile
+api_documentation_guidelines.textile
+engines.textile
+generators.textile
+initialization.textile
+nested_model_forms.textile
+plugins.textile
+rails_application_templates.textile
+rails_on_rack.textile
+upgrading_ruby_on_rails.textile
