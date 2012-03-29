@@ -113,7 +113,6 @@ h1. ИСТОРИЯ
 action_view_overview.textile
 active_model_basics.textile
 active_record_basics.textile
-active_resource_basics.textile
 ajax_on_rails.textile
 api_documentation_guidelines.textile
 engines.textile
@@ -124,3 +123,4 @@ plugins.textile
 rails_application_templates.textile
 rails_on_rack.textile
 upgrading_ruby_on_rails.textile
+active_support_instrumentation.textile
