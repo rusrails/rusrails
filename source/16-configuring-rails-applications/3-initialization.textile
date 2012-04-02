@@ -145,27 +145,27 @@ The error occurred while evaluating nil.each
 
 *+set_autoload_paths+* Этот инициализатор запускается перед +bootstrap_hook+. Добавляет все поддиректории +app+ и пути, определенные +config.autoload_paths+, в +ActiveSupport::Dependencies.autoload_paths+.
 
-*+add_routing_paths+* Загружает (по умолчанию) все файлы +config/routes.rb+ (в приложении и railties, включая движки) и настраивает маршруты для приложения.
+*+add_routing_paths+* Загружает (по умолчанию) все файлы +config/routes.rb+ (в приложении и railties, включая engine-ы) и настраивает маршруты для приложения.
 
-*+add_locales+* Добавляет файлы в +config/locales+ (из приложения, railties и движков) в +I18n.load_path+, делая доступными переводы в этих файлах.
+*+add_locales+* Добавляет файлы в +config/locales+ (из приложения, railties и engine-ов) в +I18n.load_path+, делая доступными переводы в этих файлах.
 
-*+add_view_paths+* Добавляет директорию +app/views+ из приложения, railties и движков в путь поиска файлов вьюх приложения.
+*+add_view_paths+* Добавляет директорию +app/views+ из приложения, railties и engine-ов в путь поиска файлов вьюх приложения.
 
 *+load_environment_config+* Загружает файл +config/environments+ для текущей среды.
 
 *+append_asset_paths+* Находит пути ресурсов для приложения и всех присоединенных railties и отслеживает доступные директории в +config.static_asset_paths+.
 
-*+prepend_helpers_path+* Добавляет директорию +app/helpers+ из приложения, railties и движков в путь поиска файлов хелперов приложения.
+*+prepend_helpers_path+* Добавляет директорию +app/helpers+ из приложения, railties и engine-ов в путь поиска файлов хелперов приложения.
 
-*+load_config_initializers+* Загружает все файлы Ruby из +config/initializers+ в приложении, railties и движках. Файлы в этой директории могут использоваться для хранения конфигурационных настроек, которые нужно сделать после загрузки всех фреймворков.
+*+load_config_initializers+* Загружает все файлы Ruby из +config/initializers+ в приложении, railties и engine-ах. Файлы в этой директории могут использоваться для хранения конфигурационных настроек, которые нужно сделать после загрузки всех фреймворков.
 
-*+engines_blank_point+* Предоставляет точку инициализации для хука, если нужно что-то сделать до того, как загрузятся движки. После этой точки будут запущены все инициализаторы railtie и движков.
+*+engines_blank_point+* Предоставляет точку инициализации для хука, если нужно что-то сделать до того, как загрузятся engine-ы. После этой точки будут запущены все инициализаторы railtie и engine-ов.
 
 *+add_generator_templates+* Находит шаблоны для генераторов в +lib/templates+ приложения, railities и дижков, и добавляет их в настройку +config.generators.templates+, что делает шаблоны доступными для всех ссылающихся генераторов.
 
 *+ensure_autoload_once_paths_as_subset+* Убеждается, что +config.autoload_once_paths+ содержит пути только из +config.autoload_paths+. Если она содержит другие пути, будет вызвано исключение.
 
-*+add_to_prepare_blocks+* Блок для каждого вызова +config.to_prepare+ в приложении, railtie или движке добавляется в колбэк +to_prepare+ для Action Dispatch, который будет запущен при каждом запросе в development или перед первым запросом в production.
+*+add_to_prepare_blocks+* Блок для каждого вызова +config.to_prepare+ в приложении, railtie или engine добавляется в колбэк +to_prepare+ для Action Dispatch, который будет запущен при каждом запросе в development или перед первым запросом в production.
 
 *+add_builtin_route+* Если приложение запускается в среде development, то в маршруты приложения будет добавлен маршрут для +rails/info/properties+. Этот маршрут предоставляет подробную информацию, такую как версию Rails and Ruby для +public/index.html+ в приложении Rails по умолчанию.
 
@@ -173,7 +173,7 @@ The error occurred while evaluating nil.each
 
 *+eager_load!+* Если +config.cache_classes+ true, запускает хуки +config.before_eager_load+, а затем вызывает +eager_load!+, загружающий все файлы Ruby из +config.eager_load_paths+.
 
-*+finisher_hook+* Представляет хук после завершения процесса инициализации приложения, а также запускает все блоки +config.after_initialize+ для приложения, railties и движков.
+*+finisher_hook+* Представляет хук после завершения процесса инициализации приложения, а также запускает все блоки +config.after_initialize+ для приложения, railties и engine-ов.
 
 *+set_routes_reloader+* Конфигурирует Action Dispatch, перезагружая файл маршрутов с использованием +ActionDispatch::Callbacks.to_prepare+.
 
