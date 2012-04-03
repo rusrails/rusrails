@@ -116,7 +116,11 @@ h1. ИСТОРИЯ
 16. ajax_on_rails.textile
 18. active_support_instrumentation.textile
 20. api_documentation_guidelines.textile
+
 25. engines.textile
+    03c051eb54c5042177ca75a7b2534c1a5cd513e1
+    29/03/12
+
 30. generators.textile
 35. initialization.textile
 40. nested_model_forms.textile
