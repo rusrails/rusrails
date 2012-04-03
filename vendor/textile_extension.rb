@@ -1,4 +1,4 @@
-# forked from https://github.com/lifo/docrails/blob/master/railties/guides/rails_guides/textile_extensions.rb
+# forked from https://github.com/lifo/docrails/blob/master/guides/rails_guides/textile_extensions.rb
 
 module TextileExtensions
   def notestuff(body)
