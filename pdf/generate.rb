@@ -34,7 +34,7 @@ require 'redcloth'
 require '../vendor/textile_extension'
 RedCloth.include TextileExtensions
 
-# Data Dase
+# Data Base
 require 'textile-files'
 files = @@files
 
