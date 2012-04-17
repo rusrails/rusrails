@@ -169,7 +169,7 @@ def fix_image_path
   file_write(main_file_path, cnt)
 end
 
-#textile2html(files)
-#create_one_html_file(files)
-#fix_image_path
+textile2html(files)
+create_one_html_file(files)
+fix_image_path
 generate_pdf
