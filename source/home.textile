@@ -51,3 +51,9 @@ h3. Копаем глубже
 - "Кэширование с Rails":/caching-with-rails-an-overview := Различные техники кэширования, предоставленные Rails.
 - "Asset Pipeline":/asset-pipeline := Это руководство документирует файлопровод (asset pipeline)
 - "Engine для начинающих":/different-guides/engines := Это руководство объясняет, как написать монтируемый engine
+
+h3. Заметки о релизах
+
+- "Заметки о релизе Ruby on Rails 3.2":/different-guides/3_2_release_notes := Заметки о релизе Rails 3.2
+- "Заметки о релизе Ruby on Rails 3.1":/different-guides/3_1_release_notes := Заметки о релизе Rails 3.1
+- "Заметки о релизе Ruby on Rails 3.0":/different-guides/3_0_release_notes := Заметки о релизе Rails 3.0

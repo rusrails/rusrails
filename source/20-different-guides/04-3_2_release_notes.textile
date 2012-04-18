@@ -1,0 +1,544 @@
+h1. Заметки о релизе Ruby on Rails 3.2
+
+Ключевые новинки в Rails 3.2:
+
+* Режим Development стал быстрее
+* Новый Engine для роутинга
+* Автоматические Explain для запросов
+* Тегированное логирование
+
+Эти заметки о релизе покрывают основные обновления, но не включают все мелкие багфиксы и изменения. Чтобы увидеть все, обратитесь к "списку комитов":http://github.com/rails/rails/commits/3-2-stable в главном репозитории Rails на GitHub.
+
+h3. Обновление до Rails 3.2
+
+Если обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 3.2, необходимо сначала обновиться до Rails 3.1 и убедиться, что приложение все еще выполняется так, как нужно. Затем нужно предпринять следующие изменения:
+
+h4. Rails 3.2 требует как минимум Ruby 1.8.7
+
+Rails 3.2 требует Ruby 1.8.7 или выше. Поддержка всех прежних версий Ruby была официально прекращена, и следует обновиться как можно быстрее. Rails 3.2 также совместим с Ruby 1.9.2.
+
+TIP: Отметьте, что в Ruby 1.8.7 p248 и p249 имеются ошибки маршализации, ломающие Rails. Хотя в Ruby Enterprise Edition это было исправлено, начиная с релиза 1.8.7-2010.02. В ветке 1.9, Ruby 1.9.1 не пригоден к использованию, поскольку он иногда вылетает, поэтому, если хотите использовать 1.9.x перепрыгивайте на 1.9.2 для гладкой работы.
+
+h4. Что обновить в приложении
+
+* Обновите зависимости в вашем Gemfile
+** <tt>rails = 3.2.0</tt>
+** <tt>sass-rails ~> 3.2.3</tt>
+** <tt>coffee-rails ~> 3.2.1</tt>
+** <tt>uglifier >= 1.0.3</tt>
+
+* В Rails 3.2 устаревает <tt>vendor/plugins</tt>, а в Rails 4.0 будет убрано окончательно. Можете начинать перемещать эти плагины, выделяя их в гемы и добавляя в свой Gemfile. Если вы не хотите делать из них гемы, можно их переместить, скажем в <tt>lib/my_plugin/*</tt>, и добавить соответствующий инициализатор в <tt>config/initializers/my_plugin.rb</tt>.
+
+* Имеется ряд новых конфигурационных изменений, которые можно добавить в <tt>config/environments/development.rb</tt>:
+
+<ruby>
+# Raise exception on mass assignment protection for Active Record models
+config.active_record.mass_assignment_sanitizer = :strict
+
+# Log the query plan for queries taking more than this (works
+# with SQLite, MySQL, and PostgreSQL)
+config.active_record.auto_explain_threshold_in_seconds = 0.5
+</ruby>
+
+Также необходимо добавить конфиг <tt>mass_assignment_sanitizer</tt> в <tt>config/environments/test.rb</tt>:
+
+<ruby>
+# Raise exception on mass assignment protection for Active Record models
+config.active_record.mass_assignment_sanitizer = :strict
+</ruby>
+
+h4. Что обновить в ваших engine-ах
+
+Замените код ниже комментариев в <tt>script/rails</tt> следующим содержимым:
+
+<ruby>
+ENGINE_ROOT = File.expand_path('../..', __FILE__)
+ENGINE_PATH = File.expand_path('../../lib/your_engine_name/engine', __FILE__)
+
+require 'rails/all'
+require 'rails/engine/commands'
+</ruby>
+
+h3. Создание приложения Rails 3.2
+
+<shell>
+# Необходим установленный рубигем 'rails'
+$ rails new myapp
+$ cd myapp
+</shell>
+
+h4. Сторонние гемы
+
+Сейчас Rails использует +Gemfile+ в корне приложения, чтобы определить гемы, требуемые для запуска вашего приложения. Этот +Gemfile+ обрабатывается "Bundler":http://github.com/carlhuda/bundler, который затем устанавливает все зависимости. Он может даже установить все зависимости локально в ваше приложение, и оно не будет зависеть от системных гемов.
+
+Подробнее: - "Bundler homepage":http://gembundler.com
+
+h4. Живите на грани
+
++Bundler+ и +Gemfile+ замораживает ваше приложение Rails с помощью новой отдельной команды <tt>bundle</tt>. Если хотите установить напрямую из репозитория Git, передайте флажок +--edge+:
+
+<shell>
+$ rails new myapp --edge
+</shell>
+
+Если у вас есть локальная копия репозитория Rails, и вы хотите создать приложение с ее использованием, передайте флажок +--dev+:
+
+<shell>
+$ ruby /path/to/rails/railties/bin/rails new myapp --dev
+</shell>
+
+h3. Основные особенности
+
+h4. Быстрый режим Development и роутинг
+
+В Rails 3.2 режим development стал ощутимо быстрее. Вдохновившись работой "Active Reload":https://github.com/paneq/active_reload, Rails перезагружает классы только тогда, когда файлы фактически изменились. В больших приложениях наблюдается существенный прирост производительности. Распознавание маршрутов также получило прирост скорости, благодаря новому engine "Journey":https://github.com/rails/journey.
+
+h4. Автоматические Explain запросов
+
+Rails 3.2 поставляется с прекрасной возможностью раскрытия запросов, созданных ARel, определив метод +explain+ в <tt>ActiveRecord::Relation</tt>. Для примера, можно запустить что-то наподобие <tt>puts Person.active.limit(5).explain</tt> и результат запроса ARel будет раскрыт. Это позволяет проверку правильности индексирования и дальнейшую оптимизацию.
+
+Запросы, выполняющиеся более чем пол секунды, *автоматически* раскрываются в режиме development. Это поведение, разумеется, может быть изменено.
+
+h4. Тегированное логирование
+
+При запуске многопользовательского приложения может сильно помочь фильтрация в логе, кто что делал. TaggedLogging в Active Support помогает это сделать точным, помечая строки лога поддоменами, id запросов и чем угодно, что поможет вам отладить такие приложения.
+
+h3. Документация
+
+Начиная с Rails 3.2, руководства по Rails доступны для Kindle, и как бесплатные Kindle Reading Apps для iPad, iPhone, Mac, Android и т.д.
+
+h3. Railties
+
+* Ускорен режим development за счет перезагрузки классов только при изменении зависимых файлов. Это может быть отключено, если установить <tt>config.reload_classes_only_on_change</tt> в false.
+
+* Новые приложения получают флажок <tt>config.active_record.auto_explain_threshold_in_seconds</tt> в файлах конфигурации среды. Со значением <tt>0.5</tt> в <tt>development.rb</tt> и закомментированным в <tt>production.rb</tt>. Не упоминается в <tt>test.rb</tt>.
+
+* Добавлена <tt>config.exceptions_app</tt> для указания приложения для обработки исключений, вызываемого промежуточной программой +ShowException+ при вызове исключения. По умолчанию <tt>ActionDispatch::PublicExceptions.new(Rails.public_path)</tt>.
+
+* Добавлена промежуточная программа <tt>DebugExceptions</tt>, содержащая особенности, извлеченные из промежуточной программы <tt>ShowExceptions</tt>.
+
+* Отображает маршруты монтированных engines-ов в <tt>rake routes</tt>.
+
+* Позволяет изменить порядок загрузки railties с помощью <tt>config.railties_order</tt> следующим образом:
+
+<ruby>
+config.railties_order = [Blog::Engine, :main_app, :all]
+</ruby>
+
+* Скаффолд возвращает 204 No Content для API запросов без содержимого. Это позволяет скаффолду работать с jQuery "из коробки".
+
+* Обновлена промежуточная программа <tt>Rails::Rack::Logger</tt>, чтобы добавлять любые теги, установленные в <tt>config.log_tags</tt>, в <tt>ActiveSupport::TaggedLogging</tt>. Это позволяет легко тегировать строки лога отладочной информацией, такой как поддомен и id запроса -- оба очень полезны при отладке production многопользовательских приложений.
+
+* Опции по умолчанию для +rails new+ могут быть установлены в <tt>~/.railsrc</tt>. Можно указать дополнительные аргументы командной строки, используемые каждый раз при запуске 'rails new', в конфигурационном файле <tt>.railsrc</tt> в домашней директории.
+
+* Добавлен псевдоним +d+ для +destroy+. Это также работает для engine.
+
+* Атрибуты генераторов скаффолда и модели по умолчанию строковые. Это позволяет следующее: <tt>rails g scaffold Post title body:text author</tt>
+
+* Позволяет генераторам скаффолда/модели/миграции принимать модификаторы "index" и "uniq". Например,
+
+<ruby>
+rails g scaffold Post title:string:index author:uniq price:decimal{7,2}
+</ruby>
+
+создаст индексы для +title+ и +author+, причем последний будет уникальным индексом. Некоторые типы, такие как decimal, принимают произвольные опции. В примере +price+ будет столбцом decimal с установленными точностью и масштабом 7 и 2 соответственно.
+
+* Гем Turn был убран из дефолтного Gemfile.
+
+* Убран старый генератор плагинов +rails generate plugin+ в пользу команды +rails plugin new+.
+
+* Убрано старое <tt>config.paths.app.controller</tt> API в пользу <tt>config.paths["app/controller"]</tt>.
+
+h4(#railties_deprecations). Устарело
+
+* +Rails::Plugin+ устарел и будет убран в Rails 4.0. Вместо добавления плагинов в +vendor/plugins+, используйте гемы, или bundler с путем, или зависимости git.
+
+h3. Action Mailer
+
+* Обновлена версия <tt>mail</tt> до 2.4.0.
+
+* Убрано старое Action Mailer API, которое было объявлено устаревшим в Rails 3.0.
+
+h3. Action Pack
+
+h4. Action Controller
+
+* <tt>ActiveSupport::Benchmarkable</tt> стал модулем по умолчанию для <tt>ActionController::Base,</tt> таким образом, метод <tt>#benchmark</tt> снова доступен в контексте контроллера, как это было раньше.
+
+* Добавлена опция +:gzip+ в +caches_page+. Опция по умолчанию может быть настроена глобально с использованием <tt>page_cache_compression</tt>.
+
+* Теперь Rails будет использовать ваш макет по умолчанию (такой как "layouts/application") при определенных условий <tt>:only</tt> и <tt>:except</tt>, и если они не выполняются.
+
+<ruby>
+class CarsController
+  layout 'single_car', :only => :show
+end
+</ruby>
+
+Rails будет использовать 'layouts/single_car' если запрос придет в экшн :show, и использовать 'layouts/application' (или 'layouts/cars', если он существует), если запрос придет в любой другой экшн.
+
+* form_for изменился и использует "#{action}_#{as}" как класс css и id, если представлена опция +:as+. Ранние версии использовали "#{as}_#{action}".
+
+* <tt>ActionController::ParamsWrapper</tt> на моделях ActiveRecord теперь оборачивают атрибуты <tt>attr_accessible</tt> только если они существуют. Если нет, будут обернуты только атрибуты, возвращенные методом класса +attribute_names+. Это устраняет оборачивание вложенных атрибутов при помещении их в +attr_accessible+.
+
+* Пишет в лог "Filter chain halted as CALLBACKNAME rendered or redirected" каждый раз при прерывании предварительного колбэка.
+
+* Проведен рефакторинг <tt>ActionDispatch::ShowExceptions</tt>. Контроллер ответственнен за выбор как показывать исключения. В контроллере возможно переопределить +show_detailed_exceptions?+, чтобы определить, какие запросы должны предоставлять отладочную информацию при ошибках.
+
+* Responders теперь возвращают 204 No Content для API запросов без тела запроса (как в новых скаффолдах).
+
+* Проведен рефакторинг куки <tt>ActionController::TestCase</tt>. Назначаемые куки для тестовых случаев теперь должны использовать <tt>cookies[]</tt>
+
+<ruby>
+cookies[:email] = 'user@example.com'
+get :index
+assert_equal 'user@example.com', cookies[:email]
+</ruby>
+
+Для очистки куки используйте +clear+.
+
+<ruby>
+cookies.clear
+get :index
+assert_nil cookies[:email]
+</ruby>
+
+Больше не пишется HTTP_COOKIE и куки сохраняются между запросами, поэтому если нужно манипулировать средой для вашего теста, это нужно сделать до того, как куки будут созданы.
+
+* <tt>send_file</tt> теперь угадывает тип MIME по расширению файла, если не предоставлен +:type+.
+
+* Добавлены записи типов MIME для PDF, ZIP и других форматов.
+
+* Позволяет fresh_when/stale? принимать запись вместо хэша опций.
+
+* Изменен уровень лога для предупреждения об отсутствующем токене CSRF с <tt>:debug</tt> до <tt>:warn</tt>.
+
+* По умолчанию ресурсы должны использовать протокол запроса или протокол по умолчанию, если запрос не доступен.
+
+h5(#actioncontroller_deprecations). Устарело
+
+* Устарел поиск подразумеваемого макета в контроллерах, чей родитель имеет явно установленный макет:
+
+<ruby>
+class ApplicationController
+  layout "application"
+end
+
+class PostsController < ApplicationController
+end
+</ruby>
+
+В вышеуказанном примере контроллер Posts больше не будет автоматически искать макет posts. Если вам нужна такая функциональность, следует либо убрать <tt>layout "application"</tt> из +ApplicationController+ или явно установить его в +nil+ в +PostsController+.
+
+* Устарел <tt>ActionController::UnknownAction</tt> в пользу <tt>AbstractController::ActionNotFound</tt>.
+
+* Устарел <tt>ActionController::DoubleRenderError</tt> в пользу <tt>AbstractController::DoubleRenderError</tt>.
+
+* Устарел <tt>method_missing</tt> в пользу +action_missing+ для отсутствующих экшнов.
+
+* Устарели <tt>ActionController#rescue_action</tt>, <tt>ActionController#initialize_template_class</tt> и <tt>ActionController#assign_shortcuts</tt>.
+
+h4. Action Dispatch
+
+* Добавлена <tt>config.action_dispatch.default_charset</tt> для настройки кодировки по умолчанию для <tt>ActionDispatch::Response</tt>.
+
+* Добавлена промежуточная программа <tt>ActionDispatch::RequestId</tt>, создающая уникальный заголовок X-Request-Id, доступный в отклике, и включает метод <tt>ActionDispatch::Request#uuid</tt>. Это позволяет легко отслеживать запросы от начала до конца в стеке и идентифицировать отдельные запросы в смешанных логах, наподобие Syslog.
+
+* Промежуточная программа <tt>ShowExceptions</tt> теперь принимает приложение для обработки исключений, ответственное за рендеринг исключения при ошибках приложения. Приложение запускется с копией исключения в +env["action_dispatch.exception"]+, и с переписанным <tt>PATH_INFO</tt> в код статуса.
+
+* Позволяет настроить отклики rescue с помощью railtie, как в <tt>config.action_dispatch.rescue_responses</tt>.
+
+h5(#actiondispatch_deprecations). Устарело
+
+* Устарела возможность установить кодировку по умолчанию на уровне контроллера, вместо этого используйте новую <tt>config.action_dispatch.default_charset</tt>.
+
+h4. Action View
+
+* В <tt>ActionView::Helpers::FormBuilder</tt> добавлена поддержка +button_tag+. Эта поддержка повторяет поведение по умолчанию +submit_tag+.
+
+<ruby>
+<%= form_for @post do |f| %>
+  <%= f.button %>
+<% end %>
+</ruby>
+
+* Хелперы дат принимают новую опцию <tt>:use_two_digit_numbers => true</tt>, отрисовывающую селект-боксы для месяцев и дней с ведущим нулем без изменения соответствующих value. Для примера, это полезно для отображения дат в стиле ISO 8601, таких как '2011-08-01'.
+
+* Для вашей формы можно предоставить пространство имен для обеспечения уникальности атрибута id у элементов формы. В созданном HTML id пространство имен атрибута будет идти впереди с подчеркиванием.
+
+<ruby>
+<%= form_for(@offer, :namespace => 'namespace') do |f| %>
+  <%= f.label :version, 'Version' %>:
+  <%= f.text_field :version %>
+<% end %>
+</ruby>
+
+* Ограничено количество вариантов для +select_year+ в 1000. Передайте опцию +:max_years_allowed+ для установки своего лимита.
+
+* Теперь +content_tag_for+ и +div_for+ могут принимать коллекцию записей. Они также передадут запись как первый аргумент, если вы вставите получаемый аргумент в блок. Таким образом, вместо этого:
+
+<ruby>
+@items.each do |item|
+  content_tag_for(:li, item) do
+     Title: <%= item.title %>
+  end
+end
+</ruby>
+
+Можно сделать так:
+
+<ruby>
+content_tag_for(:li, @items) do |item|
+  Title: <%= item.title %>
+end
+</ruby>
+
+* Добавлен метод хелпера +font_path+, вычисляющий путь к ресурсу шрифта в <tt>public/fonts</tt>.
+
+h5(#actionview_deprecations). Устарело
+
+* Передача форматов или обработчиков в render :template и тому подобные методы, например <tt>render :template => "foo.html.erb"</tt>, устарела. Вместо этого можно предоставить непосредственно :handlers и :formats как опции: <tt> render :template => "foo", :formats => [:html, :js], :handlers => :erb</tt>.
+
+h4. Sprockets
+
+* Добавлена конфигурационная опция <tt>config.assets.logger</tt> для контроля над логированием Sprockets. Установите ее +false+ для отключения логирования, и +nil+ для дефолтного +Rails.logger+.
+
+h3. Active Record
+
+* Булевы столбцы со значениями 'on' и 'ON' считаются за true.
+
+* Когда метод +timestamps+ создает столбцы +created_at+ и +updated_at+, по умолчанию он их делает non-nullable.
+
+* Реализован <tt>ActiveRecord::Relation#explain</tt>.
+
+* Реализован <tt>AR::Base.silence_auto_explain</tt>, позволяющий пользователю выборочно отключать автоматические EXPLAIN в блоке.
+
+* Реализовано логирование автоматического EXPLAIN для медленных запросов. Новый конфигурационный параметр +config.active_record.auto_explain_threshold_in_seconds+ определяет, что рассматривается как медленный запрос. Установите ему nil, чтобы отключить эту возможность. По умолчанию 0.5 в режиме development, и nil в режимах test и production. Rails 3.2 поддерживает эту возможность для SQLite, MySQL (адаптер mysql2) и PostgreSQL.
+
+* Добавлен <tt>ActiveRecord::Base.store</tt> для определения простых одноколоночных хранилищ key/value.
+
+<ruby>
+class User < ActiveRecord::Base
+  store :settings, accessors: [ :color, :homepage ]
+end
+
+u = User.new(color: 'black', homepage: '37signals.com')
+u.color                          # Accessor stored attribute
+u.settings[:country] = 'Denmark' # Any attribute, even if not specified with an accessor
+</ruby>
+
+* Добавлена возможность запуска миграций только для определенного пространства имен, позволяющая запустить миграции только для одного engine (например, чтобы откатить изменения от engine, чтобы убрать его).
+
+<ruby>
+rake db:migrate SCOPE=blog
+</ruby>
+
+* Миграции, скопированные из engine-ов, теперь помещаются в пространство имен с именем engine, например <tt>01_create_posts.blog.rb</tt>.
+
+* Реализован метод <tt>ActiveRecord::Relation#pluck</tt>, возвращающий массив значений столбца непосредственно из лежащей в основе таблицы. Он также работает с сериализованными атрибутами.
+
+<ruby>
+Client.where(:active => true).pluck(:id)
+# SELECT id from clients where active = 1
+</ruby>
+
+* Методы созданных связей создаются в отдельном модуле, чтобы позволить переопределение и компоновку. Для класса с именем MyModel, модель будет называться <tt>MyModel::GeneratedFeatureMethods</tt>. Он включается в класс модели сразу после модуля +generated_attributes_methods+, определенного в Active Model, таким образом, методы связей переопределяют методы атрибутов с таким же именем.
+
+* Добавлен <tt>ActiveRecord::Relation#uniq</tt> для создания уникальных запросов.
+
+<ruby>
+Client.select('DISTINCT name')
+</ruby>
+
+..может быть записано так:
+
+<ruby>
+Client.select(:name).uniq
+</ruby>
+
+В relation также можно отменить уникальность:
+
+<ruby>
+Client.select(:name).uniq.uniq(false)
+</ruby>
+
+* Поддержка порядка сортировки по индексу в адаптерах SQLite, MySQL и PostgreSQL.
+
+* Опция +:class_name+ для связей может принимать символ, в дополнение к строке. Это сделано, чтобы не смущать новичков, и быть последовательными в том факте, что другие опции, такие как :foreign_key, уже допускают символ или строку.
+
+<ruby>
+has_many :clients, :class_name => :Client # Отметьте, что символ должен начинаться с заглавной буквы
+</ruby>
+
+* В режиме development, <tt>db:drop</tt> также уничтожает тестовую базу данных, чтобы быть симметричной с <tt>db:create</tt>.
+
+* Не чувствительные к регистру валидации уникальности избегают вызов LOWER в MySQL, когда столбец уже использует не чувствительное к регистру сопоставление.
+
+* Транзакционные фикстуры выполняются во все активные соединения с базой данных. Можно тестировать модели на различных соединениях без отключения транзакционных фикстур.
+
+* В Active Record добавлены методы +first_or_create+, +first_or_create!+, +first_or_initialize+. Этот подход лучше, чем старые динамические методы +find_or_create_by+, поскольку очевиднее, какие аргументы использованы для поиска записи, а какие для ее создания.
+
+<ruby>
+User.where(:first_name => "Scarlett").first_or_create!(:last_name => "Johansson")
+</ruby>
+
+* К объектам Active Record добавлен метод <tt>with_lock</tt>, начинающий транзакцию, блокирующий объект (пессимистично) и вызывающий блок. Метод принимает один (опциональный) параметр и передает его в +lock!+.
+
+Поэтому возможно написать следующее:
+
+<ruby>
+class Order < ActiveRecord::Base
+  def cancel!
+    transaction do
+      lock!
+      # ... cancelling logic
+    end
+  end
+end
+</ruby>
+
+как:
+
+<ruby>
+class Order < ActiveRecord::Base
+  def cancel!
+    with_lock do
+      # ... cancelling logic
+    end
+  end
+end
+</ruby>
+
+h4(#activerecord_deprecations). Устарело
+
+* Устарело автоматическое закрытие соединений в тредах. Для примера, следующий код устарел:
+
+<ruby>
+Thread.new { Post.find(1) }.join
+</ruby>
+
+Он должен быть изменен, чтобы закрывать соединение с базой данных в конце треда:
+
+<ruby>
+Thread.new {
+  Post.find(1)
+  Post.connection.close
+}.join
+</ruby>
+
+Об этом должны беспокоиться только те, кто в своих приложениях создает треды.
+
+* Методы +set_table_name+, +set_inheritance_column+, +set_sequence_name+, +set_primary_key+, +set_locking_column+ устарели. Используйте вместо них методы назначения. Для примера, вместо +set_table_name+ используйте <tt>self.table_name=</tt>.
+
+<ruby>
+class Project < ActiveRecord::Base
+  self.table_name = "project"
+end
+</ruby>
+
+Или определите собственный метод <tt>self.table_name</tt>:
+
+<ruby>
+class Post < ActiveRecord::Base
+  def self.table_name
+    "special_" + super
+  end
+end
+
+Post.table_name # => "special_posts"
+
+</ruby>
+
+h3. Active Model
+
+* Добавлен <tt>ActiveModel::Errors#added?</tt> для проверки, была ли добавлена определенная ошибка.
+
+* Добавлена возможность определить строгие валидации с помощью <tt>strict => true</tt>, которые всегда вызывают исключение, когда не проходят.
+
+* Представлен mass_assignment_sanitizer как простое API для замены возможности экранизатора. Также поддерживаются возможность экранизатора :logger (по умолчанию) и :strict.
+
+h4(#activemodel_deprecations). Устарело
+
+* Устарел <tt>define_attr_method</tt> в <tt>ActiveModel::AttributeMethods</tt>, поскольку он использовался только во вспомогательных методах, таких как +set_table_name+ в Active Record, которые сами устарели.
+
+* Устарел <tt>Model.model_name.partial_path</tt> в пользу <tt>model.to_partial_path</tt>.
+
+h3. Active Resource
+
+* Отклики перенаправления: 303 See Other и 307 Temporary Redirect теперь ведут себя как 301 Moved Permanently и 302 Found.
+
+h3. Active Support
+
+* Добавлен <tt>ActiveSupport:TaggedLogging</tt>, который может обернуть любой стандартный класс +Logger+, чтобы предоставить возможности тегирования.
+
+<ruby>
+Logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+
+Logger.tagged("BCX") { Logger.info "Stuff" }
+# Logs "[BCX] Stuff"
+
+Logger.tagged("BCX", "Jason") { Logger.info "Stuff" }
+# Logs "[BCX] [Jason] Stuff"
+
+Logger.tagged("BCX") { Logger.tagged("Jason") { Logger.info "Stuff" } }
+# Logs "[BCX] [Jason] Stuff"
+</ruby>
+
+* Метод +beginning_of_week+ в +Date+, +Time+ и +DateTime+ принимает опциональный аргумент, представляющий день, в который начинается неделя.
+
+* <tt>ActiveSupport::Notifications.subscribed</tt> предоставляет подписки на события, пока выполняется блок.
+
+* Опеределены новые методы <tt>Module#qualified_const_defined?</tt>, <tt>Module#qualified_const_get</tt> и <tt>Module#qualified_const_set</tt>, являющиеся аналогами соответствующих методов в стандартном API, но принимающие полные имена констант.
+
+* Добавлен +#deconstantize+, дополняющий +#demodulize+ в словообразовании. Он убирает самый правый сегмент в полном имени константы.
+
+* Добавлен <tt>safe_constantize</tt>, преобразующий строку в константу, но возвращающий +nil+ вместо исключения, если константа (или ее часть) не существует.
+
+* <tt>ActiveSupport::OrderedHash</tt> теперь помечается как extractable при использовании <tt>Array#extract_options!</tt>.
+
+* Добавлены <tt>Array#prepend</tt> как псевдоним для <tt>Array#unshift</tt> и <tt>Array#append</tt> как псевдоним для <tt>Array#<<</tt>.
+
+* Определение пустой строки для Ruby 1.9 было расширено пробелом Unicode. А также в Ruby 1.8 идеографический пробел U+3000 рассматривается как пробел.
+
+* Инфлектор понимает акронимы.
+
+* Добавлены <tt>Time#all_day</tt>, <tt>Time#all_week</tt>, <tt>Time#all_quarter</tt> и <tt>Time#all_year</tt> как способ создание интервалов.
+
+<ruby>
+Event.where(:created_at => Time.now.all_week)
+Event.where(:created_at => Time.now.all_day)
+</ruby>
+
+* Добавлена <tt>instance_accessor: false</tt> как опция в <tt>Class#cattr_accessor</tt> и схожих методах.
+
+* Теперь у <tt>ActiveSupport::OrderedHash</tt> иное поведение для <tt>#each</tt> и <tt>#each_pair</tt> при передаче блока, принимающего свои параметры расплющенными.
+
+* Добавлен <tt>ActiveSupport::Cache::NullStore</tt> для использования при разработке и тестировании.
+
+* Убран <tt>ActiveSupport::SecureRandom</tt> в пользу <tt>SecureRandom</tt> из стандартной библиотеки.
+
+h4(#activesupport_deprecations). Устарело
+
+* +ActiveSupport::Base64+ устарел в пользу <tt>::Base64</tt>.
+
+* <tt>ActiveSupport::Memoizable</tt> устарел в пользу паттерна запоминания из Ruby.
+
+* <tt>Module#synchronize</tt> устарел без какой-либо замены. Пожалуйста, используйте monitor из стандартной библиотеки ruby.
+
+* Устарели <tt>ActiveSupport::MessageEncryptor#encrypt</tt> и <tt>ActiveSupport::MessageEncryptor#decrypt</tt>.
+
+* Устарел <tt>ActiveSupport::BufferedLogger#silence</tt>. Если хотите приглушить лог в определенном блоке, измените для него уровень лога.
+
+* Устарел <tt>ActiveSupport::BufferedLogger#open_log</tt>. Прежде всего, этот метод не должен быть публичным.
+
+* Поведение <tt>ActiveSupport::BufferedLogger's</tt> в части автоматического создания директории для файла лога устарело. Пожалуйста, убедитесь до инициализации, что директория для файла лога создана.
+
+* Устарел <tt>ActiveSupport::BufferedLogger#auto_flushing</tt> . Или установите уровень синхронизации на соответствующем файловом дескрипторе следующим образом. Или настройте свою файловую систему. Теперь очистку контролирует кэш файловой системы.
+
+<ruby>
+f = File.open('foo.log', 'w')
+f.sync = true
+ActiveSupport::BufferedLogger.new f
+</ruby>
+
+* Устарел <tt>ActiveSupport::BufferedLogger#flush</tt>. Установите sync на ваш дескриптор или настройте свою файловую систему.

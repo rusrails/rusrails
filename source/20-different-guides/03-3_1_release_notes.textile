@@ -1,0 +1,532 @@
+h1. Заметки о релизе Ruby on Rails 3.1
+
+Ключевые новинки в Rails 3.1:
+
+* Streaming
+* Обратимые миграции
+* Файлопровод (Assets Pipeline)
+* jQuery как библиотека JavaScript по умолчанию
+
+Эти заметки о релизе покрывают основные обновления, но не включают все мелкие багфиксы и изменения. Чтобы увидеть все, обратитесь к "списку комитов":http://github.com/rails/rails/commits/3-1-stable в главном репозитории Rails на GitHub.
+
+h3. Обновление до Rails 3.1
+
+Если обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 3.1, необходимо сначала обновиться до Rails 3 и убедиться, что приложение все еще выполняется так, как нужно. Затем нужно предпринять следующие изменения:
+
+h4. Rails 3.1 требует как минимум Ruby 1.8.7
+
+Rails 3.1 требует Ruby 1.8.7 или выше. Поддержка всех прежних версий Ruby была официально прекращена, и следует обновиться как можно быстрее. Rails 3.1 также совместим с Ruby 1.9.2.
+
+TIP: Отметьте, что в Ruby 1.8.7 p248 и p249 имеются ошибки маршализации, ломающие Rails. Хотя в Ruby Enterprise Edition это было исправлено, начиная с релиза 1.8.7-2010.02. В ветке 1.9, Ruby 1.9.1 не пригоден к использованию, поскольку он иногда вылетает, поэтому, если хотите использовать 1.9.x перепрыгивайте на 1.9.2 для гладкой работы.
+
+h4. Что обновить в приложении
+
+Следующие изменения означают обновление вашего приложения до Rails 3.1.3, последней версии 3.1.x Rails.
+
+h5. Gemfile
+
+Сделайте изменения в вашем +Gemfile+.
+
+<ruby>
+gem 'rails', '= 3.1.3'
+gem 'mysql2'
+
+# Needed for the new asset pipeline
+group :assets do
+  gem 'sass-rails',   "~> 3.1.5"
+  gem 'coffee-rails', "~> 3.1.1"
+  gem 'uglifier',     ">= 1.0.3"
+end
+
+# jQuery is the default JavaScript library in Rails 3.1
+gem 'jquery-rails'
+</ruby>
+
+h5. config/application.rb
+
+* Файлопровод требует следующие добавления:
+
+<ruby>
+config.assets.enabled = true
+config.assets.version = '1.0'
+</ruby>
+
+* Если ваше приложение использует маршрут "/assets", можно изменить префикс, используемый для ресурсов, чтобы избежать конфликтов:
+
+<ruby>
+# Defaults to '/assets'
+config.assets.prefix = '/asset-files'
+</ruby>
+
+h5. config/environments/development.rb
+
+* Уберите настройку RJS <tt>config.action_view.debug_rjs = true</tt>.
+
+* Добавьте следующее, если хотите включить файлопровод.
+
+<ruby>
+# Do not compress assets
+config.assets.compress = false
+
+# Expands the lines which load the assets
+config.assets.debug = true
+</ruby>
+
+h5. config/environments/production.rb
+
+* Снова, большинство изменений относится к файлопроводу. Подробнее о них можно прочитать в руководстве "Asset Pipeline":/asset-pipeline.
+
+<ruby>
+# Compress JavaScripts and CSS
+config.assets.compress = true
+
+# Don't fallback to assets pipeline if a precompiled asset is missed
+config.assets.compile = false
+
+# Generate digests for assets URLs
+config.assets.digest = true
+
+# Defaults to Rails.root.join("public/assets")
+# config.assets.manifest = YOUR_PATH
+
+# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+# config.assets.precompile += %w( search.js )
+
+# Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+# config.force_ssl = true
+
+</ruby>
+
+h5. config/environments/test.rb
+
+<ruby>
+# Configure static asset server for tests with Cache-Control for performance
+config.serve_static_assets = true
+config.static_cache_control = "public, max-age=3600"
+</ruby>
+
+h5. config/initializers/wrap_parameters.rb
+
+* Добавьте этот файл со следующим содержимым, если хотите оборачивать параметры во вложенный хэш. По умолчанию это включено в новых приложениях.
+
+<ruby>
+# Be sure to restart your server when you modify this file.
+# This file contains settings for ActionController::ParamsWrapper which
+# is enabled by default.
+
+# Enable parameter wrapping for JSON. You can disable this by setting :format to an empty array.
+ActiveSupport.on_load(:action_controller) do
+  wrap_parameters :format => [:json]
+end
+
+# Disable root element in JSON by default.
+ActiveSupport.on_load(:active_record) do
+  self.include_root_in_json = false
+end
+</ruby>
+
+h3. Создание приложения Rails 3.1
+
+<shell>
+# Нужен установленный руби-гем 'rails'
+$ rails new myapp
+$ cd myapp
+</shell>
+
+h4. Сторонние гемы
+
+Сейчас Rails использует +Gemfile+ в корне приложения, чтобы определить гемы, требуемые для запуска вашего приложения. Этот +Gemfile+ обрабатывается "Bundler":http://github.com/carlhuda/bundler, который затем устанавливает все зависимости. Он может даже установить все зависимости локально в ваше приложение, и оно не будет зависеть от системных гемов.
+
+Подробнее: - "bundler homepage":http://gembundler.com
+
+h4. Живите на грани
+
++Bundler+ и +Gemfile+ замораживает ваше приложение Rails с помощью новой отдельной команды <tt>bundle</tt>. Если хотите установить напрямую из репозитория Git, передайте флажок +--edge+:
+
+<shell>
+$ rails new myapp --edge
+</shell>
+
+Если у вас есть локальная копия репозитория Rails, и вы хотите создать приложение с ее использованием, передайте флажок +--dev+:
+
+<shell>
+$ ruby /path/to/rails/railties/bin/rails new myapp --dev
+</shell>
+
+h3. Архитектурные изменения Rails
+
+h4. Файлопровод (Assets Pipeline)
+
+Главное изменение в Rails 3.1 это Assets Pipeline. Он делает CSS и JavaScript первосортным кодом, и делает доступной надлежащую организацию, включая использование в плагинах и engine-ах.
+
+Файлопровод работает с помощью "Sprockets":https://github.com/sstephenson/sprockets и раскрывается в руководстве "Asset Pipeline":/asset_pipeline.
+
+h4. HTTP Streaming
+
+HTTP Streaming это другое новшество в Rails 3.1. Он позволяет браузеру загружать таблицы стилей и файлы JavaScript, пока сервер все еще создает отклик. Это требует Ruby 1.9.2, является опциональным, а также требует настройки веб-сервера, но популярная связка nginx и unicorn уже готова предоставлять это преимущество.
+
+h4. Библиотека JS по умолчанию теперь jQuery
+
+jQuery является библиотекой JavaScript по умолчанию, которая поствляется вместе с Rails 3.1. Но если вы используете Prototype, это просто переключить.
+
+<shell>
+$ rails new myapp -j prototype
+</shell>
+
+h4. Identity Map
+
+В Active Record имеется Identity Map в Rails 3.1. Identity map содержит ранее загруженные экземпляры записей и возвращает объект, связанный с записью, если к нему обращаются снова. Identity map создается при каждом запросе и уничтожается при его завершении.
+
+Rails 3.1 поставляется с отключенной по умолчанию identity map.
+
+h3. Railties
+
+* jQuery является новой библиотекой JavaScript по умолчанию.
+
+* jQuery и Prototype более не встроенные, а предоставляются как гемы jquery-rails и prototype-rails.
+
+* Генератор приложения принимает опцию +-j+, которая может быть произвольной строкой. Если передать "foo", в +Gemfile+ будет добавлен гем "foo-rails", и манифест JavaScript приложения затребует "foo" и "foo_ujs". В данный момент существуют только "prototype-rails" и "jquery-rails", и эти файлы предоставляются через файлопровод.
+
+* Создание приложение или плагина запускает +bundle install+, если не определено +--skip-gemfile+ или +--skip-bundle+.
+
+* Генераторы контроллера и ресурса теперь автоматически создадут заглушки для ресурсов (это может быть отключено с помощью +--skip-assets+). Эти заглушки будут использовать CoffeeScript и Sass, если эти библиотеки доступны.
+
+* Генераторы скаффолда и приложения используют стиль хэшей из Ruby 1.9, когда запущены на Ruby 1.9. Чтобы создать старый стиль хэшей, должно быть передано +--old-style-hash+.
+
+* Генератор скаффолда контроллера создает блок формата для JSON вместо XML.
+
+* Логирование Active Record направлено в STDOUT и показывается в консоли.
+
+* Добавлена конфигурация +config.force_ssl+, загружающая промежуточную программу <tt>Rack::SSL</tt> и принуждающую все запросы быть под протоколом HTTPS.
+
+* Добавлена команда +rails plugin new+, создающая плагин Rails с gemspec, тестами и пустым приложением для тестирования.
+
+* К стеку промежуточных программ по умолчанию добавлены <tt>Rack::Etag</tt> и <tt>Rack::ConditionalGet</tt>.
+
+* К стеку промежуточных программ по умолчанию добавлена <tt>Rack::Cache</tt>.
+
+* Engine-ы получили большое обновление - их можно монтировать на любой путь, включать ресурсы. запускать генераторы и т.д.
+
+h3. Action Pack
+
+h4. Action Controller
+
+* Выдается предупреждение, если токен аутентификации CSRF не может быть верифицирован.
+
+* Определите +force_ssl+ в контроллере. чтобы принудить браузер передавать данные через протокол HTTPS на конкретно этот контроллер. Для ограничения отдельных экшнов могут быть использованы +:only+ или +:except+.
+
+* Деликатные параметры строки запроса, определенные в <tt>config.filter_parameters</tt>, теперь будут отфильтрованы в логе и из пути запроса.
+
+* Параметры URL, возвращающие +nil+ на +to_param+. теперь будут убраны из строки запроса.
+
+* Добавлен <tt>ActionController::ParamsWrapper</tt> для оборачивания параметров во вложенный хэш, и он будет включен в новых приложениях по умолчанию для запроса JSON. Это может быть настроено в <tt>config/initializers/wrap_parameters.rb</tt>.
+
+* Добавлен <tt>config.action_controller.include_all_helpers</tt>. По умолчанию выполняет <tt>helper :all</tt> в <tt>ActionController::Base</tt>, что включает все хелперы по умолчанию. Установка +include_all_helpers+ в +false+ приведет к включению только application_helper и хелпера. соответствующего контроллеру (подобно foo_helper для foo_controller).
+
+* +url_for+ и именнованные хелперы _url теперь принимают как опции +:subdomain+ и +:domain+.
+
+* Добавлен +Base.http_basic_authenticate_with+ для простой базовой аутентификации http с помощью единственного вызова метода класса.
+
+<ruby>
+class PostsController < ApplicationController
+  USER_NAME, PASSWORD = "dhh", "secret"
+
+  before_filter :authenticate, :except => [ :index ]
+
+  def index
+    render :text => "Everyone can see me!"
+  end
+
+  def edit
+    render :text => "I'm only accessible if you know the password"
+  end
+
+  private
+    def authenticate
+      authenticate_or_request_with_http_basic do |user_name, password|
+        user_name == USER_NAME && password == PASSWORD
+      end
+    end
+end
+</ruby>
+
+..теперь может быть написано как
+
+<ruby>
+class PostsController < ApplicationController
+  http_basic_authenticate_with :name => "dhh", :password => "secret", :except => :index
+
+  def index
+    render :text => "Everyone can see me!"
+  end
+
+  def edit
+    render :text => "I'm only accessible if you know the password"
+  end
+end
+</ruby>
+
+* Добавлена поддержка streaming, ее можно включить с помощью:
+
+<ruby>
+class PostsController < ActionController::Base
+  stream
+end
+</ruby>
+
+Можно ограничить некоторые экшны от этого с использованием +:only+ или +:except+. Подробности можно прочитать в документации по "<tt>ActionController::Streaming</tt>":http://api.rubyonrails.org/classes/ActionController/Streaming.html.
+
+* Маршрутный метод redirect теперь принимает хэш опций, меняющих только рассматриваемые части url, или объект, отвечающий на вызов, позволяя повторно использовать редиректы.
+
+h4. Action Dispatch
+
+* <tt>config.action_dispatch.x_sendfile_header</tt> теперь по умолчанию +nil+ и <tt>config/environments/production.rb</tt> не устанавливает какое-либо значение для этого. Это позволяет серверам устанавливать его через <tt>X-Sendfile-Type</tt>.
+
+* <tt>ActionDispatch::MiddlewareStack</tt> теперь использует наследуемую структуру, и больше не является массивом.
+
+* Добавлен <tt>ActionDispatch::Request.ignore_accept_header</tt> для игнорирования заголовков accept.
+
+* Добавлена <tt>Rack::Cache</tt> в стек по умолчанию.
+
+* Ответственность за etag перенесена от <tt>ActionDispatch::Response</tt> в стек промежуточных программ.
+
+* API хранения <tt>Rack::Session</tt> стало более совместимым с остальным в мире Ruby. Оно обратно несовместимо, так как теперь в <tt>Rack::Session</tt> ожидается, что <tt>#get_session</tt> принимает четыре аргумента, и требует <tt>#destroy_session</tt> вместо простого <tt>#destroy</tt>.
+
+* Поиск шаблонов теперь ищет глубже в цепи наследования.
+
+h4. Action View
+
+* Добавлена опция +:authenticity_token+ к +form_tag+ для ручного управления, или для отмены, если передать <tt>:authenticity_token => false</tt>.
+
+* Создан <tt>ActionView::Renderer</tt> и определен API для <tt>ActionView::Context</tt>.
+
+* Встроенные мутации +SafeBuffer+ запрещены в Rails 3.1.
+
+* Добавлен HTML5 хелпер +button_tag+.
+
+* +file_field+ автоматически добавляет <tt>:multipart => true</tt> к нужным формам.
+
+* Добавлена удобная идиома создавать HTML5 атрибуты data-* в хелперах тегов с хэшем опций +:data+:
+
+<plain>
+tag("div", :data => {:name => 'Stephen', :city_state => %w(Chicago IL)})
+# => <div data-name="Stephen" data-city-state="[&quot;Chicago&quot;,&quot;IL&quot;]" />
+</plain>
+
+Ключи преобразуются в дефисные. Значения кодируются в JSON, кроме строк и символов.
+
+* +csrf_meta_tag+ переименован в +csrf_meta_tags+ и для него сделан псевдоним +csrf_meta_tag+ для обратной совместимости.
+
+* Старое API обработки шаблонов устарело, а новое API просто требует обработчик шаблонов для отклика на вызов.
+
+* rhtml и rxml окончательно убраны из обработчиков шаблонов.
+
+* Вернули <tt>config.action_view.cache_template_loading</tt>, позволяющий решить, должны ли быть кэшированы шаблоны, или нет.
+
+* Хелпер формы submit более не создает id = "object_name_id".
+
+* Позволяет <tt>FormHelper#form_for</tt> определить +:method+ как опцию первого уровня вместо вкладывания в хэш +:html+. <tt>form_for(==@==post, remote: true, method: :delete)</tt> вместо <tt>form_for(==@==post, remote: true, html: { method: :delete })</tt>.
+
+* Предоставлен <tt>JavaScriptHelper#j()</tt> как псевдоним для <tt>JavaScriptHelper#escape_javascript()</tt>. Это заменило метод <tt>Object#j()</tt>, добавляемый гемом JSON в шаблоны при использовании JavaScriptHelper.
+
+* Позволяет формат AM/PM в datetime selectors.
+
+* +auto_link+ был убран из Rails и выделен в "гем rails_autolink":https://github.com/tenderlove/rails_autolink
+
+h3. Active Record
+
+* Добавлен метод класса <tt>pluralize_table_names</tt> для склонения по числу имен таблиц отдельных моделей. Ранее это можно было сделать только глобально для всех моделей с помощью <tt>ActiveRecord::Base.pluralize_table_names</tt>.
+
+<ruby>
+class User < ActiveRecord::Base
+  self.pluralize_table_names = false
+end
+</ruby>
+
+* Добавлен блок настроек для одиночных связей. Блок будет вызван после того, как экземпляр будет инициализирован.
+
+<ruby>
+class User < ActiveRecord::Base
+  has_one :account
+end
+
+user.build_account{ |a| a.credit_limit = 100.0 }
+</ruby>
+
+* Добавлен <tt>ActiveRecord::Base.attribute_names</tt>, возвращающий список имен атрибутов. Он возвратит пустой массив, если модель абстрактная, или таблица не существует.
+
+* Фикстуры CSV устарели и их поддержка будет убрана в Rails 3.2.0.
+
+* <tt>ActiveRecord#new</tt>, <tt>ActiveRecord#create</tt> и <tt>ActiveRecord#update_attributes</tt> принимают второй хэш как опцию, позволяющую определить рассматриваемую роль при назначении атрибутов. Это основа новой возможности массового назначения Active Model:
+
+<ruby>
+class Post < ActiveRecord::Base
+  attr_accessible :title
+  attr_accessible :title, :published_at, :as => :admin
+end
+
+Post.new(params[:post], :as => :admin)
+</ruby>
+
+* +default_scope+ теперь может принимать блок, lambda или любой другой объект, отвечающий на call для ленивых вычислений.
+
+* Скоупы по умолчанию теперь вычисляются в самый последний момент для избегания проблем, когда могут быть созданы скоупы, которые неявно содержат скоуп по умолчанию, от которого впоследствии невозможно будет избавиться с помощью Model.unscoped.
+
+* Адаптер PostgreSQL теперь поддерживает только PostgreSQL версии 8.2 и выше.
+
+* Промежуточная программа +ConnectionManagement+ изменилась, чтобы очищать пул соединения после того, как тело rack было уничтожено.
+
+* В Active Record добавлен метод +update_column+. Этот новый метод обновляет заданный атрибут у объекта, пропуская валидации и колбэки. Рекомендовано использовать +update_attributes+ или +update_attribute+ если вы не уверенны, что не хотите выполнять какой-либо колбэк, включая изменение столбца +updated_at+. Он не может быть вызван на новых записях.
+
+* Связи с опцией +:through+ теперь могут использовать любые связи как посредника или источника, включая другие связи, имеющие опцию +:through+, и связи +has_and_belongs_to_many+.
+
+* Конфигурация для текущего соединения с базой данных теперь доступна с помощью <tt>ActiveRecord::Base.connection_config</tt>.
+
+* Лимиты и смещения убираются из запросов COUNT, кроме случая, когда они оба представлены.
+<ruby>
+People.limit(1).count           # => 'SELECT COUNT(*) FROM people'
+People.offset(1).count          # => 'SELECT COUNT(*) FROM people'
+People.limit(1).offset(1).count # => 'SELECT COUNT(*) FROM people LIMIT 1 OFFSET 1'
+</ruby>
+
+* <tt>ActiveRecord::Associations::AssociationProxy</tt> был разделен. Теперь имеется класс +Association+ (и подклассы), ответственные за работу со связями, и отдельная "тонкая" обертка по имени +CollectionProxy+, передающая связи коллекции. Это предотвращает загрязнение пространства имен, разделяет решаемые проблемы, и позволяет дальнейший рефакторинг.
+
+* Одиночные связи (+has_one+, +belongs_to+) больше не имеют прокси, и просто возвращают связанную запись или +nil+. Это означает, что больше не следует использовать недокументированные методы наподобие +bob.mother.create+ - используйте вместо этого +bob.create_mother+.
+
+* Поддержка опции <tt>:dependent</tt> для связи <tt>has_many :through</tt>. По историческим и практическим причинам, +:delete_all+ является стратегией удаления по умолчанию, используемой в <tt>association.delete(*records)</tt>, не смотря на то, что стратегией по умолчанию для обычного has_many является +:nullify+. Также, это работает только если вторая сторона связи belongs_to. В других ситуациях следует непосредственно изменить связь through.
+
+* Изменилось поведение +association.destroy+ для +has_and_belongs_to_many+ и <tt>has_many :through</tt>. Теперь 'destroy' или 'delete' на связи будет означать 'избавиться от связи', а не (обязательно) 'избавиться от связанных записей'.
+
+* Раньше <tt>has_and_belongs_to_many.destroy(*records)</tt> уничтожал сами записи. Он не удалял какие-либо записи в соединительной таблице. Теперь он удаляет записи в соединительной таблице.
+
+* Раньше <tt>has_many_through.destroy(*records)</tt> удалял сами записи и записи в соединительной таблице. [Отметьте: Это не всегда было так; ранние версии Rails удаляли только сами записи.] Теперь от уничтожает только записи в соединительной таблице.
+
+* Отметьте, что это изменение в некоторой степени обратно не совместимо, но, к сожалению, нет никакого способа объявить его 'deprecate' перед изменением. Изменение было сделано для единообразия в понятиях 'destroy' или 'delete' для различных типов связи. Если хотите уничтожить сами записи, следует выполнить <tt>records.association.each(&:destroy)</tt>.
+
+* В +change_table+ добавлена опция <tt>:bulk => true</tt>, чтобы выполнить все изменения схемы, определенные в блоке, с использование одного выражения ALTER.
+
+<ruby>
+change_table(:users, :bulk => true) do |t|
+  t.string :company_name
+  t.change :birthdate, :datetime
+end
+</ruby>
+
+* Убрана поддержка доступа к атрибутами в соединительной таблице +has_and_belongs_to_many+. Следует использовать <tt>has_many :through</tt>.
+
+* Добавлен метод +create_association!+ для связей +has_one+ и +belongs_to+.
+
+* Миграции теперь обратимы, что означает, что Rails теперь понимает, как обратить ваши миграции. Для использования обратимых миграций просто определите метод +change+.
+
+<ruby>
+class MyMigration < ActiveRecord::Migration
+  def change
+    create_table(:horses) do |t|
+      t.column :content, :text
+      t.column :remind_at, :datetime
+    end
+  end
+end
+</ruby>
+
+* Некоторые вещи не могут быть автоматически обратимы. Если вы знаете, как их обратить. следует в миграциях определить +up+ и +down+. Если вы определите какое-либо изменение в change, которое не может быть обращено, при откате миграции будет вызвано исключение +IrreversibleMigration+.
+
+* Теперь миграции используют методы экземпляра вместо методов класса:
+
+<ruby>
+class FooMigration < ActiveRecord::Migration
+  def up # Не self.up
+    ...
+  end
+end
+</ruby>
+
+* Файлы миграции созданные генераторами модели и конструктивной миграции (для примера, add_name_to_users), используют метод обратимой миграции +change+ вместо обычных методов +up+ и +down+.
+
+* Убрана поддержка интерполяции строк с условиями SQL на связях. Вместо этого должен быть использован proc.
+
+<ruby>
+has_many :things, :conditions => 'foo = #{bar}'          # до
+has_many :things, :conditions => proc { "foo = #{bar}" } # после
+</ruby>
+
+Внутри proc, +self+ это объект, являющийся владельцем связи, за исключением случая, когда связь лениво загружается, в этом случае +self+ это класс, в котором определена связь.
+
+Внутри proc можно иметь "нормальные" условия, поэтому следующее будет работать:
+
+<ruby>
+has_many :things, :conditions => proc { ["foo = ?", bar] }
+</ruby>
+
+* Ранее +:insert_sql+ и +:delete_sql+ на связи +has_and_belongs_to_many+ позволяли вызвать 'record' для получения записи, которую нужно вставить или удалить. Теперь это передается как аргумент в proc.
+
+* Добавлен <tt>ActiveRecord::Base#has_secure_password</tt> (через <tt>ActiveModel::SecurePassword</tt>) для инкапсуляции элементарного пароля с использованием шифрования BCrypt и соли.
+
+<ruby>
+# Schema: User(name:string, password_digest:string, password_salt:string)
+class User < ActiveRecord::Base
+  has_secure_password
+end
+</ruby>
+
+* При создании модели по умолчанию добавляется +add_index+ для столбцов +belongs_to+ или +references+.
+
+* Установление id для объекта в +belongs_to+ обновляет связь с объектом.
+
+* Изменилась семантика <tt>ActiveRecord::Base#dup</tt> и <tt>ActiveRecord::Base#clone</tt>, чтобы более соответствовать семантике обычных методов Ruby dup и clone.
+
+* Вызов <tt>ActiveRecord::Base#clone</tt> приведет к неполной копии записи, включая копирования состояния заморозки. Ни один колбэк не будет вызван.
+
+* Вызов <tt>ActiveRecord::Base#dup</tt> продублирует запись, включая вызов пост-инициализационных хуков. Состояние заморозки не будет скопировано, и все связи будут очищены. Дублированная запись возвратит +true+ для <tt>new_record?</tt>, будет иметь +nil+ в поле id, и ее можно будет сохранить.
+
+* Кэш запросов теперь работает с prepared statements. Никаких изменений в приложении не требуется.
+
+h3. Active Model
+
+* +attr_accessible+ принимает опцию +:as+ для определении роли.
+
+* Теперь +InclusionValidator+, +ExclusionValidator+ и +FormatValidator+ принимают опцию, которая может быть proc, lambda или что угодно, что отвечает на +call+. Эта опция будет вызвана с текущей записью в качестве аргумента, и возвратит объект, отвечающий на +include?+ для +InclusionValidator+ и +ExclusionValidator+, и возвратит регулярное выражение для +FormatValidator+.
+
+* Добавлен <tt>ActiveModel::SecurePassword</tt> для инкапсуляции элементарного пароля с использованием шифрования BCrypt и соли.
+
+* <tt>ActiveModel::AttributeMethods</tt> Допускает атрибуты, определяемые по требованию.
+
+* Добавлена поддержка для выборочного включения и отключения обсерверов.
+
+* Альтернативный поиск в пространстве имен <tt>I18n</tt> более не поддерживается.
+
+h3. Active Resource
+
+* Для всех запросов формат по умолчанию был изменен на JSON. Если хотите продолжить использование XML, следует установить <tt>self.format = :xml</tt> в классе. Например,
+
+<ruby>
+class User < ActiveResource::Base
+  self.format = :xml
+end
+</ruby>
+
+h3. Active Support
+
+* <tt>ActiveSupport::Dependencies</tt> теперь вызывает +NameError+, если находит существующую константу в +load_missing_constant+.
+
+* Добавлен новый метод <tt>Kernel#quietly</tt>, приглушающий +STDOUT+ и +STDERR+.
+
+* Добавлен <tt>String#inquiry</tt> как удобный метод для преобразования String в объект +StringInquirer+.
+
+* Добавлен <tt>Object#in?</tt> для проверки, включен ли объект в другой объект.
+
+* Теперь стратегия +LocalCache+ является настоящим классом промежуточной программы, а не анонимным классом.
+
+* Был представлен класс <tt>ActiveSupport::Dependencies::ClassCache</tt> как содержащий ссылки на перегружаемые классы.
+
+* Был отрефакторен <tt>ActiveSupport::Dependencies::Reference</tt>, чтобы пользоваться преимуществами нового +ClassCache+.
+
+* Портирован <tt>Range#cover?</tt> как псевдоним <tt>Range#include?</tt> в Ruby 1.8.
+
+* Добавлены +weeks_ago+ и +prev_week+ в Date/DateTime/Time.
+
+* Добавлен колбэк +before_remove_const+ к <tt>ActiveSupport::Dependencies.remove_unloadable_constants!</tt>.
+
+Устарело:
+
+* <tt>ActiveSupport::SecureRandom</tt> устарел в пользу +SecureRandom+ из стандартной библиотеки Ruby.
