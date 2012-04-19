@@ -36,7 +36,7 @@ RedCloth.include TextileExtensions
 
 # Data Base
 require 'textile-files'
-files = @@files
+##files = @@files
 
 # -- local links BEGIN
 
@@ -48,8 +48,8 @@ def fix_local_links(files)
   end
   cnt = file_read(main_file_path)
   local_links.each do |link|
-    anchor_name = link_to_anchor_name(link)
-    cnt.gsub!('<a href="'+link+'"', '<a href="#'+anchor_name+'"')
+    anchor_name = link_to_anchor_href(link)
+    cnt.gsub!('<a href="'+link+'"', '<a href="'+anchor_name+'"')
   end
   file_write(main_file_path, cnt)
 end
@@ -81,14 +81,43 @@ def path_to_link(path)
 end
 
 # '/getting-started-with-rails' -> 'getting-started-with-rails'
-# '/getting-started-with-rails/this-guide-assumes' -> 'getting-started-with-rails_this-guide-assumes'
+# '/getting-started-with-rails/this-guide-assumes' -> 'getting-started-with-rails_this-guide-assumes' ; _ -> ''
+# a name=
 def link_to_anchor_name(link)
   els = link.split('/')
-  els[1..els.size].join('_')
+  ret = els[1..els.size].join('')
+  # wtf
+  if ret == 'ruby-on-rails-security-guidecross-site-request-forgery-csrf'
+    ret = 'cross-site-request-forgery-csrf'
+  end
+  return ret
+end
+
+# a href=
+def link_to_anchor_href(link)
+  els = link.split('/')
+  ret = els[1..els.size].join('')
+  # wtf
+  if ret == 'ruby-on-rails-security-guidecross-site-request-forgery-csrf'
+    ret = 'cross-site-request-forgery-csrf'
+  end
+  file_name = @@names2file_name[els[1]]
+  ret = "#{file_name}##{ret}"
+  return ret
 end
 
 def path_to_anchor_name(f_path)
   link_to_anchor_name path_to_link(f_path)
+end
+
+
+def get_all_files_from_parts(parts)
+  ret = []
+  parts.each do |part|
+    files = part[:files]
+    ret += files
+  end
+  return ret
 end
 
 # -- local links END
@@ -97,7 +126,8 @@ end
 # all htmls in one file will be stored here
 # pdf generated from this file
 def main_file_path
-  './out/_all.html'
+  #'./out/_all.html'
+  "./out/_#{@@name}.html"
 end
 
 
@@ -114,7 +144,7 @@ end
 def textile2html(files)
   p 'Work: textile2html'
   files.each do |file_path|
-    p file_path
+    putc '.'
     file_path2 = file_path.tr('/', '_')
 
     source_path = "../source/#{file_path}"
@@ -140,7 +170,7 @@ def create_one_html_file(files)
   p 'Work: create_one_html_file'
   all_cnt = ''
   files.each do |file_path|
-    p file_path
+    putc '.' 
     file_path2 = file_path.tr('/', '_')
     cnt = file_read("./out/#{file_path2}.html")
     
@@ -163,25 +193,59 @@ def create_one_html_file(files)
 
   all_pages = layout.gsub("{CONTENT}", all_cnt)
   file_write(main_file_path, all_pages)
-
   p 'done'
 end
 
+
+# absolute file system path
+def fix_image_path
+  p 'fix_image_path'
+  cnt = file_read(main_file_path)
+  cnt.gsub!('<img src="/assets', '<img src="./../../app/assets/images')
+  file_write(main_file_path, cnt)
+end
+
+def fix_move_h1
+  p 'fix_move_h1'
+  cnt = file_read(main_file_path)
+  cnt.sub!('<h1>', '<h0>')
+  cnt.sub!('</h1>', '</h0>')
+  (1..10).to_a.reverse.each do |header_level|
+    cnt.gsub!("<h#{header_level}>", "<h#{header_level+1}>")
+    cnt.gsub!("</h#{header_level}>", "</h#{header_level+1}>")
+  end
+  cnt.sub!('<h0>', '<h1>')
+  cnt.sub!('</h0>', '</h1>')
+  file_write(main_file_path, cnt)
+end
+
+
+def generate_pdf2(parts)
+  p 'PDF generation'
+  p 'based on wkhtmltopdf'
+  pdf_file = 'rusrails.all.pdf'
+  _parts = []
+  parts.each do |part|
+    _parts << "./out/_#{part[:name]}.html"
+  end
+  sources = _parts.join(' ')
+
+  options = "--header-left [section] --header-center RusRails --header-right [page] --header-font-size 8 --header-spacing 5 --header-line --print-media-type --footer-html _footer.html"
+  `#{PATH_TO_WKHTMLTOPDF} #{options} #{sources} #{pdf_file}`
+
+  p "PDF generated: #{pdf_file}"
+end
+
+
+# obsolete
 def generate_pdf
   p 'PDF generation'
-
   # based on Prince:
   # `#{PATH_TO_PRINCE} ./out/_all.html -o rusrails.pdf`
   # or
-
   p 'based on wkhtmltopdf'
-
-  html_path = main_file_path
   pdf_file = 'rusrails.test.pdfkit.pdf'
-
-  if File.exists?(html_path)
     require 'pdfkit'
-
     PDFKit.configure do |config|
       config.wkhtmltopdf = PATH_TO_WKHTMLTOPDF
       # see 'wkhtmltopdf-options.txt'
@@ -197,22 +261,28 @@ def generate_pdf
         :print_media_type => true
       }
     end
-
-    kit = PDFKit.new(File.new(html_path))
+    # source = File.new(html_path)
+    _parts = []
+    @@parts.each do |part|
+      _parts << "./out/_#{part[:name]}.html"
+    end
+    source = _parts.join(' ')
+    p source
+    kit = PDFKit.new(source)
     file = kit.to_file(pdf_file)
-  end
 end
 
 
-# absolute file system path
-def fix_image_path
-  cnt = file_read(main_file_path)
-  cnt.gsub!('<img src="/assets', '<img src="./../../app/assets/images')
-  file_write(main_file_path, cnt)
-end
+all_files = get_all_files_from_parts(@@parts)
 
-textile2html(files)
-create_one_html_file(files)
-fix_image_path
-fix_local_links(files)
-generate_pdf
+@@parts.each do |part|
+  @@name = part[:name]
+  files = part[:files]
+  textile2html(files)
+  create_one_html_file(files)
+  fix_image_path
+  fix_local_links(all_files)
+  fix_move_h1
+end
+generate_pdf2(@@parts)
+
