@@ -203,7 +203,8 @@ h4. Просмотр переменных
 <shell>
 @posts = Post.all
 (rdb:11) instance_variables
-["@_response", "@action_name", "@url", "@_session", "@_cookies", "@performed_render", "@_flash", "@template", "@_params", "@before_filter_chain_aborted", "@request_origin", "@_headers", "@performed_redirect", "@_request"]
+["@_response", "@action_name", "@url", "@_session", "@_cookies", "@performed_render", "@_flash", "@template", 
+  "@_params", "@before_filter_chain_aborted", "@request_origin", "@_headers", "@performed_redirect", "@_request"]
 </shell>
 
 Как вы уже поняли, отображены все переменные, к которым есть доступ из контроллера. Этот перечень динамически обновляется по мере выполнения кода. Например, запустим следующую строку, используя +next+ (мы рассмотрим эту команду чуть позднее в этом руководстве).

@@ -10,7 +10,8 @@ h4. +first_or_create+
 
 <ruby>
 Client.where(:first_name => 'Andy').first_or_create(:locked => false)
-# => #<Client id: 1, first_name: "Andy", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
+# => #<Client id: 1, first_name: "Andy", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", 
+  updated_at: "2011-08-30 06:09:27">
 </ruby>
 
 SQL, генерируемый этим методом, выглядит так:
@@ -18,7 +19,8 @@ SQL, генерируемый этим методом, выглядит так:
 <sql>
 SELECT * FROM clients WHERE (clients.first_name = 'Andy') LIMIT 1
 BEGIN
-INSERT INTO clients (created_at, first_name, locked, orders_count, updated_at) VALUES ('2011-08-30 05:22:57', 'Andy', 0, NULL, '2011-08-30 05:22:57')
+INSERT INTO clients (created_at, first_name, locked, orders_count, updated_at) 
+  VALUES ('2011-08-30 05:22:57', 'Andy', 0, NULL, '2011-08-30 05:22:57')
 COMMIT
 </sql>
 
@@ -57,7 +59,8 @@ h4. +first_or_initialize+
 
 <ruby>
 nick = Client.where(:first_name => 'Nick').first_or_initialize(:locked => false)
-# => <Client id: nil, first_name: "Nick", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
+# => <Client id: nil, first_name: "Nick", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", 
+  updated_at: "2011-08-30 06:09:27">
 
 nick.persisted?
 # => false
