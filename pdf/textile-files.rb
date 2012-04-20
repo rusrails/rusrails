@@ -80,6 +80,10 @@ files2 = %w[
 @@names2file_name['active-record-validations-and-callbacks'] = '_2-active-record-validations-and-callbacks.html'
 
 
+# по той причине что по какой-то причине большие html файлы при конвертации wkhtmltopdf - содержат пустые страницы в конце,
+# разбиваем на несколько html ов
+# при этом ссылки вероятно не будут работать
+
 in_folder = '3-active-record-associations'
 files2 = %w[
   --active-record-associations.textile
@@ -87,6 +91,16 @@ files2 = %w[
   1-the-types-of-associations-1.textile
   2-the-types-of-associations-2.textile
   3-tips-tricks-and-warnings.textile
+].map{|file_name| in_folder + '/' + file_name }
+
+@@parts << { 
+  :name=> in_folder, 
+  :files=> files2
+}
+@@names2file_name['active-record-associations'] = '_3-active-record-associations.html'
+
+in_folder = '3-active-record-associations'
+files2 = %w[
   4-belongsto-association-reference.textile
   5-hasone-association-reference.textile
   6-hasmany-association-reference.textile
@@ -95,10 +109,32 @@ files2 = %w[
 ].map{|file_name| in_folder + '/' + file_name }
 
 @@parts << { 
-  :name=> in_folder, 
-  :files=> files2
+  :name=> in_folder + '2', 
+  :files=> files2,
+  :title=> 'Связи ActiveRecord (подробнее)' # в отдельном html - своя структура вложенности - поэтому делаем "обёрточный" верхний заголовок
 }
-@@names2file_name['active-record-associations'] = '_3-active-record-associations.html'
+@@names2file_name['active-record-associations2'] = '_3-active-record-associations2.html'
+
+
+#in_folder = '3-active-record-associations'
+#files2 = %w[
+#  --active-record-associations.textile
+#  0-why-associations.textile
+#  1-the-types-of-associations-1.textile
+#  2-the-types-of-associations-2.textile
+#  3-tips-tricks-and-warnings.textile
+#  4-belongsto-association-reference.textile
+#  5-hasone-association-reference.textile
+#  6-hasmany-association-reference.textile
+#  7-hasandbelongstomany-association-reference.textile
+#  8-association-callbacks-and-extensions.textile
+#].map{|file_name| in_folder + '/' + file_name }
+
+#@@parts << { 
+#  :name=> in_folder, 
+#  :files=> files2
+#}
+#@@names2file_name['active-record-associations'] = '_3-active-record-associations.html'
 
 
 
@@ -215,6 +251,34 @@ files2 = %w[
 
 
 
+# так же разбиваем на 2 части
+#in_folder = '9-active-support-core-extensions'
+#files2 = %w[
+#  --active-support-core-extensions.textile
+#  0-how-to-load-core-extensions.textile
+#  1-extensions-to-all-objects.textile
+#  2-extensions-to-module.textile
+#  3-extensions-to-class.textile
+#  4-extensions-to-string.textile
+#  5-extensions-to-numeric-integer-float.textile
+#  6-extensions-to-enumerable.textile
+#  7-extensions-to-array.textile
+#  8-extensions-to-hash.textile
+#  9-extensions-to-regexp.textile
+#  10-extensions-to-range.textile
+#  11-extensions-to-proc.textile
+#  12-extensions-to-date.textile
+#  13-extensions-to-datetime.textile
+#  14-extensions-to-time.textile
+#  15-extensions-to-process-file-nameerror-loaderror.textile
+#].map{|file_name| in_folder + '/' + file_name }
+#
+#@@parts << { 
+#  :name=> in_folder, 
+#  :files=> files2
+#}
+#@@names2file_name['active-support-core-extensions'] = '_9-active-support-core-extensions.html'
+
 
 in_folder = '9-active-support-core-extensions'
 files2 = %w[
@@ -225,6 +289,16 @@ files2 = %w[
   3-extensions-to-class.textile
   4-extensions-to-string.textile
   5-extensions-to-numeric-integer-float.textile
+].map{|file_name| in_folder + '/' + file_name }
+
+@@parts << { 
+  :name=> in_folder, 
+  :files=> files2
+}
+@@names2file_name['active-support-core-extensions'] = '_9-active-support-core-extensions.html'
+
+in_folder = '9-active-support-core-extensions'
+files2 = %w[
   6-extensions-to-enumerable.textile
   7-extensions-to-array.textile
   8-extensions-to-hash.textile
@@ -238,11 +312,11 @@ files2 = %w[
 ].map{|file_name| in_folder + '/' + file_name }
 
 @@parts << { 
-  :name=> in_folder, 
-  :files=> files2
+  :name=> in_folder + '2', 
+  :files=> files2,
+  :title=>'Расширения ядра Active Support (продолжение)'
 }
-@@names2file_name['active-support-core-extensions'] = '_9-active-support-core-extensions.html'
-
+@@names2file_name['active-support-core-extensions2'] = '_9-active-support-core-extensions2.html'
 
 
 in_folder = '10-rails-internationalization-i18n-api'

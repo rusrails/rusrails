@@ -142,7 +142,7 @@ def file_write(file_path, cnt)
 end
 
 def textile2html(files)
-  p 'Work: textile2html'
+  p '  textile2html'
   files.each do |file_path|
     putc '.'
     file_path2 = file_path.tr('/', '_')
@@ -163,11 +163,11 @@ def textile2html(files)
     file_write(dest_path, html_content)
     #`redcloth ../source/#{file_path} > ./out/#{file_path2}.html`
   end
-  p 'done'
+  p '.'
 end
 
-def create_one_html_file(files)
-  p 'Work: create_one_html_file'
+def create_one_html_file(files, part)
+  p '  create_one_html_file'
   all_cnt = ''
   files.each do |file_path|
     putc '.' 
@@ -191,27 +191,35 @@ def create_one_html_file(files)
   </html>
   """
 
+  if part[:title]
+    title = '<h1>'+part[:title]+'</h1>'
+    all_cnt = title + all_cnt
+  end
+
   all_pages = layout.gsub("{CONTENT}", all_cnt)
   file_write(main_file_path, all_pages)
-  p 'done'
+  p '.'
 end
 
 
 # absolute file system path
 def fix_image_path
-  p 'fix_image_path'
+  p '  fix_image_path'
   cnt = file_read(main_file_path)
   cnt.gsub!('<img src="/assets', '<img src="./../../app/assets/images')
   file_write(main_file_path, cnt)
 end
 
 def fix_move_h1
-  p 'fix_move_h1'
+  p '  fix_move_h1'
   cnt = file_read(main_file_path)
+
   cnt.sub!('<h1>', '<h0>')
   cnt.sub!('</h1>', '</h0>')
+
   (1..10).to_a.reverse.each do |header_level|
     cnt.gsub!("<h#{header_level}>", "<h#{header_level+1}>")
+    cnt.gsub!("<h#{header_level} ", "<h#{header_level+1} ") # <h3 id=...>
     cnt.gsub!("</h#{header_level}>", "</h#{header_level+1}>")
   end
   cnt.sub!('<h0>', '<h1>')
@@ -230,7 +238,7 @@ def generate_pdf2(parts)
   end
   sources = _parts.join(' ')
 
-  options = "--header-left [section] --header-center RusRails --header-right [page] --header-font-size 8 --header-spacing 5 --header-line --print-media-type --footer-html _footer.html"
+  options = "--header-left [section] --header-center RusRails --header-right [page] --header-font-size 8 --header-spacing 5 --header-line --print-media-type --footer-html ./out/_footer.html"
   `#{PATH_TO_WKHTMLTOPDF} #{options} #{sources} #{pdf_file}`
 
   p "PDF generated: #{pdf_file}"
@@ -272,17 +280,55 @@ def generate_pdf
     file = kit.to_file(pdf_file)
 end
 
+def generate_footer
+  version = Time.now.strftime('%Y-%m-%d')
+  footer_cnt =<<END
+  <head>
+    <META http-equiv=Content-Type content='text/html; charset=utf-8'>
+    <style>
+      .footer-text{
+      color: #c0c0c0; 
+      font-size: 6pt
+      }
+    </style>
+  </head>
+  <body>
+  <table width="100%">
+  <tr>
+    <td><a class="footer-text" href="http://groups.google.com/group/rusrails">Обсуждение данного перевода</a></td>
+    <td>
+      <a class="footer-text" href="http://rusrails.ru/">on-line</a> 
+      <span class="footer-text">
+      |
+      #{version}
+      |
+      </span>
+      <a class="footer-text" href="https://github.com/morsbox/rusrails">github</a>
+    </td>
+    <td align="right"><a class="footer-text" href="http://groups.google.com/group/ror2ru">Вопросы по Ruby/Rails</a></td>
+  </tr>
+  </table>
+  </body>
+  </html>
+END
+
+  file_write('./out/_footer.html', footer_cnt)
+
+end
+
 
 all_files = get_all_files_from_parts(@@parts)
 
 @@parts.each do |part|
   @@name = part[:name]
+  p @@name
   files = part[:files]
   textile2html(files)
-  create_one_html_file(files)
+  create_one_html_file(files, part)
   fix_image_path
   fix_local_links(all_files)
   fix_move_h1
 end
+generate_footer
 generate_pdf2(@@parts)
 
