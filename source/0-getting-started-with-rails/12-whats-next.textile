@@ -6,7 +6,6 @@ h1. Что дальше?
 * The "Ruby on Rails Tutorial":http://railstutorial.org/book
 * The "Ruby on Rails mailing list":http://groups.google.com/group/rubyonrails-talk
 * The "#rubyonrails":irc://irc.freenode.net/#rubyonrails channel on irc.freenode.net
-* The "Rails Wiki":http://wiki.rubyonrails.org/
 
 Отдельно хотелось бы выделить и поддержать следующие хорошие русскоязычные ресуры по Ruby on rails:
 

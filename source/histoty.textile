@@ -6,9 +6,9 @@ h1. ИСТОРИЯ
 4. Дата внесения изменений
 
 1. Rails для начинающих
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/getting_started.textile
-3. 0ae42311c6b77ded8eec7bbbb6c4fb72ff92bfee
-4. 20/12/11
+2. https://github.com/lifo/docrails/blob/master/guides/source/getting_started.textile
+3. 05fdb310b6e27a399ef3e99e32f319a1ef37bab1
+4. 19/05/12
 
 1. Миграции базы данных Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/migrations.textile

@@ -6,12 +6,12 @@ h1. Удаление комментариев
 
 <erb>
 <p>
-  <b>Commenter:</b>
+  <strong>Commenter:</strong>
   <%= comment.commenter %>
 </p>
 
 <p>
-  <b>Comment:</b>
+  <strong>Comment:</strong>
   <%= comment.body %>
 </p>
 
@@ -51,7 +51,6 @@ h4. Удаление связанных объектов
 
 <ruby>
 class Post < ActiveRecord::Base
-  validates :name,  :presence => true
   validates :title, :presence => true,
                     :length => { :minimum => 5 }
   has_many :comments, :dependent => :destroy

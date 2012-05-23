@@ -5,10 +5,9 @@ class Admin::PagesController < Puffer::Base
   end
 
   index do
+    field :category_id
     field :name
     field :url_match
-    field :text
-    field :category_id
     field :enabled
     field :show_order
   end
