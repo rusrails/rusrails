@@ -40,6 +40,32 @@ end
 
 добавит +ENGINE=BLACKHOLE+ к выражению SQL, используемому для создания таблицы (при использовании MySQL по умолчанию передается +ENGINE=InnoDB+).
 
+h4. Создание соединительной таблицы (Rails4)
+
+Миграционный метод +create_join_table+ создает соединительную страницу HABTM. Обычное использование будет таким:
+
+<ruby>
+create_join_table :products, :categories
+</ruby>
+
+что создаст таблицу +categories_products+ с двумя столбцами по имени +category_id+ и +product_id+. У этих столбцов есть опция +:null+, установленная в +false+ по умолчанию.
+
+Если хотите изменить имя таблицы, используйте опцию +:table_name+. Например,
+
+<ruby>
+create_join_table :products, :categories, :table_name => :categorization
+</ruby>
+
+создаст таблицу +categorization+.
+
+По умолчанию +create_join_table+ создаст два столбца без опций, но можно определить эти опции с использованием опции +:column_options+. Например,
+
+<ruby>
+create_join_table :products, :categories, :column_options => {:null => true}
+</ruby>
+
+создаст +product_id+ и +category_id+ с опцией +:null+ равной +true+.
+
 h4. Изменение таблиц
 
 Близкий родственник +create_table+ это +change_table+, используемый для изменения существующих таблиц. Он используется подобно +create_table+, но у объекта, передаваемого в блок, больше методов. Например
@@ -91,7 +117,7 @@ create_table :products do |t|
 end
 </ruby>
 
-добавит столбец +attachment_id+ и строковый столбец +attachment_type+ со значением по умолчанию "Photo".
+добавит столбец +attachment_id+ и строковый столбец +attachment_type+ со значением по умолчанию "Photo". +references+ также позволяет сразу определить индекс, вместо использования +add_index+ после вызова +create_table+:
 
 NOTE. Хелпер +references+ фактически не создает для вас внешний ключ как ограничение ссылочной целостности. Нужно использовать +execute+ или плагин, который предоставляет "поддержку внешних ключей":/rails-database-migrations/active-record-and-referential-integrity.
 
