@@ -24,8 +24,6 @@ Devise.setup do |config|
   # Defines which key will be used when confirming an account
   # config.confirmation_keys = [ :email ]
 
-  config.use_salt_as_remember_token = true
-
   config.reset_password_within = 2.hours
 
   config.omniauth :github, Settings.oauth.github.key, Settings.oauth.github.secret
