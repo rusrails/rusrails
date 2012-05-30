@@ -60,4 +60,10 @@ module TextileExtensions
 HTML
     end
   end
+
+  def rails_mark(body)
+    body.gsub!(/\(Rails(\d+)\)/m) do |m|
+      %Q(<span class="rails_mark rails_mark_#{$1.strip}">Rails #{$1.strip.split(//).join "."}</span>)
+    end
+  end
 end

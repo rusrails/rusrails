@@ -230,6 +230,13 @@ div.discussions {
   border-top: 1px solid red;
 }
 
+span.rails_mark {
+  padding: 0 20px;
+  font-style: italic;
+  color: red;
+  font-weight: bold;
+}
+
 /* search */
 
 #search {

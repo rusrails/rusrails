@@ -44,7 +44,7 @@ module ApplicationHelper
     t.hard_breaks = false
     t.lite_mode = lite_mode
     t.sanitize_html = sanitize
-    t.to_html(:notestuff, :plusplus, :code)
+    t.to_html(:notestuff, :plusplus, :code, :rails_mark)
   end
 
   def safe_textile(body, lite_mode=false)
