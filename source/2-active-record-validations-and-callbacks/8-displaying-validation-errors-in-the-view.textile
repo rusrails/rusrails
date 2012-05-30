@@ -93,13 +93,8 @@ h4. Настройка HTML сообщений об ошибке
 
 <ruby>
 ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
-  if instance.error_message.kind_of?(Array)
-    %(#{html_tag}<span class="validation-error">&nbsp;
-      #{instance.error_message.join(',')}</span>).html_safe
-  else
-    %(#{html_tag}<span class="validation-error">&nbsp;
-      #{instance.error_message}</span>).html_safe
-  end
+  errors = Array(instance.error_message).join(',')
+  %(#{html_tag}<span class="validation-error">&nbsp;#{errors}</span>).html_safe
 end
 </ruby>
 
