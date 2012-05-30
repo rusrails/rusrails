@@ -86,6 +86,7 @@ end
 * +:dependent+
 * +:foreign_key+
 * +:include+
+* +:inverse_of+
 * +:polymorphic+
 * +:readonly+
 * +:select+
@@ -212,6 +213,20 @@ end
 
 NOTE: Нет необходимости использовать +:include+ для прямых связей - то есть, если есть +Order belongs_to :customer+, тогда customer нетерпеливо загрузится автоматически, когда это потребуется.
 
+h6(#belongs_to-inverse_of). +:inverse_of+
+
+Опция +:inverse_of+ определяет имя связи +has_many+ или +has_one+, являющейся обратной для этой связи. Не работает в комбинации с опцией +:polymorphic+.
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :orders, :inverse_of => :customer
+end
+
+class Order < ActiveRecord::Base
+  belongs_to :customer, :inverse_of => :orders
+end
+</ruby>
+
 h5(#belongs_to-polymorphic). +:polymorphic+
 
 Передача +true+ для опции +:polymorphic+ показывает, что это полиморфная связь. Полиморфные связи подробно рассматривались "ранее":/active-record-associations/the-types-of-associations-2#polymorphic-associations.
@@ -264,4 +279,4 @@ end
 
 h4(#belongs_to-when_are_objects_saved). Когда сохраняются объекты?
 
-Назначение объекту связью +belongs_to+ _не_ сохраняет автоматически объект. Это также не сохранит связанный объект.
+Присвоение связи  +belongs_to+ не приводит к автоматическому сохранению ни самого объекта, ни связанного объекта.

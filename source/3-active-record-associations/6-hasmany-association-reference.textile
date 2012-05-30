@@ -116,7 +116,7 @@ h5(#has_many-collection-find). <tt><em>collection</em>.find(...)</tt>
 Метод <tt><em>collection</em>.find</tt> ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и +ActiveRecord::Base.find+.
 
 <ruby>
-@open_orders = @customer.orders.where(:open => 1)
+@open_orders = @customer.orders.find(1)
 </ruby>
 
 h5(#has_many-collection-where). <tt><em>collection</em>.where(...)</tt>
@@ -130,7 +130,7 @@ h5(#has_many-collection-where). <tt><em>collection</em>.where(...)</tt>
 
 h5(#has_many-collection-exists). <tt><em>collection</em>.exists?(...)</tt>
 
-Метод <tt><em>collection</em>.exist?</tt> проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и +ActiveRecord::Base.exists?+.
+Метод <tt><em>collection</em>.exists?</tt> проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и +ActiveRecord::Base.exists?+.
 
 h5(#has_many-collection-build). <tt><em>collection</em>.build(attributes = {}, ...)</tt>
 
@@ -152,7 +152,7 @@ h5(#has_many-collection-create). <tt><em>collection</em>.create(attributes = {})
 
 h4. Опции для +has_many+
 
-Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи +has_many+. Такая настройка легко выполнима с помощью передачи опции при создании связи. Например, эта связь использует две такие опции:
+Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи +has_many+. Такая настройка легко выполнима с помощью передачи опций при создании связи. Например, эта связь использует две такие опции:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -173,6 +173,7 @@ end
 * +:foreign_key+
 * +:group+
 * +:include+
+* +:inverse_of+
 * +:limit+
 * +:offset+
 * +:order+
@@ -191,7 +192,7 @@ h5(#has_many-as). +:as+
 
 h5(#has_many-autosave). +:autosave+
 
-Если установить опцию +:autosave+ в +true+, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда вы сохраните родительский объект.
+Если установить опцию +:autosave+ в +true+, Rails сохранит любые загруженные члены и уничтожит члены, помеченные для уничтожения, всякий раз, когда вы сохраняете родительский объект.
 
 h5(#has_many-class_name). +:class_name+
 
@@ -230,7 +231,7 @@ end
 <ruby>
 class Customer < ActiveRecord::Base
   has_many :latest_orders, :class_name => "Order",
-    :conditions => proc { ["orders.created_at > ?, 10.hours.ago] }
+    :conditions => proc { ["orders.created_at > ?", 10.hours.ago] }
 end
 </ruby>
 
@@ -238,11 +239,15 @@ h5(#has_many-counter_sql). +:counter_sql+
 
 Обычно Rails автоматически создает подходящий SQL для счета связанных членов. С опцией +:counter_sql+, можете самостоятельно определить полное выражение SQL для их счета.
 
-NOTE: Если определите <tt>:finder_sql</tt>, но не +:counter_sql+, тогда счетчик SQL будет автоматически создан, подставив +SELECT COUNT(*) FROM+ вместо выражения +SELECT ... FROM+ вашего выражения +:finder_sql+.
+NOTE: Если определите +:finder_sql+, но не +:counter_sql+, тогда счетчик SQL будет автоматически создан, заменив выражение +SELECT ... FROM+ из выражения +:finder_sql+ на +SELECT COUNT(*) FROM+.
 
 h5(#has_many-dependent). +:dependent+
 
 Если установите опцию +:dependent+ как +:destroy+, то удаление этого объекта вызовет метод +destroy+ для связанных объектов, для их удаления. Если установите опцию +:dependent+ как +:delete_all+, то удаление этого объекта удалит связанные объекты _без_ вызова их метода +destroy+. Если установите опцию +:dependent+ как +:nullify+, то удаление этого объекта установит внешний ключ в связанных объектов в +NULL+.
+
+Если установить опцию +:dependent+ как +:restrict+, то удаление объекта будет прервано, если сущестует зависимый связанный объект, и будет вызвано исключение +DeleteRestrictionError+.
+
+NOTE: Поведением по умолчанию для +:dependent => :restrict+ является вызов +DeleteRestrictionError+, когда существуют связанные объекты. Начиная с Rails 4.0, это поведение устарело в пользу добавления ошибки в основную модель. Чтобы заглушить это предупреждение в Rails 4.0, следует исправить ваш код не ожидать это исключение, и добавить +config.active_record.dependent_restrict_raises = false+ в конфигурацию приложения. (Rails4)
 
 NOTE: Эта опция игнорируется, если используете опцию +:through+ для связи.
 
@@ -327,6 +332,20 @@ h5(#has_many-offset). +:offset+
 
 Опция +:offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, если установите +:offset => 11+, она пропустит первые 11 записей.
 
+h6(#has_one-inverse_of). +:inverse_of+
+
+Опция +:inverse_of+ определяет имя связи +belongs_to+, являющейся обратной для этой связи. Не работает в комбинации с опциями +:through+ или +:as+.
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account, :inverse_of => :supplier
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier, :inverse_of => :account
+end
+</ruby>
+
 h5(#has_many-order). +:order+
 
 Опция +:order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
@@ -403,7 +422,7 @@ Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Readin
 
 h4(#has_many-validate). +:validate+
 
-Если установите опцию +:validate+ в +false+, тогда связанные объекты будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
+Если установите опцию +:validate+ в +false+, тогда связанные объекты не будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
 
 h4. Когда сохраняются объекты?
 

@@ -82,6 +82,7 @@ end
 * +:dependent+
 * +:foreign_key+
 * +:include+
+* +:inverse_of+
 * +:order+
 * +:primary_key+
 * +:readonly+
@@ -122,6 +123,10 @@ end
 h5(#has_one-dependent). +:dependent+
 
 Если установите опцию +:dependent+ как +:destroy+, то удаление этого объекта вызовет метод +destroy+ для связанного объекта для его удаления. Если установить опцию +:dependent+ как +:delete+, то удаление этого объекта удалит связанный объект _без_ вызова его метода +destroy+. Если установите опцию +:dependent+ как +:nullify+, то удаление этого объекта установит внешний ключ связанного объекта как +NULL+.
+
+Если установить опцию +:dependent+ как +:restrict+, то удаление объекта будет прервано, если сущестует зависимый связанный объект, и будет вызвано исключение +DeleteRestrictionError+.
+
+NOTE: Поведением по умолчанию для +:dependent => :restrict+ является вызов +DeleteRestrictionError+, когда существуют связанные объекты. Начиная с Rails 4.0, это поведение устарело в пользу добавления ошибки в основную модель. Чтобы заглушить это предупреждение в Rails 4.0, следует исправить ваш код не ожидать это исключение, и добавить +config.active_record.dependent_restrict_raises = false+ в конфигурацию приложения. (Rails4)
 
 h5(#has_one-foreign_key). +:foreign_key+
 
@@ -168,6 +173,20 @@ end
 
 class Representative < ActiveRecord::Base
   has_many :accounts
+end
+</ruby>
+
+h6(#has_one-inverse_of). +:inverse_of+
+
+Опция +:inverse_of+ определяет имя связи +belongs_to+, являющейся обратной для этой связи. Не работает в комбинации с опциями +:through+ или +:as+.
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account, :inverse_of => :supplier
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier, :inverse_of => :account
 end
 </ruby>
 
