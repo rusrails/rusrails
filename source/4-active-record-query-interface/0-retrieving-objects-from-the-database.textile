@@ -44,17 +44,17 @@ client = Client.find(10)
 SQL эквивалент этого такой:
 
 <sql>
-SELECT * FROM clients WHERE (clients.id = 10)
+SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
 </sql>
 
 <tt>Model.find(primary_key)</tt> вызывает исключение +ActiveRecord::RecordNotFound+, если соответствующей записи не было найдено.
 
-h5. +first+
+h5. +take+ (Rails4)
 
-<tt>Model.first</tt> находит первую запись, соответствующую предоставленным опциям, если таковые имеются. Например:
+<tt>Model.take</tt> получает запись без какого-либо явного упорядочивания. Например:
 
 <ruby>
-client = Client.first
+client = Client.take
 # => #<Client id: 1, first_name: "Lifo">
 </ruby>
 
@@ -64,11 +64,30 @@ SQL эквивалент этого такой:
 SELECT * FROM clients LIMIT 1
 </sql>
 
-<tt>Model.first</tt> возвращает +nil+, если не найдено соответствующей записи. Исключения не вызываются.
+<tt>Model.take</tt> возвращает +nil+, если ни одной записи не найдено, и исключение не будет вызвано.
+
+TIP: Получаемая запись может отличаться в зависимости от движка базы данных.
+
+h5. +first+
+
+<tt>Model.first</tt> находит первую запись, упорядоченную по первичному ключу. Например:
+
+<ruby>
+client = Client.first
+# => #<Client id: 1, first_name: "Lifo">
+</ruby>
+
+SQL эквивалент этого такой:
+
+<sql>
+SELECT * FROM clients ORDER BY clients.id ASC LIMIT 1
+</sql>
+
+<tt>Model.first</tt> возвращает +nil+, если не найдено соответствующей записи, и исключение не вызывается.
 
 h5. +last+
 
-<tt>Model.last</tt> находит последнюю запись, соответствующую предоставленным опциям. Например:
+<tt>Model.last</tt> находит последнюю запись, упорядоченную по первичному ключу. Например:
 
 <ruby>
 client = Client.last
@@ -81,14 +100,32 @@ SQL эквивалент этого такой:
 SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 </sql>
 
-<tt>Model.last</tt> возвращает +nil+, если не найдено соответствующей записи. Исключения не вызываются.
+<tt>Model.last</tt> возвращает +nil+, если не найдено соответствующей записи, и исключение не вызывается.
 
-h5(#first_1). +first!+
+h5. +find_by+ (Rails4)
 
-<tt>Model.first!</tt> находит первую запись. Например:
+<tt>Model.find_by</tt> ищет первую запись, соответствующую некоторым условиям. Например:
 
 <ruby>
-client = Client.first!
+Client.find_by first_name: 'Lifo'
+# => #<Client id: 1, first_name: "Lifo">
+
+Client.find_by first_name: 'Jon'
+# => nil
+</ruby>
+
+Это эквивалент записи:
+
+<ruby>
+Client.where(first_name: 'Lifo').take
+</ruby>
+
+h5(#take_1). +take!+ (Rails4)
+
+<tt>Model.take!</tt> получает запись без какого-либо явного упорядочивания. Например:
+
+<ruby>
+client = Client.take!
 # => #<Client id: 1, first_name: "Lifo">
 </ruby>
 
@@ -98,11 +135,28 @@ SQL эквивалент этого такой:
 SELECT * FROM clients LIMIT 1
 </sql>
 
-<tt>Model.first</tt> вызывает +RecordNotFound+, если не найдено соответствующей записи.
+<tt>Model.take!</tt> вызывает +ActiveRecord::RecordNotFound+, если соответсвующей записи не было найдено.
+
+h5(#first_1). +first!+
+
+<tt>Model.first!</tt> находит первую запись, упорядоченную по первичному ключу. Например:
+
+<ruby>
+client = Client.first!
+# => #<Client id: 1, first_name: "Lifo">
+</ruby>
+
+SQL эквивалент этого такой:
+
+<sql>
+SELECT * FROM clients ORDER BY clients.id ASC LIMIT 1
+</sql>
+
+<tt>Model.first</tt> вызывает +ActiveRecord::RecordNotFound+, если не найдено соответствующей записи.
 
 h5(#last_1). +last!+
 
-<tt>Model.last!</tt> находит последнюю запись. Например:
+<tt>Model.last!</tt> находит последнюю запись, упорядоченную по первичному ключу. Например:
 
 <ruby>
 client = Client.last!
@@ -115,7 +169,25 @@ SQL эквивалент этого такой:
 SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 </sql>
 
-<tt>Model.last</tt> вызывает +RecordNotFound+, если не найдено соответствующей записи.
+<tt>Model.last</tt> вызывает +ActiveRecord::RecordNotFound+, если не найдено соответствующей записи.
+
+h5(#find_by_1). +find_by!+ (Rails4)
+
+<tt>Model.find_by!</tt> ищет первую запись, соответствующую некоторым условиям. Он вызывает +ActiveRecord::RecordNotFound+, если не найдено соответствующей записи. Например:
+
+<ruby>
+Client.find_by! first_name: 'Lifo'
+# => #<Client id: 1, first_name: "Lifo">
+
+Client.find_by! first_name: 'Jon'
+# => ActiveRecord::RecordNotFound
+</ruby>
+
+Это эквивалент записи:
+
+<ruby>
+Client.where(first_name: 'Lifo').take!
+</ruby>
 
 h4. Получение нескольких объектов
 

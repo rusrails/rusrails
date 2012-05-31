@@ -22,6 +22,8 @@ Client.order("created_at ASC")
 
 <ruby>
 Client.order("orders_count ASC, created_at DESC")
+# или
+Client.order("orders_count ASC", "created_at DESC")
 </ruby>
 
 h4. Выбор определенных полей
@@ -117,7 +119,9 @@ Order.select("date(created_at) as ordered_date, sum(price) as total_price").grou
 SQL, который будет выполнен, будет выглядеть так:
 
 <sql>
-SELECT date(created_at) as ordered_date, sum(price) as total_price FROM orders GROUP BY date(created_at)
+SELECT date(created_at) as ordered_date, sum(price) as total_price
+FROM orders
+GROUP BY date(created_at)
 </sql>
 
 h4. Владение
@@ -133,7 +137,10 @@ Order.select("date(created_at) as ordered_date, sum(price) as total_price").grou
 SQL, который будет выполнен, выглядит так:
 
 <sql>
-SELECT date(created_at) as ordered_date, sum(price) as total_price FROM orders GROUP BY date(created_at) HAVING sum(price) > 100
+SELECT date(created_at) as ordered_date, sum(price) as total_price
+FROM orders
+GROUP BY date(created_at)
+HAVING sum(price) > 100
 </sql>
 
 Это возвратит отдельные объекты order для каждого дня, но только те, которые заказаны более чем на 100$ в день.
@@ -222,9 +229,33 @@ SELECT * FROM clients WHERE orders_count > 10 ORDER BY clients.id DESC
 
 Этот метод не принимает аргументы.
 
+h3. Нулевой Relation (Rails4)
+
+Метод +none+ возвращает сцепляемый relation без записей. Любые последующие условия, сцепленные с возвращенным relation, продолжат возвращать пустые relation. Это полезно в случаях, когда необходим сцепляемый отклик на метод или скоуп, который может вернуть пустые результаты.
+
+<ruby>
+Post.none # returns an empty Relation and fires no queries.
+</ruby>
+
+<ruby>
+# От метода visible_posts ожидается, что он вернет Relation.
+@posts = current_user.visible_posts.where(:name => params[:name])
+
+def visible_posts
+  case role
+  when 'Country Manager'
+    Post.where(:country => country)
+  when 'Reviewer'
+    Post.published
+  when 'Bad User'
+    Post.none # => если бы вернули [] или nil, код поломался бы в этом случае
+  end
+end
+</ruby>
+
 h4(#readonly-objects). Объекты только для чтения
 
-Active Record представляет метод +readonly+ у relation для явного запрета изменения/уничтожения любого возвращаемого объекта. Любые попытки изменить или уничтожить объект только для чтения будет неудачной, вызвав исключение +ActiveRecord::ReadOnlyRecord+.
+Active Record представляет метод +readonly+ у relation для явного запрета изменения любого возвращаемого объекта. Любая попытка изменить объект только для чтения будет неудачной, вызвав исключение +ActiveRecord::ReadOnlyRecord+.
 
 <ruby>
 client = Client.readonly.first
@@ -249,7 +280,7 @@ h5. Оптимистичная блокировка
 
 <strong>Столбец оптимистичной блокировки</strong>
 
-Чтобы начать использовать оптимистичную блокировку, таблица должна иметь столбец, называющийся +lock_version+. Каждый раз, когда запись обновляется, Active Record увеличивает значение +lock_version+, и средства блокирования обеспечивают, что для записи, вызванной дважды, та, которая первая успеет будет сохранена, а для второй будет вызвано исключение +ActiveRecord::StaleObjectError+. Пример:
+Чтобы начать использовать оптимистичную блокировку, таблица должна иметь столбец, называющийся +lock_version+, с типом integer. Каждый раз, когда запись обновляется, Active Record увеличивает значение +lock_version+, и средства блокирования обеспечивают, что для записи, вызванной дважды, та, которая первая успеет будет сохранена, а для второй будет вызвано исключение +ActiveRecord::StaleObjectError+. Пример:
 
 <ruby>
 c1 = Client.find(1)
@@ -264,15 +295,13 @@ c2.save # Raises a ActiveRecord::StaleObjectError
 
 Вы ответственны за разрешение конфликта с помощью обработки исключения и либо отката, либо объединения, либо применения бизнес-логики, необходимой для разрешения конфликта.
 
-NOTE: Вы должны убедиться, что в схеме базы данных для стобца +lock_version+ значением по умолчанию является +0+.
-
 Это поведение может быть отключено, если установить +ActiveRecord::Base.lock_optimistically = false+.
 
-Для переопределения имени столбца +lock_version+, +ActiveRecord::Base+ предоставляет метод класса, называющийся +set_locking_column+:
+Для переопределения имени столбца +lock_version+, +ActiveRecord::Base+ предоставляет атрибут класса +locking_column+:
 
 <ruby>
 class Client < ActiveRecord::Base
-  set_locking_column :lock_client_column
+  self.locking_column = :lock_client_column
 end
 </ruby>
 
@@ -305,5 +334,16 @@ SQL (0.8ms)   COMMIT
 Item.transaction do
   i = Item.lock("LOCK IN SHARE MODE").find(1)
   i.increment!(:views)
+end
+</ruby>
+
+Если у вас уже имеется экземпляр модели, можно начать транзакцию и затребовать блокировку одновременно, используя следующий код:
+
+<ruby>
+item = Item.first
+item.with_lock do
+  # Этот блок вызывается в транзакции,
+  # элемент уже заблокирован.
+  item.increment!(:views)
 end
 </ruby>

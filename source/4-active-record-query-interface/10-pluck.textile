@@ -21,3 +21,21 @@ Client.select(:id).map { |c| c.id }
 <ruby>
 Client.pluck(:id)
 </ruby>
+
+h3. +ids+ (Rails4)
+
++ids+ может быть использован для сбора всех ID для relation, используя первичный ключ таблицы.
+
+<ruby>
+Person.ids
+# SELECT id FROM people
+</ruby>
+
+<ruby>
+class Person < ActiveRecord::Base
+  self.primary_key = "person_id"
+end
+
+Person.ids
+# SELECT person_id FROM people
+</ruby>

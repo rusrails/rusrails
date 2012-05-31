@@ -74,6 +74,8 @@ config.active_record.auto_explain_threshold_in_seconds
 
 Порог по умолчанию в режиме development 0.5 секунды, и +nil+ в режимах test и production.
 
+INFO. Автоматический EXPLAIN становится отключенным, если у Active Record нет логгера, независимо от значения порога.
+
 h5. Отключение автоматического EXPLAIN
 
 Автоматический EXPLAIN может быть выборочно приглушен с помощью +ActiveRecord::Base.silence_auto_explain+:

@@ -1,20 +1,22 @@
 h1. Скоупы
 
-Скоупинг позволяет определить часто используемые запросы ARel, к которым можно обращаться как к вызовам метода в связанных объектах или моделях. С помощью этих скоупов можно использовать каждый ранее раскрытый метод, такой как +where+, +joins+ и +includes+. Все методы скоупов возвращают объект +ActiveRecord::Relation+, который позволяет вызывать следующие методы (такие как другие скоупы).
+Скоупинг позволяет определить часто используемые запросы, к которым можно обращаться как к вызовам метода в связанных объектах или моделях. С помощью этих скоупов можно использовать каждый ранее раскрытый метод, такой как +where+, +joins+ и +includes+. Все методы скоупов возвращают объект +ActiveRecord::Relation+, который позволяет вызывать следующие методы (такие как другие скоупы).
 
-Для определения простого скоупа мы используем метод +scope+ внутри класса, передав запрос ARel, который хотим запустить при вызове скоупа:
+Для определения простого скоупа мы используем метод +scope+ внутри класса, передав запрос, который хотим запустить при вызове скоупа:
 
 <ruby>
 class Post < ActiveRecord::Base
-  scope :published, where(:published => true)
+  scope :published, -> { where(published: true) }
 end
 </ruby>
 
-Как и ранее, эти методы также сцепляются:
+Это в точности то же самое, что определение метода класса, и то, что именно вы используете, является вопросом профессионального предпочтения:
 
 <ruby>
 class Post < ActiveRecord::Base
-  scope :published, where(:published => true).joins(:category)
+  def self.published
+    where(published: true)
+  end
 end
 </ruby>
 
@@ -22,8 +24,8 @@ end
 
 <ruby>
 class Post < ActiveRecord::Base
-  scope :published, where(:published => true)
-  scope :published_and_commented, published.and(self.arel_table[:comments_count].gt(0))
+  scope :published,               -> { where(:published => true) }
+  scope :published_and_commented, -> { published.where("comments_count > 0") }
 end
 </ruby>
 
@@ -40,39 +42,27 @@ category = Category.first
 category.posts.published # => [published posts belonging to this category]
 </ruby>
 
-h4. Работа со временем
-
-Если вы работаете в скоупах с датой или временем, в связи с особенностями их вычисления необходимо использовать лямбду, таким образом скоуп будет вычисляться каждый раз.
-
-<ruby>
-class Post < ActiveRecord::Base
-  scope :last_week, lambda { where("created_at < ?", Time.zone.now ) }
-end
-</ruby>
-
-Без +lambda+, этот +Time.zone.now+ будет вызван один раз.
-
 h4. Передача аргумента
 
-Когда +lambda+ используется для +scope+, можно принимать аргументы:
+Скоуп может принимать аргументы:
 
 <ruby>
 class Post < ActiveRecord::Base
-  scope :1_week_before, lambda { |time| where("created_at < ?", time) }
+  scope :created_before, ->(time) { where("created_at < ?", time) }
 end
 </ruby>
 
 Это можно использовать так:
 
 <ruby>
-Post.1_week_before(Time.zone.now)
+Post.created_before(Time.zone.now)
 </ruby>
 
 Однако, это всего лишь дублирование функциональности, которая должна быть предоставлена методом класса.
 
 <ruby>
 class Post < ActiveRecord::Base
-  def self.1_week_before(time)
+  def self.created_before(time)
     where("created_at < ?", time)
   end
 end
@@ -81,7 +71,7 @@ end
 Использование метода класса - более предпочтительный способ принятию аргументов скоупом. Эти методы также будут доступны на связанных объектах:
 
 <ruby>
-category.posts.1_week_before(time)
+category.posts.created_before(time)
 </ruby>
 
 h4. Работа со скоупами
@@ -105,7 +95,7 @@ h4. Применение скоупа по умолчанию
 
 <ruby>
 class Client < ActiveRecord::Base
-  default_scope where("removed_at IS NULL")
+  default_scope { where("removed_at IS NULL") }
 end
 </ruby>
 

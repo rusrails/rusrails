@@ -51,6 +51,8 @@ Client.where(:first_name => 'Andy').first_or_create!(:locked => false)
 # => ActiveRecord::RecordInvalid: Validation failed: Orders count can't be blank
 </ruby>
 
+Как и в случае с +first_or_create+, также имеется метод +find_or_create_by!+, но метод +first_or_create!+ более предпочтителен из-за ясности.
+
 h4. +first_or_initialize+
 
 Метод +first_or_initialize+ работает похоже на +first_or_create+, но он вызывает не +create+, а +new+. Это означает, что новый экземпляр модели будет создан в памяти, но не будет сохранен в базу данных. Продолжая пример с +first_or_create+, теперь мы хотим клиента по имени 'Nick':
