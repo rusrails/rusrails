@@ -41,9 +41,9 @@ h1. ИСТОРИЯ
 4. 16/05/12
 
 1. Обзор Action Controller
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_controller_overview.textile
-3. 078b4b54a6ce655854bae5f9f931423410d46ff8
-4. 07/12/11
+2. action_controller_overview.textile
+3. 68a9788cdbd5de4c58777564aeb117b4a1866194
+4. 09/04/12
 
 1. Роутинг в Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/routing.textile
