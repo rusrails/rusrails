@@ -36,9 +36,9 @@ h1. ИСТОРИЯ
 4. 16/05/12
 
 1. Хелперы форм Rails
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/form_helpers.textile
-3. a72839bc9dc5fb3d56e79f7dc7f85975550d6fde
-4. 01/12/11
+2. form_helpers.textile
+3. b02d14aad515a039c284c93a68845503dc1658e2
+4. 16/05/12
 
 1. Обзор Action Controller
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/action_controller_overview.textile
