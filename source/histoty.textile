@@ -31,9 +31,9 @@ h1. ИСТОРИЯ
 4. 16/05/12
 
 1. Макеты и рендеринг в Rails
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/layouts_and_rendering.textile
-3. b15e2be6b03811258fcaad5b827960273df88d4a
-4. 11/12/11
+2. layouts_and_rendering.textile
+3. e29626901ad82bafeb7ade13c3681aa777d7fe2a
+4. 16/05/12
 
 1. Хелперы форм Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/form_helpers.textile
