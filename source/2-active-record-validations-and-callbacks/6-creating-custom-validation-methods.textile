@@ -77,7 +77,7 @@ end
 Можно даже создать собственные валидационные хелперы и использовать их в нескольких различных моделях. Для примера, в приложении, управляющим исследованиями, может быть полезным указать, что определенное поле соответствует ряду значений:
 
 <ruby>
-ActiveRecord::Base.class_eval do
+class ActiveRecord::Base
   def self.validates_as_choice(attr_name, n, options={})
     validates attr_name, :inclusion => { { :in => 1..n }.merge!(options) }
   end
