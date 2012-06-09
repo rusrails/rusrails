@@ -1,4 +1,6 @@
 Rusrails::Application.routes.draw do
+  root :to => "pages#index"
+
   devise_for :users, :controllers => {:omniauth_callbacks => "omniauth_callbacks"}
   devise_scope :user do
     get '/users/auth/:provider' => 'omniauth_callbacks#passthru'
@@ -23,8 +25,7 @@ Rusrails::Application.routes.draw do
 
   resource :search, :only => :show, :controller => :search
 
-  root :to => "pages#index"
-  match ":url_match" => "categories#show"
-  match ":category_url_match/:url_match" => "pages#show"
+  get ":url_match" => "categories#show"
+  get ":category_url_match/:url_match" => "pages#show"
   match "*wrong" => "pages#404"
 end
