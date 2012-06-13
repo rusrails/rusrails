@@ -13,7 +13,7 @@ GET /patients/17
 оно опрашивает роутер на предмет соответствия экшну контроллера. Если первый соответствующий маршрут это
 
 <ruby>
-match "/patients/:id" => "patients#show"
+get "/patients/:id" => "patients#show"
 </ruby>
 
 то запрос будет направлен в контроллер +patients+ в экшн +show+ с <tt>{ :id => "17" }</tt> в +params+.

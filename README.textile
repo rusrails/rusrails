@@ -8,6 +8,6 @@ a: I am afraid we cannot show large diffs. You can see it locally though. /Petro
 
 Так как директорию с руководствами перенесли в корень, чтобы получить нормальный дифф, нужно:
 
-- вернуть ее обратно +mv guides/ railties/+
+- вернуть ее обратно +git mv guides/ railties/+
 - получить дифф
 - ресетнуть +git reset --hard+

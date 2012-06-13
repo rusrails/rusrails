@@ -18,7 +18,7 @@ resources :photos, :controller => "images"
 |POST        |/photos          |create   | photos_path          |
 |GET         |/photos/:id      |show     | photo_path(:id)      |
 |GET         |/photos/:id/edit |edit     | edit_photo_path(:id) |
-|PUT         |/photos/:id      |update   | photo_path(:id)      |
+|PATCH/PUT   |/photos/:id      |update   | photo_path(:id)      |
 |DELETE      |/photos/:id      |destroy  | photo_path(:id)      |
 
 NOTE: Используйте +photos_path+, +new_photo_path+ и т.д. для создания путей для этого ресурса.
@@ -62,7 +62,7 @@ resources :photos, :as => "images"
 |POST        |/photos           |create   | images_path          |
 |GET         |/photos/:id       |show     | image_path(:id)      |
 |GET         |/photos/:id/edit  |edit     | edit_image_path(:id) |
-|PUT         |/photos/:id       |update   | image_path(:id)      |
+|PATCH/PUT   |/photos/:id       |update   | image_path(:id)      |
 |DELETE      |/photos/:id       |destroy  | image_path(:id)      |
 
 h4. Переопределение сегментов +new+ и +edit+
@@ -166,7 +166,7 @@ Rails теперь создаст маршруты к +CategoriesController+.
 |POST        |/kategorien                |create   | categories_path         |
 |GET         |/kategorien/:id            |show     | category_path(:id)      |
 |GET         |/kategorien/:id/bearbeiten |edit     | edit_category_path(:id) |
-|PUT         |/kategorien/:id            |update   | category_path(:id)      |
+|PATCH/PUT   |/kategorien/:id            |update   | category_path(:id)      |
 |DELETE      |/kategorien/:id            |destroy  | category_path(:id)      |
 
 h4. Переопределение единственного числа
