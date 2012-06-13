@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Category do
   before :each do
-    @category = Factory :category, :name => "Category 1", :url_match => "category_1"
+    @category = FactoryGirl.create :category, :name => "Category 1", :url_match => "category_1"
   end
 
   it "is valid with valid attributes" do
@@ -42,7 +42,7 @@ describe Category do
 
   describe "scope :enabled" do
     before :each do
-      @disabled_category = Factory  :category, :name => "Category 2",
+      @disabled_category = FactoryGirl.create  :category, :name => "Category 2",
                                     :url_match => "category_2", :enabled => false
     end
 
@@ -57,13 +57,13 @@ describe Category do
 
   describe "scope :ordered" do
     it "returns categories ordered by show_order" do
-      @second_category = Factory  :category, :name => "Category 2",
+      @second_category = FactoryGirl.create  :category, :name => "Category 2",
                                   :url_match => "cat_2", :show_order => -1
       Category.ordered.should == [@second_category, @category]
     end
 
     it "returns categories with equal show_order ordered by creation time" do
-      @second_category = Factory  :category, :name => "Category 2", :url_match => "cat_2"
+      @second_category = FactoryGirl.create  :category, :name => "Category 2", :url_match => "cat_2"
       Category.ordered.should == [@category,@second_category]
     end
   end
@@ -74,7 +74,7 @@ describe Category do
     end
 
     it "returns nil when category present but disabled" do
-      @disabled_category = Factory  :category, :name => "Category 2",
+      @disabled_category = FactoryGirl.create  :category, :name => "Category 2",
                                     :url_match => "category_2", :enabled => false
       Category.matching("category_2").should == nil
     end

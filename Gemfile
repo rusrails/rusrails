@@ -10,6 +10,7 @@ gem 'omniauth-openid'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
+gem 'orm_adapter', '= 0.0.7'
 
 gem 'nokogiri'
 gem 'haml'

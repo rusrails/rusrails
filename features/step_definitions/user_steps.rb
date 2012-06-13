@@ -1,6 +1,6 @@
 # encoding: utf-8
 Given /^a user with email "([^"]*)" and password "([^"]*)"$/ do |email, password|
-  Factory :user, :email => email, :password => password
+  FactoryGirl.create :user, :email => email, :password => password
 end
 
 Given /^I am logout as user$/ do

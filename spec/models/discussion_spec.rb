@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe Discussion do
   before do
-    @discussion = Factory :discussion
+    @discussion = FactoryGirl.create :discussion
   end
   it "uses counter caching"
 
   describe "scope :enabled" do
     before :each do
-      @disabled_discussion = Factory :discussion, :enabled => false
+      @disabled_discussion = FactoryGirl.create :discussion, :enabled => false
     end
 
     it "returns enabled discussions" do
@@ -20,7 +20,7 @@ describe Discussion do
     end
 
     it "returns discussions ordered by update time 1" do
-      @second_discussion = Factory :discussion, :updated_at => Time.now + 1.second
+      @second_discussion = FactoryGirl.create :discussion, :updated_at => Time.now + 1.second
       Discussion.enabled.should == [@second_discussion, @discussion]
     end
   end

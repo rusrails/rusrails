@@ -1,15 +1,15 @@
 Given /^a category named "([^"]*)" with URL match "([^"]*)"$/ do |name, url_match|
-  Factory :category, :name => name, :url_match => url_match
+  FactoryGirl.create :category, :name => name, :url_match => url_match
 end
 
 Given /^a page named "([^"]*)" with URL match "([^"]*)"$/ do |name, url_match|
-  Factory :page, :name => name, :url_match => url_match
+  FactoryGirl.create :page, :name => name, :url_match => url_match
 end
 
 Given /^"([^"]*)" have a page named "([^"]*)" with URL match "([^"]*)"$/ do
     |category_name, name, url_match|
-  category = Category.find_by_name category_name 
-  Factory :page, :name => name, :url_match => url_match,
+  category = Category.find_by_name category_name
+  FactoryGirl.create :page, :name => name, :url_match => url_match,
           :category => category
 end
 
@@ -26,7 +26,7 @@ end
 Given /^"([^"]*)" additionally have (\d+) page\(s\)$/ do |name, number|
   cat = Category.find_by_name name
   (1..number.to_i).each do |n|
-    cat.pages << Factory(:page, :name => "Additional #{n}", :url_match => "add-#{n}")
+    cat.pages << FactoryGirl.create(:page, :name => "Additional #{n}", :url_match => "add-#{n}")
   end
   @pages = cat.pages.enabled
 end
@@ -48,7 +48,7 @@ Then /^I should see (\d+) (.+) link$/ do |number,link|
   else
     raise "Describe '#{link}' link in #{__FILE__}"
   end
-  
+
   case number.to_i
   when 0
     page.should have_no_selector(link_selector)
