@@ -67,7 +67,7 @@ h5. Массовый поиск и поиск в пространстве име
 Чтобы найти несколько переводов за раз, может быть передан массив ключей:
 
 <ruby>
-I18n.t [:odd, :even], :scope => 'activerecord.errors.messages'
+I18n.t [:odd, :even], :scope => 'errors.messages'
 # => ["must be odd", "must be even"]
 </ruby>
 
