@@ -51,9 +51,9 @@ h1. ИСТОРИЯ
 4. 02/06/12
 
 1. Расширения ядра Active Support
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/active_support_core_extensions.textile
-3. 16c18f00fbf1a4835c8e374939e94d7152c3c06c
-4. 13/01/12
+2. active_support_core_extensions.textile
+3. b1f634a3797003ab6276ee47fe187dd56e52c3fd
+4. 08/06/12
 
 1. API интернационализации Rails (I18n)
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/i18n.textile

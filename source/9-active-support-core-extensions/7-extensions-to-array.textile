@@ -112,7 +112,7 @@ h5. +to_formatted_s+
 
 Метод +to_formatted_s+ по умолчанию работает как +to_s+.
 
-Однако, если массив содержит элементы, откликающиеся на +id+, он может передать символ +:db+ как аргумент. Это обычно используется с коллекциями AR, хотя на самом деле технически любой объект в Ruby 1.8 может откликаться на +id+. Возвращаемые строки следующие:
+Однако, если массив содержит элементы, откликающиеся на +id+, он может передать символ +:db+ как аргумент. Это обычно используется с коллекциями AR. Возвращаемые строки следующие:
 
 <ruby>
 [].to_formatted_s(:db)            # => "null"
@@ -152,20 +152,20 @@ Contributor.limit(2).order(:rank).to_xml
 
 По умолчанию имя корневого элемента будет версией имени класса первого элемента во множественном числе, подчеркиваниями и дефисами, при условии что остальные элементы принадлежат этому типу (проверяется с помощью +is_a?+) и они не хэши. В примере выше это "contributors".
 
-Если имеется любой элемент, не принадлежащий типу первого, корневой узел становится "records":
+Если имеется любой элемент, не принадлежащий типу первого, корневой узел становится "objects":
 
 <ruby>
 [Contributor.first, Commit.first].to_xml
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
-# <records type="array">
-#   <record>
+# <objects type="array">
+#   <object>
 #     <id type="integer">4583</id>
 #     <name>Aaron Batalion</name>
 #     <rank type="integer">53</rank>
 #     <url-id>aaron-batalion</url-id>
-#   </record>
-#   <record>
+#   </object>
+#   <object>
 #     <author>Joshua Peek</author>
 #     <authored-timestamp type="datetime">2009-09-02T16:44:36Z</authored-timestamp>
 #     <branch>origin/master</branch>
@@ -176,30 +176,30 @@ Contributor.limit(2).order(:rank).to_xml
 #     <imported-from-svn type="boolean">false</imported-from-svn>
 #     <message>Kill AMo observing wrap_with_notifications since ARes was only using it</message>
 #     <sha1>723a47bfb3708f968821bc969a9a3fc873a3ed58</sha1>
-#   </record>
-# </records>
+#   </object>
+# </objects>
 </ruby>
 
-Если получатель является массивом хэшей, корневой узел по умолчанию также "records":
+Если получатель является массивом хэшей, корневой узел по умолчанию также "objects":
 
 <ruby>
 [{:a => 1, :b => 2}, {:c => 3}].to_xml
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
-# <records type="array">
-#   <record>
+# <objects type="array">
+#   <object>
 #     <b type="integer">2</b>
 #     <a type="integer">1</a>
-#   </record>
-#   <record>
+#   </object>
+#   <object>
 #     <c type="integer">3</c>
-#   </record>
-# </records>
+#   </object>
+# </objects>
 </ruby>
 
 WARNING. Если коллекция пустая, корневой элемент по умолчанию "nil-classes". Пример для понимания, корневой элемент для вышеописанного списка распространителей не будет "contributors", если коллекция пустая, а "nil-classes". Можно использовать опцию +:root+, чтобы обеспечить то, что будет соответствовать корневому элементу.
 
-Имя дочерних узлов по умолчанию является именем корневого узла в единственном числе. В вышеописанных примерах мы видели "contributor" и "record'. Опция +:children+ позволяет установить эти имена узлов.
+Имя дочерних узлов по умолчанию является именем корневого узла в единственном числе. В вышеописанных примерах мы видели "contributor" и "object'. Опция +:children+ позволяет установить эти имена узлов.
 
 По умолчанию билдер XML является свежим экземпляром +Builder::XmlMarkup+. Можно сконфигурировать свой собственный билдер через опцию +:builder+. Метод также принимает опции, такие как +:dasherize+ со товарищи, они перенаправляются в билдер:
 
@@ -265,6 +265,19 @@ Array(:foo => :bar)      # => [[:foo, :bar]]
 Таким образом, в этом случае поведение различается для +nil+, а описанная выше разница с +Kernel#Array+ применима к остальным +object+.
 
 NOTE: Определено в +active_support/core_ext/array/wrap.rb+.
+
+h4. Дублирование (Rails4)
+
+Метод +Array.deep_dup+ дублирует себя и все объекты внутри рекурсивно с помощью метода ActiveSupport +Object#deep_dup+. Он работает так же, как +Array#map+, посылая метод +deep_dup+ в каждый объект внутри.
+
+<ruby>
+array = [1, [2, 3]]
+dup = array.deep_dup
+dup[1][2] = 4
+array[1][2] == nil   # => true
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/array/deep_dup.rb+.
 
 h4. Группировка
 

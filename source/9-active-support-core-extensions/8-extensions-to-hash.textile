@@ -103,6 +103,23 @@ Active Support определяет +Hash#deep_merge+. В углубленном
 
 NOTE: Определено в +active_support/core_ext/hash/deep_merge.rb+.
 
+h4. "Глубокое" дублирование
+
+Метод +Hash.deep_dup+ дублирует себя и все ключи и значения внутри рекурсивно с помощью метода ActiveSupport +Object#deep_dup+. Он работает так же, как +Enumerator#each_with_object+, посылая метод +deep_dup+ в каждую пару внутри.
+
+<ruby>
+hash = { :a => 1, :b => { :c => 2, :d => [3, 4] } }
+
+dup = hash.deep_dup
+dup[:b][:e] = 5
+dup[:b][:d] << 5
+
+hash[:b][:e] == nil      # => true
+hash[:b][:d] == [3, 4]   # => true
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/hash/deep_dup.rb+.
+
 h4. Определение различий
 
 Метод +diff+ возвращает хэш, представляющий разницу между получателем и аргументом, с помощью следующей логики:
@@ -167,6 +184,45 @@ params[:account] = params[:account].except(:plan_id) unless admin?
 
 NOTE: Определено в +active_support/core_ext/hash/except.rb+.
 
+h5. +transform_keys+ и +transform_keys!+ (Rails4)
+
+Метод +transform_keys+ принимает блок и возвращает хэш, в котором к каждому из ключей получателя были применены операции в блоке:
+
+<ruby>
+{nil => nil, 1 => 1, :a => :a}.transform_keys{ |key| key.to_s.upcase }
+# => {"" => nil, "A" => :a, "1" => 1}
+</ruby>
+
+Результат в случае коллизии неопределен:
+
+<ruby>
+{"a" => 1, :a => 2}.transform_keys{ |key| key.to_s.upcase }
+# => {"A" => 2}, в моем тесте, хотя на этот результат не стоит полагаться
+</ruby>
+
+Этот метод можеет помочь, к примеру, при создании специальных преобразований. Например, +stringify_keys+ и +symbolize_keys+ используют +transform_keys+ для выполнения преобразований ключей:
+
+<ruby>
+def stringify_keys
+  transform_keys{ |key| key.to_s }
+end
+...
+def symbolize_keys
+  transform_keys{ |key| key.to_sym rescue key }
+end
+</ruby>
+
+Также имеется восклицательный вариант +transform_keys!+ применяющий операции в блоке к самому получателю.
+
+Кроме этого, можно использовать +deep_transform_keys+ и +deep_transform_keys!+ для выполнения операции в блоке ко всем ключам в заданном хэше и всех хэшах, вложенных в него. Пример результата:
+
+<ruby>
+{nil => nil, 1 => 1, :nested => {:a => 3, 5 => 5}}.deep_transform_keys{ |key| key.to_s.upcase }
+# => {""=>nil, "1"=>1, "NESTED"=>{"A"=>3, "5"=>5}}
+</ruby>
+
+NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
+
 h5. +stringify_keys+ и +stringify_keys!+
 
 Метод +stringify_keys+ возвращает хэш, в котором ключи получателя приведены к строке. Это выполняется с помощью применения к ним +to_s+:
@@ -196,6 +252,13 @@ end
 Вторая строка может безопасно обращаться к ключу "type" и позволяет пользователю передавать или +:type+, или "type".
 
 Также имеется восклицательный вариант +stringify_keys!+, который приводит к строке ключи в самом получателе.
+
+Кроме этого, можно использовать +deep_stringify_keys+ и +deep_stringify_keys!+ для приведения к строке всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата: (Rails4)
+
+<ruby>
+{nil => nil, 1 => 1, :nested => {:a => 3, 5 => 5}}.deep_stringify_keys
+# => {""=>nil, "1"=>1, "nested"=>{"a"=>3, "5"=>5}}
+</ruby>
 
 NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
 
@@ -230,6 +293,13 @@ end
 Вторая строка может безопасно обращаться к ключу +:params+ и позволяет пользователю передавать или +:params+, или "params".
 
 Также имеется восклицательный вариант +symbolize_keys!+, который приводит к символу ключи в самом получателе.
+
+Кроме этого, можно использовать +deep_symbolize_keys+ и +deep_symbolize_keys!+ для приведения к символам всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата: (Rails4)
+
+<ruby>
+{nil => nil, 1 => 1, "nested" => {"a" => 3, 5 => 5}}.deep_symbolize_keys
+# => {nil=>nil, 1=>1, :nested=>{:a=>3, 5=>5}}
+</ruby>
 
 NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
 

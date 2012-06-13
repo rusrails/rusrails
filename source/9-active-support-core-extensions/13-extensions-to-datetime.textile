@@ -16,13 +16,13 @@ end_of_week (at_end_of_week)
 monday
 sunday
 weeks_ago
-prev_week
+prev_week (last_week)
 next_week
 months_ago
 months_since
 beginning_of_month (at_beginning_of_month)
 end_of_month (at_end_of_month)
-prev_month
+prev_month (last_month)
 next_month
 beginning_of_quarter (at_beginning_of_quarter)
 end_of_quarter (at_end_of_quarter)
@@ -30,7 +30,7 @@ beginning_of_year (at_beginning_of_year)
 end_of_year (at_end_of_year)
 years_ago
 years_since
-prev_year
+prev_year (last_year)
 next_year
 </ruby>
 
@@ -44,6 +44,13 @@ since (in)
 </ruby>
 
 С другой стороны, +advance+ и +change+ также определяются и поддерживают больше опций, чем было сказано "ранее":/active-support-core-extensions/extensions-to-date#advance.
+
+Следующие методы реализованы только в +active_support/core_ext/date_time/calculations.rb+, так как они имеют смысл только при использовании с экземпляром +DateTime+:
+
+<ruby>
+beginning_of_hour (at_beginning_of_hour)
+end_of_hour
+</ruby>
 
 h5. Именнованные Datetime
 

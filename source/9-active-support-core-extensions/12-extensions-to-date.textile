@@ -30,7 +30,7 @@ d.prev_year               # => Sun, 28 Feb 1999
 d.next_year               # => Wed, 28 Feb 2001
 </ruby>
 
-Active Support определяет эти методы также для Ruby 1.8.
+У +prev_year+ есть псевдоним +last_year+.
 
 h6. +prev_month+, +next_month+
 
@@ -51,7 +51,7 @@ Date.new(2000, 5, 31).next_month # => Fri, 30 Jun 2000
 Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
 </ruby>
 
-Active Support определяет эти методы также для Ruby 1.8.
+У +prev_month+ есть псевдоним +last_month+.
 
 h6. +beginning_of_week+, +end_of_week+
 
@@ -94,6 +94,8 @@ d.prev_week              # => Mon, 26 Apr 2010
 d.prev_week(:saturday)   # => Sat, 01 May 2010
 d.prev_week(:friday)     # => Fri, 30 Apr 2010
 </ruby>
+
+У +prev_week+ есть псевдоним +last_week+.
 
 h6. +beginning_of_month+, +end_of_month+
 
@@ -255,17 +257,37 @@ h6. +beginning_of_day+, +end_of_day+
 
 <ruby>
 date = Date.new(2010, 6, 7)
-date.beginning_of_day # => Sun Jun 07 00:00:00 +0200 2010
+date.beginning_of_day # => Mon Jun 07 00:00:00 +0200 2010
 </ruby>
 
 Метод +end_of_day+ возвращает временную метку для конца дня (23:59:59):
 
 <ruby>
 date = Date.new(2010, 6, 7)
-date.end_of_day # => Sun Jun 06 23:59:59 +0200 2010
+date.end_of_day # => Mon Jun 07 23:59:59 +0200 2010
 </ruby>
 
 У +beginning_of_day+ есть псевдонимы +at_beginning_of_day+, +midnight+, +at_midnight+.
+
+h6. +beginning_of_hour+, +end_of_hour+
+
+Метод +beginning_of_hour+ возвращает временную метку в начале часа (hh:00:00):
+
+<ruby>
+date = DateTime.new(2010, 6, 7, 19, 55, 25)
+date.beginning_of_hour # => Mon Jun 07 19:00:00 +0200 2010
+</ruby>
+
+Метод +end_of_hour+ возвращает временную метку в конце часа (hh:59:59):
+
+<ruby>
+date = DateTime.new(2010, 6, 7, 19, 55, 25)
+date.end_of_hour # => Mon Jun 07 19:59:59 +0200 2010
+</ruby>
+
+У +beginning_of_hour+ есть псевдоним +at_beginning_of_hour+.
+
+INFO: +beginning_of_hour+ и +end_of_hour+ реализованы для +Time+ и +DateTime+, но *не* для +Date+, так как у экземпляр +Date+ не имеет смысла спрашивать о начале или окончании часа.
 
 h6. +ago+, +since+
 

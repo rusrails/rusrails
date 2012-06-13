@@ -126,49 +126,6 @@ end
 
 NOTE: Определено в +active_support/core_ext/class/attribute_accessors.rb+.
 
-h4. Наследуемые атрибуты класса
-
-WARNING: Наследуемые атрибуты класса устарели. Рекомендовано использовать вместо них +Class#class_attribute+.
-
-Переменные класса передаются вниз по дереву наследования. Переменные экземпляра класса не передаются, но и не наследуются. Макросы +class_inheritable_reader+, +class_inheritable_writer+ и +class_inheritable_accessor+ предоставляют средства доступа к данным на уровне класса, которые наследуются, но не передаются детям:
-
-<ruby>
-module ActionController
-  class Base
-    # FIXME: REVISE/SIMPLIFY THIS COMMENT.
-    # The value of allow_forgery_protection is inherited,
-    # but its value in a particular class does not affect
-    # the value in the rest of the controllers hierarchy.
-    class_inheritable_accessor :allow_forgery_protection
-  end
-end
-</ruby>
-
-Они осуществляют это с помощью переменных экземпляра класса и клонирования их в субклассы, тут не вовлекаются переменные класса. Клонирование выполняется с помощью +dup+ до тех пор, пока значение дублируемое.
-
-Имеется несколько вариантов, специализирующихся на массивах и хэшах:
-
-<ruby>
-class_inheritable_array
-class_inheritable_hash
-</ruby>
-
-Эти райтеры принимают во внимание любой наследуемый массив или хэш и расширяют, а не перезаписывают их.
-
-Как и чистые средства доступа к атрибуту класса, эти макросы создают удобные методы экземпляра для чтения и записи. Создание райтер-метода экземпляра можно отключить установив +:instance_writer+ в +false+ (не любое ложное значение, а именно +false+):
-
-<ruby>
-module ActiveRecord
-  class Base
-    class_inheritable_accessor :default_scoping, :instance_writer => false
-  end
-end
-</ruby>
-
-Так как значения копируются, когда определяется субкласс, если основной класс изменяет атрибут после этого, субкласс не видит новое значение. Вот в чем вопрос.
-
-NOTE: Определено в +active_support/core_ext/class/inheritable_attributes.rb+.
-
 h4. Субклассы и потомки
 
 h5. +subclasses+
