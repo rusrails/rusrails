@@ -159,7 +159,7 @@ h4. Файлопровод (Assets Pipeline)
 
 Главное изменение в Rails 3.1 это Assets Pipeline. Он делает CSS и JavaScript первосортным кодом, и делает доступной надлежащую организацию, включая использование в плагинах и engine-ах.
 
-Файлопровод работает с помощью "Sprockets":https://github.com/sstephenson/sprockets и раскрывается в руководстве "Asset Pipeline":/asset_pipeline.
+Файлопровод работает с помощью "Sprockets":https://github.com/sstephenson/sprockets и раскрывается в руководстве "Asset Pipeline":/asset-pipeline.
 
 h4. HTTP Streaming
 
