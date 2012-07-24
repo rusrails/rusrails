@@ -233,7 +233,7 @@ h5. Рассылка Email нескольким получателям
 
 <ruby>
 class AdminMailer < ActionMailer::Base
-  default :to => Admin.all.map(&:email),
+  default :to => Proc.new { Admin.pluck(:email) },
           :from => "notification@example.com"
 
   def new_registration(user)
