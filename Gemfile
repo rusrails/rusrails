@@ -31,6 +31,10 @@ group :assets do
   gem 'uglifier'
 end
 
+group :development do
+  gem 'quiet_assets'
+end
+
 group :development, :test do
   gem "rspec-rails"
   gem 'webrat'
