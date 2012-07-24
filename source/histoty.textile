@@ -66,9 +66,9 @@ h1. ИСТОРИЯ
 4. 09/07/12
 
 1. Руководство по тестированию приложений на Rails
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/testing.textile
-3. 255d9c3d6bdee9d1d1692e4044f1e7f34ae230e7
-4. 05/02/12
+2. testing.textile
+3. a80e1e437e74409d8b47b0c3b0cc0bc9ba78c190
+4. 15/07/12
 
 1. Руководство Ruby On Rails по безопасности
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
