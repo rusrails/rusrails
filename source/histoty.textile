@@ -71,9 +71,9 @@ h1. ИСТОРИЯ
 4. 15/07/12
 
 1. Руководство Ruby On Rails по безопасности
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/security.textile
-3. e1dbcdcacf62d13914c9e7ec71f0f7319ad32b4a
-4. 01/02/12
+2. security.textile
+3. 359af59cb3ab8c29ec2c17447fa2b7fd9aee8915
+4. 08/07/12
 
 1. Отладка приложений на Rails
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/debugging_rails_applications.textile
