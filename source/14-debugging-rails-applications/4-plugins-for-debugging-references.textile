@@ -13,13 +13,14 @@ h3. Плагины для отладки
 
 h3. Ссылки
 
-* "Домашняя страница ruby-debug":http://www.datanoise.com/ruby-debug
+* "Домашняя страница ruby-debug":http://bashdb.sourceforge.net/ruby-debug/home-page.html
+* "Домашняя страница debugger":http://github.com/cldwalker/debugger
 * "Статья: Debugging a Rails application with ruby-debug":http://www.sitepoint.com/article/debug-rails-app-ruby-debug/
 * "Скринкаст ruby-debug Basics":http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/
-* "Скринкаст Ryan Bate's ruby-debug":http://railscasts.com/episodes/54-debugging-with-ruby-debug
-* "Скринкаст Ryan Bate's stack trace":http://railscasts.com/episodes/24-the-stack-trace
-* "Скринкаст Ryan Bate's logger":http://railscasts.com/episodes/56-the-logger
+* "Скринкаст Ryan Bates' debugging ruby (revised)":http://railscasts.com/episodes/54-debugging-ruby-revised
+* "Скринкаст Ryan Bates' stack trace":http://railscasts.com/episodes/24-the-stack-trace
+* "Скринкаст Ryan Bates' logger":http://railscasts.com/episodes/56-the-logger
 * "Debugging with ruby-debug":http://bashdb.sourceforge.net/ruby-debug.html
 * "ruby-debug cheat sheet":http://cheat.errtheblog.com/s/rdebug/
 * "Вики Ruby on Rails: How to Configure Logging":http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging
-* "Документация по Bleak House":http://blog.evanweaver.com/files/doc/fauna/bleak_house/files/README.html
+* "Документация по Bleak House":http://blog.evanweaver.com/files/doc/fauna/bleak_house/
