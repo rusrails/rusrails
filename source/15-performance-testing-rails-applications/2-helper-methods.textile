@@ -18,26 +18,26 @@ end
 Creating project (185.3ms)
 </ruby>
 
-Пожалуйста, обратитесь к "API docs":http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M001336, чтобы узнать дополнительные опции для +benchmark()+
+Пожалуйста, обратитесь к "API docs":http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html#method-i-benchmark, чтобы узнать дополнительные опции для +benchmark()+
 
 h4. Контроллер
 
-Подобным образом можно использовать этот метод хелпера в "контроллерах":http://api.rubyonrails.org/classes/ActionController/Benchmarking/ClassMethods.html#M000715
+Подобным образом можно использовать этот метод хелпера в "контроллерах":http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html
 
 <ruby>
 def process_projects
-  self.class.benchmark("Processing projects") do
+  benchmark("Processing projects") do
     Project.process(params[:project_ids])
     Project.update_cached_projects
   end
 end
 </ruby>
 
-NOTE: +benchmark+ это метод класса в контроллерах
+NOTE: +benchmark+ это метод класса в контроллерах.
 
 h4. Вьюха
 
-И во "вьюхах":http://api.rubyonrails.org/classes/ActionController/Benchmarking/ClassMethods.html#M000715:
+И во "вьюхах":http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html:
 
 <erb>
 <% benchmark("Showing projects partial") do %>

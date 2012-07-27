@@ -8,9 +8,12 @@ h1. Варианты тестирования производительност
 require 'test_helper'
 require 'rails/performance_test_help'
 
-# Profiling results for each test method are written to tmp/performance.
 class BrowsingTest < ActionDispatch::PerformanceTest
-  def test_homepage
+  # Refer to the documentation for all available options
+  # self.profile_options = { runs: 5, metrics: [:wall_time, :memory],
+  #                          output: 'tmp/performance', formats: [:flat] }
+
+  test "homepage" do
     get '/'
   end
 end
@@ -33,8 +36,11 @@ require 'test_helper'
 require 'rails/performance_test_help'
 
 class HomepageTest < ActionDispatch::PerformanceTest
-  # Replace this with your real tests.
-  def test_homepage
+  # Refer to the documentation for all available options
+  # self.profile_options = { :runs => 5, :metrics => [:wall_time, :memory],
+  #                          :output => 'tmp/performance', :formats => [:flat] }
+
+  test "homepage" do
     get '/'
   end
 end
@@ -46,7 +52,7 @@ h4. Примеры
 
 <ruby>
 # routes.rb
-root :to => 'home#index'
+root to: 'home#dashboard'
 resources :posts
 
 # home_controller.rb
@@ -97,12 +103,12 @@ class PostPerformanceTest < ActionDispatch::PerformanceTest
     login_as(:lifo)
   end
 
-  def test_homepage
+  test "homepage" do
     get '/dashboard'
   end
 
-  def test_creating_new_post
-    post '/posts', :post => { :body => 'lifo is fooling you' }
+  test "creating new post" do
+    post '/posts', post: { body: 'lifo is fooling you' }
   end
 end
 </ruby>
@@ -118,11 +124,11 @@ require 'test_helper'
 require 'rails/performance_test_help'
 
 class PostModelTest < ActionDispatch::PerformanceTest
-  def test_creation
-    Post.create :body => 'still fooling you', :cost => '100'
+  test "creation" do
+    Post.create body: 'still fooling you', cost: '100'
   end
 
-  def test_slow_method
+  test "slow method" do
     # Используем фикстуру posts(:awesome)
     posts(:awesome).slow_method
   end
@@ -293,12 +299,10 @@ h4. Настройка тестовых прогонов
 require 'test_helper'
 require 'rails/performance_test_help'
 
-# Profiling results for each test method are written to tmp/performance.
 class BrowsingTest < ActionDispatch::PerformanceTest
-  self.profile_options = { :runs => 5,
-                           :metrics => [:wall_time, :memory] }
+  self.profile_options = { runs: 5, metrics: [:wall_time, :memory] }
 
-  def test_homepage
+  test "homepage"
     get '/'
   end
 end
@@ -414,16 +418,12 @@ alias gcrails='~/rubygc/bin/rails'
 
 Не забудьте использовать псевдонимы с этого момента.
 
-h6. Установить Rubygems (только 1.8!)
-
-Скачайте "Rubygems":http://rubyforge.org/projects/rubygems и установите их из исходников. В файле Rubygems README имеются необходимые инструкции по установке. Отметьте, что этот шаг не является необходимым, если вы установили Ruby 1.9 и выше.
-
 h4. Использование Ruby-Prof на MRI и REE
 
 Добавьте Ruby-Prof в Gemfile вашего приложения, если хотите использовать бенчмаркинг/профилирование под MRI или REE:
 
 <ruby>
-gem 'ruby-prof', :git => 'git://github.com/wycats/ruby-prof.git'
+gem 'ruby-prof', git: 'git://github.com/wycats/ruby-prof.git'
 </ruby>
 
 теперь запустите +bundle install+ и все готово.

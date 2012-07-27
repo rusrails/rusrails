@@ -19,7 +19,7 @@ h4. Инструменты
 h4. Самоучители и документация
 
 * "ruby-prof API Documentation":http://ruby-prof.rubyforge.org
-* "Request Profiling Railscast":http://railscasts.com/episodes/98-request-profiling - Устарело, но полезно для понимания графов
+* "Request Profiling Railscast":http://railscasts.com/episodes/98-request-profiling - Устарело, но полезно для понимания графов.
 
 
 h3. Коммерческие продукты
