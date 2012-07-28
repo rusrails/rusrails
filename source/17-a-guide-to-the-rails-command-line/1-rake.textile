@@ -6,16 +6,16 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 <shell>
 $ rake --tasks
-(in /home/foobar/commandsapp)
-rake db:abort_if_pending_migrations       # Raises an error if there are pending migrations
-rake db:charset                           # Retrieves the charset for the current environment's database
-rake db:collation                         # Retrieves the collation for the current environment's database
-rake db:create                            # Create the database defined in config/database.yml for the current Rails.env
+rake about              # List versions of all Rails frameworks and the environment
+rake assets:clean       # Remove compiled assets
+rake assets:precompile  # Compile all the assets named in config.assets.precompile
+rake db:create          # Create the database from config/database.yml for the current Rails.env
 ...
+rake log:clear          # Truncates all *.log files in log/ to zero bytes
+rake middleware         # Prints out your Rack middleware stack
 ...
-rake tmp:pids:clear                       # Clears all files in tmp/pids
-rake tmp:sessions:clear                   # Clears all files in tmp/sessions
-rake tmp:sockets:clear                    # Clears all files in tmp/sockets
+rake tmp:clear          # Clear session, cache, and socket files from tmp/ (narrow w/ tmp:sessions:clear, tmp:cache:clear, tmp:sockets:clear)
+rake tmp:create         # Creates tmp directories for sessions, cache, sockets, and pids
 </shell>
 
 h4. +about+
@@ -32,7 +32,6 @@ Rails version             4.0.0.beta
 JavaScript Runtime        Node.js (V8)
 Active Record version     4.0.0.beta
 Action Pack version       4.0.0.beta
-Active Resource version   4.0.0.beta
 Action Mailer version     4.0.0.beta
 Active Support version    4.0.0.beta
 Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, ActionDispatch::Head, Rack::ConditionalGet, Rack::ETag, ActionDispatch::BestStandardsSupport
@@ -98,6 +97,18 @@ app/model/post.rb:
 </shell>
 
 NOTE. При использовании определенных и произвольных аннотаций, имя аннотации (FIXME, BUG и т.д.) не отображается в строках результата.
+
+По умолчанию +rake notes+ будет искать в директориях +app+, +config+, +lib+, +script+ и +test+. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды +SOURCE_ANNOTATION_DIRECTORIES+.
+
+<shell>
+$ export SOURCE_ANNOTATION_DIRECTORIES='rspec,vendor'
+$ rake notes
+(in /home/foobar/commandsapp)
+app/model/user.rb:
+  * [ 35] [FIXME] User should have a subscription at this point
+rspec/model/user_spec.rb:
+  * [122] [TODO] Verify the user that has a subscription works
+</shell>
 
 h4. +routes+
 

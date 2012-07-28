@@ -86,14 +86,14 @@ h1. ИСТОРИЯ
 4. 24/07/12
 
 1. Конфигурирование приложений на Rails
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/configuring.textile
-3. 4c5dc4ac0d26b9c5d97d27f7886ebc6327771895
-4. 04/02/12
+2. configuring.textile
+3. c12024bc7dabb3d911acf49c0c936541ff5f8e93
+4. 22/07/12
 
 1. Руководство по командной строке Rails
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/command_line.textile
-3. 5c0aba238c37a71fce08f949bc2c6bdd9aab4f7b
-4. 26/02/12
+2. command_line.textile
+3. ca65dcbbb2eca975782ea007a308000f1fbaf57f
+4. 27/05/12
 
 1. Кэширование с Rails: Обзор
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/caching_with_rails.textile

@@ -15,20 +15,21 @@ h4. +rails new+
 
 Сперва мы хотим создать новое приложение на Rails, запустив команду +rails new+ после установки Rails.
 
-WARNING: Гем rails можно установить, написав +gem install rails+, если его еще нет.
+INFO: Гем rails можно установить, написав +gem install rails+, если его еще нет.
 
 <shell>
 $ rails new commandsapp
      create
      create  README.rdoc
-     create  .gitignore
      create  Rakefile
      create  config.ru
+     create  .gitignore
      create  Gemfile
      create  app
      ...
      create  tmp/cache
-     create  tmp/pids
+     ...
+        run  bundle install
 </shell>
 
 Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
@@ -45,17 +46,17 @@ INFO: WEBrick не единственный выбор для обслужива
 $ cd commandsapp
 $ rails server
 => Booting WEBrick
-=> Rails 3.1.0 application starting in development on http://0.0.0.0:3000
+=> Rails 3.2.3 application starting in development on http://0.0.0.0:3000
 => Call with -d to detach
 => Ctrl-C to shutdown server
-[2010-04-18 03:20:33] INFO  WEBrick 1.3.1
-[2010-04-18 03:20:33] INFO  ruby 1.8.7 (2010-01-10) [x86_64-linux]
-[2010-04-18 03:20:33] INFO  WEBrick::HTTPServer#start: pid=26086 port=3000
+[2012-05-28 00:39:41] INFO  WEBrick 1.3.1
+[2012-05-28 00:39:41] INFO  ruby 1.9.2 (2011-02-18) [x86_64-darwin11.2.0]
+[2012-05-28 00:39:41] INFO  WEBrick::HTTPServer#start: pid=69680 port=3000
 </shell>
 
 Всего лишь тремя командами мы развернули сервер Rails, прослушивающий порт 3000. Перейдите в браузер и зайдите на "http://localhost:3000":http://localhost:3000, вы увидите простое приложение, запущенное на rails.
 
-Для запуска сервера также можно использовать псевдоним "s": +rails s+.
+INFO: Для запуска сервера также можно использовать псевдоним "s": +rails s+.
 
 Сервер может быть запущен на другом порту, при использовании опции +-p+. Среда по умолчанию может быть изменена с использованием +-e+.
 
@@ -69,7 +70,7 @@ h4. +rails generate+
 
 Команда +rails generate+ использует шаблоны для создания целой кучи вещей. Запуск +rails generate+ выдаст список доступных генераторов:
 
-Также можно использовать псевдоним "g" для вызова команды +generate+: +rails g+.
+INFO: Также можно использовать псевдоним "g" для вызова команды +generate+: +rails g+.
 
 <shell>
 $ rails generate
@@ -81,6 +82,7 @@ Usage: rails generate GENERATOR [args] [options]
 Please choose a generator below.
 
 Rails:
+  assets
   controller
   generator
   ...
@@ -102,23 +104,22 @@ Usage: rails generate controller NAME [action action] [options]
 ...
 ...
 
+Description:
+    ...
+
+    To create a controller within a module, specify the controller name as a
+    path like 'parent_module/controller_name'.
+
+    ...
+
 Example:
-    rails generate controller CreditCard open debit credit close
+    `rails generate controller CreditCard open debit credit close`
 
     Credit card controller with URLs like /credit_card/debit.
-        Controller: app/controllers/credit_card_controller.rb
-        Views:      app/views/credit_card/debit.html.erb [...]
-        Helper:     app/helpers/credit_card_helper.rb
-        Test:       test/functional/credit_card_controller_test.rb
-
-Modules Example:
-    rails generate controller 'admin/credit_card' suspend late_fee
-
-    Credit card admin controller with URLs like /admin/credit_card/suspend.
-        Controller: app/controllers/admin/credit_card_controller.rb
-        Views:      app/views/admin/credit_card/debit.html.erb [...]
-        Helper:     app/helpers/admin/credit_card_helper.rb
-        Test:       test/functional/admin/credit_card_controller_test.rb
+        Controller:      app/controllers/credit_card_controller.rb
+        Functional Test: test/functional/credit_card_controller_test.rb
+        Views:           app/views/credit_card/debit.html.erb [...]
+        Helper:          app/helpers/credit_card_helper.rb
 </shell>
 
 Генератор контроллера ожидает параметры в форме +generate controller ControllerName action1 action2+. Давайте создадим контроллер +Greetings+ с экшном *hello*, который скажет нам что-нибудь приятное.
@@ -126,7 +127,7 @@ Modules Example:
 <shell>
 $ rails generate controller Greetings hello
      create  app/controllers/greetings_controller.rb
-      route  get "greetings/hello"
+     route  get "greetings/hello"
      invoke  erb
      create    app/views/greetings
      create    app/views/greetings/hello.html.erb
@@ -137,10 +138,10 @@ $ rails generate controller Greetings hello
      invoke    test_unit
      create      test/unit/helpers/greetings_helper_test.rb
      invoke  assets
-     create    app/assets/javascripts/greetings.js
-     invoke    css
-     create      app/assets/stylesheets/greetings.css
-
+     invoke    coffee
+     create      app/assets/javascripts/greetings.js.coffee
+     invoke    scss
+     create      app/assets/stylesheets/greetings.css.scss
 </shell>
 
 Что создалось? Создался ряд директорий в нашем приложении, и создались файл контроллера, файл вьюхи, файл функционального теста, хелпер для вьюхи и файлы яваскрипта и таблицы стилей.
@@ -169,8 +170,6 @@ $ rails server
 => Booting WEBrick...
 </shell>
 
-WARNING: Убедитесь, что у вас нет каких-либо "резервных тильда" файлов в +app/views/(controller)+, иначе WEBrick _не_ покажет ожидаемый результат. Это скорее всего <strong>баг</strong> в Rails 2.3.0.
-
 URL должен быть "http://localhost:3000/greetings/hello":http://localhost:3000/greetings/hello.
 
 INFO: В нормальном старом добром приложении на Rails, ваши URL будут создаваться по образцу http://(host)/(controller)/(action), и URL, подобный такому http://(host)/(controller), вызовет экшн *index* этого контроллера.
@@ -179,21 +178,19 @@ INFO: В нормальном старом добром приложении н�
 
 <shell>
 $ rails generate model
-Usage: rails generate model NAME [field:type field:type] [options]
+Usage:
+  rails generate model NAME [field[:type][:index] field[:type][:index]] [options]
 
 ...
 
-Examples:
-    rails generate model account
+ActiveRecord options:
+      [--migration]            # Indicates when to generate migration
+                               # Default: true
 
-            Model:      app/models/account.rb
-            Test:       test/unit/account_test.rb
-            Fixtures:   test/fixtures/accounts.yml
-            Migration:  db/migrate/XXX_add_accounts.rb
+...
 
-    rails generate model post title:string body:text published:boolean
-
-        Creates a Post model with a string title, text body, and published flag.
+Description:
+    Create rails files for model generator.
 </shell>
 
 NOTE: Список доступных типов полей можно узнать в "документации API":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html#method-i-column для метода column класса +TableDefinition+
@@ -204,46 +201,47 @@ NOTE: Список доступных типов полей можно узна�
 
 <shell>
 $ rails generate scaffold HighScore game:string score:integer
-    exists  app/models/
-    exists  app/controllers/
-    exists  app/helpers/
-    create  app/views/high_scores
-    create  app/views/layouts/
-    exists  test/functional/
-    create  test/unit/
-    create  app/assets/stylesheets/
-    create  app/views/high_scores/index.html.erb
-    create  app/views/high_scores/show.html.erb
-    create  app/views/high_scores/new.html.erb
-    create  app/views/high_scores/edit.html.erb
-    create  app/views/layouts/high_scores.html.erb
-    create  app/assets/stylesheets/scaffold.css.scss
-    create  app/controllers/high_scores_controller.rb
-    create  test/functional/high_scores_controller_test.rb
-    create  app/helpers/high_scores_helper.rb
-     route  resources :high_scores
-dependency  model
-    exists    app/models/
-    exists    test/unit/
-    create    test/fixtures/
+    invoke  active_record
+    create    db/migrate/20120528060026_create_high_scores.rb
     create    app/models/high_score.rb
-    create    test/unit/high_score_test.rb
-    create    test/fixtures/high_scores.yml
-    exists    db/migrate
-    create    db/migrate/20100209025147_create_high_scores.rb
+    invoke    test_unit
+    create      test/unit/high_score_test.rb
+    create      test/fixtures/high_scores.yml
+     route  resources :high_scores
+    invoke  scaffold_controller
+    create    app/controllers/high_scores_controller.rb
+    invoke    erb
+    create      app/views/high_scores
+    create      app/views/high_scores/index.html.erb
+    create      app/views/high_scores/edit.html.erb
+    create      app/views/high_scores/show.html.erb
+    create      app/views/high_scores/new.html.erb
+    create      app/views/high_scores/_form.html.erb
+    invoke    test_unit
+    create      test/functional/high_scores_controller_test.rb
+    invoke    helper
+    create      app/helpers/high_scores_helper.rb
+    invoke      test_unit
+    create        test/unit/helpers/high_scores_helper_test.rb
+    invoke  assets
+    invoke    coffee
+    create      app/assets/javascripts/high_scores.js.coffee
+    invoke    scss
+    create      app/assets/stylesheets/high_scores.css.scss
+    invoke  scss
+    create    app/assets/stylesheets/scaffolds.css.scss
 </shell>
 
 Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит тестов, таблиц стилей, создал вьюхи, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу +high_scores+ и поля), позаботился о маршруте для *ресурса*, и создал новые тесты для всего этого.
 
-Миграция требует, чтобы мы *мигрировали ее*, то есть запустили некоторый код Ruby (находящийся в этом +20100209025147_create_high_scores.rb+), чтобы изменить схему базы данных. Какой базы данных? Базы данных sqlite3, которую создаст Rails, когда мы запустим команду +rake db:migrate+. Поговорим о Rake чуть позже.
+Миграция требует, чтобы мы *мигрировали ее*, то есть запустили некоторый код Ruby (находящийся в этом +20120528060026_create_high_scores.rb+), чтобы изменить схему базы данных. Какой базы данных? Базы данных sqlite3, которую создаст Rails, когда мы запустим команду +rake db:migrate+. Поговорим о Rake чуть позже.
 
 <shell>
 $ rake db:migrate
-(in /home/foobar/commandsapp)
 ==  CreateHighScores: migrating ===============================================
 -- create_table(:high_scores)
-   -> 0.0026s
-==  CreateHighScores: migrated (0.0028s) ======================================
+   -> 0.0017s
+==  CreateHighScores: migrated (0.0019s) ======================================
 </shell>
 
 INFO: Давайте поговорим об юнит тестах. Юнит тесты это код, который тестирует и делает суждения о коде. В юнит тестировании мы берем часть кода, скажем, метод модели, и тестируем его входы и выходы. Юнит тесты ваши друзья. Чем раньше вы смиритесь с фактом, что качество жизни возрастет, когда станете юнит тестировать свой код, тем лучше. Серьезно. Мы сделаем один через мгновение.
@@ -260,13 +258,19 @@ h4. +rails console+
 
 Команда +console+ позволяет взаимодействовать с приложением на Rails из командной строки. В своей основе +rails console+ использует IRB, поэтому, если вы когда-либо его использовали, то будете чувствовать себя уютно. Это полезно для тестирования быстрых идей с кодом и правки данных на сервере без затрагивания вебсайта.
 
-Для вызова консоли также можно использовать псевдоним "c": +rails c+.
+INFO: Для вызова консоли также можно использовать псевдоним "c": +rails c+.
+
+Можно указать среду, в которой должна работать команда +console+.
+
+<shell>
+$ rails console staging
+</shell>
 
 Если нужно протестировать некоторый код без изменения каких-либо данных, можно это сделать, вызвав +rails console --sandbox+.
 
 <shell>
 $ rails console --sandbox
-Loading development environment in sandbox (Rails 3.1.0)
+Loading development environment in sandbox (Rails 3.2.3)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
 </shell>
@@ -275,7 +279,7 @@ h4. +rails dbconsole+
 
 +rails dbconsole+ определяет, какая база данных используется, и перемещает вас в такой интерфейс командной строки, в котором можно ее использовать (и также определяет параметры командной строки, которые нужно передать!). Она поддерживает MySQL, PostgreSQL, SQLite и SQLite3.
 
-Для вызова консоли базы данных также можно использовать псевдоним "db": +rails db+.
+INFO: Для вызова консоли базы данных также можно использовать псевдоним "db": +rails db+.
 
 h4. +rails runner+
 
@@ -285,7 +289,7 @@ h4. +rails runner+
 $ rails runner "Model.long_running_method"
 </shell>
 
-Можно также использовать псевдоним "r" для вызова runner: +rails r+.
+INFO: Можно также использовать псевдоним "r" для вызова runner: +rails r+.
 
 Можно определить среду, в которой будет работать команда +runner+, используя переключатель +-e+:
 
@@ -297,29 +301,23 @@ h4. +rails destroy+
 
 Воспринимайте +destroy+ как противоположность +generate+. Она выясняет, что было создано, и отменяет это.
 
-Также можно использовать псевдоним "d" для вызова команды destroy: <tt>rails d</tt>.
+INFO: Также можно использовать псевдоним "d" для вызова команды destroy: <tt>rails d</tt>.
 
 <shell>
 $ rails generate model Oops
-      exists  app/models/
-      exists  test/unit/
-      exists  test/fixtures/
-      create  app/models/oops.rb
-      create  test/unit/oops_test.rb
-      create  test/fixtures/oops.yml
-      exists  db/migrate
-      create  db/migrate/20081221040817_create_oops.rb
+      invoke  active_record
+      create    db/migrate/20120528062523_create_oops.rb
+      create    app/models/oops.rb
+      invoke    test_unit
+      create      test/unit/oops_test.rb
+      create      test/fixtures/oops.yml
+</shell>
+<shell>
 $ rails destroy model Oops
-    notempty  db/migrate
-    notempty  db
-          rm  db/migrate/20081221040817_create_oops.rb
-          rm  test/fixtures/oops.yml
-          rm  test/unit/oops_test.rb
-          rm  app/models/oops.rb
-    notempty  test/fixtures
-    notempty  test
-    notempty  test/unit
-    notempty  test
-    notempty  app/models
-    notempty  app
+      invoke  active_record
+      remove    db/migrate/20120528062523_create_oops.rb
+      remove    app/models/oops.rb
+      invoke    test_unit
+      remove      test/unit/oops_test.rb
+      remove      test/fixtures/oops.yml
 </shell>

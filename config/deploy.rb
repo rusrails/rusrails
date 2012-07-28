@@ -82,7 +82,7 @@ namespace :deploy do
     thinking_sphinx.rebuild
   end
 
-  after "deploy:migrate", "deploy:seed"
+  after "deploy:migrate", "deploy:restart_ts"
   after "deploy:seed", "deploy:restart_ts"
 end
 
