@@ -96,9 +96,9 @@ h1. ИСТОРИЯ
 4. 27/05/12
 
 1. Кэширование с Rails: Обзор
-2. https://github.com/lifo/docrails/blob/master/railties/guides/source/caching_with_rails.textile
-3. 03a6119e3bc4394d6a150fc07e13ceaa6ed44127
-4. 27/02/12
+2. caching_with_rails.textile
+3. 07d346646f61dbf0ef020eefc4dc11e140b55baf
+4. 11/06/12
 
 1. Asset Pipeline
 2. https://github.com/lifo/docrails/blob/master/railties/guides/source/asset_pipeline.textile
