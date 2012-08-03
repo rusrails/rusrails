@@ -33,7 +33,7 @@ h5. Пути поиска
 <plain>
 app/assets/javascripts/home.js
 lib/assets/javascripts/moovinator.js
-vendor/assets/javascript/slider.js
+vendor/assets/javascripts/slider.js
 </plain>
 
 можно сослаться в манифесте таким образом:
@@ -108,6 +108,8 @@ Sprockets также будет смотреть в путях, определе
 <erb>
 <%= image_tag "icons/rails.png" %>
 </erb>
+
+WARNING: Если вы прекомпилируете ресурсы (смотрите раздел "В production":/asset-pipeline/in-production далее), связывание с несуществующим ресурсом вызовет исключение на вызывающей странице. Это включает связывание с пустой строкой. Поэтому будьте острожны при использовании <tt>image_tag</tt> и других хелперов с данными, предоставленными пользователями.
 
 h5. CSS и ERB
 
