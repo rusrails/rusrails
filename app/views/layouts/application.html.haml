@@ -36,6 +36,7 @@
               = submit_tag :search, :class => :hidden
         - cache "menu_#{page_cache_key}" do
           = menu
+        = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
         = render "layouts/rsya"
       #content= yield
       .clear
