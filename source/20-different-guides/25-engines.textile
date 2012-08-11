@@ -512,8 +512,8 @@ $ rake blorgh:install:migrations
 Отметьте, что сейчас будет скопирована только _одна_ миграция. Это так, потому что первые две миграции уже были скопированы при первом вызове этой команды.
 
 <shell>
-NOTE: Migration [timestamp]_create_blorgh_posts.rb from blorgh has been skipped. Migration with the same name already exists.
-NOTE: Migration [timestamp]_create_blorgh_comments.rb from blorgh has been skipped. Migration with the same name already exists.
+NOTE Migration [timestamp]_create_blorgh_posts.rb from blorgh has been skipped. Migration with the same name already exists.
+NOTE Migration [timestamp]_create_blorgh_comments.rb from blorgh has been skipped. Migration with the same name already exists.
 Copied migration [timestamp]_add_author_id_to_blorgh_posts.rb from blorgh
 </shell>
 
