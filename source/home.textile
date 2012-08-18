@@ -56,7 +56,7 @@ h3. Копаем глубже
 
 h3. Расширяем Rails
 
-- "Rails on Rack":/different-guides/55-rails-on-rack := Это руководство раскрывает интеграцию Rails и Rack, и взаимодействие с другими компонентами Rack
+- "Rails on Rack":/different-guides/rails-on-rack := Это руководство раскрывает интеграцию Rails и Rack, и взаимодействие с другими компонентами Rack
 
 
 h3. Заметки о релизах
