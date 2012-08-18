@@ -54,6 +54,11 @@ h3. Копаем глубже
 - "Asset Pipeline":/asset-pipeline := Это руководство документирует файлопровод (asset pipeline)
 - "Engine для начинающих":/different-guides/engines := Это руководство объясняет, как написать монтируемый engine
 
+h3. Расширяем Rails
+
+- "Rails on Rack":/different-guides/55-rails-on-rack := Это руководство раскрывает интеграцию Rails и Rack, и взаимодействие с другими компонентами Rack
+
+
 h3. Заметки о релизах
 
 - "Заметки о релизе Ruby on Rails 3.2":/different-guides/3_2_release_notes := Заметки о релизе Rails 3.2

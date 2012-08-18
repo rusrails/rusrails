@@ -105,7 +105,7 @@ h1. ИСТОРИЯ
 3. 741cb5b12b87f0405d421c82f04cd86eba6c613b
 4. 22/06/12
 
--- Другие / план --
+** Другие / план **
 
 2.  3_0_release_notes.textile
     6d87cd028b32570973450424db164e5405a0ee13
@@ -133,8 +133,18 @@ h1. ИСТОРИЯ
 
 30. generators.textile
 35. initialization.textile
-40. nested_model_forms.textile
 45. plugins.textile
 50. rails_application_templates.textile
+
 55. rails_on_rack.textile
+    ff859f542cde9108b66c14c810a7e3c190f3f12f
+    14/06/2012
+
 60. upgrading_ruby_on_rails.textile
+
+
+** Старые / не обновляемые **
+
+0.  2_2_release_notes.textile
+1.  2_3_release_notes.textile
+40. nested_model_forms.textile
