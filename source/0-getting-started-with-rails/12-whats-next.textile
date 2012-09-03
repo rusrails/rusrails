@@ -7,7 +7,7 @@ h1. Что дальше?
 * "Ruby on Rails mailing list":http://groups.google.com/group/rubyonrails-talk
 * Канал "#rubyonrails":irc://irc.freenode.net/#rubyonrails на irc.freenode.net
 
-Отдельно хотелось бы выделить и поддержать следующие хорошие русскоязычные ресуры по Ruby on rails:
+Отдельно хотелось бы выделить и поддержать следующие хорошие русскоязычные ресурcы по Ruby on rails:
 
 * "Ruby on Rails по-русски":http://rusrails.ru/
 * "Изучение Rails на примерах (Майкл Харт)":http://russian.railstutorial.org
