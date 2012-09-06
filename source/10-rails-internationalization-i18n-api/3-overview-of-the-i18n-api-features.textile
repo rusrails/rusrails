@@ -117,11 +117,14 @@ h4. Множественное число
 
 <ruby>
 I18n.backend.store_translations :en, :inbox => {
-  :one => '1 message',
+  :one => 'one message',
   :other => '%{count} messages'
 }
 I18n.translate :inbox, :count => 2
 # => '2 messages'
+
+I18n.translate :inbox, :count => 1
+# => 'one message'
 </ruby>
 
 Алгоритм для образования множественного числа в +:en+ прост:
