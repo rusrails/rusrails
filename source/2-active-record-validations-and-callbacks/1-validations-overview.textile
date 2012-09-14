@@ -26,7 +26,7 @@ end
 
 <ruby>
 >> p = Person.new(:name => "John Doe")
-=> #<Person id: nil, name: "John Doe", created_at: nil, :updated_at: nil>
+=> #<Person id: nil, name: "John Doe", created_at: nil, updated_at: nil>
 >> p.new_record?
 => true
 >> p.save
@@ -64,6 +64,7 @@ h4. Пропуск валидаций
 * +update_all+
 * +update_attribute+
 * +update_column+
+* +update_columns+
 * +update_counters+
 
 Заметьте, что +save+ также имеет способность пропустить валидации, если как передать +:validate => false+ как аргумент. Этот способ нужно использовать осторожно.

@@ -17,8 +17,8 @@ h1. ИСТОРИЯ
 
 1. Валидации и колбэки Active Record
 2. active_record_validations_callbacks.textile
-3. 39574aa582337baa32a58caae7b2671cb52ae718
-4. 27/04/12
+3. 1affc30cd5a3ed91beb41014e203795c78a0db8d
+4. 12/09/12
 
 1. Связи Active Record
 2. association_basics.textile

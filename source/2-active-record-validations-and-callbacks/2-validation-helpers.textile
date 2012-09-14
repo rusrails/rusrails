@@ -213,6 +213,8 @@ class LineItem < ActiveRecord::Base
 end
 </ruby>
 
+При проведении волидации существования объекта, связанного отношением +has_one+ или +has_many+, будет проверено, что объект ни +blank?+, ни +marked_for_destruction?+.
+
 Так как +false.blank?+ это true, если хотите провести валидацию существования булева поля, нужно использовать +validates :field_name, :inclusion => { :in => [true, false] }+.
 
 По умолчанию сообщение об ошибке "_can't be empty_".

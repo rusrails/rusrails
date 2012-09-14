@@ -146,6 +146,7 @@ h3. Пропуск колбэков
 * +toggle+
 * +touch+
 * +update_column+
+* +update_columns+
 * +update_all+
 * +update_counters+
 
