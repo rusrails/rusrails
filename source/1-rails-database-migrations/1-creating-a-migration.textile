@@ -78,7 +78,7 @@ class RemovePartNumberFromProducts < ActiveRecord::Migration
 end
 </ruby>
 
-Вы не ограничены одним создаваемым столбцом, например
+Вы не ограничены одним создаваемым столбцом. Например
 
 <shell>
 $ rails generate migration AddDetailsToProducts part_number:string price:decimal
@@ -98,3 +98,47 @@ end
 Как всегда, то, что было сгенерировано, является всего лишь стартовой точкой. Вы можете добавлять и убирать строки, как считаете нужным, отредактировав файл db/migrate/YYYYMMDDHHMMSS_add_details_to_products.rb.
 
 NOTE. Генерируемый файл миграции для деструктивных миграций будет все еще по-старому использовать методы +up+ и +down+. Это так, потому что Rails не может знать оригинальные типы данных, которые вы создали когда-то ранее.
+
+Также генератор принимает такой тип столбца, как +references+ (или его псевдоним +belongs_to+). Например
+
+<shell>
+$ rails generate migration AddUserRefToProducts user:references
+</shell>
+
+создаст
+
+<ruby>
+class AddUserRefToProducts < ActiveRecord::Migration
+  def change
+    add_reference :products, :user, :index => true
+  end
+end
+</ruby>
+
+Эта миграция создаст столбец user_id и соответствующий индекс.
+
+h4. Поддерживаемые модификаторы типа
+
+Также возможно определить некоторые опции сразу после типа поля в фигурных скобках. Можно использовать следующие модификаторы:
+
+* +limit+        Устанавливает максимальный размер полей +string/text/binary/integer+
+* +precision+    Определяет точность для полей +decimal+
+* +scale+        Определяет масштаб для полей +decimal+
+* +polymorphic+  Добавляет столбец +type+ для связей +belongs_to+
+
+К примеру, запуск
+
+<shell>
+$ rails generate migration AddDetailsToProducts price:decimal{5,2} supplier:references{polymorphic}
+</shell>
+
+создат миграцию, которая выглядит как эта:
+
+<ruby>
+class AddDetailsToProducts < ActiveRecord::Migration
+  def change
+    add_column :products, :price, :precision => 5, :scale => 2
+    add_reference :products, :user, :polymorphic => true, :index => true
+  end
+end
+</ruby>

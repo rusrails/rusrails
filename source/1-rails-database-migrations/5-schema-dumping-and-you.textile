@@ -17,14 +17,14 @@ h4. Типы выгрузок схемы
 Если выбрано +:ruby+, тогда схема храниться в +db/schema.rb+. Посмотрев в этот файл, можно увидеть, что он очень похож на одну большую миграцию:
 
 <ruby>
-ActiveRecord::Schema.define(:version => 20080906171750) do
-  create_table "authors", :force => true do |t|
+ActiveRecord::Schema.define(version: 20080906171750) do
+  create_table "authors", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "products", :force => true do |t|
+  create_table "products", force: true do |t|
     t.string   "name"
     t.text "description"
     t.datetime "created_at"

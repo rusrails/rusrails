@@ -12,8 +12,8 @@ h1. ИСТОРИЯ
 
 1. Миграции базы данных Rails
 2. migrations.textile
-3. 34f82abf017a152bace9cbb12b69ef2076b6d67d
-4. 28/05/12
+3. cb524dc1d7525a26ecea8cf049757e530f0d4026
+4. 09/09/12
 
 1. Валидации и колбэки Active Record
 2. active_record_validations_callbacks.textile

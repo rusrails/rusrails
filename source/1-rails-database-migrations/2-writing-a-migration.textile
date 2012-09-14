@@ -40,7 +40,7 @@ end
 
 добавит +ENGINE=BLACKHOLE+ к выражению SQL, используемому для создания таблицы (при использовании MySQL по умолчанию передается +ENGINE=InnoDB+).
 
-h4. Создание соединительной таблицы (Rails4)
+h4. Создание соединительной таблицы
 
 Миграционный метод +create_join_table+ создает соединительную страницу HABTM. Обычное использование будет таким:
 
@@ -123,9 +123,9 @@ NOTE. Хелпер +references+ фактически не создает для 
 
 Если вам недостаточно хелперов, предоставленных Active Record, можете использовать функцию +execute+ для запуска произвольного SQL.
 
-Больше подробностей и примеров отдельных методов содержится в документации по API, в частности, документация для "<tt>ActiveRecord::ConnectionAdapters::SchemaStatements</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (который обеспечивает методы, доступные в методах +up+ и +down+), "<tt>ActiveRecord::ConnectionAdapters::TableDefinition</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (который обеспечивает методы, доступные у объекта, переданного методом +create_table+) и "<tt>ActiveRecord::ConnectionAdapters::Table</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html (который обеспечивает методы, доступные у объекта, переданного методом +change_table+).
+Больше подробностей и примеров отдельных методов содержится в документации по API. В частности, документация для "<tt>ActiveRecord::ConnectionAdapters::SchemaStatements</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (который обеспечивает методы, доступные в методах +up+ и +down+), "<tt>ActiveRecord::ConnectionAdapters::TableDefinition</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (который обеспечивает методы, доступные у объекта, переданного методом +create_table+) и "<tt>ActiveRecord::ConnectionAdapters::Table</tt>":http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html (который обеспечивает методы, доступные у объекта, переданного методом +change_table+).
 
-h4. Использование метода +change+
+h4. Когда использовать метод +change+
 
 Метод +change+ устраняет необходимость писать оба метода +up+ и +down+ в тех случаях, когда Rails знает, как обратить изменения автоматически. На текущий момент метод +change+ поддерживает только эти определения миграции:
 
