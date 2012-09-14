@@ -7,8 +7,8 @@ h1. ИСТОРИЯ
 
 1. Rails для начинающих
 2. getting_started.textile
-3. 05fdb310b6e27a399ef3e99e32f319a1ef37bab1
-4. 19/05/12
+3. ae3965b4752285991acb5ac8147fc9f4a88eea6d
+4. 09/09/12
 
 1. Миграции базы данных Rails
 2. migrations.textile

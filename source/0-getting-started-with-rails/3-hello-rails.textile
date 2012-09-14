@@ -34,7 +34,28 @@ h4. Скажите "привет", Рельсы
 $ rails generate controller welcome index
 </shell>
 
-Rails создаст несколько файлов. Наиболее важными из них являются, разумеется, контроллер, расположенный в +app/controllers/welcome_controller.rb+, и вьюха, расположенная в +app/views/welcome/index.html.erb+.
+Rails создаст несколько файлов и маршрут.
+
+<shell>
+create  app/controllers/welcome_controller.rb
+ route  get "welcome/index"
+invoke  erb
+create    app/views/welcome
+create    app/views/welcome/index.html.erb
+invoke  test_unit
+create    test/functional/welcome_controller_test.rb
+invoke  helper
+create    app/helpers/welcome_helper.rb
+invoke    test_unit
+create      test/unit/helpers/welcome_helper_test.rb
+invoke  assets
+invoke    coffee
+create      app/assets/javascripts/welcome.js.coffee
+invoke    scss
+create      app/assets/stylesheets/welcome.css.scss
+</shell>
+
+Наиболее важными из них являются, разумеется, контроллер, расположенный в +app/controllers/welcome_controller.rb+, и вьюха, расположенная в +app/views/welcome/index.html.erb+.
 
 Откройте файл +app/views/welcome/index.html.erb+ в текстовом редакторе и отредактируйте его, чтобы он содержал одну строчку кода:
 
@@ -52,18 +73,27 @@ h4. Настройка домашней страницы приложения
 
 Теперь нужно сказать Rails, где находится настоящая домашняя страница.
 
-Откройте файл +config/routes.rb+ в редакторе. Это _маршрутный файл_ вашего приложения, который содержит варианты входа на сайт на специальном языке DSL (domain-specific language, предметно-ориентированный язык программирования), который говорит Rails, как соединять входящие запросы с контроллерами и экшнами. Этот файл содержит много закомментированных строк с примерами, и один из них фактически показывает, как соединить корень сайта с определенным контроллером и экшном. Найдите строку, начинающуюся с +root :to+ и раскомментируйте ее. Должно получится следующее:
+Откройте файл +config/routes.rb+ в редакторе.
 
 <ruby>
 Blog::Application.routes.draw do
+  get "welcome/index"
 
-  #...
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
+  # ...
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => "welcome#index"
+  # root :to => "welcome#index"
 </ruby>
 
-<tt>root :to => "welcome#index"</tt> говорит Rails направить запросы в корень приложения в экшн index контроллера welcome. Он был создан ранее при запуске генератора контроллера (+rails generate controller welcome index+).
+Это _маршрутный файл_ вашего приложения, который содержит варианты входа на сайт на специальном языке DSL (domain-specific language, предметно-ориентированный язык программирования), который говорит Rails, как соединять входящие запросы с контроллерами и экшнами. Этот файл содержит много закомментированных строк с примерами, и один из них фактически показывает, как соединить корень сайта с определенным контроллером и экшном. Найдите строку, начинающуюся с +root :to+ и раскоментируйте ее. Должно получится следующее:
+
+<ruby>
+root :to => "welcome#index"
+</ruby>
+
+<tt>root :to => "welcome#index"</tt> говорит Rails направить запросы к корню приложения в экшн index контроллера welcome, а +get "welcome/index"+ говорит Rails направлять запросы к "http://localhost:3000/welcome/index":http://localhost:3000/welcome/index в экшн index контроллера welcome. Он был создан ранее при запуске генератора контроллера (+rails generate controller welcome index+).
 
 Теперь, если вы пройдете по адресу "http://localhost:3000":http://localhost:3000 в браузере, то увидите надпись +Hello, Rails!+, которую вы поместили в  +app/views/welcome/index.html.erb+, показывающую, что этот новый маршрут действительно ведет в экшн +index+ в +WelcomeController+, и вьюха корректно рендерится.
 
