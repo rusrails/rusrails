@@ -3,20 +3,29 @@ h1. Получение объектов из базы данных
 Для получения объектов из базы данных Active Record предоставляет несколько методов поиска. В каждый метод поиска можно передавать аргументы для выполнения определенных запросов в базу данных без необходимости писать на чистом SQL.
 
 Методы следующие:
-* +where+
-* +select+
+* +bind+
+* +create_with+
+* +eager_load+
+* +extending+
+* +from+
 * +group+
+* +having+
+* +includes+
+* +joins+
+* +limit+
+* +lock+
+* +none+
+* +offset+
 * +order+
+* +none+
+* +preload+
+* +readonly+
+* +references+
 * +reorder+
 * +reverse_order+
-* +limit+
-* +offset+
-* +joins+
-* +includes+
-* +lock+
-* +readonly+
-* +from+
-* +having+
+* +select+
+* +uniq+
+* +where+
 
 Все эти методы возвращают экземпляр +ActiveRecord::Relation+.
 
@@ -49,7 +58,7 @@ SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
 
 <tt>Model.find(primary_key)</tt> вызывает исключение +ActiveRecord::RecordNotFound+, если соответствующей записи не было найдено.
 
-h5. +take+ (Rails4)
+h5. +take+
 
 <tt>Model.take</tt> получает запись без какого-либо явного упорядочивания. Например:
 
@@ -102,7 +111,7 @@ SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 
 <tt>Model.last</tt> возвращает +nil+, если не найдено соответствующей записи, и исключение не вызывается.
 
-h5. +find_by+ (Rails4)
+h5. +find_by+
 
 <tt>Model.find_by</tt> ищет первую запись, соответствующую некоторым условиям. Например:
 
@@ -120,7 +129,7 @@ Client.find_by first_name: 'Jon'
 Client.where(first_name: 'Lifo').take
 </ruby>
 
-h5(#take_1). +take!+ (Rails4)
+h5(#take_1). +take!+
 
 <tt>Model.take!</tt> получает запись без какого-либо явного упорядочивания. Например:
 
@@ -171,7 +180,7 @@ SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 
 <tt>Model.last</tt> вызывает +ActiveRecord::RecordNotFound+, если не найдено соответствующей записи.
 
-h5(#find_by_1). +find_by!+ (Rails4)
+h5(#find_by_1). +find_by!+
 
 <tt>Model.find_by!</tt> ищет первую запись, соответствующую некоторым условиям. Он вызывает +ActiveRecord::RecordNotFound+, если не найдено соответствующей записи. Например:
 
@@ -208,6 +217,54 @@ SELECT * FROM clients WHERE (clients.id IN (1,10))
 </sql>
 
 WARNING: <tt>Model.find(array_of_primary_key)</tt> вызывает исключение +ActiveRecord::RecordNotFound+, если не найдено соответствующих записей для <strong>всех</strong> предоставленных первичных ключей.
+
+h5(#take-n-objects). take
+
+<tt>Model.take(limit)</tt> извлекает первые несколько записей, определенных +limit+ без какого-либо явного упорядочивания:
+
+<ruby>
+Client.take(2)
+# => [#<Client id: 1, first_name: "Lifo">,
+      #<Client id: 2, first_name: "Raf">]
+</ruby>
+
+Эквивалент SQL этого следующий:
+
+<sql>
+SELECT * FROM clients LIMIT 2
+</sql>
+
+h5(#first-n-objects). first
+
+<tt>Model.first(limit)</tt> находит первые несколько записей, определенных +limit+, упорядоченные по первичному ключу:
+
+<ruby>
+Client.first(2)
+# => [#<Client id: 1, first_name: "Lifo">,
+      #<Client id: 2, first_name: "Raf">]
+</ruby>
+
+Эквивалент SQL этого следующий:
+
+<sql>
+SELECT * FROM clients LIMIT 2
+</sql>
+
+h5(#last-n-objects). last
+
+<tt>Model.last(limit)</tt> находит несколько записей, определенных +limit+, упорядоченные по первичному ключу в порядке убывания:
+
+<ruby>
+Client.last(2)
+# => [#<Client id: 10, first_name: "Ryan">,
+      #<Client id: 9, first_name: "John">]
+</ruby>
+
+Эквивалент SQL этого следующий:
+
+<sql>
+SELECT * FROM clients ORDER By id DESC LIMIT 2
+</sql>
 
 h4. Получение нескольких объектов пакетами
 

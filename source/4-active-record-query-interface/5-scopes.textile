@@ -74,21 +74,6 @@ end
 category.posts.created_before(time)
 </ruby>
 
-h4. Работа со скоупами
-
-Когда требуется реляционный объект, может пригодиться метод +scoped+. Он возвратит объект +ActiveRecord::Relation+, к которому можно впоследствии применить другие скоупы. Это полезно при применении на связях:
-
-<ruby>
-client = Client.find_by_first_name("Ryan")
-orders = client.orders.scoped
-</ruby>
-
-Для полученного объекта +orders+ можно применить дополнительные скоупы. Например, если хотите возвратить заказы только за последние 30 дней.
-
-<ruby>
-orders.where("created_at > ?", 30.days.ago)
-</ruby>
-
 h4. Применение скоупа по умолчанию
 
 Если хотите, чтобы скоуп был применен ко всем запросам к модели, можно использовать метод +default_scope+ в самой модели.
@@ -105,6 +90,16 @@ end
 SELECT * FROM clients WHERE removed_at IS NULL
 </sql>
 
+Если необходимо сделать более сложные вещи со скоупом по умолчанию, альтернативно его можно определить как метод класса:
+
+<ruby>
+class Client < ActiveRecord::Base
+  def self.default_scope
+    # Should return an ActiveRecord::Relation.
+  end
+end
+</ruby>
+
 h4. Удаление всех скоупов
 
 Если хотите удалить скоупы по какой-то причине, можете использовать метод +unscoped+. Это особенно полезно, если в модели определен +default_scope+, и он не должен быть применен для конкретно этого запроса.
@@ -114,3 +109,11 @@ Client.unscoped.all
 </ruby>
 
 Этот метод удаляет все скоупы и выполняет обычный запрос к таблице.
+
+Отметьте, что сцепление +unscoped+ со +scope+ не работает. В этих случаях рекомендовано использовать блочную форму +unscoped+:
+
+<ruby>
+Client.unscoped {
+  Client.created_before(Time.zome.now)
+}
+</ruby>

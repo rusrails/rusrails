@@ -65,7 +65,7 @@ h4. Определение условий для нетерпеливой заг
 Однако, если вы сделаете так, то сможете использовать +where+ как обычно.
 
 <ruby>
-Post.includes(:comments).where("comments.visible", true)
+Post.includes(:comments).where("comments.visible" => true)
 </ruby>
 
 Это сгенерирует запрос с ограничением +LEFT OUTER JOIN+, в то время как метод +joins+ сгенерировал бы его с использованием функции +INNER JOIN+.

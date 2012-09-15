@@ -1,6 +1,6 @@
 h1. Опции поиска
 
-h4. Сортировка
+h4(#ordering). Сортировка
 
 Чтобы получить записи из базы данных в определенном порядке, можете использовать метод +order+.
 
@@ -24,6 +24,13 @@ Client.order("created_at ASC")
 Client.order("orders_count ASC, created_at DESC")
 # или
 Client.order("orders_count ASC", "created_at DESC")
+</ruby>
+
+Если хотите вызвать +order+ несколько раз, т.е. в различном контексте, новый порядок будет предшествовать предыдущему
+
+<ruby>
+Client.order("orders_count ASC").order("created_at DESC")
+# SELECT * FROM clients ORDER BY created_at DESC, orders_count ASC
 </ruby>
 
 h4. Выбор определенных полей
@@ -229,7 +236,7 @@ SELECT * FROM clients WHERE orders_count > 10 ORDER BY clients.id DESC
 
 Этот метод не принимает аргументы.
 
-h3. Нулевой Relation (Rails4)
+h3. Нулевой Relation
 
 Метод +none+ возвращает сцепляемый relation без записей. Любые последующие условия, сцепленные с возвращенным relation, продолжат возвращать пустые relation. Это полезно в случаях, когда необходим сцепляемый отклик на метод или скоуп, который может вернуть пустые результаты.
 

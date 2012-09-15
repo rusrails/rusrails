@@ -27,8 +27,8 @@ h1. ИСТОРИЯ
 
 1. Интерфейс запросов Active Record
 2. active_record_querying.textile
-3. 98bfccbdb5c29060f5e042819669b7442b6cd56c
-4. 16/05/12
+3. 2db79dc9ea0b623c6d76b72e85f58efd63b50e08
+4. 09/09/12
 
 1. Макеты и рендеринг в Rails
 2. layouts_and_rendering.textile

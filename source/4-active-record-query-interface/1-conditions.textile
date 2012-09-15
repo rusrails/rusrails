@@ -71,7 +71,7 @@ Client.where(:locked => true)
 Client.where('locked' => true)
 </ruby>
 
-NOTE: Значения не могут быть символами. Например, нельзя сделать +Client.where(:status => :active)+. (Rails4)
+NOTE: Значения не могут быть символами. Например, нельзя сделать +Client.where(:status => :active)+.
 
 h5(#hash-range_conditions). Интервальные условия
 
