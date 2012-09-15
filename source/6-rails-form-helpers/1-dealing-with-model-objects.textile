@@ -108,7 +108,7 @@ form_for(@article)
 
 ## Редактирование существующей статьи
 # длинный стиль:
-form_for(@article, :url => article_path(@article), :html => { :method => "patch" }) # Для Rails4, в Rails3 методом будет put
+form_for(@article, :url => article_path(@article), :html => { :method => "patch" })
 # короткий стиль:
 form_for(@article)
 </ruby>

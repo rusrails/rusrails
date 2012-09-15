@@ -37,8 +37,8 @@ h1. ИСТОРИЯ
 
 1. Хелперы форм Rails
 2. form_helpers.textile
-3. b02d14aad515a039c284c93a68845503dc1658e2
-4. 16/05/12
+3. 2db79dc9ea0b623c6d76b72e85f58efd63b50e08
+4. 09/09/12
 
 1. Обзор Action Controller
 2. action_controller_overview.textile

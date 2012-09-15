@@ -61,6 +61,18 @@ TIP: Второй аргумент для +options_for_select+ должен бы
 
 WARNING: Когда отсутствует +:inlude_blank+ или +:prompt:+, +:include_blank+ становится true, если атрибут +required+ true, отображаемый +size+ 1 и +multiple+ не true.
 
+С помощью хэшей можно добавить произвольные атрибуты в option:
+
+<erb>
+<%= options_for_select([['Lisbon', 1, :'data-size' => '2.8 million'], ['Madrid', 2, :'data-size' => '3.2 million']], 2) %>
+
+результат:
+
+<option value="1" data-size="2.8 million">Lisbon</option>
+<option value="2" selected="selected" data-size="3.2 million">Madrid</option>
+...
+</erb>
+
 h4. Списки выбора для работы с моделями
 
 В большинстве случаев элементы управления формой будут связаны с определенной моделью базы данных, и, как вы наверное и ожидали, Rails предоставляет хелперы, предназначенные для этой цели. Как в случае с другими хелперами форм, когда работаете с моделями, суффикс +_tag+ отбрасывается от +select_tag+:
