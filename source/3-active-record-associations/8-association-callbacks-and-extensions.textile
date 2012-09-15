@@ -68,20 +68,11 @@ module FindRecentExtension
 end
 
 class Customer < ActiveRecord::Base
-  has_many :orders, :extend => FindRecentExtension
+  has_many :orders, -> { extending FindRecentExtension }
 end
 
 class Supplier < ActiveRecord::Base
-  has_many :deliveries, :extend => FindRecentExtension
-end
-</ruby>
-
-Чтобы включить более одного модуля расширения в одну связь, определите массив модулей:
-
-<ruby>
-class Customer < ActiveRecord::Base
-  has_many :orders,
-    :extend => [FindRecentExtension, FindActiveExtension]
+  has_many :deliveries, -> { extending FindRecentExtension }
 end
 </ruby>
 

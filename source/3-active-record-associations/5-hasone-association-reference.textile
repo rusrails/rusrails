@@ -78,15 +78,10 @@ end
 * +:as+
 * +:autosave+
 * +:class_name+
-* +:conditions+
 * +:dependent+
 * +:foreign_key+
-* +:include+
 * +:inverse_of+
-* +:order+
 * +:primary_key+
-* +:readonly+
-* +:select+
 * +:source+
 * +:source_type+
 * +:through+
@@ -110,23 +105,15 @@ class Supplier < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_one-conditions). +:conditions+
-
-Опция +:conditions+ позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе SQL, используемом в условии  +WHERE+).
-
-<ruby>
-class Supplier < ActiveRecord::Base
-  has_one :account, :conditions => "confirmed = 1"
-end
-</ruby>
-
 h5(#has_one-dependent). +:dependent+
 
-Если установите опцию +:dependent+ как +:destroy+, то удаление этого объекта вызовет метод +destroy+ для связанного объекта для его удаления. Если установить опцию +:dependent+ как +:delete+, то удаление этого объекта удалит связанный объект _без_ вызова его метода +destroy+. Если установите опцию +:dependent+ как +:nullify+, то удаление этого объекта установит внешний ключ связанного объекта как +NULL+.
+Управляет тем, что произойдет со связанным объектом, когда его владелец будет уничтожен:
 
-Если установить опцию +:dependent+ как +:restrict+, то удаление объекта будет прервано, если сущестует зависимый связанный объект, и будет вызвано исключение +DeleteRestrictionError+.
-
-NOTE: Поведением по умолчанию для +:dependent => :restrict+ является вызов +DeleteRestrictionError+, когда существуют связанные объекты. Начиная с Rails 4.0, это поведение устарело в пользу добавления ошибки в основную модель. Чтобы заглушить это предупреждение в Rails 4.0, следует исправить ваш код не ожидать это исключение, и добавить +config.active_record.dependent_restrict_raises = false+ в конфигурацию приложения. (Rails4)
+* +:destroy+ приведет к тому, что связанный объект также будет уничтожен
+* +:delete+ приведет к тому, что связанный объект будет удален из базы данных напрямую (таким образом не будут выполнены колбэки)
+* +:nullify+ приведет к тому, что внешний ключ будет установлен +NULL+. Колбэки не запускаются.
+* +:restrict_with_exception+ приведет к вызову исключения, если есть связанный объект
+* +:restrict_with_error+ приведет к ошибке, добавляемой к владельцу, если есть связанный объект
 
 h5(#has_one-foreign_key). +:foreign_key+
 
@@ -139,42 +126,6 @@ end
 </ruby>
 
 TIP: В любом случае, Rails не создаст столбцы внешнего ключа за вас. Вам необходимо явно определить их в своих миграциях.
-
-h5(#has_one-include). +:include+
-
-Можете использовать опцию +:include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:
-
-<ruby>
-class Supplier < ActiveRecord::Base
-  has_one :account
-end
-
-class Account < ActiveRecord::Base
-  belongs_to :supplier
-  belongs_to :representative
-end
-
-class Representative < ActiveRecord::Base
-  has_many :accounts
-end
-</ruby>
-
-Если вы часто получаете представителей непосредственно из поставщиков (+@supplier.account.representative+), то можете сделать свой код более эффективным, включив представителей в связь между поставщиками и аккаунтами:
-
-<ruby>
-class Supplier < ActiveRecord::Base
-  has_one :account, :include => :representative
-end
-
-class Account < ActiveRecord::Base
-  belongs_to :supplier
-  belongs_to :representative
-end
-
-class Representative < ActiveRecord::Base
-  has_many :accounts
-end
-</ruby>
 
 h6(#has_one-inverse_of). +:inverse_of+
 
@@ -190,21 +141,9 @@ class Account < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_one-order). +:order+
-
-Опция +:order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+). Так как связь +has_one+ получает только один связанный объект, в этой опции нет необходимости.
-
 h5(#has_one-primary_key). +:primary_key+
 
 По соглашению, Rails предполагает, что столбец, используемый для хранения первичного ключа, это +id+. Вы можете переопределить это и явно определить первичный ключ с помощью опции +:primary_key+.
-
-h5(#has_one-readonly). +:readonly+
-
-Если установите опцию +:readonl+ в +true+, то связанный объект будет доступен только для чтения, когда получен посредством связи.
-
-h5(#has_one-select). +:select+
-
-Опция +:select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
 
 h5(#has_one-source). +:source+
 
@@ -221,6 +160,77 @@ h5(#has_one-through). +:through+
 h5(#has_one-validate). +:validate+
 
 Если установите опцию +:validate+ в +true+, тогда связанные объекты будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +false+: связанные объекты не проходят валидацию, когда этот объект сохраняется.
+
+h5(#belongs_to-scopes_for_has_one). Скоупы для +has_one+
+
+Иногда хочется настроить запрос, используемый +has_one+. Такая настройка может быть достигнута с помощью блока скоупа. Например:
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account, -> { where :active => true }
+end
+</ruby>
+
+Внутри блока скоупа можно использовать любые стандартные "методы запросов":/active-record-query-interface. Далее обсудим следующие из них:
+
+* +where+
+* +includes+
+* +readonly+
+* +select+
+
+h6(#belongs_to-where). +where+
+
+Метод +where+ позволяет определить условия, которым должен отвечать связанный объект.
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account, -> { where "confirmed = 1" }
+end
+</ruby>
+
+h6(#has_one-includes). +includes+
+
+Метод +includes+ позволяет определить связи второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим жти модели:
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier
+  belongs_to :representative
+end
+
+class Representative < ActiveRecord::Base
+  has_many :accounts
+end
+</ruby>
+
+Если вы часто получаете representatives непосредственно из suppliers (+@supplier.account.representative+), то можно улучшить эффективность кода, включив representatives в связь между suppliers и accounts:
+
+<ruby>
+class Supplier < ActiveRecord::Base
+  has_one :account, -> { includes :representative }
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier
+  belongs_to :representative
+end
+
+class Representative < ActiveRecord::Base
+  has_many :accounts
+end
+</ruby>
+
+h6(#belongs_to-readonly). +readonly+
+
+При использовании +readonly+, связанный объект будет только для чтения при получении через связь.
+
+h6(#belongs_to-select). +select+
+
+Метод +select+ позволяет переопределить SQL выражение +SELECT+, используемое для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
 
 h4(#has_one-do_any_associated_objects_exist). Существуют ли связанные объекты?
 

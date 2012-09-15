@@ -172,22 +172,8 @@ end
 * +:association_foreign_key+
 * +:autosave+
 * +:class_name+
-* +:conditions+
-* +:counter_sql+
-* +:delete_sql+
-* +:extend+
-* +:finder_sql+
 * +:foreign_key+
-* +:group+
-* +:include+
-* +:insert_sql+
 * +:join_table+
-* +:limit+
-* +:offset+
-* +:order+
-* +:readonly+
-* +:select+
-* +:uniq+
 * +:validate+
 
 h5(#has_and_belongs_to_many-association_foreign_key). +:association_foreign_key+
@@ -218,46 +204,6 @@ class Parts < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_and_belongs_to_many-conditions). +:conditions+
-
-Опция +:conditions+ позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе SQL, используемом в условии +WHERE+).
-
-<ruby>
-class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies,
-    :conditions => "factory = 'Seattle'"
-end
-</ruby>
-
-Также можно установить условия через хэш:
-
-<ruby>
-class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies,
-    :conditions => { :factory => 'Seattle' }
-end
-</ruby>
-
-Если используете хэш в опции +:conditions+, то создание записи через эту связь автоматически будет подогнано, используя хэш. В нашем случае, использование +@parts.assemblies.create+ или +@parts.assemblies.build+ создаст узлы, где столбец +factory+ имеет значение "Seattle".
-
-h5(#has_and_belongs_to_many-counter_sql). +:counter_sql+
-
-Обычно Rails автоматически создает подходящий SQL для счета связанных членов. С опцией +:counter_sql+ можете самостоятельно определить полное выражение SQL для их счета.
-
-NOTE: Если определите +:finder_sql+, но не +:counter_sql+, тогда счетчик SQL будет автоматически создан, заменив выражение +SELECT ... FROM+ из выражения +:finder_sql+ на +SELECT COUNT(*) FROM+.
-
-h5(#has_and_belongs_to_many-delete_sql). +:delete_sql+
-
-Обычно Rails автоматически создает подходящий SQL для удаления ссылок между связанными классами. С помощью опции :delete_sql можете самостоятельно определить полное выражение SQL для их удаления.
-
-h5(#has_and_belongs_to_many-extend). +:extend+
-
-Опция +:extend+ определяет именнованый модуль для расширения полномочий связи. Расширения связей будут детально обсуждены "позже в этом руководстве":/active-record-associations/association-callbacks-and-extensions#association-extensions.
-
-h5(#has_and_belongs_to_many-finder_sql). +:finder_sql+
-
-Обычно Rails автоматически создает подходящий SQL для получения связанных членов. С опцией +:finder_sql+ можете самостоятельно определить полное выражение <SQL для их получения. Это может быть необходимым, если получаемые объекты требуют сложный межтабличный SQL.
-
 h5(#has_and_belongs_to_many-foreign_key). +:foreign_key+
 
 По соглашению Rails предполагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на эту модель, имеет имя модели с добавленным суффиксом +_id+. Опция +:foreign_key+ позволяет установить имя внешнего ключа явно:
@@ -270,68 +216,114 @@ class User < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_and_belongs_to_many-group). +:group+
-
-Опция +:group+ доставляет имя атрибута, по которому группируется результирующий набор, используя выражение +GROUP BY+ в поисковом SQL.
-
-<ruby>
-class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :group => "factory"
-end
-</ruby>
-
-h5(#has_and_belongs_to_many-include). +:include+
-
-Можете использовать опцию +:include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется.
-
-h5(#has_and_belongs_to_many-insert_sql). +:insert_sql+
-
-Обычно Rails автоматически создает подходящий SQL для создания связей между связанными классами. С помощью опции +:insert_sql+ можете самостоятельно определить полное выражение SQL для их вставки.
-
 h5(#has_and_belongs_to_many-join_table). +:join_table+
 
 Если имя соединительной таблицы по умолчанию, основанное на алфавитном порядке, -- это не то, что вам нужно, используйте опцию +:join_table+, чтобы переопределить его.
 
-h5(#has_and_belongs_to_many-limit). +:limit+
-
-Опция +:limit+ позволяет ограничить общее количество объектов, которые будут выбраны через связь.
-
-<ruby>
-class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order => "created_at DESC",
-    :limit => 50
-end
-</ruby>
-
-h5(#has_and_belongs_to_many-offset). +:offset+
-
-Опция +:offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, если установите +:offset => 11+, она пропустит первые 11 записей.
-
-h5(#has_and_belongs_to_many-order). +:order+
-
-Опция +:order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
-
-<ruby>
-class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order => "assembly_name ASC"
-end
-</ruby>
-
-h5(#has_and_belongs_to_many-readonly). +:readonly+
-
-Если установите опцию +:readonly+ в +true+, тогда связанные объекты будут доступны только для чтения, когда получены посредством связи.
-
-h5(#has_and_belongs_to_many-select). +:select+
-
-Опция +:select+ позволяет переопределить SQL предложение +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
-
-h5(#has_and_belongs_to_many-uniq). +:uniq+
-
-Определите опцию +:uniq => true+, чтобы убирать дубликаты из коллекции.
-
 h5(#has_and_belongs_to_many-validate). +:validate+
 
 Если установите опцию +:validate+ в +false+, тогда связанные объекты не будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
+
+h5(#has_and_belongs_to_many-scopes_for_has_and_belongs_to_many). Скоупы для +has_and_belongs_to_many+
+
+Иногда хочется настроить запрос, используемый +has_many+. Такая настройка может быть достигнута с помощью блока скоупа. Например:
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, -> { where :active => true }
+end
+</ruby>
+
+Внутри блока скоупа можно использовать любые стандартные "методы запросов":/active-record-query-interface. Далее обсудим следующие из них:
+
+* +where+
+* +extending+
+* +group+
+* +includes+
+* +limit+
+* +offset+
+* +order+
+* +readonly+
+* +select+
+* +uniq+
+
+h6(#has_and_belongs_to_many-where). +where+
+
+Метод +where+ позволяет определить условия, которым должен отвечать связанный объект.
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies,
+    -> { where "factory = 'Seattle'" }
+end
+</ruby>
+
+Также можно задать условия хэшем:
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies,
+    -> { where :factory => 'Seattle' }
+end
+</ruby>
+
+При использовании опции +where+ хэшем, при создание записи через эту связь будет автоматически применен скоуп с использованием хэша. В этом случае при использовании +@parts.assemblies.create+ или +@parts.assemblies.build+ будут созданы заказы, в которых столбец +factory+ будет иметь значение +Seattle+.
+
+h6(#has_many-extending). +extending+
+
+Метод +extending+ определяет именнованый модуль для расширения прокси связи. Расширения связей подробно обсуждаются "позже в этом руководстве":/active-record-associations/association-callbacks-and-extensions.
+
+h6(#has_many-group). +group+
+
+Метод +group+ доставляет имя атрибута, по которому группируется результирующий набор, используя выражение +GROUP BY+ в поисковом SQL.
+
+<ruby>
+class Parts < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies, -> { group "factory" }
+end
+</ruby>
+
+h5(#has_many-includes). +includes+
+
+Можете использовать метод +include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется.
+
+h5(#has_many-limit). +limit+
+
+Метод +limit+ позволяет ограничить общее количество объектов, которые будут выбраны через связь.
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies,
+    -> { order("created_at DESC").limit(50) }
+end
+</ruby>
+
+h5(#has_many-offset). +offset+
+
+Метод +offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, +-> { offset(11) }+ пропустит первые 11 записей.
+
+h5(#has_many-order). +order+
+
+Метод +order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_and_belongs_to_many :assemblies,
+    -> { order "assembly_name ASC" }
+end
+</ruby>
+
+h5(#has_many-readonly). +readonly+
+
+При использовании метода +:readonly+, связанные объекты будут доступны только для чтения, когда получены посредством связи.
+
+h5(#has_many-select). +select+
+
+Метод +select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
+
+h5(#has_many-uniq). +uniq+
+
+Используйте метод +uniq+, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией +:through+.
 
 h4. Когда сохраняются объекты?
 

@@ -68,12 +68,12 @@ h5(#belongs_to-create_association). <tt>create_<em>association</em>(attributes =
 
 h4. Опции для +belongs_to+
 
-Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи +belongs_to+. Такая настройка легко выполнима с помощью передачи опции при создании связи. Например, эта связь использует две такие опции:
+Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи +belongs_to+. Такая настройка легко выполнима с помощью передачи опций и блоков со скоупом при создании связи. Например, эта связь использует две такие опции:
 
 <ruby>
 class Order < ActiveRecord::Base
-  belongs_to :customer, :counter_cache => true,
-    :conditions => "active = 1"
+  belongs_to :customer, :dependent => :destroy,
+    :counter_cache => true
 end
 </ruby>
 
@@ -81,15 +81,11 @@ end
 
 * +:autosave+
 * +:class_name+
-* +:conditions+
 * +:counter_cache+
 * +:dependent+
 * +:foreign_key+
-* +:include+
 * +:inverse_of+
 * +:polymorphic+
-* +:readonly+
-* +:select+
 * +:touch+
 * +:validate+
 
@@ -104,16 +100,6 @@ h5(#belongs_to-class_name). +:class_name+
 <ruby>
 class Order < ActiveRecord::Base
   belongs_to :customer, :class_name => "Patron"
-end
-</ruby>
-
-h5(#belongs_to-conditions). +:conditions+
-
-Опция +:conditions+ позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе SQL, используемом в условии +WHERE+).
-
-<ruby>
-class Order < ActiveRecord::Base
-  belongs_to :customer, :conditions => "active = 1"
 end
 </ruby>
 
@@ -175,47 +161,9 @@ end
 
 TIP: В любом случае, Rails не создаст столбцы внешнего ключа за вас. Вам необходимо явно определить их в своих миграциях.
 
-h5(#belongs_to-includes). +:include+
-
-Можете использовать опцию +:include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:
-
-<ruby>
-class LineItem < ActiveRecord::Base
-  belongs_to :order
-end
-
-class Order < ActiveRecord::Base
-  belongs_to :customer
-  has_many :line_items
-end
-
-class Customer < ActiveRecord::Base
-  has_many :orders
-end
-</ruby>
-
-Если вы часто получаете покупателей непосредственно из товарных позиций (+@line_item.order.customer+), тогда можете сделать свой код более эффективным, включив покупателей в связь между товарными позициями и заказами:
-
-<ruby>
-class LineItem < ActiveRecord::Base
-  belongs_to :order, :include => :customer
-end
-
-class Order < ActiveRecord::Base
-  belongs_to :customer
-  has_many :line_items
-end
-
-class Customer < ActiveRecord::Base
-  has_many :orders
-end
-</ruby>
-
-NOTE: Нет необходимости использовать +:include+ для прямых связей - то есть, если есть +Order belongs_to :customer+, тогда customer нетерпеливо загрузится автоматически, когда это потребуется.
-
 h6(#belongs_to-inverse_of). +:inverse_of+
 
-Опция +:inverse_of+ определяет имя связи +has_many+ или +has_one+, являющейся обратной для этой связи. Не работает в комбинации с опцией +:polymorphic+.
+Опция +:inverse_of+ определяет имя связи +has_many+ или +has_one+, являющейся противополжностью для этой связи. Не работает в комбинации с опциями +:polymorphic+.
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -230,16 +178,6 @@ end
 h5(#belongs_to-polymorphic). +:polymorphic+
 
 Передача +true+ для опции +:polymorphic+ показывает, что это полиморфная связь. Полиморфные связи подробно рассматривались "ранее":/active-record-associations/the-types-of-associations-2#polymorphic-associations.
-
-h5(#belongs_to-readonly). +:readonly+
-
-Если установите опцию +:readonly+ в +true+, тогда связанный объект будет доступен только для чтения, когда получен посредством связи.
-
-h5(#belongs_to-select). +:select+
-
-Опция +:select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
-
-TIP: Если установите опцию +:select+ в связи +belongs_to+, вы должны также установить опцию +foreign_key+, чтобы гарантировать правильные результаты.
 
 h5(#belongs_to-touch). +:touch+
 
@@ -266,6 +204,82 @@ end
 h5(#belongs_to-validate). +:validate+
 
 Если установите опцию +:validate+ в +true+, тогда связанные объекты будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +false+: связанные объекты не проходят валидацию, когда этот объект сохраняется.
+
+h5(#belongs_to-scopes_for_belongs_to). Скоупы для +belongs_to+
+
+Иногда хочется настроить запрос, используемый +belongs_to+. Такая настройка может быть достигнута с помощью блока скоупа. Например:
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :customer, -> { where :active => true },
+    :dependent => :destroy
+end
+</ruby>
+
+Внутри блока скоупа можно использовать любые стандартные "методы запросов":/active-record-query-interface. Далее обсудим следующие из них:
+
+* +where+
+* +includes+
+* +readonly+
+* +select+
+
+h6(#belongs_to-where). +where+
+
+Метод +where+ позволяет определить условия, которым должен отвечать связанный объект.
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :customer, -> { where :active => true }
+end
+</ruby>
+
+h6(#belongs_to-includes). +includes+
+
+Метод +includes+ позволяет определить связи второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим жти модели:
+
+<ruby>
+class LineItem < ActiveRecord::Base
+  belongs_to :order
+end
+
+class Order < ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class Customer < ActiveRecord::Base
+  has_many :orders
+end
+</ruby>
+
+Если вы часто получаете покупателей непосредственно из элементов заказа (+@line_item.order.customer+), то можно улучшить эффективность кода, включив  покупателей в связь между заказом и его элементами:
+
+<ruby>
+class LineItem < ActiveRecord::Base
+  belongs_to :order, -> { includes :customer }
+end
+
+class Order < ActiveRecord::Base
+  belongs_to :customer
+  has_many :line_items
+end
+
+class Customer < ActiveRecord::Base
+  has_many :orders
+end
+</ruby>
+
+NOTE: Нет необходимости в использовании +includes+ для ближайших связей - то есть, если есть +Order belongs_to :customer+, то customer автоматически лениво загружается при необходимости.
+
+h6(#belongs_to-readonly). +readonly+
+
+При использовании +readonly+, связанный объект будет только для чтения при получении через связь.
+
+h6(#belongs_to-select). +select+
+
+Метод +select+ позволяет переопределить SQL выражение +SELECT+, используемое для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
+
+TIP: при использовании метода +select+ на связи +belongs_to+, следует также установить опцию +:foreign_key+ для гарантии правильных результатов.
 
 h5(#belongs_to-do_any_associated_objects_exist). Существуют ли связанные объекты?
 

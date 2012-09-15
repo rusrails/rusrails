@@ -165,25 +165,13 @@ end
 * +:as+
 * +:autosave+
 * +:class_name+
-* +:conditions+
-* +:counter_sql+
 * +:dependent+
-* +:extend+
-* +:finder_sql+
 * +:foreign_key+
-* +:group+
-* +:include+
 * +:inverse_of+
-* +:limit+
-* +:offset+
-* +:order+
 * +:primary_key+
-* +:readonly+
-* +:select+
 * +:source+
 * +:source_type+
 * +:through+
-* +:uniq+
 * +:validate+
 
 h5(#has_many-as). +:as+
@@ -204,60 +192,17 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_many-conditions). +:conditions+
+h5(#has_one-dependent). +:dependent+
 
-Опция +:conditions+ позволяет определить условия, которым должен удовлетворять связанный объект (в синтаксисе SQL, используемом в условии +WHERE+).
+Управляет тем, что произойдет со связанными объектами, когда его владелец будет уничтожен:
 
-<ruby>
-class Customer < ActiveRecord::Base
-  has_many :confirmed_orders, :class_name => "Order",
-    :conditions => "confirmed = 1"
-end
-</ruby>
+* +:destroy+ приведет к тому, что связанные объекты также будут уничтожены
+* +:delete+ приведет к тому, что связанные объекты будут удалены из базы данных напрямую (таким образом не будут выполнены колбэки)
+* +:nullify+ приведет к тому, что внешние ключи будет установлен +NULL+. Колбэки не запускаются.
+* +:restrict_with_exception+ приведет к вызову исключения, если есть какой-нибудь связанный объект
+* +:restrict_with_error+ приведет к ошибке, добавляемой к владельцу, если есть какой-нибудь связанный объект
 
-Также можно установить условия через хэш:
-
-<ruby>
-class Customer < ActiveRecord::Base
-  has_many :confirmed_orders, :class_name => "Order",
-    :conditions => { :confirmed => true }
-end
-</ruby>
-
-Если используете хэш в опции :conditions, то создание записи через эту связь автоматически будет подогнано, используя хэш. В нашем случае, использование +@customer.confirmed_orders.create+ или +@customer.confirmed_orders.build+ создаст заказы, где столбец confirmed имеет значение +true+.
-
-Если нужно вычислить условия динамически во время выполнения, используйте proc:
-
-<ruby>
-class Customer < ActiveRecord::Base
-  has_many :latest_orders, :class_name => "Order",
-    :conditions => proc { ["orders.created_at > ?", 10.hours.ago] }
-end
-</ruby>
-
-h5(#has_many-counter_sql). +:counter_sql+
-
-Обычно Rails автоматически создает подходящий SQL для счета связанных членов. С опцией +:counter_sql+, можете самостоятельно определить полное выражение SQL для их счета.
-
-NOTE: Если определите +:finder_sql+, но не +:counter_sql+, тогда счетчик SQL будет автоматически создан, заменив выражение +SELECT ... FROM+ из выражения +:finder_sql+ на +SELECT COUNT(*) FROM+.
-
-h5(#has_many-dependent). +:dependent+
-
-Если установите опцию +:dependent+ как +:destroy+, то удаление этого объекта вызовет метод +destroy+ для связанных объектов, для их удаления. Если установите опцию +:dependent+ как +:delete_all+, то удаление этого объекта удалит связанные объекты _без_ вызова их метода +destroy+. Если установите опцию +:dependent+ как +:nullify+, то удаление этого объекта установит внешний ключ в связанных объектов в +NULL+.
-
-Если установить опцию +:dependent+ как +:restrict+, то удаление объекта будет прервано, если сущестует зависимый связанный объект, и будет вызвано исключение +DeleteRestrictionError+.
-
-NOTE: Поведением по умолчанию для +:dependent => :restrict+ является вызов +DeleteRestrictionError+, когда существуют связанные объекты. Начиная с Rails 4.0, это поведение устарело в пользу добавления ошибки в основную модель. Чтобы заглушить это предупреждение в Rails 4.0, следует исправить ваш код не ожидать это исключение, и добавить +config.active_record.dependent_restrict_raises = false+ в конфигурацию приложения. (Rails4)
-
-NOTE: Эта опция игнорируется, если используете опцию +:through+ для связи.
-
-h5(#has_many-extend). +:extend+
-
-Опция +:extend+ определяет именнованый модуль для расширения полномочий связи. Расширения связей будут детально обсуждены "позже в этом руководстве":/active-record-associations/association-callbacks-and-extensions#association-extensions.
-
-h5(#has_many-finder_sql). +:finder_sql+
-
-Обычно Rails автоматически создает подходящий SQL для получения связанных членов. С опцией +:finder_sql+ можете самостоятельно определить полное выражение SQL для их получения. Это может быть необходимым, если получаемые объекты требуют сложный межтабличный SQL.
+NOTE: Эта опция игнорируется при использовании на связи опции +:through+.
 
 h5(#has_many-foreign_key). +:foreign_key+
 
@@ -271,19 +216,104 @@ end
 
 TIP: В любом случае, Rails не создаст столбцы внешнего ключа за вас. Вам необходимо явно определить их в своих миграциях.
 
-h5(#has_many-group). +:group+
+h6(#has_one-inverse_of). +:inverse_of+
 
-Опция +:group+ доставляет имя атрибута, по которому группируется результирующий набор, используя выражение +GROUP BY+ в поисковом SQL.
+Опция +:inverse_of+ определяет имя связи +belongs_to+, являющейся обратной для этой связи. Не работает в комбинации с опциями +:through+ или +:as+.
 
 <ruby>
-class Customer < ActiveRecord::Base
-  has_many :line_items, :through => :orders, :group => "orders.id"
+class Supplier < ActiveRecord::Base
+  has_one :account, :inverse_of => :supplier
+end
+
+class Account < ActiveRecord::Base
+  belongs_to :supplier, :inverse_of => :account
 end
 </ruby>
 
-h5(#has_many-include). +:include+
+h5(#has_many-primary_key). +:primary_key+
 
-Можете использовать опцию +:include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:
+По соглашению, Rails предполагает, что столбец, используемый для хранения первичного ключа, это +id+. Вы можете переопределить это и явно определить первичный ключ с помощью опции +:primary_key+.
+
+h5(#has_many-source). +:source+
+
+Опция +:source+ oпределяет имя источника связи для связи +has_many :through+. Эту опцию нужно использовать, только если имя источника связи не может быть автоматически выведено из имени связи.
+
+h5(#has_many-source_type). +:source_type+
+
+Опция +:source_type+ определяет тип источника связи для связи +has_many :through+, который действует при полиморфной связи.
+
+h5(#has_many-through). +:through+
+
+Опция +:through+ определяет соединительную модель, через которую выполняется запрос. Связи +has_many :through+ предоставляют способ осуществления отношений многие-ко-многим, как обсуждалось "ранее в этом руководстве":/active-record-associations/the-types-of-associations-1#the-has-many-through-association.
+
+h4(#has_many-validate). +:validate+
+
+Если установите опцию +:validate+ в +false+, тогда связанные объекты не будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
+
+
+h5(#has_many-scopes_for_has_many). Скоупы для +has_many+
+
+Иногда хочется настроить запрос, используемый +has_many+. Такая настройка может быть достигнута с помощью блока скоупа. Например:
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :orders, -> { where :processed => true }
+end
+</ruby>
+
+Внутри блока скоупа можно использовать любые стандартные "методы запросов":/active-record-query-interface. Далее обсудим следующие из них:
+
+* +where+
+* +extending+
+* +group+
+* +includes+
+* +limit+
+* +offset+
+* +order+
+* +readonly+
+* +select+
+* +uniq+
+
+h6(#belongs_to-where). +where+
+
+Метод +where+ позволяет определить условия, которым должен отвечать связанный объект.
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :confirmed_orders, -> { where "confirmed = 1" },
+    :class_name => "Order"
+end
+</ruby>
+
+Также можно задать условия хэшем:
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :confirmed_orders, -> { where :confirmed => true },
+    :class_name => "Order"
+end
+</ruby>
+
+При использовании опции +where+ хэшем, при создание записи через эту связь будет автоматически применен скоуп с использованием хэша. В этом случае при использовании +@customer.confirmed_orders.create+ или +@customer.confirmed_orders.build+ будут созданы заказы, в которых столбец confirmed будет иметь значение +true+.
+
+h6(#has_many-extending). +extending+
+
+Метод +extending+ определяет именнованый модуль для расширения прокси связи. Расширения связей подробно обсуждаются "позже в этом руководстве":/active-record-associations/association-callbacks-and-extensions.
+
+h6(#has_many-group). +group+
+
+Метод +group+ доставляет имя атрибута, по которому группируется результирующий набор, используя выражение +GROUP BY+ в поисковом SQL.
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :line_items, -> { group 'orders.id' },
+    :through => :orders
+end
+</ruby>
+
+h5(#has_many-includes). +includes+
+
+Можете использовать метод +include+ для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -304,7 +334,7 @@ end
 
 <ruby>
 class Customer < ActiveRecord::Base
-  has_many :orders, :include => :line_items
+  as_many :orders, -> { includes :line_items }
 end
 
 class Order < ActiveRecord::Base
@@ -317,74 +347,45 @@ class LineItem < ActiveRecord::Base
 end
 </ruby>
 
-h5(#has_many-limit). +:limit+
+h5(#has_many-limit). +limit+
 
-Опция +:limit+ позволяет ограничить общее количество объектов, которые будут выбраны через связь.
-
-<ruby>
-class Customer < ActiveRecord::Base
-  has_many :recent_orders, :class_name => "Order",
-    :order => "order_date DESC", :limit => 100
-end
-</ruby>
-
-h5(#has_many-offset). +:offset+
-
-Опция +:offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, если установите +:offset => 11+, она пропустит первые 11 записей.
-
-h6(#has_one-inverse_of). +:inverse_of+
-
-Опция +:inverse_of+ определяет имя связи +belongs_to+, являющейся обратной для этой связи. Не работает в комбинации с опциями +:through+ или +:as+.
-
-<ruby>
-class Supplier < ActiveRecord::Base
-  has_one :account, :inverse_of => :supplier
-end
-
-class Account < ActiveRecord::Base
-  belongs_to :supplier, :inverse_of => :account
-end
-</ruby>
-
-h5(#has_many-order). +:order+
-
-Опция +:order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
+Метод +limit+ позволяет ограничить общее количество объектов, которые будут выбраны через связь.
 
 <ruby>
 class Customer < ActiveRecord::Base
-  has_many :orders, :order => "date_confirmed DESC"
+  has_many :recent_orders,
+    -> { order('order_date desc').limit(100) },
+    :class_name => "Order"
 end
 </ruby>
 
-h5(#has_many-primary_key). +:primary_key+
+h5(#has_many-offset). +offset+
 
-По соглашению, Rails предполагает, что столбец, используемый для хранения первичного ключа, это +id+. Вы можете переопределить это и явно определить первичный ключ с помощью опции +:primary_key+.
+Метод +offset+ позволяет определить начальное смещение для выбора объектов через связь. Например, +-> { offset(11) }+ пропустит первые 11 записей.
 
-h5(#has_many-readonly). +:readonly+
+h5(#has_many-order). +order+
 
-Если установите опцию +:readonly+ в +true+, тогда связанные объекты будут доступны только для чтения, когда получены посредством связи.
+Метод +order+ предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии +ORDER BY+).
 
-h5(#has_many-select). +:select+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :orders, -> { order "date_confirmed DESC" }
+end
+</ruby>
 
-Опция +:select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
+h5(#has_many-readonly). +readonly+
 
-WARNING: Если укажете свой собственный +:select+, не забудьте включить столбцы первичного ключа и внешнего ключа в связанной модели. Если так не сделать, Rails выдаст ошибку.
+При использовании метода +:readonly+, связанные объекты будут доступны только для чтения, когда получены посредством связи.
 
-h5(#has_many-source). +:source+
+h5(#has_many-select). +select+
 
-Опция +:source+ oпределяет имя источника связи для связи +has_many :through+. Эту опцию нужно использовать, только если имя источника связи не может быть автоматически выведено из имени связи.
+Метод +select+ позволяет переопределить SQL условие +SELECT+, которое используется для получения данных о связанном объекте. По умолчанию Rails получает все столбцы.
 
-h5(#has_many-source_type). +:source_type+
+WARNING: Если укажете свой собственный +select+, не забудьте включить столбцы первичного ключа и внешнего ключа в связанной модели. Если так не сделать, Rails выдаст ошибку.
 
-Опция +:source_type+ определяет тип источника связи для связи +has_many :through+, который действует при полиморфной связи.
+h5(#has_many-uniq). +uniq+
 
-h5(#has_many-through). +:through+
-
-Опция +:through+ определяет соединительную модель, через которую выполняется запрос. Связи +has_many :through+ предоставляют способ осуществления отношений многие-ко-многим, как обсуждалось "ранее в этом руководстве":/active-record-associations/the-types-of-associations-1#the-has-many-through-association.
-
-h5(#has_many-uniq). +:uniq+
-
-Определите опцию +:uniq => true+, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией +:through+.
+Используйте метод +uniq+, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией +:through+.
 
 <ruby>
 class Person < ActiveRecord::Base
@@ -402,12 +403,12 @@ Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, post_id: 5>, #<Readin
 
 В вышеописанной задаче два reading, и +person.posts+ выявляет их оба, даже хотя эти записи указывают на один и тот же post.
 
-Давайте установим +:uniq+ в true:
+Давайте установим +:uniq+:
 
 <ruby>
 class Person
   has_many :readings
-  has_many :posts, :through => :readings, :uniq => true
+  has_many :posts, -> { uniq }, :through => :readings
 end
 
 person = Person.create(:name => 'honda')
@@ -419,10 +420,6 @@ Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Readin
 </ruby>
 
 В вышеописанной задаче все еще два reading. Однако +person.posts+ показывает только один post, поскольку коллекция загружает только уникальные записи.
-
-h4(#has_many-validate). +:validate+
-
-Если установите опцию +:validate+ в +false+, тогда связанные объекты не будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна +true+: связанные объекты проходят валидацию, когда этот объект сохраняется.
 
 h4. Когда сохраняются объекты?
 
