@@ -1,6 +1,6 @@
 #main_page_banner
-  =# render 'rsya'
-  = link_to image_tag("railsclub_240x400.png"), "http://railsclub.timepad.ru/event/29192", :target => :_blank
+  = render 'rsya'
+  -# = link_to image_tag("railsclub_240x400.png"), "http://railsclub.timepad.ru/event/29192", :target => :_blank
 - cache page_cache_key do
   %h1= @homepage.name
   != textile(@homepage.text)
