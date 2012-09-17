@@ -128,7 +128,7 @@ h4. +truncate+
 # => "Oh dear! Oh..."
 </ruby>
 
-Опция +:separator+ может быть регулярным выражением: (Rails4)
+Опция +:separator+ может быть регулярным выражением:
 
 <ruby>
 "Oh dear! Oh dear! I shall be late!".truncate(18, :separator => /\s/)
@@ -182,6 +182,41 @@ end
 Технически это выглядит как выделение красной строки в отдельную строку и удаление всех впереди идущих пробелов.
 
 NOTE: Определено в +active_support/core_ext/string/strip.rb+.
+
+h4. +indent+
+
+Устанавливает отступы строчкам получателя:
+
+<ruby>
+<<EOS.indent(2)
+def some_method
+  some_code
+end
+EOS
+# =>
+  def some_method
+    some_code
+  end
+</ruby>
+
+Второй аргумент, +indent_string+, определяет, какую строку использовать для отступа. По умолчанию +nil+, что сообщает методу самому догадаться на основе первой строчки с отступом, а если такой нет, то использовать пробел.
+
+<ruby>
+"  foo".indent(2)        # => "    foo"
+"foo\n\t\tbar".indent(2) # => "\t\tfoo\n\t\t\t\tbar"
+"foo".indent(2, "\t")    # => "\t\tfoo"
+</ruby>
+
+Хотя +indent_string+ обычно один пробел или табуляция, он может быть любой строкой.
+
+Третий аргумент, +indent_empty_lines+, это флажок, указывающий, должен ли быть отступ для пустых строчек. По умолчанию false.
+
+<ruby>
+"foo\n\nbar".indent(2)            # => "  foo\n\n  bar"
+"foo\n\nbar".indent(2, nil, true) # => "  foo\n  \n  bar"
+</ruby>
+
+Метод +indent!+ делает отступы в той же строке.
 
 h4. Доступ
 
@@ -314,13 +349,9 @@ h5. +camelize+
 <ruby>
 # action_controller/metal/session_management.rb
 def session_store=(store)
-  if store == :active_record_store
-    self.session_store = ActiveRecord::SessionStore
-  else
-    @@session_store = store.is_a?(Symbol) ?
-      ActionDispatch::Session.const_get(store.to_s.camelize) :
-      store
-  end
+  @@session_store = store.is_a?(Symbol) ?
+    ActionDispatch::Session.const_get(store.to_s.camelize) :
+    store
 end
 </ruby>
 

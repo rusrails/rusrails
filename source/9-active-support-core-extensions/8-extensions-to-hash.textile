@@ -184,7 +184,7 @@ params[:account] = params[:account].except(:plan_id) unless admin?
 
 NOTE: Определено в +active_support/core_ext/hash/except.rb+.
 
-h5. +transform_keys+ и +transform_keys!+ (Rails4)
+h5. +transform_keys+ и +transform_keys!+
 
 Метод +transform_keys+ принимает блок и возвращает хэш, в котором к каждому из ключей получателя были применены операции в блоке:
 
@@ -253,7 +253,7 @@ end
 
 Также имеется восклицательный вариант +stringify_keys!+, который приводит к строке ключи в самом получателе.
 
-Кроме этого, можно использовать +deep_stringify_keys+ и +deep_stringify_keys!+ для приведения к строке всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата: (Rails4)
+Кроме этого, можно использовать +deep_stringify_keys+ и +deep_stringify_keys!+ для приведения к строке всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата:
 
 <ruby>
 {nil => nil, 1 => 1, :nested => {:a => 3, 5 => 5}}.deep_stringify_keys
@@ -294,7 +294,7 @@ end
 
 Также имеется восклицательный вариант +symbolize_keys!+, который приводит к символу ключи в самом получателе.
 
-Кроме этого, можно использовать +deep_symbolize_keys+ и +deep_symbolize_keys!+ для приведения к символам всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата: (Rails4)
+Кроме этого, можно использовать +deep_symbolize_keys+ и +deep_symbolize_keys!+ для приведения к символам всех ключей в заданном хэше и всех хэшах, вложенных в него. Пример результата:
 
 <ruby>
 {nil => nil, 1 => 1, "nested" => {"a" => 3, 5 => 5}}.deep_symbolize_keys
@@ -318,27 +318,7 @@ h5. +assert_valid_keys+
 {:a => 1}.assert_valid_keys("a") # ArgumentError
 </ruby>
 
-Active Record не принимает незнакомые опции при создании связей, к примеру. Он реализует такой контроль через +assert_valid_keys+:
-
-<ruby>
-mattr_accessor :valid_keys_for_has_many_association
-@@valid_keys_for_has_many_association = [
-  :class_name, :table_name, :foreign_key, :primary_key,
-  :dependent,
-  :select, :conditions, :include, :order, :group, :having, :limit, :offset,
-  :as, :through, :source, :source_type,
-  :uniq,
-  :finder_sql, :counter_sql,
-  :before_add, :after_add, :before_remove, :after_remove,
-  :extend, :readonly,
-  :validate, :inverse_of
-]
-
-def create_has_many_reflection(association_id, options, &extension)
-  options.assert_valid_keys(valid_keys_for_has_many_association)
-  ...
-end
-</ruby>
+Active Record не принимает незнакомые опции при создании связей, к примеру. Он реализует такой контроль через +assert_valid_keys+.
 
 NOTE: Определено в +active_support/core_ext/hash/keys.rb+.
 

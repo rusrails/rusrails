@@ -65,19 +65,25 @@ as well as adding or subtracting their results from a Time object. For example:
 
 NOTE: Определено в +active_support/core_ext/numeric/time.rb+.
 
-h4. Форматирование (Rails4)
+h4. Форматирование
 
 Влючает форматирование чисел различными способами.
 
 Создает строковое представление числа, как телефонного номера:
 
 <ruby>
-5551234.to_s(:phone)                                           # => 555-1234
-1235551234.to_s(:phone)                                        # => 123-555-1234
-1235551234.to_s(:phone, :area_code => true)                    # => (123) 555-1234
-1235551234.to_s(:phone, :delimiter => " ")                     # => 123 555 1234
-1235551234.to_s(:phone, :area_code => true, :extension => 555) # => (123) 555-1234 x 555
-1235551234.to_s(:phone, :country_code => 1)                    # => +1-123-555-1234
+5551234.to_s(:phone)
+# => 555-1234
+1235551234.to_s(:phone)
+# => 123-555-1234
+1235551234.to_s(:phone, :area_code => true)
+# => (123) 555-1234
+1235551234.to_s(:phone, :delimiter => " ")
+# => 123 555 1234
+1235551234.to_s(:phone, :area_code => true, :extension => 555)
+# => (123) 555-1234 x 555
+1235551234.to_s(:phone, :country_code => 1)
+# => +1-123-555-1234
 </ruby>
 
 Создает строковое представление числа, как валюты:
@@ -91,10 +97,14 @@ h4. Форматирование (Rails4)
 Создает строковое представление числа, как процента:
 
 <ruby>
-100.to_s(:percentage)                                        # => 100.000%
-100.to_s(:percentage, :precision => 0)                       # => 100%
-1000.to_s(:percentage, :delimiter => '.', :separator => ',') # => 1.000,000%
-302.24398923423.to_s(:percentage, :precision => 5)           # => 302.24399%
+100.to_s(:percentage)
+# => 100.000%
+100.to_s(:percentage, :precision => 0)
+# => 100%
+1000.to_s(:percentage, :delimiter => '.', :separator => ',')
+# => 1.000,000%
+302.24398923423.to_s(:percentage, :precision => 5)
+# => 302.24399%
 </ruby>
 
 Создает строковое представление числа с разделенными разрядами:
@@ -110,34 +120,34 @@ h4. Форматирование (Rails4)
 Создает строковое представление числа, округленного с точностью:
 
 <ruby>
-111.2345.to_s(:rounded)                                            # => 111.235
-111.2345.to_s(:rounded, :precision => 2)                           # => 111.23
-13.to_s(:rounded, :precision => 5)                                 # => 13.00000
-389.32314.to_s(:rounded, :precision => 0)                          # => 389
-111.2345.to_s(:rounded, :significant => true)                      # => 111
+111.2345.to_s(:rounded)                        # => 111.235
+111.2345.to_s(:rounded, :precision => 2)       # => 111.23
+13.to_s(:rounded, :precision => 5)             # => 13.00000
+389.32314.to_s(:rounded, :precision => 0)      # => 389
+111.2345.to_s(:rounded, :significant => true)  # => 111
 </ruby>
 
 Создает строковое представление числа, как удобочитаемое количество байт:
 
 <ruby>
-123.to_s(:human_size)                                          # => 123 Bytes
-1234.to_s(:human_size)                                         # => 1.21 KB
-12345.to_s(:human_size)                                        # => 12.1 KB
-1234567.to_s(:human_size)                                      # => 1.18 MB
-1234567890.to_s(:human_size)                                   # => 1.15 GB
-1234567890123.to_s(:human_size)                                # => 1.12 TB
+123.to_s(:human_size)            # => 123 Bytes
+1234.to_s(:human_size)           # => 1.21 KB
+12345.to_s(:human_size)          # => 12.1 KB
+1234567.to_s(:human_size)        # => 1.18 MB
+1234567890.to_s(:human_size)     # => 1.15 GB
+1234567890123.to_s(:human_size)  # => 1.12 TB
 </ruby>
 
 Создает строковое представление числа, как удобочитаемое число словами:
 
 <ruby>
-123.to_s(:human)                                          # => "123"
-1234.to_s(:human)                                         # => "1.23 Thousand"
-12345.to_s(:human)                                        # => "12.3 Thousand"
-1234567.to_s(:human)                                      # => "1.23 Million"
-1234567890.to_s(:human)                                   # => "1.23 Billion"
-1234567890123.to_s(:human)                                # => "1.23 Trillion"
-1234567890123456.to_s(:human)                             # => "1.23 Quadrillion"
+123.to_s(:human)               # => "123"
+1234.to_s(:human)              # => "1.23 Thousand"
+12345.to_s(:human)             # => "12.3 Thousand"
+1234567.to_s(:human)           # => "1.23 Million"
+1234567890.to_s(:human)        # => "1.23 Billion"
+1234567890123.to_s(:human)     # => "1.23 Trillion"
+1234567890123456.to_s(:human)  # => "1.23 Quadrillion"
 </ruby>
 
 NOTE: Определено в +active_support/core_ext/numeric/formatting.rb+.
@@ -155,7 +165,7 @@ h4. +multiple_of?+
 
 NOTE: Определено в +active_support/core_ext/integer/multiple.rb+.
 
-h4. +ordinal+ (Rails4)
+h4. +ordinal+
 
 Метод +ordinal+ возвращает суффикс порядковой строки, соответствующей полученному числу:
 

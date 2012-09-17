@@ -266,7 +266,7 @@ Array(:foo => :bar)      # => [[:foo, :bar]]
 
 NOTE: Определено в +active_support/core_ext/array/wrap.rb+.
 
-h4. Дублирование (Rails4)
+h4. Дублирование
 
 Метод +Array.deep_dup+ дублирует себя и все объекты внутри рекурсивно с помощью метода ActiveSupport +Object#deep_dup+. Он работает так же, как +Array#map+, посылая метод +deep_dup+ в каждый объект внутри.
 

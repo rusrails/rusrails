@@ -53,6 +53,27 @@ Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
 
 У +prev_month+ есть псевдоним +last_month+.
 
+h6. +prev_quarter+, +next_quarter+
+
+Похожи на +prev_month+ и +next_month+. Возращают дату с тем же днем в предыдущим или следующем квартале:
+
+<ruby>
+t = Time.local(2010, 5, 8) # => Sat, 08 May 2010
+t.prev_quarter             # => Mon, 08 Feb 2010
+t.next_quarter             # => Sun, 08 Aug 2010
+</ruby>
+
+Если такой день не существует, возвращается последний день соответствующего месяца:
+
+<ruby>
+Time.local(2000, 7, 31).prev_quarter  # => Sun, 30 Apr 2000
+Time.local(2000, 5, 31).prev_quarter  # => Tue, 29 Feb 2000
+Time.local(2000, 10, 31).prev_quarter # => Mon, 30 Oct 2000
+Time.local(2000, 11, 31).next_quarter # => Wed, 28 Feb 2001
+</ruby>
+
++prev_quarter+ имеет псевдоним +last_quarter+.
+
 h6. +beginning_of_week+, +end_of_week+
 
 Методы +beginning_of_week+ и +end_of_week+ возвращают даты для начала и конца недели соответственно. Предполагается, что неделя начинается с понедельника, но это может быть изменено переданным аргументом.
