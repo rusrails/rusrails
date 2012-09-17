@@ -6,7 +6,7 @@ h1. Куки
 class CommentsController < ApplicationController
   def new
     # Автозаполнение имени комментатора, если оно хранится в куки.
-    @comment = Comment.new(:name => cookies[:commenter_name])
+    @comment = Comment.new(name: cookies[:commenter_name])
   end
 
   def create
@@ -22,7 +22,7 @@ class CommentsController < ApplicationController
       end
       redirect_to @comment.article
     else
-      render :action => "new"
+      render action: "new"
     end
   end
 end

@@ -8,11 +8,11 @@ class UsersController < ApplicationController
     @users = User.all
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @users}
-      format.json { render :json => @users}
+      format.xml  { render xml: @users}
+      format.json { render json: @users}
     end
   end
 end
 </ruby>
 
-Отметьте, что в вышеописанном коде +render :xml => @users+, а не +render :xml => @users.to_xml+. Это связано с тем, что если введена не строка, то rails автоматически вызовет +to_xml+.
+Отметьте, что в вышеописанном коде +render xml: @users+, а не +render xml: @users.to_xml+. Это связано с тем, что если введена не строка, то rails автоматически вызовет +to_xml+.

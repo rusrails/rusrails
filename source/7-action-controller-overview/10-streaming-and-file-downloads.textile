@@ -12,15 +12,15 @@ class ClientsController < ApplicationController
   def download_pdf
     client = Client.find(params[:id])
     send_data generate_pdf(client),
-              :filename => "#{client.name}.pdf",
-              :type => "application/pdf"
+              filename: "#{client.name}.pdf",
+              type: "application/pdf"
   end
 
   private
 
   def generate_pdf(client)
     Prawn::Document.new do
-      text client.name, :align => :center
+      text client.name, align: :center
       text "Address: #{client.address}"
       text "Email: #{client.email}"
     end.render
@@ -40,8 +40,8 @@ class ClientsController < ApplicationController
   def download_pdf
     client = Client.find(params[:id])
     send_file("#{Rails.root}/files/clients/#{client.id}.pdf",
-              :filename => "#{client.name}.pdf",
-              :type => "application/pdf")
+              filename: "#{client.name}.pdf",
+              type: "application/pdf")
   end
 end
 </ruby>
@@ -66,7 +66,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.pdf { render :pdf => generate_pdf(@client) }
+      format.pdf { render pdf: generate_pdf(@client) }
     end
   end
 end

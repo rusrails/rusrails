@@ -18,12 +18,12 @@ h4. +rescue_from+
 
 <ruby>
 class ApplicationController < ActionController::Base
-  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   private
 
   def record_not_found
-    render :text => "404 Not Found", :status => 404
+    render text: "404 Not Found", status: 404
   end
 end
 </ruby>
@@ -32,7 +32,7 @@ end
 
 <ruby>
 class ApplicationController < ActionController::Base
-  rescue_from User::NotAuthorized, :with => :user_not_authorized
+  rescue_from User::NotAuthorized, with: :user_not_authorized
 
   private
 

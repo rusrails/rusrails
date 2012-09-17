@@ -12,9 +12,9 @@ end
 
 <ruby>
 class DinnerController
-  force_ssl :only => :cheeseburger
+  force_ssl only: :cheeseburger
   # или
-  force_ssl :except => :cheeseburger
+  force_ssl except: :cheeseburger
 end
 </ruby>
 

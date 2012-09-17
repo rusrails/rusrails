@@ -3,8 +3,8 @@ h1. Сессия
 У вашего приложения есть сессия для каждого пользователя в которой можно хранить небольшие порции данных, которые будут сохранены между запросами. Сессия доступна только в контроллере и во вьюхе, и может использовать один из нескольких механизмов хранения:
 
 * ActionDispatch::Session::CookieStore - Хранит все на клиенте.
-* ActiveRecord::SessionStore - Хранит данные в базе данных с использованием Active Record.
 * ActionDispatch::Session::CacheStore - Хранит данные в кэше Rails.
+* ActionDispatch::Session::ActiveRecordStore - Хранит данные в базе данных с использованием Active Record. (требует гем `activerecord-session_store`).
 * ActionDispatch::Session::MemCacheStore - Хранит данные в кластере memcached (эта реализация - наследие старых версий, вместо нее рассмотрите использование CacheStore).
 
 Все сессии используют куки для хранения уникального ID каждой сессии (вы обязаны использовать куки, Rails не позволяет передавать ID сессии в URL, так как это не безопасно).
@@ -22,7 +22,7 @@ CookieStore могут хранить около 4kB данных - намног
 <ruby>
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information
-# (create the session table with "script/rails g session_migration")
+# (create the session table with "script/rails g active_record:session_migration")
 # YourApp::Application.config.session_store :active_record_store
 </ruby>
 
@@ -31,7 +31,7 @@ Rails настраивает ключ сессии (имя куки) при по
 <ruby>
 # Be sure to restart your server when you modify this file.
 
-YourApp::Application.config.session_store :cookie_store, :key => '_your_app_session'
+YourApp::Application.config.session_store :cookie_store, key: '_your_app_session'
 </ruby>
 
 Можете также передать ключ <tt>:domain</tt> и определить имя домена для куки:
@@ -39,7 +39,7 @@ YourApp::Application.config.session_store :cookie_store, :key => '_your_app_sess
 <ruby>
 # Be sure to restart your server when you modify this file.
 
-YourApp::Application.config.session_store :cookie_store, :key => '_your_app_session', :domain => ".example.com"
+YourApp::Application.config.session_store :cookie_store, key: '_your_app_session', domain: ".example.com"
 </ruby>
 
 Rails настраивает (для CookieStore) секретный ключ, используемый для подписания данных сессии. Он может быть изменен в +config/initializers/secret_token.rb+:
@@ -113,42 +113,54 @@ end
 
 h4. Flash
 
-Flash - это специальная часть сессии, которая очищается с каждым запросом. Это означает, что значения хранятся там доступными только до следующего запроса, что полезно для хранения сообщений об ошибке и т.п. Доступ к нему можно получить так же, как к сессии, подобно хэшу. Давайте посмотрим действие логаута как пример. Контроллер может послать сообщение, которое будет отображено пользователю при следующем запросе:
+Flash - это специальная часть сессии, которая очищается с каждым запросом. Это означает, что значения хранятся там доступными только до следующего запроса, что полезно для хранения сообщений об ошибке и т.п.
+
+Доступ к нему можно получить так же, как к сессии, подобно хэшу (это экземпляр "FlashHash":http://api.rubyonrails.org/classes/ActionDispatch/Flash/FlashHash.html).
+
+Давайте посмотрим действие логаута как пример. Контроллер может послать сообщение, которое будет отображено пользователю при следующем запросе:
 
 <ruby>
 class LoginsController < ApplicationController
   def destroy
     session[:current_user_id] = nil
-    flash[:notice] = "You have successfully logged out"
+    flash[:notice] = "You have successfully logged out."
     redirect_to root_url
   end
 end
 </ruby>
 
-Отметьте, что также возможно назначить сообщение флэш как часть перенаправления:
+Отметьте, что также возможно назначить сообщение флэш как часть перенаправления. Можно назначить +:notice+, +:alert+ или общего назначения +:flash+:
 
 <ruby>
-redirect_to root_url, :notice => "You have successfully logged out"
+redirect_to root_url, notice: "You have successfully logged out."
+redirect_to root_url, alert: "You're stuck here!"
+redirect_to root_url, flash: { referral_code: 1234 }
 </ruby>
 
-Экшн +destroy+ перенаправляет на +root_url+ приложения, где будет отображено сообщение. Отметьте, что от следующего экшна полностью зависит решение, будет ли он или не будет что-то делать с тем, что предыдущий экшн вложил во flash. Принято отображать возникающие ошибки или уведомления из flash в макете приложения:
+Экшн +destroy+ перенаправляет на +root_url+ приложения, где будет отображено сообщение. Отметьте, что от следующего экшна полностью зависит решение, будет ли он или не будет что-то делать с тем, что предыдущий экшн вложил во flash. Принято отображать любые сообщения об ошибке или уведомления из flash в макете приложения:
 
 <ruby>
 <html>
   <!-- <head/> -->
   <body>
-    <% if flash[:notice] %>
-      <p class="notice"><%= flash[:notice] %></p>
-    <% end %>
-    <% if flash[:error] %>
-      <p class="error"><%= flash[:error] %></p>
-    <% end %>
-    <!-- more content -->
+    <% flash.each do |name, msg| -%>
+      <%= content_tag :div, msg, class: name %>
+    <% end -%>
+
+    <!-- дальнейшее содержимое -->
   </body>
 </html>
 </ruby>
 
-В этом случае, если экшн установил сообщение об ошибке или уведомление, макет отобразит это автоматически.
+В этом случае, если экшн установил сообщения уведомления или предупреждения, макет отобразит их автоматически.
+
+Можно передать все, что только сессия может хранить; вы не ограничены уведомлениями или предупреждениями:
+
+<ruby>
+<% if flash[:just_signed_up] %>
+  <p class="welcome">Welcome to our site!</p>
+<% end %>
+</ruby>
 
 Если хотите, чтобы значение flash было перенесено для другого запроса, используйте метод +keep+:
 
@@ -182,7 +194,7 @@ class ClientsController < ApplicationController
       # ...
     else
       flash.now[:error] = "Could not save client"
-      render :action => "new"
+      render action: "new"
     end
   end
 end

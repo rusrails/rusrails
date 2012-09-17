@@ -42,8 +42,8 @@ h1. ИСТОРИЯ
 
 1. Обзор Action Controller
 2. action_controller_overview.textile
-3. 68a9788cdbd5de4c58777564aeb117b4a1866194
-4. 09/04/12
+3. 961355a9f34a9cdb3001d8a4b69741408145ebb8
+4. 12/09/12
 
 1. Роутинг в Rails
 2. routing.textile
