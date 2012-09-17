@@ -20,7 +20,13 @@ get "/patients/:id" => "patients#show"
 
 h4. Создание URL из кода
 
-Также можно создавать пути и URL. Если приложение содержит код:
+Также можно создавать пути и URL. Если вышеуказанный маршрут изменить как
+
+<ruby>
+get "/patients/:id" => "patients#show", :as => "patient"
+</ruby>
+
+Если приложение содержит код:
 
 <ruby>
 @patient = Patient.find(17)

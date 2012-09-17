@@ -242,10 +242,10 @@ get "/stories" => redirect("/posts")
 get "/stories/:name" => redirect("/posts/%{name}")
 </ruby>
 
-Также можно предоставить блок для перенаправления, который получает params и (опционально) объект request:
+Также можно предоставить блок для перенаправления, который получает params и объект request:
 
 <ruby>
-get "/stories/:name" => redirect {|params| "/posts/#{params[:name].pluralize}" }
+get "/stories/:name" => redirect {|params, req| "/posts/#{params[:name].pluralize}" }
 get "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
 </ruby>
 
@@ -277,3 +277,11 @@ root 'pages#main' # то же самое в краткой форме
 Следует поместить маршрут +root+ в начало файла, поскольку это наиболее популярный маршрут и должен быть проверен первым. Также необходимо удалить файл +public/index.html+, чтобы корневой маршрут заработал.
 
 NOTE: Маршрут +root+ связывает с экшном только запросы +GET+.
+
+h4. Маршруты с символами Unicode
+
+Маршруты с символами unicode можно определять непосредственно. Например
+
+<ruby>
+match 'こんにちは' => 'welcome#index'
+</ruby>

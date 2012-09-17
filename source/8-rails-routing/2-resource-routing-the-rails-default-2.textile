@@ -59,6 +59,36 @@ end
 
 TIP: _Ресурсы никогда не должны быть вложены глубже, чем на 1 уровень._
 
+h4. Концерны маршрутов
+
+Концерны маршрутов (Routing Concerns) позволяют объявлять обычные маршруты, которые затем могут быть повторно использованы внутри других ресурсов и маршрутов.
+
+<ruby>
+concern :commentable do
+  resources :comments
+end
+
+concern :image_attachable do
+  resources :images, only: :index
+end
+</ruby>
+
+Эти концерны могут быть использованы в ресурсах, чтобы избежать дублирования кода и разделить поведение между несколькими маршрутами.
+
+<ruby>
+resources :messages, concerns: :commentable
+
+resources :posts, concerns: [:commentable, :image_attachable]
+</ruby>
+
+Также их можно использовать в любом месте внутри маршрутов, например в вызове scope или namespace:
+
+<ruby>
+namespace :posts do
+  concerns :commentable
+end
+</ruby>
+
 h4. Создание путей и URL из объектов
 
 В дополнение к использованию маршрутных хелперов, Rails может также создавать пути и URL из массива параметров. Например, предположим у вас есть этот набор маршрутов:
