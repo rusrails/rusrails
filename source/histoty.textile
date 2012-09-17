@@ -57,8 +57,8 @@ h1. ИСТОРИЯ
 
 1. API интернационализации Rails (I18n)
 2. i18n.textile
-3. 888383e0accf376109f29020c7f8cfbaa39338b9
-4. 14/05/12
+3. d881e2f8e041e75d37e27505d28314af64714fb8
+4. 07/09/12
 
 1. Основы Action Mailer
 2. action_mailer_basics.textile
