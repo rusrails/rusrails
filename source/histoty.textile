@@ -77,8 +77,8 @@ h1. ИСТОРИЯ
 
 1. Отладка приложений на Rails
 2. debugging_rails_applications.textile
-3. 359af59cb3ab8c29ec2c17447fa2b7fd9aee8915
-4. 08/07/12
+3.
+4. 09/09/12
 
 1. Тестирование производительности приложений Rails
 2. performance_testing.textile
