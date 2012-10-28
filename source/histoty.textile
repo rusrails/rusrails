@@ -123,32 +123,34 @@ h1. ИСТОРИЯ
     9694b756d16278b66248444d2f3e3a89f3a4e16c
     21/07/12
 
-10. action_view_overview.textile
-12. active_model_basics.textile
-14. active_record_basics.textile
-16. ajax_on_rails.textile
-18. active_support_instrumentation.textile
-20. api_documentation_guidelines.textile
-22. contributing_to_ruby_on_rails.textile
+10. action_view_overview.md
+12. active_model_basics.md
+14. active_record_basics.md
+18. active_support_instrumentation.md
+20. api_documentation_guidelines.md
+22. contributing_to_ruby_on_rails.md
+23. development_dependencies_install.md
 
 25. engines.textile
     39674d1e90a99f40f591cf97064f1a17d0542dc1
     04/08/12
 
-30. generators.textile
-35. initialization.textile
-45. plugins.textile
-50. rails_application_templates.textile
+30. generators.md
+35. initialization.md
+45. plugins.md
+50. rails_application_templates.md
 
 55. rails_on_rack.textile
     ff859f542cde9108b66c14c810a7e3c190f3f12f
     14/06/2012
 
+57. ruby_on_rails_guides_guidelines.md
 60. upgrading_ruby_on_rails.textile
+65. working_with_javascript.md
 
 
 ** Старые / не обновляемые **
 
-0.  2_2_release_notes.textile
-1.  2_3_release_notes.textile
-40. nested_model_forms.textile
+0.  2_2_release_notes.md
+1.  2_3_release_notes.md
+40. nested_model_forms.md
