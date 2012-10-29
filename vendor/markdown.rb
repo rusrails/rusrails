@@ -42,6 +42,8 @@ HTML
     def list(contents, list_type)
       if contents =~ /<dt>/
         %Q(<dl>#{contents}</dl>)
+      else
+        %Q(<ul>#{contents}</ul>)
       end
     end
 
@@ -50,6 +52,8 @@ HTML
         text.gsub(/^(.*):=(.*)$/) do |m|
           %Q(<dt>#{$1.strip}</dt><dd>#{$2.strip}</dd>)
         end
+      else
+        %Q(<li>#{text}</li>)
       end
     end
 
