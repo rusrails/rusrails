@@ -20,7 +20,7 @@ class ProductsController < ActionController
   caches_page :index
 
   def index
-    @products = Products.all
+    @products = Product.all
   end
 end
 </ruby>
@@ -39,7 +39,7 @@ class ProductsController < ActionController
   caches_page :index
 
   def index
-    @products = Products.all
+    @products = Product.all
   end
 
   def create
@@ -160,7 +160,9 @@ expire_fragment('all_available_products')
 
 h4. Уборщики (sweepers)
 
-Уборка кэша это механизм, позволяющий обойти кучу вызовов +expire_{page,action,fragment}+ в коде. Это осуществляется с помощью переноса всей работы, требуемой для прекращения кэшированного содержимого, в класс +ActionController::Caching::Sweeper+. Этот класс является обсервером, просматривающим изменения в объекте через колбэки, и когда изменение случается, он прекращает кэши, связанные с этим объектом, в фильтрах around или after.
+Уборка кэша это механизм, позволяющий обойти кучу вызовов +expire_{page,action,fragment}+ в коде. Это осуществляется с помощью переноса всей работы, требуемой для прекращения кэшированного содержимого, в класс +ActionController::Caching::Sweeper+. Этот класс является обсервером, просматривающим изменения в объекте Active Record через колбэки, и когда изменение случается, он прекращает кэши, связанные с этим объектом, в фильтрах around или after.
+
+TIP: Уборщики полагаются на использование Active Record и Active Record Observers. Наблюдаемый объект должен быть моделью Active Record.
 
 Продолжая с нашим примером контроллера Product, мы можем переписать его с уборщиком, следующим образом:
 

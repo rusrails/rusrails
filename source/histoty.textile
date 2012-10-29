@@ -97,8 +97,8 @@ h1. ИСТОРИЯ
 
 1. Кэширование с Rails: Обзор
 2. caching_with_rails.textile
-3. 07d346646f61dbf0ef020eefc4dc11e140b55baf
-4. 11/06/12
+3.
+4. 09/09/12
 
 1. Asset Pipeline
 2. asset_pipeline.textile

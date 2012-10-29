@@ -14,7 +14,7 @@ class ProductsController < ApplicationController
 
     # Если запрос устарел в соответствии с заданной временной меткой или значением
     # etag (т.е. нуждается в обработке снова), тогда запускаем этот блок
-    if stale?(:last_modified => @product.updated_at.utc, :etag => @product)
+    if stale?(:last_modified => @product.updated_at.utc, :etag => @product.cache_key)
       respond_to do |wants|
         # ... обычное создание отклика
       end
@@ -24,6 +24,17 @@ class ProductsController < ApplicationController
     # Рендер по умолчанию проверит это, используя параметры,
     # использованные в предыдущем вызове stale?, и автоматически пошлет
     # :not_modified.  И на этом все.
+  end
+end
+</ruby>
+
+Вместо хэша опций можно просто передать модель, Rails будет использовать методы +updated_at+ и +cache_key+ для настройки +last_modified+ и +etag+:
+
+<ruby>
+class ProductsController < ApplicationController
+  def show
+    @product = Product.find(params[:id])
+    respond_with(@product) if stale?(@product)
   end
 end
 </ruby>
