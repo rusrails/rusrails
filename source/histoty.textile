@@ -108,20 +108,20 @@ h1. ИСТОРИЯ
 ** Другие / план **
 
 2.  3_0_release_notes.textile
-    6d87cd028b32570973450424db164e5405a0ee13
+
     17/03/12
 
 3.  3_1_release_notes.textile
-    6d87cd028b32570973450424db164e5405a0ee13
+
     17/03/12
 
 4.  3_2_release_notes.textile
-    63bd01d82fb4b4f62a6842db5edcd60a60efa964
+
     11/04/12
 
 5.  4_0_release_notes.textile
-    9694b756d16278b66248444d2f3e3a89f3a4e16c
-    21/07/12
+
+    06/09/12
 
 10. action_view_overview.md
 12. active_model_basics.md

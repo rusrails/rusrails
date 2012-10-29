@@ -80,8 +80,6 @@ rails g model Product supplier:references{polymorphic}
 
 * Загружает все доступные среды в <tt>config.paths["config/environments"]</tt>.
 
-* Генератор приложения создает <tt>public/humans.txt</tt> с некоторыми базовыми данными.
-
 * Добавляет <tt>config.queue_consumer</tt> чтобы позволить настройку потребителя очереди по умолчанию.
 
 * Добавляет <tt>Rails.queue</tt> как интерфейс с реализацией по умолчанию, выполняющей работы в отдельном треде.
@@ -115,6 +113,20 @@ h3. Action Mailer
 * Вызывает исключение <tt>ActionView::MissingTemplate</tt>, когда не может быть найден ни один подходящий шаблон.
 
 * Посылает сообщения асинхронно с помощью Rails Queue.
+
+* Опции доставки (такие как настройки SMTP) теперь могут устанавливаться динамически для каждого экшна рассыльщика.
+
+Опции доставки устанавливаются с помощью ключа <tt>:delivery_method_options</tt> на mail.
+
+<ruby>
+def welcome_mailer(user,company)
+  mail to: user.email,
+       subject: "Welcome!",
+       delivery_method_options: {user_name: company.smtp_user,
+                                 password: company.smtp_password,
+                                 address: company.smtp_server}
+end
+</ruby>
 
 h3. Action Pack
 
@@ -193,6 +205,37 @@ h5(#actioncontroller_deprecations). Устарело
 * Устарел <tt>ActionController::Routing</tt> в пользу <tt>ActionDispatch::Routing</tt>.
 
 h4. Action Dispatch
+
+* Добавлен Routing Concerns для объявления общих маршрутов, которые могут быть повторно использованы в других ресурсах и маршрутах.
+
+Код до:
+
+<ruby>
+resources :messages do
+  resources :comments
+end
+
+resources :posts do
+  resources :comments
+  resources :images, only: :index
+end
+</ruby>
+
+Код после:
+
+<ruby>
+concern :commentable do
+  resources :comments
+end
+
+concern :image_attachable do
+  resources :images, only: :index
+end
+
+resources :messages, concerns: :commentable
+
+resources :posts, concerns: [:commentable, :image_attachable]
+</ruby>
 
 * Показывает маршруты на странице исключения во время отладки <tt>RoutingError</tt> в режиме development.
 
@@ -448,34 +491,9 @@ end
 User.stored_attributes[:settings] # [:color, :homepage]
 </ruby>
 
-* <tt>composed_of</tt> был убран. Можете написать свои методы доступа и изменения, если хотите использовать значения объектов для представления некоторых частей ваших моделей. Поэтому вместо:
-
-<ruby>
-class Person < ActiveRecord::Base
-  composed_of :address, :mapping => [ %w(address_street street), %w(address_city city) ]
-end
-</ruby>
-
-можно написать что-то наподобие:
-
-<ruby>
-def address
-  @address ||= Address.new(address_street, address_city)
-end
-
-def address=(address)
-  self[:address_street] = @address.street
-  self[:address_city]   = @address.city
-
-  @address = address
-end
-</ruby>
-
 * Уровень лога по умоланию для PostgreSQL теперь 'warning', чтобы пропустить шумные сообщения notice. Уровень лога можно изменить с использованием опции <tt>min_messages</tt>, доступной в вашем <tt>config/database.yml</tt>.
 
 * Добавлена поддержка типа данных uuid для адаптера PostgreSQL.
-
-* Был убран <tt>update_attribute</tt>. Используйте <tt>update_column</tt>, если хотите пропустить защиту от массового назначения, валидации, колбэки и затрагивание updated_at. В ином случае используйте <tt>update_attributes</tt>.
 
 * Добавлен <tt>ActiveRecord::Migration.check_pending!</tt>, вызывающий ошибку, если миграции ожидают выполнения.
 
@@ -699,6 +717,8 @@ where(...).remove_conditions # => все еще есть условие
 
 * Генератор миграции теперь создает соединительную таблицу с (закомментированными) индексами каждый раз, когда имя миграции содержит слово "join_table".
 
+* <tt>ActiveRecord::SessionStore</tt> убран из Rails 4.0 и теперь является отдельным "гемом":https://github.com/rails/activerecord-session_store.
+
 h3. Active Model
 
 * Изменено значение по умолчанию <tt>AM::Serializers::JSON.include_root_in_json</tt> в false. Теперь, у сериализаторов AM и объектов AR одинаковое поведение.
@@ -744,6 +764,8 @@ h3. Active Resource
 * Active Resource удален из Rails 4.0, и теперь это отдельный "гем":https://github.com/rails/activeresource.
 
 h3. Active Support
+
+* Добавлены значения по умолчанию во все методы <tt>ActiveSupport::NumberHelper</tt>, чтобы избежать ошибок с пустыми локалями или отсутствующими значениями.
 
 * Теперь <tt>Time#change</tt> работает со значениями времени со смещениями иными, чем UTC или текущая временная зона.
 
