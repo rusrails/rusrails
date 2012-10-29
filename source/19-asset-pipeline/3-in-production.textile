@@ -55,7 +55,7 @@ NOTE. Если вы прекомпилируете ресурсы локальн
 По умолчанию компилирующиеся файлы включают +application.js+, +application.css+ и все не-JS/CSS файлы (это автоматически включает все ресурсы изображений):
 
 <ruby>
-[ Proc.new{ |path| !File.extname(path).in?(['.js', '.css']) }, /application.(css|js)$/ ]
+[ Proc.new{ |path| !%w(.js .css).include?(File.extname(path)) }, /application.(css|js)$/ ]
 </ruby>
 
 NOTE. Условие отбора (и другие части прекомпиляционного массива; смотрите выше) применяется к итоговым скомпилированным именам файлов. Это означает, что все, что компилируется в JS/CSS, исключается, так же, как и файлы с чистым JS/CSS; например, файлы +.coffee+ и +.scss+ *не* включаются автоматически, так как они компилируются в JS/CSS.
@@ -65,6 +65,8 @@ NOTE. Условие отбора (и другие части прекомпил
 <erb>
 config.assets.precompile += ['admin.js', 'admin.css', 'swfObject.js']
 </erb>
+
+NOTE. Всегда определяйте ожидаемое имя скомпилированного файла, оканчивающееся на js или css, даже если хотите добавить в массив прекомпиляции файлы Sass или CoffeeScript.
 
 Задача rake также создает +manifest.yml+, который содержит список всех ваших ресурсов и их соответствующие метки. Это используется методами хелпера Rails, чтобы избежать направления запроса в Sprockets. Обычный файл манифеста выглядит так:
 
@@ -94,11 +96,12 @@ h5. Вечный заголовок Expires
 Для Apache:
 
 <plain>
+# Директивы Expires* требуют, чтобы модуль Apache +mod_expires+ был включен.
 <LocationMatch "^/assets/.*$">
-  # Use of ETag is discouraged when Last-Modified is present
+  # Не рекомендуется использование ETag, когда присутствует Last-Modified
   Header unset ETag
   FileETag None
-  # RFC says only cache for 1 year
+  # RFC предписывает кэшировать только на 1 год
   ExpiresActive On
   ExpiresDefault "access plus 1 year"
 </LocationMatch>

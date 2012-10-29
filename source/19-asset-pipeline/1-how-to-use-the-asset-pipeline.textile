@@ -26,7 +26,7 @@ h5. Пути поиска
 
 Когда к файлу обращаются из манифеста или хелпера, Sprockets ищет в трех дефолтных местах размещения ресурсов для этого.
 
-Дефолтные места следующие: +app/assets/images+ и поддиректории +javascripts+ и +stylesheets+ во всех трех метах размещения ресурсов.
+Дефолтные места следующие: +app/assets/images+ и поддиректории +javascripts+ и +stylesheets+ во всех трех метах размещения ресурсов, но эти поддиректории не особенные. Поиск будет вестись по любому пути в +assets/*+.
 
 Для примера, на эти файлы:
 
@@ -34,6 +34,7 @@ h5. Пути поиска
 app/assets/javascripts/home.js
 lib/assets/javascripts/moovinator.js
 vendor/assets/javascripts/slider.js
+vendor/assets/somepackage/phonebox.js
 </plain>
 
 можно сослаться в манифесте таким образом:
@@ -42,6 +43,7 @@ vendor/assets/javascripts/slider.js
 //= require home
 //= require moovinator
 //= require slider
+//= require phonebox
 </plain>
 
 Ресурсы в поддиректориях также доступны.
@@ -58,13 +60,13 @@ app/assets/javascripts/sub/something.js
 
 Можно просмотреть путь поиска, проинспектировав +Rails.application.config.assets.paths+ в консоли Rails.
 
-Дополнительные (полные) пути могут быть добавлены в файлопровод в +config/application.rb+. Например:
+Помимо стандартных путей +assets/*+ в файлопровод могут быть добавлены дополнительные (полные) пути в +config/application.rb+. Например:
 
 <ruby>
-config.assets.paths << Rails.root.join("app", "assets", "flash")
+config.assets.paths << Rails.root.join("lib", "videoplayer", "flash")
 </ruby>
 
-Пути обходятся в том порядке, в котором они выводятся в пути поиска.
+Пути обходятся в том порядке, в котором они выводятся в пути поиска. По умолчанию это означает, что имеют преимущество файлы в +app/assets+, они перекроют соотвествующие пути в +lib+ и +vendor+.
 
 Важно заметить, что если хотите сослаться на что-то еще, в прекомпиляционный массив должен быть добавлен манифест, или оно не будет доступно в среде production.
 
