@@ -71,6 +71,13 @@ Client.where(:locked => true)
 Client.where('locked' => true)
 </ruby>
 
+В случае отношений belongs_to, может быть использован ключ связи для указания модели, если как значение используется объект ActiveRecord. Этот метод также работает с полиморфными отношениями.
+
+<ruby>
+Post.where(:author => author)
+Author.joins(:posts).where(:posts => {:author => author})
+</ruby>
+
 NOTE: Значения не могут быть символами. Например, нельзя сделать +Client.where(:status => :active)+.
 
 h5(#hash-range_conditions). Интервальные условия
