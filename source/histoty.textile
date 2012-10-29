@@ -82,8 +82,8 @@ h1. ИСТОРИЯ
 
 1. Тестирование производительности приложений Rails
 2. performance_testing.textile
-3. c74ff7f73b9505478cec6eff20f1030a61285cd8
-4. 24/07/12
+3.
+4. 12/08/12
 
 1. Конфигурирование приложений на Rails
 2. configuring.textile
