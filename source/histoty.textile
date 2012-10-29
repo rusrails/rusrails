@@ -92,8 +92,8 @@ h1. ИСТОРИЯ
 
 1. Руководство по командной строке Rails
 2. command_line.textile
-3. ca65dcbbb2eca975782ea007a308000f1fbaf57f
-4. 27/05/12
+3.
+4. 02/08/12
 
 1. Кэширование с Rails: Обзор
 2. caching_with_rails.textile
