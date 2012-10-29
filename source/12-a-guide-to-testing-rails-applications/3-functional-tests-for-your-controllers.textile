@@ -67,7 +67,7 @@ h4. Доступные типы запросов для функциональн
 
 * +get+
 * +post+
-* +patch+ (Rails4)
+* +patch+
 * +put+
 * +head+
 * +delete+

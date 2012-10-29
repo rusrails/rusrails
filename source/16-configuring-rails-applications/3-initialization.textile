@@ -73,8 +73,6 @@ h4. Инициализаторы
 
 *+load_active_support+* Требует +active_support/dependencies+, настраивающий основу для Active Support. Опционально требует +active_support/all+, если +config.active_support.bare+ не истинно, что является значением по умолчанию.
 
-*+preload_frameworks+* Автоматически загружает все автозагружаемые зависимости Rails, если +config.preload_frameworks+ +true+ или другое истинное значение. По умолчанию эта конфигурационная опция отключена. В Rails они загружаются, когда внутренние классы обращаются в первый раз. +:preload_frameworks+ загружает их все за раз при инициализации.
-
 *+initialize_logger+* Инициализирует логгер (объект +ActiveSupport::BufferedLogger+) для приложения и делает его доступным как +Rails.logger+, если до него другой инициализатор не определит +Rails.logger+.
 
 *+initialize_cache+* Если +Rails.cache+ еще не установлен, инициализирует кэш, обращаясь к значению +config.cache_store+ и сохраняя результат как +Rails.cache+. Если этот объект отвечает на метод +middleware+, его промежуточная программа вставляется до +Rack::Runtime+ в стеке промежуточных программ.
@@ -169,10 +167,10 @@ The error occurred while evaluating nil.each
 
 *+build_middleware_stack+* Создает стек промежуточных программ для приложения, возвращает объект, у которого есть метод +call+, принимающий объект среды Rack для запроса.
 
-*+eager_load!+* Если +config.cache_classes+ true, запускает хуки +config.before_eager_load+, а затем вызывает +eager_load!+, загружающий все файлы Ruby из +config.eager_load_paths+.
+*+eager_load!+* Если +config.eager_load+ true, запускает хуки +config.before_eager_load+, а затем вызывает +eager_load!+, загружающий все +config.eager_load_namespaces+.
 
 *+finisher_hook+* Представляет хук после завершения процесса инициализации приложения, а также запускает все блоки +config.after_initialize+ для приложения, railties и engine-ов.
 
 *+set_routes_reloader+* Конфигурирует Action Dispatch, перезагружая файл маршрутов с использованием +ActionDispatch::Callbacks.to_prepare+.
 
-*+disable_dependency_loading+* Отключает автоматическую загрузку зависимостей, если +config.cache_classes+ установлена true, и +config.dependency_loading+ установлена false.
+*+disable_dependency_loading+* Отключает автоматическую загрузку зависимостей, если +config.eager_load+ установлена true.

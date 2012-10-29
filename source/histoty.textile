@@ -87,8 +87,8 @@ h1. ИСТОРИЯ
 
 1. Конфигурирование приложений на Rails
 2. configuring.textile
-3. c12024bc7dabb3d911acf49c0c936541ff5f8e93
-4. 22/07/12
+3.
+4. 13/09/12
 
 1. Руководство по командной строке Rails
 2. command_line.textile
