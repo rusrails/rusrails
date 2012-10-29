@@ -1,6 +1,6 @@
 - cache page_cache_key do
   %h1= @category.name
-  != textile(@category.text)
+  != render_text_of @category
   - unless @category.pages.enabled.empty?
     %ul
       - @category.pages.enabled.each do |page|

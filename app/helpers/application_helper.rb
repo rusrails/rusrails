@@ -39,6 +39,17 @@ module ApplicationHelper
     {:class => other_classes*" "} unless other_classes.empty?
   end
 
+  def render_text_of(model)
+    case model.renderer
+    when 'textile'
+      textile(model.text)
+    when 'md'
+      Markdown.new.render(model.text)
+    else
+      model.text
+    end
+  end
+
   def textile(body, lite_mode=false, sanitize=false)
     t = RedCloth.new(body)
     t.hard_breaks = false

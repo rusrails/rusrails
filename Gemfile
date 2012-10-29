@@ -16,6 +16,7 @@ gem 'nokogiri'
 gem 'haml'
 gem 'sass'
 gem 'RedCloth'
+gem 'redcarpet'
 gem 'rails_config'
 
 gem 'jquery-rails'
