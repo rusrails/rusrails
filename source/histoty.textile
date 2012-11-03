@@ -6,14 +6,14 @@ h1. ИСТОРИЯ
 4. Дата внесения изменений
 
 1. Rails для начинающих
-2. getting_started.textile
+2. getting_started.md
 3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
 4. 06/09/12
 
 1. Миграции базы данных Rails
-2. migrations.textile
-3.
-4. 09/09/12
+2. migrations.md
+3. 721afdcc4b58c65f36122b10ec998b913a147912
+4. 17/09/12
 
 1. Валидации и колбэки Active Record
 2. active_record_validations_callbacks.textile

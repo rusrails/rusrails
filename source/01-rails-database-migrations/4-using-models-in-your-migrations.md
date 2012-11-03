@@ -1,16 +1,16 @@
-h1. Использование моделей в ваших миграциях
+# Использование моделей в ваших миграциях
 
 При создании или обновлении данных зачастую хочется использовать одну из ваших моделей. Ведь они же существуют, чтобы облегчить доступ к лежащим в их основе данным. Это осуществимо, но с некоторыми предостережениями.
 
 Например, проблемы происходят, когда модель использует столбцы базы данных, которые (1) в текущий момент отсутствуют в базе данных и (2) будут созданы в этой или последующих миграциях.
 
-Рассмотрим пример, когда Алиса и Боб работают над одним и тем же участком кода, содержащим модель +Product+
+Рассмотрим пример, когда Алиса и Боб работают над одним и тем же участком кода, содержащим модель `Product`
 
 Боб ушел в отпуск.
 
-Алиса создала миграцию для таблицы +products+, добавляющую новый столбец, и инициализировала его. Она также добавила в модели Product валидацию на новый столбец.
+Алиса создала миграцию для таблицы `products`, добавляющую новый столбец, и инициализировала его. Она также добавила в модели Product валидацию на новый столбец.
 
-<ruby>
+```ruby
 # db/migrate/20100513121110_add_flag_to_product.rb
 
 class AddFlagToProduct < ActiveRecord::Migration
@@ -19,19 +19,19 @@ class AddFlagToProduct < ActiveRecord::Migration
     Product.update_all :flag => false
   end
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
   validates :flag, :presence => true
 end
-</ruby>
+```
 
-Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице +products+, и снова добавила в модели +Product+ валидацию на новый столбец.
+Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице `products`, и снова добавила в модели `Product` валидацию на новый столбец.
 
-<ruby>
+```ruby
 # db/migrate/20100515121110_add_fuzz_to_product.rb
 
 class AddFuzzToProduct < ActiveRecord::Migration
@@ -40,39 +40,39 @@ class AddFuzzToProduct < ActiveRecord::Migration
     Product.update_all :fuzz => 'fuzzy'
   end
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
   validates :flag, :fuzz, :presence => true
 end
-</ruby>
+```
 
 Обе миграции работают для Алисы.
 
 Боб вернулся с отпуска, и:
 
-# Обновил исходники - содержащие обе миграции и последнюю версию модели Product.
-# Запустил невыполненные миграции с помощью +rake db:migrate+, включая обновляющие модель +Product+.
+*   Обновил исходники - содержащие обе миграции и последнюю версию модели Product.
+*   Запустил невыполненные миграции с помощью `rake db:migrate`, включая обновляющие модель `Product`.
 
 Миграции не выполнятся, так как при попытке сохранения модели, она попытается валидировать второй добавленный столбец, отсутствующий в базе данных на момент запуска _первой_ миграции.
 
-<plain>
+```
 rake aborted!
 An error has occurred, this and all later migrations canceled:
 
 undefined method `fuzz' for #<Product:0x000001049b14a0>
-</plain>
+```
 
 Это исправляется путем создания локальной модели внутри миграции. Это предохраняет Rails от запуска валидаций, поэтому миграции проходят.
 
-При использовании искусственной модели неплохо бы вызвать +Product.reset_column_information+ для обновления кэша +ActiveRecord+ для модели +Product+ до обновления данных в базе данных.
+При использовании искусственной модели неплохо бы вызвать `Product.reset_column_information` для обновления кэша `ActiveRecord` для модели `Product` до обновления данных в базе данных.
 
 Если бы Алиса сделала бы так, проблем бы не было:
 
-<ruby>
+```ruby
 # db/migrate/20100513121110_add_flag_to_product.rb
 
 class AddFlagToProduct < ActiveRecord::Migration
@@ -85,9 +85,9 @@ class AddFlagToProduct < ActiveRecord::Migration
     Product.update_all :flag => false
   end
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 # db/migrate/20100515121110_add_fuzz_to_product.rb
 
 class AddFuzzToProduct < ActiveRecord::Migration
@@ -100,4 +100,4 @@ class AddFuzzToProduct < ActiveRecord::Migration
     Product.update_all :fuzz => 'fuzzy'
   end
 end
-</ruby>
+```
