@@ -10,6 +10,7 @@ public/system
 public/system/*
 public/assets
 tmp/**/*
+tmp
 .bundle
 Capfile
 webrat.log
