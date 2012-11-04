@@ -31,9 +31,9 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Макеты и рендеринг в Rails
-2. layouts_and_rendering.textile
-3.
-4. 02/09/12
+2. layouts_and_rendering.md
+3. fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
+4. 17/09/12
 
 1. Хелперы форм Rails
 2. form_helpers.textile
