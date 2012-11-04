@@ -8,7 +8,7 @@ h1. ИСТОРИЯ
 1. Rails для начинающих
 2. getting_started.md
 3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-4. 06/09/12
+4. 17/09/12
 
 1. Миграции базы данных Rails
 2. migrations.md
@@ -16,9 +16,9 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Валидации и колбэки Active Record
-2. active_record_validations_callbacks.textile
-3.
-4. 12/09/12
+2. active_record_validations_callbacks.md
+3. fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
+4. 17/09/12
 
 1. Связи Active Record
 2. association_basics.textile
