@@ -1,4 +1,4 @@
-h1. Интерфейс запросов Active Record
+# Интерфейс запросов Active Record
 
 Это руководство раскрывает различные способы получения данных из базы данных, используя Active Record. Изучив его, вы сможете:
 
@@ -14,32 +14,32 @@ h1. Интерфейс запросов Active Record
 
 Примеры кода далее в этом руководстве будут относиться к некоторым из этих моделей:
 
-TIP: Все модели используют +id+ как первичный ключ, если не указано иное.
+TIP: Все модели используют `id` как первичный ключ, если не указано иное.
 
-<ruby>
+```ruby
 class Client < ActiveRecord::Base
   has_one :address
   has_many :orders
   has_and_belongs_to_many :roles
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 class Address < ActiveRecord::Base
   belongs_to :client
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 class Order < ActiveRecord::Base
   belongs_to :client, :counter_cache => true
 end
-</ruby>
+```
 
-<ruby>
+```ruby
 class Role < ActiveRecord::Base
   has_and_belongs_to_many :clients
 end
-</ruby>
+```
 
 Active Record выполнит запросы в базу данных за вас, он совместим с большинством СУБД (MySQL, PostgreSQL и SQLite - это только некоторые из них). Независимо от того, какая используется СУБД, формат методов Active Record будет всегда одинаковый.

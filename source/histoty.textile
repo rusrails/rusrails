@@ -26,9 +26,9 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Интерфейс запросов Active Record
-2. active_record_querying.textile
-3.
-4. 11/09/12
+2. active_record_querying.md
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Макеты и рендеринг в Rails
 2. layouts_and_rendering.textile
