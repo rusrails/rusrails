@@ -21,9 +21,9 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Связи Active Record
-2. association_basics.textile
-3.
-4. 05/09/12
+2. association_basics.md
+3. fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
+4. 17/09/12
 
 1. Интерфейс запросов Active Record
 2. active_record_querying.textile

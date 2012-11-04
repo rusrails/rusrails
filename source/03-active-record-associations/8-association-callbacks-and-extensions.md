@@ -1,19 +1,19 @@
-h1. Подробная информация по колбэкам и расширениям связи
+# Подробная информация по колбэкам и расширениям связи
 
-h4. Колбэки связи
+### Колбэки связи
 
-Обычно колбэки прицепляются к жизненному циклу объектов Active Record, позволяя Вам работать с этими объектами в различных точках. Например, можете использовать колбэк +:before_save+, чтобы вызвать что-то перед тем, как объект будет сохранен.
+Обычно колбэки прицепляются к жизненному циклу объектов Active Record, позволяя Вам работать с этими объектами в различных точках. Например, можете использовать колбэк `:before_save`, чтобы вызвать что-то перед тем, как объект будет сохранен.
 
 Колбэки связи похожи на обычные колбэки, но они включаются событиями в жизненном цикле коллекции. Доступны четыре колбэка связи:
 
-* +before_add+
-* +after_add+
-* +before_remove+
-* +after_remove+
+* `before_add`
+* `after_add`
+* `before_remove`
+* `after_remove`
 
 Колбэки связи объявляются с помощью добавления опций в объявление связи. Например:
 
-<ruby>
+```ruby
 class Customer < ActiveRecord::Base
   has_many :orders, :before_add => :check_credit_limit
 
@@ -21,13 +21,13 @@ class Customer < ActiveRecord::Base
     ...
   end
 end
-</ruby>
+```
 
 Rails передает добавляемый или удаляемый объект в колбэк.
 
 Можете помещать колбэки в очередь на отдельное событие, передав их как массив:
 
-<ruby>
+```ruby
 class Customer < ActiveRecord::Base
   has_many :orders,
     :before_add => [:check_credit_limit, :calculate_shipping_charges]
@@ -40,15 +40,15 @@ class Customer < ActiveRecord::Base
     ...
   end
 end
-</ruby>
+```
 
-Если колбэк +before_add+ вызывает исключение, объект не будет добавлен в коллекцию. Подобным образом, если колбэк +before_remove+ вызывает исключение, объект не убирается из коллекции.
+Если колбэк `before_add` вызывает исключение, объект не будет добавлен в коллекцию. Подобным образом, если колбэк `before_remove` вызывает исключение, объект не убирается из коллекции.
 
-h4(#association-extensions). Расширения связи
+### Расширения связи
 
 Вы не ограничены функциональностью, которую Rails автоматически встраивает в выданные по связи объекты. Можете расширять эти объекты через анонимные модули, добавления новых методов поиска, создания и иных методов. Например:
 
-<ruby>
+```ruby
 class Customer < ActiveRecord::Base
   has_many :orders do
     def find_by_order_prefix(order_number)
@@ -56,11 +56,11 @@ class Customer < ActiveRecord::Base
     end
   end
 end
-</ruby>
+```
 
 Если имеется расширение, которое должно быть распространено на несколько связей, можете использовать именнованный модуль расширения. Например:
 
-<ruby>
+```ruby
 module FindRecentExtension
   def find_recent
     where("created_at > ?", 5.days.ago)
@@ -74,10 +74,10 @@ end
 class Supplier < ActiveRecord::Base
   has_many :deliveries, -> { extending FindRecentExtension }
 end
-</ruby>
+```
 
-Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя следующие три атрибута аксессора +proxy_association+:
+Расширения могут ссылаться на внутренние методы выданных по связи объектов, используя следующие три атрибута аксессора `proxy_association`:
 
-* +proxy_association.owner+ возвращает объект, в котором объявлена связь.
-* +proxy_association.reflection+ возвращает объект reflection, описывающий связь.
-* +proxy_association.target+ возвращает связанный объект для +belongs_to+ или +has_one+, или коллекцию связанных объектов для +has_many+ или +has_and_belongs_to_many+.
+* `proxy_association.owner` возвращает объект, в котором объявлена связь.
+* `proxy_association.reflection` возвращает объект reflection, описывающий связь.
+* `proxy_association.target` возвращает связанный объект для `belongs_to` или `has_one`, или коллекцию связанных объектов для `has_many` или `has_and_belongs_to_many`.
