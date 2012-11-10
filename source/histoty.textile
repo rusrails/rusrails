@@ -51,7 +51,7 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Расширения ядра Active Support
-2. active_support_core_extensions.textile
+2. active_support_core_extensions.md
 3.
 4. 24/08/12
 

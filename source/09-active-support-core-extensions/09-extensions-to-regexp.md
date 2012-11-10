@@ -1,20 +1,20 @@
-h1. Расширения для Regexp
+# Расширения для Regexp
 
-h4. +multiline?+
+### `multiline?`
 
-Метод +multiline?+ говорит, имеет ли регулярное выражение установленный флаг +/m+, то есть соответствует ли точка новым строкам.
+Метод `multiline?` говорит, имеет ли регулярное выражение установленный флаг `/m`, то есть соответствует ли точка новым строкам.
 
-<ruby>
+```ruby
 %r{.}.multiline?  # => false
 %r{.}m.multiline? # => true
 
 Regexp.new('.').multiline?                    # => false
 Regexp.new('.', Regexp::MULTILINE).multiline? # => true
-</ruby>
+```
 
 Rails использует этот метод в одном месте, в коде маршрутизации. Регулярные выражения Multiline недопустимы для маршрутных требований, и этот флаг облегчает обеспечение этого ограничения.
 
-<ruby>
+```ruby
 def assign_route_options(segments, defaults, requirements)
   ...
   if requirement.multiline?
@@ -22,6 +22,6 @@ def assign_route_options(segments, defaults, requirements)
   end
   ...
 end
-</ruby>
+```
 
-NOTE: Определено в +active_support/core_ext/regexp.rb+.
+NOTE: Определено в `active_support/core_ext/regexp.rb`.
