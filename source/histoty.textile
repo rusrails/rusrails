@@ -46,9 +46,9 @@ h1. ИСТОРИЯ
 4. 17/09/12
 
 1. Роутинг в Rails
-2. routing.textile
-3.
-4. 06/09/12
+2. routing.md
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Расширения ядра Active Support
 2. active_support_core_extensions.textile
