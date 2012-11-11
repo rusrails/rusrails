@@ -1,4 +1,4 @@
-h1. ИСТОРИЯ
+# ИСТОРИЯ
 
 1. Категория
 2. Оригинальное имя (в https://github.com/lifo/docrails/blob/master/guides/source/)
@@ -57,13 +57,13 @@ h1. ИСТОРИЯ
 
 1. API интернационализации Rails (I18n)
 2. i18n.textile
-3.
-4. 07/09/12
+3. 1fa5c3b39f5d0bb23c8c3d60b023613386629946
+4. 17/09/12
 
 1. Основы Action Mailer
 2. action_mailer_basics.textile
-3.
-4. 12/09/12
+3. 721afdcc4b58c65f36122b10ec998b913a147912
+4. 17/09/12
 
 1. Руководство по тестированию приложений на Rails
 2. testing.textile
