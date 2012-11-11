@@ -67,8 +67,8 @@
 
 1. Руководство по тестированию приложений на Rails
 2. testing.textile
-3.
-4. 15/07/12
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Руководство Ruby On Rails по безопасности
 2. security.textile
