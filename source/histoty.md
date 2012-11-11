@@ -72,8 +72,8 @@
 
 1. Руководство Ruby On Rails по безопасности
 2. security.textile
-3.
-4. 01/09/12
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Отладка приложений на Rails
 2. debugging_rails_applications.textile
