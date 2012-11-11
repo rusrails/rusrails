@@ -52,8 +52,8 @@ h1. ИСТОРИЯ
 
 1. Расширения ядра Active Support
 2. active_support_core_extensions.md
-3.
-4. 24/08/12
+3. 1fa5c3b39f5d0bb23c8c3d60b023613386629946
+4. 17/09/12
 
 1. API интернационализации Rails (I18n)
 2. i18n.textile
