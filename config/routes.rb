@@ -1,6 +1,8 @@
 Rusrails::Application.routes.draw do
   root :to => "pages#index"
 
+  get 'map' => 'pages#map'
+
   devise_for :users, :controllers => {:omniauth_callbacks => "omniauth_callbacks"}
   devise_scope :user do
     get '/users/auth/:provider' => 'omniauth_callbacks#passthru'

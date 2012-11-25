@@ -14,6 +14,7 @@ tmp/**/*
 Capfile
 webrat.log
 .sass-cache/
+tmp/
 
 config/settings.local.yml
 config/settings/*.local.yml

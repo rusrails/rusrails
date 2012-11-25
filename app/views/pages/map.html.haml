@@ -1,0 +1,11 @@
+%h1 Мы на карте!
+
+%script(src="http://wheremymates.com/teams/19.js" type="text/javascript")
+#map_canvas(style='height: 500px;')
+
+.info
+  %p
+    Не нашел себя!? Нужно всего лишь перейти
+    = link_to 'по этой ссылке-инвайту', 'http://wheremymates.com/teams/8377e13212437a31e2f6/join', :target => :_blank
+    на наш новый сервис
+    = link_to "WhereMyMates.com!", "http://wheremymates.com"

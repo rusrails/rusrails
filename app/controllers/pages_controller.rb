@@ -13,4 +13,7 @@ class PagesController < ApplicationController
     end
   end
 
+  def map
+  end
+
 end
