@@ -56,29 +56,29 @@
 4. 17/09/12
 
 1. API интернационализации Rails (I18n)
-2. i18n.textile
+2. i18n.md
 3. 1fa5c3b39f5d0bb23c8c3d60b023613386629946
 4. 17/09/12
 
 1. Основы Action Mailer
-2. action_mailer_basics.textile
+2. action_mailer_basics.md
 3. 721afdcc4b58c65f36122b10ec998b913a147912
 4. 17/09/12
 
 1. Руководство по тестированию приложений на Rails
-2. testing.textile
+2. testing.md
 3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
 4. 17/09/12
 
 1. Руководство Ruby On Rails по безопасности
-2. security.textile
+2. security.md
 3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
 4. 17/09/12
 
 1. Отладка приложений на Rails
-2. debugging_rails_applications.textile
-3.
-4. 09/09/12
+2. debugging_rails_applications.md
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Тестирование производительности приложений Rails
 2. performance_testing.textile

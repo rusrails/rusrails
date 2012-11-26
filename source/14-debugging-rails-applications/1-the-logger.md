@@ -1,55 +1,55 @@
-h1. Логгер
+# Логгер
 
 Также может быть полезным сохранять информацию в файл лога в процессе выполнения. Rails поддерживает отдельный файл лога для каждой среды запуска.
 
-h4. Что такое Логгер?
+### Что такое Логгер?
 
-Rails использует класс +ActiveSupport::BufferedLogger+ для записи информации в лог. Вы также можете заменить его другим логгером, таким как +Log4R+, если хотите.
+Rails использует класс `ActiveSupport::BufferedLogger` для записи информации в лог. Вы также можете заменить его другим логгером, таким как `Log4R`, если хотите.
 
-Альтернативный логгер можно определить в вашем +environment.rb+ или любом файле среды:
+Альтернативный логгер можно определить в вашем `environment.rb` или любом файле среды:
 
-<ruby>
+```ruby
 Rails.logger = Logger.new(STDOUT)
 Rails.logger = Log4r::Logger.new("Application Log")
-</ruby>
+```
 
-Или в разделе +Initializer+ добавьте _одно из_ следующего
+Или в разделе `Initializer` добавьте _одно из_ следующего
 
-<ruby>
+```ruby
 config.logger = Logger.new(STDOUT)
 config.logger = Log4r::Logger.new("Application Log")
-</ruby>
+```
 
-TIP: По умолчанию каждый лог создается в +RAILS_ROOT/log/+ с именем файла лога +environment_name.log+.
+TIP: По умолчанию каждый лог создается в `RAILS_ROOT/log/` с именем файла лога `environment_name.log`.
 
-h4. Уровни лога
+### Уровни лога
 
-Когда что-то логируется, оно записывается в соответствующий лог, если уровень лога сообщения равен или выше чем настроенный уровень лога. Если хотите узнать текущий уровень лога, вызовите метод +ActiveRecord::Base.logger.level+.
+Когда что-то логируется, оно записывается в соответствующий лог, если уровень лога сообщения равен или выше чем настроенный уровень лога. Если хотите узнать текущий уровень лога, вызовите метод `ActiveRecord::Base.logger.level`.
 
-Доступные уровни лога следующие: +:debug+, +:info+, +:warn+, +:error+, +:fatal+ и +:unknown+, соответствующие номерам уровня лога от 0 до 5 соответственно. Чтобы изменить уровень лога по умолчанию, используйте
+Доступные уровни лога следующие: `:debug`, `:info`, `:warn`, `:error`, `:fatal` и `:unknown`, соответствующие номерам уровня лога от 0 до 5 соответственно. Чтобы изменить уровень лога по умолчанию, используйте
 
-<ruby>
+```ruby
 config.log_level = :warn # В любом инициализаторе среды, или
 ActiveRecord::Base.logger.level = 0 # в любое время
-</ruby>
+```
 
 Это полезно, когда вы хотите логировать при разработке или установке, но не хотите замусорить рабочий лог ненужной информацией.
 
-TIP: Уровень лога Rails по умолчанию это +info+ в рабочем режиме и +debug+ в режиме разработки и тестирования.
+TIP: Уровень лога Rails по умолчанию это `info` в рабочем режиме и `debug` в режиме разработки и тестирования.
 
-h4. Отправка сообщений
+### Отправка сообщений
 
-Чтобы писать в текущий лог, используйте метод +logger.(debug|info|warn|error|fatal)+ внутри контроллера, модели или рассыльщика:
+Чтобы писать в текущий лог, используйте метод `logger.(debug|info|warn|error|fatal)` внутри контроллера, модели или рассыльщика:
 
-<ruby>
+```ruby
 logger.debug "Person attributes hash: #{@person.attributes.inspect}"
 logger.info "Processing the request..."
 logger.fatal "Terminating application, raised unrecoverable error!!!"
-</ruby>
+```
 
 Вот пример метода, оборудованного дополнительным логированием:
 
-<ruby>
+```ruby
 class PostsController < ApplicationController
   # ...
 
@@ -69,11 +69,11 @@ class PostsController < ApplicationController
 
   # ...
 end
-</ruby>
+```
 
 Вот пример лога, созданного этим методом:
 
-<shell>
+```
 Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
   Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
 vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
@@ -89,17 +89,17 @@ Post should be valid: true
 The post was saved and now the user is going to be redirected...
 Redirected to #<Post:0x20af760>
 Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
-</shell>
+```
 
 Добавление дополнительного логирования, подобного этому, облегчает поиск неожиданного или необычного поведения в ваших логах. Если добавляете дополнительное логирование, убедитесь в разумном использовании уровней лога, для избежания заполнения ваших рабочих логов ненужными мелочами.
 
-h4. Тегированное логирование
+### Тегированное логирование
 
-При запуске многопользовательских приложений часто полезно фильтровать логи с использованием произвольных правил. +TaggedLogging+ в Active Support помогает это сделать, помечая строчки лога с помощью поддомена, идентификаторов запроса, и тому подобного, помогая отладке таких приложений.
+При запуске многопользовательских приложений часто полезно фильтровать логи с использованием произвольных правил. `TaggedLogging` в Active Support помогает это сделать, помечая строчки лога с помощью поддомена, идентификаторов запроса, и тому подобного, помогая отладке таких приложений.
 
-<ruby>
+```ruby
 logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 logger.tagged("BCX") { logger.info "Stuff" }                            # Logs "[BCX] Stuff"
 logger.tagged("BCX", "Jason") { logger.info "Stuff" }                   # Logs "[BCX] [Jason] Stuff"
 logger.tagged("BCX") { logger.tagged("Jason") { logger.info "Stuff" } } # Logs "[BCX] [Jason] Stuff"
-</ruby>
+```
