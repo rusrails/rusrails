@@ -1,12 +1,12 @@
-h1. Инструменты командной строки
+# Инструменты командной строки
 
 Варианты написания теста производительности могут быть излишними, когда нужны одноразовые тесты. Rails имеет два инструмента командной строки, которые позволяют быстрое и черновое тестирование производительности:
 
-h4. +benchmarker+
+### `benchmarker`
 
 Использование:
 
-<shell>
+```bash
 Usage: rails benchmarker 'Ruby.code' 'Ruby.more_code' ... [OPTS]
     -r, --runs N                     Number of runs.
                                      Default: 4
@@ -14,19 +14,19 @@ Usage: rails benchmarker 'Ruby.code' 'Ruby.more_code' ... [OPTS]
                                      Default: tmp/performance
     -m, --metrics a,b,c              Metrics to use.
                                      Default: wall_time,memory,objects,gc_runs,gc_time
-</shell>
+```
 
 Пример:
 
-<shell>
+```bash
 $ rails benchmarker 'Item.all' 'CouchItem.all' --runs 3 --metrics wall_time,memory
-</shell>
+```
 
-h4. +profiler+
+### `profiler`
 
 Использование:
 
-<shell>
+```bash
 Usage: rails profiler 'Ruby.code' 'Ruby.more_code' ... [OPTS]
     -r, --runs N                     Number of runs.
                                      Default: 1
@@ -36,12 +36,12 @@ Usage: rails profiler 'Ruby.code' 'Ruby.more_code' ... [OPTS]
                                      Default: process_time,memory,objects
     -m, --formats x,y,z              Formats to output to.
                                      Default: flat,graph_html,call_tree
-</shell>
+```
 
 Пример:
 
-<shell>
+```bash
 $ rails profiler 'Item.all' 'CouchItem.all' --runs 2 --metrics process_time --formats flat
-</shell>
+```
 
-NOTE: Метрики и форматы изменяются от интерпретатора к интерпретатору. Передавайте +--help+ каждому инструменту, чтобы просмотреть значения по умолчанию для своего интерпретатора.
+NOTE: Метрики и форматы изменяются от интерпретатора к интерпретатору. Передавайте `--help` каждому инструменту, чтобы просмотреть значения по умолчанию для своего интерпретатора.

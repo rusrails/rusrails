@@ -82,8 +82,8 @@
 
 1. Тестирование производительности приложений Rails
 2. performance_testing.textile
-3.
-4. 12/08/12
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 1. Конфигурирование приложений на Rails
 2. configuring.textile
