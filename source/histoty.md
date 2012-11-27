@@ -86,9 +86,9 @@
 4. 17/09/12
 
 1. Конфигурирование приложений на Rails
-2. configuring.textile
-3.
-4. 13/09/12
+2. configuring.md
+3. 721afdcc4b58c65f36122b10ec998b913a147912
+4. 17/09/12
 
 1. Руководство по командной строке Rails
 2. command_line.textile
@@ -105,7 +105,8 @@
 3.
 4. 01/09/12
 
-** Другие / план **
+Другие / план
+-------------
 
 2.  3_0_release_notes.textile
 
@@ -149,7 +150,8 @@
 65. working_with_javascript_in_rails.md
 
 
-** Старые / не обновляемые **
+Старые / не обновляемые
+-----------------------
 
 0.  2_2_release_notes.md
 1.  2_3_release_notes.md
