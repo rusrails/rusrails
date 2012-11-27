@@ -10,7 +10,7 @@
 $ rails server
 ```
 
-TIP: Компилирование CoffeeScript в JavaScript требует JavaScript runtime, и его отсутствие приведет к ошибке `execjs`. Обычно Mac OS X и Windows поставляются с установленным JavaScript runtime. Rails добавляет гем `therubyracer` в Gemfile нового приложения в закомментированной строке, если нужно, можете ее раскомментировать. `therubyrhino` -- рекомендованный runtime для пользователей JRuby, он добавляется в Gemfile, если приложение создаётся под JRuby. Можно узнать все о поддерживаемых runtime-ах в [ExecJS](https://github.com/sstephenson/execjs#readme)
+TIP: Компилирование CoffeeScript в JavaScript требует JavaScript runtime, и его отсутствие приведет к ошибке `execjs`. Обычно Mac OS X и Windows поставляются с установленным JavaScript runtime. Rails добавляет гем `therubyracer` в Gemfile нового приложения в закомментированной строке, если нужно, можете ее раскомментировать. `therubyrhino` - рекомендованный runtime для пользователей JRuby, он добавляется в Gemfile, если приложение создаётся под JRuby. Можно узнать все о поддерживаемых runtime-ах в [ExecJS](https://github.com/sstephenson/execjs#readme)
 
 Это запустит WEBrick, веб-сервер, встроенный в Ruby по умолчанию. Чтобы увидеть приложение в действии, откройте окно браузера и пройдите по адресу [http://localhost:3000](http://localhost:3000). Вы должны увидеть дефолтную информационную страницу Rails:
 

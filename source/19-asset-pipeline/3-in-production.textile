@@ -79,7 +79,7 @@ application.js: application-3fdab497b8fb70d20cfc5495239dfc29.js
 application.css: application-8af74128f904600e41a6e39241464e03.css
 </plain>
 
-Размещение манифеста по умолчанию -- корень папки, определенной в +config.assets.prefix+ (по умолчанию '/assets').
+Размещение манифеста по умолчанию - корень папки, определенной в +config.assets.prefix+ (по умолчанию '/assets').
 
 Это может быть изменено с помощью опции +config.assets.manifest+. Требуется полностью определенный путь:
 

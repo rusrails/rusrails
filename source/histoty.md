@@ -91,9 +91,9 @@
 4. 17/09/12
 
 1. Руководство по командной строке Rails
-2. command_line.textile
-3.
-4. 02/08/12
+2. command_line.md
+3. fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
+4. 17/09/12
 
 1. Кэширование с Rails: Обзор
 2. caching_with_rails.textile

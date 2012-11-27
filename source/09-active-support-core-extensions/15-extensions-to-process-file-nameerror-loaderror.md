@@ -58,7 +58,7 @@ class Logger::FormatWithTime < Logger::Formatter
   cattr_accessor(:datetime_format) { "%Y%m%d%H%m%S" }
 
   def self.call(severity, timestamp, progname, msg)
-    "#{timestamp.strftime(datetime_format)} -- #{String === msg ? msg : msg.inspect}\n"
+    "#{timestamp.strftime(datetime_format)} - #{String === msg ? msg : msg.inspect}\n"
   end
 end
 
