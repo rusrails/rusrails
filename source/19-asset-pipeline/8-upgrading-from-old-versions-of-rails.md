@@ -1,14 +1,14 @@
-h1. Обновление со старых версий Rails
+# Обновление со старых версий Rails
 
-Имеются несколько проблем при обновлении. Первая это перемещение файлов из +public/+ в новые места размещения. Смотрите "Организация ресурсов":/asset-pipeline/how-to-use-the-asset-pipeline ранее в руководстве для правильного размешения файлов разных типов.
+Имеются несколько проблем при обновлении. Первая это перемещение файлов из `public/` в новые места размещения. Смотрите [Организация ресурсов](/asset-pipeline/how-to-use-the-asset-pipeline) ранее в руководстве для правильного размешения файлов разных типов.
 
-Следующей является избегание дублирования файлов JavaScript. Так как jQuery является библиотекой JavaScript по умолчанию, начиная с Rails 3.1 и далее, не нужно купировать +jquery.js+ в +app/assets+, он будет включен автоматически.
+Следующей является избегание дублирования файлов JavaScript. Так как jQuery является библиотекой JavaScript по умолчанию, начиная с Rails 3.1 и далее, не нужно купировать `jquery.js` в `app/assets`, он будет включен автоматически.
 
 Третья это обновление файлов различных сред с правильными значениями по умолчанию. Следующие изменения отражают значения по умолчанию в версии 3.1.0.
 
-В +application.rb+:
+В `application.rb`:
 
-<erb>
+```ruby
 # Включить файлопровод
 config.assets.enabled = true
 
@@ -17,21 +17,21 @@ config.assets.version = '1.0'
 
 # Измените путь, откуда отдаются ресурсы
 # config.assets.prefix = "/assets"
-</erb>
+```
 
-В +development.rb+:
+В `development.rb`:
 
-<erb>
+```ruby
 # Не сжимать ресурсы
 config.assets.compress = false
 
 # Разворачивать строки, загружающие ресурсы the lines which load the assets
 config.assets.debug = true
-</erb>
+```
 
-И в +production.rb+:
+И в `production.rb`:
 
-<erb>
+```ruby
 # Сжимать JavaScripts и CSS
 config.assets.compress = true
 
@@ -49,14 +49,14 @@ config.assets.digest = true
 # config.assets.manifest = YOUR_PATH
 
 # Прекомпилировать дополнительные ресурсы (application.js, application.css и все не-JS/CSS уже добавлены)
-# config.assets.precompile += %w( search.js )
-</erb>
+# config.assets.precompile `= %w( search.js )
+```
 
-Не нужно изменять +test.rb+. По умолчанию в среде test: +config.assets.compile+ равно true и +config.assets.compress+, +config.assets.debug+ и +config.assets.digest+ равны false.
+Не нужно изменять `test.rb`. По умолчанию в среде test: `config.assets.compile` равно true и `config.assets.compress`, `config.assets.debug` и `config.assets.digest` равны false.
 
-Следующее также должно быть добавлено в +Gemfile+:
+Следующее также должно быть добавлено в `Gemfile`:
 
-<plain>
+```ruby
 # Гемы, используемые только для ресурсов и не требуемые
 # в среде production по умолчанию.
 group :assets do
@@ -64,23 +64,23 @@ group :assets do
   gem 'coffee-rails', "~> 3.2.1"
   gem 'uglifier'
 end
-</plain>
+```
 
-Если используете группу +assets+ с Bundler, убедитесь, что в вашем +config/application.rb+ имеется следующее выражение Bundler require.
+Если используете группу `assets` с Bundler, убедитесь, что в вашем `config/application.rb` имеется следующее выражение Bundler require.
 
-<ruby>
+```ruby
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require *Rails.groups(:assets => %w(development test))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
-</ruby>
+```
 
 Вместо старого из Rails версии 3.0
 
-<ruby>
+```ruby
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
-</ruby>
+```

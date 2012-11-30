@@ -101,9 +101,9 @@
 4. 17/09/12
 
 1. Asset Pipeline
-2. asset_pipeline.textile
-3.
-4. 01/09/12
+2. asset_pipeline.md
+3. 41dbb58e2dd16710ffae0a44c04cf21bed5588e0
+4. 17/09/12
 
 Другие / план
 -------------
