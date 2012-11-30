@@ -96,9 +96,9 @@
 4. 17/09/12
 
 1. Кэширование с Rails: Обзор
-2. caching_with_rails.textile
-3.
-4. 09/09/12
+2. caching_with_rails.md
+3. 721afdcc4b58c65f36122b10ec998b913a147912
+4. 17/09/12
 
 1. Asset Pipeline
 2. asset_pipeline.textile

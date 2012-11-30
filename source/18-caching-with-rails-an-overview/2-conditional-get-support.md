@@ -1,4 +1,4 @@
-h1. Поддержка GET с условием (Conditional GET)
+# Поддержка GET с условием (Conditional GET)
 
 GET с условием это особенность спецификации HTTP, предоставляющая способ вебсерверам сказать браузерам, что отклик на запрос GET не изменился с последнего запроса и может быть спокойно извлечен из кэша браузера.
 
@@ -6,7 +6,7 @@ GET с условием это особенность спецификации H
 
 Это обязанность сервера (т.е. наша) искать временную метку последнего изменения и заголовок if-none-match, и определять, нужно ли отсылать полный отклик. С поддержкой conditional-get в Rails это очень простая задача:
 
-<ruby>
+```ruby
 class ProductsController < ApplicationController
 
   def show
@@ -26,22 +26,22 @@ class ProductsController < ApplicationController
     # :not_modified.  И на этом все.
   end
 end
-</ruby>
+```
 
-Вместо хэша опций можно просто передать модель, Rails будет использовать методы +updated_at+ и +cache_key+ для настройки +last_modified+ и +etag+:
+Вместо хэша опций можно просто передать модель, Rails будет использовать методы `updated_at` и `cache_key` для настройки `last_modified` и `etag`:
 
-<ruby>
+```ruby
 class ProductsController < ApplicationController
   def show
     @product = Product.find(params[:id])
     respond_with(@product) if stale?(@product)
   end
 end
-</ruby>
+```
 
 Если отсутствует специальная обработка отклика и используется дефолтный механизм рендеринга (т.е. вы не используете respond_to или вызываете сам render), то можете использовать простой хелпер fresh_when:
 
-<ruby>
+```ruby
 class ProductsController < ApplicationController
 
   # Это автоматически отошлет :not_modified, если запрос свежий,
@@ -52,4 +52,4 @@ class ProductsController < ApplicationController
     fresh_when :last_modified => @product.published_at.utc, :etag => @product
   end
 end
-</ruby>
+```
