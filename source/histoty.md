@@ -109,16 +109,16 @@
 -------------
 
 2.  3_0_release_notes.textile
-
-    17/03/12
+    7a0dad25f3be77211160560dc76a8f37963051d7
+    17/09/12
 
 3.  3_1_release_notes.textile
-
-    17/03/12
+    7a0dad25f3be77211160560dc76a8f37963051d7
+    17/09/12
 
 4.  3_2_release_notes.textile
-
-    11/04/12
+    7a0dad25f3be77211160560dc76a8f37963051d7
+    17/09/12
 
 5.  4_0_release_notes.md
     efa7717b7ab71f026df4e464046519e973c31f9a
