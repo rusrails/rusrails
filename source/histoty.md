@@ -108,15 +108,15 @@
 Другие / план
 -------------
 
-2.  3_0_release_notes.textile
+2.  3_0_release_notes.md
     7a0dad25f3be77211160560dc76a8f37963051d7
     17/09/12
 
-3.  3_1_release_notes.textile
+3.  3_1_release_notes.md
     7a0dad25f3be77211160560dc76a8f37963051d7
     17/09/12
 
-4.  3_2_release_notes.textile
+4.  3_2_release_notes.md
     7a0dad25f3be77211160560dc76a8f37963051d7
     17/09/12
 
@@ -132,18 +132,18 @@
 22. contributing_to_ruby_on_rails.md
 23. development_dependencies_install.md
 
-25. engines.textile
-
-    07/09/12
+25. engines.md
+    fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
+    17/09/12
 
 30. generators.md
 35. initialization.md
 45. plugins.md
 50. rails_application_templates.md
 
-55. rails_on_rack.textile
-
-    14/06/2012
+55. rails_on_rack.md
+    721afdcc4b58c65f36122b10ec998b913a147912
+    17/09/2012
 
 57. ruby_on_rails_guides_guidelines.md
 60. upgrading_ruby_on_rails.textile
