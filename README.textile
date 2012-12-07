@@ -1,7 +1,0 @@
-h3. Diffs
-
-q: How can I see diffs in bottom files by https://github.com/lifo/docrails/compare link, when there are too many files
-a: I am afraid we cannot show large diffs. You can see it locally though. /Petros Amiridis (GitHub Staff)/
-
-Поэтому в помощь форк docrails. "Инструкция по форкам":http://help.github.com/fork-a-repo/
-А затем берем дифф по отдельному файлу: +git diff fa159d317611d1fe5b48 -- guides/source/getting_started.textile >> gettin.diff+
