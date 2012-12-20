@@ -17,12 +17,12 @@
 
 <p>
   <%= link_to 'Destroy Comment', [comment.post, comment],
-               :method => :delete,
-               :data => { :confirm => 'Are you sure?' } %>
+               method: :delete,
+               data: { confirm: 'Are you sure?' } %>
 </p>
 ```
 
-Нажатие этой новой ссылки "Destroy Comment" запустит `DELETE /posts/:id/comments/:id` в нашем `CommentsController`, который затем будет использоваться для нахождения комментария, который мы хотим удалить, поэтому давайте добавим экшн destroy в наш контроллер:
+Нажатие этой новой ссылки "Destroy Comment" запустит `DELETE /posts/:post_id/comments/:id` в нашем `CommentsController`, который затем будет использоваться для нахождения комментария, который мы хотим удалить, поэтому давайте добавим экшн destroy в наш контроллер (`app/controllers/comments_controller.rb`):
 
 ```ruby
 class CommentsController < ApplicationController
@@ -51,8 +51,9 @@ end
 
 ```ruby
 class Post < ActiveRecord::Base
-  validates :title, :presence => true,
-                    :length => { :minimum => 5 }
-  has_many :comments, :dependent => :destroy
+  has_many :comments, dependent: :destroy
+  validates :title, presence: true,
+                    length: { minimum: 5 }
+  [...]
 end
 ```

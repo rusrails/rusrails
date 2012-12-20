@@ -16,15 +16,14 @@ $ rails generate model Comment commenter:string body:text post:references
 |---------------------------------------------|------------|
 |db/migrate/20100207235629_create_comments.rb | Миграция для создания таблицы comments в вашей базе данных (ваше имя файла будет включать другую временную метку) |
 | app/models/comment.rb                       | Модель Comment |
-| test/unit/comment_test.rb                   | Каркас для юнит-тестирования модели комментариев |
+| test/models/comment_test.rb                 | Каркас для тестирования модели комментариев |
 | test/fixtures/comments.yml                  | Образцы комментариев для использования в тестировании |
 
-Сначала взглянем на `comment.rb`:
+Сначала взглянем на `app/models/comment.rb`:
 
 ```ruby
 class Comment < ActiveRecord::Base
   belongs_to :post
-  attr_accessible :body, :commenter
 end
 ```
 
@@ -72,7 +71,7 @@ Rails достаточно сообразителен, чтобы запуска
 * Каждый комментарий принадлежит одной публикации.
 * Одна публикация может иметь много комментариев.
 
-Фактически, это очень близко к синтаксису, который использует Rails для объявления этой связи. Вы уже видели строку кода в модели Comment, которая делает каждый комментарий принадлежащим публикации:
+Фактически, это очень близко к синтаксису, который использует Rails для объявления этой связи. Вы уже видели строку кода в модели `Comment` (app/models/comment.rb), которая делает каждый комментарий принадлежащим публикации:
 
 ```ruby
 class Comment < ActiveRecord::Base
@@ -80,14 +79,14 @@ class Comment < ActiveRecord::Base
 end
 ```
 
-Вам нужно отредактировать файл `post.rb`, добавив другую сторону связи:
+Вам нужно отредактировать `app/models/post.rb`, добавив другую сторону связи:
 
 ```ruby
 class Post < ActiveRecord::Base
-  validates :title, :presence => true,
-                    :length => { :minimum => 5 }
-
   has_many :comments
+  validates :title, presence: true,
+                    length: { minimum: 5 }
+  [...]
 end
 ```
 
@@ -119,19 +118,19 @@ $ rails generate controller Comments
 
 Создадутся шесть файлов и пустая директория:
 
-| Файл/Директория                             | Назначение                                |
-|---------------------------------------------|-------------------------------------------|
-| app/controllers/comments_controller.rb      | Контроллер Comments                       |
-| app/views/comments/                         | Вьюхи контроллера хранятся здесь          |
-| test/functional/comments_controller_test.rb | Функциональные тесты для контроллера      |
-| app/helpers/comments_helper.rb              | Хелпер для вьюх                           |
-| test/unit/helpers/comments_helper_test.rb   | Юнит-тесты для хелпера                    |
-| app/assets/javascripts/comment.js.coffee    | CoffeeScript для контроллера              |
-| app/assets/stylesheets/comment.css.scss     | Каскадная таблица стилей для контроллера  |
+| Файл/Директория                              | Назначение                                |
+|--------------------------------------------- |-------------------------------------------|
+| app/controllers/comments_controller.rb       | Контроллер Comments                       |
+| app/views/comments/                          | Вьюхи контроллера хранятся здесь          |
+| test/controllers/comments_controller_test.rb | Тест для контроллера                      |
+| app/helpers/comments_helper.rb               | Хелпер для вьюх                           |
+| test/unit/helpers/comments_helper_test.rb    | Юнит-тесты для хелпера                    |
+| app/assets/javascripts/comment.js.coffee     | CoffeeScript для контроллера              |
+| app/assets/stylesheets/comment.css.scss      | Каскадная таблица стилей для контроллера  |
 
 Как и в любом другом блоге, наши читатели будут создавать свои комментарии сразу после прочтения публикации, и после добавления комментария они будут направляться обратно на страницу отображения публикации и видеть, что их комментарий уже отражен. В связи с этим, наш `CommentsController` служит как средство создания комментариев и удаления спама, если будет.
 
-Сначала мы расширим шаблон Post show ( `/app/views/posts/show.html.erb` ), чтобы он позволял добавить новый комментарий:
+Сначала мы расширим шаблон Post show (`app/views/posts/show.html.erb`), чтобы он позволял добавить новый комментарий:
 
 ```html+erb
 <p>
@@ -165,7 +164,7 @@ $ rails generate controller Comments
 
 Это добавит форму на страницу отображения публикации, создающую новый комментарий при вызове экшна `create` в `CommentsController`. Тут вызов `form_for` использует массив, что создаст вложенный маршрут, такой как `/posts/1/comments`.
 
-Давайте напишем `create`:
+Давайте напишем `create` в `app/controllers/comments_controller.rb`:
 
 ```ruby
 class CommentsController < ApplicationController

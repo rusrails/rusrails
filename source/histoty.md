@@ -2,8 +2,8 @@
 
 00. Rails для начинающих
     getting_started.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    baea5d69be52def2a81c31cd119f8dfcd2aa087b
+    05/12/12
 
 01. Миграции базы данных Rails
     migrations.md

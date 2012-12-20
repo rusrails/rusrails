@@ -12,11 +12,11 @@ $ rails server
 
 TIP: Компилирование CoffeeScript в JavaScript требует JavaScript runtime, и его отсутствие приведет к ошибке `execjs`. Обычно Mac OS X и Windows поставляются с установленным JavaScript runtime. Rails добавляет гем `therubyracer` в Gemfile нового приложения в закомментированной строке, если нужно, можете ее раскомментировать. `therubyrhino` - рекомендованный runtime для пользователей JRuby, он добавляется в Gemfile, если приложение создаётся под JRuby. Можно узнать все о поддерживаемых runtime-ах в [ExecJS](https://github.com/sstephenson/execjs#readme)
 
-Это запустит WEBrick, веб-сервер, встроенный в Ruby по умолчанию. Чтобы увидеть приложение в действии, откройте окно браузера и пройдите по адресу [http://localhost:3000](http://localhost:3000). Вы должны увидеть дефолтную информационную страницу Rails:
+Это запустит WEBrick, веб-сервер, встроенный в Ruby по умолчанию. Чтобы увидеть приложение в действии, откройте окно браузера и пройдите по адресу <http://localhost:3000>. Вы должны увидеть дефолтную информационную страницу Rails:
 
 ![скриншот Welcome Aboard](/assets/guides/rails_welcome30.png)
 
-TIP: Для остановки веб-сервера нажмите Ctrl+C в терминале, где он запущен. В режиме development, Rails в основном не требует остановки сервера; все изменения, которые Вы делаете в файлах, автоматически подхватываются сервером.
+TIP: Для остановки веб-сервера нажмите Ctrl+C в терминале, где он запущен. Чтобы убедиться в том, что сервер был остановлен, вы должны снова увидеть  курсор командной строки. Для большинства UNIX-подобных систем, включая Mac OS X, это будет знак доллара `$`. В режиме development, Rails в основном не требует остановки сервера; все изменения, которые Вы делаете в файлах, автоматически подхватываются сервером.
 
 Страница "Welcome Aboard" это своеобразный тест для нового приложения на Rails: она показывает, что ваши программы настроены достаточно правильно для отображения страницы. Также можете нажать по ссылке _About your application’s environment_ чтобы увидеть сводку о среде вашего приложения.
 
@@ -43,11 +43,11 @@ invoke  erb
 create    app/views/welcome
 create    app/views/welcome/index.html.erb
 invoke  test_unit
-create    test/functional/welcome_controller_test.rb
+create    test/controllers/welcome_controller_test.rb
 invoke  helper
 create    app/helpers/welcome_helper.rb
 invoke    test_unit
-create      test/unit/helpers/welcome_helper_test.rb
+create      test/helpers/welcome_helper_test.rb
 invoke  assets
 invoke    coffee
 create      app/assets/javascripts/welcome.js.coffee
@@ -65,7 +65,7 @@ create      app/assets/stylesheets/welcome.css.scss
 
 ### Настройка домашней страницы приложения
 
-Теперь, когда мы сделали контроллер и вьюху, нужно сказать Rails, что мы хотим увидеть "Hello Rails!". В нашем случае мы хотим это увидеть, когда зайдем в корневой URL нашего сайта, [http://localhost:3000](http://localhost:3000). Однако сейчас это место заняла тестовая "Welcome Aboard".
+Теперь, когда мы сделали контроллер и вьюху, нужно сказать Rails, что мы хотим увидеть "Hello Rails!". В нашем случае мы хотим это увидеть, когда зайдем в корневой URL нашего сайта, <http://localhost:3000>. Однако сейчас это место заняла тестовая "Welcome Aboard".
 
 Чтобы это исправить, удалите файл `index.html`, расположенный в директории `public` приложения.
 
@@ -83,18 +83,17 @@ Blog::Application.routes.draw do
   # first created -> highest priority.
   # ...
   # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => "welcome#index"
+  # root to: "welcome#index"
 ```
 
 Это _маршрутный файл_ вашего приложения, который содержит варианты входа на сайт на специальном языке DSL (domain-specific language, предметно-ориентированный язык программирования), который говорит Rails, как соединять входящие запросы с контроллерами и экшнами. Этот файл содержит много закомментированных строк с примерами, и один из них фактически показывает, как соединить корень сайта с определенным контроллером и экшном. Найдите строку, начинающуюся с `root :to` и раскоментируйте ее. Должно получится следующее:
 
 ```ruby
-root :to => "welcome#index"
+root to: "welcome#index"
 ```
 
-`root :to => "welcome#index"` говорит Rails направить запросы к корню приложения в экшн index контроллера welcome, а `get "welcome/index"` говорит Rails направлять запросы к [http://localhost:3000/welcome/index](http://localhost:3000/welcome/index) в экшн index контроллера welcome. Он был создан ранее при запуске генератора контроллера (`rails generate controller welcome index`).
+`root to: "welcome#index"` говорит Rails направить запросы к корню приложения в экшн index контроллера welcome, а `get "welcome/index"` говорит Rails направлять запросы к <http://localhost:3000/welcome/index> в экшн index контроллера welcome. Он был создан ранее при запуске генератора контроллера (`rails generate controller welcome index`).
 
-Теперь, если вы пройдете по адресу [http://localhost:3000](http://localhost:3000) в браузере, то увидите надпись `Hello, Rails!`, которую вы поместили в  `app/views/welcome/index.html.erb`, показывающую, что этот новый маршрут действительно ведет в экшн `index` в `WelcomeController`, и вьюха корректно рендерится.
+Теперь, если вы пройдете по адресу <http://localhost:3000> в браузере, то увидите надпись `Hello, Rails!`, которую вы поместили в  `app/views/welcome/index.html.erb`, показывающую, что этот новый маршрут действительно ведет в экшн `index` в `WelcomeController`, и вьюха корректно рендерится.
 
-NOTE. Чтобы узнать больше о роутинге, обратитесь к руководству [Роутинг в Rails](/rails-routing).
+TIP. Чтобы узнать больше о роутинге, обратитесь к руководству [Роутинг в Rails](/rails-routing).
