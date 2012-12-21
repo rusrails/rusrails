@@ -16,7 +16,7 @@
 class AddFlagToProduct < ActiveRecord::Migration
   def change
     add_column :products, :flag, :boolean
-    Product.update_all :flag => false
+    Product.update_all flag: false
   end
 end
 ```
@@ -25,7 +25,7 @@ end
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, :presence => true
+  validates :flag, presence: true
 end
 ```
 
@@ -37,7 +37,7 @@ end
 class AddFuzzToProduct < ActiveRecord::Migration
   def change
     add_column :products, :fuzz, :string
-    Product.update_all :fuzz => 'fuzzy'
+    Product.update_all fuzz: 'fuzzy'
   end
 end
 ```
@@ -46,7 +46,7 @@ end
 # app/model/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, :fuzz, :presence => true
+  validates :flag, :fuzz, presence: true
 end
 ```
 
@@ -68,7 +68,7 @@ undefined method `fuzz' for #<Product:0x000001049b14a0>
 
 Это исправляется путем создания локальной модели внутри миграции. Это предохраняет Rails от запуска валидаций, поэтому миграции проходят.
 
-При использовании искусственной модели неплохо бы вызвать `Product.reset_column_information` для обновления кэша `ActiveRecord` для модели `Product` до обновления данных в базе данных.
+При использовании локальной модели неплохо бы вызвать `Product.reset_column_information` для обновления кэша `ActiveRecord` для модели `Product` до обновления данных в базе данных.
 
 Если бы Алиса сделала бы так, проблем бы не было:
 
@@ -82,7 +82,7 @@ class AddFlagToProduct < ActiveRecord::Migration
   def change
     add_column :products, :flag, :boolean
     Product.reset_column_information
-    Product.update_all :flag => false
+    Product.update_all flag: false
   end
 end
 ```
@@ -97,7 +97,17 @@ class AddFuzzToProduct < ActiveRecord::Migration
   def change
     add_column :products, :fuzz, :string
     Product.reset_column_information
-    Product.update_all :fuzz => 'fuzzy'
+    Product.update_all fuzz: 'fuzzy'
   end
 end
 ```
+
+Имеется несколько способов, при которых вышеприведенные примеры могут сработать плохо.
+
+Например, представим, что Алиса создала миграцию, избирательно обновляющую поле `description` для определенных продуктов. Она запускает миграцию, комитит код, и начинает работать над следующей задачей, которая добавляет новый столбец `fuzz` в таблицу продуктов.
+
+Она создает двве миграции для этой новой задачи, одна из которых  добавляет новый столбец, а вторая избирательно обновляет столбец `fuzz`, основываясь на других атрибутах продукта.
+
+Эти миграции прекрасно запускаются, но когда Боб возвращается из отпуска  вызывает `rake db:migrate` для запуска всех невыполненных миграций, он получает неуловимый баг: Описания имеют значения по умолчанию, столбец `fuzz` присутствует, но `fuzz` равно nil для всех продуктов.
+
+Решением снова является использование `Product.reset_column_information` до обращения к модели Product в миграции, чтобы убедиться в знании Active Record о текущей структуре таблицы до манипуляции с данными в этих записях.

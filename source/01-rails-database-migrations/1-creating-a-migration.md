@@ -1,33 +1,10 @@
 # Создание миграции
 
-### Создание модели
-
-Генераторы модели и скаффолда создают соответстующие миграции для добавления новой модели. Эта миграция уже содержит инструкции для создания соответствующей таблицы. Если вы сообщите Rails какие столбцы вам нужны, выражения для создания этих столбцов также будут добавлены. Например, запуск
-
-```bash
-$ rails generate model Product name:string description:text
-```
-
-создаст подобную миграцию
-
-```ruby
-class CreateProducts < ActiveRecord::Migration
-  def change
-    create_table :products do |t|
-      t.string :name
-      t.text :description
-
-      t.timestamps
-    end
-  end
-end
-```
-
-Вы можете указать столько пар имя-столбца/тип, сколько хотите. По умолчанию сгенерированная миграция будет включать `t.timestamps` (что создает столбцы `updated_at` и `created_at`, автоматически заполняемые Active Record).
-
 ### Создание автономной миграции
 
-Если хотите создать миграцию для других целей (например, добавить столбец в существующую таблицу), также возможно использовать генератор миграции:
+Миграции хранятся как файлы в директории `db/migrate`, один файл на каждый класс. Имя файла имеет вид `YYYYMMDDHHMMSS_create_products.rb`, это означает, что временная метка UTC идентифицирует миграцию, затем идет знак подчеркивания, затем идет имя миграции, где слова разделены подчеркиваниями. Имя класса миграции содержит буквенную часть названия файла, но уже в формате CamelCase (т.е. слова пишутся слитно, каждое слово начинается с большой буквы). Например, `20080906120000_create_products.rb` должен определять класс `CreateProducts`, а `20080906120001_add_details_to_products.rb` должен определять `AddDetailsToProducts`.
+
+Конечно, вычисление временных меток не забавно, поэтому Active Record предоставляет генератор для управления этим:
 
 ```bash
 $ rails generate migration AddPartNumberToProducts
@@ -95,7 +72,7 @@ class AddDetailsToProducts < ActiveRecord::Migration
 end
 ```
 
-Как всегда, то, что было сгенерировано, является всего лишь стартовой точкой. Вы можете добавлять и убирать строки, как считаете нужным, отредактировав файл db/migrate/YYYYMMDDHHMMSS_add_details_to_products.rb.
+Как всегда, то, что было сгенерировано, является всего лишь стартовой точкой. Вы можете добавлять и убирать строки, как считаете нужным, отредактировав файл `db/migrate/YYYYMMDDHHMMSS_add_details_to_products.rb`.
 
 NOTE. Генерируемый файл миграции для деструктивных миграций будет все еще по-старому использовать методы `up` и `down`. Это так, потому что Rails не может знать оригинальные типы данных, которые вы создали когда-то ранее.
 
@@ -110,12 +87,37 @@ $ rails generate migration AddUserRefToProducts user:references
 ```ruby
 class AddUserRefToProducts < ActiveRecord::Migration
   def change
-    add_reference :products, :user, :index => true
+    add_reference :products, :user, index: true
   end
 end
 ```
 
-Эта миграция создаст столбец user_id и соответствующий индекс.
+Эта миграция создаст столбец `user_id` и соответствующий индекс.
+
+### Генераторы модели
+
+Генераторы модели и скаффолда создадут миграции, подходящие для создания новой модели. Миграция будет содержать инструкции для создания соответствующей таблицы. Если вы сообщите Rails, какие столбцы вы хотите, то выражения для добавления этих столбцов также будут созданы. Например, запуск
+
+```bash
+$ rails generate model Product name:string description:text
+```
+
+создаст миграцию, которая выглядит так
+
+```ruby
+class CreateProducts < ActiveRecord::Migration
+  def change
+    create_table :products do |t|
+      t.string :name
+      t.text :description
+
+      t.timestamps
+    end
+  end
+end
+```
+
+Можно определить сколько угодно пар имя столбца/тип.
 
 ### Поддерживаемые модификаторы типа
 
@@ -137,8 +139,8 @@ $ rails generate migration AddDetailsToProducts price:decimal{5,2} supplier:refe
 ```ruby
 class AddDetailsToProducts < ActiveRecord::Migration
   def change
-    add_column :products, :price, :precision => 5, :scale => 2
-    add_reference :products, :user, :polymorphic => true, :index => true
+    add_column :products, :price, precision: 5, scale: 2
+    add_reference :products, :user, polymorphic: true, index: true
   end
 end
 ```

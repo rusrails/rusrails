@@ -4,7 +4,7 @@
 
 ### Создание таблицы
 
-Метод `create_table` миграции будет одной из ваших рабочих лошадок. Обычное использование такое
+Метод `create_table` один из основных, но в большинстве случаев будет создан для вас генератором модли или скаффолда. Обычное использование такое
 
 ```ruby
 create_table :products do |t|
@@ -14,27 +14,11 @@ end
 
 Это создаст таблицу `products` со столбцом `name` (и, как обсуждалось выше, подразумеваемым столбцом `id`).
 
-Объект, переданный в блок, позволяет вам создавать столбцы в таблице. Есть два способа сделать это. Первая (традиционная) форма выглядит так
+По умолчанию `create_table` создаст первичный ключ, названный `id`. Вы можете изменить имя первичного ключа с помощью опции `:primary_key` (не забудьте также обновить соответствующую модель), или, если вы вообще не хотите первичный ключ, можно указать опцию `id: false`. Если нужно передать базе данных специфичные опции, вы можете поместить фрагмент `SQL` в опцию `:options`. Например,
 
 ```ruby
-create_table :products do |t|
-  t.column :name, :string, :null => false
-end
-```
-
-Вторая форма, так называемая "секси" миграция, опускает несколько избыточный метод `column`. Вместо этого, методы `string`, `integer`, и т.д. создают столбцы этого типа. Дополнительные параметры те же самые.
-
-```ruby
-create_table :products do |t|
-  t.string :name, :null => false
-end
-```
-
-По умолчанию `create_table` создаст первичный ключ, названный `id`. Вы можете изменить имя первичного ключа с помощью опции `:primary_key` (не забудьте также обновить соответствующую модель), или, если вы вообще не хотите первичный ключ (например, соединительная таблица для связи _многие ко многим_), можно указать опцию `:id => false`. Если нужно передать базе данных специфичные опции, вы можете поместить фрагмент `SQL` в опцию `:options`. Например,
-
-```ruby
-create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
-  t.string :name, :null => false
+create_table :products, options: "ENGINE=BLACKHOLE" do |t|
+  t.string :name, null: false
 end
 ```
 
@@ -53,7 +37,7 @@ create_join_table :products, :categories
 Если хотите изменить имя таблицы, используйте опцию `:table_name`. Например,
 
 ```ruby
-create_join_table :products, :categories, :table_name => :categorization
+create_join_table :products, :categories, table_name: :categorization
 ```
 
 создаст таблицу `categorization`.
@@ -61,7 +45,7 @@ create_join_table :products, :categories, :table_name => :categorization
 По умолчанию `create_join_table` создаст два столбца без опций, но можно определить эти опции с использованием опции `:column_options`. Например,
 
 ```ruby
-create_join_table :products, :categories, :column_options => {:null => true}
+create_join_table :products, :categories, column_options: {null: true}
 ```
 
 создаст `product_id` и `category_id` с опцией `:null` равной `true`.
@@ -81,53 +65,19 @@ end
 
 удаляет столбцы `description` и `name`, создает строковый столбец `part_number` и добавляет индекс на него. Наконец, он переименовывает столбец `upccode`.
 
-### Специальные хелперы
+### Когда хелперов недостаточно
 
-Active Record предоставляет некоторые ярлыки для обычной функциональности. Вот, например, обычно добавляются два столбца `created_at` и `updated_at`, поэтому есть метод, который делает непосредственно это:
-
-```ruby
-create_table :products do |t|
-  t.timestamps
-end
-```
-
-создает новую таблицу products с этими двумя столбцами (плюс столбец `id`), в то время как
+Если хелперов, предоставленных Active Record, недостаточно, можно использовать метод `execute` для запуска произвольного SQL:
 
 ```ruby
-change_table :products do |t|
-  t.timestamps
-end
+Products.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 ```
-
-добавляет эти столбцы в существующую таблицу.
-
-Другой хелпер называется `references` (также доступен как `belongs_to`). В простой форме он только добавляет немного читаемости кода
-
-```ruby
-create_table :products do |t|
-  t.references :category
-end
-```
-
-создаст столбец `category_id` подходящего типа. Отметьте, что вы указали имя модели, а не имя столбца. Active Record добавил `_id` за вас. Если у вас есть полиморфные связи `belongs_to`, то `references` создаст оба требуемых столбца:
-
-```ruby
-create_table :products do |t|
-  t.references :attachment, :polymorphic => {:default => 'Photo'}
-end
-```
-
-добавит столбец `attachment_id` и строковый столбец `attachment_type` со значением по умолчанию "Photo". `references` также позволяет сразу определить индекс, вместо использования `add_index` после вызова `create_table`:
-
-NOTE. Хелпер `references` фактически не создает для вас внешний ключ как ограничение ссылочной целостности. Нужно использовать `execute` или плагин, который предоставляет [поддержку внешних ключей](/rails-database-migrations/active-record-and-referential-integrity).
-
-Если вам недостаточно хелперов, предоставленных Active Record, можете использовать функцию `execute` для запуска произвольного SQL.
 
 Больше подробностей и примеров отдельных методов содержится в документации по API. В частности, документация для [`ActiveRecord::ConnectionAdapters::SchemaStatements`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html) (который обеспечивает методы, доступные в методах `up` и `down`), [`ActiveRecord::ConnectionAdapters::TableDefinition`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html) (который обеспечивает методы, доступные у объекта, переданного методом `create_table`) и [`ActiveRecord::ConnectionAdapters::Table`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html) (который обеспечивает методы, доступные у объекта, переданного методом `change_table`).
 
-### Когда использовать метод `change`
+### Использование метода `change`
 
-Метод `change` устраняет необходимость писать оба метода `up` и `down` в тех случаях, когда Rails знает, как обратить изменения автоматически. На текущий момент метод `change` поддерживает только эти определения миграции:
+Метод `change` это основной метод написания миграций. Он работает в большинстве случаев, когда Active Record знает, как обратить миграцию автоматически. На текущий момент метод `change` поддерживает только эти определения миграции:
 
 * `add_column`
 * `add_index`
@@ -142,7 +92,7 @@ NOTE. Хелпер `references` фактически не создает для 
 
 ### Использование методов `up`/`down`
 
-Метод `down` вашей миграции должен вернуть назад изменения, выполненные методом `up`. Другими словами, схема базы данных не должна измениться, если вы выполните `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, то должны ее удалить в методе `down`. Благоразумно откатить преобразования в порядке, полностью обратном порядку метода `up`. Например,
+Метод `up` должен описывать изменения, которые выхотите внести в вашу схему, а метод `down` вашей миграции должен обращать изменения, внесенные методом  `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, ее следует адлить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Например,
 
 ```ruby
 class ExampleMigration < ActiveRecord::Migration
@@ -150,6 +100,7 @@ class ExampleMigration < ActiveRecord::Migration
     create_table :products do |t|
       t.references :category
     end
+
     #добавляем внешний ключ
     execute <<-SQL
       ALTER TABLE products
@@ -157,6 +108,7 @@ class ExampleMigration < ActiveRecord::Migration
         FOREIGN KEY (category_id)
         REFERENCES categories(id)
     SQL
+
     add_column :users, :home_page_url, :string
     rename_column :users, :email, :email_address
   end
@@ -164,10 +116,12 @@ class ExampleMigration < ActiveRecord::Migration
   def down
     rename_column :users, :email_address, :email
     remove_column :users, :home_page_url
+
     execute <<-SQL
       ALTER TABLE products
         DROP FOREIGN KEY fk_products_categories
     SQL
+
     drop_table :products
   end
 end
