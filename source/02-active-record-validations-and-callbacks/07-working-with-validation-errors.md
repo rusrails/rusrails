@@ -10,15 +10,15 @@
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :presence => true, :length => { :minimum => 3 }
+  validates :name, presence: true, length: { minimum: 3 }
 end
 
 person = Person.new
 person.valid? # => false
 person.errors
- # => {:name => ["can't be blank", "is too short (minimum is 3 characters)"]}
+ # => {:name=>["can't be blank", "is too short (minimum is 3 characters)"]}
 
-person = Person.new(:name => "John Doe")
+person = Person.new(name: "John Doe")
 person.valid? # => true
 person.errors # => []
 ```
@@ -29,14 +29,14 @@ person.errors # => []
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :presence => true, :length => { :minimum => 3 }
+  validates :name, presence: true, length: { minimum: 3 }
 end
 
-person = Person.new(:name => "John Doe")
+person = Person.new(name: "John Doe")
 person.valid? # => true
 person.errors[:name] # => []
 
-person = Person.new(:name => "JD")
+person = Person.new(name: "JD")
 person.valid? # => false
 person.errors[:name] # => ["is too short (minimum is 3 characters)"]
 
@@ -57,7 +57,7 @@ class Person < ActiveRecord::Base
   end
 end
 
-person = Person.create(:name => "!@#")
+person = Person.create(name: "!@#")
 
 person.errors[:name]
  # => ["cannot contain the characters !@#%*()_-+="]
@@ -75,7 +75,7 @@ person.errors.full_messages
     end
   end
 
-  person = Person.create(:name => "!@#")
+  person = Person.create(name: "!@#")
 
   person.errors[:name]
    # => ["cannot contain the characters !@#%*()_-+="]
@@ -102,7 +102,7 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :presence => true, :length => { :minimum => 3 }
+  validates :name, presence: true, length: { minimum: 3 }
 end
 
 person = Person.new
@@ -125,14 +125,14 @@ p.errors[:name]
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :presence => true, :length => { :minimum => 3 }
+  validates :name, presence: true, length: { minimum: 3 }
 end
 
 person = Person.new
 person.valid? # => false
 person.errors.size # => 2
 
-person = Person.new(:name => "Andrea", :email => "andrea@example.com")
+person = Person.new(name: "Andrea", email: "andrea@example.com")
 person.valid? # => true
 person.errors.size # => 0
 ```

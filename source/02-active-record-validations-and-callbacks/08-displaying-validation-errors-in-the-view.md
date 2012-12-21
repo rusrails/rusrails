@@ -16,8 +16,8 @@ gem "dynamic_form"
 
 ```ruby
 class Product < ActiveRecord::Base
-  validates :description, :value, :presence => true
-  validates :value, :numericality => true, :allow_nil => true
+  validates :description, :value, presence: true
+  validates :value, numericality: true, allow_nil: true
 end
 ```
 
@@ -55,9 +55,9 @@ NOTE: Появившийся сгенерированный HTML будет от
 И хелпер `form.error_messages`, и хелпер `error_messages_for` принимают опции, позволяющие настроить элемент `div`, содержащий сообщения, изменить текст заголовка, сообщение после текста заголовка и определить тег, используемый для элемента заголовка.
 
 ```erb
-<%= f.error_messages :header_message => "Invalid product!",
-  :message => "You'll need to fix the following fields:",
-  :header_tag => :h3 %>
+<%= f.error_messages header_message: "Invalid product!",
+  message: "You'll need to fix the following fields:",
+  header_tag: :h3 %>
 ```
 
 приведет к
@@ -93,8 +93,12 @@ NOTE: Появившийся сгенерированный HTML будет от
 
 ```ruby
 ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
-  errors = Array(instance.error_message).join(',')
-  %(#{html_tag}<span class="validation-error">&nbsp;#{errors}</span>).html_safe
+  if html_tag =~ /\<label/
+    html_tag
+  else
+    errors = Array(instance.error_message).join(',')
+    %(#{html_tag}<span class="validation-error">&nbsp;#{errors}</span>).html_safe
+  end
 end
 ```
 

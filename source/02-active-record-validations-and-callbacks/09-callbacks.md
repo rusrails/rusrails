@@ -11,7 +11,7 @@
 
 ```ruby
 class User < ActiveRecord::Base
-  validates :login, :email, :presence => true
+  validates :login, :email, presence: true
 
   before_validation :ensure_login_has_a_value
 
@@ -28,10 +28,30 @@ end
 
 ```ruby
 class User < ActiveRecord::Base
-  validates :login, :email, :presence => true
+  validates :login, :email, presence: true
 
   before_create do |user|
     user.name = user.login.capitalize if user.name.blank?
+  end
+end
+```
+
+Колбэки также могут быть зарегистрированы на выполнение при определенных событиях жизненного цикла:
+
+```ruby
+class User < ActiveRecord::Base
+  before_validation :normalize_name, on: :create
+
+  # :on также принимает массив
+  after_validation :set_location, on: [ :create, :update ]
+
+  protected
+  def normalize_name
+    self.name = self.name.downcase.titleize
+  end
+
+  def set_location
+    self.location = LocationService.query(self)
   end
 end
 ```
@@ -115,7 +135,7 @@ You have initialized an object!
 * `increment!`
 * `save`
 * `save!`
-* `save(:validate => false)`
+* `save(validate: false)`
 * `toggle!`
 * `update`
 * `update_attribute`
@@ -128,13 +148,15 @@ You have initialized an object!
 * `all`
 * `first`
 * `find`
-* `find_all_by_<em>attribute</em>`
-* `find_by_<em>attribute</em>`
-* `find_by_<em>attribute</em>!`
+* `find_all_by_*`
+* `find_by_*`
+* `find_by_*!`
 * `find_by_sql`
 * `last`
 
 Колбэк `after_initialize` запускается всякий раз, когда инициализируется новый объект класса.
+
+NOTE: Методы `find_all_by_*`, `find_by_*` и `find_by_*!` это динамические методы поиска, создаваемые автоматически для каждого атрибута. Изучите подробнее их в [разделе Динамический поиск](/active-record-query-interface/dynamic-finders)
 
 Пропуск колбэков
 ----------------
@@ -170,7 +192,7 @@ WARNING. Вызов произвольного исключения может �
 
 ```ruby
 class User < ActiveRecord::Base
-  has_many :posts, :dependent => :destroy
+  has_many :posts, dependent: :destroy
 end
 
 class Post < ActiveRecord::Base
@@ -201,7 +223,7 @@ Post destroyed
 
 ```ruby
 class Order < ActiveRecord::Base
-  before_save :normalize_card_number, :if => :paid_with_card?
+  before_save :normalize_card_number, if: :paid_with_card?
 end
 ```
 
@@ -211,7 +233,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  before_save :normalize_card_number, :if => "paid_with_card?"
+  before_save :normalize_card_number, if: "paid_with_card?"
 end
 ```
 
@@ -222,7 +244,7 @@ end
 ```ruby
 class Order < ActiveRecord::Base
   before_save :normalize_card_number,
-    :if => Proc.new { |order| order.paid_with_card? }
+    if: Proc.new { |order| order.paid_with_card? }
 end
 ```
 
@@ -232,8 +254,8 @@ end
 
 ```ruby
 class Comment < ActiveRecord::Base
-  after_create :send_email_to_author, :if => :author_wants_emails?,
-    :unless => Proc.new { |comment| comment.post.ignore_comments? }
+  after_create :send_email_to_author, if: :author_wants_emails?,
+    unless: Proc.new { |comment| comment.post.ignore_comments? }
 end
 ```
 

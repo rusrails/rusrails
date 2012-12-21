@@ -8,8 +8,8 @@
 
 ```ruby
 class Coffee < ActiveRecord::Base
-  validates :size, :inclusion => { :in => %w(small medium large),
-    :message => "%{value} is not a valid size" }, :allow_nil => true
+  validates :size, inclusion: { in: %w(small medium large),
+    message: "%{value} is not a valid size" }, allow_nil: true
 end
 ```
 
@@ -21,7 +21,7 @@ TIP: `:allow_nil` игнорируется валидатором presence.
 
 ```ruby
 class Topic < ActiveRecord::Base
-  validates :title, :length => { :is => 5 }, :allow_blank => true
+  validates :title, length: { is: 5 }, allow_blank: true
 end
 
 Topic.create("title" => "").valid?  # => true
@@ -36,17 +36,17 @@ TIP: `:allow_blank` игнорируется валидатором presence.
 
 ### `:on`
 
-Опция `:on` позволяет определить, когда должна произойти валидация. Стандартное поведение для всех встроенных валидационных хелперов это запускаться при сохранении (и когда создается новая запись, и когда она обновляется). Если хотите изменить это, используйте `:on => :create`, для запуска валидации только когда создается новая запись, или `:on => :update`, для запуска валидации когда запись обновляется.
+Опция `:on` позволяет определить, когда должна произойти валидация. Стандартное поведение для всех встроенных валидационных хелперов это запускаться при сохранении (и когда создается новая запись, и когда она обновляется). Если хотите изменить это, используйте `on: :create`, для запуска валидации только когда создается новая запись, или `on: :update`, для запуска валидации когда запись обновляется.
 
 ```ruby
 class Person < ActiveRecord::Base
   # будет возможно обновить email с дублирующим значением
-  validates :email, :uniqueness => true, :on => :create
+  validates :email, uniqueness: true, on: :create
 
   # будет возможно создать запись с нечисловым возрастом
-  validates :age, :numericality => true, :on => :update
+  validates :age, numericality: true, on: :update
 
   # по умолчанию (проверяет и при создании, и при обновлении)
-  validates :name, :presence => true, :on => :save
+  validates :name, presence: true, on: :save
 end
 ```

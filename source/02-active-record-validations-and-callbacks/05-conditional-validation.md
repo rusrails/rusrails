@@ -8,7 +8,7 @@
 
 ```ruby
 class Order < ActiveRecord::Base
-  validates :card_number, :presence => true, :if => :paid_with_card?
+  validates :card_number, presence: true, if: :paid_with_card?
 
   def paid_with_card?
     payment_type == "card"
@@ -22,7 +22,7 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :surname, :presence => true, :if => "name.nil?"
+  validates :surname, presence: true, if: "name.nil?"
 end
 ```
 
@@ -32,8 +32,8 @@ end
 
 ```ruby
 class Account < ActiveRecord::Base
-  validates :password, :confirmation => true,
-    :unless => Proc.new { |a| a.password.blank? }
+  validates :password, confirmation: true,
+    unless: Proc.new { |a| a.password.blank? }
 end
 ```
 
@@ -43,14 +43,14 @@ end
 
 ```ruby
 class User < ActiveRecord::Base
-  with_options :if => :is_admin? do |admin|
-    admin.validates :password, :length => { :minimum => 10 }
-    admin.validates :email, :presence => true
+  with_options if: :is_admin? do |admin|
+    admin.validates :password, length: { minimum: 10 }
+    admin.validates :email, presence: true
   end
 end
 ```
 
-Во все валидации внутри `with_options` будет автоматически передано условие `:if => :is_admin?`.
+Во все валидации внутри `with_options` будет автоматически передано условие `if: :is_admin?`.
 
 ### Объединение условий валидации
 
@@ -58,9 +58,9 @@ end
 
 ```ruby
 class Computer < ActiveRecord::Base
-  validates :mouse, :presence => true,
-                    :if => ["market.retail?", :desktop?]
-                    :unless => Proc.new { |c| c.trackpad.present? }
+  validates :mouse, presence: true,
+                    if: ["market.retail?", :desktop?]
+                    unless: Proc.new { |c| c.trackpad.present? }
 end
 ```
 

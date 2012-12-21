@@ -12,7 +12,7 @@ Active Record предлагает множество предопределен
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :terms_of_service, :acceptance => true
+  validates :terms_of_service, acceptance: true
 end
 ```
 
@@ -22,7 +22,7 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :terms_of_service, :acceptance => { :accept => 'yes' }
+  validates :terms_of_service, acceptance: { accept: 'yes' }
 end
 ```
 
@@ -49,7 +49,7 @@ CAUTION: Не используйте `validates_associated` на обоих ко
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :email, :confirmation => true
+  validates :email, confirmation: true
 end
 ```
 
@@ -64,8 +64,8 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :email, :confirmation => true
-  validates :email_confirmation, :presence => true
+  validates :email, confirmation: true
+  validates :email_confirmation, presence: true
 end
 ```
 
@@ -77,8 +77,8 @@ end
 
 ```ruby
 class Account < ActiveRecord::Base
-  validates :subdomain, :exclusion => { :in => %w(www us ca jp),
-    :message => "Subdomain %{value} is reserved." }
+  validates :subdomain, exclusion: { in: %w(www us ca jp),
+    message: "Subdomain %{value} is reserved." }
 end
 ```
 
@@ -92,8 +92,8 @@ end
 
 ```ruby
 class Product < ActiveRecord::Base
-  validates :legacy_code, :format => { :with => /\A[a-zA-Z]`\z/,
-    :message => "Only letters allowed" }
+  validates :legacy_code, format: { with: /\A[a-zA-Z]+\z/,
+    message: "Only letters allowed" }
 end
 ```
 
@@ -105,8 +105,8 @@ end
 
 ```ruby
 class Coffee < ActiveRecord::Base
-  validates :size, :inclusion => { :in => %w(small medium large),
-    :message => "%{value} is not a valid size" }
+  validates :size, inclusion: { in: %w(small medium large),
+    message: "%{value} is not a valid size" }
 end
 ```
 
@@ -120,10 +120,10 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :length => { :minimum => 2 }
-  validates :bio, :length => { :maximum => 500 }
-  validates :password, :length => { :in => 6..20 }
-  validates :registration_number, :length => { :is => 6 }
+  validates :name, length: { minimum: 2 }
+  validates :bio, length: { maximum: 500 }
+  validates :password, length: { in: 6..20 }
+  validates :registration_number, length: { is: 6 }
 end
 ```
 
@@ -138,8 +138,8 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :bio, :length => { :maximum => 1000,
-    :too_long => "%{count} characters is the maximum allowed" }
+  validates :bio, length: { maximum: 1000,
+    too_long: "%{count} characters is the maximum allowed" }
 end
 ```
 
@@ -147,12 +147,12 @@ end
 
 ```ruby
 class Essay < ActiveRecord::Base
-  validates :content, :length => {
-    :minimum   => 300,
-    :maximum   => 400,
-    :tokenizer => lambda { |str| str.scan(/\w`/) },
-    :too_short => "must have at least %{count} words",
-    :too_long  => "must have at most %{count} words"
+  validates :content, length: {
+    minimum: 300,
+    maximum: 400,
+    tokenizer: lambda { |str| str.scan(/\w+/) },
+    too_short: "must have at least %{count} words",
+    too_long: "must have at most %{count} words"
   }
 end
 ```
@@ -177,8 +177,8 @@ WARNING. Отметьте, что вышеописанное регулярно�
 
 ```ruby
 class Player < ActiveRecord::Base
-  validates :points, :numericality => true
-  validates :games_played, :numericality => { :only_integer => true }
+  validates :points, numericality: true
+  validates :games_played, numericality: { only_integer: true }
 end
 ```
 
@@ -200,7 +200,7 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :login, :email, :presence => true
+  validates :name, :login, :email, presence: true
 end
 ```
 
@@ -209,13 +209,13 @@ end
 ```ruby
 class LineItem < ActiveRecord::Base
   belongs_to :order
-  validates :order_id, :presence => true
+  validates :order_id, presence: true
 end
 ```
 
 При проведении волидации существования объекта, связанного отношением `has_one` или `has_many`, будет проверено, что объект ни `blank?`, ни `marked_for_destruction?`.
 
-Так как `false.blank?` это true, если хотите провести валидацию существования булева поля, нужно использовать `validates :field_name, :inclusion => { :in => [true, false] }`.
+Так как `false.blank?` это true, если хотите провести валидацию существования булева поля, нужно использовать `validates :field_name, inclusion: { in: [true, false] }`.
 
 По умолчанию сообщение об ошибке "_can't be empty_".
 
@@ -225,7 +225,7 @@ end
 
 ```ruby
 class Account < ActiveRecord::Base
-  validates :email, :uniqueness => true
+  validates :email, uniqueness: true
 end
 ```
 
@@ -235,8 +235,8 @@ end
 
 ```ruby
 class Holiday < ActiveRecord::Base
-  validates :name, :uniqueness => { :scope => :year,
-    :message => "should happen once per year" }
+  validates :name, uniqueness: { scope: :year,
+    message: "should happen once per year" }
 end
 ```
 
@@ -244,7 +244,7 @@ end
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates :name, :uniqueness => { :case_sensitive => false }
+  validates :name, uniqueness: { case_sensitive: false }
 end
 ```
 
@@ -280,7 +280,7 @@ NOTE: Ошибки, добавляемые в `record.errors[:base]` относ�
 
 ```ruby
 class Person < ActiveRecord::Base
-  validates_with GoodnessValidator, :fields => [:first_name, :last_name]
+  validates_with GoodnessValidator, fields: [:first_name, :last_name]
 end
 
 class GoodnessValidator < ActiveModel::Validator

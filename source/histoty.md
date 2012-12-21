@@ -12,8 +12,8 @@
 
 02. Валидации и колбэки Active Record
     active_record_validations_callbacks.md
-    fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
-    17/09/12
+    ccecab3ba950a288b61a516bf9b6962e384aae0b
+    14/11/12
 
     active_record_validations.md
     active_record_callbacks.md

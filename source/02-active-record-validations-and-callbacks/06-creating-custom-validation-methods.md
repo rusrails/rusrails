@@ -26,14 +26,14 @@ end
 ```ruby
 class EmailValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    unless value =~ /\A([^@\s]<plus>)@((?:[-a-z0-9]<plus>\.)`[a-z]{2,})\z/i
+    unless value =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)`[a-z]{2,})\z/i
       record.errors[attribute] << (options[:message] || "is not an email")
     end
   end
 end
 
 class Person < ActiveRecord::Base
-  validates :email, :presence => true, :email => true
+  validates :email, presence: true, email: true
 end
 ```
 
@@ -66,7 +66,7 @@ end
 
 ```ruby
 class Invoice < ActiveRecord::Base
-  validate :active_customer, :on => :create
+  validate :active_customer, on: :create
 
   def active_customer
     errors.add(:customer_id, "is not active") unless customer.active?
@@ -79,7 +79,7 @@ end
 ```ruby
 ActiveRecord::Base.class_eval do
   def self.validates_as_choice(attr_name, n, options={})
-    validates attr_name, :inclusion => { { :in => 1..n }.merge!(options) }
+    validates attr_name, inclusion: { { in: 1..n }.merge!(options) }
   end
 end
 ```
