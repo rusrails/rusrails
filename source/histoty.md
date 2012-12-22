@@ -11,12 +11,9 @@
     07/12/12
 
 02. Валидации и колбэки Active Record
-    active_record_validations_callbacks.md
-    ccecab3ba950a288b61a516bf9b6962e384aae0b
-    14/11/12
-
     active_record_validations.md
-    active_record_callbacks.md
+    b659e00baf7334e0b42d02877cceb4498ebd8977
+    29/11/12
 
 03. Связи Active Record
     association_basics.md
@@ -125,6 +122,11 @@
 10. action_view_overview.md
 12. active_model_basics.md
 14. active_record_basics.md
+
+16. active_record_callbacks.md
+    b659e00baf7334e0b42d02877cceb4498ebd8977
+    29/11/12
+
 18. active_support_instrumentation.md
 20. api_documentation_guidelines.md
 22. contributing_to_ruby_on_rails.md

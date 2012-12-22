@@ -27,7 +27,8 @@
 ## Модели
 
 - [Миграции базы данных Rails](/rails-database-migrations) := Это руководство раскрывает, как вы должны использовать миграции Active Record, чтобы привести свою базу данных к структурированной и организованной форме.
-- [Валидации и обратные вызовы (колбэки) Active Record](/active-record-validations-and-callbacks) := Это руководство раскрывает, как вы можете применять валидации и обратные вызовы Active Record.
+- [Валидации Active Record](/active-record-validations-and-callbacks) := Это руководство раскрывает, как вы можете применять валидации Active Record.
+- [Колбэки Active Record](/different-guides/active-record-callbacks) := Это руководство раскрывает, как вы можете применять колбэки (методы обратного вызова) Active Record.
 - [Связи (ассоциации) Active Record](/active-record-associations) := Это руководство раскрывает все связи, предоставленные Active Record.
 - [Интерфейс запросов Active Record](/active-record-query-interface) := Это руководство раскрывает интерфейс запросов к базе данных, предоставленный Active Record.
 
