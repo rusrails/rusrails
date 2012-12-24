@@ -12,8 +12,8 @@
 
 02. Валидации и колбэки Active Record
     active_record_validations.md
-    b659e00baf7334e0b42d02877cceb4498ebd8977
-    29/11/12
+    561e5ab82eb24335f76961d437a16f09b4a15474
+    15/12/12
 
 03. Связи Active Record
     association_basics.md

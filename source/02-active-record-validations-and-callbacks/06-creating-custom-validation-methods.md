@@ -51,8 +51,9 @@ class Invoice < ActiveRecord::Base
     :discount_cannot_be_greater_than_total_value
 
   def expiration_date_cannot_be_in_the_past
-    errors.add(:expiration_date, "can't be in the past") if
-      !expiration_date.blank? and expiration_date < Date.today
+    if expiration_date.present? && expiration_date < Date.today
+      errors.add(:expiration_date, "can't be in the past")
+    end
   end
 
   def discount_cannot_be_greater_than_total_value
@@ -71,23 +72,5 @@ class Invoice < ActiveRecord::Base
   def active_customer
     errors.add(:customer_id, "is not active") unless customer.active?
   end
-end
-```
-
-Можно даже создать собственные валидационные хелперы и использовать их в нескольких различных моделях. Для примера, в приложении, управляющим исследованиями, может быть полезным указать, что определенное поле соответствует ряду значений:
-
-```ruby
-ActiveRecord::Base.class_eval do
-  def self.validates_as_choice(attr_name, n, options={})
-    validates attr_name, inclusion: { { in: 1..n }.merge!(options) }
-  end
-end
-```
-
-Просто переоткройте `ActiveRecord::Base` и определите подобный этому метод класса. Такой код обычно располагают где-нибудь в `config/initializers`. Теперь Вы можете использовать этот хелпер таким образом:
-
-```ruby
-class Movie < ActiveRecord::Base
-  validates_as_choice :rating, 5
 end
 ```
