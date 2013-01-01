@@ -21,7 +21,7 @@ redirect_to :back
 Rails использует код статуса HTTP 302, временное перенаправление, при вызыве `redirect_to`. Если хотите использовать иной код статуса, возможно 301, постоянное перенаправление, можете использовать опцию `:status`:
 
 ```ruby
-redirect_to photos_path, :status => 301
+redirect_to photos_path, status: 301
 ```
 
 Подобно опции `:status` для `render`, `:status` для `redirect_to` принимает и числовые, и символьные обозначения заголовка.
@@ -40,7 +40,7 @@ end
 def show
   @book = Book.find_by_id(params[:id])
   if @book.nil?
-    render :action => "index"
+    render action: "index"
   end
 end
 ```
@@ -55,7 +55,7 @@ end
 def show
   @book = Book.find_by_id(params[:id])
   if @book.nil?
-    redirect_to :action => :index
+    redirect_to action: :index
   end
 end
 ```
@@ -75,7 +75,7 @@ def show
   @book = Book.find_by_id(params[:id])
   if @book.nil?
     @books = Book.all
-    render "index", :alert => "Your book was not found!"
+    render "index", alert: "Your book was not found!"
   end
 end
 ```
@@ -106,7 +106,7 @@ Cache-Control: no-cache
 Или можете использовать другие заголовки HTTP для передачи другой информации:
 
 ```ruby
-head :created, :location => photo_path(@photo)
+head :created, location: photo_path(@photo)
 ```
 
 Что создаст:

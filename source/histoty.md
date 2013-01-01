@@ -27,8 +27,8 @@
 
 05. Макеты и рендеринг в Rails
     layouts_and_rendering.md
-    fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
-    17/09/12
+    06c7ecb4ef21bf8a91c95e67f5528f0d90f6cf75
+    30/12/12
 
 06. Хелперы форм Rails
     form_helpers.md
