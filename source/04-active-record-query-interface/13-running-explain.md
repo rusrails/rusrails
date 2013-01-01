@@ -3,7 +3,7 @@
 Можно запустить EXPLAIN на запросах, вызываемых в relations. Например,
 
 ```ruby
-User.where(:id => 1).joins(:posts).explain
+User.where(id: 1).joins(:posts).explain
 ```
 
 может выдать в MySQL.
@@ -37,7 +37,7 @@ EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "posts" ON "posts"."user_i
 Нетерпеливая загрузка может вызвать более одного запроса за раз, и некоторые запросы могут нуждаться в результате предыдущих. Поэтому `explain` фактически запускает запрос, а затем узнает о дальнейших планах по запросам. Например,
 
 ```ruby
-User.where(:id => 1).includes(:posts).explain
+User.where(id: 1).includes(:posts).explain
 ```
 
 выдаст в MySQL.

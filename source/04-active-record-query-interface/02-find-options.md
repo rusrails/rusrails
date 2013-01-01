@@ -41,8 +41,6 @@ Client.order("orders_count ASC").order("created_at DESC")
 
 Чтобы выбрать подмножество полей из всего множества, можете определить его, используя метод `select`.
 
-NOTE: Если используется метод `select`, все возвращаемые объекты будут доступны [только для чтения](#readonly-objects).
-
 Например, чтобы выбрать только столбцы `viewable_by` и `locked`:
 
 ```ruby
@@ -196,7 +194,7 @@ SELECT * FROM posts WHERE id > 10 ORDER BY id DESC
 class Post < ActiveRecord::Base
   ..
   ..
-  has_many :comments, :order => 'posted_at DESC'
+  has_many :comments, order: 'posted_at DESC'
 end
 
 Post.find(10).comments.reorder('name')
@@ -253,12 +251,12 @@ Post.none # returns an empty Relation and fires no queries.
 
 ```ruby
 # От метода visible_posts ожидается, что он вернет Relation.
-@posts = current_user.visible_posts.where(:name => params[:name])
+@posts = current_user.visible_posts.where(name: params[:name])
 
 def visible_posts
   case role
   when 'Country Manager'
-    Post.where(:country => country)
+    Post.where(country: country)
   when 'Reviewer'
     Post.published
   when 'Bad User'

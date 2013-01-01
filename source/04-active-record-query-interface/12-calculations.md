@@ -12,14 +12,14 @@ Client.count
 Или на relation:
 
 ```ruby
-Client.where(:first_name => 'Ryan').count
+Client.where(first_name: 'Ryan').count
 # SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
 ```
 
 Можете также использовать различные методы поиска на relation для выполнения сложных вычислений:
 
 ```ruby
-Client.includes("orders").where(:first_name => 'Ryan', :orders => {:status => 'received'}).count
+Client.includes("orders").where(first_name: 'Ryan', orders: {status: 'received'}).count
 ```
 
 Что выполнит:

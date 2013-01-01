@@ -3,7 +3,7 @@
 `pluck` может быть использован для запроса отдельного столбца или нескольких столбцов из таблицы, лежащей в основе модели. Он принимает имя столбца как аргумент и возвращает массив значений определенного столбца соответствующего типа данных.
 
 ```ruby
-Client.where(:active => true).pluck(:id)
+Client.where(active: true).pluck(:id)
 # SELECT id FROM clients WHERE active = 1
 # => [1, 2, 3]
 
@@ -20,6 +20,8 @@ Client.pluck(:id, :name)
 
 ```ruby
 Client.select(:id).map { |c| c.id }
+# или
+Client.select(:id).map(&:id)
 # или
 Client.select(:id).map { |c| [c.id, c.name] }
 ```

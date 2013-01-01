@@ -18,7 +18,6 @@
 * `none`
 * `offset`
 * `order`
-* `none`
 * `preload`
 * `readonly`
 * `references`
@@ -307,7 +306,7 @@ end
 Опция `:batch_size` позволяет опеределить число записей, подлежащих получению в одном пакете, до передачи отдельной записи в блок. Например, для получения 5000 записей в пакете:
 
 ```ruby
-User.find_each(:batch_size => 5000) do |user|
+User.find_each(batch_size: 5000) do |user|
   NewsLetter.weekly_deliver(user)
 end
 ```
@@ -319,14 +318,12 @@ end
 Например, чтобы выслать письма только пользователям с первичным ключом, начинающимся от 2000, и получить их в пакетах по 5000:
 
 ```ruby
-User.find_each(:start => 2000, :batch_size => 5000) do |user|
+User.find_each(start: 2000, batch_size: 5000) do |user|
   NewsLetter.weekly_deliver(user)
 end
 ```
 
 Другим примером является наличие нескольких воркеров, работающих с одной и той же очередью обработки. Можно было бы обрабатывать каждым воркером 10000 записей, установив подходящие опции `:start` в каждом воркере.
-
-NOTE: Опция `:include` позволяет назвать связи, которые должны быть загружены вместе с моделями.
 
 #### `find_in_batches`
 
@@ -334,7 +331,7 @@ NOTE: Опция `:include` позволяет назвать связи, кот
 
 ```ruby
 # Передает в add_invoices массив из 1000 счетов за раз.
-Invoice.find_in_batches(:include => :invoice_lines) do |invoices|
+Invoice.find_in_batches(include: :invoice_lines) do |invoices|
   export.add_invoices(invoices)
 end
 ```

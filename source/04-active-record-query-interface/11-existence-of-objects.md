@@ -17,7 +17,7 @@ Client.exists?([1,2,3])
 Более того, `exists` принимает опцию `conditions` подобно этому:
 
 ```ruby
-Client.where(:first_name => 'Ryan').exists?
+Client.where(first_name: 'Ryan').exists?
 ```
 
 Даже возможно использовать `exists?` без аргументов:
@@ -40,8 +40,8 @@ Post.recent.any?
 Post.recent.many?
 
 # на relation
-Post.where(:published => true).any?
-Post.where(:published => true).many?
+Post.where(published: true).any?
+Post.where(published: true).many?
 
 # на связи
 Post.first.categories.any?

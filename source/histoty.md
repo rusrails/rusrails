@@ -22,8 +22,8 @@
 
 04. Интерфейс запросов Active Record
     active_record_querying.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    0a33fcd68bb2c56b8c2eba066f343484a44fa588
+    08/12/12
 
 05. Макеты и рендеринг в Rails
     layouts_and_rendering.md

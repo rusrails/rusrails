@@ -24,7 +24,7 @@ end
 
 ```ruby
 class Post < ActiveRecord::Base
-  scope :published,               -> { where(:published => true) }
+  scope :published,               -> { where(published: true) }
   scope :published_and_commented, -> { published.where("comments_count > 0") }
 end
 ```

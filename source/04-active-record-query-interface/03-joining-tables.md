@@ -85,7 +85,7 @@ SELECT posts.* FROM posts
 #### Соединение вложенных связей (одного уровня)
 
 ```ruby
-Post.joins(:comments => :guest)
+Post.joins(comments: :guest)
 ```
 
 Это создаст:
@@ -101,7 +101,7 @@ SELECT posts.* FROM posts
 #### Соединение вложенных связей (разных уровней)
 
 ```ruby
-Category.joins(:posts => [{:comments => :guest}, :tags])
+Category.joins(posts: [{comments: :guest}, :tags])
 ```
 
 Это создаст:
@@ -127,7 +127,7 @@ Client.joins(:orders).where('orders.created_at' => time_range)
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-Client.joins(:orders).where(:orders => {:created_at => time_range})
+Client.joins(:orders).where(orders: {created_at: time_range})
 ```
 
 Будут найдены все клиенты, имеющие созданные вчера заказы, снова используя выражение SQL `BETWEEN`.

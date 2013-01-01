@@ -1,16 +1,16 @@
 # Поиск или создание нового объекта
 
-Нормально, если вам нужно найти запись или создать ее, если она не существует. Это осуществимо с помощью методов `first_or_create` и `first_or_create!`.
+Нормально, если вам нужно найти запись или создать ее, если она не существует. Это осуществимо с помощью методов `find_or_create_by` и `find_or_create_by!`.
 
-h4(#first_or_create_bang). `first_or_create`
+### `find_or_create_by`
 
-Метод `first_or_create` проверяет, возвращает ли `first` `nil` или нет. Если он возвращает `nil`, то вызывается `create`. Это очень производительно в сочетании с методом `where`. Давайте рассмотрим пример.
+Метод `find_or_create_by` проверяет, существует ли запись с атрибутами. Если нет, то вызывается `create`. Давайте рассмотрим пример.
 
-Предположим, вы хотите найти клиента по имени 'Andy', и, если такого нет, создать его и дополнительно установить его аттрибут `locked` в false. Это можно сделать, выполнив:
+Предположим, вы хотите найти клиента по имени 'Andy', и, если такого нет, создать его. Это можно сделать, выполнив:
 
 ```ruby
-Client.where(:first_name => 'Andy').first_or_create(:locked => false)
-# => #<Client id: 1, first_name: "Andy", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
+Client.find_or_create_by(first_name: 'Andy')
++# => #<Client id: 1, first_name: "Andy", orders_count: 0, locked: true, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
 ```
 
 SQL, генерируемый этим методом, выглядит так:
@@ -18,48 +18,54 @@ SQL, генерируемый этим методом, выглядит так:
 ```sql
 SELECT * FROM clients WHERE (clients.first_name = 'Andy') LIMIT 1
 BEGIN
-INSERT INTO clients (created_at, first_name, locked, orders_count, updated_at) VALUES ('2011-08-30 05:22:57', 'Andy', 0, NULL, '2011-08-30 05:22:57')
+INSERT INTO clients (created_at, first_name, locked, orders_count, updated_at) VALUES ('2011-08-30 05:22:57', 'Andy', 1, NULL, '2011-08-30 05:22:57')
 COMMIT
 ```
 
-`first_or_create` возвращает либо уже существующую запись, либо новую запись. В нашем случае, у нас еще нет клиента с именем Andy, поэтому запись будет создана и возвращена.
+`find_or_create_by` возвращает либо уже существующую запись, либо новую запись. В нашем случае, у нас еще нет клиента с именем Andy, поэтому запись будет создана и возвращена.
 
 Новая запись может быть не сохранена в базу данных; это зависит от того, прошли валидации или нет (подобно `create`).
 
-Стоит также отметить, что `first_or_create` учитывает аргументы в методе `where`. В вышеуказанном примере мы явно не передавали аргумент `:first_name => 'Andy'` в `first_or_create`. Однако, он был использован при создании новой записи, посколку уже был передан ранее в методе `where`.
+Предположим, мы хотим установить атрибут 'locked' как true, если создаем новую запись, но не хотим включать его в запрос. Таким образом, мы хотим найти клиента по имени "Andy" или, если этот клиент не существует, создать клиента по имени "Andy", который не заблокирован.
 
-То же самое можно делать с помощью метода `find_or_create_by`:
+Этого можно достичь двумя способами. Первый - это использование `create_with`:
 
 ```ruby
-Client.find_or_create_by_first_name(:first_name => "Andy", :locked => false)
+Client.create_with(locked: false).find_or_create_by(first_name: 'Andy')
 ```
 
-Этот метод все еще работает, но рекомендуется использовать `first_or_create`, потому что он более явно указывает, какие аргументы использовать для _поиска_ записи, а какие использовать для _создания_, что в итоге приводит к меньшей запутанности.
-
-### `first_or_create!`
-
-Можно также использовать `first_or_create!`, чтобы вызвать исключение, если новая запись невалидна. Валидации не раскрываются в этом руководстве, но давайте на момент предположим, что вы временно добавили
+Второй способ - это использование блока:
 
 ```ruby
-validates :orders_count, :presence => true
+Client.find_or_create_by(first_name: 'Andy') do |c|
+  c.locked = false
+end
+```
+
+Блок будет запущен только если клиент был создан. Во второй раз при запуске этого кода блок будет проигнорирован.
+
+### `find_or_create_by!`
+
+Можно также использовать `find_or_create_by!`, чтобы вызвать исключение, если новая запись невалидна. Валидации не раскрываются в этом руководстве, но давайте на момент предположим, что вы временно добавили
+
+```ruby
+validates :orders_count, presence: true
 ```
 
 в модель `Client`. Если попытаетесь создать нового `Client` без передачи `orders_count`, запись будет невалидной и будет вызвано исключение:
 
 ```ruby
-Client.where(:first_name => 'Andy').first_or_create!(:locked => false)
+Client.find_or_create_by!(first_name: 'Andy')
 # => ActiveRecord::RecordInvalid: Validation failed: Orders count can't be blank
 ```
 
-Как и в случае с `first_or_create`, также имеется метод `find_or_create_by!`, но метод `first_or_create!` более предпочтителен из-за ясности.
+### `find_or_initialize_by`
 
-### `first_or_initialize`
-
-Метод `first_or_initialize` работает похоже на `first_or_create`, но он вызывает не `create`, а `new`. Это означает, что новый экземпляр модели будет создан в памяти, но не будет сохранен в базу данных. Продолжая пример с `first_or_create`, теперь мы хотим клиента по имени 'Nick':
+Метод `find_or_initialize_by` работает похоже на `find_or_create_by`, но он вызывает не `create`, а `new`. Это означает, что новый экземпляр модели будет создан в памяти, но не будет сохранен в базу данных. Продолжая пример с `find_or_create_by`, теперь мы хотим клиента по имени 'Nick':
 
 ```ruby
-nick = Client.where(:first_name => 'Nick').first_or_initialize(:locked => false)
-# => <Client id: nil, first_name: "Nick", orders_count: 0, locked: false, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
+nick = Client.find_or_initialize_by(first_name: 'Nick')
+# => <Client id: nil, first_name: "Nick", orders_count: 0, locked: true, created_at: "2011-08-30 06:09:27", updated_at: "2011-08-30 06:09:27">
 
 nick.persisted?
 # => false
