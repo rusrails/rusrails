@@ -9,6 +9,7 @@
 * `collection(force_reload = false)`
 * `collection<<(object, ...)`
 * `collection.delete(object, ...)`
+* `collection.destroy(object, ...)`
 * `collection=objects`
 * `collection_singular_ids`
 * `collection_singular_ids=ids`
@@ -35,6 +36,7 @@ end
 assemblies(force_reload = false)
 assemblies<<(object, ...)
 assemblies.delete(object, ...)
+assemblies.destroy(object, ...)
 assemblies=objects
 assembly_ids
 assembly_ids=ids
@@ -78,6 +80,16 @@ NOTE: Этот метод - просто синоним к `collection.concat` �
 
 ```ruby
 @part.assemblies.delete(@assembly1)
+```
+
+WARNING: Это не запустит колбэки на соединительных записях.
+
+##### `collection.destroy(object, ...)`
+
+Метод `collection.destroy` убирает один или более объектов из коллекции. запуская `destroy` на каждой записи в соединительной таблице, включая запуск колбэков. Это не уничтожает объекты.
+
+```ruby
+@part.assemblies.destroy(@assembly1)
 ```
 
 #### `collection=objects`
@@ -143,8 +155,7 @@ NOTE: Этот метод - просто синоним к `collection.concat` �
 Метод `collection.build` возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, и будет создана связь через соединительную таблицу, но связанный объект _не_ будет пока сохранен.
 
 ```ruby
-@assembly = @part.assemblies.build(
-  {:assembly_name => "Transmission housing"})
+@assembly = @part.assemblies.build({assembly_name: "Transmission housing"})
 ```
 
 #### `collection.create(attributes = {})`
@@ -152,8 +163,7 @@ NOTE: Этот метод - просто синоним к `collection.concat` �
 Метод `collection.create` возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана связь через соединительную таблицу, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен.
 
 ```ruby
-@assembly = @part.assemblies.create(
-  {:assembly_name => "Transmission housing"})
+@assembly = @part.assemblies.create({assembly_name: "Transmission housing"})
 ```
 
 ### Опции для `has_and_belongs_to_many`
@@ -162,8 +172,8 @@ NOTE: Этот метод - просто синоним к `collection.concat` �
 
 ```ruby
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :uniq => true,
-    :read_only => true
+  has_and_belongs_to_many :assemblies, uniq: true,
+                                       read_only: true
 end
 ```
 
@@ -184,9 +194,10 @@ TIP: Опции `:foreign_key` и `:association_foreign_key` полезны пр
 
 ```ruby
 class User < ActiveRecord::Base
-  has_and_belongs_to_many :friends, :class_name => "User",
-    :foreign_key => "this_user_id",
-    :association_foreign_key => "other_user_id"
+  has_and_belongs_to_many :friends,
+      class_name: "User",
+      foreign_key: "this_user_id",
+      association_foreign_key: "other_user_id"
 end
 ```
 
@@ -200,7 +211,7 @@ end
 
 ```ruby
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :class_name => "Gadget"
+  has_and_belongs_to_many :assemblies, class_name: "Gadget"
 end
 ```
 
@@ -210,9 +221,10 @@ end
 
 ```ruby
 class User < ActiveRecord::Base
-  has_and_belongs_to_many :friends, :class_name => "User",
-    :foreign_key => "this_user_id",
-    :association_foreign_key => "other_user_id"
+  has_and_belongs_to_many :friends,
+      class_name: "User",
+      foreign_key: "this_user_id",
+      association_foreign_key: "other_user_id"
 end
 ```
 
@@ -230,7 +242,7 @@ end
 
 ```ruby
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, -> { where :active => true }
+  has_and_belongs_to_many :assemblies, -> { where active: true }
 end
 ```
 
@@ -263,7 +275,7 @@ end
 ```ruby
 class Parts < ActiveRecord::Base
   has_and_belongs_to_many :assemblies,
-    -> { where :factory => 'Seattle' }
+    -> { where factory: 'Seattle' }
 end
 ```
 

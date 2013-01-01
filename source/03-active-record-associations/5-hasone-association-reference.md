@@ -52,7 +52,7 @@ NOTE: При устанавлении новой связи `has_one` или `be
 Метод `build_association` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, и будет установлена связь через внешний ключ, но связанный объект _не_ будет пока сохранен.
 
 ```ruby
-@account = @supplier.build_account(:terms => "Net 30")
+@account = @supplier.build_account(terms: "Net 30")
 ```
 
 #### `create_association(attributes = {})`
@@ -60,7 +60,7 @@ NOTE: При устанавлении новой связи `has_one` или `be
 Метод `create_association` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет установлена связь через внешний ключ, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен
 
 ```ruby
-@account = @supplier.create_account(:terms => "Net 30")
+@account = @supplier.create_account(terms: "Net 30")
 ```
 
 ### Опции для `has_one`
@@ -69,7 +69,7 @@ NOTE: При устанавлении новой связи `has_one` или `be
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, :class_name => "Billing", :dependent => :nullify
+  has_one :account, class_name: "Billing", dependent: :nullify
 end
 ```
 
@@ -101,7 +101,7 @@ end
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, :class_name => "Billing"
+  has_one :account, class_name: "Billing"
 end
 ```
 
@@ -121,7 +121,7 @@ end
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, :foreign_key => "supp_id"
+  has_one :account, foreign_key: "supp_id"
 end
 ```
 
@@ -133,11 +133,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, :inverse_of => :supplier
+  has_one :account, inverse_of: :supplier
 end
 
 class Account < ActiveRecord::Base
-  belongs_to :supplier, :inverse_of => :account
+  belongs_to :supplier, inverse_of: :account
 end
 ```
 
@@ -167,7 +167,7 @@ end
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, -> { where :active => true }
+  has_one :account, -> { where active: true }
 end
 ```
 

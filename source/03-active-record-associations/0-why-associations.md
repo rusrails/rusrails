@@ -13,14 +13,13 @@ end
 Теперь, допустим, мы хотим добавить новый заказ для существующего покупателя. Нам нужно сделать так:
 
 ```ruby
-@order = Order.create(:order_date => Time.now,
-  :customer_id => @customer.id)
+@order = Order.create(order_date: Time.now, customer_id: @customer.id)
 ```
 
 Или, допустим, удалим покупателя и убедимся, что все его заказы также будут удалены:
 
 ```ruby
-@orders = Order.where(:customer_id => @customer.id)
+@orders = Order.where(customer_id: @customer.id)
 @orders.each do |order|
   order.destroy
 end
@@ -31,7 +30,7 @@ end
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :dependent => :destroy
+  has_many :orders, dependent: :destroy
 end
 
 class Order < ActiveRecord::Base
@@ -42,10 +41,10 @@ end
 С этими изменениями создание нового заказа для определенного покупателя проще:
 
 ```ruby
-@order = @customer.orders.create(:order_date => Time.now)
+@order = @customer.orders.create(order_date: Time.now)
 ```
 
-Удаление покупателя и всех его заказов _намного_ проще:
+Удаление покупателя и всех его заказов *намного* проще:
 
 ```ruby
 @customer.destroy

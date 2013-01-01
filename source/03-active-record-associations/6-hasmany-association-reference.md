@@ -8,6 +8,7 @@
 * `collection(force_reload = false)`
 * `collection<<(object, ...)`
 * `collection.delete(object, ...)`
+* `collection.destroy(object, ...)`
 * `collection=objects`
 * `collection_singular_ids`
 * `collection_singular_ids=ids`
@@ -34,6 +35,7 @@ end
 orders(force_reload = false)
 orders<<(object, ...)
 orders.delete(object, ...)
+orders.destroy(object, ...)
 orders=objects
 order_ids
 order_ids=ids
@@ -71,7 +73,17 @@ orders.create(attributes = {})
 @customer.orders.delete(@order1)
 ```
 
-WARNING: Объекты будут в дополнение уничтожены, если связаны с `:dependent => :destroy`, и удалены, если они связаны с `:dependent => :delete_all`.
+WARNING: Объекты будут в дополнение уничтожены, если связаны с `dependent: :destroy`, и удалены, если они связаны с `dependent: :delete_all`.
+
+#### `collection.destroy(object, ...)`
+
+Метод `collection.destroy` убирает один или более объектов из коллекции, выполняя `destroy` для каждого объекта.
+
+```ruby
+@customer.orders.destroy(@order1)
+```
+
+WARNING: Объекты будут _всегда_ удаляться из базы данных, игнорируя опцию `:dependent`.
 
 #### `collection=objects`
 
@@ -91,7 +103,7 @@ WARNING: Объекты будут в дополнение уничтожены,
 
 #### `collection.clear`
 
-Метод `collection.clear` убирает каждый объект из коллекции. Это уничтожает связанные объекты, если они связаны с `:dependent => :destroy`, удаляет их непосредственно из базы данных, если `:dependent => :delete_all`, и в противном случае устанавливает их внешние ключи в `NULL`.
+Метод `collection.clear` убирает каждый объект из коллекции. Это уничтожает связанные объекты, если они связаны с `dependent: :destroy`, удаляет их непосредственно из базы данных, если `dependent: :delete_all`, и в противном случае устанавливает их внешние ключи в `NULL`.
 
 #### `collection.empty?`
 
@@ -124,7 +136,7 @@ WARNING: Объекты будут в дополнение уничтожены,
 Метод `collection.where` ищет объекты в коллекции, основываясь на переданных условиях, но объекты загружаются лениво, что означает, что база данных запрашивается только когда происходит доступ к объекту(-там).
 
 ```ruby
-@open_orders = @customer.orders.where(:open => true) # Пока нет запроса
+@open_orders = @customer.orders.where(open: true) # Пока нет запроса
 @open_order = @open_orders.first # Теперь база данных будет запрошена
 ```
 
@@ -137,8 +149,8 @@ WARNING: Объекты будут в дополнение уничтожены,
 Метод `collection.build` возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана ссылка через их внешние ключи, но связанные объекты _не_ будут пока сохранены.
 
 ```ruby
-@order = @customer.orders.build(:order_date => Time.now,
-  :order_number => "A12345")
+@order = @customer.orders.build(order_date: Time.now,
+                                order_number: "A12345")
 ```
 
 #### `collection.create(attributes = {})`
@@ -146,8 +158,8 @@ WARNING: Объекты будут в дополнение уничтожены,
 Метод `collection.create` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет создана ссылка через его внешний ключ, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен
 
 ```ruby
-@order = @customer.orders.create(:order_date => Time.now,
-  :order_number => "A12345")
+@order = @customer.orders.create(order_date: Time.now,
+                                 order_number: "A12345")
 ```
 
 ### Опции для `has_many`
@@ -156,7 +168,7 @@ WARNING: Объекты будут в дополнение уничтожены,
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :dependent => :delete_all, :validate => :false
+  has_many :orders, dependent: :delete_all, validate: :false
 end
 ```
 
@@ -188,7 +200,7 @@ end
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :class_name => "Transaction"
+  has_many :orders, class_name: "Transaction"
 end
 ```
 
@@ -210,7 +222,7 @@ NOTE: Эта опция игнорируется при использовани
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :foreign_key => "cust_id"
+  has_many :orders, foreign_key: "cust_id"
 end
 ```
 
@@ -222,11 +234,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 
 ```ruby
 class Supplier < ActiveRecord::Base
-  has_one :account, :inverse_of => :supplier
+  has_many :orders, inverse_of: :customer
 end
 
 class Account < ActiveRecord::Base
-  belongs_to :supplier, :inverse_of => :account
+  belongs_to :customer, inverse_of: :orders
 end
 ```
 
@@ -256,7 +268,7 @@ end
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, -> { where :processed => true }
+  has_many :orders, -> { where processed: true }
 end
 ```
 
@@ -280,7 +292,7 @@ end
 ```ruby
 class Customer < ActiveRecord::Base
   has_many :confirmed_orders, -> { where "confirmed = 1" },
-    :class_name => "Order"
+    class_name: "Order"
 end
 ```
 
@@ -288,8 +300,8 @@ end
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :confirmed_orders, -> { where :confirmed => true },
-    :class_name => "Order"
+  has_many :confirmed_orders, -> { where confirmed: true },
+                              class_name: "Order"
 end
 ```
 
@@ -306,7 +318,7 @@ end
 ```ruby
 class Customer < ActiveRecord::Base
   has_many :line_items, -> { group 'orders.id' },
-    :through => :orders
+                        through: :orders
 end
 ```
 
@@ -354,7 +366,7 @@ end
 class Customer < ActiveRecord::Base
   has_many :recent_orders,
     -> { order('order_date desc').limit(100) },
-    :class_name => "Order"
+    class_name: "Order"
 end
 ```
 
@@ -389,11 +401,11 @@ WARNING: Если укажете свой собственный `select`, не 
 ```ruby
 class Person < ActiveRecord::Base
   has_many :readings
-  has_many :posts, :through => :readings
+  has_many :posts, through: :readings
 end
 
-person = Person.create(:name => 'john')
-post   = Post.create(:name => 'a1')
+person = Person.create(name: 'John')
+post   = Post.create(name: 'a1')
 person.posts << post
 person.posts << post
 person.posts.inspect # => [#<Post id: 5, name: "a1">, #<Post id: 5, name: "a1">]
@@ -407,11 +419,11 @@ Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, post_id: 5>, #<Readin
 ```ruby
 class Person
   has_many :readings
-  has_many :posts, -> { uniq }, :through => :readings
+  has_many :posts, -> { uniq }, through: :readings
 end
 
-person = Person.create(:name => 'honda')
-post   = Post.create(:name => 'a1')
+person = Person.create(name: 'Honda')
+post   = Post.create(name: 'a1')
 person.posts << post
 person.posts << post
 person.posts.inspect # => [#<Post id: 7, name: "a1">]

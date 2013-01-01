@@ -15,7 +15,7 @@
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :before_add => :check_credit_limit
+  has_many :orders, before_add: :check_credit_limit
 
   def check_credit_limit(order)
     ...
@@ -30,7 +30,7 @@ Rails передает добавляемый или удаляемый объе
 ```ruby
 class Customer < ActiveRecord::Base
   has_many :orders,
-    :before_add => [:check_credit_limit, :calculate_shipping_charges]
+    before_add: [:check_credit_limit, :calculate_shipping_charges]
 
   def check_credit_limit(order)
     ...

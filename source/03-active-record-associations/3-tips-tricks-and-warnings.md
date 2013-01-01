@@ -84,7 +84,7 @@ end
 ```ruby
 class CreateAssemblyPartJoinTable < ActiveRecord::Migration
   def change
-    create_table :assemblies_parts, :id => false do |t|
+    create_table :assemblies_parts, id: false do |t|
       t.integer :assembly_id
       t.integer :part_id
     end
@@ -92,7 +92,7 @@ class CreateAssemblyPartJoinTable < ActiveRecord::Migration
 end
 ```
 
-Мы передаем `:id => false` в `create_table`, так как эта таблица не представляет модель. Это необходимо, чтобы связь работала правильно. Если вы видите странное поведение в связи `has_and_belongs_to_many`, например, искаженные ID моделей, или исключения в связи с конфликтом ID, скорее всего вы забыли убрать первичный ключ.
+Мы передаем `id: false` в `create_table`, так как эта таблица не представляет модель. Это необходимо, чтобы связь работала правильно. Если вы видите странное поведение в связи `has_and_belongs_to_many`, например, искаженные ID моделей, или исключения в связи с конфликтом ID, скорее всего вы забыли убрать первичный ключ.
 
 ### Управление областью видимости связей
 
@@ -137,14 +137,14 @@ module MyApplication
   module Business
     class Supplier < ActiveRecord::Base
        has_one :account,
-        :class_name => "MyApplication::Billing::Account"
+        class_name: "MyApplication::Billing::Account"
     end
   end
 
   module Billing
     class Account < ActiveRecord::Base
        belongs_to :supplier,
-        :class_name => "MyApplication::Business::Supplier"
+        class_name: "MyApplication::Business::Supplier"
     end
   end
 end
@@ -178,11 +178,11 @@ c.first_name == o.customer.first_name # => false
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :inverse_of => :customer
+  has_many :orders, inverse_of: :customer
 end
 
 class Order < ActiveRecord::Base
-  belongs_to :customer, :inverse_of => :orders
+  belongs_to :customer, inverse_of: :orders
 end
 ```
 

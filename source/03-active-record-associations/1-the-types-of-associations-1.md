@@ -25,6 +25,25 @@ end
 
 NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если спользовать множественное число в вышеприведенном примере для связи`customer` в модели `Order`, вам будет сообщено "uninitialized constant Order::Customers". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
 
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateOrders < ActiveRecord::Migration
+  def change
+    create_table :customers do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :orders do |t|
+      t.belongs_to :customer
+      t.datetime :order_date
+      t.timestamps
+    end
+  end
+end
+```
+
 ### Связь `has_one`
 
 Связь `has_one` также устанавливает соединение один-к-одному с другой моделью, но в несколько ином смысле (и с другими последствиями). Эта связь показывает, что каждый экземпляр модели содержит или обладает одним экземпляром другой модели. Например, если каждый поставщик имеет только один аккаунт, можете объявить модель supplier подобно этому:
@@ -36,6 +55,25 @@ end
 ```
 
 ![Диаграмма для связи has_one](/assets/guides/has_one.png)
+
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateSuppliers < ActiveRecord::Migration
+  def change
+    create_table :suppliers do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :accounts do |t|
+      t.belongs_to :supplier
+      t.string :account_number
+      t.timestamps
+    end
+  end
+end
+```
 
 ### Связь `has_many`
 
@@ -51,6 +89,25 @@ NOTE: Имя другой модели указывается во множес�
 
 ![Диаграмма для связи has_many](/assets/guides/has_many.png)
 
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateCustomers < ActiveRecord::Migration
+  def change
+    create_table :customers do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :orders do |t|
+      t.belongs_to :customer
+      t.datetime :order_date
+      t.timestamps
+    end
+  end
+end
+```
+
 ### Связь `has_many :through`
 
 Связь `has_many :through` часто используется для настройки соединения многие-ко-многим с другой моделью. Эта связь указывает, что объявляющая модель может соответствовать нулю или более экземплярам другой модели _через_ третью модель. Например, рассмотрим поликлинику, где пациентам (patients) дают направления (appointments) к врачам (physicians). Соответствующие объявления связей будут выглядеть следующим образом:
@@ -58,7 +115,7 @@ NOTE: Имя другой модели указывается во множес�
 ```ruby
 class Physician < ActiveRecord::Base
   has_many :appointments
-  has_many :patients, :through => :appointments
+  has_many :patients, through: :appointments
 end
 
 class Appointment < ActiveRecord::Base
@@ -68,11 +125,36 @@ end
 
 class Patient < ActiveRecord::Base
   has_many :appointments
-  has_many :physicians, :through => :appointments
+  has_many :patients, through: :appointments
 end
 ```
 
 ![Диаграмма для связи has_many :through](/assets/guides/has_many_through.png)
+
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateAppointments < ActiveRecord::Migration
+  def change
+    create_table :physicians do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :patients do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :appointments do |t|
+      t.belongs_to :physician
+      t.belongs_to :patient
+      t.datetime :appointment_date
+      t.timestamps
+    end
+  end
+end
+```
 
 Коллекция соединительных моделей может управляться с помощью API. Например, если вы присвоите:
 
@@ -89,7 +171,7 @@ WARNING: Автоматическое удаление соединительн�
 ```ruby
 class Document < ActiveRecord::Base
   has_many :sections
-  has_many :paragraphs, :through => :sections
+  has_many :paragraphs, through: :sections
 end
 
 class Section < ActiveRecord::Base
@@ -102,7 +184,7 @@ class Paragraph < ActiveRecord::Base
 end
 ```
 
-С определенным `:through => :sections` Rails теперь понимает:
+С определенным `through: :sections` Rails теперь понимает:
 
 ```ruby
 @document.paragraphs
@@ -115,7 +197,7 @@ end
 ```ruby
 class Supplier < ActiveRecord::Base
   has_one :account
-  has_one :account_history, :through => :account
+  has_one :account_history, through: :account
 end
 
 class Account < ActiveRecord::Base
@@ -129,6 +211,31 @@ end
 ```
 
 ![Диаграмма для связи has_one :through](/assets/guides/has_one_through.png)
+
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateAccountHistories < ActiveRecord::Migration
+  def change
+    create_table :suppliers do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :accounts do |t|
+      t.belongs_to :supplier
+      t.string :account_number
+      t.timestamps
+    end
+
+    create_table :account_histories do |t|
+      t.belongs_to :account
+      t.integer :credit_rating
+      t.timestamps
+    end
+  end
+end
+```
 
 ### Связь `has_and_belongs_to_many`
 
@@ -146,4 +253,25 @@ end
 
 ![Диаграмма для связи has_and_belongs_to_many](/assets/guides/habtm.png)
 
-В [следующей части](/active-record-associations/the-types-of-associations-2) будет рассказано о принципах выбора между `belongs_to` и `has_one`, между `has_many :through` и `has_and_belongs_to_many`, про полиморфные связи и самоприсоединения.
+Соответствующая миграция может выглядеть так:
+
+```ruby
+class CreateAssembliesAndParts < ActiveRecord::Migration
+  def change
+    create_table :assemblies do |t|
+      t.string :name
+      t.timestamps
+    end
+
+    create_table :parts do |t|
+      t.string :part_number
+      t.timestamps
+    end
+
+    create_table :assemblies_parts do |t|
+      t.belongs_to :assembly
+      t.belongs_to :part
+    end
+  end
+end
+```

@@ -17,8 +17,8 @@
 
 03. Связи Active Record
     association_basics.md
-    fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
-    17/09/12
+    c5fb487965b9768da0e48a9348591422ec26f566
+    13/12/12
 
 04. Интерфейс запросов Active Record
     active_record_querying.md

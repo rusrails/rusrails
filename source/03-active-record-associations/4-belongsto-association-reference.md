@@ -53,8 +53,8 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 Метод `build_association` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет установлена связь с внешним ключом этого объекта, но связанный объект пока _не_ будет сохранен.
 
 ```ruby
-@customer = @order.build_customer(:customer_number => 123,
-  :customer_name => "John Doe")
+@customer = @order.build_customer(customer_number: 123,
+                                  customer_name: "John Doe")
 ```
 
 #### `create_association(attributes = {})`
@@ -62,8 +62,8 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 Метод `create_association` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет установлена связь с внешним ключом этого объекта, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен.
 
 ```ruby
-@customer = @order.create_customer(:customer_number => 123,
-  :customer_name => "John Doe")
+@customer = @order.create_customer(customer_number: 123,
+                                   customer_name: "John Doe")
 ```
 
 ### Опции для `belongs_to`
@@ -72,8 +72,8 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :dependent => :destroy,
-    :counter_cache => true
+  belongs_to :customer, dependent: :destroy,
+    counter_cache: true
 end
 ```
 
@@ -99,7 +99,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :class_name => "Patron"
+  belongs_to :customer, class_name: "Patron"
 end
 ```
 
@@ -120,7 +120,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :counter_cache => true
+  belongs_to :customer, counter_cache: true
 end
 class Customer < ActiveRecord::Base
   has_many :orders
@@ -133,7 +133,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :counter_cache => :count_of_orders
+  belongs_to :customer, counter_cache: :count_of_orders
 end
 class Customer < ActiveRecord::Base
   has_many :orders
@@ -154,8 +154,8 @@ WARNING: Не следует определять эту опцию в связ�
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :class_name => "Patron",
-    :foreign_key => "patron_id"
+  belongs_to :customer, class_name: "Patron",
+                        foreign_key: "patron_id"
 end
 ```
 
@@ -167,11 +167,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, :inverse_of => :customer
+  has_many :orders, inverse_of: :customer
 end
 
 class Order < ActiveRecord::Base
-  belongs_to :customer, :inverse_of => :orders
+  belongs_to :customer, inverse_of: :orders
 end
 ```
 
@@ -185,7 +185,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :touch => true
+  belongs_to :customer, touch: true
 end
 
 class Customer < ActiveRecord::Base
@@ -197,7 +197,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, :touch => :orders_updated_at
+  belongs_to :customer, touch: :orders_updated_at
 end
 ```
 
@@ -211,8 +211,8 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, -> { where :active => true },
-    :dependent => :destroy
+  belongs_to :customer, -> { where active: true },
+                        dependent: :destroy
 end
 ```
 
@@ -229,7 +229,7 @@ end
 
 ```ruby
 class Order < ActiveRecord::Base
-  belongs_to :customer, -> { where :active => true }
+  belongs_to :customer, -> { where active: true }
 end
 ```
 

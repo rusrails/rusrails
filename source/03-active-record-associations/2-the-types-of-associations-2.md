@@ -58,7 +58,7 @@ end
 ```ruby
 class Assembly < ActiveRecord::Base
   has_many :manifests
-  has_many :parts, :through => :manifests
+  has_many :parts, through: :manifests
 end
 
 class Manifest < ActiveRecord::Base
@@ -68,7 +68,7 @@ end
 
 class Part < ActiveRecord::Base
   has_many :manifests
-  has_many :assemblies, :through => :manifests
+  has_many :assemblies, through: :manifests
 end
 ```
 
@@ -82,15 +82,15 @@ _Полиморфные связи_ - это немного более "наво
 
 ```ruby
 class Picture < ActiveRecord::Base
-  belongs_to :imageable, :polymorphic => true
+  belongs_to :imageable, polymorphic: true
 end
 
 class Employee < ActiveRecord::Base
-  has_many :pictures, :as => :imageable
+  has_many :pictures, as: :imageable
 end
 
 class Product < ActiveRecord::Base
-  has_many :pictures, :as => :imageable
+  has_many :pictures, as: :imageable
 end
 ```
 
@@ -120,7 +120,7 @@ class CreatePictures < ActiveRecord::Migration
   def change
     create_table :pictures do |t|
       t.string :name
-      t.references :imageable, :polymorphic => true
+      t.references :imageable, polymorphic: true
       t.timestamps
     end
   end
@@ -135,9 +135,10 @@ end
 
 ```ruby
 class Employee < ActiveRecord::Base
-  has_many :subordinates, :class_name => "Employee",
-    :foreign_key => "manager_id"
-  belongs_to :manager, :class_name => "Employee"
+  has_many :subordinates, class_name: "Employee",
+                          foreign_key: "manager_id"
+
+  belongs_to :manager, class_name: "Employee"
 end
 ```
 
