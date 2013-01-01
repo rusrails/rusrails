@@ -44,7 +44,7 @@ end
 
 class ClientsController < ApplicationController
   # Проверим, что пользователь имеет права доступа к клиентам.
-  before_filter :check_authorization
+  before_action :check_authorization
 
   # Отметим как экшны не беспокоятся об авторизационных делах.
   def edit

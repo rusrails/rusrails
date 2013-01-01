@@ -37,8 +37,8 @@
 
 07. Обзор Action Controller
     action_controller_overview.md
-    721afdcc4b58c65f36122b10ec998b913a147912
-    17/09/12
+    0a33fcd68bb2c56b8c2eba066f343484a44fa588
+    08/12/12
 
 08. Роутинг в Rails
     routing.md

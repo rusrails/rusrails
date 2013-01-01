@@ -6,7 +6,7 @@
 class CommentsController < ApplicationController
   def new
     # Автозаполнение имени комментатора, если оно хранится в куки.
-    @comment = Comment.new(name: cookies[:commenter_name])
+    @comment = Comment.new(author: cookies[:commenter_name])
   end
 
   def create
@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
       flash[:notice] = "Thanks for your comment!"
       if params[:remember_name]
         # Запоминаем имя комментатора.
-        cookies[:commenter_name] = @comment.name
+        cookies[:commenter_name] = @comment.author
       else
         # Удаляем из куки имя комментатора, если оно есть.
         cookies.delete(:commenter_name)

@@ -25,7 +25,7 @@ Digest аутентификация HTTP превосходит простую �
 class AdminController < ApplicationController
   USERS = { "lifo" => "world" }
 
-  before_filter :authenticate
+  before_action :authenticate
 
   private
 
