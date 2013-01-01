@@ -15,7 +15,7 @@ namespace :pages do
       resource.save
     end
 
-    source = File.join(Rails.root, "source")
+    source = Rails.root.join "source"
     Dir.foreach(source) do |cat_name|
       cat_source = File.join(source, cat_name)
       next if cat_name == '.' || cat_name == '..' || File.file?(cat_source)
@@ -50,5 +50,19 @@ namespace :pages do
 
     Rails.cache.clear
     puts "complete"
+  end
+
+
+  desc "Cleanup old pages"
+  task :cleanup => :environment do
+    Category.all.each do |category|
+      category.pages.each do |page|
+        pname = Rails.root.join "source", "*-#{category.url_match}", "{[0-9],[0-9][0-9]}-#{page.url_match}.*"
+        if Dir.glob(pname).empty?
+          page.destroy
+          puts "Page #{page.path} was deleted!"
+        end
+      end
+    end
   end
 end

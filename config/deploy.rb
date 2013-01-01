@@ -60,6 +60,7 @@ namespace :deploy do
 
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} db:seed"
     run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:import"
+    run "cd #{current_release}; #{rake} RAILS_ENV=#{rails_env} pages:cleanup"
   end
   # after "deploy:migrate", "deploy:seed"
 
