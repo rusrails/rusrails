@@ -37,9 +37,9 @@ end
 Соответствующая вьюха `articles/new.html.erb:`, использующая `form_for`, выглядит так
 
 ```erb
-<%= form_for @article, :url => { :action => "create" }, :html => {:class => "nifty_form"} do |f| %>
+<%= form_for @article, url: {action: "create"}, html: {class: "nifty_form"} do |f| %>
   <%= f.text_field :title %>
-  <%= f.text_area :body, :size => "60x12" %>
+  <%= f.text_area :body, size: "60x12" %>
   <%= f.submit "Create" %>
 <% end %>
 ```
@@ -68,7 +68,7 @@ end
 Можно создать подобное привязывание без фактического создания тега `<form>` с помощью хелпера `fields_for`. Это полезно для редактирования дополнительных объектов модели в той же форме. Например, если имеем модель Person со связанной моделью ContactDetail, Вы можете создать форму для создания обеих моделей подобным образом:
 
 ```erb
-<%= form_for @person, :url => { :action => "create" } do |person_form| %>
+<%= form_for @person, url: {action: "create"} do |person_form| %>
   <%= person_form.text_field :name %>
   <%= fields_for @person.contact_detail do |contact_details_form| %>
     <%= contact_details_form.text_field :phone_number %>
@@ -102,13 +102,13 @@ TIP: Объявление ресурса имеет несколько побо�
 ```ruby
 ## Создание новой статьи
 # длинный стиль:
-form_for(@article, :url => articles_path)
+form_for(@article, url: articles_path)
 # то же самое, короткий стиль (используется идентификация записи):
 form_for(@article)
 
 ## Редактирование существующей статьи
 # длинный стиль:
-form_for(@article, :url => article_path(@article), :html => { :method => "patch" })
+form_for(@article, url: article_path(@article), html: {method: "patch"})
 # короткий стиль:
 form_for(@article)
 ```
@@ -142,7 +142,7 @@ form_for [:admin, :management, @article]
 Rails работает с этой проблемой, эмулируя другие методы с помощью POST со скрытым полем, названным `"_method"`, который установлен для отражения желаемого метода:
 
 ```ruby
-form_tag(search_path, :method => "patch")
+form_tag(search_path, method: "patch")
 ```
 
 результат:

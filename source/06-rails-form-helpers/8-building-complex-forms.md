@@ -75,7 +75,7 @@ end
 
 Ключи хэша `:addresses_attributes` не важны, они всего лишь должны быть различными для каждого адреса.
 
-Если связанный объект уже сохранен, `fields_for` автоматически создает скрытое поле с `id` сохраненной записи. Это можно отключить, передав `:include_id => false` в `fields_for`. Это может быть желаемым, если автоматически созданное поле размещается туда, где тег input не имеет валидного HTML, или при использовании ORM, когда дочерние элементы не имеют id.
+Если связанный объект уже сохранен, `fields_for` автоматически создает скрытое поле с `id` сохраненной записи. Это можно отключить, передав `include_id: false` в `fields_for`. Это может быть желаемым, если автоматически созданное поле размещается туда, где тег input не имеет валидного HTML, или при использовании ORM, когда дочерние элементы не имеют id.
 
 ### Контроллер
 
@@ -83,12 +83,12 @@ end
 
 ### Удаление объектов
 
-Можно позволить пользователям удалять связанные объекты, передав `allow_destroy => true` в `accepts_nested_attributes_for`
+Можно позволить пользователям удалять связанные объекты, передав `allow_destroy: true` в `accepts_nested_attributes_for`
 
 ```ruby
 class Person < ActiveRecord::Base
   has_many :addresses
-  accepts_nested_attributes_for :addresses, :allow_destroy => true
+  accepts_nested_attributes_for :addresses, allow_destroy: true
 end
 ```
 
@@ -100,7 +100,7 @@ end
   <ul>
     <%= f.fields_for :addresses do |addresses_form| %>
       <li>
-        <%= check_box :_destroy%>
+        <%= check_box :_destroy %>
         <%= addresses_form.label :kind %>
         <%= addresses_form.text_field :kind %>
         ...
@@ -117,7 +117,7 @@ end
 ```ruby
 class Person < ActiveRecord::Base
   has_many :addresses
-  accepts_nested_attributes_for :addresses, :reject_if => lambda {|attributes| attributes['kind'].blank?}
+  accepts_nested_attributes_for :addresses, reject_if: lambda {|attributes| attributes['kind'].blank?}
 end
 ```
 

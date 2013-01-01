@@ -32,8 +32,8 @@
 
 06. Хелперы форм Rails
     form_helpers.md
-    5e2866cc3445646d8df049413aa5fbf03fa605ef
-    17/09/12
+    1e83730067709d8c07fd25669088e8e9efd2355b
+    10/12/12
 
 07. Обзор Action Controller
     action_controller_overview.md

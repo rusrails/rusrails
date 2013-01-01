@@ -11,7 +11,7 @@
 может быть заменено этим
 
 ```erb
-<%= form_for @person, :builder => LabellingFormBuilder do |f| %>
+<%= form_for @person, builder: LabellingFormBuilder do |f| %>
   <%= f.text_field :first_name %>
 <% end %>
 ```
@@ -26,12 +26,12 @@ class LabellingFormBuilder < ActionView::Helpers::FormBuilder
 end
 ```
 
-Если это используется часто, можно определить хелпер `labeled_form_for` который автоматически определяет опцию `:builder => LabellingFormBuilder`.
+Если это используется часто, можно определить хелпер `labeled_form_for` который автоматически определяет опцию `builder: LabellingFormBuilder`.
 
 Form builder также определяет, что произойдет, если вы сделаете
 
 ```erb
-<%= render :partial => f %>
+<%= render partial: f %>
 ```
 
 Если `f` - это экземпляр FormBuilder, тогда это отрендерит партиал `form`, установив объект партиала как form builder. Если form builder класса LabellingFormBuilder, тогда вместо этого будет отрендерен партиал `labelling_form`.

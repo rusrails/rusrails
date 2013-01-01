@@ -64,7 +64,7 @@ WARNING: Когда отсутствует `:inlude_blank` или `:prompt:`, `:
 С помощью хэшей можно добавить произвольные атрибуты в option:
 
 ```html+erb
-<%= options_for_select([['Lisbon', 1, :'data-size' => '2.8 million'], ['Madrid', 2, :'data-size' => '3.2 million']], 2) %>
+<%= options_for_select([['Lisbon', 1, {'data-size' => '2.8 million'}], ['Madrid', 2, {'data-size' => '3.2 million'}]], 2) %>
 
 результат:
 
@@ -79,7 +79,7 @@ WARNING: Когда отсутствует `:inlude_blank` или `:prompt:`, `:
 
 ```ruby
 # контроллер:
-@person = Person.new(:city_id => 2)
+@person = Person.new(city_id: 2)
 ```
 
 ```erb
@@ -96,7 +96,7 @@ WARNING: Когда отсутствует `:inlude_blank` или `:prompt:`, `:
 <%= f.select(:city_id, ...) %>
 ```
 
-WARNING: При использовании `select` (или подобного хелпера, такого как `collection_select`, `select_tag`), чтобы установить связь `belongs_to`, вы должны передасть имя внешнего ключа (в примере выше `city_id`), а не само имя связи. Если определите `city` вместо `city_id`, Active Record вызовет ошибку в строке `ActiveRecord::AssociationTypeMismatch: City(#17815740) expected, got String(#1138750)`, когда вы передадите хэш `params` в `Person.new` или `update_attributes`. Можно взглянуть на это по другому, что хелперы форм редактируют только атрибуты. Также вам стоит знать о потенциальных последствиях безопасности, если разрешить пользователям редактировать внешние ключи напрямую. Возможно вы захотите использовть `attr_protected` и `attr_accessible`. Более подробно об этом читайте в [Руководстве Ruby On Rails по безопасности](/ruby-on-rails-security-guide/mass-assignment).
+WARNING: При использовании `select` (или подобного хелпера, такого как `collection_select`, `select_tag`), чтобы установить связь `belongs_to`, вы должны передасть имя внешнего ключа (в примере выше `city_id`), а не само имя связи. Если определите `city` вместо `city_id`, Active Record вызовет ошибку в строке `ActiveRecord::AssociationTypeMismatch: City(#17815740) expected, got String(#1138750)`, когда вы передадите хэш `params` в `Person.new` или `update_attributes`. Можно взглянуть на это по другому, что хелперы форм редактируют только атрибуты. Также вам стоит пеобеспокоиться о потенциальных последствиях безопасности, если разрешить пользователям редактировать внешние ключи напрямую.
 
 ### Тэги варианта выбора из коллекции произвольных объектов
 
