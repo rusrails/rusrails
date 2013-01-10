@@ -29,18 +29,20 @@ get ':controller/:action/:id/:user_id'
 NOTE: Нельзя использовать `:namespace` или `:module` вместе с сегментом пути `:controller`. Если это нужно, используйте ограничение на :controller, которое соответствует требуемому пространству имен, т.е.:
 
 ```ruby
-get ':controller(/:action(/:id))', :controller => /admin\/[^\/]+/
+get ':controller(/:action(/:id))', controller: /admin\/[^\/]+/
 ```
+
+TIP: По умолчанию динамические сегменты не принимают точки - потому что точка используется как разделитель для формата маршрутов. Если в динамическом сегменте необходимо использовать точку, добавьте ограничение, переопределяющее это – к примеру, `id: /[^\/]+/` позволяет все, кроме слэша.
 
 ### Статичные сегменты
 
-Можете определить статичные сегменты при создании маршрута:
+Можете определить статичные сегменты при создании маршрута, не начинающиеся с двоеточия в фрагменте:
 
 ```ruby
 get ':controller/:action/:id/with_user/:user_id'
 ```
 
-Этот маршрут соответствует путям, таким как `/photos/show/1/with_user/2`. В этом случае `params` будет `{ :controller => "photos", :action => "show", :id => "1", :user_id => "2" }`.
+Этот маршрут соответствует путям, таким как `/photos/show/1/with_user/2`. В этом случае `params` будет `{ controller: 'photos', action: 'show', id: '1', user_id: '2' }`.
 
 ### Параметры строки запроса
 
@@ -50,14 +52,14 @@ get ':controller/:action/:id/with_user/:user_id'
 get ':controller/:action/:id'
 ```
 
-Входящий путь `/photos/show/1?user_id=2` будет направлен на экшн `show` контроллера `Photos`. `params` будет `{ :controller => "photos", :action => "show", :id => "1", :user_id => "2" }`.
+Входящий путь `/photos/show/1?user_id=2` будет направлен на экшн `show` контроллера `Photos`. `params` будет `{ controller: 'photos', action: 'show', id: '1', user_id: '2' }`.
 
 ### Определение значений по умолчанию
 
 В маршруте не обязательно явно использовать символы `:controller` и `:action`. Можете предоставить их как значения по умолчанию:
 
 ```ruby
-get 'photos/:id' => 'photos#show'
+get 'photos/:id', to: 'photos#show'
 ```
 
 С этим маршрутом Rails направит входящий путь `/photos/12` на экшн `show` в `PhotosController`.
@@ -65,17 +67,17 @@ get 'photos/:id' => 'photos#show'
 Также можете определить другие значения по умолчанию в маршруте, предоставив хэш для опции `:defaults`. Это также относится к параметрам, которые не определены как динамические сегменты. Например:
 
 ```ruby
-get 'photos/:id' => 'photos#show', :defaults => { :format => 'jpg' }
+get 'photos/:id', to: 'photos#show', defaults: { format: 'jpg' }
 ```
 
 Rails направит `photos/12` в экшн `show` `PhotosController`, и установит `params[:format]` как `jpg`.
 
 ### Именование маршрутов
 
-Можно определить имя для любого маршрута, используя опцию `:as`.
+Можно определить имя для любого маршрута, используя опцию `:as`:
 
 ```ruby
-get 'exit' => 'sessions#destroy', :as => :logout
+get 'exit', to: 'sessions#destroy', as: :logout
 ```
 
 Это создаст `logout_path` и `logout_url` как именнованные хелперы в вашем приложении. Вызов `logout_path` вернет `/exit`
@@ -83,7 +85,7 @@ get 'exit' => 'sessions#destroy', :as => :logout
 Также это можно использовать для переопределения маршрутых методов, поределенных ресурсами, следующим образом:
 
 ```ruby
-get ':username', :to => "users#show", :as => :user
+get ':username', to: 'users#show', as: :user
 ```
 
 Что определит метод `user_path`, который будет доступен в контроллерах, хелперах и вьюхах, и будет вести на маршрут, такой как `/bob`. В экшне `show` из `UsersController`, `params[:username]` будет содержать имя пользователя. Измените `:username` в определении маршурта, если не хотите, чтобы имя параметра было `:username`.
@@ -93,35 +95,35 @@ get ':username', :to => "users#show", :as => :user
 В основном следует импользовать методы `get`, `post`, `put` и `delete` для ограничения маршрута определенным методом. Можно использовать метод `match` с опцией `:via` для соответствия нескольким методам за раз:
 
 ```ruby
-match 'photos' => 'photos#show', :via => [:get, :post]
+match 'photos', to: 'photos#show', via: [:get, :post]
 ```
 
-Также можно установить соответствие всем методам для определенного маршрута, используя `:via => :all`:
+Также можно установить соответствие всем методам для определенного маршрута, используя `:via: :all`:
 
 ```ruby
-match 'photos' => 'photos#show', :via => :all
+match 'photos', to: 'photos#show', via: :all
 ```
 
-Следует избегать маршрутизацию всех методов в экшн, если у вас нет веской причины делать так, поскольку маршрутизация запросов `GET` и `POST` одновременно в один экшн небезопасна.
+NOTE: Маршрутизация запросов `GET` и `POST` одновременно в один экшн небезопасна. В основном, следует избегать маршрутизацию всех методов в экшн, если у вас нет веской причины делать так.
 
 ### Ограничения сегмента
 
 Можно использовать опцию `:constraints` для соблюдения формата динамического сегмента:
 
 ```ruby
-get 'photos/:id' => 'photos#show', :constraints => { :id => /[A-Z]\d{5}/ }
+get 'photos/:id', to: 'photos#show', constraints: { id: /[A-Z]\d{5}/ }
 ```
 
-Этот маршрут соответствует путям, таким как `/photos/A12345`. Можно выразить более кратко тот же маршрут следующим образом:
+Этот маршрут соответствует путям, таким как `/photos/A12345`, но не `/photos/893`. Можно выразить более кратко тот же маршрут следующим образом:
 
 ```ruby
-get 'photos/:id' => 'photos#show', :id => /[A-Z]\d{5}/
+get 'photos/:id', to: 'photos#show', id: /[A-Z]\d{5}/
 ```
 
 `:constraints` принимает регулярное выражение c ограничением, что якоря regexp не могут использоваться. Например, следующий маршрут не работает:
 
 ```ruby
-get '/:id' => 'posts#show', :constraints => {:id => /^\d/}
+get '/:id', to: 'posts#show', constraints: {id: /^\d/}
 ```
 
 Однако отметьте, что нет необходимости использовать якоря, поскольку все маршруты заякорены изначально.
@@ -129,8 +131,8 @@ get '/:id' => 'posts#show', :constraints => {:id => /^\d/}
 Например, следующие маршруты приведут к `posts` со значением `to_param` такими как `1-hello-world`, которые всегда начинаются с цифры, к `users` со значениями `to_param` такими как `david`, никогда не начинающимися с цифры, разделенные в корневом пространстве имен:
 
 ```ruby
-get '/:id' => 'posts#show', :constraints => { :id => /\d.+/ }
-get '/:username' => 'users#show'
+get '/:id', to: 'posts#show', constraints: { id: /\d.+/ }
+get '/:username', to: 'users#show'
 ```
 
 ### Ограничения, основанные на запросе
@@ -140,14 +142,14 @@ get '/:username' => 'users#show'
 Ограничение, основанное на запросе, определяется так же, как и сегментное ограничение:
 
 ```ruby
-get "photos", :constraints => {:subdomain => "admin"}
+get 'photos', constraints: {subdomain: 'admin'}
 ```
 
 Также можно определить ограничения в форме блока:
 
 ```ruby
 namespace :admin do
-  constraints :subdomain => "admin" do
+  constraints subdomain: 'admin' do
     resources :photos
   end
 end
@@ -169,63 +171,58 @@ class BlacklistConstraint
 end
 
 TwitterClone::Application.routes.draw do
-  get "*path" => "blacklist#index",
-    :constraints => BlacklistConstraint.new
+  get '*path', to: 'blacklist#index',
+    constraints: BlacklistConstraint.new
 end
 ```
 
-Ограничения также можно определить в форме блока:
+Ограничения также можно определить как лямбду:
 
 ```ruby
-namespace :admin do
-  constraints :subdomain => "admin" do
-    resources :photos
-  end
+TwitterClone::Application.routes.draw do
+  get '*path', to: 'blacklist#index',
+    constraints: lambda { |request| Blacklist.retrieve_ips.include?(request.remote_ip) }
 end
 ```
 
-### Подстановка маршрутов
+И метод `matches?`, и лямбда получают объект `request` в качестве аргумента.
 
-Подстановка маршрутов - это способ указать, что определенные параметры должны соответствовать остальным частям маршрута. Например
+### Подстановка маршрутов и динамические сегменты
+
+Подстановка маршрутов - это способ указать, что определенные параметры должны соответствовать остальным частям маршрута. Например:
 
 ```ruby
-get 'photos/*other' => 'photos#unknown'
+get 'photos/*other', to: 'photos#unknown'
 ```
 
-Этот маршрут будет соответствовать `photos/12` или `/photos/long/path/to/12`, установив `params[:other]` как `"12"`, или `"long/path/to/12"`.
+Этот маршрут будет соответствовать `photos/12` или `/photos/long/path/to/12`, установив `params[:other]` как `"12"`, или `"long/path/to/12"`. Фрагменты, начинающиеся со звездочки, называются динамические сегменты ("wildcard segments").
 
-Динамические сегменты могут быть где угодно в маршруте. Например
+Динамические сегменты могут быть где угодно в маршруте. Например:
 
 ```ruby
-get 'books/*section/:title' => 'books#show'
+get 'books/*section/:title', to: 'books#show'
 ```
 
-будет соответствовать `books/some/section/last-words-a-memoir` с `params[:section]` равным `"some/section"`, и `params[:title]` равным `"last-words-a-memoir"`.
+будет соответствовать `books/some/section/last-words-a-memoir` с `params[:section]` равным `'some/section'`, и `params[:title]` равным `'last-words-a-memoir'`.
 
-На самом деле технически маршрут может иметь более одного динамического сегмента, matcher назначает параметры интуитивным образом. Для примера
+На самом деле технически маршрут может иметь более одного динамического сегмента, matcher назначает параметры интуитивным образом. Для примера:
 
 ```ruby
-get '*a/foo/*b' => 'test#index'
+get '*a/foo/*b', to: 'test#index'
 ```
 
-будет соответствовать `zoo/woo/foo/bar/baz` с `params[:a]` равным `"zoo/woo"`, и `params[:b]` равным `"bar/baz"`.
+будет соответствовать `zoo/woo/foo/bar/baz` с `params[:a]` равным `'zoo/woo'`, и `params[:b]` равным `'bar/baz'`.
 
-NOTE: Начиная с Rails 3.1, динамические маршруты всегда будут соответствовать опциональному формату сегмента по умолчанию. Например, если есть такой маршрут:
+NOTE: Запросив `'/foo/bar.json'`, ваш `params[:pages]` будет равен `'foo/bar'` с форматом запроса JSON. Если вам нужно вернуть старое поведение 3.0.x, можете предоставить `format: false` вот так:
 
 ```ruby
-get '*pages' => 'pages#show'
+get '*pages', to: 'pages#show', format: false
 ```
 
-NOTE: Запросив `"/foo/bar.json"`, ваш `params[:pages]` будет равен `"foo/bar"` с форматом запроса JSON. Если вам нужно вернуть старое поведение 3.0.x, можете предоставить `:format => false` вот так:
+NOTE: Если хотите сделать сегмент формата обязательным, чтобы его нельзя было опустить, укажите `format: true` подобным образом:
 
 ```ruby
-get '*pages' => 'pages#show', :format => false
-```
-
-NOTE: Если хотите сделать сегмент формата обязательным, чтобы его нельзя было опустить, укажите `:format => true` подобным образом:
-
-```ruby
-get '*pages' => 'pages#show', :format => true
+get '*pages', to: 'pages#show', format: true
 ```
 
 ### Перенаправление
@@ -233,20 +230,20 @@ get '*pages' => 'pages#show', :format => true
 Можно перенаправить любой путь на другой путь, используя хелпер `redirect` в вашем роутере:
 
 ```ruby
-get "/stories" => redirect("/posts")
+get '/stories', to: redirect('/posts')
 ```
 
 Также можно повторно использовать динамические сегменты для соответствия пути, на который перенаправляем:
 
 ```ruby
-get "/stories/:name" => redirect("/posts/%{name}")
+get '/stories/:name', to: redirect('/posts/%{name}')
 ```
 
 Также можно предоставить блок для перенаправления, который получает params и объект request:
 
 ```ruby
-get "/stories/:name" => redirect {|params, req| "/posts/#{params[:name].pluralize}" }
-get "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
+get '/stories/:name', to: redirect {|params, req| "/posts/#{params[:name].pluralize}" }
+get '/stories', to: redirect {|p, req| "/posts/#{req.subdomain}" }
 ```
 
 Пожалуйста, отметьте, что это перенаправление является 301 "Moved Permanently". Учтите, что некоторые браузеры или прокси серверы закэшируют этот тип перенаправления, сделав старые страницы недоступными.
@@ -255,33 +252,33 @@ get "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
 
 ### Роутинг к приложениям Rack
 
-Вместо строки, подобной `"posts#index"`, соответствующей экшну `index` в `PostsController`, можно определить любое [приложение Rack](/different-guides/rails-on-rack) как конечную точку совпадения.
+Вместо строки, подобной `'posts#index'`, соответствующей экшну `index` в `PostsController`, можно определить любое [приложение Rack](/different-guides/rails-on-rack) как конечную точку совпадения.
 
 ```ruby
-match "/application.js" => Sprockets, :via => :all
+match '/application.js', to: Sprockets, via: :all
 ```
 
-Пока `Sprockets` отвечает на `call` и возвращает `[status, headers, body]`, роутер не будет различать приложение Rack и экшн. Здесь подходит использование `:via => :all`, если вы хотите позволить своему приложению Rack обрабатывать все методы так, как оно считает нужным.
+Пока `Sprockets` отвечает на `call` и возвращает `[status, headers, body]`, роутер не будет различать приложение Rack и экшн. Здесь подходит использование `via: :all`, если вы хотите позволить своему приложению Rack обрабатывать все методы так, как оно считает нужным.
 
-NOTE: Для любопытства, `"posts#index"` фактически расширяется до `PostsController.action(:index)`, который возвращает валидное приложение Rack.
+NOTE: Для любопытства, `'posts#index'` фактически расширяется до `PostsController.action(:index)`, который возвращает валидное приложение Rack.
 
 ### Использование `root`
 
-Можно определить, с чем Rails должен связать `"/"` с помощью метода `root`:
+Можно определить, с чем Rails должен связать `'/'` с помощью метода `root`:
 
 ```ruby
-root :to => 'pages#main'
+root to: 'pages#main'
 root 'pages#main' # то же самое в краткой форме
 ```
 
-Следует поместить маршрут `root` в начало файла, поскольку это наиболее популярный маршрут и должен быть проверен первым. Также необходимо удалить файл `public/index.html`, чтобы корневой маршрут заработал.
+Следует поместить маршрут `root` в начало файла, поскольку это наиболее популярный маршрут и должен быть проверен первым.
 
 NOTE: Маршрут `root` связывает с экшном только запросы `GET`.
 
 ### Маршруты с символами Unicode
 
-Маршруты с символами unicode можно определять непосредственно. Например
+Маршруты с символами unicode можно определять непосредственно. Например:
 
 ```ruby
-match 'こんにちは' => 'welcome#index'
+get 'こんにちは', to: 'welcome#index'
 ```

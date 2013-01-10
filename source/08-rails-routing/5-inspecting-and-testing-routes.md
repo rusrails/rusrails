@@ -2,7 +2,7 @@
 
 Rails предлагает инструменты для осмотра и тестирования маршрутов.
 
-h4. Обзор существующих маршрутов
+### Список существующих маршрутов
 
 Чтобы получить полный список всех доступных маршрутов вашего приложения, посетите `http://localhost:3000/rails/info/routes` в браузере, в то время как ваш сервер запущен в режиме **development**.
 Команда `rake routes`, запущенная в терминале, выдаст тот же результат.
@@ -41,31 +41,31 @@ TIP: Результат команды `rake routes` более читаемый
 
 #### Оператор контроля `assert_generates`
 
-Используйте `assert_generates` чтобы убедиться в том, что определенный набор опций создает конкретный путь. Можете использовать его с маршрутами по умолчанию или своими маршрутами
+Используйте `assert_generates` чтобы убедиться в том, что определенный набор опций создает конкретный путь. Можете использовать его с маршрутами по умолчанию или своими маршрутами. Например:
 
 ```ruby
-assert_generates "/photos/1", { :controller => "photos", :action => "show", :id => "1" }
-assert_generates "/about", :controller => "pages", :action => "about"
+assert_generates '/photos/1', { controller: 'photos', action: 'show', id: '1' }
+assert_generates '/about', controller: 'pages', action: 'about'
 ```
 
 #### Оператор контроля `assert_recognizes`
 
-Оператор контроля `assert_recognizes` - это противоположность `assert_generates`. Он убеждается, что Rails распознает предложенный путь и маршрутизирует его в конкретную точку в вашем приложении.
+Оператор контроля `assert_recognizes` - это противоположность `assert_generates`. Он убеждается, что Rails распознает предложенный путь и маршрутизирует его в конкретную точку в вашем приложении. Например:
 
 ```ruby
-assert_recognizes({ :controller => "photos", :action => "show", :id => "1" }, "/photos/1")
+assert_recognizes({ controller: 'photos', action: 'show', id: '1' }, '/photos/1')
 ```
 
-Можете задать аргумент <tt>:method</tt>, чтобы определить метод HTTP:
+Можете задать аргумент `:method`, чтобы определить метод HTTP:
 
 ```ruby
-assert_recognizes({ :controller => "photos", :action => "create" }, { :path => "photos", :method => :post })
+assert_recognizes({ controller: 'photos', action: 'create' }, { path: 'photos', method: :post })
 ```
 
 #### Оператор контроля `assert_routing`
 
-Оператор контроля `assert_routing` проверяет маршрут с двух сторон: он тестирует, что путь генерирует опции, и что опции генерируют путь. Таким образом, он комбинирует функции `assert_generates` и `assert_recognizes`.
+Оператор контроля `assert_routing` проверяет маршрут с двух сторон: он тестирует, что путь генерирует опции, и что опции генерируют путь. Таким образом, он комбинирует функции `assert_generates` и `assert_recognizes`:
 
 ```ruby
-assert_routing({ :path => "photos", :method => :post }, { :controller => "photos", :action => "create" })
+assert_routing({ path: 'photos', method: :post }, { controller: 'photos', action: 'create' })
 ```

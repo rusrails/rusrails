@@ -42,8 +42,8 @@
 
 08. Роутинг в Rails
     routing.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    6e98989c95c3e90ffef4ddad891d0893ef08f26f
+    11/12/12
 
 09. Расширения ядра Active Support
     active_support_core_extensions.md

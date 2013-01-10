@@ -50,7 +50,7 @@ resources :publishers do
 end
 ```
 
-Глубоко вложенные ресурсы быстро становятся громоздкими. В этом случае, например, приложение будет распознавать URL, такие как
+Глубоко вложенные ресурсы быстро становятся громоздкими. В этом случае, например, приложение будет распознавать URL, такие как:
 
 ```
 /publishers/1/magazines/2/photos/3
@@ -60,9 +60,94 @@ end
 
 TIP: _Ресурсы никогда не должны быть вложены глубже, чем на 1 уровень._
 
+#### Мелкое вложение
+
+Один из способов избежать глубокого вложения (как показано выше) является создание экшнов коллекции в прстранстве имен родителя, чтобы чувствовать иерархию, но не вкладывать экшны элементов. Другими словами, создавать маршруты с минимальным количеством информации для однозначной идентификации ресурса, например так:
+
+```ruby
+resources :posts do
+  resources :comments, only: [:index, :new, :create]
+end
+resources :comments, only: [:show, :edit, :update, :destroy]
+```
+
+Эта идея балансирует на грани между наглядностью маршрутов и глубоким вложением. Существует сокращенный синтаксис для получения подобног, с помощью опции `:shallow`:
+
+```ruby
+resources :posts do
+  resources :comments, shallow: true
+end
+```
+
+Это создаст те же самые маршруты из первого примера, Также можно определить опцию `:shallow` в родительском ресурсе, в этом случае все вложенные ресурсы будут мелкие:
+
+```ruby
+resources :posts, shallow: true do
+  resources :comments
+  resources :quotes
+  resources :drafts
+end
+```
+
+Метод `shallow` в DSL создает пространство имен, в котором каждое вложение мелкое. Это создаст те же самые маршруты из предыдущего примера:
+
+```ruby
+shallow do
+  resources :posts do
+    resources :comments
+    resources :quotes
+    resources :drafts
+  end
+end
+```
+
+Также существуют две опции для `scope` для настройки мелких маршрутов. `:shallow_path` добавляет префикс к путям элемента из указанного параметра:
+
+```ruby
+scope shallow_path: "sekret" do
+  resources :posts do
+    resources :comments, shallow: true
+  end
+end
+```
+
+Для ресурса комментариев будут созданы следующие маршруты:
+
+| Метод HTTP | Путь                                   | Именнованный хелпер |
+| ---------- | -------------------------------------- | ------------------- |
+| GET        | /posts/:post_id/comments(.:format)     | post_comments       |
+| POST       | /posts/:post_id/comments(.:format)     | post_comments       |
+| GET        | /posts/:post_id/comments/new(.:format) | new_post_comment    |
+| GET        | /sekret/comments/:id/edit(.:format)    | edit_comment        |
+| GET        | /sekret/comments/:id(.:format)         | comment             |
+| PATCH/PUT  | /sekret/comments/:id(.:format)         | comment             |
+| DELETE     | /sekret/comments/:id(.:format)         | comment             |
+
+Опция `:shallow_prefix` добавляет указанный параметр к именнованным хелперам:
+
+```ruby
+scope shallow_prefix: "sekret" do
+  resources :posts do
+    resources :comments, shallow: true
+  end
+end
+```
+
+Для ресурса комментариев будут созданы следующие маршруты:
+
+| Метод HTTP | Путь                                   | Именнованный хелпер |
+| ---------- | -------------------------------------- | ------------------- |
+| GET        | /posts/:post_id/comments(.:format)     | post_comments       |
+| POST       | /posts/:post_id/comments(.:format)     | post_comments       |
+| GET        | /posts/:post_id/comments/new(.:format) | new_post_comment    |
+| GET        | /comments/:id/edit(.:format)           | edit_sekret_comment |
+| GET        | /comments/:id(.:format)                | sekret_comment      |
+| PATCH/PUT  | /comments/:id(.:format)                | sekret_comment      |
+| DELETE     | /comments/:id(.:format)                | sekret_comment      |
+
 ### Концерны маршрутов
 
-Концерны маршрутов (Routing Concerns) позволяют объявлять обычные маршруты, которые затем могут быть повторно использованы внутри других ресурсов и маршрутов.
+Концерны маршрутов (Routing Concerns) позволяют объявлять обычные маршруты, которые затем могут быть повторно использованы внутри других ресурсов и маршрутов. Чтобы определить концерн:
 
 ```ruby
 concern :commentable do
@@ -74,12 +159,25 @@ concern :image_attachable do
 end
 ```
 
-Эти концерны могут быть использованы в ресурсах, чтобы избежать дублирования кода и разделить поведение между несколькими маршрутами.
+Эти концерны могут быть использованы в ресурсах, чтобы избежать дублирования кода и разделить поведение между несколькими маршрутами:
 
 ```ruby
 resources :messages, concerns: :commentable
 
 resources :posts, concerns: [:commentable, :image_attachable]
+```
+
+Вышеуказанное эквивалентно:
+
+```ruby
+resources :messages do
+  resources :comments
+end
+
+resources :posts do
+  resources :comments
+  resources :images, only: :index
+end
 ```
 
 Также их можно использовать в любом месте внутри маршрутов, например в вызове scope или namespace:
@@ -103,31 +201,31 @@ end
 При использовании magazine_ad_path, можно передать экземпляры `Magazine` и `Ad` вместо числовых ID:
 
 ```erb
-<%= link_to "Ad details", magazine_ad_path(@magazine, @ad) %>
+<%= link_to 'Ad details', magazine_ad_path(@magazine, @ad) %>
 ```
 
 Можно также использовать `url_for` с набором объектов, и Rails автоматически определит, какой маршрут вам нужен:
 
 ```erb
-<%= link_to "Ad details", url_for([@magazine, @ad]) %>
+<%= link_to 'Ad details', url_for([@magazine, @ad]) %>
 ```
 
 В этом случае Rails увидит, что `@magazine` это `Magazine` и `@ad` это `Ad` и поэтому использует хелпер `magazine_ad_path`. В хелперах, таких как `link_to`, можно определить лишь объект вместо полного вызова `url_for`:
 
 ```erb
-<%= link_to "Ad details", [@magazine, @ad] %>
+<%= link_to 'Ad details', [@magazine, @ad] %>
 ```
 
 Если хотите ссылку только на magazine:
 
 ```erb
-<%= link_to "Magazine details", @magazine %>
+<%= link_to 'Magazine details', @magazine %>
 ```
 
 Для других экшнов следует всего лишь вставить имя экшна как первый элемент массива:
 
 ```erb
-<%= link_to "Edit Ad", [:edit, @magazine, @ad] %>
+<%= link_to 'Edit Ad', [:edit, @magazine, @ad] %>
 ```
 
 Это позволит рассматривать экземпляры ваших моделей как URL, что является ключевым преимуществом ресурсного стиля.
@@ -148,15 +246,17 @@ resources :photos do
 end
 ```
 
-Это распознает `/photos/1/preview` с GET, и направит его в экшн `preview` `PhotosController`. Это также создаст хелперы `preview_photo_url` и `preview_photo_path`.
+Это распознает `/photos/1/preview` с GET, и направит его в экшн `preview` `PhotosController`, со значением id ресурса, переданным в `params[:id]`. Это также создаст хелперы `preview_photo_url` и `preview_photo_path`.
 
 В блоке маршрутов к элементу каждое имя маршрута определяет метод HTTP, с которым он будет распознан. Тут можно использовать `get`, `patch`, `put`, `post` или `delete`. Если у вас нет нескольких маршрутов к `элементу`, также можно передать `:on` к маршруту, избавившись от блока:
 
 ```ruby
 resources :photos do
-  get 'preview', :on => :member
+  get 'preview', on: :member
 end
 ```
+
+Можно опустить опцию `:on`, это создаст такой же маршрут для элемента, за исключением того, что значение id ресурса будет доступен в `params[:photo_id]` вместо `params[:id]`.
 
 #### Добавление маршрутов к коллекции
 
@@ -176,10 +276,20 @@ end
 
 ```ruby
 resources :photos do
-  get 'search', :on => :collection
+  get 'search', on: :collection
 end
 ```
 
-#### Предостережение
+#### Добавление маршрутов для дополнительных экшнов New
 
-Если вдруг вы захотели добавить много дополнительных экшнов в ресурсный маршрут, нужно остановиться и спросить себя, может от вас утаилось присутствие другого ресурса.
+Чтобы добавить альтернативный экшн new, используя сокращенный вариант `:on`:
+
+```ruby
+resources :comments do
+  get 'preview', on: :new
+end
+```
+
+Это позволит Rails распознавать маршруты, такие как `/comments/new/preview` с GET, и направлять их в экшн `preview` в `CommentsController`. Он также создаст маршрутные хелперы `preview_new_comment_url` и `preview_new_comment_path`.
+
+TIP: Если вдруг вы захотели добавить много дополнительных экшнов в ресурсный маршрут, нужно остановиться и спросить себя, может быть, от вас утаилось присутствие другого ресурса.
