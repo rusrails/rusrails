@@ -14,7 +14,7 @@
 ```ruby
 [[1, 2], [2, 3], [3, 4]].sum    # => [1, 2, 2, 3, 3, 4]
 %w(foo bar baz).sum             # => "foobarbaz"
-{:a => 1, :b => 2, :c => 3}.sum # => [:b, 2, :c, 3, :a, 1]
+{a: 1, b: 2, c: 3}.sum # => [:b, 2, :c, 3, :a, 1]
 ```
 
 Сумма пустой коллекции равна нулю по умолчанию, но это может быть настроено:
@@ -35,14 +35,6 @@
 
 ```ruby
 [].sum(1) {|n| n**3} # => 1
-```
-
-Метод `ActiveRecord::Observer#observed_subclasses`, к примеру, применяет это так:
-
-```ruby
-def observed_subclasses
-  observed_classes.sum([]) { |klass| klass.send(:subclasses) }
-end
 ```
 
 NOTE: Определено в `active_support/core_ext/enumerable.rb`.

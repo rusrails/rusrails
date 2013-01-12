@@ -41,14 +41,14 @@ NOTE: Определено в `active_support/core_ext/numeric/bytes.rb`.
 Эти методы используют Time#advance для уточнения вычисления дат с использованием from_now, ago, и т. д., а также для сложения или вычитания их результата из объекта Time. Например:
 
 ```ruby
-# эквивалент для Time.current.advance(:months => 1)
+# эквивалент для Time.current.advance(months: 1)
 1.month.from_now
 
-# эквивалент для Time.current.advance(:years => 2)
+# эквивалент для Time.current.advance(years: 2)
 2.years.from_now
 
-# эквивалент для Time.current.advance(:months => 4, :years => 5)
-(4.months ` 5.years).from_now
+# эквивалент для Time.current.advance(months: 4, years: 5)
+(4.months + 5.years).from_now
 ```
 
 Хотя эти примеры предоставляют точные вычисления при использовании в примерах выше, следует отметить, что это не так, если перед использованием конвертируется результат методов `months', `years', и т.п.:
@@ -76,22 +76,22 @@ NOTE: Определено в `active_support/core_ext/numeric/time.rb`.
 # => 555-1234
 1235551234.to_s(:phone)
 # => 123-555-1234
-1235551234.to_s(:phone, :area_code => true)
+1235551234.to_s(:phone, area_code: true)
 # => (123) 555-1234
-1235551234.to_s(:phone, :delimiter => " ")
+1235551234.to_s(:phone, delimiter: " ")
 # => 123 555 1234
-1235551234.to_s(:phone, :area_code => true, :extension => 555)
+1235551234.to_s(:phone, area_code: true, extension: 555)
 # => (123) 555-1234 x 555
-1235551234.to_s(:phone, :country_code => 1)
+1235551234.to_s(:phone, country_code: 1)
 # => `1-123-555-1234
 ```
 
 Создает строковое представление числа, как валюты:
 
 ```ruby
-1234567890.50.to_s(:currency)                    # => $1,234,567,890.50
-1234567890.506.to_s(:currency)                   # => $1,234,567,890.51
-1234567890.506.to_s(:currency, :precision => 3)  # => $1,234,567,890.506
+1234567890.50.to_s(:currency)                 # => $1,234,567,890.50
+1234567890.506.to_s(:currency)                # => $1,234,567,890.51
+1234567890.506.to_s(:currency, precision: 3)  # => $1,234,567,890.506
 ```
 
 Создает строковое представление числа, как процента:
@@ -99,32 +99,32 @@ NOTE: Определено в `active_support/core_ext/numeric/time.rb`.
 ```ruby
 100.to_s(:percentage)
 # => 100.000%
-100.to_s(:percentage, :precision => 0)
+100.to_s(:percentage, precision: 0)
 # => 100%
-1000.to_s(:percentage, :delimiter => '.', :separator => ',')
+1000.to_s(:percentage, delimiter: '.', separator: ',')
 # => 1.000,000%
-302.24398923423.to_s(:percentage, :precision => 5)
+302.24398923423.to_s(:percentage, precision: 5)
 # => 302.24399%
 ```
 
 Создает строковое представление числа с разделенными разрядами:
 
 ```ruby
-12345678.to_s(:delimited)                        # => 12,345,678
-12345678.05.to_s(:delimited)                     # => 12,345,678.05
-12345678.to_s(:delimited, :delimiter => ".")     # => 12.345.678
-12345678.to_s(:delimited, :delimiter => ",")     # => 12,345,678
-12345678.05.to_s(:delimited, :separator => " ")  # => 12,345,678 05
+12345678.to_s(:delimited)                     # => 12,345,678
+12345678.05.to_s(:delimited)                  # => 12,345,678.05
+12345678.to_s(:delimited, delimiter: ".")     # => 12.345.678
+12345678.to_s(:delimited, delimiter: ",")     # => 12,345,678
+12345678.05.to_s(:delimited, separator: " ")  # => 12,345,678 05
 ```
 
 Создает строковое представление числа, округленного с точностью:
 
 ```ruby
-111.2345.to_s(:rounded)                        # => 111.235
-111.2345.to_s(:rounded, :precision => 2)       # => 111.23
-13.to_s(:rounded, :precision => 5)             # => 13.00000
-389.32314.to_s(:rounded, :precision => 0)      # => 389
-111.2345.to_s(:rounded, :significant => true)  # => 111
+111.2345.to_s(:rounded)                     # => 111.235
+111.2345.to_s(:rounded, precision: 2)       # => 111.23
+13.to_s(:rounded, precision: 5)             # => 13.00000
+389.32314.to_s(:rounded, precision: 0)      # => 389
+111.2345.to_s(:rounded, significant: true)  # => 111
 ```
 
 Создает строковое представление числа, как удобочитаемое количество байт:

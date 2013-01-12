@@ -12,7 +12,7 @@ Hash.instance_method(:delete) # => #<UnboundMethod: Hash#delete>
 
 ```ruby
 clear = Hash.instance_method(:clear)
-clear.bind({:a => 1}).call # => {}
+clear.bind({a: 1}).call # => {}
 ```
 
 Active Support определяет `Proc#bind` с аналогичным назначением:

@@ -8,7 +8,7 @@
 
 #### Безопасные строки
 
-В Active Support есть концепция <i>(html) безопасных</i> строк, начиная с Rails 3. Безопасная строка - это та, которая помечена как подлежащая вставке в HTML как есть. Ей доверяется, независимо от того, была она экранирована или нет.
+В Active Support есть концепция <i>(html) безопасных</i> строк. Безопасная строка - это та, которая помечена как подлежащая вставке в HTML как есть. Ей доверяется, независимо от того, была она экранирована или нет.
 
 Строки рассматриваются как <i>небезопасные</i> по умолчанию:
 
@@ -45,10 +45,10 @@ s            # => "<script>...</script>"
 "".html_safe + "<".html_safe # => "<"
 ```
 
-Эти методы не должны использоваться в обычных вьюхах. В Rails 3 небезопасные значения автоматически экранируются:
+Эти методы не должны использоваться в обычных вьюхах. Небезопасные значения автоматически экранируются:
 
 ```erb
-<%= @review.title %> <%# прекрасно в Rails 3, экранируется, если нужно %>
+<%= @review.title %> <%# прекрасно, экранируется, если нужно %>
 ```
 
 Чтобы вставить что-либо дословно, используйте хелпер `raw` вместо вызова `html_safe`:
@@ -113,7 +113,7 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 Многоточие может быть настроено с помощью опции `:omission`:
 
 ```ruby
-"Oh dear! Oh dear! I shall be late!".truncate(20, :omission => '&hellip;')
+"Oh dear! Oh dear! I shall be late!".truncate(20, omission: '&hellip;')
 # => "Oh dear! Oh &hellip;"
 ```
 
@@ -124,14 +124,14 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 ```ruby
 "Oh dear! Oh dear! I shall be late!".truncate(18)
 # => "Oh dear! Oh dea..."
-"Oh dear! Oh dear! I shall be late!".truncate(18, :separator => ' ')
+"Oh dear! Oh dear! I shall be late!".truncate(18, separator: ' ')
 # => "Oh dear! Oh..."
 ```
 
 Опция `:separator` может быть регулярным выражением:
 
 ```ruby
-"Oh dear! Oh dear! I shall be late!".truncate(18, :separator => /\s/)
+"Oh dear! Oh dear! I shall be late!".truncate(18, separator: /\s/)
 # => "Oh dear! Oh..."
 ```
 
@@ -296,11 +296,10 @@ NOTE: Определено в `active_support/core_ext/string/access.rb`.
 Active Record использует этот метод для вычисления имени таблицы по умолчанию, соответствующей модели:
 
 ```ruby
-# active_record/base.rb
+# active_record/model_schema.rb
 def undecorated_table_name(class_name = base_class.name)
   table_name = class_name.to_s.demodulize.underscore
-  table_name = table_name.pluralize if pluralize_table_names
-  table_name
+  pluralize_table_names ? table_name.pluralize : table_name
 end
 ```
 
@@ -609,7 +608,7 @@ def full_messages
   each do |attribute, messages|
     ...
     attr_name = attribute.to_s.gsub('.', '_').humanize
-    attr_name = @base.class.human_attribute_name(attribute, :default => attr_name)
+    attr_name = @base.class.human_attribute_name(attribute, default: attr_name)
     ...
   end
 

@@ -76,7 +76,7 @@ Time.local(2000, 11, 31).next_quarter # => Wed, 28 Feb 2001
 
 ##### `beginning_of_week`, `end_of_week`
 
-Методы `beginning_of_week` и `end_of_week` возвращают даты для начала и конца недели соответственно. Предполагается, что неделя начинается с понедельника, но это может быть изменено переданным аргументом.
+Методы `beginning_of_week` и `end_of_week` возвращают даты для начала и конца недели соответственно. Предполагается, что неделя начинается с понедельника, но это может быть изменено переданным аргументом, установив локально для треда `Date.beginning_of_week` или `config.beginning_of_week`.
 
 ```ruby
 d = Date.new(2010, 5, 8)     # => Sat, 08 May 2010
@@ -90,17 +90,23 @@ d.end_of_week(:sunday)       # => Sat, 08 May 2010
 
 ##### `monday`, `sunday`
 
-Методы `monday` и `sunday` возвращают даты начала и конца недели, соответственно. Предполагается, что недели начинаются в понедельник.
+Методы `monday` и `sunday` возвращают даты для прошлого понедельника или следующего воскресенья, соответственно.
 
 ```ruby
 d = Date.new(2010, 5, 8)     # => Sat, 08 May 2010
 d.monday                     # => Mon, 03 May 2010
 d.sunday                     # => Sun, 09 May 2010
+
+d = Date.new(2012, 9, 10)    # => Mon, 10 Sep 2012
+d.monday                     # => Mon, 10 Sep 2012
+
+d = Date.new(2012, 9, 16)    # => Sun, 16 Sep 2012
+d.sunday                     # => Sun, 16 Sep 2012
 ```
 
 ##### `prev_week`, `next_week`
 
-`next_week` принимает символ с днем недели на английском (в нижнем регистре, по умолчанию `:monday`) и возвращает дату, соответствующую этому дню на следующей неделе:
+`next_week` принимает символ с днем недели на английском (по умолчанию локальный для треда `Date.beginning_of_week`, или`config.beginning_of_week` или `:monday`) и возвращает дату, соответствующую этому дню на следующей неделе:
 
 ```ruby
 d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
@@ -117,6 +123,8 @@ d.prev_week(:friday)     # => Fri, 30 Apr 2010
 ```
 
 У `prev_week` есть псевдоним `last_week`.
+
+И `next_week`, и `prev_week` работают так, как нужно, когда установлен `Date.beginning_of_week` или `config.beginning_of_week`.
 
 ##### `beginning_of_month`, `end_of_month`
 
@@ -210,8 +218,8 @@ Date.new(2010, 5, 24).weeks_ago(2)    # => Mon, 10 May 2010
 
 ```ruby
 date = Date.new(2010, 6, 6)
-date.advance(:years => 1, :weeks => 2)  # => Mon, 20 Jun 2011
-date.advance(:months => 2, :days => -2) # => Wed, 04 Aug 2010
+date.advance(years: 1, weeks: 2)  # => Mon, 20 Jun 2011
+date.advance(months: 2, days: -2) # => Wed, 04 Aug 2010
 ```
 
 Отметьте в предыдущем примере, что приросты могут быть отрицательными.
@@ -221,14 +229,14 @@ date.advance(:months => 2, :days => -2) # => Wed, 04 Aug 2010
 Метод `advance` передвигает сначала на один месяц, и затем на один день, результат такой:
 
 ```ruby
-Date.new(2010, 2, 28).advance(:months => 1, :days => 1)
+Date.new(2010, 2, 28).advance(months: 1, days: 1)
 # => Sun, 29 Mar 2010
 ```
 
 Если бы мы делали по другому, результат тоже был бы другой:
 
 ```ruby
-Date.new(2010, 2, 28).advance(:days => 1).advance(:months => 1)
+Date.new(2010, 2, 28).advance(days: 1).advance(months: 1)
 # => Thu, 01 Apr 2010
 ```
 
@@ -237,14 +245,14 @@ Date.new(2010, 2, 28).advance(:days => 1).advance(:months => 1)
 Метод `change` позволяет получить новую дату, которая идентична получателю, за исключением заданного года, месяца или дня:
 
 ```ruby
-Date.new(2010, 12, 23).change(:year => 2011, :month => 11)
+Date.new(2010, 12, 23).change(year: 2011, month: 11)
 # => Wed, 23 Nov 2011
 ```
 
 Метод не толерантен к несуществующим датам, если изменение невалидно, вызывается `ArgumentError`:
 
 ```ruby
-Date.new(2010, 1, 31).change(:month => 2)
+Date.new(2010, 1, 31).change(month: 2)
 # => ArgumentError: invalid date
 ```
 

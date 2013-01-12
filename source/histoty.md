@@ -47,8 +47,8 @@
 
 09. Расширения ядра Active Support
     active_support_core_extensions.md
-    1fa5c3b39f5d0bb23c8c3d60b023613386629946
-    17/09/12
+    f049016cd348627bf8db0d72382d7580bf802a79
+    08/01/13
 
 10. API интернационализации Rails (I18n)
     i18n.md

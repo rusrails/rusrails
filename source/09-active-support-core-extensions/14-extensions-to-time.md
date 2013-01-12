@@ -54,9 +54,9 @@ Time.zone_default
 # => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
 
 # В Барселоне, 2010/03/28 02:00 +0100 становится 2010/03/28 03:00 +0200 благодаря переходу на летнее время.
-t = Time.local_time(2010, 3, 28, 1, 59, 59)
+t = Time.local(2010, 3, 28, 1, 59, 59)
 # => Sun Mar 28 01:59:59 +0100 2010
-t.advance(:seconds => 1)
+t.advance(seconds: 1)
 # => Sun Mar 28 03:00:00 +0200 2010
 ```
 
@@ -86,6 +86,8 @@ now = Time.current
 # => Mon, 09 Aug 2010 23:20:05 UTC +00:00
 now.all_week
 # => Mon, 09 Aug 2010 00:00:00 UTC +00:00..Sun, 15 Aug 2010 23:59:59 UTC +00:00
+now.all_week(:sunday)
+# => Sun, 16 Sep 2012 00:00:00 UTC +00:00..Sat, 22 Sep 2012 23:59:59 UTC +00:00
 now.all_month
 # => Sat, 01 Aug 2010 00:00:00 UTC +00:00..Tue, 31 Aug 2010 23:59:59 UTC +00:00
 now.all_quarter
@@ -107,26 +109,6 @@ Time.current
 
 Как и у `DateTime`, условия `past?` и `future?` выполняются относительно `Time.current`.
 
-Используйте метод класса `local_time`, чтобы создать объекты времени, учитывающие временную зону пользователя:
-
-```ruby
-Time.zone_default
-# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
-Time.local_time(2010, 8, 15)
-# => Sun Aug 15 00:00:00 +0200 2010
-```
-
-Метод класса `utc_time` возвращает время в UTC:
-
-```ruby
-Time.zone_default
-# => #<ActiveSupport::TimeZone:0x7f73654d4f38 @utc_offset=nil, @name="Madrid", ...>
-Time.utc_time(2010, 8, 15)
-# => Sun Aug 15 00:00:00 UTC 2010
-```
-
-И `local_time`, и `utc_time` принимают до семи позиционных аргументов: year, month, day, hour, min, sec, usec. Year обязателен, month и day принимаются по умолчанию как 1, остальное по умолчанию 0.
-
 Если время, подлежащее конструированию лежит за рамками, поддерживаемыми `Time` на запущенной платформе, usecs отбрасываются и вместо этого возвращается объект `DateTime`.
 
 #### Длительности
@@ -145,6 +127,6 @@ now - 1.week
 Это преводится в вызовы `since` или `advance`. Для примера выполним корректный переход во время календарной реформы:
 
 ```ruby
-Time.utc_time(1582, 10, 3) + 5.days
+Time.utc(1582, 10, 3) + 5.days
 # => Mon Oct 18 00:00:00 UTC 1582
 ```

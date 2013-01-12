@@ -33,10 +33,10 @@ B.x # => :b
 ```ruby
 class_attribute :default_params
 self.default_params = {
-  :mime_version => "1.0",
-  :charset      => "UTF-8",
-  :content_type => "text/plain",
-  :parts_order  => [ "text/plain", "text/enriched", "text/html" ]
+  mime_version: "1.0",
+  charset: "UTF-8",
+  content_type: "text/plain",
+  parts_order: [ "text/plain", "text/enriched", "text/html" ]
 }.freeze
 ```
 
@@ -58,7 +58,7 @@ a2.x # => 2, переопределено в a2
 ```ruby
 module ActiveRecord
   class Base
-    class_attribute :table_name_prefix, :instance_writer => false
+    class_attribute :table_name_prefix, instance_writer: false
     self.table_name_prefix = ""
   end
 end
@@ -70,7 +70,7 @@ end
 
 ```ruby
 class A
-  class_attribute :x, :instance_reader => false
+  class_attribute :x, instance_reader: false
 end
 
 A.new.x = 1 # NoMethodError
@@ -113,11 +113,11 @@ end
 module A
   class B
     # No first_name instance reader is generated.
-    cattr_accessor :first_name, :instance_reader => false
+    cattr_accessor :first_name, instance_reader: false
     # No last_name= instance writer is generated.
-    cattr_accessor :last_name, :instance_writer => false
+    cattr_accessor :last_name, instance_writer: false
     # No surname instance reader or surname= writer is generated.
-    cattr_accessor :surname, :instance_accessor => false
+    cattr_accessor :surname, instance_accessor: false
   end
 end
 ```
@@ -147,8 +147,6 @@ C.subclasses # => [B, D]
 ```
 
 Порядок, в котором эти классы возвращаются, неопределен.
-
-WARNING: Этот метод переопределяет некоторые основные классы Rails, но все это должно стать совместимым в Rails 3.1.
 
 NOTE: Определено в `active_support/core_ext/class/subclasses.rb`.
 

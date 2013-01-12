@@ -581,7 +581,7 @@ Active Record
     RAILS_ENV=production bundle exec rails server
     => use db/schema_cache.dump
 
-    # Если нужно убрать выгруженный кеш, запустите таск rake.
+    # Если нужно убрать выгруженный кэш, запустите таск rake.
     RAILS_ENV=production bundle exec rake db:schema:cache:clear
     => remove db/schema_cache.dump
     ```

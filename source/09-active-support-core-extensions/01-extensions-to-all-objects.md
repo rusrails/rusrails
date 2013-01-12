@@ -69,19 +69,21 @@ true.dup  # => TypeError: can't dup TrueClass
 Active Support предоставляет `duplicable?` для программного запроса к объекту о таком свойстве:
 
 ```ruby
+"foo".duplicable? # => true
 "".duplicable?     # => true
+0.0.duplicable?   # => false
 false.duplicable?  # => false
 ```
 
-По определению все объекты являются `duplicable?`, кроме `nil`, `false`, `true`, символов, чисел и объектов class и module.
+По определению все объекты являются `duplicable?`, кроме объектов `nil`, `false`, `true`, символов, чисел, классов и модулей.
 
-WARNING. Любой класс может запретить дублирование, убрав `dup` и `clone`, или вызвав исключение в них, тогда только `rescue` может сказать, является ли данный отдельный объект дублируемым. `duplicable?` зависит от жестко заданного вышеуказанного перечня, но он намного быстрее, чем `rescue`. Используйте его, только если знаете, что жесткий перечень достаточен в конкретном случае.
+WARNING. Любой класс может запретить дублирование, убрав `dup` и `clone`, или вызвав исключение в них. Таким образом, только `rescue` может сказать, является ли данный отдельный объект дублируемым. `duplicable?` зависит от жестко заданного вышеуказанного перечня, но он намного быстрее, чем `rescue`. Используйте его, только если знаете, что жесткий перечень достаточен в конкретном случае.
 
 NOTE: Определено в `active_support/core_ext/object/duplicable.rb`.
 
 ### `deep_dup`
 
-Метод `deep_dup` возвращает "глубокую" копию данного объекта. Обычно при вызове `dup` на объекте, содержащем другие объекты, ruby не вызывает `dup` для них. Если, к примеру, у вас имеется массив со строкой, это будет выглядеть так:
+Метод `deep_dup` возвращает "глубокую" копию данного объекта. Обычно при вызове `dup` на объекте, содержащем другие объекты, ruby не вызывает `dup` для них, таким образом, он создает мелкую копию объекта. Если, к примеру, у вас имеется массив со строкой, это будет выглядеть так:
 
 ```ruby
 array     = ['string']
@@ -114,12 +116,12 @@ array     #=> ['string']
 duplicate #=> ['foo']
 ```
 
-Если объект нельзя дублировать, `deep_dup` просто возвратит этот объект:
+Если объект нельзя дублировать, `deep_dup` просто возвратит его:
 
 ```ruby
 number = 1
-dup = number.deep_dup
-number.object_id == dup.object_id   # => true
+duplicate = number.deep_dup
+number.object_id == duplicate.object_id   # => true
 ```
 
 NOTE: Определено в `active_support/core_ext/object/deep_dup.rb`.
@@ -280,13 +282,13 @@ account.to_query('company[name]')
 Хэши также отвечают на `to_query`, но в другом ключе. Если аргументы не заданы, вызов создает сортированную серию назначений ключ/значение, вызвав `to_query(key)` на его значениях. Затем он соединяет результат с помощью "&":
 
 ```ruby
-{:c => 3, :b => 2, :a => 1}.to_query # => "a=1&b=2&c=3"
+{c: 3, b: 2, a: 1}.to_query # => "a=1&b=2&c=3"
 ```
 
 метод `Hash#to_query` принимает опциональное пространство имен для ключей:
 
 ```ruby
-{:id => 89, :name => "John Smith"}.to_query('user')
+{id: 89, name: "John Smith"}.to_query('user')
 # => "user%5Bid%5D=89&user%5Bname%5D=John`Smith"
 ```
 
@@ -300,10 +302,10 @@ NOTE: Определено в `active_support/core_ext/object/to_query.rb`.
 
 ```ruby
 class Account < ActiveRecord::Base
-  has_many :customers, :dependent => :destroy
-  has_many :products,  :dependent => :destroy
-  has_many :invoices,  :dependent => :destroy
-  has_many :expenses,  :dependent => :destroy
+  has_many :customers, dependent: :destroy
+  has_many :products,  dependent: :destroy
+  has_many :invoices,  dependent: :destroy
+  has_many :expenses,  dependent: :destroy
 end
 ```
 
@@ -311,7 +313,7 @@ end
 
 ```ruby
 class Account < ActiveRecord::Base
-  with_options :dependent => :destroy do |assoc|
+  with_options dependent: :destroy do |assoc|
     assoc.has_many :customers
     assoc.has_many :products
     assoc.has_many :invoices
@@ -323,9 +325,9 @@ end
 Эта идиома также может передавать _группировку_ в reader. Например скажем, что нужно послать письмо, язык которого зависит от пользователя. Где-нибудь в рассыльщике можно сгруппировать локале-зависимые кусочки, наподобие этих:
 
 ```ruby
-I18n.with_options :locale => user.locale, :scope => "newsletter" do |i18n|
+I18n.with_options locale: user.locale, scope: "newsletter" do |i18n|
   subject i18n.t :subject
-  body    i18n.t :body, :user_name => user.name
+  body    i18n.t :body, user_name: user.name
 end
 ```
 
@@ -336,24 +338,6 @@ NOTE: Определено в `active_support/core_ext/object/with_options.rb`.
 ### Переменные экземпляра
 
 Active Support предоставляет несколько методов для облегчения доступа к переменным экземпляра.
-
-#### `instance_variable_names`
-
-В Ruby 1.8 и 1.9 есть метод `instance_variables`, возвращающий имена определенных переменных экземпляра. Но они ведут себя по-разному, в 1.8 он возвращает строки, в то время как в 1.9 он возвращает символы. Active Support определяет `instance_variable_names` как способ сохранить их как строки:
-
-```ruby
-class C
-  def initialize(x, y)
-    @x, @y = x, y
-  end
-end
-
-C.new(0, 1).instance_variable_names # => ["@y", "@x"]
-```
-
-WARNING: Порядок, в котором имена возвращаются, не определен, и он в действительности определяется версией интерпретатора.
-
-NOTE: Определено в `active_support/core_ext/object/instance_variables.rb`.
 
 #### `instance_values`
 

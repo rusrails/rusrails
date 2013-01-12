@@ -377,7 +377,7 @@ end
 class User < ActiveRecord::Base
   has_one :profile
 
-  delegate :name, :to => :profile
+  delegate :name, to: :profile
 end
 ```
 
@@ -388,17 +388,17 @@ end
 Макрос `delegate` принимает несколько методов:
 
 ```ruby
-delegate :name, :age, :address, :twitter, :to => :profile
+delegate :name, :age, :address, :twitter, to: :profile
 ```
 
 При интерполяции в строку опция `:to` должна стать выражением, применяемым к объекту, метод которого передается. Обычно строка или символ. Такое выражение вычисляется в контексте получателя:
 
 ```ruby
 # передает константе Rails
-delegate :logger, :to => :Rails
+delegate :logger, to: :Rails
 
 # передает классу получателя
-delegate :table_name, :to => 'self.class'
+delegate :table_name, to: :class
 ```
 
 WARNING: Если опция `:prefix` установлена `true` это менее характерно, смотрите ниже.
@@ -406,7 +406,7 @@ WARNING: Если опция `:prefix` установлена `true` это ме
 По умолчанию, если передача вызывает `NoMethodError` и цель является `nil`, выводится исключение. Можно попросить, чтобы возвращался `nil` с помощью опции `:allow_nil`:
 
 ```ruby
-delegate :name, :to => :profile, :allow_nil => true
+delegate :name, to: :profile, allow_nil: true
 ```
 
 С `:allow_nil` вызов `user.name` возвратит `nil`, если у пользователя нет профиля.
@@ -414,7 +414,7 @@ delegate :name, :to => :profile, :allow_nil => true
 Опция `:prefix` добавляет префикс к имени генерируемого метода. Это удобно, если хотите получить более благозвучное наименование:
 
 ```ruby
-delegate :street, :to => :address, :prefix => true
+delegate :street, to: :address, prefix: true
 ```
 
 Предыдущий пример создаст `address_street`, а не `street`.
@@ -424,7 +424,7 @@ WARNING: Поскольку в этом случае имя создаваемо
 Также может быть настроен произвольный префикс:
 
 ```ruby
-delegate :size, :to => :attachment, :prefix => :avatar
+delegate :size, to: :attachment, prefix: :avatar
 ```
 
 В предыдущем примере макрос создаст `avatar_size`, а не `size`.

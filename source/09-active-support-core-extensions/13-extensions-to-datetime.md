@@ -97,7 +97,7 @@ now.utc.utc?       # => true
 ```ruby
 d = DateTime.current
 # => Thu, 05 Aug 2010 11:33:31 +0000
-d.advance(:years => 1, :months => 1, :days => 1, :hours => 1, :minutes => 1, :seconds => 1)
+d.advance(years: 1, months: 1, days: 1, hours: 1, minutes: 1, seconds: 1)
 # => Tue, 06 Sep 2011 12:34:32 +0000
 ```
 
@@ -108,14 +108,14 @@ d.advance(:years => 1, :months => 1, :days => 1, :hours => 1, :minutes => 1, :se
 ```ruby
 d = DateTime.new(2010, 2, 28, 23, 59, 59)
 # => Sun, 28 Feb 2010 23:59:59 +0000
-d.advance(:months => 1, :seconds => 1)
+d.advance(months: 1, seconds: 1)
 # => Mon, 29 Mar 2010 00:00:00 +0000
 ```
 
 но если мы вычисляем обратным способом, результат будет иным:
 
 ```ruby
-d.advance(:seconds => 1).advance(:months => 1)
+d.advance(seconds: 1).advance(months: 1)
 # => Thu, 01 Apr 2010 00:00:00 +0000
 ```
 
@@ -128,28 +128,28 @@ WARNING: Поскольку `DateTime` не знает о переходе на 
 ```ruby
 now = DateTime.current
 # => Tue, 08 Jun 2010 01:56:22 +0000
-now.change(:year => 2011, :offset => Rational(-6, 24))
+now.change(year: 2011, offset: Rational(-6, 24))
 # => Wed, 08 Jun 2011 01:56:22 +0600
 ```
 
 Если часы обнуляются, то минуты и секунды тоже (если у них не заданы значения):
 
 ```ruby
-now.change(:hour => 0)
+now.change(hour: 0)
 # => Tue, 08 Jun 2010 00:00:00 +0000
 ```
 
 Аналогично, если минуты обнуляются, то секунды тоже(если у них не задано значение):
 
 ```ruby
-now.change(:min => 0)
+now.change(min: 0)
 # => Tue, 08 Jun 2010 01:00:00 +0000
 ```
 
 Этот метод нетолерантен к несуществующим датам, если изменение невалидно, вызывается `ArgumentError`:
 
 ```ruby
-DateTime.current.change(:month => 2, :day => 30)
+DateTime.current.change(month: 2, day: 30)
 # => ArgumentError: invalid date
 ```
 

@@ -55,7 +55,7 @@ NOTE: Определено в `active_support/core_ext/array/prepend_and_append.
 Когда последний аргумент в вызове метода является хэшем, за исключением, пожалуй, аргумента `&block`, Ruby позволяет опустить скобки:
 
 ```ruby
-User.exists?(:email => params[:email])
+User.exists?(email: params[:email])
 ```
 
 Этот синтаксический сахар часто используется в Rails для избежания позиционных аргументов там, где их не слишком много, предлагая вместо них интерфейсы, эмулирующие именнованные параметры. В частности, очень характерно использовать такой хэш для опций.
@@ -184,7 +184,7 @@ Contributor.limit(2).order(:rank).to_xml
 Если получатель является массивом хэшей, корневой узел по умолчанию также "objects":
 
 ```ruby
-[{:a => 1, :b => 2}, {:c => 3}].to_xml
+[{a: 1, b: 2}, {c: 3}].to_xml
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
 # <objects type="array">
@@ -205,7 +205,7 @@ WARNING. Если коллекция пустая, корневой элемен
 По умолчанию билдер XML является свежим экземпляром `Builder::XmlMarkup`. Можно сконфигурировать свой собственный билдер через опцию `:builder`. Метод также принимает опции, такие как `:dasherize` со товарищи, они перенаправляются в билдер:
 
 ```ruby
-Contributor.limit(2).order(:rank).to_xml(:skip_types => true)
+Contributor.limit(2).order(:rank).to_xml(skip_types: true)
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
 # <contributors>
@@ -251,8 +251,8 @@ Array.wrap(0)         # => [0]
 Следующий пункт особенно заметен для некоторых enumerables:
 
 ```ruby
-Array.wrap(:foo => :bar) # => [{:foo => :bar}]
-Array(:foo => :bar)      # => [[:foo, :bar]]
+Array.wrap(foo: :bar) # => [{:foo=>:bar}]
+Array(foo: :bar)      # => [[:foo, :bar]]
 ```
 
 Также имеется связанная идиома, использующая оператор расплющивания:
@@ -295,9 +295,9 @@ NOTE: Определено в `active_support/core_ext/array/deep_dup.rb`.
 ```erb
 <% sample.in_groups_of(3) do |a, b, c| %>
   <tr>
-    <td><%=h a %></td>
-    <td><%=h b %></td>
-    <td><%=h c %></td>
+    <td><%= a %></td>
+    <td><%= b %></td>
+    <td><%= c %></td>
   </tr>
 <% end %>
 ```
