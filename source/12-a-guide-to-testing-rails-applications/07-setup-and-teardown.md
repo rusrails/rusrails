@@ -21,13 +21,13 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test "should show post" do
-    get :show, :id => @post.id
+    get :show, id: @post.id
     assert_response :success
   end
 
   test "should destroy post" do
     assert_difference('Post.count', -1) do
-      delete :destroy, :id => @post.id
+      delete :destroy, id: @post.id
     end
 
     assert_redirected_to posts_path
@@ -46,7 +46,7 @@ end
 Давайте рассмотрим предыдущий пример, определив колбэк `setup` указав имя метода как символ:
 
 ```ruby
-require '../test_helper'
+require 'test_helper'
 
 class PostsControllerTest < ActionController::TestCase
 
@@ -59,18 +59,18 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test "should show post" do
-    get :show, :id => @post.id
+    get :show, id: @post.id
     assert_response :success
   end
 
   test "should update post" do
-    patch :update, :id => @post.id, :post => { }
+    patch :update, id: @post.id, post: {}
     assert_redirected_to post_path(assigns(:post))
   end
 
   test "should destroy post" do
     assert_difference('Post.count', -1) do
-      delete :destroy, :id => @post.id
+      delete :destroy, id: @post.id
     end
 
     assert_redirected_to posts_path

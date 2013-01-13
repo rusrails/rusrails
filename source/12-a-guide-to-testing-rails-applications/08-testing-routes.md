@@ -4,6 +4,6 @@
 
 ```ruby
 test "should route to post" do
-  assert_routing '/posts/1', { :controller => "posts", :action => "show", :id => "1" }
+  assert_routing '/posts/1', {controller: "posts", action: "show", id: "1"}
 end
 ```

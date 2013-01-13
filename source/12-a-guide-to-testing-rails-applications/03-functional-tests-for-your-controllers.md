@@ -12,7 +12,7 @@
 * был ли правильный объект сохранен в шаблон отклика?
 * было ли подходящее сообщение отражено для пользователя во вьюхе
 
-Теперь, когда мы использовали Rails scaffold generator для нашего ресурса `Post`, он также создал код контроллера и функциональные тесты. Можете посмотреть файл `posts_controller_test.rb` в директории `test/functional`.
+Теперь, когда мы использовали Rails scaffold generator для нашего ресурса `Post`, он также создал код контроллера и тесты. Можете посмотреть файл `posts_controller_test.rb` в директории `test/controllers`.
 
 Давайте пробежимся про одному такому тесту, `test_should_get_index` из файла `posts_controller_test.rb`.
 
@@ -52,7 +52,7 @@ NOTE: Если попытаетесь запустить тест `test_should_c
 ```ruby
 test "should create post" do
   assert_difference('Post.count') do
-    post :create, :post => { :title => 'Some title'}
+    post :create, post: {title: 'Some title'}
   end
 
   assert_redirected_to post_path(assigns(:post))
@@ -110,14 +110,14 @@ assigns["something"]          assigns(:something)
 test "index should render correct template and layout" do
   get :index
   assert_template :index
-  assert_template :layout => "layouts/application"
+  assert_template layout: "layouts/application"
 end
 ```
 
 Отметьте, что нельзя тестировать шаблон и макет одновременно, в одном вызове метода `assert_template`. Также для тестирования `layout` можно задать регулярное выражение вместо строки, но использование строки более точно описывает ситуацию. С другой стороны, следует включать имя директории "layouts" даже когда файл макета находится в этой стандартной директории для макетов. Следовательно,
 
 ```ruby
-assert_template :layout => "application"
+assert_template layout: "application"
 ```
 
 не будет работать.
@@ -129,7 +129,7 @@ assert_template :layout => "application"
 ```ruby
 test "new should render correct layout" do
   get :new
-  assert_template :layout => "layouts/application", :partial => "_form"
+  assert_template layout: "layouts/application", partial: "_form"
 end
 ```
 
@@ -142,7 +142,7 @@ end
 ```ruby
 test "should create post" do
   assert_difference('Post.count') do
-    post :create, :post => { :title => 'Hi', :body => 'This is my first post.'}
+    post :create, post: {title: 'Hi', body: 'This is my first post.'}
   end
   assert_redirected_to post_path(assigns(:post))
   assert_equal 'Post was successfully created.', flash[:notice]

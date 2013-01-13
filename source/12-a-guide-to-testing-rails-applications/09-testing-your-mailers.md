@@ -74,7 +74,7 @@ require 'test_helper'
 class UserControllerTest < ActionController::TestCase
   test "invite friend" do
     assert_difference 'ActionMailer::Base.deliveries.size', `1 do
-      post :invite_friend, :email => 'friend@example.com'
+      post :invite_friend, email: 'friend@example.com'
     end
     invite_email = ActionMailer::Base.deliveries.last
 

@@ -62,8 +62,8 @@
 
 12. Руководство по тестированию приложений на Rails
     testing.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    46af32aa50cb9fda2cbefb124ef0adf3116137ec
+    30/12/12
 
 13. Руководство Ruby On Rails по безопасности
     security.md

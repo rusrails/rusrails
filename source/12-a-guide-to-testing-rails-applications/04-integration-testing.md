@@ -62,7 +62,7 @@ class UserFlowsTest < ActionDispatch::IntegrationTest
     get "/login"
     assert_response :success
 
-    post_via_redirect "/login", :username => users(:avs).username, :password => users(:avs).password
+    post_via_redirect "/login", username: users(:avs).username, password: users(:avs).password
     assert_equal '/welcome', path
     assert_equal 'Welcome avs!', flash[:notice]
 
@@ -118,7 +118,7 @@ class UserFlowsTest < ActionDispatch::IntegrationTest
       sess.extend(CustomDsl)
       u = users(user)
       sess.https!
-      sess.post "/login", :username => u.username, :password => u.password
+      sess.post "/login", username: u.username, password: u.password
       assert_equal '/welcome', path
       sess.https!(false)
     end

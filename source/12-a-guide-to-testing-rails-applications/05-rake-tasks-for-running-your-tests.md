@@ -6,9 +6,13 @@
 | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `rake test`             | Запускает все юнит-, функциональные и объединенные тесты. Также можете просто запустить `rake`, так как задание _test_ идет по умолчанию.|
 | `rake test:benchmark`   | Запускает тесты производительности в режиме бенчмаркинга                                                     |
-| `rake test:functionals` | Запускает все функциональные тесты из `test/functional`                                                      |
+| `rake test:controllers` | Запускает все тесты контроллеров из `test/controllers`                                                       |
+| `rake test:functionals` | Запускает все функциональные тесты из `test/controllers`, `test/mailers` и `test/functional`                 |
+| `rake test:helpers`     | Запускает все тесты хелперов из `test/helpers`                                                               |
 | `rake test:integration` | Запускает все объединенные тесты из `test/integration`                                                       |
+| `rake test:mailers`     | Запускает все тесты рассыльщиков из `test/mailers`                                                           |
+| `rake test:models`      | Запускает все тесты моделей из `test/models`                                                                 |
 | `rake test:profile`     | Запускает тесты производительности в режиме профилирования                                                   |
 | `rake test:recent`      | Тестирует последние изменения                                                                                |
 | `rake test:uncommitted` | Выполняет все тесты, которые не отправлены в систему контроля версии. Поддерживается только Git и Subversion |
-| `rake test:units`       | Запускает все юнит-тесты из `test/unit`                                                                      |
+| `rake test:units`       | Запускает все юнит-тесты из `test/models`, `test/helpers` и `test/unit`                                      |
