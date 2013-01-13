@@ -57,8 +57,8 @@
 
 11. Основы Action Mailer
     action_mailer_basics.md
-    721afdcc4b58c65f36122b10ec998b913a147912
-    17/09/12
+    009873aec89a4b843b41accf616b42b7a9917ba8
+    06/01/13
 
 12. Руководство по тестированию приложений на Rails
     testing.md

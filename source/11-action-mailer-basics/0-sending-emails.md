@@ -12,7 +12,7 @@ create  app/mailers/user_mailer.rb
 invoke  erb
 create    app/views/user_mailer
 invoke  test_unit
-create    test/functional/user_mailer_test.rb
+create    test/mailers/user_mailer_test.rb
 ```
 
 Таким образом мы получим рассыльщик, фикстуры и тесты.
@@ -23,7 +23,7 @@ create    test/functional/user_mailer_test.rb
 
 ```ruby
 class UserMailer < ActionMailer::Base
-  default :from => "from@example.com"
+  default from: 'from@example.com'
 end
 ```
 
@@ -31,12 +31,12 @@ end
 
 ```ruby
 class UserMailer < ActionMailer::Base
-  default :from => "notifications@example.com"
+  default from: 'notifications@example.com'
 
   def welcome_email(user)
     @user = user
-    @url  = "http://example.com/login"
-    mail(:to => user.email, :subject => "Welcome to My Awesome Site")
+    @url  = 'http://example.com/login'
+    mail(to: user.email, subject: 'Welcome to My Awesome Site')
   end
 
 end
@@ -57,7 +57,7 @@ end
 <!DOCTYPE html>
 <html>
   <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
     <h1>Welcome to example.com, <%= @user.name %></h1>
@@ -91,7 +91,7 @@ Thanks for joining and have a great day!
 
 #### Делаем так, что система отправляет письмо, когда пользователь регистрируется
 
-Есть несколько способов сделать так: одни создают обсерверы Rails для отправки email, другие это делают внутри модели User. Однако в  Rails 3 рассыльщики - это всего лишь другой способ отрендерить вьюху. Вместо рендеринга вьюхи и отсылки ее по протоколу HTTP, они всего лишь вместо этого отправляют ее по протоколам Email. Благодаря этому имеет смысл, чтобы контроллер сказал рассыльщику отослать письмо тогда, когда пользователь был успешно создан.
+Есть несколько способов сделать так: одни создают обсерверы Rails для отправки email, другие это делают внутри модели User. Однако, рассыльщики - это всего лишь другой способ отрендерить вьюху. Вместо рендеринга вьюхи и отсылки ее по протоколу HTTP, они всего лишь вместо этого отправляют ее по протоколам Email. Благодаря этому имеет смысл, чтобы контроллер сказал рассыльщику отослать письмо тогда, когда пользователь был успешно создан.
 
 Настройка этого до безобразия проста.
 
@@ -116,11 +116,11 @@ class UsersController < ApplicationController
         # Tell the UserMailer to send a welcome Email after save
         UserMailer.welcome_email(@user).deliver
 
-        format.html { redirect_to(@user, :notice => 'User was successfully created.') }
-        format.json { render :json => @user, :status => :created, :location => @user }
+        format.html { redirect_to(@user, notice: 'User was successfully created.') }
+        format.json { render json: @user, status: :created, location: @user }
       else
-        format.html { render :action => "new" }
-        format.json { render :json => @user.errors, :status => :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -130,10 +130,6 @@ end
 Это обеспечит более простую реализацию, не требующую регистрацию обсерверов и тому подобного.
 
 Метод `welcome_email` возвращает объект <tt>Mail::Message</tt>, которому затем можно сказать `deliver`, чтобы он сам себя отослал.
-
-NOTE: В предыдущих версиях Rails, нужно было вызывать `deliver_welcome_email` или `create_welcome_email`, однако в Rails 3.0 это устарело в пользу простого вызова имени метода на себе.
-
-WARNING: Отсылка email займет доли секунды. Если планируете рассылать много писем, или у вас медленный доменный сервер, вы, возможно, захотите рассмотреть использование фонового процесса, подобного Delayed Job.
 
 ### Автоматическое кодирование значений заголовка
 
@@ -158,19 +154,19 @@ Action Mailer теперь осуществляет автоматическое
 * Определить поле заголовка как параметр в методе `mail`:
 
     ```ruby
-    mail("X-Spam" => value)
+    mail('X-Spam' => value)
     ```
 
 * Передать в присвоении ключа в методе `headers`:
 
     ```ruby
-    headers["X-Spam"] = value
+    headers['X-Spam'] = value
     ```
 
 * Передать хэш пар ключ-значение в методе `headers`:
 
     ```ruby
-    headers {"X-Spam" => value, "X-Special" => another_value}
+    headers {'X-Spam' => value, 'X-Special' => another_value}
     ```
 
 TIP: Все заголовки `X-Value` в соответствии с RFC2822 могут появляться более одного раза. Если хотите удалить заголовок `X-Value`, присвойте ему значение `nil`.
@@ -191,9 +187,9 @@ NOTE: Mail автоматически кодирует вложение в Base6
 
     ```ruby
     encoded_content = SpecialEncode(File.read('/path/to/filename.jpg'))
-    attachments['filename.jpg'] = {:mime_type => 'application/x-gzip',
-                                   :encoding => 'SpecialEncoding',
-                                   :content => encoded_content }
+    attachments['filename.jpg'] = {mime_type: 'application/x-gzip',
+                                   encoding: 'SpecialEncoding',
+                                   content: encoded_content }
     ```
 
 NOTE: Если указать кодировку, Mail будет полагать, что ваше содержимое уже кодировано в ней и не попытается кодировать в Base64.
@@ -223,8 +219,8 @@ Action Mailer 3.0 создает встроенные вложения, кото
     ```html+erb
     <p>Hello there, this is our image</p>
 
-    <%= image_tag attachments['image.jpg'].url, :alt => 'My Photo',
-                                                :class => 'photos' %>
+    <%= image_tag attachments['image.jpg'].url, alt: 'My Photo',
+                                                class: 'photos' %>
     ```
 
 #### Рассылка Email нескольким получателям
@@ -233,12 +229,12 @@ Action Mailer 3.0 создает встроенные вложения, кото
 
 ```ruby
 class AdminMailer < ActionMailer::Base
-  default :to => Proc.new { Admin.pluck(:email) },
-          :from => "notification@example.com"
+  default to: Proc.new { Admin.pluck(:email) },
+          from: 'notification@example.com'
 
   def new_registration(user)
     @user = user
-    mail(:subject => "New User Signup: #{@user.email}")
+    mail(subject: "New User Signup: #{@user.email}")
   end
 end
 ```
@@ -253,7 +249,7 @@ end
 def welcome_email(user)
   @user = user
   email_with_name = "#{@user.name} <#{@user.email}>"
-  mail(:to => email_with_name, :subject => "Welcome to My Awesome Site")
+  mail(to: email_with_name, subject: 'Welcome to My Awesome Site')
 `end
 ```
 
@@ -265,35 +261,35 @@ def welcome_email(user)
 
 ```ruby
 class UserMailer < ActionMailer::Base
-  default :from => "notifications@example.com"
+  default from: 'notifications@example.com'
 
   def welcome_email(user)
     @user = user
-    @url  = "http://example.com/login"
-    mail(:to => user.email,
-         :subject => "Welcome to My Awesome Site",
-         :template_path => 'notifications',
-         :template_name => 'another')
+    @url  = 'http://example.com/login'
+    mail(to: user.email,
+         subject: 'Welcome to My Awesome Site',
+         template_path: 'notifications',
+         template_name: 'another')
   end
 
 end
 ```
 
-В этом случае он будет искать шаблон в `app/views/notifications` с именем `another`.
+В этом случае он будет искать шаблон в `app/views/notifications` с именем `another`. Также можно определить массив путей для `template_path`, и они будут искаться в указанном порядке.
 
 Если желаете большей гибкости, также возможно передать блок и рендерить определенный шаблон или даже рендерить вложенный код или текст без использования файла шаблона:
 
 ```ruby
 class UserMailer < ActionMailer::Base
-  default :from => "notifications@example.com"
+  default from: 'notifications@example.com'
 
   def welcome_email(user)
     @user = user
-    @url  = "http://example.com/login"
-    mail(:to => user.email,
-         :subject => "Welcome to My Awesome Site") do |format|
+    @url  = 'http://example.com/login'
+    mail(to: user.email,
+         subject: 'Welcome to My Awesome Site') do |format|
       format.html { render 'another_template' }
-      format.text { render :text => 'Render text' }
+      format.text { render text: 'Render text' }
     end
   end
 
@@ -316,13 +312,13 @@ end
 
 Подобно вьюхам контроллера, используйте `yield` для рендера вьюхи внутри макета.
 
-Также можно передать опцию `:layout => 'layout_name'` в вызов render в формате блока, чтобы определить различные макеты для различных действий:
+Также можно передать опцию `layout: 'layout_name'` в вызов render в формате блока, чтобы определить различные макеты для различных действий:
 
 ```ruby
 class UserMailer < ActionMailer::Base
   def welcome_email(user)
-    mail(:to => user.email) do |format|
-      format.html { render :layout => 'my_layout' }
+    mail(to: user.email) do |format|
+      format.html { render layout: 'my_layout' }
       format.text
     end
   end
@@ -338,15 +334,15 @@ URL могут быть созданы во вьюхах рассыльщика,
 В отличие от контроллеров, экземпляр рассыльщика не может использовать какой-либо контекст относительно входящего запроса, поэтому необходимо предоставить `:host`, `:controller` и `:action`:
 
 ```erb
-<%= url_for(:host => "example.com",
-            :controller => "welcome",
-            :action => "greeting") %>
+<%= url_for(host: 'example.com',
+            controller: 'welcome',
+            action: 'greeting') %>
 ```
 
 При использовании именнованных маршрутов, необходимо предоставить только `:host`:
 
 ```erb
-<%= user_url(@user, :host => "example.com") %>
+<%= user_url(@user, host: 'example.com') %>
 ```
 
 У клиентов email отсутствует веб контекст, таким образом у путей нет базового URL для формирования полного веб адреса. Поэтому при использовании именнованных маршрутов имеет смысл только вариант "_url".
@@ -354,32 +350,16 @@ URL могут быть созданы во вьюхах рассыльщика,
 Также возможно установить хост по умолчанию, который будет использоваться во всех рассыльщиках, установив опцию <tt>:host</tt> как конфигурационную опцию в <tt>config/application.rb</tt>:
 
 ```ruby
-config.action_mailer.default_url_options = { :host => "example.com" }
+config.action_mailer.default_url_options = { host: 'example.com' }
 ```
 
-При использовании этой настройки следует передать `:only_path => false` при использовании `url_for`. Это обеспечит, что гнерируются абсолютные URL, так как хелпер вьюх `url_for` по умолчанию будет создавать относительные URL, когда явно не представлена опция `:host`.
+При использовании этой настройки следует передать `only_path: false` при использовании `url_for`. Это обеспечит, что гнерируются абсолютные URL, так как хелпер вьюх `url_for` по умолчанию будет создавать относительные URL, когда явно не представлена опция `:host`.
 
-### Рассылка  multipart email
+### Рассылка multipart email
 
 Action Mailer автоматически посылает multipart email, если имеются разные шаблоны для одного и того же экшна. Таким образом, для нашего примера UserMailer, если есть `welcome_email.text.erb` и `welcome_email.html.erb` в `app/views/user_mailer`, то Action Mailer автоматически пошлет multipart email с версиями HTML и текстовой, настроенными как разные части.
 
-Порядок, в котором части будут вставлены, определяется `:parts_order` в методе `ActionMailer::Base.default`. Если хотите явно изменить порядок, можете или изменить `:parts_order`, или явно отрендерить части в различном порядке:
-
-```ruby
-class UserMailer < ActionMailer::Base
-  def welcome_email(user)
-    @user = user
-    @url  = user_url(@user)
-    mail(:to => user.email,
-         :subject => "Welcome to My Awesome Site") do |format|
-      format.html
-      format.text
-    end
-  end
-end
-```
-
-Поместит сначала часть HTML, а текстовую часть разместит второй.
+Порядок, в котором части будут вставлены, определяется `:parts_order` в методе `ActionMailer::Base.default`.
 
 ### Рассылка писем с вложениями
 
@@ -391,15 +371,15 @@ class UserMailer < ActionMailer::Base
     @user = user
     @url  = user_url(@user)
     attachments['terms.pdf'] = File.read('/path/terms.pdf')
-    mail(:to => user.email,
-         :subject => "Please see the Terms and Conditions attached")
+    mail(to: user.email,
+         subject: 'Please see the Terms and Conditions attached')
   end
 end
 ```
 
 Вышеописанное отошлет multipart email с правильно размещенным вложением, верхний уровень будет `multipart/mixed`, и первая часть будет `multipart/alternative`, содержащая сообщения email в чистом тексте и HTML.
 
-#### Рассылка писем с динамическими опциями доставки
+### Рассылка писем с динамическими опциями доставки
 
 Если хотите переопределить опции доставки по умолчанию (т. е. данные SMTP) во время доставки писем, можно использовать `delivery_method_options` в экшне рассыльщика.
 

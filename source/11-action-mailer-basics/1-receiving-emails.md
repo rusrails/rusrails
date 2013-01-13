@@ -4,7 +4,7 @@
 
 * Реализовать метод `receive` в вашем рассыльщике.
 
-* Настроить ваш почтовый сервер для направления почты от адресов, желаемых к получению вашим приложением, в `/path/to/app/script/rails runner 'UserMailer.receive(STDIN.read)'`.
+* Настроить ваш почтовый сервер для направления почты от адресов, желаемых к получению вашим приложением, в `/path/to/app/bin/rails runner 'UserMailer.receive(STDIN.read)'`.
 
 Как только метод, названный `receive`, определяется в каком-либо рассыльщике, Action Mailer будет парсить сырую входящую почту в объект email, декодировать его, создавать экземпляр нового рассыльщика и передавать объект email в метод экземпляра рассыльщика `receive`. Вот пример:
 
@@ -13,15 +13,15 @@ class UserMailer < ActionMailer::Base
   def receive(email)
     page = Page.find_by_address(email.to.first)
     page.emails.create(
-      :subject => email.subject,
-      :body => email.body
+      subject: email.subject,
+      body: email.body
     )
 
     if email.has_attachments?
       email.attachments.each do |attachment|
         page.attachments.create({
-          :file => attachment,
-          :description => email.subject
+          file: attachment,
+          description: email.subject
         })
       end
     end
