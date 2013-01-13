@@ -6,9 +6,9 @@
 
 ```ruby
 {
-  :pt => {
-    :foo => {
-      :bar => "baz"
+  pt: {
+    foo: {
+      bar: "baz"
     }
   }
 }
@@ -35,13 +35,13 @@ en:
       long: "%B %d, %Y"
 ```
 
-Таким образом, все из нижеследующих эквивалентов возвратит короткий (`:short`) формат даты `"%B %d"`:
+Таким образом, все из нижеследующих эквивалентов возвратит краткий (`:short`) формат даты `"%b %d"`:
 
 ```ruby
 I18n.t 'date.formats.short'
-I18n.t 'formats.short', :scope => :date
-I18n.t :short, :scope => 'date.formats'
-I18n.t :short, :scope => [:date, :formats]
+I18n.t 'formats.short', scope: :date
+I18n.t :short, scope: 'date.formats'
+I18n.t :short, scope: [:date, :formats]
 ```
 
 Как правило мы рекомендуем использовать YAML как формат хранения переводов. Хотя имеются случаи, когда хочется хранить лямбда-функции Ruby как часть данных локали, например, для специальных форматов дат.
@@ -75,7 +75,7 @@ en:
 
 ```ruby
 class User < ActiveRecord::Base
-  validates :name, :presence => true
+  validates :name, presence: true
 end
 ```
 
@@ -105,7 +105,7 @@ errors.messages.blank
 
 ```ruby
 class Admin < User
-  validates :name, :presence => true
+  validates :name, presence: true
 end
 ```
 
@@ -171,6 +171,8 @@ en:
           other: "%{count} errors prohibited this %{model} from being saved"
         body:    "There were problems with the following fields:"
 ```
+
+NOTE: Чтобы использовать этот хелпер, необходимо установить гем [DynamicForm](https://github.com/joelmoss/dynamic_form), добаввив следующую строчку в свой Gemfile: `gem 'dynamic_form'`.
 
 ### Обзор других встроенных методов, предоставляющих поддержку I18n
 

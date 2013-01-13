@@ -24,7 +24,7 @@ I18n.t 'message'
 Метод `translate` также принимает опцию `:scope`, которая содержит один или более дополнительных ключей, которые будут использованы для определения “пространства” или области имен для ключа перевода:
 
 ```ruby
-I18n.t :record_invalid, :scope => [:activerecord, :errors, :messages]
+I18n.t :record_invalid, scope: [:activerecord, :errors, :messages]
 ```
 
 Тут будет искаться сообщение `:record_invalid` в сообщениях об ошибке Active Record.
@@ -39,9 +39,9 @@ I18n.translate "activerecord.errors.messages.record_invalid"
 
 ```ruby
 I18n.t 'activerecord.errors.messages.record_invalid'
-I18n.t 'errors.messages.record_invalid', :scope => :active_record
-I18n.t :record_invalid, :scope => 'activerecord.errors.messages'
-I18n.t :record_invalid, :scope => [:activerecord, :errors, :messages]
+I18n.t 'errors.messages.record_invalid', scope: :active_record
+I18n.t :record_invalid, scope: 'activerecord.errors.messages'
+I18n.t :record_invalid, scope: [:activerecord, :errors, :messages]
 ```
 
 #### Значения по умолчанию
@@ -49,7 +49,7 @@ I18n.t :record_invalid, :scope => [:activerecord, :errors, :messages]
 Когда задана опция `:default`, будет возвращено ее значение в случае, если отсутствует перевод:
 
 ```ruby
-I18n.t :missing, :default => 'Not here'
+I18n.t :missing, default: 'Not here'
 # => 'Not here'
 ```
 
@@ -58,7 +58,7 @@ I18n.t :missing, :default => 'Not here'
 Т.е., следующее попытается перевести ключ `:missing`, затем ключ `:also_missing`. Если они оба не дадут результат, будет возвращена строка "Not here":
 
 ```ruby
-I18n.t :missing, :default => [:also_missing, 'Not here']
+I18n.t :missing, default: [:also_missing, 'Not here']
 # => 'Not here'
 ```
 
@@ -67,7 +67,7 @@ I18n.t :missing, :default => [:also_missing, 'Not here']
 Чтобы найти несколько переводов за раз, может быть передан массив ключей:
 
 ```ruby
-I18n.t [:odd, :even], :scope => 'errors.messages'
+I18n.t [:odd, :even], scope: 'errors.messages'
 # => ["must be odd", "must be even"]
 ```
 
@@ -75,7 +75,7 @@ I18n.t [:odd, :even], :scope => 'errors.messages'
 
 ```ruby
 I18n.t 'activerecord.errors.messages'
-# => { :inclusion => "is not included in the list", :exclusion => ... }
+# => {:inclusion=>"is not included in the list", :exclusion=> ... }
 ```
 
 #### "Ленивый" поиск
@@ -102,8 +102,8 @@ es:
 Все опции, кроме `:default` и `:scope`, которые передаются в `#translate`, будут интерполированы в перевод:
 
 ```ruby
-I18n.backend.store_translations :en, :thanks => 'Thanks %{name}!'
-I18n.translate :thanks, :name => 'Jeremy'
+I18n.backend.store_translations :en, thanks: 'Thanks %{name}!'
+I18n.translate :thanks, name: 'Jeremy'
 # => 'Thanks Jeremy!'
 ```
 
@@ -116,14 +116,14 @@ I18n.translate :thanks, :name => 'Jeremy'
 У переменной интерполяции `:count` есть специальная роль в том, что она интерполируется для перевода, и используется для подбора множественного числа для перевода в соответствии с правилами множественного числа, определенными в CLDR:
 
 ```ruby
-I18n.backend.store_translations :en, :inbox => {
-  :one => 'one message',
-  :other => '%{count} messages'
+I18n.backend.store_translations :en, inbox: {
+  one: 'one message',
+  other: '%{count} messages'
 }
-I18n.translate :inbox, :count => 2
+I18n.translate :inbox, count: 2
 # => '2 messages'
 
-I18n.translate :inbox, :count => 1
+I18n.translate :inbox, count: 1
 # => 'one message'
 ```
 
@@ -152,8 +152,8 @@ I18n.l Time.now
 Явно переданная локаль:
 
 ```ruby
-I18n.t :foo, :locale => :de
-I18n.l Time.now, :locale => :de
+I18n.t :foo, locale: :de
+I18n.l Time.now, locale: :de
 ```
 
 Умолчанием для `I18n.locale` является `I18n.default_locale`, для которой по умолчанию установлено `:en`. Локаль по умолчанию может быть установлена так:

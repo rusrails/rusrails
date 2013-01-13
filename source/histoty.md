@@ -52,8 +52,8 @@
 
 10. API интернационализации Rails (I18n)
     i18n.md
-    1fa5c3b39f5d0bb23c8c3d60b023613386629946
-    17/09/12
+    0acf92184dab8d97db7d447bea8e3c6097b33722
+    07/01/13
 
 11. Основы Action Mailer
     action_mailer_basics.md

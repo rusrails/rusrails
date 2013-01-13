@@ -9,7 +9,7 @@
 ```ruby
 # config/routes.rb
 Yourapp::Application.routes.draw do
-  root :to => "home#index"
+  root to: "home#index"
 end
 ```
 
@@ -87,7 +87,7 @@ NOTE: Нужно перезагрузить сервер после того, к
 
 ```erb
 # app/views/home/index.html.erb
-<%=t 'greet_username', :user => "Bill", :message => "Goodbye" %>
+<%=t 'greet_username', user: "Bill", message: "Goodbye" %>
 ```
 
 ```yaml
@@ -104,7 +104,7 @@ en:
 # app/views/home/index.html.erb
 <h1><%=t :hello_world %></h1>
 <p><%= flash[:notice] %></p
-<p><%= l Time.now, :format => :short %></p>
+<p><%= l Time.now, format: :short %></p>
 ```
 
 И в нашем файле переводов на пиратский давайте добавим формат времени (в Rails уже есть формат по умолчанию для английского):
