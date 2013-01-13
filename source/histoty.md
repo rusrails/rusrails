@@ -67,8 +67,8 @@
 
 13. Руководство Ruby On Rails по безопасности
     security.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    6c7699f60122396c40087363a9680778e87bcc37
+    02/01/13
 
 14. Отладка приложений на Rails
     debugging_rails_applications.md

@@ -10,7 +10,7 @@ WARNING: _Перенаправление в веб приложении это �
 
 ```ruby
 def legacy
-  redirect_to(params.update(:action=>'main'))
+  redirect_to(params.update(action:'main'))
 end
 ```
 
@@ -80,7 +80,7 @@ basename = File.expand_path(File.join(File.dirname(__FILE__), '../../files'))
 filename = File.expand_path(File.join(basename, @file.public_filename))
 raise if basename !=
      File.expand_path(File.join(File.dirname(filename), '../../../'))
-send_file filename, :disposition => 'inline'
+send_file filename, disposition: 'inline'
 ```
 
 Другой (дополнительный) подход заключается в хранении имен файлов в базе данных и именовании файлов на диске по id в базе данных. Это также хороший подход для избежания возможного кода в загруженных файлах, который может быть запущен. Плагин attachment_fu осуществляет это похожим образом.

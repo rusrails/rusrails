@@ -10,8 +10,7 @@ NOTE: _При экранировании, защите или верификац
 
 Черный список может быть перечнем плохих адресов e-mail, непубличных действий или плохих тегов HTML. Этому противопоставляется белый список хороших адресов e-mail, публичных действий, хороших тегов HTML и так далее. Хотя иногда не возможно создать белый список (в фильтре спама, например), _предпочтительнее использовать подходы белого списка_:
 
-* Используйте before_filter :only => [...] вместо :except => [...]. Тогда вы не забудете отключить только что добавленные экшны.
-* Используйте attr_accessible вместо attr_protected. Подробнее смотрите "раздел по массовому назначению":/ruby-on-rails-security-guide/mass-assignment
+* Используйте before_action only: [...] вместо except: [...]. Тогда вы не забудете отключить только что добавленные экшны.
 * Разрешите &lt;strong&gt; вместо удаления &lt;script&gt; против кроссайтового скриптинга (XSS). Подробнее об этом ниже.
 * Не пытайтесь править пользовательские данные с помощью черных списков:
     * Это позволит сработать атаке: "&lt;sc&lt;script&gt;ript&gt;".gsub("&lt;script&gt;", "")
@@ -93,7 +92,7 @@ Model.where("login = ? AND password = ?", entered_user_name, entered_password).f
 Как видите, первая часть массива это фрагмент SQL с знаками вопроса. Экранируемые версии переменных во второй части массива заменяют знаки вопроса. Или можете передать хэш с тем же результатом:
 
 ```ruby
-Model.where(:login => entered_user_name, :password => entered_password).first
+Model.where(login: entered_user_name, password: entered_password).first
 ```
 
 Форма массива или хэша доступна только в экземплярах модели. В других местах используйте `sanitize_sql()`. _Введите в привычку думать о последствиях безопасности, когда используете внешние строки в SQL_.
@@ -188,7 +187,7 @@ strip_tags("some<<b>script>alert('hello')<</b>/script>")
 
 ```ruby
 tags = %w(a acronym b strong i em li ul ol h1 h2 h3 h4 h5 h6 blockquote br cite sub sup ins p)
-s = sanitize(user_input, :tags => tags, :attributes => %w(href title))
+s = sanitize(user_input, tags: tags, attributes: %w(href title))
 ```
 
 Это допустит только заданные теги и сделает все хорошо, даже против всех ухищрений и злонамеренных тегов.
