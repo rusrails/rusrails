@@ -97,10 +97,12 @@ end
 Существует также генератор, который будет производить объединение таблиц, если `JoinTable` является частью названия.
 
 Например
+
 ```bash
 $ rails generate migration CreateJoinTableCustomerProduct customer product
 ```
 Сгенерирует следующую миграцию:
+
 ```ruby
 class CreateJoinTableCustomerProduct < ActiveRecord::Migration
   def change
