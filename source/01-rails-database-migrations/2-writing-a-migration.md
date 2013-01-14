@@ -85,8 +85,8 @@ Products.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 * `add_timestamps`
 * `create_table`
 * `create_join_table`
-* `drop_table` (Необходимо указать блог)
-* `drop_join_table` (Необходимо указать блог)
+* `drop_table` (Необходимо указать блок)
+* `drop_join_table` (Необходимо указать блок)
 * `remove_timestamps`
 * `rename_column`
 * `rename_index`
