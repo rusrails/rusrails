@@ -16,6 +16,9 @@
 class AddFlagToProduct < ActiveRecord::Migration
   def change
     add_column :products, :flag, :boolean
+    reversible do |dir|
+      dir.up { Product.update_all flag: false }
+    end
     Product.update_all flag: false
   end
 end
@@ -37,7 +40,9 @@ end
 class AddFuzzToProduct < ActiveRecord::Migration
   def change
     add_column :products, :fuzz, :string
-    Product.update_all fuzz: 'fuzzy'
+    reversible do |dir|
+      dir.up { Product.update_all fuzz: 'fuzzy' }
+    end
   end
 end
 ```
@@ -82,7 +87,9 @@ class AddFlagToProduct < ActiveRecord::Migration
   def change
     add_column :products, :flag, :boolean
     Product.reset_column_information
-    Product.update_all flag: false
+    reversible do |dir|
+      dir.up { Product.update_all flag: false }
+    end
   end
 end
 ```
@@ -97,7 +104,9 @@ class AddFuzzToProduct < ActiveRecord::Migration
   def change
     add_column :products, :fuzz, :string
     Product.reset_column_information
-    Product.update_all fuzz: 'fuzzy'
+    reversible do |dir|
+      dir.up { Product.update_all fuzz: 'fuzzy' }
+    end
   end
 end
 ```
@@ -106,8 +115,8 @@ end
 
 Например, представим, что Алиса создала миграцию, избирательно обновляющую поле `description` для определенных продуктов. Она запускает миграцию, комитит код, и начинает работать над следующей задачей, которая добавляет новый столбец `fuzz` в таблицу продуктов.
 
-Она создает двве миграции для этой новой задачи, одна из которых  добавляет новый столбец, а вторая избирательно обновляет столбец `fuzz`, основываясь на других атрибутах продукта.
+Она создает две миграции для этой новой задачи, одна из которых добавляет новый столбец, а вторая избирательно обновляет столбец `fuzz`, основываясь на других атрибутах продукта.
 
-Эти миграции прекрасно запускаются, но когда Боб возвращается из отпуска  вызывает `rake db:migrate` для запуска всех невыполненных миграций, он получает неуловимый баг: Описания имеют значения по умолчанию, столбец `fuzz` присутствует, но `fuzz` равно nil для всех продуктов.
+Эти миграции прекрасно запускаются, но когда Боб возвращается из отпуска вызывает `rake db:migrate` для запуска всех невыполненных миграций, он получает неуловимый баг: Описания имеют значения по умолчанию, столбец `fuzz` присутствует, но `fuzz` равно nil для всех продуктов.
 
 Решением снова является использование `Product.reset_column_information` до обращения к модели Product в миграции, чтобы убедиться в знании Active Record о текущей структуре таблицы до манипуляции с данными в этих записях.
