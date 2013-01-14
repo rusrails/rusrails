@@ -4,7 +4,7 @@
 
 ### Создание таблицы
 
-Метод `create_table` один из основных, но в большинстве случаев будет создан для вас генератором модли или скаффолда. Обычное использование такое
+Метод `create_table` один из самых фундаментальных, но в большинстве случаев, он будет создан для вас генератором модели или скаффолда. Обычное использование такое
 
 ```ruby
 create_table :products do |t|
@@ -22,7 +22,7 @@ create_table :products, options: "ENGINE=BLACKHOLE" do |t|
 end
 ```
 
-добавит `ENGINE=BLACKHOLE` к выражению SQL, используемому для создания таблицы (при использовании MySQL по умолчанию передается `ENGINE=InnoDB`).
+добавит `ENGINE=BLACKHOLE` к SQL выражению, используемому для создания таблицы (при использовании MySQL по умолчанию передается `ENGINE=InnoDB`).
 
 ### Создание соединительной таблицы
 
@@ -81,18 +81,63 @@ Products.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 
 * `add_column`
 * `add_index`
+* `add_reference`
 * `add_timestamps`
 * `create_table`
+* `create_join_table`
+* `drop_table` (Необходимо указать блог)
+* `drop_join_table` (Необходимо указать блог)
 * `remove_timestamps`
 * `rename_column`
 * `rename_index`
+* `remove_reference`
 * `rename_table`
 
-Если вы нуждаетесь в использовании иных методов, следует писать методы `up` и `down` вместо метода `change`.
+`change_table` так же является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
+
+Если вы нуждаетесь в использовании иных методов, следует использовать `reversible` или писать методы `up` и `down` вместо метода `change`.
+
+### Использование `reversible`
+
+Комплексная миграция может включать процессы, которые Active Record не знает как обратить. Вы можете использовать `reversible`, чтобы указать что делать когда миграция требует отката. Например,
+
+```ruby
+class ExampleMigration < ActiveRecord::Migration
+  def change
+    create_table :products do |t|
+      t.references :category
+    end
+
+    reversible do |dir|
+      dir.up do
+        #add a foreign key
+        execute <<-SQL
+          ALTER TABLE products
+            ADD CONSTRAINT fk_products_categories
+            FOREIGN KEY (category_id)
+            REFERENCES categories(id)
+        SQL
+      end
+      dir.down do
+        execute <<-SQL
+          ALTER TABLE products
+            DROP FOREIGN KEY fk_products_categories
+        SQL
+      end
+    end
+
+    add_column :users, :home_page_url, :string
+    rename_column :users, :email, :email_address
+  end
+```
+
+Использование `reversible` гарантирует что инструкции выполнятся в правильном порядке. Если предыдущий пример миграции возвращается, `down` блок начнёт выполнятся после того как столбец `home_page_url` будет удалён и перед перед тем как произойдёт удаление таблицы `products`.
+
+Иногда миграция будет делать то, что это просто необратимо; например, она может уничтожить некоторые данные. В таких случаях, вы можете вызвать `ActiveRecord::IrreversibleMigration` в вашем `down` блоке. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.
 
 ### Использование методов `up`/`down`
 
-Метод `up` должен описывать изменения, которые выхотите внести в вашу схему, а метод `down` вашей миграции должен обращать изменения, внесенные методом  `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, ее следует адлить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Например,
+Метод `up` должен описывать изменения, которые вы хотите внести в вашу схему, а метод `down` вашей миграции должен обращать изменения, внесенные методом  `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, ее следует удалить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Например,
 
 ```ruby
 class ExampleMigration < ActiveRecord::Migration
@@ -127,4 +172,70 @@ class ExampleMigration < ActiveRecord::Migration
 end
 ```
 
-Иногда ваша миграция делает то, что невозможно отменить, например, уничтожает какую-либо информацию. В таких случаях можете вызвать `IrreversibleMigration` из вашего метода `down`. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.
+Иногда ваша миграция делает то, что невозможно отменить, например, уничтожает какую-либо информацию. В таких случаях можете вызвать `ActiveRecord::IrreversibleMigration` из вашего метода `down`. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.
+
+### Возвращение к предыдущим миграциям
+
+ВЫ можете использовать возможность Active Record откатить миграции используя `revert` метод:
+
+```ruby
+require_relative '2012121212_example_migration'
+
+class FixupExampleMigration < ActiveRecord::Migration
+  def change
+    revert ExampleMigration
+
+    create_table(:apples) do |t|
+      t.string :variety
+    end
+  end
+end
+```
+
+`Revert` метод так же может принимает блок. Это может быть полезным для отката выбранной части предыдущих миграций. Для примера, давайте представим что `ExampleMigration` закомичена и уже поздно решать, хорошо ли было бы сериализовать список продуктов или нет. Она может быть написана так:
+
+```ruby
+class SerializeProductListMigration < ActiveRecord::Migration
+  def change
+    add_column :categories, :product_list
+
+    reversible do |dir|
+      dir.up do
+        # transfer data from Products to Category#product_list
+      end
+      dir.down do
+        # create Products from Category#product_list
+      end
+    end
+
+    revert do
+      # copy-pasted code from ExampleMigration
+      create_table :products do |t|
+        t.references :category
+      end
+
+      reversible do |dir|
+        dir.up do
+          #add a foreign key
+          execute <<-SQL
+            ALTER TABLE products
+              ADD CONSTRAINT fk_products_categories
+              FOREIGN KEY (category_id)
+              REFERENCES categories(id)
+          SQL
+        end
+        dir.down do
+          execute <<-SQL
+            ALTER TABLE products
+              DROP FOREIGN KEY fk_products_categories
+          SQL
+        end
+      end
+
+      # The rest of the migration was ok
+    end
+  end
+end
+```
+
+Подобная миграция так же может быть написана без использования `revert`, но это бы привело к ещё нескольким шагам: изменение заказа `create table` и `reversible`, замена `create_table` на `drop_table`, и в конечном итоге изменение `up` `down` наоборот. Обо всём этом уже позаботился `revert`.
