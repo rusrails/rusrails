@@ -2,13 +2,13 @@
 
 00. Rails для начинающих
     getting_started.md
-    baea5d69be52def2a81c31cd119f8dfcd2aa087b
-    05/12/12
+    f049016cd348627bf8db0d72382d7580bf802a79
+    08/01/13
 
 01. Миграции базы данных Rails
     migrations.md
-    fc6336d1bed794681b09cc10c80182cd457fb414
-    07/12/12
+    dfc930b2b165f3fc13e0f931e152802ddf3c7c46
+    01/01/13
 
 02. Валидации и колбэки Active Record
     active_record_validations.md
