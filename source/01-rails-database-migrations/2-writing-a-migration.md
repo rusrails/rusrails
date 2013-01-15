@@ -73,7 +73,7 @@ end
 Products.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 ```
 
-Больше подробностей и примеров отдельных методов содержится в документации по API. В частности, документация для [`ActiveRecord::ConnectionAdapters::SchemaStatements`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html) (который обеспечивает методы, доступные в методах `up` и `down`), [`ActiveRecord::ConnectionAdapters::TableDefinition`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html) (который обеспечивает методы, доступные у объекта, переданного методом `create_table`) и [`ActiveRecord::ConnectionAdapters::Table`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html) (который обеспечивает методы, доступные у объекта, переданного методом `change_table`).
+Больше подробностей и примеров отдельных методов содержится в документации по API. В частности, документация для [`ActiveRecord::ConnectionAdapters::SchemaStatements`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html) (который обеспечивает методы, доступные в методах `up`, `down` и `change`), [`ActiveRecord::ConnectionAdapters::TableDefinition`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html) (который обеспечивает методы, доступные у объекта, переданного методом `create_table`) и [`ActiveRecord::ConnectionAdapters::Table`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html) (который обеспечивает методы, доступные у объекта, переданного методом `change_table`).
 
 ### Использование метода `change`
 
@@ -137,7 +137,8 @@ class ExampleMigration < ActiveRecord::Migration
 
 ### Использование методов `up`/`down`
 
-Метод `up` должен описывать изменения, которые вы хотите внести в вашу схему, а метод `down` вашей миграции должен обращать изменения, внесенные методом  `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, ее следует удалить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Например,
+Вы так же можеет использовать старый стиль миграций используя `up` и `down` методы, вместо `change`
+Метод `up` должен описывать изменения, которые вы хотите внести в вашу схему, а метод `down` вашей миграции должен обращать изменения, внесенные методом  `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если вы создали таблицу в методе `up`, ее следует удалить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Например в сравнении с кодом `reversible` следующий код будет эквивалентным
 
 ```ruby
 class ExampleMigration < ActiveRecord::Migration
@@ -172,7 +173,7 @@ class ExampleMigration < ActiveRecord::Migration
 end
 ```
 
-Иногда ваша миграция делает то, что невозможно отменить, например, уничтожает какую-либо информацию. В таких случаях можете вызвать `ActiveRecord::IrreversibleMigration` из вашего метода `down`. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.
+Если ваша миграция не обратима вам следует вызвать `ActiveRecord::IrreversibleMigration` из вашего метода `down`. Если кто-либо попытается отменить вашу миграцию, будет отображена ошибка, что это не может быть выполнено.
 
 ### Возвращение к предыдущим миграциям
 

@@ -7,8 +7,8 @@
 
 01. Миграции базы данных Rails
     migrations.md
-    fc6336d1bed794681b09cc10c80182cd457fb414
-    07/12/12
+    dfc930b2b165f3fc13e0f931e152802ddf3c7c46
+    15/01/13
 
 02. Валидации и колбэки Active Record
     active_record_validations.md
