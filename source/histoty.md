@@ -22,13 +22,13 @@
 
 04. Интерфейс запросов Active Record
     active_record_querying.md
-    0a33fcd68bb2c56b8c2eba066f343484a44fa588
-    08/12/12
+    44717a9d548c95c7b01e7e0dce061257b3a93646
+    01/01/13
 
 05. Макеты и рендеринг в Rails
     layouts_and_rendering.md
-    06c7ecb4ef21bf8a91c95e67f5528f0d90f6cf75
-    30/12/12
+    f049016cd348627bf8db0d72382d7580bf802a79
+    08/01/13
 
 06. Хелперы форм Rails
     form_helpers.md

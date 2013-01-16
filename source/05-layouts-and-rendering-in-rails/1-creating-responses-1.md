@@ -117,7 +117,7 @@ TIP: Возможно следует использовать метод `head`,
 ```ruby
 def update
   @book = Book.find(params[:id])
-  if @book.update_attributes(params[:book])
+  if @book.update(params[:book])
     redirect_to(@book)
   else
     render "edit"
@@ -125,14 +125,14 @@ def update
 end
 ```
 
-Если вызов `update_attributes` проваливается, вызов экшна `update` в этом контроллере отрендерит шаблон `edit.html.erb`, принадлежащий тому же контроллеру.
+Если вызов `update` проваливается, вызов экшна `update` в этом контроллере отрендерит шаблон `edit.html.erb`, принадлежащий тому же контроллеру.
 
 Если хотите, можете использовать символ вместо строки для определения экшна для рендеринга:
 
 ```ruby
 def update
   @book = Book.find(params[:id])
-  if @book.update_attributes(params[:book])
+  if @book.update(params[:book])
     redirect_to(@book)
   else
     render :edit
