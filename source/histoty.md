@@ -87,8 +87,8 @@
 
 17. Руководство по командной строке Rails
     command_line.md
-    fd56c3a72e261c7c5432f3ee040c8cb5091fe4f1
-    17/09/12
+    f049016cd348627bf8db0d72382d7580bf802a79
+    09/01/13
 
 18. Кэширование с Rails: Обзор
     caching_with_rails.md

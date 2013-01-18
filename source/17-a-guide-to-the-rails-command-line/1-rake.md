@@ -34,7 +34,7 @@ Active Record version     4.0.0.beta
 Action Pack version       4.0.0.beta
 Action Mailer version     4.0.0.beta
 Active Support version    4.0.0.beta
-Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, ActionDispatch::Head, Rack::ConditionalGet, Rack::ETag, ActionDispatch::BestStandardsSupport
+Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::EncryptedCookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::Head, Rack::ConditionalGet, Rack::ETag, ActionDispatch::BestStandardsSupport
 Application root          /home/foobar/commandsapp
 Environment               development
 Database adapter          sqlite3
@@ -137,25 +137,19 @@ Rails поставляется с набором тестов по имени `T
 * `rake secret` даст псевдо-случайный ключ для использования в качестве секретного ключа сессии.
 * `rake time:zones:all` перечислит все временные зоны, о которых знает Rails.
 
-### Написание тасков Rake
+### Пользовательские таски Rake
 
-Если у вас есть (илы вы хотите написать) какие-либо автоматические скрипты вне вашего приложения (испорт данных, проверки и т.д.), их можно сделать тасками rake. Это просто.
-
-INFO: В официальной документации доступно [Полное руководство по написанию тасков](http://rake.rubyforge.org/files/doc/rakefile_rdoc.html).
-
-Таски должны располагаться в `Rails.root/lib/tasks` и иметь расширение `.rake`.
-
-Каждый таск должен быть определен в следующем формате (зависимости необязательны):
+Пользовательские таски rake имеют расширение `.rake` и располагаются в`Rails.root/lib/tasks`.
 
 ```ruby
 desc "I am short, but comprehensive description for my cool task"
-task :task_name => [:prerequisite_task, :another_task_we_depend_on] do
+task task_name: [:prerequisite_task, :another_task_we_depend_on] do
   # Вся магия тут
   # Разрешен любой код Ruby
 end
 ```
 
-Если необходимо передать параметры, можно использовать следующий формат (оба аргумента и зависимости необязательны):
+Чтобы передать аргументы в ваш таск rake:
 
 ```ruby
 task :task_name, [:arg_1] => [:pre_1, :pre_2] do |t, args|
@@ -166,7 +160,7 @@ end
 Таски можно группировать, помещая их в пространства имен:
 
 ```ruby
-namespace :do
+namespace :db do
   desc "This task does nothing"
   task :nothing do
     # Серьезно, ничего
@@ -174,12 +168,12 @@ namespace :do
 end
 ```
 
-Список тасков можно просмотреть с помощью команды `rake -T`. Для вышеукзанных примеров результат вызова будет таким:
+Вызов тасков выглядит так:
 
 ```bash
 rake task_name
 rake "task_name[value 1]" # entire argument string should be quoted
-rake do:nothing
+rake db:nothing
 ```
 
 NOTE: Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваш таск должен зависеть от таска `environment`, который загрузит код вашего приложения.
