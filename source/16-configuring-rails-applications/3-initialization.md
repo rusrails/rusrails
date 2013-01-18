@@ -44,7 +44,7 @@ Rails.application.config.before_initialize do
 end
 ```
 
-WARNING: Некоторые части вашего приложения, в частности обсерверы и роутинг, пока еще не настроены в месте, где вызывается блок `after_initialize`.
+WARNING: Некоторые части вашего приложения, в частности роутинг, пока еще не настроены в месте, где вызывается блок `after_initialize`.
 
 ### `Rails::Railtie#initializer`
 
@@ -74,7 +74,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `load_active_support` Требует `active_support/dependencies`, настраивающий основу для Active Support. Опционально требует `active_support/all`, если `config.active_support.bare` не истинно, что является значением по умолчанию.
 
-* `initialize_logger` Инициализирует логгер (объект `ActiveSupport::BufferedLogger`) для приложения и делает его доступным как `Rails.logger`, если до него другой инициализатор не определит `Rails.logger`.
+* `initialize_logger` Инициализирует логгер (объект `ActiveSupport::Logger`) для приложения и делает его доступным как `Rails.logger`, если до него другой инициализатор не определит `Rails.logger`.
 
 * `initialize_cache` Если `Rails.cache` еще не установлен, инициализирует кэш, обращаясь к значению `config.cache_store` и сохраняя результат как `Rails.cache`. Если этот объект отвечает на метод `middleware`, его промежуточная программа вставляется до `Rack::Runtime` в стеке промежуточных программ.
 
@@ -89,7 +89,7 @@ WARNING: Можно помещать свои инициализаторы до 
 * `active_support.initialize_whiny_nils` Требует `active_support/whiny_nil`, если `config.whiny_nils` true. Этот файл выведет ошибки, такие как:
 
     ```
-    Called id for nil, which would mistakenly be 4 -- if you really wanted the id of nil, use object_id
+    Called id for nil, which would mistakenly be 4 - if you really wanted the id of nil, use object_id
     ```
 
     И:
@@ -103,6 +103,8 @@ WARNING: Можно помещать свои инициализаторы до 
 * `active_support.deprecation_behavior` Настраивает отчеты об устаревании для сред, по умолчанию `:log` для development, `:notify` для production и `:stderr` для test. Если для `config.active_support.deprecation` не установлено значение, то инициализатор подскажет пользователю сконфигурировать эту строку в файле `config/environments` текущей среды. Можно установить массив значений.
 
 * `active_support.initialize_time_zone` Устанавливает для приложения временную зону по умолчанию, основываясь на настройке `config.time_zone`, которая по умолчанию равна "UTC".
+
+* `active_support.initialize_beginning_of_week` Устанавливает начало недели по умолчанию для приложения, основываясь на настройке `config.beginning_of_week`, которая по умолчанию `:monday`.
 
 * `action_dispatch.configure` Конфигурирует `ActionDispatch::Http::URL.tld_length` быть равным значению `config.action_dispatch.tld_length`.
 
