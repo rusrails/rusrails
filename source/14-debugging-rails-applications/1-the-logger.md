@@ -4,7 +4,7 @@
 
 ### Что такое Логгер?
 
-Rails использует класс `ActiveSupport::BufferedLogger` для записи информации в лог. Вы также можете заменить его другим логгером, таким как `Log4R`, если хотите.
+Rails использует класс `ActiveSupport::Logger` для записи информации в лог. Вы также можете заменить его другим логгером, таким как `Log4R`, если хотите.
 
 Альтернативный логгер можно определить в вашем `environment.rb` или любом файле среды:
 
@@ -63,7 +63,7 @@ class PostsController < ApplicationController
       logger.debug "The post was saved and now the user is going to be redirected..."
       redirect_to(@post)
     else
-      render :action => "new"
+      render action: "new"
     end
   end
 

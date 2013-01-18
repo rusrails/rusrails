@@ -2,60 +2,7 @@
 
 Приложение Ruby (на Rails или нет), может съедать память - или в коде Ruby, или на уровне кода C.
 
-В этом разделе вы научитесь находить и исправлять такие утечки, используя инструменты отладки BleakHouse и Valgrind.
-
-### BleakHouse
-
-[BleakHouse](https://github.com/evan/bleak_house/) Это библиотека для обнаружения утечек памяти.
-
-Если объект Ruby не выходит за область видимости, Ruby Garbage Collector не очистит его, пока на него ссылаются где-то еще. Утечки, подобные этой, могут понемногу расти, и ваше приложение будет потреблять все больши и больше памяти, постепенно влияя на общую производительность системы. Этот инструмент поможет найти утечки в куче Ruby.
-
-Чтобы установить его, запустите:
-
-```bash
-$ gem install bleak_house
-```
-
-Затем настройте приложение для профилирования. Затем добавьте следующее в конец config/environment.rb:
-
-```ruby
-require 'bleak_house' if ENV['BLEAK_HOUSE']
-```
-
-Запустите экземпляр сервера со встроенным BleakHouse:
-
-```bash
-$ RAILS_ENV=production BLEAK_HOUSE=1 ruby-bleak-house rails server
-```
-
-Убедитесь, что были запущены сотни запросов, чтобы получить лучшие образцы данных, затем нажмите `CTRL-C`. Сервер остановится и Bleak House создаст файл дампа в `/tmp`:
-
-```
-** BleakHouse: working...
-** BleakHouse: complete
-** Bleakhouse: run 'bleak /tmp/bleak.5979.0.dump' to analyze.
-```
-
-Чтобы его проанализировать, просто запустите команду listed. Будут отображены 20 наиболее съедающих память строк:
-
-```
-  191691 total objects
-  Final heap size 191691 filled, 220961 free
-  Displaying top 20 most common line/class pairs
-  89513 __null__:__null__:__node__
-  41438 __null__:__null__:String
-  2348 /opt/local//lib/ruby/site_ruby/1.8/rubygems/specification.rb:557:Array
-  1508 /opt/local//lib/ruby/gems/1.8/specifications/gettext-1.90.0.gemspec:14:String
-  1021 /opt/local//lib/ruby/gems/1.8/specifications/heel-0.2.0.gemspec:14:String
-   951 /opt/local//lib/ruby/site_ruby/1.8/rubygems/version.rb:111:String
-   935 /opt/local//lib/ruby/site_ruby/1.8/rubygems/specification.rb:557:String
-   834 /opt/local//lib/ruby/site_ruby/1.8/rubygems/version.rb:146:Array
-  ...
-```
-
-Таким образом, можно найти, где ваше приложение съедает память, и исправить это.
-
-Если [BleakHouse](https://github.com/evan/bleak_house/) не сообщает о каком-либо росте кучи, но у вас все равно наблюдается рост занимаемой памяти, скорее всего у вас неисправное расширение на C, или настоящая утечка в интерпретаторе. В этом случае, попробуйте использовать Valgrind для дальнейшего исследования.
+В этом разделе вы научитесь находить и исправлять такие утечки, используя инструмент отладки Valgrind.
 
 ### Valgrind
 

@@ -14,7 +14,7 @@
 <%= debug @post %>
 <p>
   <b>Title:</b>
-  <%=h @post.title %>
+  <%= @post.title %>
 </p>
 ```
 
@@ -43,7 +43,7 @@ Title: Rails debugging guide
 <%= simple_format @post.to_yaml %>
 <p>
   <b>Title:</b>
-  <%=h @post.title %>
+  <%= @post.title %>
 </p>
 ```
 
@@ -73,7 +73,7 @@ Title: Rails debugging guide
 <%= [1, 2, 3, 4, 5].inspect %>
 <p>
   <b>Title:</b>
-  <%=h @post.title %>
+  <%= @post.title %>
 </p>
 ```
 

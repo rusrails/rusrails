@@ -72,8 +72,8 @@
 
 14. Отладка приложений на Rails
     debugging_rails_applications.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    f049016cd348627bf8db0d72382d7580bf802a79
+    09/01/13
 
 15. Тестирование производительности приложений Rails
     performance_testing.textile
