@@ -13,8 +13,6 @@ class Coffee < ActiveRecord::Base
 end
 ```
 
-TIP: `:allow_nil` игнорируется валидатором presence.
-
 ### `:allow_blank`
 
 Опция `:allow_blank` подобна опции `:allow_nil`. Эта опция пропускает валидацию, если значение аттрибута `blank?`, например `nil` или пустая строка.
@@ -27,8 +25,6 @@ end
 Topic.create("title" => "").valid?  # => true
 Topic.create("title" => nil).valid? # => true
 ```
-
-TIP: `:allow_blank` игнорируется валидатором presence.
 
 ### `:message`
 
