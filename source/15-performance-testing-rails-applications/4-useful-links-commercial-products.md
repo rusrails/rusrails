@@ -6,9 +6,8 @@
 ### Плагины и гемы Rails
 
 * [Rails Analyzer](http://rails-analyzer.rubyforge.org)
-* [Palmist](http://www.flyingmachinestudios.com/programming/announcing-palmist)
 * [Rails Footnotes](https://github.com/josevalim/rails-footnotes/tree/master)
-* [Query Reviewer](https://github.com/dsboulder/query_reviewer/tree/master)
+* [Query Reviewer](https://github.com/nesquena/query_reviewer)
 * [MiniProfiler](http://www.miniprofiler.com)
 
 ### Инструменты

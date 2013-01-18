@@ -37,8 +37,8 @@ require 'rails/performance_test_help'
 
 class HomepageTest < ActionDispatch::PerformanceTest
   # Refer to the documentation for all available options
-  # self.profile_options = { :runs => 5, :metrics => [:wall_time, :memory],
-  #                          :output => 'tmp/performance', :formats => [:flat] }
+  # self.profile_options = { runs: 5, metrics: [:wall_time, :memory],
+  #                          output: 'tmp/performance', formats: [:flat] }
 
   test "homepage" do
     get '/'
@@ -340,7 +340,7 @@ end
 ```bash
 ActionController::Base.perform_caching = true
 ActiveSupport::Dependencies.mechanism = :require
-Rails.logger.level = ActiveSupport::BufferedLogger::INFO
+Rails.logger.level = ActiveSupport::Logger::INFO
 ```
 
 Когда `ActionController::Base.perform_caching` устанавливается в `true`, тесты производительности будут вести себя так, как будто они в среде `production`.
@@ -349,17 +349,9 @@ Rails.logger.level = ActiveSupport::BufferedLogger::INFO
 
 Чтобы взять лучшее от тестов производительности Rails под MRI, нужно создать специальный мощный двоичный файл Ruby.
 
-Рекомендованные патчи для каждой версии MRI следующие:
+Рекомендованные патчи для MRI находятся в директории [_patches_ RVM](https://github.com/wayneeseguin/rvm/tree/master/patches/ruby) для каждой определенной версии интерпретатора.
 
-| Версия       | Патч      |
-| ------------ | --------- |
-| 1.8.6        | ruby186gc |
-| 1.8.7        | ruby187gc |
-| 1.9.2 и выше | gcdata    |
-
-Все они находятся в директории [_patches_ RVM](https://github.com/wayneeseguin/rvm/tree/master/patches/ruby) для каждой определенной версии интерпретатора.
-
-Что касается самой установки, можно либо сделать это просто, используя [RVM](http://rvm.beginrescueend.com), либо создать все из исходников, что несколько сложнее.
+Что касается самой установки, можно либо сделать это просто, используя [RVM](http://rvm.io/), либо создать все из исходников, что несколько сложнее.
 
 #### Установка с использованием RVM
 
@@ -367,7 +359,6 @@ Rails.logger.level = ActiveSupport::BufferedLogger::INFO
 
 ```bash
 $ rvm install 1.9.2-p180 --patch gcdata
-$ rvm install 1.8.7 --patch ruby187gc
 $ rvm install 1.9.2-p180 --patch ~/Downloads/downloaded_gcdata_patch.patch
 ```
 
@@ -397,8 +388,7 @@ $ cd <ruby-version>
 ##### Применить патч
 
 ```bash
-$ curl http://github.com/wayneeseguin/rvm/raw/master/patches/ruby/1.9.2/p180/gcdata.patch | patch -p0 # if you're on 1.9.2!
-$ curl http://github.com/wayneeseguin/rvm/raw/master/patches/ruby/1.8.7/ruby187gc.patch | patch -p0 # if you're on 1.8.7!
+$ curl https://raw.github.com/wayneeseguin/rvm/master/patches/ruby/1.9.2/p180/gcdata.patch | patch -p0 # если у вас 1.9.2!
 ```
 
 ##### Настроить и установить
@@ -429,7 +419,7 @@ alias gcrails='~/rubygc/bin/rails'
 Добавьте Ruby-Prof в Gemfile вашего приложения, если хотите использовать бенчмаркинг/профилирование под MRI или REE:
 
 ```ruby
-gem 'ruby-prof', git: 'git://github.com/wycats/ruby-prof.git'
+gem 'ruby-prof'
 ```
 
 теперь запустите `bundle install` и все готово.

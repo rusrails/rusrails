@@ -77,8 +77,8 @@
 
 15. Тестирование производительности приложений Rails
     performance_testing.textile
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    85c13b7d3d4cb940785ac58d24f6fe90a5346f9c
+    05/01/13
 
 16. Конфигурирование приложений на Rails
     configuring.md
