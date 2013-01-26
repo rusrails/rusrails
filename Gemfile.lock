@@ -196,6 +196,7 @@ GEM
     rake (10.0.3)
     rdoc (3.12)
       json (~> 1.4)
+    redcarpet (2.2.2)
     riddle (1.5.3)
     rspec (2.11.0)
       rspec-core (~> 2.11.0)
@@ -282,6 +283,7 @@ DEPENDENCIES
   quiet_assets
   rails (~> 3.2.0)
   rails_config
+  redcarpet
   rspec-rails
   sass
   sass-rails (~> 3.2.0)

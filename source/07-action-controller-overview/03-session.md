@@ -1,0 +1,201 @@
+# Сессия
+
+У вашего приложения есть сессия для каждого пользователя в которой можно хранить небольшие порции данных, которые будут сохранены между запросами. Сессия доступна только в контроллере и во вьюхе, и может использовать один из нескольких механизмов хранения:
+
+* ActionDispatch::Session::CookieStore - Хранит все на клиенте.
+* ActionDispatch::Session::CacheStore - Хранит данные в кэше Rails.
+* ActionDispatch::Session::ActiveRecordStore - Хранит данные в базе данных с использованием Active Record. (требует гем `activerecord-session_store`).
+* ActionDispatch::Session::MemCacheStore - Хранит данные в кластере memcached (эта реализация - наследие старых версий, вместо нее рассмотрите использование CacheStore).
+
+Все сессии используют куки для хранения уникального ID каждой сессии (вы обязаны использовать куки, Rails не позволяет передавать ID сессии в URL, так как это не безопасно).
+
+Для большинства способов хранения этот ID используется для поиска данных сессии на сервере, в т.ч. в таблице базы данных. Имеется одно исключение, это дефолтное и рекомендуемое хранение сессии - CookieStore - которое хранит все данные сессии в куки (ID остается доступным, если он вам нужен). Преимущества этого в легкости, отсутствии настройки для нового приложения в порядке использования сессий. Данные в куки криптографически подписаны, что делает их защищенными от взлома, но не зашифрованы, таким образом любой получивший к ним доступ, может прочитать их содержимое, но не отредактировать их (Rails не примет их, если они были отредактированы).
+
+CookieStore могут хранить около 4kB данных - намного меньше, чем остальные - но этого обычно хватает. Хранение большего количества данных в сессии не рекомендуется, вне зависимости от того, как хранятся они в приложении. Следует специально избегать хранения в сессии сложных объектов (ничего, кроме простых объектов Ruby, например экземпляры моделей), так как сервер может не собрать их между запросами, что приведет к ошибке.
+
+Если пользовательские сессии не хранят критичные данные или нет необходимости в ее сохранности на долгий период (скажем, если вы используете ее для сообщений во flash), можете рассмотреть использование ActionDispatch::Session::CacheStore. Он сохранит сессии с использованием реализации кэша, которую вы настроили для своего приложения. Преимущество этого в том, что для хранения сессий можно использовать существующую инфраструктуру кэширования без необходимости дополнительных настроек или администрирования. Минус, разумеется, в том, что сессии будут недолговечными и время от времени исчезать.
+
+Читайте подробнее о хранении сессий в [Руководстве по безопасности](/ruby-on-rails-security-guide).
+
+Если вы нуждаетесь в другом механизме хранения сессий, измените его в файле `config/initializers/session_store.rb`:
+
+```ruby
+# Use the database for sessions instead of the cookie-based default,
+# which shouldn't be used to store highly confidential information
+# (create the session table with "script/rails g active_record:session_migration")
+# YourApp::Application.config.session_store :active_record_store
+```
+
+Rails настраивает ключ сессии (имя куки) при подписании данных сессии. Он также может быть изменен в `config/initializers/session_store.rb`:
+
+```ruby
+# Be sure to restart your server when you modify this file.
+
+YourApp::Application.config.session_store :cookie_store, key: '_your_app_session'
+```
+
+Можете также передать ключ `:domain` и определить имя домена для куки:
+
+```ruby
+# Be sure to restart your server when you modify this file.
+
+YourApp::Application.config.session_store :cookie_store, key: '_your_app_session', domain: ".example.com"
+```
+
+Rails настраивает (для CookieStore) секретный ключ, используемый для подписания данных сессии. Он может быть изменен в `config/initializers/secret_token.rb`:
+
+```ruby
+# Be sure to restart your server when you modify this file.
+
+# Your secret key for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+YourApp::Application.config.secret_token = '49d3f3de9ed86c74b94ad6bd0...'
+```
+
+NOTE: Изменение секретного ключа при использовании CookieStore делает все предыдущие сессии невалидными.
+
+### Доступ к сессии
+
+В контроллере можно получить доступ к сессии с помощью метода экземпляра `session`.
+
+NOTE: Сессии лениво загружаются. Если вы не получаете доступ к сессиям в коде экшна, они не будут загружаться. Следовательно, никогда не нужно отключать сессии, просто не обращайтесь к ним, чтобы они не работали.
+
+Значение сессии хранится, используя пары ключ/значение, подобно хэшу:
+
+```ruby
+class ApplicationController < ActionController::Base
+
+  private
+
+  # Находим пользователя с ID, хранящимся в сессии с ключем
+  # :current_user_id Это обычный способ обрабатывать вход пользователя
+  # в приложении на Rails; вход устанавливает значение сессии, а
+  # выход убирает его.
+  def current_user
+    @_current_user ||= session[:current_user_id] &&
+      User.find_by_id(session[:current_user_id])
+  end
+end
+```
+
+Чтобы что-то хранить в сессии, просто присвойте это ключу, как в хэше:
+
+```ruby
+class LoginsController < ApplicationController
+  # "Создаем" логин (при входе пользователя)
+  def create
+    if user = User.authenticate(params[:username], params[:password])
+      # Сохраняем ID пользователя в сессии, так что он может быть использован
+      # в последующих запросах
+      session[:current_user_id] = user.id
+      redirect_to root_url
+    end
+  end
+end
+```
+
+Чтобы убрать что-то из сессии, присвойте этому ключу `nil`:
+
+```ruby
+class LoginsController < ApplicationController
+  # "Удаляем" логин (при выходе пользователя)
+  def destroy
+    # Убираем id пользователя из сессии
+    @_current_user = session[:current_user_id] = nil
+    redirect_to root_url
+  end
+end
+```
+
+Для сброса существующей сессии, используйте `reset_session`.
+
+### Flash
+
+Flash - это специальная часть сессии, которая очищается с каждым запросом. Это означает, что значения хранятся там доступными только до следующего запроса, что полезно для хранения сообщений об ошибке и т.п.
+
+Доступ к нему можно получить так же, как к сессии, подобно хэшу (это экземпляр [FlashHash](http://api.rubyonrails.org/classes/ActionDispatch/Flash/FlashHash.html)).
+
+Давайте посмотрим действие логаута как пример. Контроллер может послать сообщение, которое будет отображено пользователю при следующем запросе:
+
+```ruby
+class LoginsController < ApplicationController
+  def destroy
+    session[:current_user_id] = nil
+    flash[:notice] = "You have successfully logged out."
+    redirect_to root_url
+  end
+end
+```
+
+Отметьте, что также возможно назначить сообщение флэш как часть перенаправления. Можно назначить `:notice`, `:alert` или общего назначения `:flash`:
+
+```ruby
+redirect_to root_url, notice: "You have successfully logged out."
+redirect_to root_url, alert: "You're stuck here!"
+redirect_to root_url, flash: { referral_code: 1234 }
+```
+
+Экшн `destroy` перенаправляет на `root_url` приложения, где будет отображено сообщение. Отметьте, что от следующего экшна полностью зависит решение, будет ли он или не будет что-то делать с тем, что предыдущий экшн вложил во flash. Принято отображать любые сообщения об ошибке или уведомления из flash в макете приложения:
+
+```ruby
+<html>
+  <!-- <head/> -->
+  <body>
+    <% flash.each do |name, msg| -%>
+      <%= content_tag :div, msg, class: name %>
+    <% end -%>
+
+    <!-- дальнейшее содержимое -->
+  </body>
+</html>
+```
+
+В этом случае, если экшн установил сообщения уведомления или предупреждения, макет отобразит их автоматически.
+
+Можно передать все, что только сессия может хранить; вы не ограничены уведомлениями или предупреждениями:
+
+```ruby
+<% if flash[:just_signed_up] %>
+  <p class="welcome">Welcome to our site!</p>
+<% end %>
+```
+
+Если хотите, чтобы значение flash было перенесено для другого запроса, используйте метод `keep`:
+
+```ruby
+class MainController < ApplicationController
+  # Давайте скажем этому экшну, соответствующему root_url, что хотим
+  # все запросы сюда перенаправить на UsersController#index. Если
+  # экшн установил flash и направил сюда, значения в нормальной ситуации
+  # будут потеряны, когда произойдет другой редирект, но Вы можете
+  # использовать 'keep', чтобы сделать его доступным для другого запроса.
+  def index
+    # Сохранит все значения flash.
+    flash.keep
+
+    # Можете также использовать ключ для сохранения определенных значений.
+    # flash.keep(:notice)
+    redirect_to users_url
+  end
+end
+```
+
+#### `flash.now`
+
+По умолчанию, добавление значений во flash делает их доступными для следующего запроса, но иногда хочется иметь доступ к этим значениям в том же запросе. Например, если экшн `create` проваливается в сохранении ресурса, и вы рендерите макет `new` непосредственно тут, то не собираетесь передавать результат в новый запрос, но хотите отобразить сообщение, используя flash. Чтобы это сделать, используйте `flash.now` так же, как использовали нормальный `flash`:
+
+```ruby
+class ClientsController < ApplicationController
+  def create
+    @client = Client.new(params[:client])
+    if @client.save
+      # ...
+    else
+      flash.now[:error] = "Could not save client"
+      render action: "new"
+    end
+  end
+end
+```
