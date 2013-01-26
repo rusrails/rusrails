@@ -10,7 +10,7 @@
     dfc930b2b165f3fc13e0f931e152802ddf3c7c46
     01/01/13
 
-02. Валидации и колбэки Active Record
+02. Валидации Active Record
     active_record_validations.md
     5fb84c6828cea031d829969fed1fdf52d1e94ac4
     08/01/13
@@ -124,8 +124,8 @@
 14. active_record_basics.md
 
 16. active_record_callbacks.md
-    b659e00baf7334e0b42d02877cceb4498ebd8977
-    29/11/12
+    5fb84c6828cea031d829969fed1fdf52d1e94ac4
+    08/01/13
 
 18. active_support_instrumentation.md
 20. api_documentation_guidelines.md
