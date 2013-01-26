@@ -45,9 +45,6 @@ config.assets.compile = false
 # Создавать дайджесты для URL ресурсов.
 config.assets.digest = true
 
-# По умолчанию nil и сохраняется в расположении, определенном с помощью config.assets.prefix
-# config.assets.manifest = YOUR_PATH
-
 # Прекомпилировать дополнительные ресурсы (application.js, application.css и все не-JS/CSS уже добавлены)
 # config.assets.precompile `= %w( search.js )
 ```

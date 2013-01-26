@@ -97,8 +97,8 @@
 
 19. Asset Pipeline
     asset_pipeline.md
-    41dbb58e2dd16710ffae0a44c04cf21bed5588e0
-    17/09/12
+    3fa73324c59299e4c9ac68b81fa84fd7eea8eaac
+    17/01/13
 
 99. Другие / план:
 ------------------

@@ -41,8 +41,8 @@ config.assets.debug = false
 Режим отладки также может быть включен в методе хелпера Rails:
 
 ```erb
-<%= stylesheet_link_tag "application", :debug => true %>
-<%= javascript_include_tag "application", :debug => true %>
+<%= stylesheet_link_tag "application", debug: true %>
+<%= javascript_include_tag "application", debug: true %>
 ```
 
 Опция `:debug` излишняя, если режим отладки включен.

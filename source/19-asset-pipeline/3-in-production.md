@@ -18,6 +18,8 @@
 <link href="/assets/application-4dd5b109ee3439da54f5bdfd78a80473.css" media="screen" rel="stylesheet" />
 ```
 
+Note: с Asset Pipeline опции :cache и :concat больше не используются, удалите эти опции из `javascript_include_tag` и `stylesheet_link_tag`.
+
 Режим меток контролируется установкой настройки `config.assets.digest` в Rails (которая по умолчанию `true` для production, `false` для всего остального).
 
 NOTE: В нормальных обстоятельствах опция по умолчанию не должна изменяться. Если нет дайджеста в именах файлов и установлены заголовки с вечным кэшированием, удаленные клиенты никогда не узнают, когда перезапросить файлы при изменении ихсодержимого.
@@ -55,7 +57,7 @@ NOTE. Если вы прекомпилируете ресурсы локальн
 По умолчанию компилирующиеся файлы включают `application.js`, `application.css` и все не-JS/CSS файлы (это автоматически включает все ресурсы изображений):
 
 ```ruby
-[ Proc.new{ |path| !%w(.js .css).include?(File.extname(path)) }, /application.(css|js)$/ ]
+[ Proc.new { |path| !%w(.js .css).include?(File.extname(path)) }, /application.(css|js)$/ ]
 ```
 
 NOTE. Условие отбора (и другие части прекомпиляционного массива; смотрите выше) применяется к итоговым скомпилированным именам файлов. Это означает, что все, что компилируется в JS/CSS, исключается, так же, как и файлы с чистым JS/CSS; например, файлы `.coffee` и `.scss` *не* включаются автоматически, так как они компилируются в JS/CSS.
@@ -64,6 +66,27 @@ NOTE. Условие отбора (и другие части прекомпил
 
 ```erb
 config.assets.precompile `= ['admin.js', 'admin.css', 'swfObject.js']
+```
+
+Или можно прекомпилировать все ресурсы, например так:
+
+```ruby
+# config/environments/production.rb
+config.assets.precompile << Proc.new do |path|
+  if path =~ /\.(css|js)\z/
+    full_path = Rails.application.assets.resolve(path).to_path
+    app_assets_path = Rails.root.join('app', 'assets').to_path
+    if full_path.starts_with? app_assets_path
+      puts "including asset: " + full_path
+      true
+    else
+      puts "excluding asset: " + full_path
+      false
+    end
+  else
+    false
+  end
+end
 ```
 
 NOTE. Всегда определяйте ожидаемое имя скомпилированного файла, оканчивающееся на js или css, даже если хотите добавить в массив прекомпиляции файлы Sass или CoffeeScript.
@@ -81,12 +104,6 @@ application.css: application-8af74128f904600e41a6e39241464e03.css
 
 Размещение манифеста по умолчанию - корень папки, определенной в `config.assets.prefix` (по умолчанию '/assets').
 
-Это может быть изменено с помощью опции `config.assets.manifest`. Требуется полностью определенный путь:
-
-```erb
-config.assets.manifest = '/path/to/some/other/location'
-```
-
 NOTE: Если в production отсутствуют прекомпилированные файлы, вы получите исключение `Sprockets::Helpers::RailsHelper::AssetPaths::AssetNotPrecompiledError`, указывающее имя отсутствующего файла(-ов).
 
 #### Вечный заголовок Expires
@@ -97,14 +114,14 @@ NOTE: Если в production отсутствуют прекомпилирова
 
 ```apache
 # Директивы Expires* требуют, чтобы модуль Apache `mod_expires` был включен.
-<LocationMatch "^/assets/.*$">
+<Location /assets/>
   # Не рекомендуется использование ETag, когда присутствует Last-Modified
   Header unset ETag
   FileETag None
   # RFC предписывает кэшировать только на 1 год
   ExpiresActive On
   ExpiresDefault "access plus 1 year"
-</LocationMatch>
+</Location>
 ```
 
 Для nginx:
@@ -202,3 +219,9 @@ group :production do
   gem 'therubyracer'
 end
 ```
+
+### CDN
+
+Если ваши ресурсы отдаются с CDN, убедитесь, что они не остаются в кэше вечно. Это может вызвать проблемы. Если использовать `config.action_controller.perform_caching = true`, Rack::Cache будет использовать `Rails.cache` для хранения ресурсов. Это может привести к тому, что ваш кэш быстро заполнится.
+
+Каждый кэш различен, поэтому вычисляйте, как ваш CDN управляет кэшированием, и убеждайтесь, что он хорошо работает с файлопроводом. Можно обнаружить причуды, относящиеся к определенным настройкам, можно не найти. Использование nginx с настройками по умолчанию, к примеру, не должно давать проблем при исользовании в качестве кэша HTTP.
