@@ -108,16 +108,16 @@
     17/09/12
 
 03. 3_1_release_notes.md
-    7a0dad25f3be77211160560dc76a8f37963051d7
-    17/09/12
+    276e7b0a1d4b6b742733ee5b5c7dde4dd37a5e11
+    24/10/12
 
 04. 3_2_release_notes.md
     7a0dad25f3be77211160560dc76a8f37963051d7
     17/09/12
 
 05. 4_0_release_notes.md
-    efa7717b7ab71f026df4e464046519e973c31f9a
-    17/09/12
+    550299a6712cf5731f007176cb9f2135f813e9e7
+    25/01/13
 
 10. action_view_overview.md
 12. active_model_basics.md
@@ -146,7 +146,7 @@
     17/09/2012
 
 57. ruby_on_rails_guides_guidelines.md
-60. upgrading_ruby_on_rails.textile
+60. upgrading_ruby_on_rails.md
 65. working_with_javascript_in_rails.md
 
 
