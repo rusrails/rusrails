@@ -252,7 +252,7 @@ class ProductSweeper < ActionController::Caching::Sweeper
 end
 ```
 
-Обратите внимание на использование тут '/products', а вместо 'products'. Если хотите прекратить кэш экшна для `Admin::ProductsController`, вместо этого можно использовать 'admin/products'.
+Обратите внимание на использование тут '/products', вместо 'products'. Если хотите обновить кэш экшна для `Admin::ProductsController`, вместо этого можно использовать 'admin/products'.
 
 ### Кэширование SQL
 
