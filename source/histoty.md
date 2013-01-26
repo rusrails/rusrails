@@ -92,8 +92,8 @@
 
 18. Кэширование с Rails: Обзор
     caching_with_rails.md
-    721afdcc4b58c65f36122b10ec998b913a147912
-    17/09/12
+    03a391482aa6a9d532eb43bb3e697852e0b83618
+    20/01/13
 
 19. Asset Pipeline
     asset_pipeline.md

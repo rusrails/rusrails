@@ -14,7 +14,7 @@ class ProductsController < ApplicationController
 
     # Если запрос устарел в соответствии с заданной временной меткой или значением
     # etag (т.е. нуждается в обработке снова), тогда запускаем этот блок
-    if stale?(:last_modified => @product.updated_at.utc, :etag => @product.cache_key)
+    if stale?(last_modified: @product.updated_at.utc, etag: @product.cache_key)
       respond_to do |wants|
         # ... обычное создание отклика
       end
@@ -49,7 +49,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
-    fresh_when :last_modified => @product.published_at.utc, :etag => @product
+    fresh_when last_modified: @product.published_at.utc, etag: @product
   end
 end
 ```
