@@ -146,7 +146,11 @@
     17/09/2012
 
 57. ruby_on_rails_guides_guidelines.md
+
 60. upgrading_ruby_on_rails.md
+    351f071dabb4304d48cbda086c86743dec58aada
+    15/12/2012
+
 65. working_with_javascript_in_rails.md
 
 
