@@ -1,18 +1,20 @@
 # Rails on Rack
 
-Это руководство раскрывает интеграцию Rails и Rack и взаимодействие с другими компонентами Rack. Обратившись к нему, вы сможете:
+Это руководство раскрывает интеграцию Rails и Rack и взаимодействие с другими компонентами Rack.
 
-* Создавать приложения Rails Metal
-* Использовать промежуточные программы Rack в своих приложениях Rails
-* Понимать стек внутренних промежуточных программ Action Pack
-* Определять собственный стек промежуточных программ
+После прочтения этого руководства, вы узнаете:
+
+* Как создавать приложения Rails Metal
+* Как использовать промежуточные программы Rack в своих приложениях Rails
+* О стеке внутренних промежуточных программ Action Pack
+* Как определять собственный стек промежуточных программ
 
 WARNING: Это руководство предполагает практические знания протокола Rack и такие концепции Rack, как промежуточные программы (middlewares), карты (maps) url и `Rack::Builder`.
 
 Введение в Rack
 ---------------
 
-bq. Rack представляет собой минимальный, модульный и адаптивный интерфейс для разработки веб-приложений на Ruby. Оборачивая запросы и отклики HTTP как можно более простым образом, он объединил и очистил API для веб-серверов, веб-фреймворков и промежуточных программ (так называемых middleware) до единственного метода call.
+Rack представляет собой минимальный, модульный и адаптивный интерфейс для разработки веб-приложений на Ruby. Оборачивая запросы и отклики HTTP как можно более простым образом, он объединил и очистил API для веб-серверов, веб-фреймворков и промежуточных программ (так называемых middleware) до единственного метода call.
 
 - [Документация Rack API](http://rack.rubyforge.org/doc/)
 
@@ -32,11 +34,11 @@ Rails on Rack
 Вот как `rails server` создает экземпляр `Rack::Server`
 
 ```ruby
-Rails::Server.new.tap { |server|
+Rails::Server.new.tap do |server|
   require APP_PATH
   Dir.chdir(Rails.application.root)
   server.start
-}
+end
 ```
 
 `Rails::Server` унаследован от `Rack::Server` и вызывает метод `Rack::Server#start` следующим образом:
@@ -55,7 +57,7 @@ end
 ```ruby
 def middleware
   middlewares = []
-  middlewares << [Rails::Rack::Debugger]  if options[:debugger]
+  middlewares << [Rails::Rack::Debugger] if options[:debugger]
   middlewares << [::Rack::ContentLength]
   Hash.new(middlewares)
 end
@@ -129,11 +131,11 @@ use ActionDispatch::Cookies
 use ActionDispatch::Session::CookieStore
 use ActionDispatch::Flash
 use ActionDispatch::ParamsParser
-use ActionDispatch::Head
+use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
 use ActionDispatch::BestStandardsSupport
-run ApplicationName::Application.routes
+run MyApp::Application.routes
 ```
 
 Назначение каждой из этих промежуточных программ объясняется в разделе "Внутренние промежуточные программы":#internal-middleware-stack.
@@ -159,8 +161,8 @@ Rails предоставляет простой конфигурационных
 config.middleware.use Rack::BounceFavicon
 
 # Добавить Lifo::Cache после ActiveRecord::QueryCache.
-# Передать аргумент { :page_cache => false } в Lifo::Cache.
-config.middleware.insert_after ActiveRecord::QueryCache, Lifo::Cache, :page_cache => false
+# Передать аргумент { page_cache: false } в Lifo::Cache.
+config.middleware.insert_after ActiveRecord::QueryCache, Lifo::Cache, page_cache: false
 ```
 
 #### Перемена местами промежуточных программ
@@ -224,7 +226,7 @@ config.middleware.delete "Rack::MethodOverride"
 
  **`Rack::Lock`**
 
-* Устанавливает флажок `env["rack.multithread"]` в `true` и оборачивает приложение в Mutex.
+* Устанавливает флажок `env["rack.multithread"]` в `false` и оборачивает приложение в Mutex.
 
  **`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
 

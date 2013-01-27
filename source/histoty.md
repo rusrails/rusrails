@@ -142,8 +142,8 @@
 50. rails_application_templates.md
 
 55. rails_on_rack.md
-    721afdcc4b58c65f36122b10ec998b913a147912
-    17/09/2012
+    732d3507da930c8d21e21d2c87c96594bb1e4d2c
+    06/01/2013
 
 57. ruby_on_rails_guides_guidelines.md
 
