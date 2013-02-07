@@ -8,6 +8,7 @@ class Markdown
   class Renderer < Redcarpet::Render::HTML
     def initialize(options={})
       super
+      @numeration = []
     end
 
     def block_code(code, language)
@@ -23,8 +24,11 @@ HTML
     def header(text, header_level)
       # Always increase the heading level by, so we can use h1, h2 heading in the document
       header_level += 1
+      @numeration[header_level] ||= 0
+      @numeration[header_level] += 1
+      @numeration = @numeration[0..header_level]
 
-      %(<h#{header_level}>#{text}</h#{header_level}>)
+      %(<h#{header_level}>#{@numeration.compact.join('.')}. #{text}</h#{header_level}>)
     end
 
     def paragraph(text)

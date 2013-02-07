@@ -1,2 +1,2 @@
-require "textile_extension"
+require "renderers/textile_extension"
 RedCloth.include TextileExtensions
