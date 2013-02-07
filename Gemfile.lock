@@ -213,6 +213,8 @@ GEM
       rspec (~> 2.11.0)
     ruby-openid (2.2.0)
     rubyzip (0.9.9)
+    russian (0.6.0)
+      i18n (>= 0.5.0)
     sass (3.2.1)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -285,6 +287,7 @@ DEPENDENCIES
   rails_config
   redcarpet
   rspec-rails
+  russian
   sass
   sass-rails (~> 3.2.0)
   therubyracer

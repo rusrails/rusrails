@@ -28,7 +28,9 @@ HTML
       @numeration[header_level] += 1
       @numeration = @numeration[0..header_level]
 
-      %(<h#{header_level}>#{@numeration.compact.join('.')}. #{text}</h#{header_level}>)
+      hid = text.parameterize
+
+      %(<h#{header_level} id='#{hid}'><a href="##{hid}">#{@numeration.compact.join('.')}.</a> #{text}</h#{header_level}>)
     end
 
     def paragraph(text)
