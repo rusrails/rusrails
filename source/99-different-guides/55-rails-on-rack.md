@@ -330,7 +330,7 @@ use MyOwnStackFromScratch
 run ApplicationName::Application
 ```
 
-Источники
+(resources) Источники
 ---------
 
 ### Обучение Rack
