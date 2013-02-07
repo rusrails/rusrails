@@ -28,7 +28,8 @@ HTML
       @numeration[header_level] += 1
       @numeration = @numeration[0..header_level]
 
-      hid = text.parameterize
+      text.gsub!(/\A\s*\((.+)\)/, '')
+      hid = ($1 || text).parameterize
 
       %(<h#{header_level} id='#{hid}'><a href="##{hid}">#{@numeration.compact.join('.')}.</a> #{text}</h#{header_level}>)
     end
