@@ -22,7 +22,12 @@ protected
   end
 
   def render_404
-    render 'pages/404', :status => 404
+    redirect = Redirect.find_by_from request.fullpath
+    if redirect
+      redirect_to redirect.to, :status => 301
+    else
+      render 'pages/404', :status => 404
+    end
   end
 
   def page_cache_key
