@@ -1,22 +1,19 @@
-!!! 5
+!!!
 %html
   %head
     %meta{:name => "keywords", :content => "ruby on rails, Ruby, Rails, Rails3, Rails4, Rails 4.0, руководство, начинающим, самоучитель, manual, мануал, справочник, учебник, примеры, Руби, рельсы"}
     %meta{:name => "description", :content => "Ruby on Rails русские руководства, учебники, статьи"}
     %title= title
     = stylesheet_link_tag "application"
-    = javascript_include_tag "application"
     = csrf_meta_tag
   %body
-    #container
-      #header
-        = link_to "", root_path, :id => "logo"
-        - if notice
-          .notice= notice
-        - if alert
-          .alert= alert
-        #user_panel
-          %ul
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container-fluid
+          = link_to "", root_path, :class => :brand
+          = form_tag search_path, :method => :get, :class => "navbar-search pull-right" do
+            = text_field_tag :search, params[:search], :class => "search-query", :placeholder => "Поиск.."
+          %ul.nav.pull-right
             - if user_signed_in?
               %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path
@@ -24,27 +21,30 @@
               %li= link_to "Регистрация", new_user_registration_path
               %li= link_to "Вход", new_user_session_path
             %li= link_to "Обсуждения", discussions_path
-      #right
-        %ul.menu
-          %li.category_pages
-            = form_tag search_path, :method => :get do
-              = text_field_tag :search, params[:search]
-              = submit_tag :search, :class => :hidden
-        - cache "menu_#{page_cache_key}" do
-          = menu
-        -# = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
-        = render "layouts/rsya"
-      #content= yield
-      .clear
-      #footer
-        %p
-          = link_to "github", "https://github.com/morsbox/rusrails", :id => :github_link
-          = link_to "Карта", map_path, :id => :morsbox_link
-          2010 - 2012
-          = link_to "Твиттер", "http://twitter.com/rusrails", :id => :twitter_link
-          Хостинг -
-          = link_to "Locum.ru", "http://locum.ru?code=91f0442af4234d9f732d89e111795557f795edb6", :id => :locum_link
-        %p
-          = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
-          , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
-          = render "layouts/counter"
+    .container-fluid
+      .row-fluid
+        .span10= yield
+        .span2
+          - cache "menu_#{page_cache_key}" do
+            = menu
+          = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
+          -#= render "layouts/rsya"
+      .row-fluid
+        .span12
+          %p
+            = link_to "github", "https://github.com/morsbox/rusrails", :id => :github_link
+            = link_to "Карта", map_path, :id => :morsbox_link
+            2010 - #{Date.today.year}
+            = link_to "Твиттер", "http://twitter.com/rusrails", :id => :twitter_link
+            Хостинг -
+            = link_to "Locum.ru", "http://locum.ru?code=91f0442af4234d9f732d89e111795557f795edb6", :id => :locum_link
+          %p
+            = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
+            , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
+            = render "layouts/counter"
+
+    - if notice
+      .notice= notice
+    - if alert
+      .alert= alert
+    = javascript_include_tag "application"
