@@ -15,10 +15,12 @@ gem 'orm_adapter', '= 0.0.7'
 
 gem 'nokogiri'
 gem 'haml'
-gem 'sass'
+gem 'sass-rails', " ~> 3.2.0"
+gem "less-rails"
 gem 'RedCloth'
 gem 'redcarpet'
 gem 'rails_config'
+gem 'twitter-bootstrap-rails'
 
 gem 'jquery-rails'
 gem 'capistrano'
@@ -28,7 +30,6 @@ gem 'therubyracer'
 gem 'unicorn'
 
 group :assets do
-  gem 'sass-rails', " ~> 3.2.0"
   gem 'coffee-rails', " ~> 3.2.0"
   gem 'uglifier'
 end

@@ -1,10 +1,5 @@
-html {
-  height: 100%;
-}
-
 body {
   background: #D5E9F6;
-  height: 100%;
 }
 
 /* special */
@@ -339,43 +334,4 @@ span.rails_mark {
 #preview_link {
   display: block;
   margin-bottom: 15px;
-}
-
-/* secret */
-
-#admin_panel {
-  float:left;
-  width:200px;
-  padding:40px 0;
-  background:#fff;
-}
-
-#admin_zone {
-  margin-left:200px;
-  padding:40px 10px 5px 10px;
-  background:#fff;
-}
-
-
-#admin_zone label, #admin_zone input, #admin_zone select, #admin_zone textarea {
-  display:block;
-}
-
-#admin_zone input#page_submit, #admin_zone input#category_submit {
-  float:left;
-}
-
-#admin_zone select {
-  min-width:200px;
-}
-
-#admin_zone textarea {
-  width:95%;
-  height:400px;
-}
-
-.admin .notice, .admin .alert {
-  position: absolute;
-  right: 0;
-  width: 400px;
 }
