@@ -14,7 +14,7 @@
 }
 
 #footer {
-  height:49px;
+  margin-top: 30px;
   padding:35px 0;
   background:#F7F7F7;
   border-radius: 119px 119px 0 0;
@@ -40,50 +40,6 @@
 
 #locum_link {
   color: #206d82;
-  font-weight: bold;
-}
-
-/* content */
-
-.note tt, .info tt {border:none; background: none; padding: 0;}
-
-#links{
-  height:50px;
-}
-
-#prev_link{
-  float:left;
-}
-
-#prev_link a {
-  display:block;
-  background: url('/assets/arrow_left.png') no-repeat left top;
-  padding:35px 0 15px;
-  min-width:35px;
-  margin-left:85px;
-}
-
-#next_link{
-  float:right;
-}
-
-#next_link a {
-  display:block;
-  background: url('/assets/arrow_right.png') no-repeat right top;
-  padding:35px 0 15px;
-  min-width:35px;
-}
-
-div.discussions {
-  margin: 10px 0 0 85px;
-  padding-top:10px;
-  border-top: 1px solid red;
-}
-
-span.rails_mark {
-  padding: 0 20px;
-  font-style: italic;
-  color: red;
   font-weight: bold;
 }
 

@@ -28,10 +28,10 @@
           - cache "menu_#{page_cache_key}" do
             .well= menu
           .well
-            = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
-            -#= render "layouts/rsya"
+            -# = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
+            = render "layouts/rsya"
       .row-fluid
-        .span12
+        .span12#footer
           %p
             = link_to "github", "https://github.com/morsbox/rusrails", :id => :github_link
             = link_to "Карта", map_path, :id => :morsbox_link
