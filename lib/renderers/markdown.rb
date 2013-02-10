@@ -24,14 +24,20 @@ HTML
     def header(text, header_level)
       # Always increase the heading level by, so we can use h1, h2 heading in the document
       header_level += 1
-      @numeration[header_level] ||= 0
-      @numeration[header_level] += 1
-      @numeration = @numeration[0..header_level]
-
       text.gsub!(/\A\s*\((.+)\)/, '')
       hid = ($1 || text).parameterize
 
-      %(<h#{header_level} id='#{hid}'><a href="##{hid}">#{@numeration.compact.join('.')}.</a> #{text}</h#{header_level}>)
+      if header_level > 2
+        @numeration[header_level] ||= 0
+        @numeration[header_level] += 1
+        @numeration = @numeration[0..header_level]
+        num_link = %(<a href="##{hid}">#{@numeration.compact.join('.')}.</a>)
+      else
+        @numeration = []
+        num_link = ''
+      end
+
+      %(<h#{header_level} id='#{hid}'>#{num_link} #{text}</h#{header_level}>)
     end
 
     def paragraph(text)
