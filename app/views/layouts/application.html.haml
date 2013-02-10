@@ -33,7 +33,7 @@
 
     .container-fluid
       .row-fluid
-        .span9= yield
+        .span9.content= yield
         .span3
           - cache "menu_#{page_cache_key}" do
             .well= menu

@@ -70,6 +70,14 @@ HTML
       end
     end
 
+    def table(header, body)
+      %Q(<table class='table table-striped'>#{header}#{body}</table>)
+    end
+
+    def image(link, title, alt_text)
+      %Q(<img src='#{link}' title='#{title}' alt='#{alt_text}' class='img-polaroid' />)
+    end
+
   private
     def convert_footnotes(text)
       text.gsub(/\[<sup>(\d+)\]<\/sup>/i) do
