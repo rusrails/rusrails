@@ -21,6 +21,16 @@
               %li= link_to "Регистрация", new_user_registration_path
               %li= link_to "Вход", new_user_session_path
             %li= link_to "Обсуждения", discussions_path
+
+    - if notice
+      .alert.alert-success
+        %button.close{:type => :button, :data => {:dismiss => :alert}} &times;
+        = notice
+    - if alert
+      .alert.alert-error
+        %button.close{:type => :button, :data => {:dismiss => :alert}} &times;
+        = alert
+
     .container-fluid
       .row-fluid
         .span9= yield
@@ -44,8 +54,4 @@
             , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
             = render "layouts/counter"
 
-    - if notice
-      .notice= notice
-    - if alert
-      .alert= alert
     = javascript_include_tag "application"

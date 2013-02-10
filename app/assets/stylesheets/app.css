@@ -1,15 +1,6 @@
-
-#header .notice, #header .alert {
-  margin: 0 80px 0 60%;
-}
-
-
 #main_page_banner {
   float:right;
   width:240px;
-  border:1px solid red;
-  background:#FFEEEE;
-  padding:5px;
   margin:0 0 10px 10px
 }
 
