@@ -23,12 +23,13 @@
             %li= link_to "Обсуждения", discussions_path
     .container-fluid
       .row-fluid
-        .span10= yield
-        .span2
+        .span9= yield
+        .span3
           - cache "menu_#{page_cache_key}" do
-            = menu
-          = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
-          -#= render "layouts/rsya"
+            .well= menu
+          .well
+            = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
+            -#= render "layouts/rsya"
       .row-fluid
         .span12
           %p

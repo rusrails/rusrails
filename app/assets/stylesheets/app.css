@@ -1,83 +1,8 @@
-body {
-  background: #D5E9F6;
-}
-
-/* special */
-
-.hidden {
-  display: none !important;
-}
-
-.clear {
-  clear: both;
-}
-
-/* layout */
-#header {
-  height:119px;
-  padding:0;
-  background:#F7F7F7;
-  border-radius: 0 0 119px 119px;
-}
-
-a#logo {
-  display: block;
-  height:119px;
-  background: url('/assets/rusrails.png') center center no-repeat;
-  width: 60%;
-  float: left;
-}
 
 #header .notice, #header .alert {
   margin: 0 80px 0 60%;
 }
 
-div#user_panel {
-  margin: 0 80px 0 60%;
-  background: #eee;
-  border-radius: 0 0 40px 40px;
-  height: 40px;
-}
-
-#user_panel ul {
-  margin: 0;
-  padding: 5px 20px;
-  list-style-type: none;
-}
-
-#user_panel ul li {
-  float:left;
-  padding:3px 10px;
-  border-left: 1px solid #ccc;
-  color: #a10f15;
-}
-
-#user_panel ul li:first-child {
-  border-left: none;
-}
-
-#user_panel ul li a {
-  color: #404040;
-  font-weight: bold;
-}
-
-#user_panel ul li a:hover {
-  color: #BF1E2E;
-  font-weight: bold;
-}
-
-div#container {
-  background: #ffffff;
-  min-width: 800px;
-  max-width: 1200px;
-  min-height: 100%;
-  margin: 0 auto;
-}
-
-#content {
-  padding: 20px 10px 20px 30px;
-  margin-right:210px;
-}
 
 #main_page_banner {
   float:right;
@@ -86,46 +11,6 @@ div#container {
   background:#FFEEEE;
   padding:5px;
   margin:0 0 10px 10px
-}
-
-#right {
-  width:190px;
-  float:right;
-  padding: 20px 10px;
-}
-
-#right ul.menu {
-  margin: 0;
-  padding:0;
-  list-style-type: none;
-}
-
-#right li.category_pages {
-  border:1px solid red;
-  background: #fee;
-  margin-bottom:5px;
-  padding: 3px;
-}
-
-#right li.category_pages>a {
-  color: #a10f15;
-  font-size: 17px;
-  line-height:10px;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-#right li.category_pages.selected>a, #right li.category_pages>a:hover {
-  text-decoration: underline;
-}
-
-#right li.category_pages ul a {
-  color: #a10f15;
-  text-decoration: none;
-}
-
-#right li.category_pages ul li.selected a, #right li.category_pages ul a:hover {
-  text-decoration: underline;
 }
 
 #footer {
@@ -159,36 +44,6 @@ div#container {
 }
 
 /* content */
-
-#content h4, #content h5 {
-  font-weight: bold;
-}
-
-div.warning {
-  background: #f9d9d8 url('/assets/tab_red.gif') no-repeat left top;
-  padding: 1em 1em 0.25em 48px;
-  margin: 0.25em 0 1.5em 0;
-}
-
-div.code_container {
-  background: #EEE url('/assets/tab_grey.gif') no-repeat left top;
-  padding: 0.25em 1em 0.5em 48px;
-  margin: 0.25em 0 1.5em 0;
-}
-
-.note {
-  background: #fff9d8 url('/assets/tab_note.gif') no-repeat left top;
-  border: none;
-  padding: 1em 1em 0.25em 48px;
-  margin: 0.25em 0 1.5em 0;
-}
-
-.info {
-  background: #d5e9f6 url('/assets/tab_info.gif') no-repeat left top;
-  border: none;
-  padding: 1em 1em 0.25em 48px;
-  margin: 0.25em 0 1.5em 0;
-}
 
 .note tt, .info tt {border:none; background: none; padding: 0;}
 
@@ -230,26 +85,6 @@ span.rails_mark {
   font-style: italic;
   color: red;
   font-weight: bold;
-}
-
-/* search */
-
-#search {
-  margin: 0;
-  width: 150px;
-  padding: 5px 15px 5px 15px;
-  background: #f7f7f7;
-  border: 1px solid #e7e7e7;
-  border-radius: 0 0 20px 20px;
-  color: #aaa;
-  outline: none; /*Remove Chrome and Safari glows on focus*/
-}
-
-#search.active {
-  background: #ebf3fc;
-  border: 1px solid #abd2ff;
-  color: #a10f15;
-  font-weight:bold;
 }
 
 /* forms */

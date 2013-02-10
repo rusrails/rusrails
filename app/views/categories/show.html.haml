@@ -1,5 +1,5 @@
 - cache page_cache_key do
-  %h1= @category.name
+  %h2= @category.name
   != render_text_of @category
   - unless @category.pages.enabled.empty?
     %ul

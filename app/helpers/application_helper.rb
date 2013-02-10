@@ -14,12 +14,12 @@ module ApplicationHelper
     @categories ||= Category.enabled
     return if @categories.empty?
     builder = Nokogiri::HTML::Builder.new do |doc|
-      doc.ul :class => "menu" do
+      doc.ul :class => "nav nav-list" do
         @categories.each do |cat|
           doc.li selected_class(cat==@category, "category_pages") do
             doc.a cat.name, :href => cat.path
             if cat==@category
-              doc.ul do
+              doc.ul :class => "nav nav-list" do
                 @category.pages.enabled.each do |p|
                   doc.li selected_class(p==@page) do
                     doc.a p.name, :href => p.path
@@ -35,7 +35,7 @@ module ApplicationHelper
   end
 
   def selected_class condition, *other_classes
-    other_classes << "selected" if condition
+    other_classes << "active" if condition
     {:class => other_classes*" "} unless other_classes.empty?
   end
 
