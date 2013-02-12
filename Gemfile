@@ -5,13 +5,12 @@ gem 'puffer'
 gem 'russian'
 
 gem 'mysql2'
-gem 'thinking-sphinx'
+gem 'thinking-sphinx', '~> 2.0'
 gem 'devise'
 gem 'omniauth-openid'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
-gem 'orm_adapter', '= 0.0.7'
 
 gem 'nokogiri'
 gem 'haml'
@@ -32,6 +31,7 @@ gem 'unicorn'
 group :assets do
   gem 'coffee-rails', " ~> 3.2.0"
   gem 'uglifier'
+  gem 'turbo-sprockets-rails3'
 end
 
 group :development do
