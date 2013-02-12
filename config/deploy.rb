@@ -6,13 +6,14 @@ set :application, "rusrails"
 
 default_run_options[:pty] = true  # Must be set for the password prompt from git to work
 set :repository, "git@github.com:morsbox/rusrails.git"  # Your clone URL
-# set :branch, "production"
+set :branch, "master"
 set :scm, "git"
 set :deploy_via, :remote_cache
 
 dpath = "/home/hosting_mik-die/projects/rusrails"
 
 set :user, "hosting_mik-die"
+set :host, "hydrogen.locum.ru"
 
 set :use_sudo, false
 set :deploy_to, dpath
