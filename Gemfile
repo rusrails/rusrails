@@ -4,13 +4,12 @@ gem 'rails', " ~> 3.2.0"
 gem 'puffer'
 
 gem 'mysql2'
-gem 'thinking-sphinx'
+gem 'thinking-sphinx', '~> 2.0'
 gem 'devise'
 gem 'omniauth-openid'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
-gem 'orm_adapter', '= 0.0.7'
 
 gem 'nokogiri'
 gem 'haml'
