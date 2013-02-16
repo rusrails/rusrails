@@ -46,8 +46,8 @@ namespace :deploy do
 
   desc "Make sure local git is in sync with remote."
   task :check_revision, roles: :web do
-    unless `git rev-parse HEAD` == `git rev-parse origin/master`
-      puts "WARNING: HEAD is not the same as origin/master"
+    unless `git rev-parse HEAD` == `git rev-parse origin/v3.2`
+      puts "WARNING: HEAD is not the same as origin"
       puts "Run `git push` to sync changes."
       exit
     end
@@ -63,9 +63,9 @@ namespace :deploy do
     run "cd #{release_path}; #{rake} RAILS_ENV=#{rails_env} pages:cleanup"
   end
 
-  after "deploy:migrate", "thinking_sphinx:rebuild"
   after "deploy:seed", "thinking_sphinx:rebuild"
 end
 
 before "deploy", "deploy:check_revision"
+after "deploy", "thinking_sphinx:rebuild"
 after "deploy", "deploy:cleanup"
