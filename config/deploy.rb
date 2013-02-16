@@ -13,6 +13,8 @@ set :scm, :git
 set :repository, "git@github.com:morsbox/rusrails.git"
 set :branch, "v3.2"
 
+set :bundle_cmd, '/home/admin/.rbenv/shims/bundle'
+
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
