@@ -60,7 +60,7 @@ namespace :deploy do
 
     run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} db:seed"
     run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} pages:import"
-    #run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} pages:cleanup"
+    run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} pages:cleanup"
   end
 
   after "deploy:seed", "thinking_sphinx:rebuild"
