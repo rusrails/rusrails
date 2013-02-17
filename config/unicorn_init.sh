@@ -3,7 +3,7 @@ set -e
 
 # Feel free to change any of the following variables for your app:
 TIMEOUT=${TIMEOUT-60}
-APP_ROOT=/home/admin/apps/rusrails_v32/current
+APP_ROOT=/home/admin/apps/rusrails_v40/current
 PID=$APP_ROOT/tmp/pids/unicorn.pid
 CMD="cd $APP_ROOT; /home/admin/.rbenv/shims/bundle exec unicorn -D -c $APP_ROOT/config/unicorn.rb -E production"
 AS_USER=admin

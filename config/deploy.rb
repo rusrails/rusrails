@@ -3,7 +3,7 @@ require 'thinking_sphinx/deploy/capistrano'
 
 server "78.47.229.178", :web, :app, :db, primary: true
 
-set :application, "rusrails_v32"
+set :application, "rusrails_v40"
 set :user, 'admin'
 set :deploy_to, "/home/#{user}/apps/#{application}"
 set :deploy_via, :remote_cache
@@ -11,7 +11,7 @@ set :use_sudo, false
 
 set :scm, :git
 set :repository, "git@github.com:morsbox/rusrails.git"
-set :branch, "v3.2"
+set :branch, "master"
 
 set :bundle_cmd, '/home/admin/.rbenv/shims/bundle'
 
@@ -46,7 +46,7 @@ namespace :deploy do
 
   desc "Make sure local git is in sync with remote."
   task :check_revision, roles: :web do
-    unless `git rev-parse HEAD` == `git rev-parse origin/v3.2`
+    unless `git rev-parse HEAD` == `git rev-parse origin/master`
       puts "WARNING: HEAD is not the same as origin"
       puts "Run `git push` to sync changes."
       exit
