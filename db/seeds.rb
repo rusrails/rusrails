@@ -64,6 +64,13 @@ current_redirects = {
   '/active-record-query-interface/calculations' => '/active-record-query-interface',
   '/active-record-query-interface/running-explain' => '/active-record-query-interface',
 
+  '/layouts-and-rendering-in-rails/overview-how-the-pieces-fit-together' => '/layouts-and-rendering-in-rails',
+  '/layouts-and-rendering-in-rails/creating-responses-1' => '/layouts-and-rendering-in-rails',
+  '/layouts-and-rendering-in-rails/creating-responses-2' => '/layouts-and-rendering-in-rails',
+  '/layouts-and-rendering-in-rails/structuring-layouts' => '/layouts-and-rendering-in-rails',
+  '/layouts-and-rendering-in-rails/structuring-layouts-2' => '/layouts-and-rendering-in-rails',
+  '/layouts-and-rendering-in-rails/structuring-layouts-3' => '/layouts-and-rendering-in-rails',
+
 
 }
 
