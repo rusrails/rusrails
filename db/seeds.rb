@@ -71,6 +71,16 @@ current_redirects = {
   '/layouts-and-rendering-in-rails/structuring-layouts-2' => '/layouts-and-rendering-in-rails',
   '/layouts-and-rendering-in-rails/structuring-layouts-3' => '/layouts-and-rendering-in-rails',
 
+  '/rails-form-helpers/dealing-with-basic-forms' => '/rails-form-helpers',
+  '/rails-form-helpers/dealing-with-model-objects' => '/rails-form-helpers',
+  '/rails-form-helpers/making-select-boxes-with-ease' => '/rails-form-helpers',
+  '/rails-form-helpers/using-date-and-time-form-helpers' => '/rails-form-helpers',
+  '/rails-form-helpers/uploading-files' => '/rails-form-helpers',
+  '/rails-form-helpers/customising-form-builders' => '/rails-form-helpers',
+  '/rails-form-helpers/understanding-parameter-naming-conventions' => '/rails-form-helpers',
+  '/rails-form-helpers/forms-to-external-resources' => '/rails-form-helpers',
+  '/rails-form-helpers/building-complex-forms' => '/rails-form-helpers',
+
 
 }
 
