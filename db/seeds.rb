@@ -19,6 +19,17 @@ current_redirects = {
   '/getting-started-with-rails/security' => '/getting-started-with-rails',
   '/getting-started-with-rails/whats-next' => '/getting-started-with-rails',
   '/getting-started-with-rails/configuration-gotchas' => '/getting-started-with-rails',
+
+  '/rails-database-migrations/anatomy-of-a-migration' => '/rails-database-migrations',
+  '/rails-database-migrations/creating-a-migration' => '/rails-database-migrations',
+  '/rails-database-migrations/writing-a-migration' => '/rails-database-migrations',
+  '/rails-database-migrations/running-migrations' => '/rails-database-migrations',
+  '/rails-database-migrations/changing-existing-migrations' => '/rails-database-migrations',
+  '/rails-database-migrations/using-models-in-your-migrations' => '/rails-database-migrations',
+  '/rails-database-migrations/schema-dumping-and-you' => '/rails-database-migrations',
+  '/rails-database-migrations/active-record-and-referential-integrity' => '/rails-database-migrations',
+  '/rails-database-migrations/migrations-and-seed-data' => '/rails-database-migrations',
+
 }
 
 current_redirects.each do |from, to|
