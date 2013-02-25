@@ -49,6 +49,21 @@ current_redirects = {
   '/active-record-associations/hasandbelongstomany-association-reference' => '/active-record-associations',
   '/active-record-associations/association-callbacks-and-extensions' => '/active-record-associations',
 
+  '/active-record-query-interface/retrieving-objects-from-the-database' => '/active-record-query-interface',
+  '/active-record-query-interface/conditions' => '/active-record-query-interface',
+  '/active-record-query-interface/find-options' => '/active-record-query-interface',
+  '/active-record-query-interface/joining-tables' => '/active-record-query-interface',
+  '/active-record-query-interface/eager-loading-associations' => '/active-record-query-interface',
+  '/active-record-query-interface/scopes' => '/active-record-query-interface',
+  '/active-record-query-interface/dynamic-finders' => '/active-record-query-interface',
+  '/active-record-query-interface/find-or-build-a-new-object' => '/active-record-query-interface',
+  '/active-record-query-interface/finding-by-sql' => '/active-record-query-interface',
+  '/active-record-query-interface/selectall' => '/active-record-query-interface',
+  '/active-record-query-interface/pluck' => '/active-record-query-interface',
+  '/active-record-query-interface/existence-of-objects' => '/active-record-query-interface',
+  '/active-record-query-interface/calculations' => '/active-record-query-interface',
+  '/active-record-query-interface/running-explain' => '/active-record-query-interface',
+
 
 }
 
