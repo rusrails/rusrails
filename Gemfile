@@ -20,10 +20,10 @@ gem 'RedCloth'
 gem 'redcarpet'
 gem 'rails_config'
 gem 'twitter-bootstrap-rails'
-
 gem 'jquery-rails'
-gem 'capistrano'
+gem 'draper'
 
+gem 'capistrano'
 gem 'execjs'
 gem 'therubyracer'
 gem 'unicorn'

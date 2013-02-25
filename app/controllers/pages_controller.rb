@@ -1,12 +1,11 @@
 class PagesController < ApplicationController
   def index
-    @homepage = Page.matching("home") ||
-        Page.create(:name => "Homepage", :url_match => "home")
+    @homepage = Page.matching("home").decorate
   end
 
   def show
     if  @category = Category.matching(params[:category_url_match]) and
-        @page = @category.pages.matching(params[:url_match])
+        @page = @category.pages.matching(params[:url_match]).decorate
       @pages = @category.pages.enabled
     else
       render_404
