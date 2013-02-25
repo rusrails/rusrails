@@ -39,6 +39,16 @@ current_redirects = {
   '/active-record-validations-and-callbacks/working-with-validation-errors' => '/active-record-validations-and-callbacks',
   '/active-record-validations-and-callbacks/displaying-validation-errors-in-the-view' => '/active-record-validations-and-callbacks',
 
+  '/active-record-associations/why-associations' => '/active-record-associations',
+  '/active-record-associations/the-types-of-associations-1' => '/active-record-associations',
+  '/active-record-associations/the-types-of-associations-2' => '/active-record-associations',
+  '/active-record-associations/tips-tricks-and-warnings' => '/active-record-associations',
+  '/active-record-associations/belongsto-association-reference' => '/active-record-associations',
+  '/active-record-associations/hasone-association-reference' => '/active-record-associations',
+  '/active-record-associations/hasmany-association-reference' => '/active-record-associations',
+  '/active-record-associations/hasandbelongstomany-association-reference' => '/active-record-associations',
+  '/active-record-associations/association-callbacks-and-extensions' => '/active-record-associations',
+
 
 }
 
