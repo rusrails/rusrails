@@ -168,6 +168,12 @@ current_redirects = {
   '/performance-testing-rails-applications/request-logging' => '/performance-testing-rails-applications',
   '/performance-testing-rails-applications/useful-links-commercial-products' => '/performance-testing-rails-applications',
 
+  '/configuring-rails-applications/locations-for-initialization-code' => '/configuring-rails-applications',
+  '/configuring-rails-applications/configuring-rails-components' => '/configuring-rails-applications',
+  '/configuring-rails-applications/rails-environment-settings' => '/configuring-rails-applications',
+  '/configuring-rails-applications/initialization' => '/configuring-rails-applications',
+  '/configuring-rails-applications/database-pooling' => '/configuring-rails-applications',
+
 
 }
 
