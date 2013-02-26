@@ -127,6 +127,13 @@ current_redirects = {
   '/rails-internationalization-i18n-api/how-to-store-your-custom-translations' => '/rails-internationalization-i18n-api',
   '/rails-internationalization-i18n-api/customize-your-i18n-setup' => '/rails-internationalization-i18n-api',
 
+  '/action-mailer-basics/sending-emails' => '/action-mailer-basics',
+  '/action-mailer-basics/receiving-emails' => '/action-mailer-basics',
+  '/action-mailer-basics/action-mailer-callbacks' => '/action-mailer-basics',
+  '/action-mailer-basics/using-action-mailer-helpers' => '/action-mailer-basics',
+  '/action-mailer-basics/action-mailer-configuration' => '/action-mailer-basics',
+  '/action-mailer-basics/mailer-testing' => '/action-mailer-basics',
+
 
 }
 

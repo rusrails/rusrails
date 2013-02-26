@@ -1,4 +1,19 @@
-# Отправка электронной почты
+Основы Action Mailer
+====================
+
+Это руководство предоставит вам все, что нужно для того, чтобы посылать и получать электронную почту в вашем приложении, и раскроет множество внутренних методов Action Mailer. Оно также раскроет, как тестировать ваши рассыльщики.
+
+После прочтения этого руководства, вы узнаете:
+
+* Как отправлять и получать письма в приложении Rails.
+* Как создавать и редактировать класс Action Mailer и вьюху рассыльщика.
+* Как настраивать Action Mailer для своей среды.
+* Как тестировать свои классы Action Mailer.
+
+Action Mailer позволяет отправлять электронные письма из вашего приложения, используя модель и вьюхи рассыльщика. Таким образом, в Rails электронная почта используется посредством создание рассыльщиков, наследуемых от `ActionMailer::Base`, и находящихся в `app/mailers`. Эти рассыльщики имеют связанные вьюхи, которые находятся среди вьюх контроллеров в `app/views`.
+
+Отправка электронной почты
+--------------------------
 
 Этот раздел представляет пошаговое руководство по созданию рассыльщика и его вьюх.
 
@@ -393,3 +408,167 @@ class UserMailer < ActionMailer::Base
   end
 end
 ```
+
+Получение электронной почты
+---------------------------
+
+Получение и парсинг электронной почты с помощью Action Mailer может быть довольно сложным делом. До того, как электронная почта достигнет ваше приложение на Rails, нужно настроить вашу систему, чтобы каким-то образом направлять почту в приложение, которому нужно быть следящим за ней. Таким образом, чтобы получать электронную почту в приложении на Rails, нужно:
+
+* Реализовать метод `receive` в вашем рассыльщике.
+
+* Настроить ваш почтовый сервер для направления почты от адресов, желаемых к получению вашим приложением, в `/path/to/app/bin/rails runner 'UserMailer.receive(STDIN.read)'`.
+
+Как только метод, названный `receive`, определяется в каком-либо рассыльщике, Action Mailer будет парсить сырую входящую почту в объект email, декодировать его, создавать экземпляр нового рассыльщика и передавать объект email в метод экземпляра рассыльщика `receive`. Вот пример:
+
+```ruby
+class UserMailer < ActionMailer::Base
+  def receive(email)
+    page = Page.find_by_address(email.to.first)
+    page.emails.create(
+      subject: email.subject,
+      body: email.body
+    )
+
+    if email.has_attachments?
+      email.attachments.each do |attachment|
+        page.attachments.create({
+          file: attachment,
+          description: email.subject
+        })
+      end
+    end
+  end
+end
+```
+
+Колбэки Action Mailer
+---------------------
+
+Action Mailer позволяет определить `before_action`, `after_action` и 'around_action'.
+
+* Фильтры могут быть определены в блоке или сиволом с именем метода рассыльщика, подобно контроллерам.
+
+* `before_action` можно использовать для предварительного заполнения объекта mail значениями по умолчанию, delivery_method_options или вставки заголовков по умолчанию и вложений.
+
+* `after_action` можно использовать для подобной настройки, как и в `before_action`, но используя переменные экземпляра, установленные в экшне рассыльщика.
+
+```ruby
+class UserMailer < ActionMailer::Base
+  after_action :set_delivery_options, :prevent_delivery_to_guests, :set_business_headers
+
+  def feedback_message(business, user)
+    @business = business
+    @user = user
+    mail
+  end
+
+  def campaign_message(business, user)
+    @business = business
+    @user = user
+  end
+
+  private
+
+  def set_delivery_options
+    # Тут у вас есть доступ к экземпляру mail и переменным экземпляра @business и @user
+    if @business && @business.has_smtp_settings?
+      mail.delivery_method.settings.merge!(@business.smtp_settings)
+    end
+  end
+
+  def prevent_delivery_to_guests
+    if @user && @user.guest?
+      mail.perform_deliveries = false
+    end
+  end
+
+  def set_business_headers
+    if @business
+      headers["X-SMTPAPI-CATEGORY"] = @business.code
+    end
+  end
+end
+```
+
+* Фильтры рассыльщика прерывают дальнейшую обработку, если body установлено в не-nil значение.
+
+Использование хелперов Action Mailer
+------------------------------------
+
+Action Mailer теперь всего лишь наследуется от Abstract Controller, поэтому у вас есть доступ к тем же общим хелперам, как и в Action Controller.
+
+Настройка Action Mailer
+-----------------------
+
+Следующие конфигурационные опции лучше всего делать в одном из файлов среды разработки (environment.rb, production.rb, и т.д...)
+
+| Конфигурация            | Описание |
+| ----------------------- | -------- |
+| `template_root`         | Определяет основу, от которой будут делаться ссылки на шаблоны.|
+| `logger`                | logger исользуется для создания информации на ходу, если возможно. Можно установить как `nil` для отсутствия логирования. Совместим как с `Logger` в Ruby, так и с логером `Log4r`.|
+| `smtp_settings`         | Позволяет подробную настройку для метода доставки `:smtp`:<ul><li>`:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение "localhost".</li><li>`:port`  - В случае, если ваш почтовый сервер не работает с 25 портом, можете изменить его.</li><li>`:domain` - Если необходимо определить домен HELO, это можно сделать здесь.</li><li>`:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.</li><li>`:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. </li><li>`:authentication` - Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов `:plain`, `:login`, `:cram_md5`.</li><li>`:enable_starttls_auto` - Установите его в `false` если есть проблема с сертификатом сервера, которую вы не можете решить.</li></ul>|
+| `sendmail_settings`     | Позволяет переопределить опции для метода доставки `:sendmail`.<ul><li>`:location` - Расположение исполняемого sendmail. По умолчанию `/usr/sbin/sendmail`.</li><li>`:arguments` - Аргументы командной строки. По умолчанию `-i -t`.</li></ul>|
+| `raise_delivery_errors` | Должны ли быть вызваны ошибки, если email не может быть доставлен. Это работает, если внешний сервер email настроен на немедленную доставку.|
+| `delivery_method`       | Определяет метод доставки. Возможные значения `:smtp` (по умолчанию), `:sendmail`, `:file` и `:test`.|
+| `perform_deliveries`    | Определяет, должны ли методы deliver_* фактически выполняться. По умолчанию должны, но это можно отключить для функционального тестирования.|
+| `deliveries`            | Содержит массив всех электронных писем, отправленных через Action Mailer с помощью delivery_method :test. Очень полезно для юнит- и функционального тестирования.|
+| `default_options`       | Позволит вам установить значения по умолчанию для опций метода `mail` (`:from`, `:reply_to` и т.д.).|
+
+### Пример настройки Action Mailer
+
+Примером может быть добавление следующего в подходящий файл `config/environments/$RAILS_ENV.rb`:
+
+```ruby
+config.action_mailer.delivery_method = :sendmail
+# Defaults to:
+# config.action_mailer.sendmail_settings = {
+#   location: '/usr/sbin/sendmail',
+#   arguments: '-i -t'
+# }
+config.action_mailer.perform_deliveries = true
+config.action_mailer.raise_delivery_errors = true
+config.action_mailer.default_options = {from: 'no-replay@example.org'}
+```
+
+### Настройка Action Mailer для GMail
+
+Action Mailer теперь использует гем Mail, теперь это сделать просто, нужно добавить в файл `config/environments/$RAILS_ENV.rb`:
+
+```ruby
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address:              'smtp.gmail.com',
++  port:                 587,
++  domain:               'baci.lindsaar.net',
++  user_name:            '<username>',
++  password:             '<password>',
++  authentication:       'plain',
++  enable_starttls_auto: true  }
+```
+
+Тестирование рассыльщика
+------------------------
+
+По умолчанию Action Mailer не посылает электронные письма в среде разработки test. Они всего лишь добавляются к массиву `ActionMailer::Base.deliveries`.
+
+Тестирование рассыльщиков обычно включает две вещи: Первая это то, что письмо помещается в очередь, а вторая это то, что письмо правильное. Имея это в виду, можем протестировать наш пример рассыльщика из предыдущих статей таким образом:
+
+```ruby
+class UserMailerTest < ActionMailer::TestCase
+  def test_welcome_email
+    user = users(:some_user_in_your_fixtures)
+
+    # Посылаем email, затем тестируем, если оно не попало в очередь
+    email = UserMailer.welcome_email(user).deliver
+    assert !ActionMailer::Base.deliveries.empty?
+
+    # Тестируем, содержит ли тело посланного email то, что мы ожидаем
+    assert_equal [user.email], email.to
+    assert_equal 'Welcome to My Awesome Site', email.subject
+    assert_match "<h1>Welcome to example.com, #{user.name}</h1>", email.body.to_s
+    assert_match 'you have joined to example.com community', email.body.to_s
+  end
+end
+```
+
+В тесте мы посылаем email и храним возвращенный объект в переменной `email`. Затем мы убеждаемся, что он был послан (первый assert), затем, во второй группе операторов контроля, мы убеждаемся, что email действительно содержит то, что мы ожидаем.
