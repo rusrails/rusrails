@@ -146,6 +146,16 @@ current_redirects = {
   '/a-guide-to-testing-rails-applications/testing-your-mailers' => '/a-guide-to-testing-rails-applications',
   '/a-guide-to-testing-rails-applications/other-testing-approaches' => '/a-guide-to-testing-rails-applications',
 
+  '/ruby-on-rails-security-guide/introduction' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/sessions' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/cross-site-request-forgery-csrf' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/redirection-and-files' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/intranet-and-admin-security' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/user-management' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/injection' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/default-headers' => '/ruby-on-rails-security-guide',
+  '/ruby-on-rails-security-guide/additional-resources' => '/ruby-on-rails-security-guide',
+
 
 }
 
