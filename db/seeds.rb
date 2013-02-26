@@ -120,6 +120,13 @@ current_redirects = {
   '/active-support-core-extensions/extensions-to-time' => '/active-support-core-extensions',
   '/active-support-core-extensions/extensions-to-process-file-nameerror-loaderror' => '/active-support-core-extensions',
 
+  '/rails-internationalization-i18n-api/how-i18n-in-ruby-on-rails-works' => '/rails-internationalization-i18n-api',
+  '/rails-internationalization-i18n-api/setup-the-rails-application-for-internationalization' => '/rails-internationalization-i18n-api',
+  '/rails-internationalization-i18n-api/internationalizing-your-application' => '/rails-internationalization-i18n-api',
+  '/rails-internationalization-i18n-api/overview-of-the-i18n-api-features' => '/rails-internationalization-i18n-api',
+  '/rails-internationalization-i18n-api/how-to-store-your-custom-translations' => '/rails-internationalization-i18n-api',
+  '/rails-internationalization-i18n-api/customize-your-i18n-setup' => '/rails-internationalization-i18n-api',
+
 
 }
 
