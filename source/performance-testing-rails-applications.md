@@ -1,4 +1,20 @@
-# Варианты тестирования производительности
+Тестирование производительности приложений Rails
+================================================
+
+Это руководство раскрывает различные способы тестирования производительности приложения на Ruby on Rails.
+
+После прочтения этого руководства, вы узнаете:
+
+* О различных типах метрик бенчмаркинга и профилирования.
+* Как создавать тесты производительности и бенчмаркинга.
+* Как использовать двоичный файл Ruby, пропатченого GC, для измерения использования памяти и размещения объектов.
+* О бенчмаркинговой информации, предоставленной Rails в файлах лога.
+* О различных инструментах, помогающих бенчмаркигу и профилированию.
+
+Тестирование производительности это неотъемлемая часть цикла разработки. Очень важно, чтобы конечные пользователи не ждали долго полной загрузки страницы. Обеспечение приятного серфинга для конечных пользователей и снижение расходов на ненужное оборудование важны для любого нетривиального веб приложения.
+
+Варианты тестирования производительности
+----------------------------------------
 
 Тесты производительности Rails являются специальным типом интеграционных тестов, разработанным для бенчмаркинга и профилирования тестируемого кода. С тестами производительности можно определить, откуда идут проблемы вашего приложения с памятью или скоростью, и получить более глубокую картину об этих проблемах.
 
@@ -423,3 +439,152 @@ gem 'ruby-prof'
 ```
 
 теперь запустите `bundle install` и все готово.
+
+Инструменты командной строки
+----------------------------
+
+Варианты написания теста производительности могут быть излишними, когда нужны одноразовые тесты. Rails имеет два инструмента командной строки, которые позволяют быстрое и черновое тестирование производительности:
+
+### `benchmarker`
+
+Использование:
+
+```bash
+Usage: rails benchmarker 'Ruby.code' 'Ruby.more_code' ... [OPTS]
+    -r, --runs N                     Number of runs.
+                                     Default: 4
+    -o, --output PATH                Directory to use when writing the results.
+                                     Default: tmp/performance
+    -m, --metrics a,b,c              Metrics to use.
+                                     Default: wall_time,memory,objects,gc_runs,gc_time
+```
+
+Пример:
+
+```bash
+$ rails benchmarker 'Item.all' 'CouchItem.all' --runs 3 --metrics wall_time,memory
+```
+
+### `profiler`
+
+Использование:
+
+```bash
+Usage: rails profiler 'Ruby.code' 'Ruby.more_code' ... [OPTS]
+    -r, --runs N                     Number of runs.
+                                     Default: 1
+    -o, --output PATH                Directory to use when writing the results.
+                                     Default: tmp/performance
+    -m, --metrics a,b,c              Metrics to use.
+                                     Default: process_time,memory,objects
+    -f, --formats x,y,z              Formats to output to.
+                                     Default: flat,graph_html,call_tree
+```
+
+Пример:
+
+```bash
+$ rails profiler 'Item.all' 'CouchItem.all' --runs 2 --metrics process_time --formats flat
+```
+
+NOTE: Метрики и форматы изменяются от интерпретатора к интерпретатору. Передавайте `--help` каждому инструменту, чтобы просмотреть значения по умолчанию для своего интерпретатора.
+
+Методы хелпера
+--------------
+
+Rails предоставляет различные методы хелпера в Active Record, Action Controller и Action View для измерения времени, затраченного на заданный кусок кода. Метод называется `benchmark()` во всех трех компонентах.
+
+### Модель
+
+```ruby
+Project.benchmark("Creating project") do
+  project = Project.create("name" => "stuff")
+  project.create_manager("name" => "David")
+  project.milestones << Milestone.all
+end
+```
+
+Это произведет бенчмаркинг кода, заключенного в блок `Project.benchmark("Creating project") do...end` и напечатает результат в файл лога:
+
+```ruby
+Creating project (185.3ms)
+```
+
+Пожалуйста, обратитесь к [API docs](http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html#method-i-benchmark), чтобы узнать дополнительные опции для `benchmark()`
+
+### Контроллер
+
+Подобным образом можно использовать этот метод хелпера в [контроллерах](http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html)
+
+```ruby
+def process_projects
+  benchmark("Processing projects") do
+    Project.process(params[:project_ids])
+    Project.update_cached_projects
+  end
+end
+```
+
+NOTE: `benchmark` это метод класса в контроллерах.
+
+### Вьюха
+
+И во [вьюхах](http://api.rubyonrails.org/classes/ActiveSupport/Benchmarkable.html):
+
+```erb
+<% benchmark("Showing projects partial") do %>
+  <%= render @projects %>
+<% end %>
+```
+
+Логирование запроса
+-------------------
+
+Файлы лога Rails содержат очень полезную информацию о времени, затраченном на обслуживание каждого запроса. Вот обычная запись файла лога:
+
+```bash
+Processing ItemsController#index (for 127.0.0.1 at 2009-01-08 03:06:39) [GET]
+Rendering template within layouts/items
+Rendering items/index
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+```
+
+В этом разделе нас интересует только последняя строка:
+
+```bash
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+```
+
+Эти данные достаточно просты для понимания. Rails использует миллисекунды(ms) как метрику для измерения затраченного времени. Полный запрос потратил 5 ms в Rails, из которых 2 ms были потрачены на рендеринг вьюх, и ничего не потрачено на связь с базой данных. Можно с уверенностью предположить, что оставшиеся 3 ms были потрачены в контроллере.
+
+У Michael Koziarski есть [интерестная публикация в блоге](http://www.therailsway.com/2009/1/6/requests-per-second), объясняющая важность использования миллисекунд как метрики.
+
+Полезные ссылки
+---------------
+
+### Плагины и гемы Rails
+
+* [Rails Analyzer](http://rails-analyzer.rubyforge.org)
+* [Rails Footnotes](https://github.com/josevalim/rails-footnotes/tree/master)
+* [Query Reviewer](https://github.com/nesquena/query_reviewer)
+* [MiniProfiler](http://www.miniprofiler.com)
+
+### Инструменты
+
+* [httperf](http://www.hpl.hp.com/research/linux/httperf/)
+* [ab](http://httpd.apache.org/docs/2.2/programs/ab.html)
+* [JMeter](http://jakarta.apache.org/jmeter/)
+* [kcachegrind](http://kcachegrind.sourceforge.net/html/Home.html)
+
+### Самоучители и документация
+
+* [ruby-prof API Documentation](http://ruby-prof.rubyforge.org)
+* [Request Profiling Railscast](http://railscasts.com/episodes/98-request-profiling) - Устарело, но полезно для понимания графов.
+
+Коммерческие продукты
+---------------------
+
+Rails повезло, что есть компании, предоставляющие инструменты измерения производительности Rails. Вот некоторые из них:
+
+* [New Relic](http://www.newrelic.com)
+* [Scout](http://scoutapp.com)
