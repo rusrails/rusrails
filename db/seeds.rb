@@ -81,6 +81,21 @@ current_redirects = {
   '/rails-form-helpers/forms-to-external-resources' => '/rails-form-helpers',
   '/rails-form-helpers/building-complex-forms' => '/rails-form-helpers',
 
+  '/action-controller-overview/what-does-a-controller-do' => '/action-controller-overview',
+  '/action-controller-overview/methods-and-actions' => '/action-controller-overview',
+  '/action-controller-overview/parameters' => '/action-controller-overview',
+  '/action-controller-overview/session' => '/action-controller-overview',
+  '/action-controller-overview/cookies' => '/action-controller-overview',
+  '/action-controller-overview/rendering-xml-and-json-data' => '/action-controller-overview',
+  '/action-controller-overview/filters' => '/action-controller-overview',
+  '/action-controller-overview/request-forgery-protection' => '/action-controller-overview',
+  '/action-controller-overview/the-request-and-response-objects' => '/action-controller-overview',
+  '/action-controller-overview/http-authentications' => '/action-controller-overview',
+  '/action-controller-overview/streaming-and-file-downloads' => '/action-controller-overview',
+  '/action-controller-overview/parameter-filtering' => '/action-controller-overview',
+  '/action-controller-overview/rescue' => '/action-controller-overview',
+  '/action-controller-overview/force-https-protocol' => '/action-controller-overview',
+
 
 }
 
