@@ -134,6 +134,18 @@ current_redirects = {
   '/action-mailer-basics/action-mailer-configuration' => '/action-mailer-basics',
   '/action-mailer-basics/mailer-testing' => '/action-mailer-basics',
 
+  '/a-guide-to-testing-rails-applications/why-write-tests-for-your-rails-applications' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/introduction-to-testing' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/unit-testing-your-models' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/functional-tests-for-your-controllers' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/integration-testing' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/rake-tasks-for-running-your-tests' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/brief-note-about-test-unit' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/setup-and-teardown' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/testing-routes' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/testing-your-mailers' => '/a-guide-to-testing-rails-applications',
+  '/a-guide-to-testing-rails-applications/other-testing-approaches' => '/a-guide-to-testing-rails-applications',
+
 
 }
 
