@@ -103,6 +103,23 @@ current_redirects = {
   '/rails-routing/customizing-resourceful-routes' => '/rails-routing',
   '/rails-routing/inspecting-and-testing-routes' => '/rails-routing',
 
+  '/active-support-core-extensions/how-to-load-core-extensions' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-all-objects' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-module' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-class' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-string' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-numeric-integer-float' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-enumerable' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-array' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-hash' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-regexp' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-range' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-proc' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-date' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-datetime' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-time' => '/active-support-core-extensions',
+  '/active-support-core-extensions/extensions-to-process-file-nameerror-loaderror' => '/active-support-core-extensions',
+
 
 }
 
