@@ -1,4 +1,212 @@
-# Отладка с помощью гема "debugger"
+Отладка приложений на Rails
+===========================
+
+Это руководство представляет технику отладки приложений на Ruby on Rails.
+
+После прочтения этого руководства, вы узнаете:
+
+* Цель отладки
+* Как отслеживать проблемы и вопросы в вашем приложении, которые не определили ваши тесты
+* Различные способы отладки
+* Как анализировать трассировку
+
+Хелперы вьюхи для отладки
+-------------------------
+
+Одной из обычных задач является проверить содержимое переменной. В Rails это можно сделать тремя методами:
+
+* `debug`
+* `to_yaml`
+* `inspect`
+
+### `debug`
+
+Хелпер `debug` возвратит тег \<pre>, который рендерит объект, с использованием формата YAML. Это создаст читаемые данные из объекта. Например, если у вас такой код во вьюхе:
+
+```html+erb
+<%= debug @post %>
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+```
+
+Вы получите что-то наподобие этого:
+
+```yaml
+--- !ruby/object:Post
+attributes:
+  updated_at: 2008-09-05 22:55:47
+  body: It's a very helpful guide for debugging your Rails app.
+  title: Rails debugging guide
+  published: t
+  id: "1"
+  created_at: 2008-09-05 22:55:47
+attributes_cache: {}
+
+
+Title: Rails debugging guide
+```
+
+### `to_yaml`
+
+Отображение переменной экземпляра или любого другого объекта или метода в формате yaml может быть достигнуто следующим образом:
+
+```html+erb
+<%= simple_format @post.to_yaml %>
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+```
+
+Метод `to_yaml` преобразует метод в формат YAML, оставив его более читаемым, а затем используется хелпер `simple_format` для рендера каждой строки как в консоли. Именно так и работает метод `debug`.
+
+В результате получится что-то вроде этого во вашей вьюхе:
+
+```yaml
+--- !ruby/object:Post
+attributes:
+updated_at: 2008-09-05 22:55:47
+body: It's a very helpful guide for debugging your Rails app.
+title: Rails debugging guide
+published: t
+id: "1"
+created_at: 2008-09-05 22:55:47
+attributes_cache: {}
+
+Title: Rails debugging guide
+```
+
+### `inspect`
+
+Другим полезным методом для отображения значений объекта является `inspect`, особенно при работе с массивами и хэшами. Он напечатает значение объекта как строку. Например:
+
+```html+erb
+<%= [1, 2, 3, 4, 5].inspect %>
+<p>
+  <b>Title:</b>
+  <%= @post.title %>
+</p>
+```
+
+Отрендерит следующее:
+
+```
+[1, 2, 3, 4, 5]
+
+Title: Rails debugging guide
+```
+
+Логгер
+------
+
+Также может быть полезным сохранять информацию в файл лога в процессе выполнения. Rails поддерживает отдельный файл лога для каждой среды запуска.
+
+### Что такое Логгер?
+
+Rails использует класс `ActiveSupport::Logger` для записи информации в лог. Вы также можете заменить его другим логгером, таким как `Log4R`, если хотите.
+
+Альтернативный логгер можно определить в вашем `environment.rb` или любом файле среды:
+
+```ruby
+Rails.logger = Logger.new(STDOUT)
+Rails.logger = Log4r::Logger.new("Application Log")
+```
+
+Или в разделе `Initializer` добавьте _одно из_ следующего
+
+```ruby
+config.logger = Logger.new(STDOUT)
+config.logger = Log4r::Logger.new("Application Log")
+```
+
+TIP: По умолчанию каждый лог создается в `RAILS_ROOT/log/` с именем файла лога `environment_name.log`.
+
+### Уровни лога
+
+Когда что-то логируется, оно записывается в соответствующий лог, если уровень лога сообщения равен или выше чем настроенный уровень лога. Если хотите узнать текущий уровень лога, вызовите метод `ActiveRecord::Base.logger.level`.
+
+Доступные уровни лога следующие: `:debug`, `:info`, `:warn`, `:error`, `:fatal` и `:unknown`, соответствующие номерам уровня лога от 0 до 5 соответственно. Чтобы изменить уровень лога по умолчанию, используйте
+
+```ruby
+config.log_level = :warn # В любом инициализаторе среды, или
+ActiveRecord::Base.logger.level = 0 # в любое время
+```
+
+Это полезно, когда вы хотите логировать при разработке или установке, но не хотите замусорить рабочий лог ненужной информацией.
+
+TIP: Уровень лога Rails по умолчанию это `info` в рабочем режиме и `debug` в режиме разработки и тестирования.
+
+### Отправка сообщений
+
+Чтобы писать в текущий лог, используйте метод `logger.(debug|info|warn|error|fatal)` внутри контроллера, модели или рассыльщика:
+
+```ruby
+logger.debug "Person attributes hash: #{@person.attributes.inspect}"
+logger.info "Processing the request..."
+logger.fatal "Terminating application, raised unrecoverable error!!!"
+```
+
+Вот пример метода, оборудованного дополнительным логированием:
+
+```ruby
+class PostsController < ApplicationController
+  # ...
+
+  def create
+    @post = Post.new(params[:post])
+    logger.debug "New post: #{@post.attributes.inspect}"
+    logger.debug "Post should be valid: #{@post.valid?}"
+
+    if @post.save
+      flash[:notice] = 'Post was successfully created.'
+      logger.debug "The post was saved and now the user is going to be redirected..."
+      redirect_to(@post)
+    else
+      render action: "new"
+    end
+  end
+
+  # ...
+end
+```
+
+Вот пример лога, созданного этим методом:
+
+```
+Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
+  Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
+vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
+  Parameters: {"commit"=>"Create", "post"=>{"title"=>"Debugging Rails",
+ "body"=>"I'm learning how to print in logs!!!", "published"=>"0"},
+ "authenticity_token"=>"2059c1286e93402e389127b1153204e0d1e275dd", "action"=>"create", "controller"=>"posts"}
+New post: {"updated_at"=>nil, "title"=>"Debugging Rails", "body"=>"I'm learning how to print in logs!!!",
+ "published"=>false, "created_at"=>nil}
+Post should be valid: true
+  Post Create (0.000443)   INSERT INTO "posts" ("updated_at", "title", "body", "published",
+ "created_at") VALUES('2008-09-08 14:52:54', 'Debugging Rails',
+ 'I''m learning how to print in logs!!!', 'f', '2008-09-08 14:52:54')
+The post was saved and now the user is going to be redirected...
+Redirected to #<Post:0x20af760>
+Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
+```
+
+Добавление дополнительного логирования, подобного этому, облегчает поиск неожиданного или необычного поведения в ваших логах. Если добавляете дополнительное логирование, убедитесь в разумном использовании уровней лога, для избежания заполнения ваших рабочих логов ненужными мелочами.
+
+### Тегированное логирование
+
+При запуске многопользовательских приложений часто полезно фильтровать логи с использованием произвольных правил. `TaggedLogging` в Active Support помогает это сделать, помечая строчки лога с помощью поддомена, идентификаторов запроса, и тому подобного, помогая отладке таких приложений.
+
+```ruby
+logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+logger.tagged("BCX") { logger.info "Stuff" }                            # Logs "[BCX] Stuff"
+logger.tagged("BCX", "Jason") { logger.info "Stuff" }                   # Logs "[BCX] [Jason] Stuff"
+logger.tagged("BCX") { logger.tagged("Jason") { logger.info "Stuff" } } # Logs "[BCX] [Jason] Stuff"
+```
+
+Отладка с помощью гема "debugger"
+---------------------------------
 
 Когда ваш код ведет себя неожиданным образом, можете печатать в логи или консоль, чтобы выявить проблему. К сожалению, иногда бывает, что такой способ отслеживания ошибки не эффективен в поиске причины проблемы. Когда вы фактически нуждаетесь в путешествии вглубь исполняемого кода, отладчик - это ваш лучший напарник.
 
@@ -423,3 +631,42 @@ set autolist
 set forcestep
 set listsize 25
 ```
+
+Отладка утечки памяти
+---------------------
+
+Приложение Ruby (на Rails или нет), может съедать память - или в коде Ruby, или на уровне кода C.
+
+В этом разделе вы научитесь находить и исправлять такие утечки, используя инструмент отладки Valgrind.
+
+### Valgrind
+
+[Valgrind](http://valgrind.org/) это приложение для Linux для обнаружения утечек памяти, основанных на C, и гонки условий.
+
+Имеются инструменты Valgrind, которые могут автоматически обнаруживать многие баги управления памятью и тредами, и подробно профилировать ваши программы. Например, расширение C в интерпретаторе вызывает `malloc()` но не вызывает должным образом `free()`, эта память не будет доступна, пока приложение не будет остановлено.
+
+Чтобы узнать подробности, как установить Valgrind и использовать его с Ruby, обратитесь к [Valgrind and Ruby](http://blog.evanweaver.com/articles/2008/02/05/valgrind-and-ruby/) by Evan Weaver.
+
+Плагины для отладки
+-------------------
+
+Имеются некоторые плагины Rails, помогающие в поиске ошибок и отладке вашего приложения. Вот список полезных плагинов для отладки:
+
+* [Footnotes](https://github.com/josevalim/rails-footnotes): У каждой страницы Rails есть сноска, дающая информацию о запросе и ссылку на исходный код через TextMate.
+* [Query Trace](https://github.com/ntalbott/query_trace/tree/master): Добавляет трассировку запросов в ваши логи.
+* [Query Reviewer](https://github.com/nesquena/query_reviewer): Этот плагин rails не только запускает "EXPLAIN" перед каждым из ваших запросов select в development, но и представляет небольшой DIV в отрендеренном результате каждой страницы со сводкой предупреждений по каждому проанализированному запросу.
+* [Exception Notifier](https://github.com/smartinez87/exception_notification/tree/master): Предоставляет объект рассыльщика и набор шаблонов по умолчанию для отправки уведомлений по email, когда происходят ошибки в приложении в Rails.
+
+Ссылки
+------
+
+* [Домашняя страница ruby-debug](http://bashdb.sourceforge.net/ruby-debug/home-page.html)
+* [Домашняя страница debugger](https://github.com/cldwalker/debugger)
+* [Статья: Debugging a Rails application with ruby-debug](http://www.sitepoint.com/article/debug-rails-app-ruby-debug/)
+* [Скринкаст ruby-debug Basics](http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/)
+* [Скринкаст Ryan Bates' debugging ruby (revised)](http://railscasts.com/episodes/54-debugging-ruby-revised)
+* [Скринкаст Ryan Bates' stack trace](http://railscasts.com/episodes/24-the-stack-trace)
+* [Скринкаст Ryan Bates' logger](http://railscasts.com/episodes/56-the-logger)
+* [Debugging with ruby-debug](http://bashdb.sourceforge.net/ruby-debug.html)
+* [ruby-debug cheat sheet](http://cheat.errtheblog.com/s/rdebug/)
+* [Вики Ruby on Rails: How to Configure Logging](http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging)

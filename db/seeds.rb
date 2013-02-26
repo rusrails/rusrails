@@ -156,6 +156,12 @@ current_redirects = {
   '/ruby-on-rails-security-guide/default-headers' => '/ruby-on-rails-security-guide',
   '/ruby-on-rails-security-guide/additional-resources' => '/ruby-on-rails-security-guide',
 
+  '/debugging-rails-applications/view-helpers-for-debugging' => '/debugging-rails-applications',
+  '/debugging-rails-applications/the-logger' => '/debugging-rails-applications',
+  '/debugging-rails-applications/debugging-with-ruby-debug' => '/debugging-rails-applications',
+  '/debugging-rails-applications/debugging-memory-leaks' => '/debugging-rails-applications',
+  '/debugging-rails-applications/plugins-for-debugging-references' => '/debugging-rails-applications',
+
 
 }
 
