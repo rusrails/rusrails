@@ -96,6 +96,13 @@ current_redirects = {
   '/action-controller-overview/rescue' => '/action-controller-overview',
   '/action-controller-overview/force-https-protocol' => '/action-controller-overview',
 
+  '/rails-routing/the-purpose-of-the-rails-router' => '/rails-routing',
+  '/rails-routing/resource-routing-the-rails-default-1' => '/rails-routing',
+  '/rails-routing/resource-routing-the-rails-default-2' => '/rails-routing',
+  '/rails-routing/non-resourceful-routes' => '/rails-routing',
+  '/rails-routing/customizing-resourceful-routes' => '/rails-routing',
+  '/rails-routing/inspecting-and-testing-routes' => '/rails-routing',
+
 
 }
 
