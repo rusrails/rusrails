@@ -182,6 +182,15 @@ current_redirects = {
   '/caching-with-rails-an-overview/cache-stores' => '/caching-with-rails-an-overview',
   '/caching-with-rails-an-overview/conditional-get-support' => '/caching-with-rails-an-overview',
 
+  '/asset-pipeline/what-is-the-asset-pipeline' => '/asset-pipeline',
+  '/asset-pipeline/how-to-use-the-asset-pipeline' => '/asset-pipeline',
+  '/asset-pipeline/in-development' => '/asset-pipeline',
+  '/asset-pipeline/in-production' => '/asset-pipeline',
+  '/asset-pipeline/customizing-the-pipeline' => '/asset-pipeline',
+  '/asset-pipeline/assets-cache-store' => '/asset-pipeline',
+  '/asset-pipeline/adding-assets-to-your-gems' => '/asset-pipeline',
+  '/asset-pipeline/upgrading-from-old-versions-of-rails' => '/asset-pipeline',
+
 
 }
 
