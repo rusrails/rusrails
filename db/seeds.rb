@@ -191,7 +191,14 @@ current_redirects = {
   '/asset-pipeline/adding-assets-to-your-gems' => '/asset-pipeline',
   '/asset-pipeline/upgrading-from-old-versions-of-rails' => '/asset-pipeline',
 
-
+  '/different-guides/3_0_release_notes'       => '3_0_release_notes',
+  '/different-guides/3_1_release_notes'       => '3_1_release_notes',
+  '/different-guides/3_2_release_notes'       => '3_2_release_notes',
+  '/different-guides/4_0_release_notes'       => '4_0_release_notes',
+  '/different-guides/active-record-callbacks' => 'active-record-callbacks',
+  '/different-guides/engines'                 => 'engines',
+  '/different-guides/rails-on-rack'           => 'rails-on-rack',
+  '/different-guides/upgrading-ruby-on-rails' => 'upgrading-ruby-on-rails',
 }
 
 current_redirects.each do |from, to|
