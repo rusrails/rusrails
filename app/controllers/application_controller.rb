@@ -33,8 +33,6 @@ protected
   def page_cache_key
     if @page
       "page_#{@page.id}"
-    elsif @category
-      "category_#{@category.id}"
     else
       ""
     end

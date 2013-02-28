@@ -10,5 +10,5 @@ class Discussion < ActiveRecord::Base
   accepts_nested_attributes_for :says
 
   scope :ordered, order("updated_at DESC")
-  scope :enabled, where(:enabled=>true).ordered
+  scope :enabled, where(:enabled => true).ordered
 end

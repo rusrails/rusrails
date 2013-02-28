@@ -26,7 +26,6 @@ Rusrails::Application.routes.draw do
 
   resource :search, :only => :show, :controller => :search
 
-  get ":url_match" => "categories#show"
-  get ":category_url_match/:url_match" => "pages#show"
+  get ":url_match" => "pages#show"
   match "*wrong" => "pages#404"
 end

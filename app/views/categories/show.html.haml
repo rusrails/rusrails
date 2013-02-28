@@ -1,9 +1,0 @@
-- cache page_cache_key do
-  %h2= @category.name
-  != render_text_of @category
-  - unless @category.pages.enabled.empty?
-    %ul
-      - @category.pages.enabled.each do |page|
-        %li= link_to page.name, page.path
-
-= comment_link @category

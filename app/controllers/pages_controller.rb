@@ -4,9 +4,9 @@ class PagesController < ApplicationController
   end
 
   def show
-    if  @category = Category.matching(params[:category_url_match]) and
-        @page = @category.pages.matching(params[:url_match]).decorate
-      @pages = @category.pages.enabled
+    @page = Page.matching(params[:url_match])
+    if @page
+      @page = @page.decorate
     else
       render_404
     end

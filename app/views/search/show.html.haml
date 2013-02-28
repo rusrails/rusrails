@@ -7,9 +7,4 @@
   %ol
     - @result.each do |result|
       %li
-        - case result.class.name
-        - when "Category"
-          = link_to result.name, result.path
-        - when "Page"
-          - label = (result.category ? result.category.name + " / " : "")+result.name
-          = link_to label, result.path
+        = link_to result.name, result.path
