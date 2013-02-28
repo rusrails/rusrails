@@ -174,6 +174,10 @@ current_redirects = {
   '/configuring-rails-applications/initialization' => '/configuring-rails-applications',
   '/configuring-rails-applications/database-pooling' => '/configuring-rails-applications',
 
+  '/a-guide-to-the-rails-command-line/command-line-basics' => '/a-guide-to-the-rails-command-line',
+  '/a-guide-to-the-rails-command-line/rake' => '/a-guide-to-the-rails-command-line',
+  '/a-guide-to-the-rails-command-line/the-rails-advanced-command-line' => '/a-guide-to-the-rails-command-line',
+
 
 }
 
