@@ -1,188 +1,188 @@
 pages:
   - title:    Rails для начинающих
-    file:     getting-started-with-rails.md
-    original: getting_started.md
+    url:      getting-started-with-rails
+    file:     getting_started.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     08/01/13
 
   - title:    Миграции базы данных Rails
-    file:     rails-database-migrations.md
-    original: migrations.md
+    url:      rails-database-migrations
+    file:     migrations.md
     revision: dfc930b2b165f3fc13e0f931e152802ddf3c7c46
     date:     01/01/13
 
   - title:    Валидации Active Record
-    file:     active-record-validations-and-callbacks.md
-    original: active_record_validations.md
+    url:      active-record-validations-and-callbacks
+    file:     active_record_validations.md
     revision: 5fb84c6828cea031d829969fed1fdf52d1e94ac4
     date:     08/01/13
 
   - title:    Колбэки Active Record
-    file:     active-record-callbacks.md
-    original: active_record_callbacks.md
+    url:      active-record-callbacks
+    file:     active_record_callbacks.md
     revision: 5fb84c6828cea031d829969fed1fdf52d1e94ac4
     date:     08/01/13
 
   - title:    Связи Active Record
-    file:     active-record-associations.md
-    original: association_basics.md
+    url:      active-record-associations
+    file:     association_basics.md
     revision: c5fb487965b9768da0e48a9348591422ec26f566
     date:     13/12/12
 
   - title:    Интерфейс запросов Active Record
-    file:     active-record-query-interface.md
-    original: active_record_querying.md
+    url:      active-record-query-interface
+    file:     active_record_querying.md
     revision: 44717a9d548c95c7b01e7e0dce061257b3a93646
     date:     01/01/13
 
   - title:    Макеты и рендеринг в Rails
-    file:     layouts-and-rendering-in-rails.md
-    original: layouts_and_rendering.md
+    url:      layouts-and-rendering-in-rails
+    file:     layouts_and_rendering.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     08/01/13
 
   - title:    Хелперы форм Rails
-    file:     rails-form-helpers.md
-    original: form_helpers.md
+    url:      rails-form-helpers
+    file:     form_helpers.md
     revision: 1e83730067709d8c07fd25669088e8e9efd2355b
     date:     10/12/12
 
   - title:    Обзор Action Controller
-    file:     action-controller-overview.md
-    original: action_controller_overview.md
+    url:      action-controller-overview
+    file:     action_controller_overview.md
     revision: 0a33fcd68bb2c56b8c2eba066f343484a44fa588
     date:     08/12/12
 
   - title:    Роутинг в Rails
-    file:     rails-routing.md
-    original: routing.md
+    url:      rails-routing
+    file:     routing.md
     revision: 6e98989c95c3e90ffef4ddad891d0893ef08f26f
     date:     11/12/12
 
   - title:    Расширения ядра Active Support
-    file:     active-support-core-extensions.md
-    original: active_support_core_extensions.md
+    url:      active-support-core-extensions
+    file:     active_support_core_extensions.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     08/01/13
 
   - title:    API интернационализации Rails (I18n)
-    file:     rails-internationalization-i18n-api.md
-    original: i18n.md
+    url:      rails-internationalization-i18n-api
+    file:     i18n.md
     revision: 0acf92184dab8d97db7d447bea8e3c6097b33722
     date:     07/01/13
 
   - title:    Основы Action Mailer
-    file:     action-mailer-basics.md
-    original: action_mailer_basics.md
+    url:      action-mailer-basics
+    file:     action_mailer_basics.md
     revision: 009873aec89a4b843b41accf616b42b7a9917ba8
     date:     06/01/13
 
   - title:    Руководство по тестированию приложений на Rails
-    file:     a-guide-to-testing-rails-applications.md
-    original: testing.md
+    url:      a-guide-to-testing-rails-applications
+    file:     testing.md
     revision: 46af32aa50cb9fda2cbefb124ef0adf3116137ec
     date:     30/12/12
 
   - title:    Руководство Ruby On Rails по безопасности
-    file:     ruby-on-rails-security-guide.md
-    original: security.md
+    url:      ruby-on-rails-security-guide
+    file:     security.md
     revision: 6c7699f60122396c40087363a9680778e87bcc37
     date:     02/01/13
 
   - title:    Отладка приложений на Rails
-    file:     debugging-rails-applications.md
-    original: debugging_rails_applications.md
+    url:      debugging-rails-applications
+    file:     debugging_rails_applications.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     09/01/13
 
   - title:    Тестирование производительности приложений Rails
-    file:     performance-testing-rails-applications.md
-    original: performance_testing.md
+    url:      performance-testing-rails-applications
+    file:     performance_testing.md
     revision: 85c13b7d3d4cb940785ac58d24f6fe90a5346f9c
     date:     05/01/13
 
   - title:    Конфигурирование приложений на Rails
-    file:     configuring-rails-applications.md
-    original: configuring.md
+    url:      configuring-rails-applications
+    file:     configuring.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     09/01/13
 
   - title:    Руководство по командной строке Rails
-    file:     a-guide-to-the-rails-command-line.md
-    original: command_line.md
+    url:      a-guide-to-the-rails-command-line
+    file:     command_line.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     09/01/13
 
   - title:    'Кэширование с Rails: Обзор'
-    file:     caching-with-rails-an-overview.md
-    original: caching_with_rails.md
+    url:      caching-with-rails-an-overview
+    file:     caching_with_rails.md
     revision: 03a391482aa6a9d532eb43bb3e697852e0b83618
     date:     20/01/13
 
   - title:    Asset Pipeline
-    file:     asset-pipeline.md
-    original: asset_pipeline.md
+    url:      asset-pipeline
+    file:     asset_pipeline.md
     revision: 3fa73324c59299e4c9ac68b81fa84fd7eea8eaac
     date:     17/01/13
 
   - title:    Engine для начинающих
+    url:      engines
     file:     engines.md
-    original: engines.md
     revision: 97b249112d2a66ac19828e0c3875681d4d60c08f
     date:     24/01/13
 
   - title:    Rails on Rack
-    file:     rails-on-rack.md
-    original: rails_on_rack.md
+    url:      rails-on-rack
+    file:     rails_on_rack.md
     revision: 732d3507da930c8d21e21d2c87c96594bb1e4d2c
     date:     06/01/2013
 
   - title:    Руководство по обновлению Ruby on Rails
-    file:     upgrading-ruby-on-rails.md
-    original: upgrading_ruby_on_rails.md
+    url:      upgrading-ruby-on-rails
+    file:     upgrading_ruby_on_rails.md
     revision: 351f071dabb4304d48cbda086c86743dec58aada
     date:     15/12/2012
 
   - title:    Заметки о релизе Ruby on Rails 3.0
+    url:      3_0_release_notes
     file:     3_0_release_notes.md
-    original: 3_0_release_notes.md
     revision: 7a0dad25f3be77211160560dc76a8f37963051d7
     date:     17/09/12
 
   - title:    Заметки о релизе Ruby on Rails 3.1
+    url:      3_1_release_notes
     file:     3_1_release_notes.md
-    original: 3_1_release_notes.md
     revision: 276e7b0a1d4b6b742733ee5b5c7dde4dd37a5e11
     date:     24/10/12
 
   - title:    Заметки о релизе Ruby on Rails 3.2
+    url:      3_2_release_notes
     file:     3_2_release_notes.md
-    original: 3_2_release_notes.md
     revision: 7a0dad25f3be77211160560dc76a8f37963051d7
     date:     17/09/12
 
   - title:    Заметки о релизе Ruby on Rails 4.0
+    url:      4_0_release_notes
     file:     4_0_release_notes.md
-    original: 4_0_release_notes.md
     revision: 550299a6712cf5731f007176cb9f2135f813e9e7
     date:     25/01/13
 
 plan:
-  - original: action_view_overview.md
-  - original: active_model_basics.md
-  - original: active_record_basics.md
-  - original: active_support_instrumentation.md
-  - original: api_documentation_guidelines.md
-  - original: contributing_to_ruby_on_rails.md
-  - original: development_dependencies_install.md
-  - original: generators.md
-  - original: initialization.md
-  - original: plugins.md
-  - original: rails_application_templates.md
-  - original: ruby_on_rails_guides_guidelines.md
-  - original: working_with_javascript_in_rails.md
+  - file:     action_view_overview.md
+  - file:     active_model_basics.md
+  - file:     active_record_basics.md
+  - file:     active_support_instrumentation.md
+  - file:     api_documentation_guidelines.md
+  - file:     contributing_to_ruby_on_rails.md
+  - file:     development_dependencies_install.md
+  - file:     generators.md
+  - file:     initialization.md
+  - file:     plugins.md
+  - file:     rails_application_templates.md
+  - file:     ruby_on_rails_guides_guidelines.md
+  - file:     working_with_javascript_in_rails.md
 
 old:
-  - original: 2_2_release_notes.md
-  - original: 2_3_release_notes.md
-  - original: nested_model_forms.md
+  - file:     2_2_release_notes.md
+  - file:     2_3_release_notes.md
+  - file:     nested_model_forms.md
