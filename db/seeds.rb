@@ -178,6 +178,10 @@ current_redirects = {
   '/a-guide-to-the-rails-command-line/rake' => '/a-guide-to-the-rails-command-line',
   '/a-guide-to-the-rails-command-line/the-rails-advanced-command-line' => '/a-guide-to-the-rails-command-line',
 
+  '/caching-with-rails-an-overview/basic-caching' => '/caching-with-rails-an-overview',
+  '/caching-with-rails-an-overview/cache-stores' => '/caching-with-rails-an-overview',
+  '/caching-with-rails-an-overview/conditional-get-support' => '/caching-with-rails-an-overview',
+
 
 }
 
