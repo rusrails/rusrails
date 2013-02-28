@@ -1,68 +1,23 @@
 namespace :pages do
-  desc "import pages from /source to bd"
-  task :import => :environment do
-    def file_load(file, resource)
-      content = File.read(file).partition("\n\n")
-      resource.name = case resource.renderer
-      when 'md'
-        content[0][/^#\s(.*)/, 1]
-      when 'textile'
-        content[0][/^h1\.\s(.*)/, 1]
-      else
-        content[0].strip
-      end
-      resource.text = content[2]
-      resource.save
-    end
-
-    source = Rails.root.join "source"
-    Dir.foreach(source) do |cat_name|
-      cat_source = File.join(source, cat_name)
-      next if cat_name == '.' || cat_name == '..' || File.file?(cat_source)
-
-      category = Category.find_or_initialize_by_url_match cat_name[/\d+-(.*)$/, 1]
-      category.show_order = cat_name[/^(\d+)/, 1]
-      category.save
-
-      Dir.foreach(cat_source) do |page_name|
-        next if page_name == '.' || page_name == '..'
-        page_source = File.join(cat_source, page_name)
-
-        if page_name =~ /^--/
-          category.renderer = page_name[/\--.*\.((?:textile|md))$/, 1]
-          file_load page_source, category
-        else
-          page = category.pages.find_or_initialize_by_url_match page_name[/\d+-(.*)\.(?:textile|md)$/, 1]
-          page.renderer = page_name[/\d+-.*\.((?:textile|md))$/, 1]
-          page.show_order = page_name[/^(\d+)/, 1]
-          file_load page_source, page
-        end
-        print "."
-      end
-
-      print "|"
-    end
-
-    homepage = Page.find_or_initialize_by_url_match 'home'
-    homepage.renderer = 'md'
-    homepage.show_order = -1
-    file_load File.join(Rails.root, "source", "home.md"), homepage
-
-    Rails.cache.clear
-    puts "complete"
-  end
-
-
   desc "Cleanup old pages"
   task :cleanup => :environment do
-    Category.all.each do |category|
-      category.pages.each do |page|
-        pname = Rails.root.join "source", "*-#{category.url_match}", "{[0-9],[0-9][0-9]}-#{page.url_match}.*"
-        if Dir.glob(pname).empty?
-          page.destroy
-          puts "Page #{page.path} was deleted!"
-        end
-      end
+    source = Rails.root.join "source"
+    config = YAML.load IO.read File.join source, 'pages.yml'
+    actual_page_urls = config['pages'].map{ |page| page['url'] }
+    Page.where('url_match not in (?)', actual_page_urls).destroy_all
+  end
+
+  desc "import pages from /source to bd"
+  task :import => :environment do
+    source = Rails.root.join "source"
+    config = YAML.load IO.read File.join source, 'pages.yml'
+    config['pages'].each_with_index do |data, index|
+      page = Page.find_or_initialize_by_url_match(data['url'])
+      page.renderer = data['file'][/\.*\.((?:textile|md))$/, 1]
+      page.show_order = index - 1
+      page.name = data['title']
+      page.text = File.read File.join(source, data['file'])
+      page.save
     end
   end
 end

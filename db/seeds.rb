@@ -30,14 +30,16 @@ current_redirects = {
   '/rails-database-migrations/active-record-and-referential-integrity' => '/rails-database-migrations',
   '/rails-database-migrations/migrations-and-seed-data' => '/rails-database-migrations',
 
-  '/active-record-validations-and-callbacks/validations-overview' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/validation-helpers' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/common-validation-options' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/strict-validations' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/conditional-validation' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/creating-custom-validation-methods' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/working-with-validation-errors' => '/active-record-validations-and-callbacks',
-  '/active-record-validations-and-callbacks/displaying-validation-errors-in-the-view' => '/active-record-validations-and-callbacks',
+  '/active-record-validations-and-callbacks/validations-overview' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/validation-helpers' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/common-validation-options' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/strict-validations' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/conditional-validation' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/creating-custom-validation-methods' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/working-with-validation-errors' => '/active-record-validations',
+  '/active-record-validations-and-callbacks/displaying-validation-errors-in-the-view' => '/active-record-validations',
+
+  '/active-record-validations-and-callbacks' => '/active-record-validations',
 
   '/active-record-associations/why-associations' => '/active-record-associations',
   '/active-record-associations/the-types-of-associations-1' => '/active-record-associations',
@@ -199,6 +201,7 @@ current_redirects = {
   '/different-guides/engines'                 => 'engines',
   '/different-guides/rails-on-rack'           => 'rails-on-rack',
   '/different-guides/upgrading-ruby-on-rails' => 'upgrading-ruby-on-rails',
+
 }
 
 current_redirects.each do |from, to|

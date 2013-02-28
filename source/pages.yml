@@ -1,4 +1,10 @@
 pages:
+  - title:    Ruby on Rails по-русски
+    url:      home
+    file:     home.md
+    revision: ''
+    date:     28/02/13
+
   - title:    Rails для начинающих
     url:      getting-started-with-rails
     file:     getting_started.md
@@ -12,7 +18,7 @@ pages:
     date:     01/01/13
 
   - title:    Валидации Active Record
-    url:      active-record-validations-and-callbacks
+    url:      active-record-validations
     file:     active_record_validations.md
     revision: 5fb84c6828cea031d829969fed1fdf52d1e94ac4
     date:     08/01/13
