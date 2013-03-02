@@ -1,0 +1,26 @@
+set daemon 30
+
+set logfile /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+set eventqueue
+    basedir /var/lib/monit/events
+    slots 100
+
+# set mailserver smtp.gmail.com port 587
+#     username "foo@example.com" password "secret"
+#     using tlsv1
+#     with timeout 30 seconds
+
+# set alert mikdiet@gmail.com
+
+# set httpd port 2812
+#     allow admin:"secret"
+
+check system first
+  if loadavg(5min) > 2 for 2 cycles then alert
+  if memory > 75% for 2 cycles then alert
+  if cpu(user) > 75% for 2 cycles then alert
+
+include /etc/monit/conf.d/*

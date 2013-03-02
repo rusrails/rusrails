@@ -8,7 +8,7 @@ set :default_stage, "v40"
 load "config/recipes/base"
 load "config/recipes/nginx"
 load "config/recipes/unicorn"
-#load "config/recipes/monit"
+load "config/recipes/monit"
 
 server "78.47.229.178", :web, :app, :db, primary: true
 
@@ -28,6 +28,7 @@ ssh_options[:forward_agent] = true
 namespace :deploy do
   task :symlink_config, roles: :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{shared_path}/config/unicorn.rb #{release_path}/config/unicorn.rb"
     run "ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings/production.yml"
   end
 
