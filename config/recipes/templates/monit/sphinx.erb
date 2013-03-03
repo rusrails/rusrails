@@ -1,3 +1,3 @@
-check process sphinx_searchd_<%= @application %> with pidfile <%= current_path %>/log/searchd.<%= rails_env %>.pid
-  start program = "/etc/init.d/sphinxsearch --pidfile --config <%= current_path %>/<%= rails_env %>.sphinx.conf"
-  stop program = "/etc/init.d/sphinxsearch --pidfile --stop --config <%= current_path %>/<%= rails_env %>.sphinx.conf"
+check process sphinx_searchd_<%= application %> with pidfile <%= current_path %>/log/searchd.<%= rails_env %>.pid
+  start program = "/usr/bin/searchd --pidfile --config <%= current_path %>/config/<%= rails_env %>.sphinx.conf"
+  stop program = "/usr/bin/searchd --pidfile --config <%= current_path %>/config/<%= rails_env %>.sphinx.conf"
