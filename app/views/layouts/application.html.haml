@@ -18,6 +18,12 @@
           = form_tag search_path, :method => :get, :class => "navbar-search pull-right" do
             = text_field_tag :search, params[:search], :class => "search-query", :placeholder => "Поиск.."
           %ul.nav.pull-right
+            %li= link_to 'Главная', root_path
+            %li.dropdown
+              = link_to '#', :class => "dropdown-toggle", :data => {:toggle => :dropdown} do
+                Индекс
+                %b.caret
+              = menu('dropdown-menu')
             - if user_signed_in?
               %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path

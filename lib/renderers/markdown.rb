@@ -42,7 +42,7 @@ HTML
 
       @headers << [@numeration.compact, hid, text]
 
-      %(<h#{header_level} id='#{hid}'>#{num_link} #{text}</h#{header_level}>)
+      %(<h#{header_level} id='#{hid}' class='inside_page_header'>#{num_link} #{text}</h#{header_level}>)
     end
 
     def paragraph(text)
