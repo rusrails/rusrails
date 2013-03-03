@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   layout :layout_by_resource
   around_filter :catch_exceptions
-  helper_method :current_author, :page_cache_key
+  helper_method :current_author
 
 protected
   def layout_by_resource
@@ -30,21 +30,9 @@ protected
     end
   end
 
-  def page_cache_key
-    if @page
-      "page_#{@page.id}"
-    else
-      ""
-    end
-  end
-
 private
   def after_sign_out_path_for resource
     resource == Admin ? admin_root_path : root_path
-  end
-
-  def expire_content_cache
-    expire_fragment %r{.*}
   end
 
   def catch_exceptions

@@ -1,0 +1,4 @@
+%ul.nav.nav-list
+  - markdown_renderer.headers.each do |header|
+    %li
+      = link_to "#{header[0]} #{header[2]}".html_safe, "##{header[1]}"

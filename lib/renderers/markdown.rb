@@ -6,9 +6,12 @@ require 'nokogiri'
 class Markdown
 
   class Renderer < Redcarpet::Render::HTML
+    attr_reader :headers
+
     def initialize(options={})
       super
       @numeration = []
+      @headers = []
     end
 
     def block_code(code, language)
@@ -36,6 +39,8 @@ HTML
         @numeration = []
         num_link = ''
       end
+
+      @headers << [@numeration.compact, hid, text]
 
       %(<h#{header_level} id='#{hid}'>#{num_link} #{text}</h#{header_level}>)
     end
@@ -126,7 +131,6 @@ HTML
     engine.render(body)
   end
 
-private
   def engine
     @engine ||= Redcarpet::Markdown.new(Renderer, {
       no_intra_emphasis: true,

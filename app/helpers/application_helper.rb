@@ -46,23 +46,4 @@ module ApplicationHelper
     textile(body, lite_mode, true)
   end
 
-  def comment_link(subject)
-    builder = Nokogiri::HTML::Builder.new do |doc|
-      doc.div :class => :well do
-        if subject.discussions.present?
-          doc.h4 "Обсуждения к этой теме:"
-          doc.ul do
-            subject.discussions.each do |discussion|
-              doc.li do
-                doc.a discussion.title, :href => discussion_path(discussion)
-              end
-            end
-          end
-        end
-        doc.a "Оставить комментарий или задать вопрос",
-              :href => new_discussion_path(:discussion => {:subject_id => subject.id, :subject_type => subject.source.class.to_s})
-      end
-    end
-    builder.doc.inner_html.html_safe
-  end
 end

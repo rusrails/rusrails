@@ -1,4 +1,6 @@
-- cache page_cache_key do
-  != render_text_of @page
+- content_for :menu do
+  = @page.menu
 
-= comment_link @page
+= @page.html
+
+= @page.comment_link
