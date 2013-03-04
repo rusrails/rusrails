@@ -14,8 +14,6 @@
 * [Rails 3.0](http://archive.rusrails.ru)
 * [Rails 2.3](http://archive.rusrails.ru/rails23-archive)
 
-Эти руководства также доступны в формате `pdf`: [![Скачать руководства в формате pdf](/assets/pdficon.png)](/rusrails.all.pdf)
-
 Приступим!
 
 ## С чего начать?
