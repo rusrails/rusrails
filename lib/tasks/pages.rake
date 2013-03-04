@@ -11,10 +11,20 @@ namespace :pages do
   task :import => :environment do
     source = Rails.root.join "source"
     config = YAML.load IO.read File.join source, 'pages.yml'
+
+    config['special'].each_with_index do |data, index|
+      page = Page.find_or_initialize_by_url_match(data['url'])
+      page.renderer = data['file'][/\.*\.((?:textile|md))$/, 1]
+      page.show_order = nil
+      page.name = data['title']
+      page.text = File.read File.join(source, data['file'])
+      page.save
+    end
+
     config['pages'].each_with_index do |data, index|
       page = Page.find_or_initialize_by_url_match(data['url'])
       page.renderer = data['file'][/\.*\.((?:textile|md))$/, 1]
-      page.show_order = index - 1
+      page.show_order = index
       page.name = data['title']
       page.text = File.read File.join(source, data['file'])
       page.save

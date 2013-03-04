@@ -8,19 +8,8 @@ module ApplicationHelper
     end
   end
 
-  def menu(menu_class = "nav nav-list")
-    @pages ||= Page.enabled
-    return if @pages.empty?
-    builder = Nokogiri::HTML::Builder.new do |doc|
-      doc.ul :class => menu_class do
-        @pages.each do |page|
-          doc.li :class => (page == @page ? "active" : nil) do
-            doc.a page.name, :href => page.path
-          end
-        end # each
-      end
-    end
-    builder.doc.inner_html.html_safe
+  def menu
+    Page.matching("index").decorate.html
   end
 
   def render_text_of(model)

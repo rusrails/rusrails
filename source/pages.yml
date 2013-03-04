@@ -1,10 +1,13 @@
-pages:
+special:
   - title:    Ruby on Rails по-русски
     url:      home
     file:     home.md
-    revision: ''
-    date:     28/02/13
 
+  - title:    Список руководств
+    url:      index
+    file:     index.md
+
+pages:
   - title:    Rails для начинающих
     url:      getting-started-with-rails
     file:     getting_started.md

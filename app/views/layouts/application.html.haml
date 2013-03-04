@@ -20,10 +20,10 @@
           %ul.nav.pull-right
             %li= link_to 'Главная', root_path
             %li.dropdown
-              = link_to '#', :class => "dropdown-toggle", :data => {:toggle => :dropdown} do
+              = link_to '#', :class => "index-popover", :data => {:title => 'Индекс руководств'} do
                 Индекс
                 %b.caret
-              = menu('dropdown-menu')
+              .index-popover-content.hide= menu
             - if user_signed_in?
               %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path
@@ -45,8 +45,8 @@
       .row-fluid
         .span9.content= yield
         .span3
-          .well.menu
-            = yield(:menu).presence || menu
+          - if content_for?(:menu)
+            .well.menu= yield(:menu)
           .well
             -# = link_to image_tag("railsclub_240x400.png", :width => 190), "http://railsclub.timepad.ru/event/29192", :target => :_blank
             = render "layouts/rsya"

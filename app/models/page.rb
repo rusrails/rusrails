@@ -11,9 +11,9 @@ class Page < ActiveRecord::Base
     has :enabled
   end
 
-  scope :ordered, order(:show_order, :created_at)
+  scope :usual, where('show_order is not null')
+  scope :ordered, usual.order(:show_order, :created_at)
   scope :enabled, where(:enabled => true).ordered
-  scope :without_text, select("id,name,url_match,enabled,show_order,created_at")
 
   def self.matching url_match
     where(:url_match => url_match).first

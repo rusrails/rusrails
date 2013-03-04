@@ -4,7 +4,7 @@ class PagesController < ApplicationController
   end
 
   def show
-    @page = Page.matching(params[:url_match])
+    @page = Page.usual.matching(params[:url_match])
     if @page
       @page = @page.decorate
     else
