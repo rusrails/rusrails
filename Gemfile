@@ -45,7 +45,6 @@ group :development, :test do
 end
 
 group :test do
-  gem "cucumber-rails"
   gem 'factory_girl_rails'
   gem 'database_cleaner'
 end
