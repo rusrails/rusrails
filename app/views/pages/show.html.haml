@@ -1,6 +1,7 @@
 - content_for :menu do
-  = @page.menu
+  - cache ['v1', @page, 'menu'] do
+    = @page.menu
 
-= @page.html
-
-= @page.comment_link
+- cache ['v1', @page] do
+  = @page.html
+  = @page.comment_link

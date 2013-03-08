@@ -2,16 +2,6 @@
 class PageDecorator < Draper::Decorator
   delegate_all
 
-  # Define presentation-specific methods here. Helpers are accessed through
-  # `helpers` (aka `h`). You can override attributes, for example:
-  #
-  #   def created_at
-  #     helpers.content_tag :span, class: 'time' do
-  #       source.created_at.strftime("%a %m/%d/%y")
-  #     end
-  #   end
-
-
   def menu
     return unless renderer == 'md'
     h.render 'pages/menu', :markdown_renderer => markdown_renderer
@@ -35,14 +25,13 @@ class PageDecorator < Draper::Decorator
   def html
     case renderer
     when 'textile'
-      textile(text).html_safe
+      h.textile(text).html_safe
     when 'md'
       markdown_html.html_safe
     else
       text.html_safe
     end
   end
-
 
   def comment_link
     builder = Nokogiri::HTML::Builder.new do |doc|

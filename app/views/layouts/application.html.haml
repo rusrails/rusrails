@@ -23,7 +23,11 @@
               = link_to '#', :class => "index-popover", :data => {:title => 'Индекс руководств'} do
                 Индекс
                 %b.caret
-              .index-popover-content.hide= menu
+              .index-popover-content.hide
+                - index_page = Page.matching("index").decorate
+                - cache ['v1', index_page] do
+                  = index_page.html
+
             - if user_signed_in?
               %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path

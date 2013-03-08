@@ -1,5 +1,5 @@
 class Discussion < ActiveRecord::Base
-  belongs_to :subject, :polymorphic => true
+  belongs_to :subject, :polymorphic => true, :touch => true
   belongs_to :author,  :polymorphic => true
   has_many :says
 

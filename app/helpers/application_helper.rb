@@ -2,14 +2,10 @@
 module ApplicationHelper
   def title
     if @page
-      "Rusrails: "+@page.name
+      "Rusrails: " + @page.name
     else
       "Rusrails: Ruby on Rails по-русски"
     end
-  end
-
-  def menu
-    Page.matching("index").decorate.html
   end
 
   def render_text_of(model)

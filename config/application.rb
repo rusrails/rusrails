@@ -43,6 +43,6 @@ module Rusrails
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.assets.precompile += ['sh/*.js', 'blueprint/*.css']
+    config.assets.precompile += ['sh/*.js']
   end
 end
