@@ -46,5 +46,4 @@ namespace :deploy do
   after "deploy:seed", "thinking_sphinx:rebuild"
 end
 
-after "deploy", "thinking_sphinx:rebuild"
 after "deploy", "deploy:cleanup"

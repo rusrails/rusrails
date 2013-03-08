@@ -3,7 +3,7 @@ namespace :pages do
   task :cleanup => :environment do
     source = Rails.root.join "source"
     config = YAML.load IO.read File.join source, 'pages.yml'
-    actual_page_urls = config['pages'].map{ |page| page['url'] }
+    actual_page_urls = (config['pages'] + config['special']).map{ |page| page['url'] }
     Page.where('url_match not in (?)', actual_page_urls).destroy_all
   end
 
