@@ -15,4 +15,8 @@ class PagesController < ApplicationController
   def map
   end
 
+  def not_found
+    render_404
+  end
+
 end
