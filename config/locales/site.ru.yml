@@ -21,7 +21,6 @@ ru:
         remember_me: Запомните меня
     models:
       admin: Администратор
-      category: Категория
       discussion: Обсуждение
       page: Страница
       say: Высказывание
