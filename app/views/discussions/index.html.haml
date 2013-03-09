@@ -4,7 +4,7 @@
 - else
   = link_to "Авторизуйтесь, чтобы участвовать в обсуждениях", new_user_session_path
 
-- @discussions.each do |discussion|
+- @discussions.decorate.each do |discussion|
   .discussion_title
     .title
       = link_to discussion.title, discussion_path(discussion)
@@ -15,7 +15,7 @@
         = link_to "'#{discussion.subject.name}'", discussion.subject.path
     .author
       автор
-      = author_of(discussion)
+      = discussion.author
       = ","
       = "обновлено #{l discussion.updated_at, :format => :short}"
 

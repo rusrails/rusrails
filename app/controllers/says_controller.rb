@@ -6,6 +6,7 @@ class SaysController < ApplicationController
     @discussion = Discussion.enabled.find params[:discussion_id]
     @say = @discussion.says.build params[:say]
     @say.author = current_author
+    @say.renderer = 'md'
     if @say.save
       flash[:notice] = "Оставлено сообщение"
       @discussion.touch

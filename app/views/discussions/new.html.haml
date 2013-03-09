@@ -11,12 +11,8 @@
     = f.fields_for :says, @say do |say|
       .left_label
         = say.label :text
-        %p
-          Можно использовать разметку
-          = link_to "Textile", "http://textile.thresholdstate.com/", :target => "_blank"
       .right_value
-        = say.text_area :text, :id => :say_text
-        = preview_link
+        = say.text_area :text, :id => :say_text, :class => :markitup
 
   %div
     .right_value= f.submit "Начать обсуждение"

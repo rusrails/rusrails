@@ -22,6 +22,7 @@ gem 'rails_config'
 gem 'twitter-bootstrap-rails'
 gem 'jquery-rails'
 gem 'draper'
+gem "markitup-rails"
 
 gem 'capistrano'
 gem 'execjs'

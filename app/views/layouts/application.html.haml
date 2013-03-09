@@ -28,13 +28,14 @@
                 - cache ['v2', index_page] do
                   = index_page.html
 
+            %li= link_to "Обсуждения", discussions_path
+
             - if user_signed_in?
               %li= link_to current_user.name, edit_user_registration_path, :id => :user_edit
               %li= link_to "Выход", destroy_user_session_path
             - else
               %li= link_to "Регистрация", new_user_registration_path
               %li= link_to "Вход", new_user_session_path
-            %li= link_to "Обсуждения", discussions_path
 
     - if notice
       .alert.alert-success

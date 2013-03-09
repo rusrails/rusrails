@@ -3,11 +3,11 @@
   %h3
     к теме
     = link_to "'#{@discussion.subject.name}'", @discussion.subject.path
-- @discussion.says.enabled.each do |say|
+- @discussion.says.enabled.decorate.each do |say|
   .say
-    .name= author_of say
+    .name= say.author
     .time= l say.updated_at, :format => :short
-    .text!= safe_textile(say.text)
+    .text= say.html
 - if current_author
   = form_for [@discussion, @discussion.says.build] do |f|
     %h3 Ответить
@@ -15,12 +15,9 @@
     %div
       .left_label
         = f.label :text
-        %p
-          Можно использовать разметку
-          = link_to "Textile", "http://textile.thresholdstate.com/", :target => "_blank"
       .right_value
-        = f.text_area :text
-        = preview_link
+        = f.text_area :text, :class => :markitup
+
     %div
       .right_value= f.submit "Отправить"
 - else

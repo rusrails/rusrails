@@ -16,6 +16,7 @@ class DiscussionsController < ApplicationController
     @say = @discussion.says.first
     @discussion.author = current_author
     @say.author = current_author
+    @say.renderer = 'md'
 
     if @discussion.save
       flash[:notice] = "Начато новое обсуждение"
@@ -27,10 +28,13 @@ class DiscussionsController < ApplicationController
   end
 
   def show
-    @discussion = Discussion.enabled.find params[:id]
+    @discussion = Discussion.enabled.find(params[:id]).decorate
   end
 
   def preview
-    render :layout => false
+    @say = Say.new
+    @say.renderer = 'md'
+    @say.text = params[:data]
+    render :inline => @say.decorate.html
   end
 end

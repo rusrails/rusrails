@@ -7,5 +7,5 @@ class Say < ActiveRecord::Base
   validates :text, :presence => true
 
   scope :ordered, order("updated_at DESC")
-  scope :enabled, where(:enabled=>true)
+  scope :enabled, where(:enabled => true)
 end
