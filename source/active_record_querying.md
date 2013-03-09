@@ -998,7 +998,7 @@ SELECT categories.* FROM categories
 
 ### Определение условий в соединительных таблицах
 
-В соединительных таблицах можно определить условия, используя надлежащие [массивные](/active-record-query-interface/conditions#array-conditions) и [строчные](/active-record-query-interface/conditions#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-query-interface/conditions#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
+В соединительных таблицах можно определить условия, используя надлежащие [массивные](/active-record-query-interface#array-conditions) и [строчные](/active-record-query-interface#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-query-interface#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
@@ -1217,7 +1217,7 @@ Client.unscoped {
 }
 ```
 
-Динамический поиск
+(dynamic-finders) Динамический поиск
 ------------------
 
 Для каждого поля (также называемого атрибутом), определенного в вашей таблице, Active Record предоставляет метод поиска. Например, если есть поле `first_name` в вашей модели `Client`, вы на халяву получаете `find_by_first_name` от Active Record. Если также есть поле `locked` в модели `Client`, вы также получаете `find_by_locked`.

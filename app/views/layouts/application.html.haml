@@ -25,7 +25,7 @@
                 %b.caret
               .index-popover-content.hide
                 - index_page = Page.matching("index").decorate
-                - cache ['v1', index_page] do
+                - cache ['v2', index_page] do
                   = index_page.html
 
             - if user_signed_in?

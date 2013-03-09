@@ -659,7 +659,7 @@ WARNING: Хелперы ресурсных тегов _не_ проверяют 
 
 При использовании Rails с включенным "Asset Pipeline":/asset-pipeline enabled, этот хелпер создаст ссылку на `/assets/javascripts/`, а не на `public/javascripts`, что использовалось в прежних версиях Rails. Эта ссылка обслуживается файлопроводом (asset pipeline).
 
-Файл JavaScript в приложении Rails или engine Rails размещается в одном из трех мест: `app/assets`, `lib/assets` или `vendor/assets`. Эти места детально описаны в [разделе про организацию ресурсов в руководстве по Asset Pipeline](http://rusrails.ru/asset-pipeline/how-to-use-the-asset-pipeline).
+Файл JavaScript в приложении Rails или engine Rails размещается в одном из трех мест: `app/assets`, `lib/assets` или `vendor/assets`. Эти места детально описаны в [разделе про организацию ресурсов в руководстве по Asset Pipeline](/asset-pipeline#how-to-use-the-asset-pipeline).
 
 Можно определить полный путь относительно корня документа или URL, по желанию. Например, сослаться на файл JavaScript, находящийся в директории с именем `javascripts` в одной из `app/assets`, `lib/assets` или `vendor/assets`, можно так:
 

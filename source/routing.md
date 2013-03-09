@@ -659,7 +659,7 @@ get '/:username', to: 'users#show'
 
 ### Ограничения, основанные на запросе
 
-Также можно ограничить маршрут, основываясь на любом методе в объекте [Request](/action-controller-overview/the-request-and-response-objects), который возвращает `String`.
+Также можно ограничить маршрут, основываясь на любом методе в объекте [Request](/action-controller-overview#the-request-and-response-objects), который возвращает `String`.
 
 Ограничение, основанное на запросе, определяется так же, как и сегментное ограничение:
 
@@ -774,7 +774,7 @@ get '/stories', to: redirect {|p, req| "/posts/#{req.subdomain}" }
 
 ### Роутинг к приложениям Rack
 
-Вместо строки, подобной `'posts#index'`, соответствующей экшну `index` в `PostsController`, можно определить любое [приложение Rack](/different-guides/rails-on-rack) как конечную точку совпадения.
+Вместо строки, подобной `'posts#index'`, соответствующей экшну `index` в `PostsController`, можно определить любое [приложение Rack](/rails-on-rack) как конечную точку совпадения.
 
 ```ruby
 match '/application.js', to: Sprockets, via: :all

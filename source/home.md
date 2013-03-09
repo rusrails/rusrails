@@ -9,7 +9,7 @@
 
 Это перевод [Ruby on Rails Guides](http://guides.rubyonrails.org) для версии Rails 4.0. Переводы для ранних версий доступны в архиве или на гитхабе:
 
-* [Rails 3.2](https://github.com/morsbox/rusrails/tree/3.2/source)
+* [Rails 3.2](http://v32.rusrails.ru)
 * [Rails 3.1](https://github.com/morsbox/rusrails/tree/3.1.3/source)
 * [Rails 3.0](http://archive.rusrails.ru)
 * [Rails 2.3](http://archive.rusrails.ru/rails23-archive)
@@ -24,7 +24,7 @@
 
 - [Миграции базы данных Rails](/rails-database-migrations) := Это руководство раскрывает, как вы должны использовать миграции Active Record, чтобы привести свою базу данных к структурированной и организованной форме.
 - [Валидации Active Record](/active-record-validations) := Это руководство раскрывает, как вы можете применять валидации Active Record.
-- [Колбэки Active Record](/different-guides/active-record-callbacks) := Это руководство раскрывает, как вы можете применять колбэки (методы обратного вызова) Active Record.
+- [Колбэки Active Record](/active-record-callbacks) := Это руководство раскрывает, как вы можете применять колбэки (методы обратного вызова) Active Record.
 - [Связи (ассоциации) Active Record](/active-record-associations) := Это руководство раскрывает все связи, предоставленные Active Record.
 - [Интерфейс запросов Active Record](/active-record-query-interface) := Это руководство раскрывает интерфейс запросов к базе данных, предоставленный Active Record.
 
@@ -51,16 +51,16 @@
 - [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line) := Это руководство раскроет инструменты командной строки и задачи rake, предоставленные Rails.
 - [Кэширование с Rails](/caching-with-rails-an-overview) := Различные техники кэширования, предоставленные Rails.
 - [Asset Pipeline](/asset-pipeline) := Это руководство документирует файлопровод (asset pipeline)
-- [Engine для начинающих](/different-guides/engines) := Это руководство объясняет, как написать монтируемый engine
+- [Engine для начинающих](/engines) := Это руководство объясняет, как написать монтируемый engine
 
 ## Расширяем Rails
 
-- [Rails on Rack](/different-guides/rails-on-rack) := Это руководство раскрывает интеграцию Rails и Rack, и взаимодействие с другими компонентами Rack
+- [Rails on Rack](/rails-on-rack) := Это руководство раскрывает интеграцию Rails и Rack, и взаимодействие с другими компонентами Rack
 
 ## Заметки о релизах
 
-- [Руководство по обновлению Ruby on Rails](/different-guides/upgrading-ruby-on-rails) := Это руководство поможет обновить приложения на последние версии Ruby on Rails.
-- [Заметки о релизе Ruby on Rails 4.0](/different-guides/4_0_release_notes) := Заметки о релизе Rails 4.0
-- [Заметки о релизе Ruby on Rails 3.2](/different-guides/3_2_release_notes) := Заметки о релизе Rails 3.2
-- [Заметки о релизе Ruby on Rails 3.1](/different-guides/3_1_release_notes) := Заметки о релизе Rails 3.1
-- [Заметки о релизе Ruby on Rails 3.0](/different-guides/3_0_release_notes) := Заметки о релизе Rails 3.0
+- [Руководство по обновлению Ruby on Rails](/upgrading-ruby-on-rails) := Это руководство поможет обновить приложения на последние версии Ruby on Rails.
+- [Заметки о релизе Ruby on Rails 4.0](/4_0_release_notes) := Заметки о релизе Rails 4.0
+- [Заметки о релизе Ruby on Rails 3.2](/3_2_release_notes) := Заметки о релизе Rails 3.2
+- [Заметки о релизе Ruby on Rails 3.1](/3_1_release_notes) := Заметки о релизе Rails 3.1
+- [Заметки о релизе Ruby on Rails 3.0](/3_0_release_notes) := Заметки о релизе Rails 3.0
