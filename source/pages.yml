@@ -104,12 +104,6 @@ pages:
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     09/01/13
 
-  - title:    Тестирование производительности приложений Rails
-    url:      performance-testing-rails-applications
-    file:     performance_testing.md
-    revision: 85c13b7d3d4cb940785ac58d24f6fe90a5346f9c
-    date:     05/01/13
-
   - title:    Конфигурирование приложений на Rails
     url:      configuring-rails-applications
     file:     configuring.md

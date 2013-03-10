@@ -164,12 +164,6 @@ current_redirects = {
   '/debugging-rails-applications/debugging-memory-leaks' => '/debugging-rails-applications',
   '/debugging-rails-applications/plugins-for-debugging-references' => '/debugging-rails-applications',
 
-  '/performance-testing-rails-applications/performance-test-cases' => '/performance-testing-rails-applications',
-  '/performance-testing-rails-applications/command-line-tools' => '/performance-testing-rails-applications',
-  '/performance-testing-rails-applications/helper-methods' => '/performance-testing-rails-applications',
-  '/performance-testing-rails-applications/request-logging' => '/performance-testing-rails-applications',
-  '/performance-testing-rails-applications/useful-links-commercial-products' => '/performance-testing-rails-applications',
-
   '/configuring-rails-applications/locations-for-initialization-code' => '/configuring-rails-applications',
   '/configuring-rails-applications/configuring-rails-components' => '/configuring-rails-applications',
   '/configuring-rails-applications/rails-environment-settings' => '/configuring-rails-applications',

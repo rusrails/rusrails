@@ -30,7 +30,6 @@ next_column
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
-    * [Тестирование производительности приложений на Rails](/performance-testing-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line)
     * [Кэширование с Rails](/caching-with-rails-an-overview)
