@@ -11,8 +11,8 @@ pages:
   - title:    Rails для начинающих
     url:      getting-started-with-rails
     file:     getting_started.md
-    revision: f049016cd348627bf8db0d72382d7580bf802a79
-    date:     08/01/13
+    revision: 3dde99d01c71dad36e483d0d1957639fde255c27
+    date:     01/03/13
 
   - title:    Миграции базы данных Rails
     url:      rails-database-migrations
