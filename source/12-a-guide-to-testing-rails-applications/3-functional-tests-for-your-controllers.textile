@@ -189,7 +189,7 @@ assert_select "ol" do
 end
 </ruby>
 
-Оператор контроля +assert_select+ достаточно мощный. Для более продвинутого использования обратитесь к его "документации":http://api.rubyonrails.org/classes/ActionController/Assertions/SelectorAssertions.html.
+Оператор контроля +assert_select+ достаточно мощный. Для более продвинутого использования обратитесь к его "документации":http://api.rubyonrails.org/classes/ActionDispatch/Assertions/SelectorAssertions.html.
 
 h5. Дополнительные операторы контроля, основанные на вьюхе
 
