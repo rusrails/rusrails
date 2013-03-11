@@ -7,10 +7,7 @@ Rusrails::Application.routes.draw do
     get '/users/auth/:provider' => 'omniauth_callbacks#passthru'
   end
 
-  devise_for :admins, :controllers => {:registrations => "admins/registrations" }
-
   namespace "admin" do
-    resources :categories
     resources :pages
     resources :users
     resources :discussions

@@ -1,13 +1,6 @@
 ru:
   activerecord:
     attributes:
-      admin:
-        current_password: Текущий пароль
-        email: Email
-        name: Имя
-        password: Пароль
-        password_confirmation: Подтверждение пароля
-        remember_me: Запомните меня
       discussion:
         title: Заголовок
       say:
@@ -20,7 +13,6 @@ ru:
         password_confirmation: Подтверждение пароля
         remember_me: Запомните меня
     models:
-      admin: Администратор
       discussion: Обсуждение
       page: Страница
       say: Высказывание

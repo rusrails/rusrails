@@ -3,11 +3,7 @@ class DiscussionDecorator < ContentDecorator
   delegate_all
 
   def author
-    case source.author
-      when Admin then "<span class='admin_name'>#{source.author.name}</span>".html_safe
-      when User then source.author.name
-    else "неизвестный"
-    end
+    h.content_tag :span, source.author.try(:name) || 'неизвестный', :class => (source.author.try(:admin?) ? :admin_name : nil)
   end
 
   def textile_html(lite_mode = false)

@@ -1,11 +1,4 @@
 FactoryGirl.define  do
-  factory :admin do
-    email "admin@domain.com"
-    password "foobar"
-    password_confirmation { |x| x.password }
-    remember_me true
-  end
-
   factory :user do
     email "user@domain.com"
     password "foobar"
