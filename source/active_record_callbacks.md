@@ -339,19 +339,16 @@ end
 
 ```ruby
 class PictureFile < ActiveRecord::Base
-  attr_accessor :delete_file
+  after_commit :delete_picture_file_from_disk, :on => [:destroy]
 
-  after_destroy do |picture_file|
-    picture_file.delete_file = picture_file.filepath
-  end
-
-  after_commit do |picture_file|
-    if picture_file.delete_file && File.exist?(picture_file.delete_file)
-      File.delete(picture_file.delete_file)
-      picture_file.delete_file = nil
+  def delete_picture_file_from_disk
+    if File.exist?(filepath)
+      File.delete(filepath)
     end
   end
 end
 ```
+
+NOTE: опция `:on` определяет, когда будет запущен колбэк. Если не предоставить опцию `:on`, колбэк будет запущен для каждого действия.
 
 Колбэки `after_commit` и `after_rollback` гарантируют, что будут вызваны для всех созданных, обновленных или удаленных моделей внутри блока транзакции. Если какое-либо исключение вызовется в одном из этих колбэков, они будут проигнорированы, чтобы не препятствовать другим колбэкам. По сути, если код вашего колбэка может вызвать исключение, нужно для него вызвать rescue, и обработать его нужным образом в колбэке.

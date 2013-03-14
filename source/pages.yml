@@ -29,8 +29,8 @@ pages:
   - title:    Колбэки Active Record
     url:      active-record-callbacks
     file:     active_record_callbacks.md
-    revision: 5fb84c6828cea031d829969fed1fdf52d1e94ac4
-    date:     08/01/13
+    revision: 74bc0d0fd4161a80af4337797f0e65535114acab
+    date:     24/02/13
 
   - title:    Связи Active Record
     url:      active-record-associations
