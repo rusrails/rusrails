@@ -35,8 +35,8 @@ pages:
   - title:    Связи Active Record
     url:      active-record-associations
     file:     association_basics.md
-    revision: c5fb487965b9768da0e48a9348591422ec26f566
-    date:     13/12/12
+    revision: 2fb1cdd0a5cfdac73d8152fd33bc8c1821ea9717
+    date:     06/03/13
 
   - title:    Интерфейс запросов Active Record
     url:      active-record-query-interface
