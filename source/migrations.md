@@ -38,6 +38,8 @@ end
 
 В базах данных, поддерживающих транзакции с выражениями, изменяющими схему, миграции оборачиваются в транзакцию. Если база данных это не поддерживает, и миграция проваливается, части, которые прошли успешно, не будут откаченны назад. Вам нужно произвести откат вручную.
 
+NOTE: Некоторые запросы не могут быть запущены в транзакции. Если ваш адаптер поддерживает транзакции DDL, можно использовать `disable_ddl_transaction!` для их отключения для отдельной миграции.
+
 Если хотите миграцию для чего-то, что Active Record не знает, как обратить, вы можете использовать `reversible`:
 
 ```ruby
@@ -138,6 +140,25 @@ class AddDetailsToProducts < ActiveRecord::Migration
   def change
     add_column :products, :part_number, :string
     add_column :products, :price, :decimal
+  end
+end
+```
+
+Если имя миграции имеет форму "CreateXXX" и затем следует списко имен и типов столбцов, то будет сгенерирована миграция, создающая таблицу XXX с перечисленными столбцами. Например:
+
+```bash
+$ rails generate migration CreateProducts name:string part_number:string
+```
+
+создаст
+
+```ruby
+class CreateProducts < ActiveRecord::Migration
+  def change
+    create_table :products do |t|
+      t.string :name
+      t.string :part_number
+    end
   end
 end
 ```
@@ -286,6 +307,15 @@ create_join_table :products, :categories, column_options: {null: true}
 
 создаст `product_id` и `category_id` с опцией `:null` равной `true`.
 
+`create_join_table` также принимает блок, который можно использовать для добавления индексов (которые по умолчанию не создаются) или дополнительных столбцов:
+
+```ruby
+create_join_table :products, :categories do |t|
+  t.index :products
+  t.index :categories
+end
+```
+
 ### Изменение таблиц
 
 Близкий родственник `create_table` это `change_table`, используемый для изменения существующих таблиц. Он используется подобно `create_table`, но у объекта, передаваемого в блок, больше методов. Например
@@ -346,7 +376,7 @@ class ExampleMigration < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        #add a foreign key
+        # добавим внешний ключ
         execute <<-SQL
           ALTER TABLE products
             ADD CONSTRAINT fk_products_categories
@@ -791,7 +821,7 @@ Active Record и ссылочная целостность
 
 Валидации, такие как `validates :foreign_key, uniqueness: true`, это один из способов, которым ваши модели могут соблюдать ссылочную целостность. Опция `:dependent` в связях позволяет моделям автоматически уничтожать дочерние объекты при уничтожении родителя. Подобно всему, что работает на уровне приложения, это не может гарантировать ссылочной целостности, таким образом кто-то может добавить еще и внешние ключи как ограничители ссылочной целостности в базе данных.
 
-Хотя Active Record не предоставляет каких-либо инструментов для работы напрямую с этими функциями, можно использовать метод `execute` для запуска произвольного SQL. Можно использовать плагины, такие как [foreigner](https://github.com/matthuhiggins/foreigner), добавляющие поддержку внешних ключей в Active Record (включая поддержку выгрузки внешних ключей в `db/schema.rb`).
+Хотя Active Record не предоставляет каких-либо инструментов для работы напрямую с этими функциями, можно использовать метод `execute` для запуска произвольного SQL. Можно использовать гемы, такие как [foreigner](https://github.com/matthuhiggins/foreigner), добавляющие поддержку внешних ключей в Active Record (включая поддержку выгрузки внешних ключей в `db/schema.rb`).
 
 Миграции и сиды
 ---------------

@@ -17,8 +17,8 @@ pages:
   - title:    Миграции базы данных Rails
     url:      rails-database-migrations
     file:     migrations.md
-    revision: dfc930b2b165f3fc13e0f931e152802ddf3c7c46
-    date:     01/01/13
+    revision: b337390889cb4a9f80ed08daf072a043f0e7ddf3
+    date:     01/03/13
 
   - title:    Валидации Active Record
     url:      active-record-validations
