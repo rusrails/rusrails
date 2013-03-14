@@ -23,8 +23,8 @@ pages:
   - title:    Валидации Active Record
     url:      active-record-validations
     file:     active_record_validations.md
-    revision: 5fb84c6828cea031d829969fed1fdf52d1e94ac4
-    date:     08/01/13
+    revision: 74c3b7f6f61c1115b7409cb8ce9d6832ef9caa75
+    date:     13/03/13
 
   - title:    Колбэки Active Record
     url:      active-record-callbacks

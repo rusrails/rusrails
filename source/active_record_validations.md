@@ -393,6 +393,39 @@ end
 
 По умолчанию сообщение об ошибке _"can't be empty"_.
 
+### `absence`
+
+Этот хелпер проверяет, что указанные атрибуты отсутствуют. Он использует метод `present?` для проверки, что значение является либо nil, либо пустой строкой (то есть либо нулевой длины, либо состоящей из пробелов).
+
+```ruby
+class Person < ActiveRecord::Base
+  validates :name, :login, :email, absence: true
+end
+```
+
+Если хотите убедиться, что отсутствует связь, неободимо проверить, что отсутствует сам связанный объект, а не внешний ключ, используемый для связи.
+
+```ruby
+class LineItem < ActiveRecord::Base
+  belongs_to :order
+  validates :order, absence: true
+end
+```
+
+Чтобы проверять связанные объекты, отсутствие которых требуется, для связи необходимо указать опцию `:inverse_of`:
+
+```ruby
+class Order < ActiveRecord::Base
+  has_many :line_items, inverse_of: :order
+end
+```
+
+Если проверяете отсутствие объекта, связанного отношением `has_one` или `has_many`, он проверит, что объект и не `present?`, и не `marked_for_destruction?`.
+
+Поскольку `false.present?` является false, если хотите проверить отсутствие булева поля, следует использовать `validates :field_name, exclusion: { in: [true, false] }`.
+
+По умолчанию сообщение об ошибке _"must be blank"_.
+
 ### `uniqueness`
 
 Этот хелпер проводит валидацию того, что значение атрибута уникально, перед тем, как объект будет сохранен. Он не создает условие уникальности в базе данных, следовательно, может произойти так, что два разных подключения к базе данных создадут две записи с одинаковым значением для столбца, который вы подразумеваете уникальным. Чтобы этого избежать, нужно создать индекс unique в вашей базе данных.
@@ -463,6 +496,32 @@ class GoodnessValidator < ActiveModel::Validator
       record.errors[:base] << "This person is evil"
     end
   end
+end
+```
+
+Отметьте, что валидатор будет инициализирован **только один раз** на протяжении всего жизненного цикла приложения, а не при каждом запуске валидации, поэтому будьте аккуратнее с использованием переменных экземпляра в нем.
+
+Если ваш валидатор настолько сложный, что вы хотите использовать переменные экземпляра, вместо него проще использовать обычные объекты Ruby:
+
+```ruby
+class Person < ActiveRecord::Base
+  validate do |person|
+    GoodnessValidator.new(person).validate
+  end
+end
+
+class GoodnessValidator
+  def initialize(person)
+    @person = person
+  end
+
+  def validate
+    if some_complex_condition_involving_ivars_and_private_methods?
+      @person.errors[:base] << "This person is evil"
+    end
+  end
+
+  # …
 end
 ```
 
