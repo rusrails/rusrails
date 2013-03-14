@@ -297,7 +297,7 @@ Client.first(2)
 Эквивалент SQL этого следующий:
 
 ```sql
-SELECT * FROM clients LIMIT 2
+SELECT * FROM clients ORDER BY id ASC LIMIT 2
 ```
 
 #### last
@@ -313,7 +313,7 @@ Client.last(2)
 Эквивалент SQL этого следующий:
 
 ```sql
-SELECT * FROM clients ORDER By id DESC LIMIT 2
+SELECT * FROM clients ORDER BY id DESC LIMIT 2
 ```
 
 ### Получение нескольких объектов пакетами
@@ -689,9 +689,30 @@ SQL, который будет выполнен:
 SELECT * FROM posts WHERE id > 10 LIMIT 20
 ```
 
+### `unscope`
+
+Метод `except` не работает, когда сливаются несколько relation. Например:
+
+```ruby
+Post.comments.except(:order)
+```
+
+все еще будет иметь упорядочивание, если оно задано скоупом по умолчанию в Comment. Чтобы убрать все упорядочивание, даже из слитых relation, используйте unscope следующим образом:
+
+```ruby
+Post.order('id DESC').limit(20).unscope(:order) = Post.limit(20)
+Post.order('id DESC').limit(20).unscope(:order, :limit) = Post.all
+```
+
+Дополнительно можно убрать определенные условия из where. Например:
+
+```ruby
+Post.where(:id => 10).limit(1).unscope(:where => :id, :limit).order('id DESC') = Post.order('id DESC')
+```
+
 ### `only`
 
-Также можете переопределить условия, используя метод `only`. Например:
+Также можно переопределить условия, используя метод `only`. Например:
 
 ```ruby
 Post.where('id > 10').limit(20).order('id desc').only(:order, :where)
@@ -902,7 +923,7 @@ SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id =
 
 WARNING: Этот метод работает только с `INNER JOIN`.
 
-Active Record позволяет использовать имена "связей":/active-record-associations, определенных в модели, как ярлыки для определения условия `JOIN` этих связей при использовании метода `joins`.
+Active Record позволяет использовать имена [связей](/active-record-associations), определенных в модели, как ярлыки для определения условия `JOIN` этих связей при использовании метода `joins`.
 
 Например, рассмотрим следующие модели `Category`, `Post`, `Comments` и `Guest`:
 
@@ -946,7 +967,7 @@ SELECT categories.* FROM categories
   INNER JOIN posts ON posts.category_id = categories.id
 ```
 
-Или, по-русски, "возвратить объект Category для всех категорий с публикациями". Отметьте, что будут дублирующиеся категории, если имеется более одной публикации в одной категории. Если нужны уникальные категории, можно использовать `Category.joins(:posts).select("distinct(categories.id)")`.
+Или, по-русски, "возвратить объект Category для всех категорий с публикациями". Отметьте, что будут дублирующиеся категории, если имеется более одной публикации в одной категории. Если нужны уникальные категории, можно использовать `Category.joins(:posts).uniq`.
 
 #### Соединение нескольких связей
 
@@ -1173,6 +1194,56 @@ end
 category.posts.created_before(time)
 ```
 
+### Слияние скоупов
+
+Подобно условиям `where`, скоупы сливаются с использованием `AND`.
+
+```ruby
+class User < ActiveRecord::Base
+  scope :active, -> { where state: 'active' }
+  scope :inactive, -> { where state: 'inactive' }
+end
+
+```ruby
+User.active.inactive
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'inactive'
+```
+
+Можно комбинировать условия `scope` и `where`, и результирующий sql будет содержать все условия, соединенные с помощью `AND` .
+
+```ruby
+User.active.where(state: 'finished')
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'finished'
+```
+
+Если необходимо, чтобы сработало только последнее условие `where`, тогда можно использовать `Relation#merge`.
+
+```ruby
+User.active.merge(User.inactive)
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
+```
+
+Важным отличием является то, что `default_scope` будет переопределен условиями `scope` и `where`.
+
+```ruby
+class User < ActiveRecord::Base
+  default_scope  { where state: 'pending' }
+  scope :active, -> { where state: 'active' }
+  scope :inactive, -> { where state: 'inactive' }
+end
+
+User.all
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'pending'
+
+User.active
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active'
+
+User.where(state: 'inactive')
+# => SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
+```
+
+Как видите, `default_scope` был переопределен как условием `scope`, так и `where`.
+
 ### Применение скоупа по умолчанию
 
 Если хотите, чтобы скоуп был применен ко всем запросам к модели, можно использовать метод `default_scope` в самой модели.
@@ -1213,7 +1284,7 @@ Client.unscoped.all
 
 ```ruby
 Client.unscoped {
-  Client.created_before(Time.zome.now)
+  Client.created_before(Time.zone.now)
 }
 ```
 
@@ -1364,7 +1435,7 @@ Client.select(:id).map { |c| c.id }
 # или
 Client.select(:id).map(&:id)
 # или
-Client.select(:id).map { |c| [c.id, c.name] }
+Client.select(:id, :name).map { |c| [c.id, c.name] }
 ```
 
 на
@@ -1587,36 +1658,6 @@ EXPLAIN for: SELECT `posts`.* FROM `posts`  WHERE `posts`.`user_id` IN (1)
 +----+-------------+-------+------+---------------+------+---------+------+------+-------------+
 1 row in set (0.00 sec)
 ```
-
-### Автоматический EXPLAIN
-
-Active Record способен запускать EXPLAIN автоматически для медленных запросов и логировать его результат. Эта возможность управляется конфигурационным параметром
-
-```ruby
-config.active_record.auto_explain_threshold_in_seconds
-```
-
-Если установить число, то у любого запроса, превышающего заданное количество секунд, будет автоматически включен и залогирован EXPLAIN. В случае с relations, порог сравнивается с общим временем, необходимым для извлечения записей. Таким образом, relation рассматривается как рабочая единица, вне зависимости от того, что применение нетерпеливой загрузки может вызвать несколько запросов за раз.
-
-Порог `nil` отключает автоматические EXPLAIN-ы.
-
-Порог по умолчанию в режиме development 0.5 секунды, и `nil` в режимах test и production.
-
-INFO. Автоматический EXPLAIN становится отключенным, если у Active Record нет логгера, независимо от значения порога.
-
-#### Отключение автоматического EXPLAIN
-
-Автоматический EXPLAIN может быть выборочно приглушен с помощью `ActiveRecord::Base.silence_auto_explain`:
-
-```ruby
-ActiveRecord::Base.silence_auto_explain do
-  # здесь не будет включаться автоматический EXPLAIN
-end
-```
-
-Это полезно для запросов, о которых вы знаете, что они медленные, но правильные, наподобие тяжеловесных отчетов в административном интерфейсе.
-
-Как следует из имени, `silence_auto_explain` only приглушает только автоматические EXPLAIN-ы. Явный вызов `ActiveRecord::Relation#explain` запустится.
 
 ### Интерпретация EXPLAIN
 
