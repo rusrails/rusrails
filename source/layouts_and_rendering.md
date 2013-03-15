@@ -361,7 +361,7 @@ end
 
 ```ruby
 class ProductsController < ApplicationController
-  layout "products_layout"
+  layout :products_layout
 
   def show
     @product = Product.find(params[:id])
@@ -566,7 +566,8 @@ def show
   @book = Book.find_by_id(params[:id])
   if @book.nil?
     @books = Book.all
-    render "index", alert: "Your book was not found!"
+    flash[:alert] = "Your book was not found"
+    render "index"
   end
 end
 ```
@@ -693,72 +694,6 @@ Rails тогда выдаст такой тег `script`:
 <%= javascript_include_tag "http://example.com/main.js" %>
 ```
 
-Если приложение не использует файлопровод (asset pipeline), опция `:defaults` загрузит загружает библиотеки jQuery по умолчанию:
-
-```erb
-<%= javascript_include_tag :defaults %>
-```
-
-Выдаст такие теги `script`:
-
-```html
-<script src="/javascripts/jquery.js"></script>
-<script src="/javascripts/jquery_ujs.js"></script>
-```
-
-Эти два файла для jQuery, `jquery.js` и `jquery_ujs.js`, должны быть помещены в `public/javascripts`, если приложение не использует файлопровод. Эти файлы могут быть скачаны из [репозитория jquery-rails на GitHub](https://github.com/indirect/jquery-rails/tree/master/vendor/assets/javascripts).
-
-WARNING: При использовании файлопровода этот тег отрендерит тег `script` для ресурса по имени `defaults.js`, не существующего в вашем приложении, если вы явно не создали его.
-
-Разумеется, можно переопределить список `:defaults` в `config/application.rb`:
-
-```ruby
-config.action_view.javascript_expansions[:defaults] = %w(foo.js bar.js)
-```
-
-Также можно определить новые значения по умолчанию.
-
-```ruby
-config.action_view.javascript_expansions[:projects] = %w(projects.js tickets.js)
-```
-
-А затем использовать их, ссылаясь так же, как на `:defaults`:
-
-```erb
-<%= javascript_include_tag :projects %>
-```
-
-При использовании `:defaults`, если файл `application.js` существует в `public/javascripts`, он также будет включен в конец.
-
-Также, если отключен файлопровод, опция `all` загружает каждый файл javascript из каталога `public/javascripts`:
-
-```erb
-<%= javascript_include_tag :all %>
-```
-
-Отметьте, что сначала будут включены выбранные по умолчанию скрипты, поскольку они могут требоваться во всех последующих файлах.
-
-Также можете применить опцию `:recursive` для загрузки файлов в подпапках `public/javascripts`:
-
-```erb
-<%= javascript_include_tag :all, recursive: true %>
-```
-
-Если вы загружаете несколько файлов javascript, то можете объединить несколько файлов в единую загрузку. Чтобы сделать это, определите `cache: true` в вашем `javascript_include_tag`:
-
-```erb
-<%= javascript_include_tag "main", "columns", cache: true %>
-```
-
-По умолчанию, объединенный файл будет доставлен как `javascripts/all.js`. Вместо этого вы можете определить собственное расположение для кэшированного ресурсного файла:
-
-```erb
-<%= javascript_include_tag "main", "columns",
-  cache: "cache/main/display" %>
-```
-
-Можно даже использовать динамические пути, такие как `cache/#{current_site}/main/display`.
-
 #### Присоединение файлов CSS с помощью `stylesheet_link_tag`
 
 Хелпер `stylesheet_link_tag` возвращает HTML тег `<link>` для каждого предоставленного источника.
@@ -794,33 +729,6 @@ config.action_view.javascript_expansions[:projects] = %w(projects.js tickets.js)
 ```erb
 <%= stylesheet_link_tag "main_print", media: "print" %>
 ```
-
-Если файлопровод отключен, опция `all` создает ссылки на каждый файл CSS в `public/stylesheets`:
-
-```erb
-<%= stylesheet_link_tag :all %>
-```
-
-Также можете применить опцию `:recursive` для загрузки файлов в подпапках каталога `public/stylesheets`:
-
-```erb
-<%= stylesheet_link_tag :all, recursive: true %>
-```
-
-Если вы загружаете несколько файлов CSS, то можете объединить несколько файлов в единую загрузку. Чтобы сделать это, определите `cache: true` в вашем `stylesheet_link_tag`:
-
-```erb
-<%= stylesheet_link_tag "main", "columns", cache: true %>
-```
-
-По умолчанию, объединенный файл будет доставлен как `stylesheets/all.css`. Вместо этого вы можете определить собственное расположение для кэшированного ресурсного файла:
-
-```erb
-<%= stylesheet_link_tag "main", "columns",
-  cache: "cache/main/display" %>
-```
-
-Можно даже использовать динамические пути, такие как `cache/#{current_site}/main/display`.
 
 #### Присоединение изображений с помощью `image_tag`
 
