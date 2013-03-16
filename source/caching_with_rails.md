@@ -10,8 +10,6 @@
 * Об альтернативных хранилищах кэша.
 * Об условной поддержке GET.
 
-После прочтения руководства рекомендуется посмотреть [скринкасты по масштабированию Rails](http://railslab.newrelic.com/scaling-rails) (на английском)
-
 Основы кэширования
 ------------------
 
@@ -103,9 +101,9 @@ end
 <% end %>
 ```
 
-В качестве ключа кэша можно использовать модель `ActiveRecord`:
+В качестве ключа кэша можно использовать модель Active Record:
 
-```ruby
+```erb
 <% Product.all.each do |p| %>
   <% cache(p) do %>
     <%= link_to p.name, product_url(p) %>
@@ -117,7 +115,7 @@ end
 
 Можно также объединить две схемы, что называется "Russian Doll Caching":
 
-```ruby
+```erb
 <% cache(cache_key_for_products) do %>
   All available products:
   <% Product.all.each do |p| %>
