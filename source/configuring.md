@@ -183,8 +183,6 @@ end
 
 * `orm` определяет используемую orm. По умолчанию `false` и используется Active Record.
 
-* `performance_tool` определяет используемый инструмент оценки производительности. По умолчанию `nil`.
-
 * `resource_controller` определяет используемый генератор для создания контроллера при использовании `rails generate resource`. По умолчанию `:controller`.
 
 * `scaffold_controller`, отличающийся от `resource_controller`, определяет используемый генератор для создания _скаффолдингового_ контроллера при использовании `rails generate scaffold`. По умолчанию `:scaffold_controller`.
@@ -239,8 +237,6 @@ end
 
 * `ActionDispatch::Head` преобразует запросы HEAD в запросы GET и обслуживает их соответствующим образом.
 
-* `ActionDispatch::BestStandardsSupport` включает "best standards support", таким образом IE8 корректно рендерит некоторые элементы.
-
 Кроме этих полезных промежуточных программ можно добавить свои, используя метод `config.middleware.use`:
 
 ```ruby
@@ -262,13 +258,13 @@ config.middleware.insert_after ActionDispatch::Head, Magical::Unicorns
 Промежуточные программы также могут быть полностью переставлены и заменены другими:
 
 ```ruby
-config.middleware.swap ActionDispatch::BestStandardsSupport, Magical::Unicorns
+config.middleware.swap ActionController::Failsafe, Lifo::Failsafe
 ```
 
 Они также могут быть убраны из стека полностью:
 
 ```ruby
-config.middleware.delete ActionDispatch::BestStandardsSupport
+config.middleware.delete "Rack::MethodOverride"
 ```
 
 ### Конфигурирование i18n
@@ -300,8 +296,6 @@ config.middleware.delete ActionDispatch::BestStandardsSupport
 * `config.active_record.timestamped_migrations` регулирует, должны ли миграции нумероваться серийными номерами или временными метками. По умолчанию `true` для использования временных меток, которые более предпочтительны если над одним проектом работают несколько разработчиков.
 
 * `config.active_record.lock_optimistically` регулирует, должен ли ActiveRecord использовать оптимистичную блокировку. По умолчанию `true`.
-
-* `config.active_record.auto_explain_threshold_in_seconds` настраивает порог для автоматических EXPLAIN (`nil` отключает эту возможность). Запросы, превышающие порог, получат залогированным из план запроса. По умолчанию 0.5 в режиме development.
 
 * +config.active_record.cache_timestamp_format+ управляет форматом значения временной метки в ключе кэширования. По умолчанию +:number+.
 
@@ -335,7 +329,7 @@ config.middleware.delete ActionDispatch::BestStandardsSupport
 
 * `config.action_controller.permit_all_parameters` устанавливает все параметры для массового назначения как разрешенные по умолчанию. Значение по умолчанию `false`.
 
-* `config.action_controller.raise_on_unpermitted_parameters` включает вызов исключения, если обнаружены параметры, которые не разрешены явно. Значение по умолчанию `true` в средах development и test, в противном случае `false`.
+* `config.action_controller.action_on_unpermitted_params` включает логирование или вызов исключения, если обнаружены параметры, которые не разрешены явно. Чтобы включить, установите `:log` или `:raise`. По умолчанию `:log` в средах development и test, и `false` во всех остальных средах.
 
 ### Конфигурирование Action Dispatch
 
@@ -374,32 +368,6 @@ config.middleware.delete ActionDispatch::BestStandardsSupport
 * `config.action_view.logger` принимает логгер, соответствующий интерфейсу Log4r или классу Ruby по умолчанию Logger, который затем используется для логирования информации от Action Mailer. Установите `nil` для отключения логирования.
 
 * `config.action_view.erb_trim_mode` задает режим обрезки, который будет использоваться ERB. По умолчанию `'-'`. Подробнее смотрите в [документации по ERB](http://www.ruby-doc.org/stdlib/libdoc/erb/rdoc/).
-
-* `config.action_view.javascript_expansions` это хэш, содержащий расширения, используемые для тега включения JavaScript. По умолчанию это определено так:
-
-    ```ruby
-    config.action_view.javascript_expansions = { :defaults => %w(jquery jquery_ujs) }
-    ```
-
-    Однако, можно добавить к нему, чтобы определить что-то другое:
-
-    ```ruby
-    config.action_view.javascript_expansions[:prototype] = ['prototype', 'effects', 'dragdrop', 'controls']
-    ```
-
-    И обратиться во вьюхе с помощью следующего кода:
-
-    ```ruby
-    <%= javascript_include_tag :prototype %>
-    ```
-
-* `config.action_view.stylesheet_expansions` работает так же, как и `javascript_expansions`, но у него нет ключа default По ключам, определенным для этого хэша, можно обращаться во вьюхах так:
-
-    ```ruby
-    <%= stylesheet_link_tag :special %>
-    ```
-
-* `config.action_view.cache_asset_ids` Со включенным кэшем хелпер тегов ресурсов будет меньше нагружать файловую систему (реализация по умолчанию проверяет временную метку файловой системы). Однако, это препятствует модификации любого файла ресурса, пока сервер запущен.
 
 * `config.action_view.embed_authenticity_token_in_remote_forms` позволяет установить поведение по умолчанию для `authenticity_token` в формах с `:remote => true`. По умолчанию установлен false, что означает, что remote формы не включают `authenticity_token`, что полезно при фрагментарном кэшировании формы. Remote формы получают аутентификацию из тега `meta`, поэтому встраивание бесполезно, если, конечно, вы не поддерживаете браузеры без JavaScript. В противном случае можно либо передать `:authenticity_token => true` как опцию для формы, либо установить эту настройку в `true`
 
@@ -582,7 +550,11 @@ development:
 
 ### (creating-rails-environments) Создание сред Rails
 
-NOTE: Раздел скоро будет опубликован
+По умолчанию Rails поставляется с тремы средами: "development", "test" и "production". Хотя в большинстве случаев их достаточно, бывают условия, когда нужно больше сред.
+
+Представим, что у вас есть сервер, отражающий среду production, но используемый только для тестирования. Такой сервер обычно называется "staging server". Для определения среды с именем "staging" для этого сервера, просто создайте файл с именем `config/environments/staging.rb`. В качестве исходного содержимого используйте любой файл, существующий в `config/environments`, а затем сделайте в нем необходимые изменения.
+
+Эта среда ничем не отличается от одной из стандартных, сервер запускается с помощью `rails server -e staging`, консоль с помощью `rails console staging`, работает `Rails.env.staging?`, и т.д.
 
 Настройка среды Rails
 ---------------------
@@ -702,10 +674,6 @@ WARNING: Можно помещать свои инициализаторы до 
 * `active_support.initialize_beginning_of_week` Устанавливает начало недели по умолчанию для приложения, основываясь на настройке `config.beginning_of_week`, которая по умолчанию `:monday`.
 
 * `action_dispatch.configure` Конфигурирует `ActionDispatch::Http::URL.tld_length` быть равным значению `config.action_dispatch.tld_length`.
-
-* `action_view.cache_asset_ids` Устанавливает `ActionView::Helpers::AssetTagHelper::AssetPaths.cache_asset_ids` `false` при загрузке Active Support, но только, если `config.cache_classes` тоже `false`.
-
-* `action_view.javascript_expansions` Регистрирует расширения, установленные `config.action_view.javascript_expansions` и `config.action_view.stylesheet_expansions`, чтобы они распознавались Action View, и, следовательно, могли быть использованы во вьюхах.
 
 * `action_view.set_configs` Устанавливает, чтобы Action View использовал настройки в `config.action_view`, посылая имена методов через `send` как сеттер в `ActionView::Base` и передавая в него значения.
 
