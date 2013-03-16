@@ -77,8 +77,8 @@ pages:
   - title:    API интернационализации Rails (I18n)
     url:      rails-internationalization-i18n-api
     file:     i18n.md
-    revision: 0acf92184dab8d97db7d447bea8e3c6097b33722
-    date:     07/01/13
+    revision: 2bca2f6418a7167a813e63c3efc6334815f49c80
+    date:     22/01/13
 
   - title:    Основы Action Mailer
     url:      action-mailer-basics
