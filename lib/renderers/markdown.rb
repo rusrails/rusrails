@@ -31,7 +31,7 @@ HTML
     def header(text, header_level)
       # Always increase the heading level by, so we can use h1, h2 heading in the document
       header_level += 1
-      text.gsub!(/\A\s*\((.+)\)/, '')
+      text.gsub!(/\A\s*\(([^\)]+)\)/, '')
       hid = sanitizer.sanitize($1 || text).parameterize
 
       if header_level > 2
