@@ -131,8 +131,8 @@ pages:
   - title:    Engine для начинающих
     url:      engines
     file:     engines.md
-    revision: 97b249112d2a66ac19828e0c3875681d4d60c08f
-    date:     24/01/13
+    revision: 9e23399c3004afc6110c93d3df89c5209d39b20f
+    date:     11/02/13
 
   - title:    Rails on Rack
     url:      rails-on-rack
