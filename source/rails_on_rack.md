@@ -135,7 +135,6 @@ use ActionDispatch::ParamsParser
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
-use ActionDispatch::BestStandardsSupport
 run MyApp::Application.routes
 ```
 
@@ -213,7 +212,6 @@ config.middleware.delete "ActionDispatch::Flash"
 
 ```ruby
 # config/application.rb
-config.middleware.delete "ActionDispatch::BestStandardsSupport"
 config.middleware.delete "Rack::MethodOverride"
 ```
 
@@ -304,10 +302,6 @@ config.middleware.delete "Rack::MethodOverride"
  **`Rack::ETag`**
 
 * Добавляет заголовок ETag во все строковые header on all String bodies. ETags are used to validate cache.
-
- **`ActionDispatch::BestStandardsSupport`**
-
-* Включает "best standards support", таким образом IE8 корректно рендерит некоторые элементы.
 
 TIP: Можете использовать любые из этих промежуточных программ в своем стеке Rack.
 
