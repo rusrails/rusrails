@@ -167,8 +167,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.0
     url:      4_0_release_notes
     file:     4_0_release_notes.md
-    revision: 550299a6712cf5731f007176cb9f2135f813e9e7
-    date:     25/01/13
+    revision: 9b27e13c05a1896bfe0fbd65c496de33251cad35
+    date:     07/03/13
 
 plan:
   - file:     action_view_overview.md

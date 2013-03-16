@@ -3,7 +3,7 @@
 
 Ключевые новинки в Rails 4.0:
 
-* Только Ruby 1.9.3
+* Ruby 2.0 предпочтителен; 1.9.3+ требуется
 * Строгие параметры (Strong Parameters)
 * Турболинки (Turbolinks)
 * Кэширование "матрешкой" (Russian Doll Caching)
@@ -66,6 +66,7 @@ TODO. Give a list and then talk about each of them briefly. We can point to rele
 * Кэширование экшна ([Github](https://github.com/rails/actionpack-action_caching), [Pull Request](https://github.com/rails/rails/pull/7833))
 * Кэширование страницы ([Github](https://github.com/rails/actionpack-page_caching), [Pull Request](https://github.com/rails/rails/pull/7833))
 * Sprockets ([Github](https://github.com/rails/sprockets-rails))
+* Тесты производительности ([Github](https://github.com/rails/rails-perftest), [Pull Request](https://github.com/rails/rails/pull/8876))
 
 Документация
 ------------
@@ -84,7 +85,7 @@ Railties
 
 *   Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие рейк-таски. ([Pull Request](https://github.com/rails/rails/pull/7878))
 
-*   Исполняемые файлы приложения теперь находятся в директории `bin/`. Запустите `rake update:bin` чтобы получить `bin/bundle`, `bin/rails` и `bin/rake`.
+*   Исполняемые файлы приложения теперь находятся в директории `bin/`. Запустите `rake rails:update:bin` чтобы получить `bin/bundle`, `bin/rails` и `bin/rake`.
 
 *   Тредобезопасность включена по умолчанию
 
@@ -176,12 +177,6 @@ Active Record
       Если миграция откатывается, данная миграция / блок выполняется обычно.
       Смотрите [Руководство по миграциям](/rails-database-migrations#writing-a-migration)
 
-*   Добавлены некоторые столбцы метаданных в таблицу `schema_migrations`.
-
-    * `migrated_at`
-    * `fingerprint` - хэш md5 миграции.
-    * `name` - имя файла минус версия и расширение.
-
 *   Добавлена поддержка массивов PostgreSQL. Для создания столбца array может быть использован любой тип данных, с полной поддержкой миграций и выгрузкой схемы.
 
 *   Добавлен `Relation#load` для явной загрузки записи и возврата `self`.
@@ -197,6 +192,8 @@ Active Record
 *   Соединения `mysql` и `mysql2` будут по умолчанию устанавливать `SQL_MODE=STRICT_ALL_TABLES`, чтобы избежать тихих потерь данных. Это может быть отключено, определив `strict: false` в `database.yml`.
 
 *   Убрана IdentityMap.
+
+*   Убран автоматический запуск запросов EXPLAIN. Опция `active_record.auto_explain_threshold_in_seconds` больше не используется и должна быть убрана.
 
 *   Добавлены `ActiveRecord::NullRelation` и `ActiveRecord::Relation#none`, реализующие паттерн нулевого объекта для класса Relation.
 
