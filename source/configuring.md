@@ -580,6 +580,10 @@ development:
 
 Измените username и password в секции `development` на правильные.
 
+### (creating-rails-environments) Создание сред Rails
+
+NOTE: Раздел скоро будет опубликован
+
 Настройка среды Rails
 ---------------------
 

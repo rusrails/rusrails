@@ -83,8 +83,8 @@ pages:
   - title:    Основы Action Mailer
     url:      action-mailer-basics
     file:     action_mailer_basics.md
-    revision: 009873aec89a4b843b41accf616b42b7a9917ba8
-    date:     06/01/13
+    revision: be3e402c79d5c1eac4729e2982d05161c1a9b6a2
+    date:     10/03/13
 
   - title:    Руководство по тестированию приложений на Rails
     url:      a-guide-to-testing-rails-applications

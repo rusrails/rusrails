@@ -113,7 +113,7 @@ Thanks for joining and have a great day!
 Во первых, необходимо создать простой скаффолд `User`:
 
 ```bash
-$ rails generate scaffold user name:string email:string login:string
+$ rails generate scaffold user name email login
 $ rake db:migrate
 ```
 
@@ -400,11 +400,23 @@ end
 
 ```ruby
 class UserMailer < ActionMailer::Base
-  def welcome_email(user,company)
+  def welcome_email(user, company)
     @user = user
     @url  = user_url(@user)
     delivery_options = { user_name: company.smtp_user, password: company.smtp_password, address: company.smtp_host }
     mail(to: user.email, subject: "Please see the Terms and Conditions attached", delivery_method_options: delivery_options)
+  end
+end
+```
+
+### Рассыла писем без рендеринга шаблона
+
+Бывают ситуации, когда вы хотите пропустить шаг рендеринга шаблона и и предоставить тело письма, как строку. Это достигается с использованием опции `:body`. В таком случае не забудьте добавить опцию `:content_type`. Иначе Rails использует по умолчанию `text/plain`.
+
+```ruby
+class UserMailer < ActionMailer::Base
+  def welcome_email(user, email_body)
+    mail(to: user.email, body: email_body, content_type: "text/html", subject: "Already rendered!")
   end
 end
 ```
@@ -504,7 +516,6 @@ Action Mailer теперь всего лишь наследуется от Abstr
 
 | Конфигурация            | Описание |
 | ----------------------- | -------- |
-| `template_root`         | Определяет основу, от которой будут делаться ссылки на шаблоны.|
 | `logger`                | logger исользуется для создания информации на ходу, если возможно. Можно установить как `nil` для отсутствия логирования. Совместим как с `Logger` в Ruby, так и с логером `Log4r`.|
 | `smtp_settings`         | Позволяет подробную настройку для метода доставки `:smtp`:<ul><li>`:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение "localhost".</li><li>`:port`  - В случае, если ваш почтовый сервер не работает с 25 портом, можете изменить его.</li><li>`:domain` - Если необходимо определить домен HELO, это можно сделать здесь.</li><li>`:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.</li><li>`:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. </li><li>`:authentication` - Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов `:plain`, `:login`, `:cram_md5`.</li><li>`:enable_starttls_auto` - Установите его в `false` если есть проблема с сертификатом сервера, которую вы не можете решить.</li></ul>|
 | `sendmail_settings`     | Позволяет переопределить опции для метода доставки `:sendmail`.<ul><li>`:location` - Расположение исполняемого sendmail. По умолчанию `/usr/sbin/sendmail`.</li><li>`:arguments` - Аргументы командной строки. По умолчанию `-i -t`.</li></ul>|
@@ -572,3 +583,26 @@ end
 ```
 
 В тесте мы посылаем email и храним возвращенный объект в переменной `email`. Затем мы убеждаемся, что он был послан (первый assert), затем, во второй группе операторов контроля, мы убеждаемся, что email действительно содержит то, что мы ожидаем.
+
++NOTE: Массив `ActionMailer::Base.deliveries` автоматически сбрасывается только в тестах `ActionMailer::TestCase`. Если хотите очистку вне тестов Action Mailer, можно сбрасывать его вручную с помощью: `ActionMailer::Base.deliveries.clear`
+
+Перехват писем
+--------------
+
+Бывают ситуации, когда необходимо отредактировать письмо до его отправки. К счастью, Action Mailer предоставляет хуки для перехвата каждого письма. Можно зарегистрировать перехватчик для внесения изменений в сообщения писем перед тем, как они будут переданы агентам доставки.
+
+```ruby
+class SandboxEmailInterceptor
+  def self.delivering_email(message)
+    message.to = ['sandbox@example.com']
+  end
+end
+```
+
+Чтобы перехватчик начал работать, его необходимо зарегистрировать с помощью фреймворка Action Mailer. Это можно сделать в файле инициализатора `config/initializers/sandbox_email_interceptor.rb`
+
+```ruby
+ActionMailer::Base.register_interceptor(SandboxEmailInterceptor) if Rails.env.staging?
+```
+
+NOTE: Вышеприведенный пример использует пользовательское окружение по имени "staging" для сервера, похожего на production, но для целей тестирования. Подробнее о пользовательских окружениях в Rails можно прочитать в [Создание сред Rails](/configuring-rails-applications#creating-rails-environments).
