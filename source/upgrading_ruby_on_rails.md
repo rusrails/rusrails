@@ -16,11 +16,11 @@
 
 В основном Rails использует последние выпущенные версии Ruby:
 
-* Rails 3 и выше требует Ruby 1.8.7 или выше. Поддержка всех прежних версий Ruby была официально прекращена, и следует обновиться как можно быстрее
-* Rails 3.2.x был последней веткой с поддержкой Ruby 1.8.7.
-* Rails 4 будет поддерживать только Ruby 1.9.3.
+* Rails 3 и выше требует Ruby 1.8.7 или выше. Поддержка всех прежних версий Ruby была официально прекращена. Следует обновиться как можно быстрее.
+* Rails 3.2.x это последняя ветка с поддержкой Ruby 1.8.7.
+* Rails 4 предпочитает Ruby 2.0 и требует Ruby 1.9.3 или новее.
 
-TIP: В Ruby 1.8.7 p248 и p249 имеются ошибки маршализации, ломающие Rails. Хотя в Ruby Enterprise Edition это было исправлено, начиная с релиза 1.8.7-2010.02. В ветке 1.9, Ruby 1.9.1 не пригоден к использованию, поскольку он иногда вылетает, поэтому, если хотите использовать 1.9.x перепрыгивайте на 1.9.2 или 1.9.3 для гладкой работы.
+TIP: В Ruby 1.8.7 p248 и p249 имеются ошибки маршализации, ломающие Rails. Хотя в Ruby Enterprise Edition это было исправлено, начиная с релиза 1.8.7-2010.02. В ветке 1.9, Ruby 1.9.1 не пригоден к использованию, поскольку он иногда вылетает, поэтому, если хотите использовать 1.9.x перепрыгивайте сразу на 1.9.3 для гладкой работы.
 
 (upgrading-from-rails-3-2-to-rails-4-0) Обновление с Rails 3.2 на Rails 4.0
 -------------------------------------
@@ -43,7 +43,26 @@ Rails 4.0 больше не поддерживает загрузку плаги
 
 * Rails 4.0 изменил то, как складывается упорядочивание в `ActiveRecord::Relation`. В прежних версиях Rails, новый порядок применялся после предыдуще определенного. Но теперь это не так. Обратитесь к [Руководству по интерфейсу запросов Active Record](/active-record-query-interface#ordering) за дальнейшей информацией.
 
-* Rails 4.0 изменил `serialized_attributes` и `attr_readonly` быть только методами класса. Теперь не следует использовать методы экземпляра, они устарели. Их следует изменить, т.е. `self.serialized_attributes` на `self.class.serialized_attributes`.
+* Rails 4.0 изменил `serialized_attributes` и `attr_readonly` быть только методами класса. Не следует использовать методы экземпляра, так как они устарели. Следует заменить их на методы класса, т.е. `self.serialized_attributes` на `self.class.serialized_attributes`.
+
+* Rails 4.0 убрал особенность `attr_accessible` и `attr_protected` в пользу. Для более гладкого процесса обновления можно использовать [гем Protected Attributes](https://github.com/rails/protected_attributes).
+
+* Rails 4.0 требует, чтобы скоупы использовали вызываемый объект, такой как Proc или lambda:
+
+```ruby
+  scope :active, where(active: true)
+
+  # becomes
+  scope :active, -> { where active: true }
+```
+
+* В Rails 4.0 устарели `ActiveRecord::Fixtures` в пользу `ActiveRecord::FixtureSet`.
+
+* В Rails 4.0 устарел `ActiveRecord::TestCase` в пользу `ActiveSupport::TestCase`.
+
+### Active Resource
+
+Rails 4.0 извлек Active Resource в отдельный гем. Если вам все еще нужна эта особенность, можете добавить [гем Active Resource](https://github.com/rails/activeresource) в своем Gemfile.
 
 ### Active Model
 
@@ -60,13 +79,28 @@ Rails 4.0 больше не поддерживает загрузку плаги
 
 ### Action Pack
 
-* Имеется хранилище куки для обновления `UpgradeSignatureToEncryptionCookieStore`, помогающее обновить приложение, использующее `CookieStore`, на новое дефолтное `EncryptedCookieStore`. Для использования этого `CookieStore`, установите `Myapp::Application.config.session_store :upgrade_signature_to_encryption_cookie_store, key: '_myapp_session'` в `config/initializers/session_store.rb`. Дополнительно добавьте `Myapp::Application.config.secret_key_base = 'some secret'` в `config/initializers/secret_token.rb`. Не убирайте `Myapp::Application.config.secret_token = 'some secret'`.
+* Rails 4.0 представил новое хранилище куки `UpgradeSignatureToEncryptionCookieStore`. Оно полезно для обновления приложения со старого дефолтного `CookieStore` на новое дефолтное `EncryptedCookieStore`. Для использования этого традиционного хранилища куки, нужно оставить свой существующий `secret_token`, добавить новый `secret_key_base` и именить свое `session_store` следующим образом:
+
+```ruby
+  # config/initializers/session_store.rb
+  Myapp::Application.config.session_store :upgrade_signature_to_encryption_cookie_store, key: 'existing session key'
+
+  # config/initializers/secret_token.rb
+  Myapp::Application.config.secret_token = 'existing secret token'
+  Myapp::Application.config.secret_key_base = 'new secret key base'
+```
 
 * Rails 4.0 убрал опцию `ActionController::Base.asset_path`. Используйте особенность файлопровода (assets pipeline).
 
 * В Rails 4.0 устарела опция `ActionController::Base.page_cache_extension`. Используйте вместо нее `ActionController::Base.default_static_extension`.
 
 * Rails 4.0 убрал кэширование страниц и экшнов из Action Pack. Необходимо добавить гем `actionpack-action_caching` для использования `caches_action` и `actionpack-page_caching` для использования `caches_pages` в контроллерах.
+
+* Rails 4.0 убрал парсер параметров XML. Следует добавить гем `actionpack-xml_parser`, если вам требуется эта особенность.
+
+* Rails 4.0 изменил клиент memcached по умолчанию с `memcache-client` на `dalli`. Чтобы обновиться, просто добавьте `gem 'dalli'` в свой `Gemfile`.
+
+* В Rails 4.0 устарели методы `dom_id` и `dom_class`. Вам следует включить модуль `ActionView::RecordIdentifier` в контроллерах, требующих эту особенность.
 
 * Rails 4.0 изменил работу `assert_generates`, `assert_recognizes` и `assert_routing`. Теперь все эти операторы контроля вызывают `Assertion` вместо `ActionController::RoutingError`.
 
@@ -82,6 +116,47 @@ get Rack::Utils.escape('こんにちは'), controller: 'welcome', action: 'index
 get 'こんにちは', controller: 'welcome', action: 'index'
 ```
 
+* Rails 4.0 требует, чтобы маршруты, использующие `match` указывали метод запроса. Например:
+
+```ruby
+  # Rails 3.x
+  match "/" => "root#index"
+
+  # станет
+  match "/" => "root#index", via: :get
+
+  # или
+  get "/" => "root#index"
+```
+
+* В Rails 4.0 убрана промежуточная программа `ActionDispatch::BestStandardsSupport`, `<!DOCTYPE html>` уже включает режим стандартов в соответствии с http://msdn.microsoft.com/en-us/library/jj676915(v=vs.85).aspx, а заголовок ChromeFrame был перемещен в `config.action_dispatch.default_headers`.
+
+Помните, что вы также должны убрать все упоминания промежуточной программы из кода своего приложения, например:
+
+```ruby
+# Вызовет исключение
+config.middleware.insert_before(Rack::Lock, ActionDispatch::BestStandardsSupport)
+```
+
+Также найдите в своих настройках сред `config.action_dispatch.best_standards_support`, и уберите эту строчку, если она есть.
+
+* В Rails 4.0 при прекомпиляции ресурсов не будут больше автоматически копироваться не-JS/CSS ресурсы из `vendor/assets` и `lib/assets`. Разрабочики приложений Rails и engine-ов должны поместить эти ресурсы в `app/assets` или настроить `config.assets.precompile`.
+
+* В Rails 4.0 вызывается `ActionController::UnknownFormat`, когда экшн не обрабатывает формат запроса. По умолчанию исключение обрабатывается, откликаясь с помощью 406 Not Acceptable, но теперь это можно переопределить. В Rails 3 всегда возвращался 406 Not Acceptable. Без возможности переопределения.
+
+* В Rails 4.0 вызывается характерное исключение `ActionDispatch::ParamsParser::ParseError`, когда `ParamsParser` не сможет спарсить параметры запроса. Вам нужно ловить это исключение, вместо нискоуровневого `MultiJson::DecodeError`, например.
+
+* В Rails 4.0 `SCRIPT_NAME` правильно вкладывается, когда engine монтируется в приложении, находящемся на префиксе URL. Больше не нужно устанавливать `default_url_options[:script_name]`, чтобы работать с переписанными префиксами URL.
+
+* В Rails 4.0 устарел `ActionController::Integration` в пользу `ActionDispatch::Integration`.
+* В Rails 4.0 устарел `ActionController::IntegrationTest` в пользу `ActionDispatch::IntegrationTest`.
+* В Rails 4.0 устарел `ActionController::PerformanceTest` в пользу `ActionDispatch::PerformanceTest`.
+* В Rails 4.0 устарел `ActionController::AbstractRequest` в пользу `ActionDispatch::Request`.
+* В Rails 4.0 устарел `ActionController::Request` в пользу `ActionDispatch::Request`.
+* В Rails 4.0 устарел `ActionController::AbstractResponse` в пользу `ActionDispatch::Response`.
+* В Rails 4.0 устарел `ActionController::Response` в пользу `ActionDispatch::Response`.
+* В Rails 4.0 устарел `ActionController::Routing` в пользу `ActionDispatch::Routing`.
+
 ### Active Support
 
 Rails 4.0 убрал псевдоним `j` для `ERB::Util#json_escape`, так как `j` уже используется для `ActionView::Helpers::JavaScriptHelper#escape_javascript`.
@@ -90,19 +165,32 @@ Rails 4.0 убрал псевдоним `j` для `ERB::Util#json_escape`, та
 
 В Rails 4.0 изменился порядок, в котором загружались хелперы из более чем одной директории. Ранее они собирались, а затем сортировались по алфавиту. После обновления на Rails 4.0, хелперы будут сохранять порядок загружаемых директорий и будут сортироваться по алфавиту только в пределах каждой директории. Если вы явно не используете параметр `helpers_path`, Это изменение повлияет только на способ загрузки хелперов из engine-ов. Если вы полагаетесь на порядок загрузки, следует проврить, что после обновления доступны правильные методы. Если хотите изменить порядок, в котором загружаются engine, Можно использовать метод `config.railties_order=`.
 
+### Active Record Observer и Action Controller Sweeper
+
+Active Record Observer и Action Controller Sweeper были извлечены в гем `rails-observers`. Следует добавить гем `rails-observers`, если вам нужны эти особенности.
+
+### sprockets-rails
+
+* `assets:precompile:primary` был убран. Используйте вместо него `assets:precompile`.
+
+### sass-rails
+
+* `asset_url` с двумя аргументами устарел. Например: `asset-url("rails.png", image)` стал `asset-url("rails.png")`
+
+
 Обновление с Rails 3.1 на Rails 3.2
 -------------------------------------
 
 Если версия Rails вашего приложения сейчас старше чем 3.1.x, следует сперва обновиться до Rails 3.1, перед попыткой обновиться до Rails 3.2.
 
-Следующие изменения предназначены для обновления вашего приложения на Rails 3.2.2.
+Следующие изменения предназначены для обновления вашего приложения на Rails 3.2.12, последнюю версию 3.2.x Rails.
 
 ### Gemfile
 
 Сделайте следующие изменения в своем `Gemfile`.
 
 ```ruby
-gem 'rails', '= 3.2.2'
+gem 'rails', '= 3.2.12'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
@@ -142,14 +230,14 @@ config.active_record.mass_assignment_sanitizer = :strict
 
 Если версия Rails вашего приложения сейчас старше чем 3.0.x, следует сперва обновиться до Rails 3.0, перед попыткой обновиться до Rails 3.1.
 
-Следующие изменения предназначены для обновления вашего приложения на Rails 3.1.3.
+Следующие изменения предназначены для обновления вашего приложения на Rails 3.1.11, последнюю версию 3.1.x Rails.
 
 ### Gemfile
 
 Сделайте следующие изменения в своем `Gemfile`.
 
 ```ruby
-gem 'rails', '= 3.1.3'
+gem 'rails', '= 3.1.11'
 gem 'mysql2'
 
 # Needed for the new asset pipeline
