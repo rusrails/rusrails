@@ -354,7 +354,7 @@ rake assets:clean       # Remove compiled assets
 rake assets:precompile  # Compile all the assets named in config.assets.precompile
 rake db:create          # Create the database from config/database.yml for the current Rails.env
 ...
-rake log:clear          # Truncates all *.log files in log/ to zero bytes
+rake log:clear          # Truncates all *.log files in log/ to zero bytes (specify which logs with LOGS=test,development)
 rake middleware         # Prints out your Rack middleware stack
 ...
 rake tmp:clear          # Clear session, cache, and socket files from tmp/ (narrow w/ tmp:sessions:clear, tmp:cache:clear, tmp:sockets:clear)
@@ -377,7 +377,7 @@ Active Record version     4.0.0.beta
 Action Pack version       4.0.0.beta
 Action Mailer version     4.0.0.beta
 Active Support version    4.0.0.beta
-Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::EncryptedCookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::Head, Rack::ConditionalGet, Rack::ETag, ActionDispatch::BestStandardsSupport
+Middleware                ActionDispatch::Static, Rack::Lock, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::EncryptedCookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::Head, Rack::ConditionalGet, Rack::ETag
 Application root          /home/foobar/commandsapp
 Environment               development
 Database adapter          sqlite3
@@ -441,7 +441,7 @@ app/model/post.rb:
 
 NOTE. При использовании определенных и произвольных аннотаций, имя аннотации (FIXME, BUG и т.д.) не отображается в строках результата.
 
-По умолчанию `rake notes` будет искать в директориях `app`, `config`, `lib`, `script` и `test`. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды `SOURCE_ANNOTATION_DIRECTORIES`.
+По умолчанию `rake notes` будет искать в директориях `app`, `config`, `lib`, `bin` и `test`. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды `SOURCE_ANNOTATION_DIRECTORIES`.
 
 ```bash
 $ export SOURCE_ANNOTATION_DIRECTORIES='rspec,vendor'
