@@ -125,8 +125,8 @@ pages:
   - title:    Asset Pipeline
     url:      asset-pipeline
     file:     asset_pipeline.md
-    revision: 3fa73324c59299e4c9ac68b81fa84fd7eea8eaac
-    date:     17/01/13
+    revision: aec466e75294be177f66472fcdbd392831b26fdd
+    date:     15/03/13
 
   - title:    Engine для начинающих
     url:      engines

@@ -534,7 +534,35 @@ location ~ ^/(assets)/  {
 
 Если компилируете nginx вместе с Phusion Passenger, необходимо передать эту опцию, когда будет предложено.
 
-Надежная конфигурация для Apache возможна, но сложна, гуглите, пожалуйста.
+Apache также способен отдавать [gzipped](http://en.wikipedia.org/wiki/Gzip) версию ваших ресурсов; однако, это требует немного работы:
+
+```apache
+<LocationMatch "^/assets/.*$">
+  Header unset ETag
+  FileETag None
+
+  # RFC says only cache for 1 year
+  ExpiresActive On
+  ExpiresDefault "access plus 1 year"
+
+  RewriteEngine	On
+  RewriteCond %{HTTP:Accept-Encoding} gzip
+  RewriteCond %{HTTP_USER_AGENT} !Konqueror
+  RewriteCond %{REQUEST_FILENAME}.gz -f
+  RewriteRule ^(.+).(css|js)$ $1.$2.gz [QSA,L]
+</LocationMatch>
+
+<FilesMatch \.css\.gz>
+  ForceType text/css
+</FilesMatch>
+
+<FilesMatch \.js\.gz>
+  ForceType application/javascript
+</FilesMatch>
+AddEncoding gzip .gz
+```
+
+NOTE: Следует убедиться, что загружены `mod_headers`, `mod_mime` и `mod_rewrite`; В противном случае вышеописанная конфигурация не сработает.
 
 ### Локальная прекомпиляция
 
@@ -696,6 +724,28 @@ config.assets.cache_store = :memory_store, { :size => 32.megabytes }
 Ресурсы также могут идти от внешних источников в виде гемов.
 
 Хорошим примером этого является гем `jquery-rails`, поставляющийся вместе с Rails как гем стандартной JavaScript библиотеки. Этот гем содержит класс engine, унаследованный от `Rails::Engine`. Сделав так, Rails становится проинформированным, что директории для этого гема могут содержать ресурсы, и директории `app/assets`, `lib/assets` и `vendor/assets` этого engine добавляются в путь поиска Sprockets.
+
+Создание препроцессора в вашей библиотеке или геме
+--------------------------------------------------
+
+Так как Sprockets использует [Tilt](https://github.com/rtomayko/tilt) как основной интерфейс для различных движков шаблонов, ваш гем должен просто реализовать протокол шаблонов Tilt. Обычно следует унаследовать подкласс от `Tilt::Template` и переопределить метод `evaluate`, возвращающий конечный результат. Исходник шаблона хранится в `@code`. Чтобы узнать больше, взгляните на исходники[`Tilt::Template`](https://github.com/rtomayko/tilt/blob/master/lib/tilt/template.rb).
+
+```ruby
+module BangBang
+  class Template < ::Tilt::Template
+    # Добавляет "!" к оригинальному шаблону.
+    def evaluate(scope, locals, &block)
+      "#{@code}!"
+    end
+  end
+end
+```
+
+Теперь, когда у вас есть класс `Template`, пришло время связать его с расширением для файлов шаблона:
+
+```ruby
+Sprockets.register_engine '.bang', BangBang::Template
+```
 
 Обновление со старых версий Rails
 ---------------------------------
