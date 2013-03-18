@@ -13,9 +13,9 @@ gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
 
 gem 'nokogiri'
-gem 'haml'
 gem 'sass-rails', " ~> 3.2.0"
 gem "less-rails"
+gem 'haml-rails'
 gem 'RedCloth'
 gem 'redcarpet'
 gem 'rails_config'
