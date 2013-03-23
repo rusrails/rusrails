@@ -11,6 +11,7 @@ gem 'omniauth-openid'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
+gem 'cancan'
 
 gem 'nokogiri'
 gem 'sass-rails', " ~> 3.2.0"

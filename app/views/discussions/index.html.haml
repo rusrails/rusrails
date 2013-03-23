@@ -7,7 +7,7 @@
 - @discussions.decorate.each do |discussion|
   .discussion_title
     .title
-      = link_to discussion.title, discussion_path(discussion)
+      = link_to discussion.title, discussion_says_path(discussion)
       = "(#{discussion.says.enabled.count} высказываний)"
     - if discussion.subject
       .subject

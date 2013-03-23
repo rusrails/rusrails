@@ -1,5 +1,5 @@
 mySettings =
-  previewParserPath: "/discussions/preview"
+  previewParserPath: "/says/preview"
   onShiftEnter:    {keepDefault:false, openWith:'\n\n'}
   markupSet: [
     {name:'First Level Heading', key:'1', placeHolder:'Your title here...', closeWith: (markItUp) -> miu.markdownTitle(markItUp, '=') }

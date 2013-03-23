@@ -15,7 +15,7 @@ class PageDecorator < ContentDecorator
           doc.ul do
             discussions.each do |discussion|
               doc.li do
-                doc.a discussion.title, :href => h.discussion_path(discussion)
+                doc.a discussion.title, :href => h.discussion_says_path(discussion)
               end
             end
           end

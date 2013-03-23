@@ -3,12 +3,12 @@
   %h3
     к теме
     = link_to "'#{@discussion.subject.name}'", @discussion.subject.path
-- @discussion.says.enabled.decorate.each do |say|
+- @says.each do |say|
   .say
     .name= say.author
     .time= l say.updated_at, :format => :short
     .text= say.html
-- if current_author
+- if can? :create, Say
   = form_for [@discussion, @discussion.says.build] do |f|
     %h3 Ответить
     #preview

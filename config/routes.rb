@@ -15,11 +15,15 @@ Rusrails::Application.routes.draw do
     root :to => "dashboard#index"
   end
 
-  resources :discussions, :only => [:index, :show, :new, :create] do
-    resources :says, :only => :create
-    post :preview, :on => :collection
+  resources :discussions, :only => [:index, :new, :create] do
+    resources :says, :only => [:index, :create]
     get 'page/:page', :action => :index, :on => :collection
   end
+
+  resources :says, :only => [:edit, :update, :destroy] do
+    post :preview, :on => :collection
+  end
+
 
   resource :search, :only => :show, :controller => :search
 

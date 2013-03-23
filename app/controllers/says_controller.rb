@@ -1,18 +1,35 @@
 # encoding: utf-8
 class SaysController < ApplicationController
-  before_filter :check_author
+  load_and_authorize_resource :discussion
+  load_and_authorize_resource :through => :discussion, :shallow => true, :new => :preview
+
+  def index
+    @discussion = @discussion.decorate
+    @says = @says.decorate
+  end
 
   def create
-    @discussion = Discussion.enabled.find params[:discussion_id]
-    @say = @discussion.says.build params[:say]
-    @say.author = current_author
     @say.renderer = 'md'
     if @say.save
       flash[:notice] = "Оставлено сообщение"
-      @discussion.touch
     else
       flash[:alert] = "Произошли ошибки: " + @say.errors.full_messages * ", "
     end
-    redirect_to @discussion
+    redirect_to [@discussion, :says]
+  end
+
+  def edit
+  end
+
+  def update
+  end
+
+  def destroy
+  end
+
+  def preview
+    @say.renderer = 'md'
+    @say.text = params[:data]
+    render :inline => @say.decorate.html
   end
 end
