@@ -128,6 +128,12 @@ pages:
     revision: aec466e75294be177f66472fcdbd392831b26fdd
     date:     15/03/13
 
+  - title:    Работа с JavaScript в Rails
+    url:      working-with-javascript-in-rails
+    file:     working_with_javascript_in_rails.md
+    revision: b9b8b240098eec098904cf084f751f8bf8cc7bcc
+    date:     21/03/13
+
   - title:    Engine для начинающих
     url:      engines
     file:     engines.md
@@ -183,7 +189,6 @@ plan:
   - file:     plugins.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
-  - file:     working_with_javascript_in_rails.md
 
 old:
   - file:     2_2_release_notes.md

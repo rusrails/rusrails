@@ -261,7 +261,7 @@ end
 
 Наконец, создаются два ресурсных файла, `app/assets/javascripts/blorgh/posts.js` и `app/assets/stylesheets/blorgh/posts.css`. Вы увидите, как их использовать немного позже.
 
-По умолчанию стили скаффоллда не применяется в engine, поскольку файл макета engine, `app/views/layouts/blorgh/application.html.erb` не загружает его. Чтобы применить их, вставьте эту строку в тэг `<head>` этого макета:
+По умолчанию стили скаффоллда не применяется в engine, поскольку файл макета engine, `app/views/layouts/blorgh/application.html.erb` не загружает его. Чтобы применить их, вставьте эту строку в тег `<head>` этого макета:
 
 ```erb
 <%= stylesheet_link_tag "scaffold" %>

@@ -50,6 +50,7 @@
 - [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line) := Это руководство раскроет инструменты командной строки и задачи rake, предоставленные Rails.
 - [Кэширование с Rails](/caching-with-rails-an-overview) := Различные техники кэширования, предоставленные Rails.
 - [Asset Pipeline](/asset-pipeline) := Это руководство документирует файлопровод (asset pipeline)
+- [Работа с JavaScript в Rails](/working-with-javascript-in-rails) := Это руководство раскрывает встроенный в Rails функционал Ajax/JavaScript.
 - [Engine для начинающих](/engines) := Это руководство объясняет, как написать монтируемый engine
 
 ## Расширяем Rails

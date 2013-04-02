@@ -34,6 +34,7 @@ next_column
     * [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line)
     * [Кэширование с Rails](/caching-with-rails-an-overview)
     * [Asset Pipeline](/asset-pipeline)
+    * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Engine для начинающих](/engines)
 
 * **Расширяем Rails**
