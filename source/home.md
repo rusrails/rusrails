@@ -52,6 +52,7 @@
 - [Asset Pipeline](/asset-pipeline) := Это руководство документирует файлопровод (asset pipeline)
 - [Работа с JavaScript в Rails](/working-with-javascript-in-rails) := Это руководство раскрывает встроенный в Rails функционал Ajax/JavaScript.
 - [Engine для начинающих](/engines) := Это руководство объясняет, как написать монтируемый engine
+- [Процесс инициализации в Rails](/initialization) := Это руководство объясняет внутренние процессы инициализации в Rails, начиная с Rails 4.
 
 ## Расширяем Rails
 

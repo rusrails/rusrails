@@ -36,6 +36,7 @@ next_column
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Engine для начинающих](/engines)
+    * [Процесс инициализации в Rails](/initialization)
 
 * **Расширяем Rails**
 

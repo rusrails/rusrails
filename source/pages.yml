@@ -140,6 +140,12 @@ pages:
     revision: 9e23399c3004afc6110c93d3df89c5209d39b20f
     date:     11/02/13
 
+  - title:    Процесс инициализации в Rails
+    url:      initialization
+    file:     initialization.md
+    revision: b0557389de13103c32baee438bf2d58f40176f73
+    date:     18/03/13
+
   - title:    Rails on Rack
     url:      rails-on-rack
     file:     rails_on_rack.md
@@ -185,7 +191,6 @@ plan:
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
   - file:     generators.md
-  - file:     initialization.md
   - file:     plugins.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
