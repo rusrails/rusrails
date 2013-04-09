@@ -4,6 +4,7 @@
 
 * **Модели**
 
+    * [Основы Active Record](/active-record-basics)
     * [Миграции базы данных Rails](/rails-database-migrations)
     * [Валидации Active Record](/active-record-validations)
     * [Колбэки Active Record](/active-record-callbacks)

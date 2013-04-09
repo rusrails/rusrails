@@ -14,6 +14,12 @@ pages:
     revision: 3dde99d01c71dad36e483d0d1957639fde255c27
     date:     01/03/13
 
+  - title:    Основы Active Record
+    url:      active-record-basics
+    file:     active_record_basics.md
+    revision: 9d62ebb0d025150aa685845bb482deeafc65af9c
+    date:     05/04/13
+
   - title:    Миграции базы данных Rails
     url:      rails-database-migrations
     file:     migrations.md
@@ -185,7 +191,6 @@ pages:
 plan:
   - file:     action_view_overview.md
   - file:     active_model_basics.md
-  - file:     active_record_basics.md
   - file:     active_support_instrumentation.md
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md
