@@ -41,6 +41,7 @@ next_column
 
 * **Расширяем Rails**
 
+    * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
 
 * **Заметки о релизах**

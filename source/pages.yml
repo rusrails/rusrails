@@ -152,6 +152,12 @@ pages:
     revision: b0557389de13103c32baee438bf2d58f40176f73
     date:     18/03/13
 
+  - title:    Основы создания плагинов Rails
+    url:      plugins
+    file:     plugins.md
+    revision: 879c18df83ec019da08d8ba7688b5722af5981bb
+    date:     26/01/13
+
   - title:    Rails on Rack
     url:      rails-on-rack
     file:     rails_on_rack.md
@@ -196,7 +202,6 @@ plan:
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
   - file:     generators.md
-  - file:     plugins.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
 
