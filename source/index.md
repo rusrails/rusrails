@@ -43,6 +43,7 @@ next_column
 
     * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
+    * [Создание и настройка генераторов Rails](/generators)
 
 * **Заметки о релизах**
 

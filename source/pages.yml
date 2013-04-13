@@ -164,6 +164,12 @@ pages:
     revision: a83183c72155db3f11af287281ef3c13d56dddce
     date:     01/02/2013
 
+  - title:    Создание и настройка генераторов Rails
+    url:      generators
+    file:     generators.md
+    revision: 18f9d46d4ff0c9be6f4561d06d66f4c55b81731c
+    date:     22/03/2013
+
   - title:    Руководство по обновлению Ruby on Rails
     url:      upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
@@ -201,7 +207,6 @@ plan:
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
-  - file:     generators.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
 
