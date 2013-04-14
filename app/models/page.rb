@@ -1,9 +1,9 @@
 class Page < ActiveRecord::Base
-  validates :name, :presence => true
-  validates :url_match, :presence => true, :format => {:without => /(\\|\/)/}
+  validates :name, presence: true
+  validates :url_match, presence: true, format: {without: /(\\|\/)/}
   validate :validates_path
 
-  has_many :discussions, :as => :subject
+  has_many :discussions, as: :subject
 
   define_index do
     indexes :name
@@ -13,10 +13,10 @@ class Page < ActiveRecord::Base
 
   scope :usual, where('show_order is not null')
   scope :ordered, usual.order(:show_order, :created_at)
-  scope :enabled, where(:enabled => true).ordered
+  scope :enabled, where(enabled: true).ordered
 
   def self.matching url_match
-    where(:url_match => url_match).first
+    where(url_match: url_match).first
   end
 
   def path

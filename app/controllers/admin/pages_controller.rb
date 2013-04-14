@@ -14,7 +14,7 @@ class Admin::PagesController < Puffer::Base
   form do
     field :name
     field :url_match
-    field :text, :html => {:rows => 20}
+    field :text, html: {rows: 20}
     field :enabled
     field :show_order
   end

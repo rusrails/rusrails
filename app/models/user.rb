@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :name
 
-  has_many :discussions, :as => :author
-  has_many :says, :as => :author
+  has_many :discussions, as: :author
+  has_many :says, as: :author
 
   def name
     read_attribute(:name) || email.split('@').first
@@ -25,10 +25,10 @@ class User < ActiveRecord::Base
 
   def self.find_or_create_for_github(response)
     data = response.info
-    if user = User.where(:oauth_id => response.uid, :oauth => 'github').first
+    if user = User.where(oauth_id: response.uid, oauth: 'github').first
       user
     else
-      user = User.new :email => "#{data.email}.github", :password => Devise.friendly_token[0,20], :name => data.name
+      user = User.new email: "#{data.email}.github", password: Devise.friendly_token[0,20], name: data.name
       user.oauth_id = response.uid
       user.oauth = 'github'
       user.save
@@ -38,10 +38,10 @@ class User < ActiveRecord::Base
 
   def self.find_or_create_for_twitter(response)
     data = response.info
-    if user = User.where(:oauth_id => response.uid, :oauth => 'twitter').first
+    if user = User.where(oauth_id: response.uid, oauth: 'twitter').first
       user
     else
-      user = User.new :email => "#{response.uid}@#{data.nickname}.twitter", :password => Devise.friendly_token[0,20], :name => data.name
+      user = User.new email: "#{response.uid}@#{data.nickname}.twitter", password: Devise.friendly_token[0,20], name: data.name
       user.oauth_id = response.uid
       user.oauth = 'twitter'
       user.save
@@ -51,10 +51,10 @@ class User < ActiveRecord::Base
 
   def self.find_or_create_for_google(response)
     data = response.info
-    if user = User.where(:oauth_id => data.email, :oauth => 'google').first
+    if user = User.where(oauth_id: data.email, oauth: 'google').first
       user
     else
-      user = User.new :email => "#{data.email}.google", :password => Devise.friendly_token[0,20]
+      user = User.new email: "#{data.email}.google", password: Devise.friendly_token[0,20]
       user.oauth_id = data.email
       user.oauth = 'google'
       user.save

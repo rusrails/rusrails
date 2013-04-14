@@ -8,7 +8,7 @@ describe Discussion do
 
   describe "scope :enabled" do
     before :each do
-      @disabled_discussion = FactoryGirl.create :discussion, :enabled => false
+      @disabled_discussion = FactoryGirl.create :discussion, enabled: false
     end
 
     it "returns enabled discussions" do
@@ -20,7 +20,7 @@ describe Discussion do
     end
 
     it "returns discussions ordered by update time 1" do
-      @second_discussion = FactoryGirl.create :discussion, :updated_at => Time.now + 1.second
+      @second_discussion = FactoryGirl.create :discussion, updated_at: Time.now + 1.second
       Discussion.enabled.should == [@second_discussion, @discussion]
     end
   end

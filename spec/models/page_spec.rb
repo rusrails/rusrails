@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Page do
   before :each do
-    @page = FactoryGirl.create :page, :name => "Page 11", :url_match => "page_11"
+    @page = FactoryGirl.create :page, name: "Page 11", url_match: "page_11"
   end
 
   it "is valid with valid attributes" do
@@ -42,21 +42,19 @@ describe Page do
 
   describe "scope :ordered" do
     it "returns pages ordered by show_order" do
-      @second_page = FactoryGirl.create :page, :name => "page 13",
-                             :url_match => "page_13", :show_order => -1
+      @second_page = FactoryGirl.create :page, name: "page 13", url_match: "page_13", show_order: -1
       Page.ordered.should == [@second_page,@page]
     end
 
     it "returns pages with equal show_order ordered by creation time" do
-      @second_page = FactoryGirl.create  :page, :name => "page 13", :url_match => "page_13"
+      @second_page = FactoryGirl.create :page, name: "page 13", url_match: "page_13"
       Page.ordered.should == [@page,@second_page]
     end
   end
 
   describe "scope :enabled" do
     before :each do
-      @disabled_page = FactoryGirl.create  :page, :name => "page 12",
-                                :url_match => "page_12", :enabled => false
+      @disabled_page = FactoryGirl.create :page, name: "page 12", url_match: "page_12", enabled: false
     end
 
     it "returns enabled pages within category" do

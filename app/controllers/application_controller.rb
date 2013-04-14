@@ -24,9 +24,9 @@ protected
   def render_404
     redirect = Redirect.find_by_from request.fullpath
     if redirect
-      redirect_to redirect.to, :status => 301
+      redirect_to redirect.to, status: 301
     else
-      render 'pages/404', :status => 404
+      render 'pages/404', status: 404
     end
   end
 

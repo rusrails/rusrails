@@ -1,7 +1,7 @@
 # encoding: utf-8
 class SaysController < ApplicationController
   load_and_authorize_resource :discussion
-  load_and_authorize_resource :through => :discussion, :shallow => true, :new => :preview
+  load_and_authorize_resource through: :discussion, shallow: true, new: :preview
 
   def index
     @discussion = @discussion.decorate
@@ -30,6 +30,6 @@ class SaysController < ApplicationController
   def preview
     @say.renderer = 'md'
     @say.text = params[:data]
-    render :inline => @say.decorate.html
+    render inline: @say.decorate.html
   end
 end
