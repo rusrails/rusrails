@@ -14,7 +14,6 @@ development:
 
 production:
   <<: *setup
-  port: 9311
 
 test:
   <<: *setup

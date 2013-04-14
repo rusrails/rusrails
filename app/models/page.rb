@@ -5,12 +5,6 @@ class Page < ActiveRecord::Base
 
   has_many :discussions, as: :subject
 
-  define_index do
-    indexes :name
-    indexes :text
-    has :enabled
-  end
-
   scope :usual, where('show_order is not null')
   scope :ordered, usual.order(:show_order, :created_at)
   scope :enabled, where(enabled: true).ordered

@@ -1,5 +1,5 @@
 require "bundler/capistrano"
-require 'thinking_sphinx/deploy/capistrano'
+require 'thinking_sphinx/capistrano'
 
 require 'capistrano/ext/multistage'
 set :stages, %w(v32 v40)

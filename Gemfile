@@ -4,8 +4,8 @@ gem 'rails', " ~> 3.2.0"
 gem 'puffer'
 gem 'russian'
 
-gem 'mysql2'
-gem 'thinking-sphinx', '~> 2.0'
+gem 'mysql2', '>= 0.3.12b4'
+gem 'thinking-sphinx'
 gem 'devise'
 gem 'omniauth-openid'
 gem 'omniauth-github'
