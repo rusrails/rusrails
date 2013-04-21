@@ -3,8 +3,6 @@ class Page < ActiveRecord::Base
   validates :url_match, presence: true, format: {without: /(\\|\/)/}
   validate :validates_path
 
-  has_many :discussions, as: :subject
-
   scope :usual, where('show_order is not null')
   scope :ordered, usual.order(:show_order, :created_at)
   scope :enabled, where(enabled: true).ordered

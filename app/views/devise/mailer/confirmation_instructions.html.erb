@@ -1,5 +1,0 @@
-<p>Добро пожаловать, <%= @resource.email %>!</p>
-
-<p>Вы можете подтвердить свою учетную запись, перейдя по ссылке:</p>
-
-<p><%= link_to 'Подтвердить мою учетную запись', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>

@@ -7,9 +7,4 @@ module ApplicationHelper
       "Rusrails: Ruby on Rails по-русски"
     end
   end
-
-  def safe_markdown(body)
-    sanitize Markdown.new.render(body)
-  end
-
 end
