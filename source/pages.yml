@@ -11,8 +11,8 @@ pages:
   - title:    Rails для начинающих
     url:      getting-started-with-rails
     file:     getting_started.md
-    revision: 3dde99d01c71dad36e483d0d1957639fde255c27
-    date:     01/03/13
+    revision: d46b4e9c62f3db72930f9dba264c7d0b9a1e79d0
+    date:     23/04/13
 
   - title:    Основы Active Record
     url:      active-record-basics
