@@ -1,5 +1,4 @@
-ThinkingSphinx::Index.define :page, with: :active_record do
-  indexes name
-  indexes text
-  has enabled
+ThinkingSphinx::Index.define 'static_docs/page', with: :active_record do
+  indexes title
+  indexes body
 end

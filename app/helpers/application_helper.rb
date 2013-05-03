@@ -2,7 +2,7 @@
 module ApplicationHelper
   def title
     if @page
-      "Rusrails: " + @page.name
+      "Rusrails: " + @page.title
     else
       "Rusrails: Ruby on Rails по-русски"
     end

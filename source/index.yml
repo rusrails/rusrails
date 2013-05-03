@@ -1,201 +1,201 @@
 special:
   - title:    Ruby on Rails по-русски
-    url:      home
+    path:     home
     file:     home.md
 
   - title:    Список руководств
-    url:      index
+    path:     index
     file:     index.md
 
 pages:
   - title:    Rails для начинающих
-    url:      getting-started-with-rails
+    path:     getting-started-with-rails
     file:     getting_started.md
     revision: d46b4e9c62f3db72930f9dba264c7d0b9a1e79d0
     date:     23/04/13
 
   - title:    Основы Active Record
-    url:      active-record-basics
+    path:     active-record-basics
     file:     active_record_basics.md
     revision: 9d62ebb0d025150aa685845bb482deeafc65af9c
     date:     05/04/13
 
   - title:    Миграции базы данных Rails
-    url:      rails-database-migrations
+    path:     rails-database-migrations
     file:     migrations.md
     revision: b337390889cb4a9f80ed08daf072a043f0e7ddf3
     date:     01/03/13
 
   - title:    Валидации Active Record
-    url:      active-record-validations
+    path:     active-record-validations
     file:     active_record_validations.md
     revision: 74c3b7f6f61c1115b7409cb8ce9d6832ef9caa75
     date:     13/03/13
 
   - title:    Колбэки Active Record
-    url:      active-record-callbacks
+    path:     active-record-callbacks
     file:     active_record_callbacks.md
     revision: 74bc0d0fd4161a80af4337797f0e65535114acab
     date:     24/02/13
 
   - title:    Связи Active Record
-    url:      active-record-associations
+    path:     active-record-associations
     file:     association_basics.md
     revision: 2fb1cdd0a5cfdac73d8152fd33bc8c1821ea9717
     date:     06/03/13
 
   - title:    Интерфейс запросов Active Record
-    url:      active-record-query-interface
+    path:     active-record-query-interface
     file:     active_record_querying.md
     revision: d41c279bf12de4722d4cf781929e491e588a612c
     date:     14/03/13
 
   - title:    Макеты и рендеринг в Rails
-    url:      layouts-and-rendering-in-rails
+    path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
     revision: 6e0aafbba2300e78ecb8bf956dd5e90b6acf6b94
     date:     15/03/13
 
   - title:    Хелперы форм Rails
-    url:      rails-form-helpers
+    path:     rails-form-helpers
     file:     form_helpers.md
     revision: d41c279bf12de4722d4cf781929e491e588a612c
     date:     14/03/13
 
   - title:    Обзор Action Controller
-    url:      action-controller-overview
+    path:     action-controller-overview
     file:     action_controller_overview.md
     revision: e23413bfcae72f52258658e1b5ba1f061467077d
     date:     14/03/13
 
   - title:    Роутинг в Rails
-    url:      rails-routing
+    path:     rails-routing
     file:     routing.md
     revision: 00f80029068223143d2eec570eebb3055eea1795
     date:     26/02/13
 
   - title:    Расширения ядра Active Support
-    url:      active-support-core-extensions
+    path:     active-support-core-extensions
     file:     active_support_core_extensions.md
     revision: d41c279bf12de4722d4cf781929e491e588a612c
     date:     14/03/13
 
   - title:    API интернационализации Rails (I18n)
-    url:      rails-internationalization-i18n-api
+    path:     rails-internationalization-i18n-api
     file:     i18n.md
     revision: 2bca2f6418a7167a813e63c3efc6334815f49c80
     date:     22/01/13
 
   - title:    Основы Action Mailer
-    url:      action-mailer-basics
+    path:     action-mailer-basics
     file:     action_mailer_basics.md
     revision: be3e402c79d5c1eac4729e2982d05161c1a9b6a2
     date:     10/03/13
 
   - title:    Руководство по тестированию приложений на Rails
-    url:      a-guide-to-testing-rails-applications
+    path:     a-guide-to-testing-rails-applications
     file:     testing.md
     revision: 2008fe606b6096e4b8ad9c03e03b0d11b94605cd
     date:     15/02/13
 
   - title:    Руководство Ruby On Rails по безопасности
-    url:      ruby-on-rails-security-guide
+    path:     ruby-on-rails-security-guide
     file:     security.md
     revision: 4e5a4cf4b2b52815bcba8fcd4bab52fe5a8f161b
     date:     25/01/13
 
   - title:    Отладка приложений на Rails
-    url:      debugging-rails-applications
+    path:     debugging-rails-applications
     file:     debugging_rails_applications.md
     revision: f049016cd348627bf8db0d72382d7580bf802a79
     date:     09/01/13
 
   - title:    Конфигурирование приложений на Rails
-    url:      configuring-rails-applications
+    path:     configuring-rails-applications
     file:     configuring.md
     revision: d3688e02ca52c0b72d3092e8498da51e06b7fc58
     date:     24/02/13
 
   - title:    Руководство по командной строке Rails
-    url:      a-guide-to-the-rails-command-line
+    path:     a-guide-to-the-rails-command-line
     file:     command_line.md
     revision: a83183c72155db3f11af287281ef3c13d56dddce
     date:     01/02/13
 
   - title:    'Кэширование с Rails: Обзор'
-    url:      caching-with-rails-an-overview
+    path:     caching-with-rails-an-overview
     file:     caching_with_rails.md
     revision: 7ded3b8c4bb24e02a93ced0dc78879c3210b526c
     date:     22/02/13
 
   - title:    Asset Pipeline
-    url:      asset-pipeline
+    path:     asset-pipeline
     file:     asset_pipeline.md
     revision: aec466e75294be177f66472fcdbd392831b26fdd
     date:     15/03/13
 
   - title:    Работа с JavaScript в Rails
-    url:      working-with-javascript-in-rails
+    path:     working-with-javascript-in-rails
     file:     working_with_javascript_in_rails.md
     revision: b9b8b240098eec098904cf084f751f8bf8cc7bcc
     date:     21/03/13
 
   - title:    Engine для начинающих
-    url:      engines
+    path:     engines
     file:     engines.md
     revision: 9e23399c3004afc6110c93d3df89c5209d39b20f
     date:     11/02/13
 
   - title:    Процесс инициализации в Rails
-    url:      initialization
+    path:     initialization
     file:     initialization.md
     revision: b0557389de13103c32baee438bf2d58f40176f73
     date:     18/03/13
 
   - title:    Основы создания плагинов Rails
-    url:      plugins
+    path:     plugins
     file:     plugins.md
     revision: 879c18df83ec019da08d8ba7688b5722af5981bb
     date:     26/01/13
 
   - title:    Rails on Rack
-    url:      rails-on-rack
+    path:     rails-on-rack
     file:     rails_on_rack.md
     revision: a83183c72155db3f11af287281ef3c13d56dddce
     date:     01/02/2013
 
   - title:    Создание и настройка генераторов Rails
-    url:      generators
+    path:     generators
     file:     generators.md
     revision: 18f9d46d4ff0c9be6f4561d06d66f4c55b81731c
     date:     22/03/2013
 
   - title:    Руководство по обновлению Ruby on Rails
-    url:      upgrading-ruby-on-rails
+    path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
     revision: c27f9481dfd1d8196ff727b6f4934892b567bc01
     date:     01/03/2013
 
   - title:    Заметки о релизе Ruby on Rails 3.0
-    url:      3_0_release_notes
+    path:     3_0_release_notes
     file:     3_0_release_notes.md
     revision: 7a0dad25f3be77211160560dc76a8f37963051d7
     date:     17/09/12
 
   - title:    Заметки о релизе Ruby on Rails 3.1
-    url:      3_1_release_notes
+    path:     3_1_release_notes
     file:     3_1_release_notes.md
     revision: 276e7b0a1d4b6b742733ee5b5c7dde4dd37a5e11
     date:     24/10/12
 
   - title:    Заметки о релизе Ruby on Rails 3.2
-    url:      3_2_release_notes
+    path:     3_2_release_notes
     file:     3_2_release_notes.md
     revision: 7a0dad25f3be77211160560dc76a8f37963051d7
     date:     17/09/12
 
   - title:    Заметки о релизе Ruby on Rails 4.0
-    url:      4_0_release_notes
+    path:     4_0_release_notes
     file:     4_0_release_notes.md
     revision: 9b27e13c05a1896bfe0fbd65c496de33251cad35
     date:     07/03/13

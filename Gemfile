@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', " ~> 3.2.0"
 gem 'russian'
+gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
 gem 'mysql2', '>= 0.3.12b4'
 gem 'thinking-sphinx'
@@ -15,7 +16,6 @@ gem 'redcarpet'
 gem 'rails_config'
 gem 'twitter-bootstrap-rails'
 gem 'jquery-rails'
-gem 'draper'
 
 gem 'capistrano'
 gem 'execjs'

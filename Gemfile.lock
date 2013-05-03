@@ -48,10 +48,6 @@ GEM
     commonjs (0.2.6)
     database_cleaner (0.8.0)
     diff-lcs (1.2.1)
-    draper (1.1.0)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      request_store (~> 1.0.3)
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
@@ -139,7 +135,6 @@ GEM
       json (~> 1.4)
     redcarpet (2.2.2)
     ref (1.0.2)
-    request_store (1.0.5)
     riddle (1.5.5)
     rspec-core (2.13.1)
     rspec-expectations (2.13.0)
@@ -165,6 +160,8 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    static_docs (0.1.0)
+      rails (>= 3.1)
     therubyracer (0.11.3)
       libv8 (~> 3.11.8.12)
       ref
@@ -207,7 +204,6 @@ DEPENDENCIES
   capistrano
   coffee-rails (~> 3.2.0)
   database_cleaner
-  draper
   execjs
   factory_girl_rails
   haml-rails
@@ -223,6 +219,7 @@ DEPENDENCIES
   rspec-rails
   russian
   sass-rails (~> 3.2.0)
+  static_docs
   therubyracer
   thinking-sphinx
   turbo-sprockets-rails3

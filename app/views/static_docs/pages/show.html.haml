@@ -1,0 +1,6 @@
+- cache ['v1', @page] do
+  = @page.rendered_body(self)
+
+- content_for :menu do
+  - cache ['v1', @page, 'menu'] do
+    = @page.meta[:menu]
