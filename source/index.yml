@@ -1,11 +1,11 @@
 special:
   - title:    Ruby on Rails по-русски
-    path:     home
-    file:     home.md
-
-  - title:    Список руководств
     path:     index
     file:     index.md
+
+  - title:    Список руководств
+    path:     menu
+    file:     menu.md
 
 pages:
   - title:    Rails для начинающих

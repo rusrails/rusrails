@@ -24,9 +24,9 @@
                 Индекс
                 %b.caret
               .index-popover-content.hide
-                - index_page = Page.matched("index")
-                - cache ['v1', index_page] do
-                  = index_page.rendered_body(self)
+                - menu_page = Page.matched("menu")
+                - cache ['v1', menu_page] do
+                  = menu_page.rendered_body(self)
 
     - if notice
       .alert.alert-success
