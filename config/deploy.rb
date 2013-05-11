@@ -1,4 +1,5 @@
 require "bundler/capistrano"
+require 'static_docs/capistrano'
 require 'thinking_sphinx/capistrano'
 
 require 'capistrano/ext/multistage'
@@ -39,9 +40,9 @@ namespace :deploy do
     rails_env = fetch(:rails_env, "production")
 
     run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} db:seed"
-    run "cd #{current_path}; #{rake} RAILS_ENV=#{rails_env} static_docs:import"
   end
 
+  after "deploy:seed", "static_docs:import"
   after "deploy:seed", "thinking_sphinx:rebuild"
 end
 
