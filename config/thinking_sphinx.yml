@@ -15,6 +15,7 @@ development:
 production:
   <<: *setup
   port: 9311
+  sql_sock: /var/run/mysqld/mysqld.sock
 
 test:
   <<: *setup
