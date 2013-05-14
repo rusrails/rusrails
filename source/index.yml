@@ -119,8 +119,8 @@ pages:
   - title:    Руководство по командной строке Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
-    revision: a83183c72155db3f11af287281ef3c13d56dddce
-    date:     01/02/13
+    revision: d2fe72345aeea2a0874dfe5c665368b9fd543bcb
+    date:     30/04/13
 
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
