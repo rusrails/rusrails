@@ -19,7 +19,7 @@
 * Заполнить базу
 
     ```
-    $ rake pages:import
+    $ rake static_docs:import
     ```
 
 * Запустить сервер и открыть в браузере
@@ -32,7 +32,7 @@
 Нашли ошибку?
 -------------
 
-* Находите нужный файл в `source` (соответствие url на сайте rusrails и имени файла задается в `source/pages.yml`)
+* Находите нужный файл в `source` (соответствие url на сайте rusrails и имени файла задается в `source/index.yml`)
 * В интерфейсе есть кнопка Edit
 * Вносите изменение
 * Commit Changes
@@ -51,7 +51,7 @@
 
 Для того, чтобы быстро и полно осуществлять переводы, каждое руководство привязано к определенной ревизии репозитория [docrails](https://github.com/lifo/docrails).
 
-Эта привязка осуществляется в файле https://raw.github.com/morsbox/rusrails/4.0/source/pages.yml. Указывается заголовок на русском, имя файла в репозиториях docrails и rusrails, url на сайте rusrails, ревизия и дата коммита.
+Эта привязка осуществляется в файле https://github.com/morsbox/rusrails/blob/master/source/index.yml. Указывается заголовок на русском, имя файла в репозиториях docrails и rusrails, url на сайте rusrails, ревизия и дата коммита.
 
 Таким образом, алгоритм работы:
 
@@ -59,8 +59,8 @@
 * если уже есть репозиторий, обновляете его до актуального состояния (fetch/merge)
 * Делаете форк этого репозитория. [Инструкция по форкам](http://help.github.com/fork-a-repo/)
 * Открываете issue, где говорите, какое руководство хотите обновить/перевести (чтобы этим руководством пока никто больше не занимался)
-* берете дифф по отдельному файлу `git diff fa159d317611d1fe5b48 -- guides/source/getting_started.md >> gettin.diff`. Ревизия - из файла `source/pages.yml`
-* Смотрите номер последней ревизии по файлу `git log -- guides/source/getting_started.md`, изменяете эти данные в `source/pages.yml`
+* берете дифф по отдельному файлу `git diff fa159d317611d1fe5b48 -- guides/source/getting_started.md >> gettin.diff`. Ревизия - из файла `source/index.yml`
+* Смотрите номер последней ревизии по файлу `git log -- guides/source/getting_started.md`, изменяете эти данные в `source/index.yml`
 * Вносите в нужных местах исправления по диффу
 * Отправляете пул-реквест
 * Я принимаю изменения
