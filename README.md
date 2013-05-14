@@ -51,7 +51,7 @@
 
 Для того, чтобы быстро и полно осуществлять переводы, каждое руководство привязано к определенной ревизии репозитория [docrails](https://github.com/lifo/docrails).
 
-Эта привязка осуществляется в файле https://raw.github.com/morsbox/rusrails/4.0/source/pages.yml. Указывается заголовок на русском, имя файла в репозиториях docrails и rusrails, url на сайте rusrails, ревизия и дата коммита.
+Эта привязка осуществляется в файле https://raw.github.com/morsbox/rusrails/4.0/source/index.yml. Указывается заголовок на русском, имя файла в репозиториях docrails и rusrails, url на сайте rusrails, ревизия и дата коммита.
 
 Таким образом, алгоритм работы:
 
