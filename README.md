@@ -19,7 +19,7 @@
 * Заполнить базу
 
     ```
-    $ rake pages:import
+    $ rake static_docs:import
     ```
 
 * Запустить сервер и открыть в браузере
