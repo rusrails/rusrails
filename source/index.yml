@@ -56,6 +56,12 @@ pages:
     revision: b1286d391897e3228013295b574de4fa0f856efa
     date:     14/04/13
 
+  - title:    Обзор Action View
+    path:     action-view-overview
+    file:     action_view_overview.md
+    revision: 567ea4ba29074079a05ba327c2d78e4a68eb3882
+    date:     04/04/13
+
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
     file:     form_helpers.md

@@ -13,6 +13,7 @@
 
 * **Вьюхи**
 
+    * [Обзор Action View](/action-view-overview)
     * [Макеты и рендеринг в Rails](/layouts-and-rendering-in-rails)
     * [Хелперы форм Action View](/rails-form-helpers)
 
