@@ -26,7 +26,7 @@ Rails on Rack
 
 ### Объект Rack приложения Rails
 
-`ApplicationName::Application` это основной объект приложения Rack в приложении Rails. Любой совместимый с Rack веб-сервер должен использовать объект `ApplicationName::Application` для обслуживания приложения Rails.
+`ApplicationName::Application` это основной объект приложения Rack в приложении Rails. Любой совместимый с Rack веб-сервер должен использовать объект `ApplicationName::Application` для обслуживания приложения Rails. `Rails.application` ссылается на тот же объект приложения.
 
 ### `rails server`
 
@@ -77,11 +77,11 @@ end
 
 ```ruby
 # Rails.root/config.ru
-require "config/environment"
+require ::File.expand_path('../config/environment',  __FILE__)
 
 use Rack::Debugger
 use Rack::ContentLength
-run ApplicationName::Application
+run Rails.application
 ```
 
 И запустить сервер:
@@ -322,7 +322,7 @@ config.middleware.clear
 ```ruby
 # config.ru
 use MyOwnStackFromScratch
-run ApplicationName::Application
+run Rails.application
 ```
 
 (resources) Источники
@@ -330,7 +330,7 @@ run ApplicationName::Application
 
 ### Обучение Rack
 
-* [Official Rack Website](http://rack.github.com)
+* [Official Rack Website](http://rack.github.io)
 * [Introducing Rack](http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html)
 * [Ruby on Rack #1 - Hello Rack!](http://m.onkey.org/ruby-on-rack-1-hello-rack)
 * [Ruby on Rack #2 - The Builder](http://m.onkey.org/ruby-on-rack-2-the-builder)
