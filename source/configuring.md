@@ -297,7 +297,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 * `config.active_record.lock_optimistically` регулирует, должен ли ActiveRecord использовать оптимистичную блокировку. По умолчанию `true`.
 
-* config.active_record.cache_timestamp_format управляет форматом значения временной метки в ключе кэширования. По умолчанию :number.
+* `config.active_record.cache_timestamp_format` управляет форматом значения временной метки в ключе кэширования. По умолчанию :number.
 
 Адаптер MySQL добавляет дополнительную конфигурационную опцию:
 
