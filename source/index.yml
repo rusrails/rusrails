@@ -23,8 +23,8 @@ pages:
   - title:    Миграции базы данных Rails
     path:     rails-database-migrations
     file:     migrations.md
-    revision: b337390889cb4a9f80ed08daf072a043f0e7ddf3
-    date:     01/03/13
+    revision: d6bf62c3c6be07dd4208214f86b8b122b4f3d16a
+    date:     13/05/13
 
   - title:    Валидации Active Record
     path:     active-record-validations
@@ -101,8 +101,8 @@ pages:
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
     file:     security.md
-    revision: 4e5a4cf4b2b52815bcba8fcd4bab52fe5a8f161b
-    date:     25/01/13
+    revision: 2392916eab6ff3c60668dbece09d33dee1bfaa49
+    date:     02/05/13
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
@@ -113,14 +113,14 @@ pages:
   - title:    Конфигурирование приложений на Rails
     path:     configuring-rails-applications
     file:     configuring.md
-    revision: d3688e02ca52c0b72d3092e8498da51e06b7fc58
-    date:     24/02/13
+    revision: 3064d642f6c989caf1d9172aa4209aaa34a19f63
+    date:     01/05/13
 
   - title:    Руководство по командной строке Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
-    revision: a83183c72155db3f11af287281ef3c13d56dddce
-    date:     01/02/13
+    revision: d2fe72345aeea2a0874dfe5c665368b9fd543bcb
+    date:     30/04/13
 
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
@@ -179,20 +179,20 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
     file:     3_0_release_notes.md
-    revision: 7a0dad25f3be77211160560dc76a8f37963051d7
-    date:     17/09/12
+    revision: ab819e5b10b121bd8b6eb2e04eb2c79c5b7f432a
+    date:     18/04/13
 
   - title:    Заметки о релизе Ruby on Rails 3.1
     path:     3_1_release_notes
     file:     3_1_release_notes.md
-    revision: 276e7b0a1d4b6b742733ee5b5c7dde4dd37a5e11
-    date:     24/10/12
+    revision: ab819e5b10b121bd8b6eb2e04eb2c79c5b7f432a
+    date:     18/04/13
 
   - title:    Заметки о релизе Ruby on Rails 3.2
     path:     3_2_release_notes
     file:     3_2_release_notes.md
-    revision: 7a0dad25f3be77211160560dc76a8f37963051d7
-    date:     17/09/12
+    revision: d2fe72345aeea2a0874dfe5c665368b9fd543bcb
+    date:     30/04/13
 
   - title:    Заметки о релизе Ruby on Rails 4.0
     path:     4_0_release_notes

@@ -111,7 +111,24 @@ class AddPartNumberToProducts < ActiveRecord::Migration
 end
 ```
 
-Аналогично,
+Если вы хотите добавить индекс на новый столбец, вы можете сделать это так
+
+```bash
+$ rails generate migration AddPartNumberToProducts part_number:string:index
+```
+
+создаст
+
+```ruby
+class AddPartNumberToProducts < ActiveRecord::Migration
+  def change
+    add_column :products, :part_number, :string
+    add_index :products, :part_number
+  end
+end
+```
+
+Точно так же, вы можете сгенерировать миграцию для удаления столбца из командной строки:
 
 ```bash
 $ rails generate migration RemovePartNumberFromProducts part_number:string
@@ -669,10 +686,10 @@ end
 ```
 
 ```ruby
-# app/model/product.rb
+# app/models/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, presence: true
+  validates :flag, :inclusion => { :in => [true, false] }
 end
 ```
 
@@ -692,10 +709,11 @@ end
 ```
 
 ```ruby
-# app/model/product.rb
+# app/models/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, :fuzz, presence: true
+  validates :flag, :inclusion => { :in => [true, false] }
+  validates :fuzz, presence: true
 end
 ```
 
@@ -821,7 +839,7 @@ Active Record и ссылочная целостность
 
 Валидации, такие как `validates :foreign_key, uniqueness: true`, это один из способов, которым ваши модели могут соблюдать ссылочную целостность. Опция `:dependent` в связях позволяет моделям автоматически уничтожать дочерние объекты при уничтожении родителя. Подобно всему, что работает на уровне приложения, это не может гарантировать ссылочной целостности, таким образом кто-то может добавить еще и внешние ключи как ограничители ссылочной целостности в базе данных.
 
-Хотя Active Record не предоставляет каких-либо инструментов для работы напрямую с этими функциями, можно использовать метод `execute` для запуска произвольного SQL. Можно использовать гемы, такие как [foreigner](https://github.com/matthuhiggins/foreigner), добавляющие поддержку внешних ключей в Active Record (включая поддержку выгрузки внешних ключей в `db/schema.rb`).
+Хотя Active Record не предоставляет каких-либо инструментов для работы напрямую с этими функциями, метод `execute` может использоваться для запуска произвольного SQL. Вы так же можете использовать гем, такой как [foreigner](https://github.com/matthuhiggins/foreigner), добавляющий поддержку внешних ключей в Active Record (включая поддержку выгрузки внешних ключей в `db/schema.rb`).
 
 Миграции и сиды
 ---------------

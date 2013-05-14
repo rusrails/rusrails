@@ -80,7 +80,7 @@ INFO: Для запуска сервера также можно использ�
 $ rails server -e production -p 4000
 ```
 
-Опция `-b` привязывает Rails к определенному ip, по умолчанию это 0.0.0.0. Можете запустить сервер, как демона, передав опцию `-d`.
+Опция `-b` привязывает Rails к определенному IP, по умолчанию это 0.0.0.0. Можете запустить сервер, как демона, передав опцию `-d`.
 
 ### `rails generate`
 
@@ -413,7 +413,7 @@ app/controllers/admin/users_controller.rb:
   * [ 20] [TODO] any other way to do this?
   * [132] [FIXME] high priority for next deploy
 
-app/model/school.rb:
+app/models/school.rb:
   * [ 13] [OPTIMIZE] refactor this code to make it faster
   * [ 17] [FIXME]
 ```
@@ -426,7 +426,7 @@ $ rake notes:fixme
 app/controllers/admin/users_controller.rb:
   * [132] high priority for next deploy
 
-app/model/school.rb:
+app/models/school.rb:
   * [ 17]
 ```
 
@@ -435,7 +435,7 @@ app/model/school.rb:
 ```bash
 $ rake notes:custom ANNOTATION=BUG
 (in /home/foobar/commandsapp)
-app/model/post.rb:
+app/models/post.rb:
   * [ 23] Have to fix this one before pushing!
 ```
 
@@ -444,12 +444,12 @@ NOTE. При использовании определенных и произв
 По умолчанию `rake notes` будет искать в директориях `app`, `config`, `lib`, `bin` и `test`. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды `SOURCE_ANNOTATION_DIRECTORIES`.
 
 ```bash
-$ export SOURCE_ANNOTATION_DIRECTORIES='rspec,vendor'
+$ export SOURCE_ANNOTATION_DIRECTORIES='spec,vendor'
 $ rake notes
 (in /home/foobar/commandsapp)
-app/model/user.rb:
+app/models/user.rb:
   * [ 35] [FIXME] User should have a subscription at this point
-rspec/model/user_spec.rb:
+rspec/models/user_spec.rb:
   * [122] [TODO] Verify the user that has a subscription works
 ```
 
