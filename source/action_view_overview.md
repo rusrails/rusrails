@@ -1,31 +1,31 @@
-Action View Overview
+Обзор Action View
 ====================
 
-After reading this guide, you will know:
+После прочтения этого гайда вы узнаете:
 
-* What Action View is and how to use it with Rails.
-* How best to use templates, partials, and layouts.
-* What helpers are provided by Action View and how to make your own.
-* How to use localized views.
-* How to use Action View outside of Rails.
+* Что такое Action View и как этим пользоваться в Rails.
+* Как лучше использовать шаблоны, паршиалы и лайауты.
+* Какие хелперы предоставляет Action View и как создать свои.
+* Как локализировать представления.
+* Как использовать Action View вне Rails.
 
 --------------------------------------------------------------------------------
 
-What is Action View?
+Что такое Action View?
 --------------------
 
-Action View and Action Controller are the two major components of Action Pack. In Rails, web requests are handled by Action Pack, which splits the work into a controller part (performing the logic) and a view part (rendering a template). Typically, Action Controller will be concerned with communicating with the database and performing CRUD actions where necessary. Action View is then responsible for compiling the response.
+Action View и Action Controller являются двумя крупными компонентами Action Pack. В Rails, веб-запросы обрабатываются с помощью Action Pack, который разбивает работу на контроллер (логику приложения) и представление (рендеринг шаблона). Как правило, Action Controller взаимодействует с базой данных и выполняет CRUD операций где необходимо. Action View ответственный за составление ответа.
 
-Action View templates are written using embedded Ruby in tags mingled with HTML. To avoid cluttering the templates with boilerplate code, a number of helper classes provide common behavior for forms, dates, and strings. It's also easy to add new helpers to your application as it evolves.
+Шаблоны Action View написаны с использованием встроенных в Ruby тегов смешанных с HTML. Для избежания захламления шаблонов с boilerplate кодом, ряд вспомогательных классов обеспечивает общее поведение для форм, дат и строк. Так же, с лёгкостью можно добавлять новые хелперы в ваше приложение, по мере его развития.
 
-NOTE: Some features of Action View are tied to Active Record, but that doesn't mean Action View depends on Active Record. Action View is an independent package that can be used with any sort of Ruby libraries.
+NOTE. Некоторые возможности Action View привязаны к Active Record, но это не означает что Action View зависит от Active Record. Action View является независимым пакетом который может использоваться с любой Ruby библиотекой.
 
-Using Action View with Rails
+Использование Action View в Rails
 ----------------------------
 
-For each controller there is an associated directory in the `app/views` directory which holds the template files that make up the views associated with that controller. These files are used to display the view that results from each controller action.
+Для каждого контроллера существует связанная директория расположенная в `app/views` которая содержит файлы шаблонов, что составляет отображение связанное с этим контроллером. Эти файлы используются для отображения результата каждого действия контроллера.
 
-Let's take a look at what Rails does by default when creating a new resource using the scaffold generator:
+Давайте взглянем на то, что Rails генерирует по умолчанию при создании нового ресурса используя scaffold генератор:
 
 ```bash
 $ rails generate scaffold post
@@ -42,44 +42,46 @@ $ rails generate scaffold post
       [...]
 ```
 
-There is a naming convention for views in Rails. Typically, the views share their name with the associated controller action, as you can see above.
-For example, the index controller action of the `posts_controller.rb` will use the `index.html.erb` view file in the `app/views/posts` directory.
-The complete HTML returned to the client is composed of a combination of this ERB file, a layout template that wraps it, and all the partials that the view may reference. Later on this guide you can find a more detailed documentation of each one of these three components.
+Существует конвенция по именованию представлений в Rails. Как правило, представления имеют одинаковое название ассоциируемое с контроллером, как вы могли заметить выше.
+Для примера, index действие контроллера `posts_controller.rb` будет иметь представление с именем  `index.html.erb` расположенное в `app/views/posts` директории.
 
+Полученный HTML возвращаемый клиенту состоит из комбинации этого ERB файла, макета шаблона, который включает его, и всех остальных частей на которые представление может ссылаться. Ниже в этому руководстве вы сможете найти более подробную документацию каждого из этих трех компонентов.
 
-Templates, Partials and Layouts
+Шаблоны, Патиалы и Макеты
 -------------------------------
 
-As mentioned before, the final HTML output is a composition of three Rails elements: `Templates`, `Partials` and `Layouts`.
-Below is a brief overview of each one of them.
+Как упоминалось ранее, финальный вывод HTML является одной из трёх составляющих элементов Rails: `Шаблоны`, `Паршиалы` and `Макеты`.
+Ниже приведено описание каждого из них.
 
-### Templates
+### Шаблоны
 
-Action View templates can be written in several ways. If the template file has a `.erb` extension then it uses a mixture of ERB (included in Ruby) and HTML. If the template file has a `.builder` extension then a fresh instance of `Builder::XmlMarkup` library is used.
+Шаблоны Action View могут быть написаны по разному. Если файл имеет расширение `.erb` значит используется смень ERB (включает ruby) и HTML. Если расширеине файла `.builder` значит это свежий экземпляр `Builder::XmlMarkup` используемой библиотеки.
 
-Rails supports multiple template systems and uses a file extension to distinguish amongst them. For example, an HTML file using the ERB template system will have `.html.erb` as a file extension.
+Rails поддерживает несколько систем шаблонов и использует расширение файла для различиях среди них. Например, HTML файл использующий систему шаблонов ERB будет иметь `. Html.erb` в качестве расширения файла.
 
 #### ERB
 
-Within an ERB template, Ruby code can be included using both `<% %>` and `<%= %>` tags. The `<% %>` tags are used to execute Ruby code that does not return anything, such as conditions, loops or blocks, and the `<%= %>` tags are used when you want output.
+В пределах ERB щаблона, ruby код может быть заключён в теги `<% %>` и `<%= %>`.
+Тег `<% %>` используется когда Ruby код не возвращает что либо, например условие, цикл, или блок, тег <%= %> наоборот используется когда вы хотите что либо вывести
 
-Consider the following loop for names:
+Рассмотрим следующий цикл для имен:
 
 ```html+erb
-<h1>Names of all the people</h1>
+<h1>Имена всех людей</h1>
 <% @people.each do |person| %>
-  Name: <%= person.name %><br/>
+  Имя: <%= person.name %><br/>
 <% end %>
 ```
 
-The loop is set up in regular embedding tags (`<% %>`) and the name is written using the output embedding tags (`<%= %>`). Note that this is not just a usage suggestion, for regular output functions like `print` or `puts` won't work with ERB templates. So this would be wrong:
+Цикл создан с помощью обычных тегов (`<% %>`) и имя выводится с помощью `<%= %>` .
+Заметьте, что это не просто соглашение использования для регулярных функций вывода, обычные функцие `print` и `puts` не работают с ERB шаблонами. Так что это не будет работать:
 
 ```html+erb
 <%# WRONG %>
 Hi, Mr. <% puts "Frodo" %>
 ```
 
-To suppress leading and trailing whitespaces, you can use `<%-` `-%>` interchangeably with `<%` and `%>`.
+Для подавления начальных и конечных пробелов, вы можете использовать `<% -` `-%>` наравне с `<%` и `%>`.
 
 #### Builder
 
@@ -146,15 +148,15 @@ xml.rss("version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/") do
 end
 ```
 
-#### Template Caching
+#### Кэширование Шаблонов
 
 By default, Rails will compile each template to a method in order to render it. When you alter a template, Rails will check the file's modification time and recompile it in development mode.
 
-### Partials
+### Партиалы
 
 Partial templates – usually just called "partials" – are another device for breaking the rendering process into more manageable chunks. With partials, you can extract pieces of code from your templates to separate files and also reuse them throughout your templates.
 
-#### Naming Partials
+#### Именование партиалов
 
 To render a partial as part of a view, you use the `render` method within the view:
 
@@ -170,7 +172,7 @@ This will render a file named `_menu.html.erb` at that point within the view tha
 
 That code will pull in the partial from `app/views/shared/_menu.html.erb`.
 
-#### Using Partials to simplify Views
+#### Использование Партиалов для упрощения представлений
 
 One way to use partials is to treat them as the equivalent of subroutines; a way to move details out of a view so that you can grasp what's going on more easily. For example, you might have a view that looks like this:
 
@@ -189,7 +191,7 @@ One way to use partials is to treat them as the equivalent of subroutines; a way
 
 Here, the `_ad_banner.html.erb` and `_footer.html.erb` partials could contain content that is shared among many pages in your application. You don't need to see the details of these sections when you're concentrating on a particular page.
 
-#### The `as` and `object` options
+#### Опции `as` и `object`
 
 By default `ActionView::Partials::PartialRenderer` has its object in a local variable with the same name as the template. So, given:
 
@@ -229,7 +231,7 @@ The `object` and `as` options can also be used together:
 <%= render partial: "product", object: @item, as: "item" %>
 ```
 
-#### Rendering Collections
+#### Рендеринг коллекций
 
 It is very common that a template needs to iterate over a collection and render a sub-template for each of the elements. This pattern has been implemented as a single method that accepts an array and renders a partial for each one of the elements in the array.
 
@@ -257,7 +259,7 @@ You can use a shorthand syntax for rendering collections. Assuming `@products` i
 
 Rails determines the name of the partial to use by looking at the model name in the collection, `Product` in this case. In fact, you can even create a heterogeneous collection and render it this way, and Rails will choose the proper partial for each member of the collection.
 
-#### Spacer Templates
+#### Промежуточные шаблоны
 
 You can also specify a second partial to be rendered between instances of the main partial by using the `:spacer_template` option:
 
@@ -267,11 +269,11 @@ You can also specify a second partial to be rendered between instances of the ma
 
 Rails will render the `_product_ruler` partial (with no data passed to it) between each pair of `_product` partials.
 
-### Layouts
+### Макеты
 
 Layouts can be used to render a common view template around the results of Rails controller actions. Typically, every Rails has a couple of overall layouts that most pages are rendered within. For example, a site might have a layout for a logged in user, and a layout for the marketing or sales side of the site. The logged in user layout might include top-level navigation that should be present across many controller actions. The sales layout for a SaaS app might include top-level navigation for things like "Pricing" and "Contact Us." You would expect each layout to have a different look and feel. You can read more details about Layouts in the [Layouts and Rendering in Rails](layouts_and_rendering.html) guide.
 
-Partial Layouts
+Макет партиалов
 ---------------
 
 Partials can have their own layouts applied to them. These layouts are different than the ones that are specified globally for the entire action, but they work in a similar fashion.
@@ -341,7 +343,7 @@ View Paths
 
 TODO...
 
-Overview of helpers provided by Action View
+Обзор хелперов предоставляемых Action View
 -------------------------------------------
 
 WIP: Not all the helpers are listed here. For a full list see the [API documentation](http://api.rubyonrails.org/classes/ActionView/Helpers.html)
@@ -1467,7 +1469,7 @@ number_with_precision(111.2345)     # => 111.235
 number_with_precision(111.2345, 2)  # => 111.23
 ```
 
-Localized Views
+Локализация вьюх
 ---------------
 
 Action View has the ability render different templates depending on the current locale.
@@ -1490,7 +1492,7 @@ Then you could create special views like `app/views/posts/show.expert.html.erb` 
 
 You can read more about the Rails Internationalization (I18n) API [here](i18n.html).
 
-Using Action View outside of Rails
+Использование Action View вне Rails
 ----------------------------------
 
 Action View is a Rails component, but it can also be used without Rails. We can demonstrate this by creating a small [Rack](http://rack.rubyforge.org/) application that includes Action View functionality. This may be useful, for example, if you'd like access to Action View's helpers in a Rack application.
