@@ -148,7 +148,7 @@ logger.info "Processing the request..."
 logger.fatal "Terminating application, raised unrecoverable error!!!"
 ```
 
-Вот пример метода, оборудованного дополнительным логированием:
+Вот пример метода, оборудованного дополнительным логированием, :
 
 ```ruby
 class PostsController < ApplicationController
@@ -172,7 +172,7 @@ class PostsController < ApplicationController
 end
 ```
 
-Вот пример лога, созданного этим методом:
+Пример лога, сгенерированного при выполнении экшена контроллера:
 
 ```
 Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
@@ -196,7 +196,8 @@ Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localh
 
 ### Тегированное логирование
 
-При запуске многопользовательских приложений часто полезно фильтровать логи с использованием произвольных правил. `TaggedLogging` в Active Support помогает это сделать, помечая строчки лога с помощью поддомена, идентификаторов запроса, и тому подобного, помогая отладке таких приложений.
+При запуске многопользовательских приложений часто полезно фильтровать логи с использованием произвольных правил.
+`TaggedLogging` в Active Support помогает это сделать, помечая строчки лога с помощью поддомена, идентификаторов запроса, и тому подобного, помогая отладке таких приложений.
 
 ```ruby
 logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
@@ -214,7 +215,7 @@ logger.tagged("BCX") { logger.tagged("Jason") { logger.info "Stuff" } } # Logs "
 
 ### Установка
 
-Rails использует гем `debugger` для настройки точек останова и прохождения через живой код. Чтобы установить его, просто запустите:
+Вы можете использовать гем `debugger` для настройки точек останова и прохождения через живой код. Чтобы установить его, просто запустите:
 
 ```bash
 $ gem install debugger
@@ -233,7 +234,7 @@ class PeopleController < ApplicationController
 end
 ```
 
-Если видите сообщение в консоли или логах:
+Если вы видите это сообщение в консоли или логах:
 
 ```
 ***** Debugger requested, but was not available: Start server with --debugger to enable *****
@@ -244,12 +245,12 @@ end
 ```bash
 $ rails server --debugger
 => Booting WEBrick
-=> Rails 3.0.0 application starting on http://0.0.0.0:3000
+=> Rails 3.2.13 application starting on http://0.0.0.0:3000
 => Debugger enabled
 ...
 ```
 
-TIP: В режиме development можно динамически вызвать `require \'debugger\'` вместо перезапуска сервера, если он был запущен без `--debugger`.
+TIP: В режиме development можно динамически вызвать `require \'debugger\'` вместо перезапуска сервера, даже если он был запущен без `--debugger`.
 
 ### Среда
 
@@ -264,7 +265,7 @@ TIP: В режиме development можно динамически вызват�
 (rdb:7)
 ```
 
-Настало время изучить и покопаться в вашем приложении. Для начала хорошо бы попросить помощь у отладчика... поэтому напишите: `help` (Неожиданно, правда?)
+Настало время изучить и покопаться в вашем приложении. Для начала хорошо бы попросить помощь у отладчика. Напишите: `help`
 
 ```
 (rdb:7) help
@@ -279,7 +280,7 @@ condition  down     finish  list    ps    save     thread  var
 continue   edit     frame   method  putl  set      tmate   where
 ```
 
-TIP: Чтобы просмотреть помощь для любой команды, используйте `help <имя команды>` в активном режиме отладки. Например: _`help var`_
+TIP: Чтобы просмотреть помощь для любой команды, используйте `help <имя команды>` в консоли отладчика. Например: _`help var`_
 
 Следующая команда, которую мы изучим, одна из самых полезных: `list`. Можно сокращать любые отладочные команды, предоставляя только достаточные буквы для отличения их от других команд, поэтому можно использовать `l` для команды `list`.
 
@@ -287,7 +288,7 @@ TIP: Чтобы просмотреть помощь для любой коман
 
 ```
 (rdb:7) list
-[1, 10] in /PathToProject/posts_controller.rb
+[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
    1  class PostsController < ApplicationController
    2    # GET /posts
    3    # GET /posts.json
@@ -323,7 +324,7 @@ TIP: Чтобы просмотреть помощь для любой коман
 
 ```
 (rdb:7) l-
-[1, 10] in /PathToProject/posts_controller.rb
+[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
    1  class PostsController < ApplicationController
    2    # GET /posts
    3    # GET /posts.json
@@ -340,7 +341,7 @@ TIP: Чтобы просмотреть помощь для любой коман
 
 ```
 (rdb:7) list=
-[1, 10] in /PathToProject/posts_controller.rb
+[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
    1  class PostsController < ApplicationController
    2    # GET /posts
    3    # GET /posts.json
@@ -499,7 +500,7 @@ TIP: Можете использовать debugger при использова�
 
 ```
 $ rails console
-Loading development environment (Rails 3.1.0)
+Loading development environment (Rails 3.2.13)
 >> require "debugger"
 => []
 >> author = Author.first
@@ -662,11 +663,8 @@ set listsize 25
 
 * [Домашняя страница ruby-debug](http://bashdb.sourceforge.net/ruby-debug/home-page.html)
 * [Домашняя страница debugger](https://github.com/cldwalker/debugger)
-* [Статья: Debugging a Rails application with ruby-debug](http://www.sitepoint.com/article/debug-rails-app-ruby-debug/)
-* [Скринкаст ruby-debug Basics](http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/)
+* [Статья: Debugging a Rails application with ruby-debug](http://www.sitepoint.com/debug-rails-app-ruby-debug/)
 * [Скринкаст Ryan Bates' debugging ruby (revised)](http://railscasts.com/episodes/54-debugging-ruby-revised)
 * [Скринкаст Ryan Bates' stack trace](http://railscasts.com/episodes/24-the-stack-trace)
 * [Скринкаст Ryan Bates' logger](http://railscasts.com/episodes/56-the-logger)
 * [Debugging with ruby-debug](http://bashdb.sourceforge.net/ruby-debug.html)
-* [ruby-debug cheat sheet](http://cheat.errtheblog.com/s/rdebug/)
-* [Вики Ruby on Rails: How to Configure Logging](http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging)
