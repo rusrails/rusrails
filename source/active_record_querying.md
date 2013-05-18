@@ -54,7 +54,7 @@ Active Record выполнит запросы в базу данных за ва
 
 Методы следующие:
 
-* `bind`
+* `find`
 * `create_with`
 * `eager_load`
 * `extending`
