@@ -22,6 +22,90 @@
 
 TIP: В Ruby 1.8.7 p248 и p249 имеются ошибки маршализации, ломающие Rails. Хотя в Ruby Enterprise Edition это было исправлено, начиная с релиза 1.8.7-2010.02. В ветке 1.9, Ruby 1.9.1 не пригоден к использованию, поскольку он иногда вылетает, поэтому, если хотите использовать 1.9.x перепрыгивайте сразу на 1.9.3 для гладкой работы.
 
+### HTTP PATCH
+
+Rails 4 теперь использует `PATCH` в качестве основного метода HTTP для обновлений, когда в `config/routes.rb` объявлен RESTful-ресурс. Экшн `update` все еще используется, и запросы `PUT` также будут направлены к экшну `update`. Поэтому, если вы используте только стандартные RESTful-маршруты, не нужно делать никаких изменений:
+
+```ruby
+resources :users
+```
+
+```erb
+<%= form_for @user do |f| %>
+```
+
+```ruby
+class UsersController < ApplicationController
+  def update
+    # No change needed; PATCH will be preferred, and PUT will still work.
+  end
+end
+```
+
+Однако, необходимо сделать изменение, если вы используете `form_for` для обновления ресурса в сочентании с произвольным маршрутом с использованием метода `PUT` HTTP:
+
+```ruby
+resources :users, do
+  put :update_name, on: :member
+end
+```
+
+```erb
+<%= form_for [ :update_name, @user ] do |f| %>
+```
+
+```ruby
+class UsersController < ApplicationController
+  def update_name
+    # Требуется изменение; form_for попытается использовать несуществующий маршрут PATCH.
+  end
+end
+```
+
+Если экшн не используется в публичном API, и можно без проблем изменить метод HTTP, можно обновить маршрут для использования `patch` вместо `put`:
+
+Запросы `PUT` к `/users/:id` в Rails 4 направляются к `update`, как и раньше. Поэтому, если ваше API получит настоящие PUT запросы, они будут работать.
+Роутер также направит заросы `PATCH` к `/users/:id` в экшн `update`.
+
+```ruby
+resources :users do
+  patch :update_name, on: :member
+end
+```
+
+Если экшн используется в публичном API, и вы не можете изменить используемый метод HTTP, можно обновить форму для использования метода `PUT`:
+
+```erb
+<%= form_for [ :update_name, @user ], method: :put do |f| %>
+```
+
+Подробнее о PATCH, и почему это изменение было сделано, смотрите [эту публикацию](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/) в блоге Rails.
+
+#### Заметка о типах медиа
+
+Корректировка для метода `PATCH` [определяет, что с `PATCH` должен использоваться тип медиа 'diff' ](http://www.rfc-editor.org/errata_search.php?rfc=5789). Один из таких форматов [JSON Patch](http://tools.ietf.org/html/rfc6902). Хотя Rails не поддерживает JSON Patch, такую поддержку легко добавить:
+
+```
+# в вашем контроллере
+def update
+  respond_to do |format|
+    format.json do
+      # выполнить частичное обновление
+      @post.update params[:post]
+    end
+
+    format.json_patch do
+      # выполнить сложное изменение
+    end
+  end
+end
+
+# В config/initializers/json_patch.rb:
+Mime::Type.register 'application/json-patch+json', :json_patch
+```
+
+Так как JSON Patch только недавно был добавлен в RFC, пока еще нет множества замечательных библиотек Ruby. Один из имеющихся гемов [hana](https://github.com/tenderlove/hana) от Aaron Patterson, но в нем еще нет полной поддержки нескольких последних изменений в спецификации.
+
 (upgrading-from-rails-3-2-to-rails-4-0) Обновление с Rails 3.2 на Rails 4.0
 -------------------------------------
 
@@ -30,6 +114,10 @@ NOTE: This section is a work in progress.
 Если версия Rails вашего приложения сейчас старше чем 3.2.x, следует сперва обновиться до Rails 3.2, перед попыткой обновиться до Rails 4.0.
 
 Следующие изменения предназначены для обновления вашего приложения на Rails 4.0.
+
+### Gemfile
+
+Rails 4.0 убрал группу `assets` из Gemfile. Вам нужно убрать эту строчку из Gemfile перед обновлением.
 
 ### vendor/plugins
 
@@ -79,16 +167,31 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 
 ### Action Pack
 
-* Rails 4.0 представил новое хранилище куки `UpgradeSignatureToEncryptionCookieStore`. Оно полезно для обновления приложения со старого дефолтного `CookieStore` на новое дефолтное `EncryptedCookieStore`. Для использования этого традиционного хранилища куки, нужно оставить свой существующий `secret_token`, добавить новый `secret_key_base` и именить свое `session_store` следующим образом:
+* Rails 4.0 представил `ActiveSupport::KeyGenerator`, и использует его, как основу для генерации и проверки подписанных куки (среди прочего). Существующие подписанные куки, сгенерированные с помощью Rails 3.x будут прозрачно обновлены, если вы оставите существующий `secret_token` и добавите новый `secret_key_base`.
 
 ```ruby
-  # config/initializers/session_store.rb
-  Myapp::Application.config.session_store :upgrade_signature_to_encryption_cookie_store, key: 'existing session key'
-
   # config/initializers/secret_token.rb
   Myapp::Application.config.secret_token = 'existing secret token'
   Myapp::Application.config.secret_key_base = 'new secret key base'
 ```
+
+Отметьте, что вы должны обождать с установкой `secret_key_base`, пока 100% пользователей на перейдет на Rails 4.x, и вы точно не будете уверены, что не придется откатиться к Rails 3.x. Это так, потому что куки, подписанные на основе нового `secret_key_base` в Rails 4.x, обратно несовместимы с Rails 3.x. Можно спокойно оставить существующий `secret_token`, не устанавливать новый `secret_key_base` и игнорировать предупреждения, пока вы не будете полностью уверены, что обновление полностью завершено.
+
+Если вы полагаетесь на возможность внешних приложений или Javascript читать подписанные куки сессии вашего приложения Rails (или подписанные куки в целом), вам не следует устанавливать `secret_key_base`, пока вы не избавитесь от этой проблемы.
+
+* Rails 4.0 шифрует содержимое основанной на куки сессии, если был установлен `secret_key_base`. Rails 3.x подписывал, но не шифровал содержимое основанной на куки сессии. Подписанные куки "безопасны", так как проверяется, что они были созданы приложением, и защищены от взлома. Однако, содержимое может быть просмотрено пользователем, и шифрование содержимого устраняет эту заботу без значительного снижения производительности.
+
+Как описывалось ранее, существующие подписанные куки, созданные Rails 3.x, будут прозрачно обновлены, если вы оставите существующий `secret_token` и добавите новый `secret_key_base`.
+
+```ruby
+  # config/initializers/secret_token.rb
+  Myapp::Application.config.secret_token = 'existing secret token'
+  Myapp::Application.config.secret_key_base = 'new secret key base'
+```
+
+Также применяются те же оговорки. Следует обождать с установкой `secret_key_base`, пока 100% пользователей на перейдет на Rails 4.x, и вы точно не будете уверены, что не придется откатиться к Rails 3.x. Также до обновления нужно позаботится, что вы не полагаетесь на возможность декодирования подписанных куки, созданных вашим приложением, во внешних приложениях или Javascript.
+
+Подробнее читайте в [Pull Request #9978](https://github.com/rails/rails/pull/9978) о перезоде на подписанные куки сессии.
 
 * Rails 4.0 убрал опцию `ActionController::Base.asset_path`. Используйте особенность файлопровода (assets pipeline).
 
@@ -100,9 +203,23 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 
 * Rails 4.0 изменил клиент memcached по умолчанию с `memcache-client` на `dalli`. Чтобы обновиться, просто добавьте `gem 'dalli'` в свой `Gemfile`.
 
-* В Rails 4.0 устарели методы `dom_id` и `dom_class`. Вам следует включить модуль `ActionView::RecordIdentifier` в контроллерах, требующих эту особенность.
+* В Rails 4.0 устарели методы `dom_id` и `dom_class` в контроллерах (они нужны только во вьюхах). Вам следует включить модуль `ActionView::RecordIdentifier` в контроллерах, требующих эту особенность.
 
 * Rails 4.0 изменил работу `assert_generates`, `assert_recognizes` и `assert_routing`. Теперь все эти операторы контроля вызывают `Assertion` вместо `ActionController::RoutingError`.
+
+* Rails 4.0 вызывает `ArgumentError`, если определены коллизии в иенах маршрутов. Это может быть вызвано как явно определенными именнованными маршрутами, либо методом `resources`. Вот два примера, которые вызывают коллизию маршрутов с именем `example_path`:
+
+```ruby
+  get 'one' => 'test#example', as: :example
+  get 'two' => 'test#example', as: :example
+```
+
+```ruby
+  resources :examples
+  get 'clashing/:id' => 'test#example', as: :example
+```
+
+В первом случае можно просто избежать использование одинакого имени для нескольких маршрутов. Во втором следует использовать опции `only` или `except`, представленные методом `resources`, чтобы ограничить создаваемые маршруты, о чем подробно описано в [Руководстве по роутингу](/rails-routing#restricting-the-routes-created).
 
 * Rails 4.0 также изменил способ отрисовки маршрутов с символами unicode. Теперь можно непосредственно отрисовывать симвлы unicode character. Если вы уже отрисовываете такие маршруты, их нужно изменить, например:
 
