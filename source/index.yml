@@ -41,8 +41,8 @@ pages:
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: 2fb1cdd0a5cfdac73d8152fd33bc8c1821ea9717
-    date:     06/03/13
+    revision: f1d453b4fd3697c9b5bd9b130d4fd7cce6a776ad
+    date:     07/06/13
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface

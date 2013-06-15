@@ -570,7 +570,7 @@ end
 Теперь нужно написать миграцию для создания таблицы `assemblies_parts`. Эта таблица должна быть создана без первичного ключа:
 
 ```ruby
-class CreateAssemblyPartJoinTable < ActiveRecord::Migration
+class CreateAssembliesPartsJoinTable < ActiveRecord::Migration
   def change
     create_table :assemblies_parts, id: false do |t|
       t.integer :assembly_id
@@ -691,6 +691,13 @@ c.first_name == o.customer.first_name # => true
 * Они не работают со связями `:as`.
 * Для связей `belongs_to` противоположные связи `has_many` игнорируются.
 
+Каждая связь попытается автоматически найти противоположную связь и установить опцию `:inverse_of` эвристически (основываясь на имени связи). Поддерживается большинство связей со стандартными именами. Однако, связям, содержащим следующие опции, противоположности не будут установлены автоматически:
+
+* :conditions
+* :through
+* :polymorphic
+* :foreign_key
+
 Подробная информация по связи belongs_to
 ----------------------------------------
 
@@ -704,6 +711,7 @@ c.first_name == o.customer.first_name # => true
 * `association=(associate)`
 * `build_association(attributes = {})`
 * `create_association(attributes = {})`
+* `create_association!(attributes = {})`
 
 Во всех четырех методах `association` заменяется символом, переданным как первый аргумент в `belongs_to`. Например, имеем объявление:
 
@@ -720,6 +728,7 @@ customer
 customer=
 build_customer
 create_customer
+create_customer!
 ```
 
 NOTE: Когда устанавливаете новую связь `has_one` или `belongs_to`, следует использовать префикс `build_` для построения связи, в отличие от метода `association.build`, используемый для связей `has_many` или `has_and_belongs_to_many`. Чтобы создать связь, используйте префикс `create_`.
@@ -759,6 +768,10 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 @customer = @order.create_customer(customer_number: 123,
                                    customer_name: "John Doe")
 ```
+
+#### `create_association!(attributes = {})`
+
+Работает так же, как и вышеприведенный `create_association`, но вызывает `ActiveRecord::RecordInvalid`, если запись невалидна.
 
 ### Опции для `belongs_to`
 
@@ -1001,6 +1014,7 @@ end
 * `association=(associate)`
 * `build_association(attributes = {})`
 * `create_association(attributes = {})`
+* `create_association!(attributes = {})`
 
 Во всех этих методах `association` заменяется на символ, переданный как первый аргумент в `has_one`. Например, имеем объявление:
 
@@ -1017,6 +1031,7 @@ account
 account=
 build_account
 create_account
+create_account!
 ```
 
 NOTE: При устанавлении новой связи `has_one` или `belongs_to`, следует использовать префикс `build_` для построения связи, в отличие от метода `association.build`, используемого для связей `has_many` или `has_and_belongs_to_many`. Чтобы создать связь, используйте префикс `create_`.
@@ -1054,6 +1069,10 @@ NOTE: При устанавлении новой связи `has_one` или `be
 ```ruby
 @account = @supplier.create_account(terms: "Net 30")
 ```
+
+#### `create_association!(attributes = {})`
+
+Работает так же, как и вышеприведенный `create_association`, но вызывает `ActiveRecord::RecordInvalid`, если запись невалидна.
 
 ### Опции для `has_one`
 
@@ -1267,6 +1286,7 @@ end
 * `collection.exists?(...)`
 * `collection.build(attributes = {}, ...)`
 * `collection.create(attributes = {})`
+* `collection.create!(attributes = {})`
 
 Во всех этих методах `collection` заменяется символом, переданным как первый аргумент в `has_many`, и `collection_singular` заменяется версией в единственном числе этого символа. Например, имеем объявление:
 
@@ -1294,6 +1314,7 @@ orders.where(...)
 orders.exists?(...)
 orders.build(attributes = {}, ...)
 orders.create(attributes = {})
+orders.create!(attributes = {})
 ```
 
 #### `collection(force_reload = false)`
@@ -1409,6 +1430,10 @@ WARNING: Объекты будут _всегда_ удаляться из баз
                                  order_number: "A12345")
 ```
 
+#### `collection.create!(attributes = {})`
+
+Работает так же, как вышеприведенный `collection.create`, но вызывает `ActiveRecord::RecordInvalid`, если запись невалидна.
+
 ### Опции для `has_many`
 
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `has_many`. Такая настройка легко выполнима с помощью передачи опций при создании связи. Например, эта связь использует две такие опции:
@@ -1492,6 +1517,16 @@ end
 #### `:primary_key`
 
 По соглашению, Rails предполагает, что столбец, используемый для хранения первичного ключа, это `id`. Вы можете переопределить это и явно определить первичный ключ с помощью опции `:primary_key`.
+
+Допустим, в таблице `users` есть `id` в качестве primary_key, но также имеется столбец `guid`. А также имеется требование, что таблица `todos` должна содержать значение столбца `guid`, а не значение `id`. Это достигается следующим образом
+
+```ruby
+class User < ActiveRecord::Base
+  has_many :todos, primary_key: :guid
+end
+```
+
+Теперь, если выполнить `@user.todos.create`, то в запись `@todo` значение `user_id` будет таким же, как значение `guid` в `@user`.
 
 #### `:source`
 
@@ -1641,9 +1676,9 @@ end
 
 WARNING: Если укажете свой собственный `select`, не забудьте включить столбцы первичного ключа и внешнего ключа в связанной модели. Если так не сделать, Rails выдаст ошибку.
 
-#### `uniq`
+#### `distinct`
 
-Используйте метод `uniq`, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией `:through`.
+Используйте метод `distinct`, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией `:through`.
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -1661,12 +1696,12 @@ Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, post_id: 5>, #<Readin
 
 В вышеописанной задаче два reading, и `person.posts` выявляет их оба, даже хотя эти записи указывают на один и тот же post.
 
-Давайте установим `:uniq`:
+Давайте установим `:distinct`:
 
 ```ruby
 class Person
   has_many :readings
-  has_many :posts, -> { uniq }, through: :readings
+  has_many :posts, -> { distinct }, through: :readings
 end
 
 person = Person.create(name: 'Honda')
@@ -1678,6 +1713,18 @@ Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Readin
 ```
 
 В вышеописанной задаче все еще два reading. Однако `person.posts` показывает только один post, поскольку коллекция загружает только уникальные записи.
+
+Если вы хотите быть уверенными, что после вставки все записи сохраненной связи различны (и, таким образом, убедиться, что при росмотре связи никогда не будет дублирующихся записей), следует добавить уникальный индекс для самой таблицы. Например, если таблица называется `person_posts`, и вы хотите убедиться, что все публикации уникальны, следует добавить в миграции:
+
+```ruby
+add_index :person_posts, :post, unique: true
+```
+
+Отметьте, что проверка уникальности при использовании чего-то, наподобие `include?`, это субъект гонки условий. Не пытайтесь использовать `include?` для соблюдения уникальности в связи. Используя вышеприведенный пример с публикацией, нижеследующий код вызовет гонку, поскольку несколько пользователей могут использовать его одновременно:
+
+```ruby
+person.posts << post unless person.posts.include?(post)
+```
 
 ### Когда сохраняются объекты?
 
@@ -1713,6 +1760,7 @@ Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Readin
 * `collection.exists?(...)`
 * `collection.build(attributes = {})`
 * `collection.create(attributes = {})`
+* `collection.create!(attributes = {})`
 
 Во всех этих методах `collection` заменяется символом, переданным как первый аргумент в `has_and_belongs_to_many`, а `collection_singular` заменяется версией в единственном числе этого символа. Например, имеем объявление:
 
@@ -1740,6 +1788,7 @@ assemblies.where(...)
 assemblies.exists?(...)
 assemblies.build(attributes = {}, ...)
 assemblies.create(attributes = {})
+assemblies.create!(attributes = {})
 ```
 
 #### Дополнительные методы столбцов
@@ -1857,6 +1906,10 @@ WARNING: Это не запустит колбэки на соединитель
 ```ruby
 @assembly = @part.assemblies.create({assembly_name: "Transmission housing"})
 ```
+
+#### `collection.create!(attributes = {})`
+
+Работает так же, как вышеприведенный `collection.create`, но вызывает `ActiveRecord::RecordInvalid`, если запись невалидна.
 
 ### Опции для `has_and_belongs_to_many`
 
