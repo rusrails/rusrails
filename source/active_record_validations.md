@@ -110,7 +110,7 @@ Person.create(name: "John Doe").valid? # => true
 Person.create(name: nil).valid? # => false
 ```
 
-После того, как Active Record выполнит валидации, все найденные ошибки будут доступны в методе экземпляра `errors`, возвращающем коллекцию ошибок. По определению объект валиден, если эта коллекция будет пуста после запуска валидаций.
+После того, как Active Record выполнит валидации, все найденные ошибки будут доступны в методе экземпляра `errors.messages`, возвращающем коллекцию ошибок. По определению объект валиден, если эта коллекция будет пуста после запуска валидаций.
 
 Заметьте, что объект, созданный с помощью `new` не сообщает об ошибках, даже если технически невалиден, поскольку валидации не запускаются при использовании `new`.
 
@@ -121,17 +121,17 @@ end
 
 >> p = Person.new
 #=> #<Person id: nil, name: nil>
->> p.errors
+>> p.errors.messages
 #=> {}
 
 >> p.valid?
 #=> false
->> p.errors
+>> p.errors.messages
 #=> {name:["can't be blank"]}
 
 >> p = Person.create
 #=> #<Person id: nil, name: nil>
->> p.errors
+>> p.errors.messages
 #=> {name:["can't be blank"]}
 
 >> p.save
@@ -259,7 +259,7 @@ end
 ```ruby
 class Product < ActiveRecord::Base
   validates :legacy_code, format: { with: /\A[a-zA-Z]+\z/,
-    message: "Only letters allowed" }
+    message: "only allows letters" }
 end
 ```
 
@@ -323,7 +323,7 @@ class Essay < ActiveRecord::Base
 end
 ```
 
-Отметьте, что сообщения об ошибке по умолчанию во множественном числе (т.е., "is too short (minimum is %{count} characters)"). По этой причине, когда `:minimum` равно 1, следует предоставить собственное сообщение или использовать вместо него `validates_presence_of`. Когда `:in` или `:within` имеют как нижнюю границу 1, следует или предоставить собственное сообщение, или вызвать `presence` перед `length`.
+Отметьте, что сообщения об ошибке по умолчанию во множественном числе (т.е., "is too short (minimum is %{count} characters)"). По этой причине, когда `:minimum` равно 1, следует предоставить собственное сообщение или использовать вместо него `presence: true`. Когда `:in` или `:within` имеют как нижнюю границу 1, следует или предоставить собственное сообщение, или вызвать `presence` перед `length`.
 
 Хелпер `size` это псевдоним для `length`.
 
@@ -564,8 +564,8 @@ class Topic < ActiveRecord::Base
   validates :title, length: { is: 5 }, allow_blank: true
 end
 
-Topic.create("title" => "").valid?  # => true
-Topic.create("title" => nil).valid? # => true
+Topic.create(title: "").valid?  # => true
+Topic.create(title: nil).valid? # => true
 ```
 
 ### `:message`
@@ -588,6 +588,8 @@ class Person < ActiveRecord::Base
   validates :name, presence: true, on: :save
 end
 ```
+
+Последняя строчка в состоянии пересмотра, что обсуждается в этом [issue](https://github.com/rails/rails/issues/10248)
 
 Строгие валидации
 -----------------
@@ -777,12 +779,12 @@ end
 
 person = Person.new
 person.valid? # => false
-person.errors
+person.errors.messages
  # => {:name=>["can't be blank", "is too short (minimum is 3 characters)"]}
 
 person = Person.new(name: "John Doe")
 person.valid? # => true
-person.errors # => []
+person.errors.messages # => []
 ```
 
 ### `errors[]`
