@@ -56,6 +56,7 @@ Active Record выполнит запросы в базу данных за ва
 
 * `bind`
 * `create_with`
+* `distinct`
 * `eager_load`
 * `extending`
 * `from`
@@ -88,7 +89,7 @@ Active Record выполнит запросы в базу данных за ва
 
 ### Получение одиночного объекта
 
-Active Record представляет пять различных способов получения одиночного объекта.
+Active Record представляет несколько различных способов получения одиночного объекта.
 
 #### Использование первичного ключа
 
@@ -503,19 +504,15 @@ Client.where(orders_count: [1,3,5])
 SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 ```
 
-### Условия NOT, LIKE и NOT LIKE
+### Условия NOT
 
-Запросы `NOT`, `LIKE` и `NOT LIKE` в SQL могут быть созданы с помощью `where.not`, `where.like` и `where.not_like` соответственно.
+Запросы `NOT` в SQL могут быть созданы с помощью `where.not`.
 
 ```ruby
 Post.where.not(author: author)
-
-Author.where.like(name: 'Nari%')
-
-Developer.where.not_like(name: 'Tenderl%')
 ```
 
-Другими словами, этот тип запросов может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not`, `like` или `not_like` с переданными условиями для `where`.
+Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`.
 
 (ordering) Сортировка
 ---------------------
@@ -578,10 +575,10 @@ ActiveModel::MissingAttributeError: missing attribute: <attribute>
 
 Где `<attribute>` это атрибут, который был запрошен. Метод `id` не вызывает `ActiveRecord::MissingAttributeError`, поэтому будьте аккуратны при работе со связями, так как они нуждаются в методе `id` для правильной работы.
 
-Если хотите вытащить только по одной записи для каждого уникального значения в определенном поле, можно использовать `uniq`:
+Если хотите вытащить только по одной записи для каждого уникального значения в определенном поле, можно использовать `distinct`:
 
 ```ruby
-Client.select(:name).uniq
+Client.select(:name).distinct
 ```
 
 Это создаст такой SQL:
@@ -593,10 +590,10 @@ SELECT DISTINCT name FROM clients
 Также можно убрать ограничение уникальности:
 
 ```ruby
-query = Client.select(:name).uniq
+query = Client.select(:name).distinct
 # => Возвратит уникальные имена
 
-query.uniq(false)
+query.distinct(false)
 # => Возвратит все имена, даже если есть дубликаты
 ```
 
@@ -707,7 +704,7 @@ Post.order('id DESC').limit(20).unscope(:order, :limit) = Post.all
 Дополнительно можно убрать определенные условия из where. Например:
 
 ```ruby
-Post.where(:id => 10).limit(1).unscope(:where => :id, :limit).order('id DESC') = Post.order('id DESC')
+Post.where(id: 10).limit(1).unscope(where: :id, :limit).order('id DESC') = Post.order('id DESC')
 ```
 
 ### `only`
@@ -732,7 +729,7 @@ SELECT * FROM posts WHERE id > 10 ORDER BY id DESC
 class Post < ActiveRecord::Base
   ..
   ..
-  has_many :comments, order: 'posted_at DESC'
+  has_many :comments, -> { order('posted_at DESC') }
 end
 
 Post.find(10).comments.reorder('name')
@@ -1203,6 +1200,7 @@ class User < ActiveRecord::Base
   scope :active, -> { where state: 'active' }
   scope :inactive, -> { where state: 'inactive' }
 end
+```
 
 ```ruby
 User.active.inactive
@@ -1227,7 +1225,7 @@ User.active.merge(User.inactive)
 
 ```ruby
 class User < ActiveRecord::Base
-  default_scope  { where state: 'pending' }
+  default_scope { where state: 'pending' }
   scope :active, -> { where state: 'active' }
   scope :inactive, -> { where state: 'inactive' }
 end
@@ -1289,7 +1287,9 @@ Client.unscoped {
 ```
 
 (dynamic-finders) Динамический поиск
-------------------
+------------------------------------
+
++NOTE: Методы динамического поиска устарели в Rails 4.0 и будут убраны в Rails 4.1. Лучшей практикой является использование скоупов Active Record. Гем с устаревшими методами находится в https://github.com/rails/activerecord-deprecated_finders
 
 Для каждого поля (также называемого атрибутом), определенного в вашей таблице, Active Record предоставляет метод поиска. Например, если есть поле `first_name` в вашей модели `Client`, вы на халяву получаете `find_by_first_name` от Active Record. Если также есть поле `locked` в модели `Client`, вы также получаете `find_by_locked`.
 
@@ -1419,7 +1419,7 @@ Client.where(active: true).pluck(:id)
 # SELECT id FROM clients WHERE active = 1
 # => [1, 2, 3]
 
-Client.uniq.pluck(:role)
+Client.distinct.pluck(:role)
 # SELECT DISTINCT role FROM clients
 # => ['admin', 'member', 'guest']
 
