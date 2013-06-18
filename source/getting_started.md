@@ -15,7 +15,7 @@ Rails для начинающих
 
 Это руководство рассчитано на новичков, которые хотят запустить приложение на Rails с нуля. Оно не предполагает, что вы раньше работали с Rails. Однако, чтобы полноценно им воспользоваться, необходимо предварительно установить:
 
-* Язык [Ruby](http://www.ruby-lang.org/en/downloads версии 1.9.3) или новее
+* Язык [Ruby](http://www.ruby-lang.org/en/downloads) версии 1.9.3 или новее
 * Систему пакетов [RubyGems](http://rubygems.org/)
     * Чтобы узнать больше о RubyGems, прочитайте [RubyGems User Guide](http://docs.rubygems.org/read/book/1)
 * Установленную [базу данных SQLite3](http://www.sqlite.org)
