@@ -831,16 +831,14 @@ class Person < ActiveRecord::Base
   has_many :addresses
   accepts_nested_attributes_for :addresses
 
-  attr_accessible :name, :addresses_attributes
 end
 
 class Address < ActiveRecord::Base
   belongs_to :person
-  attr_accessible :kind, :street
 end
 ```
 
-Это создат метод `addresses_attributes=` в `Person`, позволяющий создавать, обновлять и (опционально) уничтожать адреса. При использовании `attr_accessible` или `attr_protected` необходимо пометить `addresses_attributes` как accessible, как и другие атрибуты `Person` и `Address`, которым следует быть массово назначаемыми.
+Это создат метод `addresses_attributes=` в `Person`, позволяющий создавать, обновлять и (опционально) уничтожать адреса.
 
 ### Создание формы
 
@@ -899,7 +897,20 @@ end
 
 ### Контроллер
 
-Для использования вложенных атрибутов не нужно писать какой-либо специфичный для контроллера код. Создавайте или обновляйте записи так, как для обычной формы.
+Как обычно, в контроллере необходим 
+[белый список параметров](action_controller_overview.html#strong-parameters), который вы передаёте в модель:
+
+```ruby
+def create
+  @person = Person.new(person_params)
+  # ...
+end
+
+private
+  def person_params
+    params.require(:person).permit(:name, addresses_attributes: [:id, :kind, :street])
+  end
+```
 
 ### Удаление объектов
 
@@ -928,6 +939,15 @@ end
     <% end %>
   </ul>
 <% end %>
+```
+
+Не забудьте обновить белый список параметров в вашем контроллере, а также включить туда поле `_destroy`:
+
+```ruby
+def person_params
+  params.require(:person).
+    permit(:name, addresses_attributes: [:id, :kind, :street, :_destroy])
+end
 ```
 
 ### Предотвращение пустых записей
