@@ -44,7 +44,7 @@ require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
 В стандартном приложении Rails имеется `Gemfile`, объявляющий все зависимости приложения. `config/boot.rb` устанавливает `ENV['BUNDLE_GEMFILE']` как расположение этого файла. Затем, если Gemfile существует, будет затребован `bundler/setup`.
 
-Стандартное Rails приложение зависит от несольких гемов, а именно:
+Стандартное Rails приложение зависит от нескольких гемов, а именно:
 
 * abstract
 * actionmailer
