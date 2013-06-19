@@ -149,8 +149,8 @@ pages:
   - title:    Процесс инициализации в Rails
     path:     initialization
     file:     initialization.md
-    revision: b0557389de13103c32baee438bf2d58f40176f73
-    date:     18/03/13
+    revision: 70b302b189dbe9f90e3b081fa540c909a43ba8d0
+    date:     28/05/13
 
   - title:    Основы создания плагинов Rails
     path:     plugins
