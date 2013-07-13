@@ -50,7 +50,7 @@ Rusrails::Application.configure do
   config.action_mailer.default_url_options = {host: "rusrails.ru"}
 
   # Compress JavaScript and CSS
-  config.assets.compress = true
+  config.assets.js_compressor = :uglifier
 
   # Don't fallback to assets pipeline
   config.assets.compile = false
