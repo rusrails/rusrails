@@ -5,7 +5,7 @@ namespace :monit do
     nginx
     mysql
     unicorn
-    sphinx
+    # sphinx
     syntax
     force_reload
   end
