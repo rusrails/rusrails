@@ -49,7 +49,6 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 Основные особенности
 --------------------
 
-![Rails 4.0](/assets/guides/rails4_features.png)
 [![Rails 4.0](/assets/guides/rails4_features.png)](/assets/guides/rails4_features.png)
 
 ### Обновление
