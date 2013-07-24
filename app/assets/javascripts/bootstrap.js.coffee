@@ -11,3 +11,10 @@ jQuery ->
     template: '<div class="popover index-content"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
 
   $('.index-popover').click -> false
+
+  $(".to_top_panel").hide()
+  $ ->
+    $(window).scroll ->
+      if $(this).scrollTop() > 900
+        $(".to_top_panel").fadeIn(1000)
+    $(".to_top_panel").click -> $('body').animate({scrollTop:0}, '1000')
