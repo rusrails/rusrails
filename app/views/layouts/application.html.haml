@@ -11,17 +11,13 @@
       .navbar-inner
         .container-fluid
           = link_to '', '/', :class => :brand
-          .github-fork-ribbon-wrapper.left
-            .github-fork-ribbon
-              = link_to "Fork me on GitHub", "https://github.com/morsbox/rusrails"
-
           = form_tag search_path, :method => :get, :class => "navbar-search pull-right" do
             = text_field_tag :search, params[:search], :class => "search-query", :placeholder => "Поиск.."
           %ul.nav.pull-right.top-menu
             %li= link_to 'Главная', '/'
             %li.dropdown
-              = link_to '#', :class => "index-popover", :data => {:title => 'Индекс руководств'} do
-                Индекс
+              = link_to '#', :class => "index-popover", :data => {:title => 'Содержание руководства'} do
+                Меню
                 %b.caret
               .index-popover-content.hide
                 - menu_page = Page.matched("menu")
@@ -41,6 +37,10 @@
       .row-fluid
         .span9.content= yield
         .span3
+          - if root_path
+            .well.github
+              %h4 Принимаем пожелания и пул-реквесты!
+              %iframe{:allowtransparency => "true", :frameborder => "0", :height => "30", :scrolling => "0", :src => "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", :width => "180"}
           - if content_for?(:menu)
             .well.menu= yield(:menu)
           .well
@@ -59,5 +59,6 @@
             = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
             , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
             = render "layouts/counter"
-
+    .to_top{ style: "display: block"}
+      .to_top_panel
     = javascript_include_tag "application"
