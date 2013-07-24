@@ -37,10 +37,9 @@
       .row-fluid
         .span9.content= yield
         .span3
-          - if root_path
-            .well.github
-              %h4 Принимаем пожелания и пулл реквесты!
-              %iframe{:allowtransparency => "true", :frameborder => "0", :height => "30", :scrolling => "0", :src => "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", :width => "180"}
+          .well.github
+            %h4 Принимаем пожелания и пулл реквесты!
+            %iframe{:allowtransparency => "true", :frameborder => "0", :height => "30", :scrolling => "0", :src => "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", :width => "180"}
           - if content_for?(:menu)
             .well.menu= yield(:menu)
           .well
