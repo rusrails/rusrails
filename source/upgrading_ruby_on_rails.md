@@ -117,7 +117,13 @@ NOTE: This section is a work in progress.
 
 ### Gemfile
 
-Rails 4.0 убрал группу `assets` из Gemfile. Вам нужно убрать эту строчку из Gemfile перед обновлением.
+Rails 4.0 убрал группу `assets` из Gemfile. Вам нужно убрать эту строчку из Gemfile перед обновлением. Также следует обновить файл приложения (`config/application.rb`):
+
+```ruby
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(:default, Rails.env)
+```
 
 ### vendor/plugins
 
@@ -129,11 +135,15 @@ Rails 4.0 больше не поддерживает загрузку плаги
 
 * Метод `delete` в связях коллекции может получать аргументы `Fixnum` или `String` в качестве id записей, кроме самих записей, так же, как делает метод `destroy`. Раньше он вызывал `ActiveRecord::AssociationTypeMismatch` для таких аргументов. Начиная с Rails 4.0, `delete` пытается автоматически найти записи, соответствующие переданным id, до их удаления.
 
+* В Rails 4.0, когда переименовывается столбец или таблица, относящиеся к ним индексы также переименовываются. Если у вас есть миграции, переименовывающие индексы – они больше не нужны.
+
 * Rails 4.0 изменил то, как складывается упорядочивание в `ActiveRecord::Relation`. В прежних версиях Rails, новый порядок применялся после предыдуще определенного. Но теперь это не так. Обратитесь к [Руководству по интерфейсу запросов Active Record](/active-record-query-interface#ordering) за дальнейшей информацией.
 
 * Rails 4.0 изменил `serialized_attributes` и `attr_readonly` быть только методами класса. Не следует использовать методы экземпляра, так как они устарели. Следует заменить их на методы класса, т.е. `self.serialized_attributes` на `self.class.serialized_attributes`.
 
 * Rails 4.0 убрал особенность `attr_accessible` и `attr_protected` в пользу. Для более гладкого процесса обновления можно использовать [гем Protected Attributes](https://github.com/rails/protected_attributes).
+
+* Если вы не используете Protected Attributes, можно удалить опции, относящиеся к этому гему, такиие как `whitelist_attributes` или `mass_assignment_sanitizer`.
 
 * Rails 4.0 требует, чтобы скоупы использовали вызываемый объект, такой как Proc или lambda:
 
@@ -181,16 +191,6 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 
 * Rails 4.0 шифрует содержимое основанной на куки сессии, если был установлен `secret_key_base`. Rails 3.x подписывал, но не шифровал содержимое основанной на куки сессии. Подписанные куки "безопасны", так как проверяется, что они были созданы приложением, и защищены от взлома. Однако, содержимое может быть просмотрено пользователем, и шифрование содержимого устраняет эту заботу без значительного снижения производительности.
 
-Как описывалось ранее, существующие подписанные куки, созданные Rails 3.x, будут прозрачно обновлены, если вы оставите существующий `secret_token` и добавите новый `secret_key_base`.
-
-```ruby
-  # config/initializers/secret_token.rb
-  Myapp::Application.config.secret_token = 'existing secret token'
-  Myapp::Application.config.secret_key_base = 'new secret key base'
-```
-
-Также применяются те же оговорки. Следует обождать с установкой `secret_key_base`, пока 100% пользователей на перейдет на Rails 4.x, и вы точно не будете уверены, что не придется откатиться к Rails 3.x. Также до обновления нужно позаботится, что вы не полагаетесь на возможность декодирования подписанных куки, созданных вашим приложением, во внешних приложениях или Javascript.
-
 Подробнее читайте в [Pull Request #9978](https://github.com/rails/rails/pull/9978) о переходе на подписанные куки сессии.
 
 * Rails 4.0 убрал опцию `ActionController::Base.asset_path`. Используйте особенность файлопровода (assets pipeline).
@@ -204,6 +204,8 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 * Rails 4.0 изменил клиент memcached по умолчанию с `memcache-client` на `dalli`. Чтобы обновиться, просто добавьте `gem 'dalli'` в свой `Gemfile`.
 
 * В Rails 4.0 устарели методы `dom_id` и `dom_class` в контроллерах (они нужны только во вьюхах). Вам следует включить модуль `ActionView::RecordIdentifier` в контроллерах, требующих эту особенность.
+
+* В Rails 4.0 устарела опция `:confirm` для хелпера `link_to`. Вместо нее следует полагаться на атрибут data (т.е. `data: { confirm: 'Are you sure?' }`). Это устаревание также затрагивает хелперы, основанные на этом (такие как `link_to_if` или `link_to_unless`).
 
 * Rails 4.0 изменил работу `assert_generates`, `assert_recognizes` и `assert_routing`. Теперь все эти операторы контроля вызывают `Assertion` вместо `ActionController::RoutingError`.
 
@@ -289,6 +291,11 @@ Active Record Observer и Action Controller Sweeper были извлечены 
 ### sprockets-rails
 
 * `assets:precompile:primary` был убран. Используйте вместо него `assets:precompile`.
+* Опция `config.assets.compress` должна быть изменена на `config.assets.js_compressor`, например, так:
+
+```ruby
+config.assets.js_compressor = :uglifier
+```
 
 ### sass-rails
 
