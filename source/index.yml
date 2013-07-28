@@ -47,8 +47,8 @@ pages:
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
     file:     active_record_querying.md
-    revision: 41a398f859cc46430cb3b655d44c0cb3b41e42ae
-    date:     14/06/13
+    revision: a8d1412a3227ac3d14a40f0e62c9cd83b515ff95
+    date:     26/07/13
 
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails

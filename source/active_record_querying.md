@@ -512,7 +512,11 @@ SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 Post.where.not(author: author)
 ```
 
-Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`.
+Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`. Это создаст подобный SQL:
+
+```sql
+SELECT * FROM posts WHERE (author_id != 1)
+```
 
 (ordering) Сортировка
 ---------------------
@@ -684,6 +688,10 @@ SQL, который будет выполнен:
 
 ```sql
 SELECT * FROM posts WHERE id > 10 LIMIT 20
+
+# Оригинальный запрос без `except`
+SELECT * FROM posts WHERE id > 10 ORDER BY id asc LIMIT 20
+
 ```
 
 ### `unscope`
@@ -704,7 +712,7 @@ Post.order('id DESC').limit(20).unscope(:order, :limit) = Post.all
 Дополнительно можно убрать определенные условия из where. Например:
 
 ```ruby
-Post.where(id: 10).limit(1).unscope(where: :id, :limit).order('id DESC') = Post.order('id DESC')
+Post.where(id: 10).limit(1).unscope({ where: :id }, :limit).order('id DESC') = Post.order('id DESC')
 ```
 
 ### `only`
@@ -719,6 +727,10 @@ SQL, который будет выполнен:
 
 ```sql
 SELECT * FROM posts WHERE id > 10 ORDER BY id DESC
+
+# Оригинальный запрос без `only`
+SELECT "posts".* FROM "posts" WHERE (id > 10) ORDER BY id desc LIMIT 20
+
 ```
 
 ### `reorder`
@@ -1200,9 +1212,7 @@ class User < ActiveRecord::Base
   scope :active, -> { where state: 'active' }
   scope :inactive, -> { where state: 'inactive' }
 end
-```
 
-```ruby
 User.active.inactive
 # => SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'inactive'
 ```
