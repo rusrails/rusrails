@@ -77,8 +77,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: d41c279bf12de4722d4cf781929e491e588a612c
-    date:     14/03/13
+    revision: 990e8f06f63ce31d7eb34931b2b290a32f12dd20
+    date:     24/07/13
 
   - title:    API интернационализации Rails (I18n)
     path:     rails-internationalization-i18n-api
