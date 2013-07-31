@@ -5,13 +5,6 @@ class RemoveAdmins < ActiveRecord::Migration
   end
 
   def up
-    legacy_admin = User.new :email => 'admin@rusrails.ru', :password => SecureRandom.hex, :name => 'Admin'
-    legacy_admin.admin = true
-    legacy_admin.save
-    Admin.all.each do |admin|
-      legacy_admin.discussions.concat(*admin.discussions)
-      legacy_admin.says.concat(*admin.says)
-    end
 
     drop_table :admins
   end
