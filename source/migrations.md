@@ -680,7 +680,6 @@ class AddFlagToProduct < ActiveRecord::Migration
     reversible do |dir|
       dir.up { Product.update_all flag: false }
     end
-    Product.update_all flag: false
   end
 end
 ```
