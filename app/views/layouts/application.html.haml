@@ -46,7 +46,7 @@
           - if content_for?(:menu)
             .well.menu= yield(:menu)
           - unless @page && @page.path == 'index'
-            .well
+            .well{align: 'center'}
               = render "shared/railsclub13"
           .well
             = render "layouts/rsya"
