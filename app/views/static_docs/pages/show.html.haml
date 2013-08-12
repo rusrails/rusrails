@@ -1,3 +1,7 @@
+- if @page && @page.path == 'index'
+  #main_page_banner.well
+    = render "shared/railsclub13"
+
 - cache ['v1', @page] do
   = @page.rendered_body(self)
 
