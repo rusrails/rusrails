@@ -161,7 +161,7 @@ class AddDetailsToProducts < ActiveRecord::Migration
 end
 ```
 
-Если имя миграции имеет форму "CreateXXX" и затем следует списко имен и типов столбцов, то будет сгенерирована миграция, создающая таблицу XXX с перечисленными столбцами. Например:
+Если имя миграции имеет форму "CreateXXX" и затем следует список имен и типов столбцов, то будет сгенерирована миграция, создающая таблицу XXX с перечисленными столбцами. Например:
 
 ```bash
 $ rails generate migration CreateProducts name:string part_number:string
