@@ -5,8 +5,9 @@ gem 'rails', " ~> 4.0.0"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
+gem 'pg'
+# For production
 gem 'mysql2', '>= 0.3.12b4'
-gem 'thinking-sphinx'
 
 gem 'nokogiri'
 gem 'sass-rails', '~> 4.0.0'
@@ -27,6 +28,8 @@ gem 'coffee-rails', '~> 4.0.0'
 
 group :development do
   gem 'quiet_assets'
+  # Need for cap tasks for 3.2 branch
+  gem 'thinking-sphinx', require: false
 end
 
 group :development, :test do

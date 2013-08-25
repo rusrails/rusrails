@@ -1,6 +1,5 @@
 require "bundler/capistrano"
 require 'static_docs/capistrano'
-require 'thinking_sphinx/capistrano'
 
 require 'capistrano/ext/multistage'
 set :stages, %w(v32 v40)
@@ -43,7 +42,6 @@ namespace :deploy do
   end
 
   after "deploy:seed", "static_docs:import"
-  after "deploy:seed", "thinking_sphinx:rebuild"
 end
 
 after "deploy", "deploy:cleanup"

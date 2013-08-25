@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20130503124427) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "redirects", force: true do |t|
     t.string   "from"
     t.string   "to"
@@ -24,7 +27,7 @@ ActiveRecord::Schema.define(version: 20130503124427) do
     t.string   "title"
     t.string   "path"
     t.string   "namespace"
-    t.text     "body",       limit: 16777215
+    t.text     "body"
     t.string   "extension"
     t.datetime "created_at"
     t.datetime "updated_at"

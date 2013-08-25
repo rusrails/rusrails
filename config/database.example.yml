@@ -1,0 +1,15 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: rusrails_development
+  pool: 5
+  username: postgres
+  password: '123456'
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: rusrails_test
+  pool: 5
+  username: postgres
+  password: '123456'

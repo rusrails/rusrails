@@ -5,7 +5,6 @@ namespace :monit do
     nginx
     mysql
     unicorn
-    # sphinx
     syntax
     force_reload
   end
@@ -13,7 +12,6 @@ namespace :monit do
 
   task(:nginx, roles: :web) { monit_config "nginx" }
   task(:mysql, roles: :db) { monit_config "mysql" }
-  # task(:sphinx, roles: :db) { monit_config "sphinx", "/etc/monit/conf.d/sphinx_#{application}.conf"  }
   task(:unicorn, roles: :app) { monit_config "unicorn", "/etc/monit/conf.d/unicorn_#{application}.conf" }
 
   %w[start stop restart syntax force_reload].each do |command|
