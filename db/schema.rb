@@ -9,28 +9,28 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130503214806) do
+ActiveRecord::Schema.define(version: 20130503124427) do
 
-  create_table "redirects", :force => true do |t|
+  create_table "redirects", force: true do |t|
     t.string   "from"
     t.string   "to"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "static_docs_pages", :force => true do |t|
+  create_table "static_docs_pages", force: true do |t|
     t.string   "title"
     t.string   "path"
     t.string   "namespace"
-    t.text     "body",       :limit => 16777215
+    t.text     "body",       limit: 16777215
     t.string   "extension"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "static_docs_pages", ["namespace"], :name => "index_static_docs_pages_on_namespace"
-  add_index "static_docs_pages", ["path"], :name => "index_static_docs_pages_on_path"
+  add_index "static_docs_pages", ["namespace"], name: "index_static_docs_pages_on_namespace", using: :btree
+  add_index "static_docs_pages", ["path"], name: "index_static_docs_pages_on_path", using: :btree
 
 end
