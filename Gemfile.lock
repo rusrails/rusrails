@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     RedCloth (4.2.9)
     actionmailer (4.0.0)
@@ -47,8 +47,7 @@ GEM
     database_cleaner (1.0.1)
     diff-lcs (1.2.4)
     erubis (2.7.0)
-    execjs (1.4.0)
-      multi_json (~> 1.0)
+    execjs (2.0.0)
     factory_girl (4.2.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.2.1)
@@ -83,7 +82,7 @@ GEM
     mime-types (1.23)
     mini_portile (0.5.1)
     minitest (4.7.5)
-    multi_json (1.7.7)
+    multi_json (1.7.9)
     mysql2 (0.3.12b6)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
