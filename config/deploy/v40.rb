@@ -1,3 +1,5 @@
+load "config/recipes/postgresql"
+
 set :application, "rusrails_v40"
 
 set :branch, "master"

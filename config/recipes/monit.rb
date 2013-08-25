@@ -3,7 +3,7 @@ namespace :monit do
   task :setup do
     monit_config "monitrc", "/etc/monit/monitrc"
     nginx
-    mysql
+    application == 'rusrails_v32' ? mysql : postgresql
     unicorn
     syntax
     force_reload
@@ -12,6 +12,7 @@ namespace :monit do
 
   task(:nginx, roles: :web) { monit_config "nginx" }
   task(:mysql, roles: :db) { monit_config "mysql" }
+  task(:postgresql, roles: :db) { monit_config "postgresql" }
   task(:unicorn, roles: :app) { monit_config "unicorn", "/etc/monit/conf.d/unicorn_#{application}.conf" }
 
   %w[start stop restart syntax force_reload].each do |command|

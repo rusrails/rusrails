@@ -6,8 +6,6 @@ gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
 gem 'pg'
-# For production
-gem 'mysql2', '>= 0.3.12b4'
 
 gem 'nokogiri'
 gem 'sass-rails', '~> 4.0.0'

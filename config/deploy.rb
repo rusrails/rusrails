@@ -26,13 +26,6 @@ default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
 namespace :deploy do
-  task :symlink_config, roles: :app do
-    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-    run "ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings/production.yml"
-  end
-
-  after "deploy:finalize_update", "deploy:symlink_config"
-
   desc "Seed the database with the required data"
   task :seed do
     rake = fetch(:rake, "rake")
