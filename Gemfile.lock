@@ -155,6 +155,8 @@ GEM
       sprockets (~> 2.8)
     static_docs (0.2.1)
       rails (>= 3.1)
+    textacular (3.1.0)
+      activerecord (>= 3.0, < 4.1)
     therubyracer (0.11.4)
       libv8 (~> 3.11.8.12)
       ref
@@ -212,6 +214,7 @@ DEPENDENCIES
   russian
   sass-rails (~> 4.0.0)
   static_docs
+  textacular (~> 3.0)
   therubyracer
   thinking-sphinx
   twitter-bootstrap-rails

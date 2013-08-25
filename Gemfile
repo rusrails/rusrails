@@ -6,6 +6,7 @@ gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
 gem 'pg'
+gem 'textacular', '~> 3.0'
 
 gem 'nokogiri'
 gem 'sass-rails', '~> 4.0.0'
