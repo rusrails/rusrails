@@ -548,7 +548,7 @@ Date.civil(params[:start_date][:year].to_i, params[:start_date][:month].to_i, pa
 что приведет к такому результату в хэше `params`
 
 ```ruby
-{:person => {'birth_date(1i)' => '2008', 'birth_date(2i)' => '11', 'birth_date(3i)' => '22'}}
+{'person' => {'birth_date(1i)' => '2008', 'birth_date(2i)' => '11', 'birth_date(3i)' => '22'}}
 ```
 
 Когда это передастся в `Person.new` (или `update`), Active Record отметит, что эти параметры должны быть использованы, для конструирования атрибута `birth_date` и использует суффиксную информацию для определения, в каком порядке должен передать эти параметры в функции, такие как `Date.civil`.
@@ -600,7 +600,7 @@ Rails предоставляет обычную пару хелперов: ск�
 ```ruby
 def upload
   uploaded_io = params[:person][:picture]
-  File.open(Rails.root.join('public', 'uploads', uploaded_io.original_filename), 'w') do |file|
+  File.open(Rails.root.join('public', 'uploads', uploaded_io.original_filename), 'wb') do |file|
     file.write(uploaded_io.read)
   end
 end
@@ -875,19 +875,19 @@ end
 
 ```ruby
 {
-    :person => {
-        :name => 'John Doe',
-        :addresses_attributes => {
-            '0' => {
-                :kind  => 'Home',
-                :street => '221b Baker Street',
-            },
-            '1' => {
-                :kind => 'Office',
-                :street => '31 Spooner Street'
-            }
-        }
+  'person' => {
+    'name' => 'John Doe',
+    'addresses_attributes' => {
+      '0' => {
+        'kind' => 'Home',
+        'street' => '221b Baker Street'
+      },
+      '1' => {
+        'kind' => 'Office',
+        'street' => '31 Spooner Street'
+      }
     }
+  }
 }
 ```
 
@@ -897,7 +897,7 @@ end
 
 ### Контроллер
 
-Как обычно, в контроллере необходим 
+Как обычно, в контроллере необходим
 [белый список параметров](action_controller_overview.html#strong-parameters), который вы передаёте в модель:
 
 ```ruby
