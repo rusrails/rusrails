@@ -171,7 +171,7 @@ NOTE: Поскольку вы можете захотеть использова
 
 WARNING: [Давняя ошибка](https://github.com/rails/rails/issues/1769) мешает `form_for` работать автоматически с одиночными ресурсными маршрутами. Для решения данной проблемы, указывайте URL для формы, вот так:
 
-```
+```ruby
 form_for @geocoder, url: geocoder_path do |f|
 ```
 
@@ -771,11 +771,11 @@ get '/stories', to: redirect('/posts')
 get '/stories/:name', to: redirect('/posts/%{name}')
 ```
 
-Также можно предоставить блок для перенаправления, который получает params и объект request:
+Также можно предоставить блок для перенаправления, который получает символизированные параметры пути и объект request:
 
 ```ruby
-get '/stories/:name', to: redirect {|params, req| "/posts/#{params[:name].pluralize}" }
-get '/stories', to: redirect {|p, req| "/posts/#{req.subdomain}" }
+get '/stories/:name', to: redirect {|path_params, req| "/posts/#{path_params[:name].pluralize}" }
+get '/stories', to: redirect {|path_params, req| "/posts/#{req.subdomain}" }
 ```
 
 Пожалуйста, отметьте, что это перенаправление является 301 "Moved Permanently". Учтите, что некоторые браузеры или прокси серверы закэшируют этот тип перенаправления, сделав старые страницы недоступными.
