@@ -942,7 +942,7 @@ end
 
 #### `includes`
 
-Метод `includes` позволяет определить связи второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим эти модели:
+Метод `includes` можно использовать для определения связей второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим эти модели:
 
 ```ruby
 class LineItem < ActiveRecord::Base
@@ -1125,6 +1125,8 @@ end
 * `:nullify` приведет к тому, что внешний ключ будет установлен `NULL`. Колбэки не запускаются.
 * `:restrict_with_exception` приведет к вызову исключения, если есть связанный объект
 * `:restrict_with_error` приведет к ошибке, добавляемой к владельцу, если есть связанный объект
+
+Нельзя устанавливать или уставлять опцию `:nullify` для свзей, имеющих ограничение `NOT NULL`. Если не установить `dependent` для уничтожения таких связей, вы не сможете изменить связанный объект, акт как внешнему ключу изначально связанного объекта будет назначено недопустимое значение `NULL`.
 
 #### `:foreign_key`
 
@@ -1917,8 +1919,8 @@ WARNING: Это не запустит колбэки на соединитель
 
 ```ruby
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, uniq: true,
-                                       read_only: true
+  has_and_belongs_to_many :assemblies, autosave: true,
+                                       readonly: true
 end
 ```
 
@@ -1930,6 +1932,7 @@ end
 * `:foreign_key`
 * `:join_table`
 * `:validate`
+* `:readonly`
 
 #### `:association_foreign_key`
 
@@ -2147,7 +2150,7 @@ end
 class Customer < ActiveRecord::Base
   has_many :orders do
     def find_by_order_prefix(order_number)
-      find_by_region_id(order_number[0..2])
+      find_by(region_id: order_number[0..2])
     end
   end
 end
