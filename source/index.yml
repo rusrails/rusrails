@@ -53,8 +53,8 @@ pages:
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
-    revision: b1286d391897e3228013295b574de4fa0f856efa
-    date:     14/04/13
+    revision: c883fedc472f64b45b69f18d3b6c4693e1430df7
+    date:     01/08/13
 
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
