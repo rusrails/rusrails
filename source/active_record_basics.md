@@ -62,7 +62,7 @@ Active Record использует соглашения о именовании 
 * **Внешние ключи** - Эти поля должны именоваться по образцу `singularized_table_name_id` (т.е., `item_id`, `order_id`). Это поля, которые ищет Active Record при создании связей между вашими моделями.
 * **Первичные ключи** - По умолчанию Active Record использует числовой столбец с именем `id` как первичный ключ таблицы. Этот столбец будет автоматически создан при использовании [миграций Rails](/rails-database-migrations) для создания таблиц.
 
-Также имеются некоторые опциональные имена столбцов, создающие дополнительные особенности для экземпляров Active Record:
+Также имеются некоторые опциональные имена столбцов, добавляющие дополнительные особенности для экземпляров Active Record:
 
 * `created_at` - Автоматически будут установлены текущие дата и время при изначальном создании записи.
 * `updated_at` - Автоматически будут установлены текущие дата и время всякий раз, когда обновляется запись.
@@ -118,17 +118,17 @@ end
 
 ```ruby
 class FunnyJoke < ActiveSupport::TestCase
-  set_fixture_class funny_jokes: 'Joke'
+  set_fixture_class funny_jokes: Joke
   fixtures :funny_jokes
   ...
 end
 ```
 
-Также возможно переопределить столбец, который должен быть использован как первичный ключ таблицы, с помощью метода `ActiveRecord::Base.set_primary_key`:
+Также возможно переопределить столбец, который должен быть использован как первичный ключ таблицы, с помощью метода `ActiveRecord::Base.primary_key=`:
 
 ```ruby
 class Product < ActiveRecord::Base
-  set_primary_key "product_id"
+  self.primary_key = "product_id"
 end
 ```
 
@@ -182,7 +182,7 @@ user = User.first
 
 ```ruby
 # возвратит первого пользователя с именем David
-david = User.find_by_name('David')
+david = User.find_by(name: 'David')
 ```
 
 ```ruby
@@ -197,7 +197,7 @@ users = User.where(name: 'David', occupation: 'Code Artist').order('created_at D
 Как только объект Active Record будет получен, его атрибуты могут быть изменены, и он может быть сохранен в базу данных.
 
 ```ruby
-user = User.find_by_name('David')
+user = User.find_by(name: 'David')
 user.name = 'Dave'
 user.save
 ```
@@ -205,7 +205,7 @@ user.save
 Сокращенным вариантом для этого является использование хэша с атрибутами, связанными с желаемыми значениями, таким образом:
 
 ```ruby
-user = User.find_by_name('David')
+user = User.find_by(name: 'David')
 user.update(name: 'Dave')
 ```
 
@@ -220,7 +220,7 @@ User.update_all "max_login_attempts = 3, must_change_password = 'true'"
 Более того, после получения, объект Active Record может быть уничтожен, что уберет его из базы данных.
 
 ```ruby
-user = User.find_by_name('David')
+user = User.find_by(name: 'David')
 user.destroy
 ```
 
