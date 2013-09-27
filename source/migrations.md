@@ -266,7 +266,7 @@ $ rails generate migration AddDetailsToProducts price:decimal{5,2} supplier:refe
 class AddDetailsToProducts < ActiveRecord::Migration
   def change
     add_column :products, :price, precision: 5, scale: 2
-    add_reference :products, :user, polymorphic: true, index: true
+    add_reference :products, :supplier, polymorphic: true, index: true
   end
 end
 ```
@@ -306,7 +306,13 @@ end
 create_join_table :products, :categories
 ```
 
-что создаст таблицу `categories_products` с двумя столбцами по имени `category_id` и `product_id`. У этих столбцов есть опция `:null`, установленная в `false` по умолчанию.
+что создаст таблицу `categories_products` с двумя столбцами по имени `category_id` и `product_id`. У этих столбцов есть опция `:null`, установленная в `false` по умолчанию. Это может быть переопределено опцией `:column_options`.
+
+```ruby
+create_join_table :products, :categories, column_options: {null: true}
+```
+
+создаст `product_id` и `category_id` с опцией `:null` как `true`.
 
 Если хотите изменить имя таблицы, используйте опцию `:table_name`. Например,
 
@@ -328,8 +334,8 @@ create_join_table :products, :categories, column_options: {null: true}
 
 ```ruby
 create_join_table :products, :categories do |t|
-  t.index :products
-  t.index :categories
+  t.index :product_id
+  t.index :category_id
 end
 ```
 
@@ -368,8 +374,8 @@ Products.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 * `add_timestamps`
 * `create_table`
 * `create_join_table`
-* `drop_table` (Необходимо указать блок)
-* `drop_join_table` (Необходимо указать блок)
+* `drop_table` (необходимо указать блок)
+* `drop_join_table` (необходимо указать блок)
 * `remove_timestamps`
 * `rename_column`
 * `rename_index`
@@ -565,9 +571,13 @@ $ rake db:migrate:redo STEP=3
 
 Ни одна из этих команд Rake не может сделать ничего такого, чего нельзя было бы сделать с `db:migrate`. Они просто более удобны, так как вам не нужно явно указывать версию миграции, к которой нужно мигрировать.
 
+### Установка базы даных
+
+Задача `rake db:setup` создаст базу данных, загрузит схему и инициализирует ее с помощью данных seed.
+
 ### Сброс базы данных
 
-Задача `db:reset` удаляет базу данных, пересоздает ее и загружает в нее текущую схему.
+Задача `db:reset` удалит базу данных и установит ее заново. Функционально это эквивалентно `rake db:drop db:setup`.
 
 NOTE. Это не то же самое, что запуск всех миграций. Оно использует только текущее содержимое файла schema.rb. Если миграция не может быть откачена,
 'rake db:reset' может не помочь вам. Подробнее об экспорте схемы смотрите "Экспорт схемы":/rails-database-migrations/schema-dumping-and-you.
@@ -669,7 +679,7 @@ end
 
 Боб ушел в отпуск.
 
-Алиса создала миграцию для таблицы `products`, добавляющую новый столбец, и инициализировала его. Она также добавила в модели Product валидацию на новый столбец.
+Алиса создала миграцию для таблицы `products`, добавляющую новый столбец, и инициализировала ее.
 
 ```ruby
 # db/migrate/20100513121110_add_flag_to_product.rb
@@ -684,15 +694,17 @@ class AddFlagToProduct < ActiveRecord::Migration
 end
 ```
 
+Она также добавила в модели Product валидацию на новый столбец:
+
 ```ruby
 # app/models/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, :inclusion => { :in => [true, false] }
+  validates :flag, inclusion: { in: [true, false] }
 end
 ```
 
-Алиса добавила вторую миграцию, добавляющую и инициализирующую другой столбец в таблице `products`, и снова добавила в модели `Product` валидацию на новый столбец.
+Алиса добавила вторую миграцию, добавляющую другой столбец в таблице `products`, и инициализировала ее.
 
 ```ruby
 # db/migrate/20100515121110_add_fuzz_to_product.rb
@@ -707,11 +719,13 @@ class AddFuzzToProduct < ActiveRecord::Migration
 end
 ```
 
+Она также добавила в модели `Product` валидацию на новый столбец:
+
 ```ruby
 # app/models/product.rb
 
 class Product < ActiveRecord::Base
-  validates :flag, :inclusion => { :in => [true, false] }
+  validates :flag, inclusion: { in: [true, false] }
   validates :fuzz, presence: true
 end
 ```
@@ -734,7 +748,7 @@ undefined method `fuzz' for #<Product:0x000001049b14a0>
 
 Это исправляется путем создания локальной модели внутри миграции. Это предохраняет Rails от запуска валидаций, поэтому миграции проходят.
 
-При использовании локальной модели неплохо бы вызвать `Product.reset_column_information` для обновления кэша `ActiveRecord` для модели `Product` до обновления данных в базе данных.
+При использовании локальной модели неплохо бы вызвать `Product.reset_column_information` для обновления кэша Active Record для модели `Product` до обновления данных в базе данных.
 
 Если бы Алиса сделала бы так, проблем бы не было:
 
@@ -778,7 +792,7 @@ end
 
 Она создает две миграции для этой новой задачи, одна из которых добавляет новый столбец, а вторая избирательно обновляет столбец `fuzz`, основываясь на других атрибутах продукта.
 
-Эти миграции прекрасно запускаются, но когда Боб возвращается из отпуска вызывает `rake db:migrate` для запуска всех невыполненных миграций, он получает неуловимый баг: Описания имеют значения по умолчанию, столбец `fuzz` присутствует, но `fuzz` равно nil для всех продуктов.
+Эти миграции прекрасно запускаются, но когда Боб возвращается из отпуска вызывает `rake db:migrate` для запуска всех невыполненных миграций, он получает неуловимый баг: Описания имеют значения по умолчанию, столбец `fuzz` присутствует, но `fuzz` равно `nil` для всех продуктов.
 
 Решением снова является использование `Product.reset_column_information` до обращения к модели Product в миграции, чтобы убедиться в знании Active Record о текущей структуре таблицы до манипуляции с данными в этих записях.
 
