@@ -89,8 +89,8 @@ pages:
   - title:    Основы Action Mailer
     path:     action-mailer-basics
     file:     action_mailer_basics.md
-    revision: be3e402c79d5c1eac4729e2982d05161c1a9b6a2
-    date:     10/03/13
+    revision: 2e0a9941a855cb3283daa43942eda68e478ff61d
+    date:     24/07/13
 
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications

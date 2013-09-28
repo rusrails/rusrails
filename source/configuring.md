@@ -379,7 +379,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 Настройка по умолчанию `true`, что использует партиал в `/admin/posts/_post.erb`. Установка значение в `false` будет рендерить `/posts/_post.erb`, что является тем же поведением, что и рендеринг из контроллера не в пространстве имен, такого как `PostsController`.
 
-### Конфигурирование Action Mailer
+### (configuring-action-mailer) Конфигурирование Action Mailer
 
 Имеется несколько доступных настроек `ActionMailer::Base`:
 
