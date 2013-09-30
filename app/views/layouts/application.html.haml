@@ -34,35 +34,36 @@
         %button.close{type: :button, data: {dismiss: :alert}} &times;
         = alert
 
-    .container-fluid
-      .row-fluid
-        .span9.content= yield
-        .span3
-          .well.social
-            %h4 Принимаем пожелания и пулл реквесты!
-            %iframe{allowtransparency: "true", frameborder: "0", height: "30", src: "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", width: "180"}
+    .content-wrapper
+      .container-fluid
+        .row-fluid
+          .span9.content= yield
+          .span3
+            .well.social
+              %h4 Принимаем пожелания и пулл реквесты!
+              %iframe{allowtransparency: "true", frameborder: "0", height: "30", src: "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", width: "180"}
+              %p
+              %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
+            - if content_for?(:menu)
+              .well.menu= yield(:menu)
+            - unless @page && @page.path == 'index'
+              .well{align: 'center'}
+                = render "shared/railsclub13"
+            .well
+              = render "layouts/rsya"
+        .row-fluid
+          .span12#footer
             %p
-            %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
-          - if content_for?(:menu)
-            .well.menu= yield(:menu)
-          - unless @page && @page.path == 'index'
-            .well{align: 'center'}
-              = render "shared/railsclub13"
-          .well
-            = render "layouts/rsya"
-      .row-fluid
-        .span12#footer
-          %p
-            = link_to "GitHub", "https://github.com/morsbox/rusrails", id: :github_link
-            = link_to "Карта", map_path, :id => :morsbox_link
-            2010 - #{Date.today.year}
-            = link_to "Твиттер", "http://twitter.com/rusrails", id: :twitter_link
-            При поддержке
-            = link_to "Evrone.ru", "http://evrone.ru", id: :evrone_link
-          %p
-            = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
-            , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
-            = render "layouts/counter"
+              = link_to "GitHub", "https://github.com/morsbox/rusrails", id: :github_link
+              = link_to "Карта", map_path, :id => :morsbox_link
+              2010 - #{Date.today.year}
+              = link_to "Твиттер", "http://twitter.com/rusrails", id: :twitter_link
+              При поддержке
+              = link_to "Evrone.ru", "http://evrone.ru", id: :evrone_link
+            %p
+              = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
+              , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
+              = render "layouts/counter"
     .to_top{ style: "display: block"}
       .to_top_panel
     = javascript_include_tag "application"
