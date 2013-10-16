@@ -1,6 +1,6 @@
 - if @page && @page.path == 'index'
   #main_page_banner.well
-    = render "layouts/rsya"
+    = render "layouts/rsya", limit: 2
     =# render "shared/railsclub13"
 
 - cache ['v1', @page] do
