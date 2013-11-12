@@ -440,7 +440,7 @@ end
 Колбэки Action Mailer
 ---------------------
 
-Action Mailer позволяет определить `before_action`, `after_action` и 'around_action'.
+Action Mailer позволяет определить `before_action`, `after_action` и `around_action`.
 
 * Фильтры могут быть определены в блоке или сиволом с именем метода рассыльщика, подобно контроллерам.
 
