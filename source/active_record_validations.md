@@ -693,7 +693,7 @@ end
 ```ruby
 class MyValidator < ActiveModel::Validator
   def validate(record)
-    if record.name.starts_with? ‘X’
+    unless record.name.starts_with? 'X'
       record.errors[:name] << ‘Need a name starting with X please!’
     end
   end
