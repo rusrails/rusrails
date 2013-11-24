@@ -87,15 +87,15 @@ resources :photos
 
 создает семь различных маршрутов в вашем приложении, все соединенные с контроллером `Photos`:
 
-| Метод HTTP | Путь             | Экшн    | Использование                                  |
-| ---------- | ---------------- | ------- | ---------------------------------------------- |
-| GET        | /photos          | index   | отображает список всех фото                    |
-| GET        | /photos/new      | new     | возвращает форму HTML для создания нового фото |
-| POST       | /photos          | create  | создает новое фото                             |
-| GET        | /photos/:id      | show    | отображает определенное фото                   |
-| GET        | /photos/:id/edit | edit    | возвращает форму HTML для редактирования фото  |
-| PATCH/PUT  | /photos/:id      | update  | обновляет определенное фото                    |
-| DELETE     | /photos/:id      | destroy | удаляет определенное фото                      |
+| Метод HTTP | Путь             | Контроллер#Экшн | Использование                                  |
+| ---------- | ---------------- | --------------  | ---------------------------------------------- |
+| GET        | /photos          | photos#index    | отображает список всех фото                    |
+| GET        | /photos/new      | photos#new      | возвращает форму HTML для создания нового фото |
+| POST       | /photos          | photos#create   | создает новое фото                             |
+| GET        | /photos/:id      | photos#show     | отображает определенное фото                   |
+| GET        | /photos/:id/edit | photos#edit     | возвращает форму HTML для редактирования фото  |
+| PATCH/PUT  | /photos/:id      | photos#update   | обновляет определенное фото                    |
+| DELETE     | /photos/:id      | photos#destroy  | удаляет определенное фото                      |
 
 NOTE: Поскольку роутер использует как метод HTTP, так и URL, для сопоставления с входящими запросами, четыре URL соединяют с семью различными экшнами.
 
@@ -150,14 +150,14 @@ resource :geocoder
 
 создаст шесть различных маршрутов в вашем приложении, все связанные с контроллером `Geocoders`:
 
-| Метод HTTP | Путь           | Экшн    | Использование                                       |
-| ---------- | -------------- | ------- | --------------------------------------------------- |
-| GET        | /geocoder/new  | new     | возвращает форму HTML для создания нового геокодера |
-| POST       | /geocoder      | create  | создает новый геокодер                              |
-| GET        | /geocoder      | show    | отображает один и только один ресурс геокодера      |
-| GET        | /geocoder/edit | edit    | возвращает форму HTML для редактирования геокодера  |
-| PATCH/PUT  | /geocoder      | update  | обновляет один и только один ресурс геокодера       |
-| DELETE     | /geocoder      | destroy | удаляет ресурс геокодера                            |
+| Метод HTTP | Путь           | Контроллер#Экшн   | Использование                                       |
+| ---------- | -------------- | ----------------- | --------------------------------------------------- |
+| GET        | /geocoder/new  | geocoders#new     | возвращает форму HTML для создания нового геокодера |
+| POST       | /geocoder      | geocoders#create  | создает новый геокодер                              |
+| GET        | /geocoder      | geocoders#show    | отображает один и только один ресурс геокодера      |
+| GET        | /geocoder/edit | geocoders#edit    | возвращает форму HTML для редактирования геокодера  |
+| PATCH/PUT  | /geocoder      | geocoders#update  | обновляет один и только один ресурс геокодера       |
+| DELETE     | /geocoder      | geocoders#destroy | удаляет ресурс геокодера                            |
 
 NOTE: Поскольку вы можете захотеть использовать один и тот же контроллер и для одиночного маршрута (`/account`), и для множественного маршрута (`/accounts/45`), одиночные ресурсы ведут на множественные контроллеры. По этой причине, например, `resource :photo` и `resources :photos` создадут и одиночные, и множественные маршруты, привязанные к одному и тому же контроллеру (`PhotosController`).
 
@@ -187,15 +187,15 @@ end
 
 Это создаст ряд маршрутов для каждого контроллера `posts` и `comments`. Для `Admin::PostsController`, Rails создаст:
 
-| Метод HTTP | Путь                  | Экшн    | Именнованнный хелпер      |
-| ---------- | --------------------- | ------- | ------------------------- |
-| GET        | /admin/posts          | index   | admin_posts_path          |
-| GET        | /admin/posts/new      | new     | new_admin_post_path       |
-| POST       | /admin/posts          | create  | admin_posts_path          |
-| GET        | /admin/posts/:id      | show    | admin_post_path(:id)      |
-| GET        | /admin/posts/:id/edit | edit    | edit_admin_post_path(:id) |
-| PATCH/PUT  | /admin/posts/:id      | update  | admin_post_path(:id)      |
-| DELETE     | /admin/posts/:id      | destroy | admin_post_path(:id)      |
+| Метод HTTP | Путь                  | Контроллер#Экшн     | Именнованнный хелпер      |
+| ---------- | --------------------- | ------------------- | ------------------------- |
+| GET        | /admin/posts          | admin/posts#index   | admin_posts_path          |
+| GET        | /admin/posts/new      | admin/posts#new     | new_admin_post_path       |
+| POST       | /admin/posts          | admin/posts#create  | admin_posts_path          |
+| GET        | /admin/posts/:id      | admin/posts#show    | admin_post_path(:id)      |
+| GET        | /admin/posts/:id/edit | admin/posts#edit    | edit_admin_post_path(:id) |
+| PATCH/PUT  | /admin/posts/:id      | admin/posts#update  | admin_post_path(:id)      |
+| DELETE     | /admin/posts/:id      | admin/posts#destroy | admin_post_path(:id)      |
 
 Если хотите маршрут `/photos` (без префикса `/admin`) к `Admin::PostsController`, можете использовать:
 
@@ -227,15 +227,15 @@ resources :posts, path: '/admin/posts'
 
 В каждом из этих случаев, именнованные маршруты остаются теми же, что и без использования `scope`. В последнем случае, следующие пути соединят с `PostsController`:
 
-| Метод HTTP | Путь                  | Экшн    | Именнованнный хелпер |
-| ---------- | --------------------- | ------- | -------------------- |
-| GET        | /admin/posts          |index    | posts_path           |
-| GET        | /admin/posts/new      |new      | new_post_path        |
-| POST       | /admin/posts          |create   | posts_path           |
-| GET        | /admin/posts/:id      |show     | post_path(:id)       |
-| GET        | /admin/posts/:id/edit |edit     | edit_post_path(:id)  |
-| PUT        | /admin/posts/:id      |update   | post_path(:id)       |
-| DELETE     | /admin/posts/:id      |destroy  | post_path(:id)       |
+| Метод HTTP | Путь                  | Контроллер#Экшн | Именнованнный хелпер |
+| ---------- | --------------------- | --------------- | -------------------- |
+| GET        | /admin/posts          | posts#index     | posts_path           |
+| GET        | /admin/posts/new      | posts#new       | new_post_path        |
+| POST       | /admin/posts          | posts#create    | posts_path           |
+| GET        | /admin/posts/:id      | posts#show      | post_path(:id)       |
+| GET        | /admin/posts/:id/edit | posts#edit      | edit_post_path(:id)  |
+| PUT        | /admin/posts/:id      | posts#update    | post_path(:id)       |
+| DELETE     | /admin/posts/:id      | posts#destroy   | post_path(:id)       |
 
 ### Вложенные ресурсы
 
@@ -261,15 +261,15 @@ end
 
 В дополнение к маршрутам для magazines, это объявление также создаст маршруты для ads в `AdsController`. URL с ad требует magazine:
 
-| Метод HTTP | Путь                                 | Экшн    | Использование                                                                         |
-| ---------- | ------------------------------------ | ------- | ------------------------------------------------------------------------------------- |
-| GET        | /magazines/:magazine_id/ads          | index   | отображает список всей рекламы для определенного журнала                              |
-| GET        | /magazines/:magazine_id/ads/new      | new     | возвращает форму HTML для создания новой рекламы, принадлежащей определенному журналу |
-| POST       | /magazines/:magazine_id/ads          | create  | создает новую рекламу, принадлежащую указанному журналу                               |
-| GET        | /magazines/:magazine_id/ads/:id      | show    | отражает определенную рекламу, принадлежащую определенному журналу                    |
-| GET        | /magazines/:magazine_id/ads/:id/edit | edit    | возвращает форму HTML для редактирования рекламы, принадлежащей определенному журналу |
-| PATCH/PUT  | /magazines/:magazine_id/ads/:id      | update  | обновляет определенную рекламу, принадлежащую определенному журналу                   |
-| DELETE     | /magazines/:magazine_id/ads/:id      | destroy | удаляет определенную рекламу, принадлежащую определенному журналу                     |
+| Метод HTTP | Путь                                 | Контроллер#Экшн | Использование                                                                         |
+| ---------- | ------------------------------------ | --------------- | ------------------------------------------------------------------------------------- |
+| GET        | /magazines/:magazine_id/ads          | ads#index       | отображает список всей рекламы для определенного журнала                              |
+| GET        | /magazines/:magazine_id/ads/new      | ads#new         | возвращает форму HTML для создания новой рекламы, принадлежащей определенному журналу |
+| POST       | /magazines/:magazine_id/ads          | ads#create      | создает новую рекламу, принадлежащую указанному журналу                               |
+| GET        | /magazines/:magazine_id/ads/:id      | ads#show        | отражает определенную рекламу, принадлежащую определенному журналу                    |
+| GET        | /magazines/:magazine_id/ads/:id/edit | ads#edit        | возвращает форму HTML для редактирования рекламы, принадлежащей определенному журналу |
+| PATCH/PUT  | /magazines/:magazine_id/ads/:id      | ads#update      | обновляет определенную рекламу, принадлежащую определенному журналу                   |
+| DELETE     | /magazines/:magazine_id/ads/:id      | ads#destroy     | удаляет определенную рекламу, принадлежащую определенному журналу                     |
 
 Также будут созданы маршрутные хелперы, такие как `magazine_ads_url` и `edit_magazine_ad_path`. Эти хелперы принимают экземпляр Magazine как первый параметр (`magazine_ads_url(@magazine)`).
 
@@ -348,15 +348,15 @@ end
 
 Для ресурса комментариев будут созданы следующие маршруты:
 
-| Метод HTTP | Путь                                   | Именнованный хелпер |
-| ---------- | -------------------------------------- | ------------------- |
-| GET        | /posts/:post_id/comments(.:format)     | post_comments       |
-| POST       | /posts/:post_id/comments(.:format)     | post_comments       |
-| GET        | /posts/:post_id/comments/new(.:format) | new_post_comment    |
-| GET        | /sekret/comments/:id/edit(.:format)    | edit_comment        |
-| GET        | /sekret/comments/:id(.:format)         | comment             |
-| PATCH/PUT  | /sekret/comments/:id(.:format)         | comment             |
-| DELETE     | /sekret/comments/:id(.:format)         | comment             |
+| Метод HTTP | Путь                                   | Контроллер#Экшн  | Именнованный хелпер |
+| ---------  | -------------------------------------- | ---------------- | ------------------- |
+| GET        | /posts/:post_id/comments(.:format)     | comments#index   | post_comments       |
+| POST       | /posts/:post_id/comments(.:format)     | comments#create  | post_comments       |
+| GET        | /posts/:post_id/comments/new(.:format) | comments#new     | new_post_comment    |
+| GET        | /sekret/comments/:id/edit(.:format)    | comments#edit    | edit_comment        |
+| GET        | /sekret/comments/:id(.:format)         | comments#show    | comment             |
+| PATCH/PUT  | /sekret/comments/:id(.:format)         | comments#update  | comment             |
+| DELETE     | /sekret/comments/:id(.:format)         | comments#destroy | comment             |
 
 Опция `:shallow_prefix` добавляет указанный параметр к именнованным хелперам:
 
@@ -370,16 +370,15 @@ end
 
 Для ресурса комментариев будут созданы следующие маршруты:
 
-| Метод HTTP | Путь                                   | Именнованный хелпер |
-| ---------- | -------------------------------------- | ------------------- |
-| GET        | /posts/:post_id/comments(.:format)     | post_comments       |
-| POST       | /posts/:post_id/comments(.:format)     | post_comments       |
-| GET        | /posts/:post_id/comments/new(.:format) | new_post_comment    |
-| GET        | /comments/:id/edit(.:format)           | edit_sekret_comment |
-| GET        | /comments/:id(.:format)                | sekret_comment      |
-| PATCH/PUT  | /comments/:id(.:format)                | sekret_comment      |
-| DELETE     | /comments/:id(.:format)                | sekret_comment      |
-
+| Метод HTTP | Путь                                   | Контроллер#Экшн  | Именнованный хелпер |
+| ---------  | -------------------------------------- | ---------------- | ------------------- |
+| GET        | /posts/:post_id/comments(.:format)     | comments#index   | post_comments       |
+| POST       | /posts/:post_id/comments(.:format)     | comments#create  | post_comments       |
+| GET        | /posts/:post_id/comments/new(.:format) | comments#new     | new_post_comment    |
+| GET        | /comments/:id/edit(.:format)           | comments#edit    | edit_sekret_comment |
+| GET        | /comments/:id(.:format)                | comments#show    | sekret_comment      |
+| PATCH/PUT  | /comments/:id(.:format)                | comments#update  | sekret_comment      |
+| DELETE     | /comments/:id(.:format)                | comments#destroy | sekret_comment      |
 ### Концерны маршрутов
 
 Концерны маршрутов (Routing Concerns) позволяют объявлять обычные маршруты, которые затем могут быть повторно использованы внутри других ресурсов и маршрутов. Чтобы определить концерн:
@@ -483,7 +482,9 @@ end
 
 Это распознает `/photos/1/preview` с GET, и направит его в экшн `preview` `PhotosController`, со значением id ресурса, переданным в `params[:id]`. Это также создаст хелперы `preview_photo_url` и `preview_photo_path`.
 
-В блоке маршрутов к элементу каждое имя маршрута определяет метод HTTP, с которым он будет распознан. Тут можно использовать `get`, `patch`, `put`, `post` или `delete`. Если у вас нет нескольких маршрутов к `элементу`, также можно передать `:on` к маршруту, избавившись от блока:
+В блоке маршрутов к элементу каждое имя маршрута определяет метод HTTP,
+с которым он будет распознан. Тут можно использовать `get`, `patch`, `put`, `post` или `delete`.
+Если у вас нет нескольких маршрутов к `элементу`, также можно передать `:on` к маршруту, избавившись от блока:
 
 ```ruby
 resources :photos do
@@ -840,16 +841,15 @@ resources :photos, controller: 'images'
 
 распознает входящие пути, начинающиеся с `/photo`, но смаршрутизирует к контроллеру `Images`:
 
-| Метод HTTP | Путь             | Экшн    | Именнованный хелпер  |
-| ---------- | ---------------- | ------- | -------------------- |
-| GET        | /photos          | index   | photos_path          |
-| GET        | /photos/new      | new     | new_photo_path       |
-| POST       | /photos          | create  | photos_path          |
-| GET        | /photos/:id      | show    | photo_path(:id)      |
-| GET        | /photos/:id/edit | edit    | edit_photo_path(:id) |
-| PATCH/PUT  | /photos/:id      | update  | photo_path(:id)      |
-| DELETE     | /photos/:id      | destroy | photo_path(:id)      |
-
+| Метод HTTP | Путь             | Контроллер#Экшн   | Именнованный хелпер  |
+| ---------  | ---------------- | ----------------- | -------------------- |
+| GET        | /photos          | images#index      | photos_path          |
+| GET        | /photos/new      | images#new        | new_photo_path       |
+| POST       | /photos          | images#create     | photos_path          |
+| GET        | /photos/:id      | images#show       | photo_path(:id)      |
+| GET        | /photos/:id/edit | images#edit       | edit_photo_path(:id) |
+| PATCH/PUT  | /photos/:id      | images#update     | photo_path(:id)      |
+| DELETE     | /photos/:id      | images#destroy    | photo_path(:id)      |
 NOTE: Используйте `photos_path`, `new_photo_path` и т.д. для создания путей для этого ресурса.
 
 Для контроллеров в пространстве имен можно использовать обозначение директории. Например:
@@ -860,8 +860,8 @@ resources :user_permissions, controller: 'admin/user_permissions'
 
 Это будет смаршрутизировано на контроллер `Admin::UserPermissions`.
 
-NOTE: Поддерживается только обозначение директории. Указание контроллера с помощью обозначения константы ruby (т.е. `:controller =>
-'Admin::UserPermissions'`) может привести к маршрутным проблемам, и в итоге к ошибке.
+NOTE: Поддерживается только обозначение директории. Указание контроллера с помощью обозначения константы ruby (т.е. `controller: 'Admin::UserPermissions'`)
+может привести к маршрутным проблемам, и в итоге к ошибке.
 
 ### Опеределение ограничений
 
@@ -896,16 +896,15 @@ resources :photos, as: 'images'
 
 распознает входящие пути, начинающиеся с `/photos` и смаршрутизирует запросы к `PhotosController`:
 
-| Метод HTTP | Путь             | Экшн    | Именнованный хелпер  |
-| ---------- | ---------------- | ------- | -------------------- |
-| GET        | /photos          | index   | images_path          |
-| GET        | /photos/new      | new     | new_image_path       |
-| POST       | /photos          | create  | images_path          |
-| GET        | /photos/:id      | show    | image_path(:id)      |
-| GET        | /photos/:id/edit | edit    | edit_image_path(:id) |
-| PATCH/PUT  | /photos/:id      | update  | image_path(:id)      |
-| DELETE     | /photos/:id      | destroy | image_path(:id)      |
-
+| Метод HTTP | Путь             | Контроллер#Экшн   | Именнованный хелпер  |
+| ---------  | ---------------- | ----------------- | -------------------- |
+| GET        | /photos          | photos#index      | images_path          |
+| GET        | /photos/new      | photos#new        | new_image_path       |
+| POST       | /photos          | photos#create     | images_path          |
+| GET        | /photos/:id      | photos#show       | image_path(:id)      |
+| GET        | /photos/:id/edit | photos#edit       | edit_image_path(:id) |
+| PATCH/PUT  | /photos/:id      | photos#update     | image_path(:id)      |
+| DELETE     | /photos/:id      | photos#destroy    | image_path(:id)      |
 ### Переопределение сегментов `new` и `edit`
 
 Опция `:path_names` позволяет переопределить автоматически создаваемые сегменты "new" и "edit" в путях:
@@ -1001,15 +1000,15 @@ end
 
 Rails теперь создаст маршруты к `CategoriesController`.
 
-| Метод HTTP | Путь                       | Экшн    | Именнованный хелпер     |
-| ---------- | -------------------------- | ------- | ----------------------- |
-| GET        | /kategorien                | index   | categories_path         |
-| GET        | /kategorien/neu            | new     | new_category_path       |
-| POST       | /kategorien                | create  | categories_path         |
-| GET        | /kategorien/:id            | show    | category_path(:id)      |
-| GET        | /kategorien/:id/bearbeiten | edit    | edit_category_path(:id) |
-| PATCH/PUT  | /kategorien/:id            | update  | category_path(:id)      |
-| DELETE     | /kategorien/:id            | destroy | category_path(:id)      |
+| Метод HTTP | Путь                       | Контроллер#Экшн    | Именнованный хелпер     |
+| ---------- | -------------------------- | ------------------ | ----------------------- |
+| GET        | /kategorien                | categories#index   | categories_path         |
+| GET        | /kategorien/neu            | categories#new     | new_category_path       |
+| POST       | /kategorien                | categories#create  | categories_path         |
+| GET        | /kategorien/:id            | categories#show    | category_path(:id)      |
+| GET        | /kategorien/:id/bearbeiten | categories#edit    | edit_category_path(:id) |
+| PATCH/PUT  | /kategorien/:id            | categories#update  | category_path(:id)      |
+| DELETE     | /kategorien/:id            | categories#destroy | category_path(:id)      |
 
 ### Переопределение единственного числа
 
