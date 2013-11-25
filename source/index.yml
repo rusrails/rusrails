@@ -71,8 +71,8 @@ pages:
   - title:    Роутинг в Rails
     path:     rails-routing
     file:     routing.md
-    revision: 317aaa05883c92165cfb8204634b9fd9b976a97b
-    date:     26/06/13
+    revision: 5019a046c68bcdfd59640bd106d87667fdacf816
+    date:     18/11/13
 
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
@@ -101,8 +101,8 @@ pages:
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
     file:     security.md
-    revision: 2392916eab6ff3c60668dbece09d33dee1bfaa49
-    date:     02/05/13
+    revision: 336caf9114f71bb09f0be61f4270fd2bedef5812
+    date:     18/11/13
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
