@@ -11,7 +11,6 @@ public/assets
 tmp/**/*
 tmp
 .bundle
-Capfile
 webrat.log
 .sass-cache/
 tmp/
