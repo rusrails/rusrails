@@ -11,8 +11,6 @@
 
 * [Rails 3.2](http://v32.rusrails.ru)
 * [Rails 3.1](https://github.com/morsbox/rusrails/tree/3.1.3/source)
-* [Rails 3.0](http://archive.rusrails.ru)
-* [Rails 2.3](http://archive.rusrails.ru/rails23-archive)
 
 Приступим!
 
