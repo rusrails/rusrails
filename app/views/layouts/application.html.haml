@@ -17,13 +17,13 @@
             %li= link_to 'Главная', '/'
             %li.dropdown
               = link_to '#', class: "index-popover", data: {title: 'Содержание руководства'} do
-                Меню
+                Содержание
                 %b.caret
               .index-popover-content.hide
                 - menu_page = Page.matched("menu")
                 - cache ['v1', menu_page] do
                   = menu_page.rendered_body(self)
-            %li= link_to 'Ruby & Rails API', 'http://api.rusrails.ru'
+            %li= link_to 'Ruby & Rails API', 'http://api.rusrails.ru', target: :blank
 
     - if notice
       .alert.alert-success
