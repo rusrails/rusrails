@@ -197,7 +197,7 @@ end
 | PATCH/PUT  | /admin/posts/:id      | admin/posts#update  | admin_post_path(:id)      |
 | DELETE     | /admin/posts/:id      | admin/posts#destroy | admin_post_path(:id)      |
 
-Если хотите маршрут `/photos` (без префикса `/admin`) к `Admin::PostsController`, можете использовать:
+Если хотите маршрут `/posts` (без префикса `/admin`) к `Admin::PostsController`, можете использовать:
 
 ```ruby
 scope module: 'admin' do
@@ -211,7 +211,7 @@ end
 resources :posts, module: 'admin'
 ```
 
-Если хотите маршрут `/admin/photos` к `PostsController` (без префикса модуля `Admin::`), можно использовать:
+Если хотите маршрут `/admin/posts` к `PostsController` (без префикса модуля `Admin::`), можно использовать:
 
 ```ruby
 scope '/admin' do
@@ -625,7 +625,7 @@ get ':username', to: 'users#show', as: :user
 
 ### Ограничения метода HTTP
 
-В основном следует импользовать методы `get`, `post`, `put` и `delete` для ограничения маршрута определенным методом. Можно использовать метод `match` с опцией `:via` для соответствия нескольким методам за раз:
+В основном следует использовать методы `get`, `post`, `put` и `delete` для ограничения маршрута определенным методом. Можно использовать метод `match` с опцией `:via` для соответствия нескольким методам за раз:
 
 ```ruby
 match 'photos', to: 'photos#show', via: [:get, :post]
@@ -863,7 +863,7 @@ resources :user_permissions, controller: 'admin/user_permissions'
 NOTE: Поддерживается только обозначение директории. Указание контроллера с помощью обозначения константы ruby (т.е. `controller: 'Admin::UserPermissions'`)
 может привести к маршрутным проблемам, и в итоге к ошибке.
 
-### Опеределение ограничений
+### Определение ограничений
 
 Можно использовать опцию `:constraints` для определения требуемого формата на неявном `id`. Например:
 
