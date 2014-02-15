@@ -18,7 +18,7 @@ gem 'rails_config'
 gem 'twitter-bootstrap-rails'
 gem 'jquery-rails'
 
-gem 'capistrano'
+gem 'capistrano', '~> 2.15'
 gem 'therubyracer'
 gem 'unicorn'
 
