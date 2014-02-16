@@ -136,7 +136,7 @@ resources :videos
 get 'profile', to: 'users#show'
 ```
 
-Передавая `String` в `match` ожидается следующий формат - `controller#action`, при передаче `Symbol` произойдёт непосредственно  прямое обращение к экшену:
+Передавая `String` в `get` ожидается следующий формат - `controller#action`, при передаче `Symbol` произойдёт непосредственно  прямое обращение к экшену:
 
 ```ruby
 get 'profile', to: :show
@@ -236,6 +236,8 @@ resources :posts, path: '/admin/posts'
 | GET        | /admin/posts/:id/edit | posts#edit      | edit_post_path(:id)  |
 | PUT        | /admin/posts/:id      | posts#update    | post_path(:id)       |
 | DELETE     | /admin/posts/:id      | posts#destroy   | post_path(:id)       |
+
+TIP: _Если хотите использовать другое пространство имен контроллера в блоке `namespace`, можно указать абсолютный путь контроллера, т.е: `get '/foo' => '/foo#index'`._
 
 ### Вложенные ресурсы
 
