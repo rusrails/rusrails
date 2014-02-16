@@ -65,8 +65,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: c2fc9f6080853587c36486b4bcbc72701e62939c
-    date:     13/07/13
+    revision: fd487860db3097104cdb8d589f3931d75b767721
+    date:     30/01/14
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -103,6 +103,8 @@ pages:
     file:     security.md
     revision: 336caf9114f71bb09f0be61f4270fd2bedef5812
     date:     18/11/13
+    todo:
+      - 'add anchor for unsafe-query-generation header (reference from controllers guide)'
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
