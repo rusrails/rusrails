@@ -335,7 +335,7 @@ class CreateAssembliesAndParts < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :assemblies_parts do |t|
+    create_table :assemblies_parts, id: false do |t|
       t.belongs_to :assembly
       t.belongs_to :part
     end
@@ -484,6 +484,20 @@ end
 ```
 
 С такой настройкой, вы можете получить `@employee.subordinates` и `@employee.manager`.
+
+В миграциях/схеме следует добавить столбец ссылки модели на саму себя.
+
+```ruby
+class CreateEmployees < ActiveRecord::Migration
+  def change
+    create_table :employees do |t|
+      t.references :manager
+      t.timestamps
+    end
+  end
+end
+```
+
 
 Полезные советы и предупреждения
 ---------------------------------
@@ -705,7 +719,7 @@ c.first_name == o.customer.first_name # => true
 
 ### Методы, добавляемые `belongs_to`
 
-Когда объявляете связь `belongs_to`, объявляющий класс автоматически получает четыре метода, относящихся к связи:
+Когда объявляете связь `belongs_to`, объявляющий класс автоматически получает пять методов, относящихся к связи:
 
 * `association(force_reload = false)`
 * `association=(associate)`
@@ -851,7 +865,10 @@ end
 
 #### `:dependent`
 
-Если установить опцию `:dependent` как `:destroy`, тогда удаление этого объекта вызовет метод `destroy` у связанного объекта, для удаление того объекта. Если установить опцию `:dependent` как `:delete`, тогда удаление этого объекта удалит связанный объект _без_ вызова его метода `destroy`. Если установить опцию `:dependent` как `:restrict`, тогда попытка удалить этот объект приведет к `ActiveRecord::DeleteRestrictionError`, если существуют какие-либо связанные объекты.
+Если установить опцию `:dependent` как:
+
+* `:destroy`, то, когда объект уничтожен, метод `destroy` будет вызван на его связанных объектах.
+* `:delete`, то, когда объект уничтожен, все его связанные объекты будут удалены непосредственно из базы данных без вызова их методов `destroy`.
 
 WARNING: Не следует определять эту опцию в связи `belongs_to`, которая соединена со связью `has_many` в другом классе. Это приведет к "битым" связям в записях вашей базы данных.
 
@@ -1009,7 +1026,7 @@ end
 
 ### Методы, добавляемые `has_one`
 
-Когда объявляете связь `has_one`, объявляющий класс автоматически получает четыре метода, относящихся к связи:
+Когда объявляете связь `has_one`, объявляющий класс автоматически получает пять методов, относящихся к связи:
 * `association(force_reload = false)`
 * `association=(associate)`
 * `build_association(attributes = {})`
@@ -1272,7 +1289,7 @@ end
 
 ### Добавляемые методы
 
-Когда объявляете связь `has_many`, объявляющий класс автоматически получает 13 методов, относящихся к связи:
+Когда объявляете связь `has_many`, объявляющий класс автоматически получает 16 методов, относящихся к связи:
 * `collection(force_reload = false)`
 * `collection<<(object, ...)`
 * `collection.delete(object, ...)`
@@ -1745,7 +1762,7 @@ person.posts << post unless person.posts.include?(post)
 
 ### Добавляемые методы
 
-Когда объявляете связь `has_and_belongs_to_many`, объявляющий класс автоматически получает 14 методов, относящихся к связи:
+Когда объявляете связь `has_and_belongs_to_many`, объявляющий класс автоматически получает 16 методов, относящихся к связи:
 
 * `collection(force_reload = false)`
 * `collection<<(object, ...)`
