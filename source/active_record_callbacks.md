@@ -32,11 +32,11 @@ class User < ActiveRecord::Base
   before_validation :ensure_login_has_a_value
 
   protected
-  def ensure_login_has_a_value
-    if login.nil?
-      self.login = email unless email.blank?
+    def ensure_login_has_a_value
+      if login.nil?
+        self.login = email unless email.blank?
+      end
     end
-  end
 end
 ```
 
@@ -62,13 +62,13 @@ class User < ActiveRecord::Base
   after_validation :set_location, on: [ :create, :update ]
 
   protected
-  def normalize_name
-    self.name = self.name.downcase.titleize
-  end
+    def normalize_name
+      self.name = self.name.downcase.titleize
+    end
 
-  def set_location
-    self.location = LocationService.query(self)
-  end
+    def set_location
+      self.location = LocationService.query(self)
+    end
 end
 ```
 
@@ -138,6 +138,55 @@ You have initialized an object!
 => #<User id: 1>
 ```
 
+### `after_touch`
+
+Колбэк `after_touch` будет вызван, когда на объекте Active Record вызван `touch`.
+
+```ruby
+class User < ActiveRecord::Base
+  after_touch do |user|
+    puts "You have touched an object"
+  end
+end
+
+>> u = User.create(name: 'Kuldeep')
+=> #<User id: 1, name: "Kuldeep", created_at: "2013-11-25 12:17:49", updated_at: "2013-11-25 12:17:49">
+
+>> u.touch
+You have touched an object
+=> true
+```
+
+Он может быть использован совместно с `belongs_to`:
+
+```ruby
+class Employee < ActiveRecord::Base
+  belongs_to :company, touch: true
+  after_touch do
+    puts 'An Employee was touched'
+  end
+end
+
+class Company < ActiveRecord::Base
+  has_many :employees
+  after_touch :log_when_employees_or_company_touched
+
+  private
+  def log_when_employees_or_company_touched
+    puts 'Employee/Company was touched'
+  end
+end
+
+>> @employee = Employee.last
+=> #<Employee id: 1, company_id: 1, created_at: "2013-11-25 17:04:22", updated_at: "2013-11-25 17:05:05">
+
+# вызывает @employee.company.touch
+>> @employee.touch
+Employee/Company was touched
+An Employee was touched
+=> true
+```
+
 Запуск колбэков
 ---------------
 
@@ -202,6 +251,8 @@ NOTE: Методы `find_by_*` и `find_by_*!` это динамические �
 Вся цепочка колбэков упаковывается в операцию. Если любой метод _before_ колбэков возвращает `false` или вызывает исключение, выполняемая цепочка прерывается и запускается ROLLBACK; Колбэки _after_ могут достичь этого, только вызвав исключение.
 
 WARNING. Вызов произвольного исключения может прервать код, который предполагает, что `save` и тому подобное не будут провалены подобным образом. Исключение `ActiveRecord::Rollback` чуть точнее сообщает Active Record, что происходит откат. Он подхватывается изнутри, но не перевызывает исключение.
+
+WARNING. Любое исключение, кроме `ActiveRecord::Rollback` будет перевызвано Rails после того, как прервется цепочка колбэков. Вызов исключения, отличного от `ActiveRecord::Rollback` может сломать код, который не ожидает, что методы, такие как `save` и `update_attributes` (которые обычно пытаются вернуть `true` или `false`) вызовут исключение.
 
 Колбэки для отношений
 ---------------------
@@ -287,7 +338,7 @@ end
 ```ruby
 class PictureFileCallbacks
   def after_destroy(picture_file)
-    if File.exists?(picture_file.filepath)
+    if File.exist?(picture_file.filepath)
       File.delete(picture_file.filepath)
     end
   end
@@ -307,7 +358,7 @@ end
 ```ruby
 class PictureFileCallbacks
   def self.after_destroy(picture_file)
-    if File.exists?(picture_file.filepath)
+    if File.exist?(picture_file.filepath)
       File.delete(picture_file.filepath)
     end
   end
@@ -354,4 +405,4 @@ end
 
 NOTE: опция `:on` определяет, когда будет запущен колбэк. Если не предоставить опцию `:on`, колбэк будет запущен для каждого действия.
 
-Колбэки `after_commit` и `after_rollback` гарантируют, что будут вызваны для всех созданных, обновленных или удаленных моделей внутри блока транзакции. Если какое-либо исключение вызовется в одном из этих колбэков, они будут проигнорированы, чтобы не препятствовать другим колбэкам. По сути, если код вашего колбэка может вызвать исключение, нужно для него вызвать rescue, и обработать его нужным образом в колбэке.
+WARNING: Колбэки `after_commit` и `after_rollback` гарантируют, что будут вызваны для всех созданных, обновленных или удаленных моделей внутри блока транзакции. Если какое-либо исключение вызовется в одном из этих колбэков, они будут проигнорированы, чтобы не препятствовать другим колбэкам. По сути, если код вашего колбэка может вызвать исключение, нужно для него вызвать rescue, и обработать его нужным образом в колбэке.
