@@ -471,7 +471,7 @@ Client.where('locked' => true)
 
 ```ruby
 Post.where(author: author)
-Author.joins(:posts).where(posts: {author: author})
+Author.joins(:posts).where(posts: { author: author })
 ```
 
 NOTE: Значения не могут быть символами. Например, нельзя сделать `Client.where(status: :active)`.
@@ -512,11 +512,7 @@ SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 Post.where.not(author: author)
 ```
 
-Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`. Это создаст подобный SQL:
-
-```sql
-SELECT * FROM posts WHERE (author_id != 1)
-```
+Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`.
 
 (ordering) Сортировка
 ---------------------
@@ -526,12 +522,18 @@ SELECT * FROM posts WHERE (author_id != 1)
 Например, если вы получаете ряд записей и хотите упорядочить их в порядке возрастания поля `created_at` в таблице:
 
 ```ruby
+Client.order(:created_at)
+# ИЛИ
 Client.order("created_at")
 ```
 
 Также можете определить `ASC` или `DESC`:
 
 ```ruby
+Client.order(created_at: :desc)
+# ИЛИ
+Client.order(created_at: :asc)
+# ИЛИ
 Client.order("created_at DESC")
 # ИЛИ
 Client.order("created_at ASC")
@@ -540,16 +542,20 @@ Client.order("created_at ASC")
 Или сортировку по нескольким полям:
 
 ```ruby
+Client.order(orders_count: :asc, created_at: :desc)
+# ИЛИ
+Client.order(:orders_count, created_at: :desc)
+# ИЛИ
 Client.order("orders_count ASC, created_at DESC")
-# или
+# ИЛИ
 Client.order("orders_count ASC", "created_at DESC")
 ```
 
-Если хотите вызвать `order` несколько раз, т.е. в различном контексте, новый порядок будет предшествовать предыдущему
+Если хотите вызвать `order` несколько раз, т.е. в различном контексте, новый порядок будет следовать за предыдущим
 
 ```ruby
 Client.order("orders_count ASC").order("created_at DESC")
-# SELECT * FROM clients ORDER BY created_at DESC, orders_count ASC
+# SELECT * FROM clients ORDER BY orders_count ASC, created_at DESC
 ```
 
 Выбор определенных полей
@@ -676,12 +682,12 @@ HAVING sum(price) > 100
 Переопределяющие условия
 ------------------------
 
-### `except`
+### `unscope`
 
-Можете указать определенные условия, которые будут исключены, используя метод `except`. Например:
+Можете указать определенные условия, которые будут убраны, используя метод `unscope`. Например:
 
 ```ruby
-Post.where('id > 10').limit(20).order('id asc').except(:order)
+Post.where('id > 10').limit(20).order('id asc').unscope(:order)
 ```
 
 SQL, который будет выполнен:
@@ -689,30 +695,23 @@ SQL, который будет выполнен:
 ```sql
 SELECT * FROM posts WHERE id > 10 LIMIT 20
 
-# Оригинальный запрос без `except`
+# Оригинальный запрос без `unscope`
 SELECT * FROM posts WHERE id > 10 ORDER BY id asc LIMIT 20
 
 ```
 
-### `unscope`
-
-Метод `except` не работает, когда сливаются несколько relation. Например:
+Дополнительно можно убрать определенные условия `where`. Например:
 
 ```ruby
-Post.comments.except(:order)
+Post.where(id: 10, trashed: false).unscope(where: :id)
+# => SELECT "posts".* FROM "posts" WHERE trashed = 0
 ```
 
-все еще будет иметь упорядочивание, если оно задано скоупом по умолчанию в Comment. Чтобы убрать все упорядочивание, даже из слитых relation, используйте unscope следующим образом:
+Relation, использующий `unscope` повлияет на любой relation, с которым он слит:
 
 ```ruby
-Post.order('id DESC').limit(20).unscope(:order) = Post.limit(20)
-Post.order('id DESC').limit(20).unscope(:order, :limit) = Post.all
-```
-
-Дополнительно можно убрать определенные условия из where. Например:
-
-```ruby
-Post.where(id: 10).limit(1).unscope({ where: :id }, :limit).order('id DESC') = Post.order('id DESC')
+Post.order('id asc').merge(Post.unscope(:order))
+# => SELECT "posts".* FROM "posts"
 ```
 
 ### `only`
@@ -786,6 +785,32 @@ SELECT * FROM clients WHERE orders_count > 10 ORDER BY clients.id DESC
 ```
 
 Этот метод не принимает аргументы.
+
+### `rewhere`
+
+Метод `rewhere` переопределяет существующее именнованное условие `where`. Например:
+
+```ruby
+Post.where(trashed: true).rewhere(trashed: false)
+```
+
+SQL, который будет выполнен:
+
+```sql
+SELECT * FROM posts WHERE `trashed` = 0
+```
+
+В случае, когда не используется условие `rewhere`,
+
+```ruby
+Post.where(trashed: true).where(trashed: false)
+```
+
+SQL, который будет выполнен:
+
+```sql
+SELECT * FROM posts WHERE `trashed` = 1 AND `trashed` = 0
+```
 
 Нулевой Relation
 ----------------
@@ -934,7 +959,7 @@ WARNING: Этот метод работает только с `INNER JOIN`.
 
 Active Record позволяет использовать имена [связей](/active-record-associations), определенных в модели, как ярлыки для определения условия `JOIN` этих связей при использовании метода `joins`.
 
-Например, рассмотрим следующие модели `Category`, `Post`, `Comments` и `Guest`:
+Например, рассмотрим следующие модели `Category`, `Post`, `Comment`, `Guest` и `Tag`:
 
 ```ruby
 class Category < ActiveRecord::Base
@@ -1013,7 +1038,7 @@ SELECT posts.* FROM posts
 #### Соединение вложенных связей (разных уровней)
 
 ```ruby
-Category.joins(posts: [{comments: :guest}, :tags])
++Category.joins(posts: [{ comments: :guest }, :tags])
 ```
 
 Это создаст:
@@ -1039,7 +1064,7 @@ Client.joins(:orders).where('orders.created_at' => time_range)
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-Client.joins(:orders).where(orders: {created_at: time_range})
+Client.joins(:orders).where(orders: { created_at: time_range })
 ```
 
 Будут найдены все клиенты, имеющие созданные вчера заказы, снова используя выражение SQL `BETWEEN`.
@@ -1100,7 +1125,7 @@ Post.includes(:category, :comments)
 #### Вложенный хэш связей
 
 ```ruby
-Category.includes(posts: [{comments: :guest}, :tags]).find(1)
+Category.includes(posts: [{ comments: :guest }, :tags]).find(1)
 ```
 
 Вышеприведенный код находит категории с id 1 и нетерпеливо загружает все публикации, связанные с найденной категорией. Кроме того, он также нетерпеливо загружает теги и комментарии каждой публикации. Гость, связанный с оставленным комментарием, также будет нетерпеливо загружен.
@@ -1181,7 +1206,7 @@ class Post < ActiveRecord::Base
 end
 ```
 
-Это можно использовать так:
+Вызывайте скоуп, как будто это метод класса:
 
 ```ruby
 Post.created_before(Time.zone.now)
@@ -1283,7 +1308,7 @@ end
 Если хотите удалить скоупы по какой-то причине, можете использовать метод `unscoped`. Это особенно полезно, если в модели определен `default_scope`, и он не должен быть применен для конкретно этого запроса.
 
 ```ruby
-Client.unscoped.all
+Client.unscoped.load
 ```
 
 Этот метод удаляет все скоупы и выполняет обычный запрос к таблице.
@@ -1299,8 +1324,6 @@ Client.unscoped {
 (dynamic-finders) Динамический поиск
 ------------------------------------
 
-+NOTE: Методы динамического поиска устарели в Rails 4.0 и будут убраны в Rails 4.1. Лучшей практикой является использование скоупов Active Record. Гем с устаревшими методами находится в https://github.com/rails/activerecord-deprecated_finders
-
 Для каждого поля (также называемого атрибутом), определенного в вашей таблице, Active Record предоставляет метод поиска. Например, если есть поле `first_name` в вашей модели `Client`, вы на халяву получаете `find_by_first_name` от Active Record. Если также есть поле `locked` в модели `Client`, вы также получаете `find_by_locked`.
 
 Можете определить восклицательный знак (!) в конце динамического поиска, чтобы он вызвал ошибку `ActiveRecord::RecordNotFound`, если не возвратит ни одной записи, например так `Client.find_by_name!("Ryan")`
@@ -1309,6 +1332,8 @@ Client.unscoped {
 
 Поиск или создание нового объекта
 ---------------------------------
+
+NOTE: Некоторые методы динамического поиска устарели в Rails 4.0 и будут убраны в Rails 4.1. Лучшей практикой является использование скоупов Active Record. Гем с устаревшими методами находится в https://github.com/rails/activerecord-deprecated_finders
 
 Нормально, если вам нужно найти запись или создать ее, если она не существует. Это осуществимо с помощью методов `find_or_create_by` и `find_or_create_by!`.
 
@@ -1336,7 +1361,7 @@ COMMIT
 
 Новая запись может быть не сохранена в базу данных; это зависит от того, прошли валидации или нет (подобно `create`).
 
-Предположим, мы хотим установить атрибут 'locked' как true, если создаем новую запись, но не хотим включать его в запрос. Таким образом, мы хотим найти клиента по имени "Andy" или, если этот клиент не существует, создать клиента по имени "Andy", который не заблокирован.
+Предположим, мы хотим установить атрибут 'locked' как `false`, если создаем новую запись, но не хотим включать его в запрос. Таким образом, мы хотим найти клиента по имени "Andy" или, если этот клиент не существует, создать клиента по имени "Andy", который не заблокирован.
 
 Этого можно достичь двумя способами. Первый - это использование `create_with`:
 
@@ -1405,7 +1430,7 @@ nick.save
 ```ruby
 Client.find_by_sql("SELECT * FROM clients
   INNER JOIN orders ON clients.id = orders.client_id
-  ORDER clients.created_at desc")
+  ORDER BY clients.created_at desc")
 ```
 
 `find_by_sql` предоставляет простой способ создания произвольных запросов к базе данных и получения экземпляров объектов.
@@ -1438,7 +1463,7 @@ Client.pluck(:id, :name)
 # => [[1, 'David'], [2, 'Jeremy'], [3, 'Jose']]
 ```
 
-`pluck` позволяет заменить такой код
+`pluck` позволяет заменить такой код:
 
 ```ruby
 Client.select(:id).map { |c| c.id }
@@ -1448,12 +1473,38 @@ Client.select(:id).map(&:id)
 Client.select(:id, :name).map { |c| [c.id, c.name] }
 ```
 
-на
+на:
 
 ```ruby
 Client.pluck(:id)
 # или
 Client.pluck(:id, :name)
+```
+
+В отличие от `select`, `pluck` непосредственно конвертирует результат запроса в массив Ruby, без создания объектов `ActiveRecord`. Это означает лучшую производительность для больших или часто используемых запросов. Однако. любые переопределения методов в модели будут недоступны. Например:
+
+```ruby
+class Client < ActiveRecord::Base
+  def name
+    "I am #{super}"
+  end
+end
+
+Client.select(:name).map &:name
+# => ["I am David", "I am Jeremy", "I am Jose"]
+
+Client.pluck(:name)
+# => ["David", "Jeremy", "Jose"]
+```
+
+Более того, в отличие от `select` и других скоупов `Relation`, `pluck` вызывает немедленный запрос, и поэтому не может быть соединен с любыми последующими скоупами, хотя он работает со скоупами, подключенными ранее:
+
+```ruby
+Client.pluck(:name).limit(1)
+# => NoMethodError: undefined method `limit' for #<Array:0x007ff34d3ad6d8>
+
+Client.limit(1).pluck(:name)
+# => ["David"]
 ```
 
 `ids`
@@ -1484,12 +1535,12 @@ Person.ids
 Client.exists?(1)
 ```
 
-Метод `exists?` также принимает несколько id, при этом возвращает true, если хотя бы хотя бы одна запись из них существует.
+Метод `exists?` также принимает несколько значений, при этом возвращает `true`, если хотя бы хотя бы одна запись из них существует.
 
 ```ruby
-Client.exists?(1,2,3)
-#или
-Client.exists?([1,2,3])
+Client.exists?(id: [1,2,3])
+# или
+Client.exists?(name: ['John', 'Sergei'])
 ```
 
 Более того, `exists` принимает опцию `conditions` подобно этому:
@@ -1548,7 +1599,7 @@ Client.where(first_name: 'Ryan').count
 Можете также использовать различные методы поиска на relation для выполнения сложных вычислений:
 
 ```ruby
-Client.includes("orders").where(first_name: 'Ryan', orders: {status: 'received'}).count
+Client.includes("orders").where(first_name: 'Ryan', orders: { status: 'received' }).count
 ```
 
 Что выполнит:
