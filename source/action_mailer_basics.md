@@ -87,7 +87,7 @@ end
     <h1>Welcome to example.com, <%= @user.name %></h1>
     <p>
       You have successfully signed up to example.com,
-      your username is: <%= @user.login %>.<br/>
+      your username is: <%= @user.login %>.<br>
     </p>
     <p>
       To login to the site, just follow this link: <%= @url %>.
@@ -115,7 +115,7 @@ Thanks for joining and have a great day!
 
 #### Вызов рассыльщика
 
-Рассыльщики - это всего лишь другой способ отрендерить вьюху. Вместо рендеринга вьюхи и отсылки ее по протоколу HTTP, они всего лишь вместо этого отправляют ее по протоколам Email. Благодаря этому имеет смысл, чтобы контроллер сказал рассыльщику отослать письмо тогда, когда пользователь был успешно создан.
+Рассыльщики - это всего лишь другой способ отрендерить вьюху. Вместо рендеринга вьюхи и отсылки ее по протоколу HTTP, они всего лишь вместо этого отправляют ее по протоколам email. Благодаря этому имеет смысл, чтобы контроллер сказал рассыльщику отослать письмо тогда, когда пользователь был успешно создан.
 
 Настройка этого до безобразия проста.
 
@@ -137,7 +137,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        # Tell the UserMailer to send a welcome Email after save
+        # Сказать UserMailer отослать приветственное письмо после сохранения
         UserMailer.welcome_email(@user).deliver
 
         format.html { redirect_to(@user, notice: 'User was successfully created.') }
@@ -467,25 +467,25 @@ class UserMailer < ActionMailer::Base
 
   private
 
-  def set_delivery_options
-    # Тут у вас есть доступ к экземпляру mail и переменным экземпляра
-    # @business и @user
-    if @business && @business.has_smtp_settings?
-      mail.delivery_method.settings.merge!(@business.smtp_settings)
+    def set_delivery_options
+      # Тут у вас есть доступ к экземпляру mail и переменным экземпляра
+      # @business и @user
+      if @business && @business.has_smtp_settings?
+        mail.delivery_method.settings.merge!(@business.smtp_settings)
+      end
     end
-  end
 
-  def prevent_delivery_to_guests
-    if @user && @user.guest?
-      mail.perform_deliveries = false
+    def prevent_delivery_to_guests
+      if @user && @user.guest?
+        mail.perform_deliveries = false
+      end
     end
-  end
 
-  def set_business_headers
-    if @business
-      headers["X-SMTPAPI-CATEGORY"] = @business.code
+    def set_business_headers
+      if @business
+        headers["X-SMTPAPI-CATEGORY"] = @business.code
+      end
     end
-  end
 end
 ```
 
@@ -507,7 +507,7 @@ Action Mailer теперь всего лишь наследуется от `Abst
 | `smtp_settings`         | Позволяет подробную настройку для метода доставки `:smtp`:<ul><li>`:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение "localhost".</li><li>`:port`  - В случае, если ваш почтовый сервер не работает с 25 портом, можете изменить его.</li><li>`:domain` - Если необходимо определить домен HELO, это можно сделать здесь.</li><li>`:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.</li><li>`:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. </li><li>`:authentication` - Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов `:plain`, `:login`, `:cram_md5`.</li><li>`:enable_starttls_auto` - Установите его в `false` если есть проблема с сертификатом сервера, которую вы не можете решить.</li></ul>|
 | `sendmail_settings`     | Позволяет переопределить опции для метода доставки `:sendmail`.<ul><li>`:location` - Расположение исполняемого sendmail. По умолчанию `/usr/sbin/sendmail`.</li><li>`:arguments` - Аргументы командной строки. По умолчанию `-i -t`.</li></ul>|
 | `raise_delivery_errors` | Должны ли быть вызваны ошибки, если email не может быть доставлен. Это работает, если внешний сервер email настроен на немедленную доставку.|
-| `delivery_method`       | Определяет метод доставки. Возможные значения `:smtp` (по умолчанию), `:sendmail`, `:file` и `:test`.|
+| `delivery_method`       | Определяет метод доставки. Возможные значения: <ul><li>`:smtp` (по умолчанию), может быть настроен с помощью `config.action_mailer.smtp_settings`.</li><li>`:sendmail`, может быть настроен с помощью  `config.action_mailer.sendmail_settings`.</li><li>`:file`: сохраняет письма в файлы; может быть настроен с помощью `config.action_mailer.file_settings`.</li><li>`:test`: сохраняет письма в массив `ActionMailer::Base.deliveries`.</li></ul>Подробнее смотрите в [API docs](http://api.rubyonrails.org/classes/ActionMailer/Base.html).|
 | `perform_deliveries`    | Определяет, должны ли методы deliver_* фактически выполняться. По умолчанию должны, но это можно отключить для функционального тестирования.|
 | `deliveries`            | Содержит массив всех электронных писем, отправленных через Action Mailer с помощью delivery_method :test. Очень полезно для юнит- и функционального тестирования.|
 | `default_options`       | Позволит вам установить значения по умолчанию для опций метода `mail` (`:from`, `:reply_to` и т.д.).|
@@ -532,18 +532,18 @@ config.action_mailer.default_options = {from: 'no-reply@example.com'}
 
 ### Настройка Action Mailer для Gmail
 
-Action Mailer теперь использует гем Mail, теперь это сделать просто, нужно добавить в файл `config/environments/$RAILS_ENV.rb`:
+Action Mailer теперь использует [гем Mail](https://github.com/mikel/mail), теперь это сделать просто, нужно добавить в файл `config/environments/$RAILS_ENV.rb`:
 
 ```ruby
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
   address:              'smtp.gmail.com',
-+  port:                 587,
-+  domain:               'example.com',
-+  user_name:            '<username>',
-+  password:             '<password>',
-+  authentication:       'plain',
-+  enable_starttls_auto: true  }
+  port:                 587,
+  domain:               'example.com',
+  user_name:            '<username>',
+  password:             '<password>',
+  authentication:       'plain',
+  enable_starttls_auto: true  }
 ```
 
 Тестирование рассыльщика
