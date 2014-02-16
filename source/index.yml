@@ -23,8 +23,8 @@ pages:
   - title:    Миграции базы данных Rails
     path:     rails-database-migrations
     file:     migrations.md
-    revision: 3bcecf8258d6b63ded2714672f92ad767423e41f
-    date:     30/08/13
+    revision: e9bfa28b1ac610a1e5d6ef75b152e44a2754aa8e
+    date:     04/02/14
 
   - title:    Валидации Active Record
     path:     active-record-validations
