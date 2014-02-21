@@ -96,15 +96,13 @@ pages:
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
     revision: 8fffcfc674bc15fed1a20934962fa35b5c907549
-    date:     06/02/12
+    date:     06/02/14
 
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
     file:     security.md
-    revision: 336caf9114f71bb09f0be61f4270fd2bedef5812
-    date:     18/11/13
-    todo:
-      - 'add anchor for unsafe-query-generation header (reference from controllers guide)'
+    revision: 848e377a2017234e3831599346918fb8d413fd28
+    date:     14/02/14
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
