@@ -200,8 +200,13 @@ pages:
     revision: 60cca3b0619e69ce0b1086fc1433adbd8b7d11c5
     date:     20/07/13
 
+  - title:    Заметки о релизе Ruby on Rails 4.1
+    path:     4_1_release_notes
+    file:     4_1_release_notes.md
+    revision: de535226e8884ea16fd1de1eee7bd14d33733765
+    date:     09/01/14
+
 plan:
-  - file:     4_1_release_notes.md
   - file:     action_view_overview.md
   - file:     active_model_basics.md
   - file:     active_support_instrumentation.md
