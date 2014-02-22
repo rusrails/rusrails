@@ -175,6 +175,8 @@ pages:
     file:     upgrading_ruby_on_rails.md
     revision: 82a2a78be816c16deb191abd72306a3c0aa9859d
     date:     26/07/2013
+    todo:
+      - check all cross-links with 4_1_release_notes
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
@@ -200,8 +202,13 @@ pages:
     revision: 60cca3b0619e69ce0b1086fc1433adbd8b7d11c5
     date:     20/07/13
 
+  - title:    Заметки о релизе Ruby on Rails 4.1
+    path:     4_1_release_notes
+    file:     4_1_release_notes.md
+    revision: 578839bbbd8c0ca670a9735aafdf49bd7c8587c8
+    date:     18/02/14
+
 plan:
-  - file:     4_1_release_notes.md
   - file:     action_view_overview.md
   - file:     active_model_basics.md
   - file:     active_support_instrumentation.md
