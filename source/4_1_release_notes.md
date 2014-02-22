@@ -17,9 +17,7 @@
 Обновление до Rails 4.1
 ----------------------
 
-Если вы обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами.
-Для начала, вы должны обновиться до Rails 4.0 и убедиться что ваше приложение по-прежнему работает,
-как ожидалось, прежде чем пытаться обновиться до Rails 4.1.
+Если вы обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.1, необходимо сначала обновиться до Rails 4.0 и убедиться, что приложение все еще выполняется так, как нужно.
 Список вещей, которые нужно выполнить для обновления доступен в руководстве
 [Обновление Rails](upgrading_ruby_on_rails.html#upgrading-from-rails-4-0-to-rails-4-1).
 
@@ -58,11 +56,10 @@ Spring is running:
  3746 spring app    | my_app | started 10 secs ago | development mode
 ```
 
-Взгляните на
-[Spring README](https://github.com/jonleighton/spring/blob/master/README.md),
+Обратитесь к [Spring README](https://github.com/jonleighton/spring/blob/master/README.md),
 чтобы увидеть все возможности.
 
-Взгляните на руководство по [Обновлению Rails](upgrading_ruby_on_rails.html#spring)
+Обратитесь к руководству по [Обновлению Rails](upgrading_ruby_on_rails.html#spring)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### `config/secrets.yml`
@@ -71,8 +68,8 @@ Rails 4.1 генерирует новый файл `secrets.yml` в директ
 этот файл содержит `secret_key_base` приложения, но он так же может использоваться
 для хранения других секретных данных, таких как ключи доступа к внешним API.
 
-Секретные данные, добавляемые в этот файл, будут доступны  через `Rails.application.secrets`.
-К примеру, `config/secrets.yml`:
+Секретные данные, добавляемые в этот файл, будут доступны с помощью `Rails.application.secrets`.
+Например, для `config/secrets.yml`:
 
 ```yaml
 development:
@@ -82,7 +79,7 @@ development:
 
 `Rails.application.secrets.some_api_key` вернёт `SOMEKEY` в development окружении.
 
-Взгляните на руководство по [Обновлению Rails](upgrading_ruby_on_rails.html#config-secrets-yml)
+Обратитесь к руководству по [Обновлению Rails](upgrading_ruby_on_rails.html#config-secrets-yml)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### Action Pack Variants
@@ -99,7 +96,7 @@ development:
 request.variant = :tablet if request.user_agent =~ /iPad/
 ```
 
-Респонс варианта шаблона в экшене, такой же как респонс у различных форматов
+Отклик на варианты в экшне похож на отклик на форматы:
 
 ```ruby
 respond_to do |format|
@@ -118,7 +115,7 @@ app/views/projects/show.html+tablet.erb
 app/views/projects/show.html+phone.erb
 ```
 
-Вы так же можете упростить определение вариантов шаблонов используя строчный синтаксис:
+Также можно упростить определение вариантов с помощью строчного синтаксиса:
 
 ```ruby
 respond_to do |format|
@@ -150,14 +147,13 @@ end
 По умолчанию, эти превью-классы располагаются в `test/mailers/previews`.
 Директорию можно легко изменить используя `preview_path` опцию.
 
-Посмотреть
-[документацию](http://api.rubyonrails.org/v4.1.0/classes/ActionMailer/Base.html)
-для детального изучения.
+Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/ActionMailer/Base.html)
+за подробным описанием.
 
-### Active Record enum поля
+### Enum поля в Active Record
 
-Объявляйте в базе данных enum поле, в котором каждое значение принадлежит цифре,
-но может быть запрошено по имени
+Объявляйте в базе данных enum поле, в котором числа связываются со значениеми,
+но могут быть запрошены по имени
 
 ```ruby
 class Conversation < ActiveRecord::Base
@@ -171,17 +167,15 @@ conversation.status  # => "archived"
 Conversation.archived # => Связь для всех архивированных бесед
 ```
 
-Посмотреть
-[документацию](http://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html)
-для детального изучения.
+Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html)
+за подробным описанием.
 
 ### Message Verifiers
 
 Message verifiers могут быть использованы для генерации и верификации подписанных сообщений.
-Это может быть полезным для безопасной передачи деликатных данных, таких как токены запомни-меня и др.
+Это полезно для безопасной передачи деликатных данных, таких как токены remember-me и прочие подобные.
 
-Метод `Rails.application.message_verifier` возвращает верификационное сообщение, которое
-подтверждено ключём, полученным из secret_key_base и именем верификационного сообщения:
+Метод `Rails.application.message_verifier` возвращает новый Message Verifier, который подписывает сообщения с помощью ключа, созданного из secret_key_base и имени верификационного сообщения:
 
 ```ruby
 signed_token = Rails.application.message_verifier(:remember_me).generate(token)
