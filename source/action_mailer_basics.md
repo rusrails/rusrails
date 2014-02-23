@@ -496,8 +496,8 @@ end
 
 Action Mailer теперь всего лишь наследуется от `AbstractController`, поэтому у вас есть доступ к тем же общим хелперам, как и в Action Controller.
 
-Настройка Action Mailer
------------------------
+(action-mailer-configuration) Настройка Action Mailer
+-----------------------------------------------------
 
 Следующие конфигурационные опции лучше всего делать в одном из файлов среды разработки (environment.rb, production.rb, и т.д...)
 
