@@ -137,8 +137,8 @@ pages:
   - title:    Работа с JavaScript в Rails
     path:     working-with-javascript-in-rails
     file:     working_with_javascript_in_rails.md
-    revision: b9b8b240098eec098904cf084f751f8bf8cc7bcc
-    date:     21/03/13
+    revision: d0b251e986ebbf4358ec9d339367387f32d74792
+    date:     13/02/14
 
   - title:    Engine для начинающих
     path:     engines
