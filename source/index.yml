@@ -125,8 +125,8 @@ pages:
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
     file:     caching_with_rails.md
-    revision: 56cdf7809d7664ebae1c6ce721967d954655a65b
-    date:     21/04/13
+    revision: 99eb1eb4dfcb3a270deb1f83d495749a90a1d08e
+    date:     19/11/13
 
   - title:    Asset Pipeline
     path:     asset-pipeline
