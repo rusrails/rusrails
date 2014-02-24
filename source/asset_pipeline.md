@@ -47,7 +47,7 @@ config.assets.css_compressor = :yui
 config.assets.js_compressor = :uglify
 ```
 
-NOTE: Шем `sass-rails` автоматически используется для сжатия CSS, если он подключен в Gemfile, опцию `config.assets.css_compressor` устанавливать не нужно.
+NOTE: Гем `sass-rails` автоматически используется для сжатия CSS, если он подключен в Gemfile, опцию `config.assets.css_compressor` устанавливать не нужно.
 
 ### Основные особенности
 
