@@ -5,7 +5,6 @@ Rails on Rack
 
 После прочтения этого руководства, вы узнаете:
 
-* Как создавать приложения Rails Metal
 * Как использовать промежуточные программы Rack в своих приложениях Rails
 * О стеке внутренних промежуточных программ Action Pack
 * Как определять собственный стек промежуточных программ
@@ -77,9 +76,9 @@ end
 
 ```ruby
 # Rails.root/config.ru
-require ::File.expand_path('../config/environment',  __FILE__)
+require ::File.expand_path('../config/environment', __FILE__)
 
-use Rack::Debugger
+use Rails::Rack::Debugger
 use Rack::ContentLength
 run Rails.application
 ```
@@ -114,6 +113,7 @@ $ rake middleware
 Для нового приложения Rails он может выдать что-то наподобие:
 
 ```ruby
+use Rack::Sendfile
 use ActionDispatch::Static
 use Rack::Lock
 use #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x000000029a0838>
@@ -126,6 +126,7 @@ use ActionDispatch::DebugExceptions
 use ActionDispatch::RemoteIp
 use ActionDispatch::Reloader
 use ActionDispatch::Callbacks
+use ActiveRecord::Migration::CheckPending
 use ActiveRecord::ConnectionAdapters::ConnectionManagement
 use ActiveRecord::QueryCache
 use ActionDispatch::Cookies
@@ -138,7 +139,7 @@ use Rack::ETag
 run MyApp::Application.routes
 ```
 
-Назначение каждой из этих промежуточных программ объясняется в разделе "Внутренние промежуточные программы":#internal-middleware-stack.
+Промежуточные программы по умолчанию, показанные здесь (и некоторые другие) описываются в разделе [Внутренние промежуточные программы](#internal-middleware-stack) ниже.
 
 ### Настройка стека промежуточных программ
 
@@ -176,9 +177,7 @@ config.middleware.insert_after ActiveRecord::QueryCache, Lifo::Cache, page_cache
 config.middleware.swap ActionDispatch::ShowExceptions, Lifo::ShowExceptions
 ```
 
-#### Стек промежуточных программ как Enumerable
-
-Стек промежуточных программ ведет себя как обычный `Enumerable`. Можно использовать любой `Enumerable` метод для воздействия или получения данных из стека. Стек промежуточных программ также реализует некоторые методы `Array`, включая `[]`, `unshift` and `delete`. Методы, описанные в предыдущем разделе - это всего лишь методы для удобства.
+#### Удаление промежуточных программ
 
 Добавьте следующие строчки в конфигурацию вашего приложения:
 
@@ -219,111 +218,99 @@ config.middleware.delete "Rack::MethodOverride"
 
 Значительная часть функционала Action Controller реализована как промежуточные программы. Следующий перечень объясняет назначение каждой из них:
 
- **`ActionDispatch::Static`**
+**`Rack::Sendfile`**
+
+* Устанавливает заголовки X-Sendfile, специфичные для сервера. Настраивается с помощью опции `config.action_dispatch.x_sendfile_header`.
+
+**`ActionDispatch::Static`**
 
 * Используется для раздачи статичных ресурсов. Отключена, если `config.serve_static_assets` является true.
 
- **`Rack::Lock`**
+**`Rack::Lock`**
 
 * Устанавливает флажок `env["rack.multithread"]` в `false` и оборачивает приложение в Mutex.
 
- **`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
+**`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
 
 * Используется для кэширования в памяти. Этот кэш не является нитебезопасным (thread safe).
 
- **`Rack::Runtime`**
+**`Rack::Runtime`**
 
 * Устанавливает заголовок X-Runtime, содержащий время (в секундах), затраченное на выполнение запроса.
 
- **`Rack::MethodOverride`**
+**`Rack::MethodOverride`**
 
 * Переопределяет метод, если установлен `params[:_method]`. Эта промежуточная программа поддерживает типы HTTP методов PUT и DELETE.
 
- **`ActionDispatch::RequestId`**
+**`ActionDispatch::RequestId`**
 
 * Создает для отклика уникальный заголовок `X-Request-Id` и включает метод `ActionDispatch::Request#uuid`.
 
- **`Rails::Rack::Logger`**
+**`Rails::Rack::Logger`**
 
 * Уведомляет логи, что начался запрос. После выполнения запроса, глушит все логи.
 
- **`ActionDispatch::ShowExceptions`**
+**`ActionDispatch::ShowExceptions`**
 
 * Ловит все исключения, возвращаемые приложением и вызывает приложение для показа исключений, которое форматирует его для конечного пользователя.
 
- **`ActionDispatch::DebugExceptions`**
+**`ActionDispatch::DebugExceptions`**
 
 * Ответственна за логирование исключений и показа отладочной страницы, если запрос локальный.
 
- **`ActionDispatch::RemoteIp`**
+**`ActionDispatch::RemoteIp`**
 
 * Проверяет на атаки с ложных IP.
 
- **`ActionDispatch::Reloader`**
+**`ActionDispatch::Reloader`**
 
 * Предоставляет колбэки prepare и cleanup, предназначенные для перезагрузки кода во время разработки.
 
- **`ActionDispatch::Callbacks`**
+**`ActionDispatch::Callbacks`**
 
 * Запускает колбэки prepare до обслуживания запроса.
 
- **`ActiveRecord::ConnectionAdapters::ConnectionManagement`**
+**`ActiveRecord::Migration::CheckPending`**
+
+* Проверяет отложенные миграции и вызывает `ActiveRecord::PendingMigrationError`, если какие-то миграции отложены.
+
+**`ActiveRecord::ConnectionAdapters::ConnectionManagement`**
 
 * Очищает активные соединения после каждого запроса, если ключ `rack.test` в среде запроса не установлен в `true`.
 
- **`ActiveRecord::QueryCache`**
+**`ActiveRecord::QueryCache`**
 
 * Включает кэширование запросов Active Record.
 
- **`ActionDispatch::Cookies`**
+**`ActionDispatch::Cookies`**
 
 * Устанавливает для запроса куки.
 
- **`ActionDispatch::Session::CookieStore`**
+**`ActionDispatch::Session::CookieStore`**
 
 * Ответственна за хранение сессии в куки.
 
- **`ActionDispatch::Flash`**
+**`ActionDispatch::Flash`**
 
 * Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присовено значение.
 
- **`ActionDispatch::ParamsParser`**
+**`ActionDispatch::ParamsParser`**
 
 * Парсит параметры запроса в `params`.
 
- **`ActionDispatch::Head`**
+**`ActionDispatch::Head`**
 
 * Преобразует запросы HEAD в запросы `GET` и обслуживает их соответствующим образом.
 
- **`Rack::ConditionalGet`**
+**`Rack::ConditionalGet`**
 
 * Добавляет поддержку для "Conditional `GET`", чтобы сервер ничего не отвечал, если страница не изменилась.
 
- **`Rack::ETag`**
+**`Rack::ETag`**
 
 * Добавляет заголовок ETag во все строковые header on all String bodies. ETags are used to validate cache.
 
 TIP: Можете использовать любые из этих промежуточных программ в своем стеке Rack.
-
-### Использование Rack Builder
-
-Следующее показывает, как использовать `Rack::Builder` вместо предоставленного Rails `MiddlewareStack`.
-
-<strong>Очистите существующий стек промежуточных программ Rails</strong>
-
-```ruby
-# config/application.rb
-config.middleware.clear
-```
-
-<br />
-<strong>Добавьте файл `config.ru` в `Rails.root`</strong>
-
-```ruby
-# config.ru
-use MyOwnStackFromScratch
-run Rails.application
-```
 
 (resources) Источники
 ---------
