@@ -155,8 +155,8 @@ pages:
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
-    revision: 879c18df83ec019da08d8ba7688b5722af5981bb
-    date:     26/01/13
+    revision: ff7ab3bc78abc3e8439a57ef7d755c5aa5b069f4
+    date:     29/12/13
 
   - title:    Rails on Rack
     path:     rails-on-rack

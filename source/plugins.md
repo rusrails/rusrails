@@ -3,9 +3,9 @@
 
 Плагин Rails  - это либо расширение, либо изменение основного фреймворка. Плагины представляют:
 
-* способ для разработчиков делиться новыми идеями без затрагивания стабильного кода
-* сегментную архитектуру, такую, что часть кода может быть исправлена или изменена по своему собственному графику
-* решение для разработчиков ядра приложения, чтобы не включать каждую новую особенность в свой код
+* Способ для разработчиков делиться новыми идеями без затрагивания стабильного кода.
+* Сегментную архитектуру, такую, что часть кода может быть исправлена или изменена по своему собственному графику.
+* Решение для разработчиков ядра приложения, чтобы не включать каждую новую особенность в свой код.
 
 После прочтения этого руководства, вы узнаете:
 
@@ -15,7 +15,7 @@
 Это руководство описывает, как создать плагин, движимый тестами (TDD), который будет:
 
 * Расширять классы ядра Ruby, такие как Hash и String.
-* Добавлять методы в ActiveRecord::Base в традициях плагинов 'acts_as'.
+* Добавлять методы в `ActiveRecord::Base` в традициях плагинов 'acts_as'.
 * Представлять информацию о том, где разместить генераторы в вашем плагине.
 
 Для целей этого руководства представьте на момент, что вы заядлый любитель птиц. Вашей любимой птицей является дятел (Yaffle), и вы хотите создать плагин, позволяющий другим разработчикам пользоваться особенностями дятлов.
@@ -27,7 +27,13 @@
 
 ### Создание гема.
 
-Rails поставляется с командой `rails plugin new`, создающей скелет для разработки любого типа расширения Rails со способностью запуска интеграционных тестов с помощью приложения-заглушки Rails. Как ее использовать и ее опции смотрите:
+Rails поставляется с командой `rails plugin new`, создающей скелет для разработки любого типа расширения Rails со способностью запуска интеграционных тестов с помощью приложения-заглушки Rails. Создайте свой плагин с помощью команды:
+
+```bash
+$ rails plugin new yaffle
+```
+
+Как ее использовать и ее опции смотрите:
 
 ```bash
 $ rails plugin --help
@@ -58,7 +64,7 @@ $ rails plugin --help
 
 require 'test_helper'
 
-class CoreExtTest < Test::Unit::TestCase
+class CoreExtTest < ActiveSupport::TestCase
   def test_to_squawk_prepends_the_word_squawk
     assert_equal "squawk! Hello World", "Hello World".to_squawk
   end
@@ -76,7 +82,7 @@ end
 
 Отлично - теперь мы готовы начать разработку.
 
-Затем в `lib/yaffle.rb` добавьте `require "yaffle/core_ext"`:
+В `lib/yaffle.rb` добавьте `require "yaffle/core_ext"`:
 
 ```ruby
 # yaffle/lib/yaffle.rb
@@ -116,7 +122,7 @@ $ rails console
 Добавление метода "acts_as" в Active Record
 ----------------------------------------
 
-Обычным паттерном для плагинов является добавление в модель метода с именем 'acts_as_something'. В нашем случае мы хотим написать метод с именем 'acts_as_yaffle', добавляющий метод 'squawk' в модель Active Record.
+Обычным паттерном для плагинов является добавление в модель метода с именем `acts_as_something`. В нашем случае мы хотим написать метод с именем `acts_as_yaffle`, добавляющий метод `squawk` в модель Active Record.
 
 Для начала настройте свои файлы, вам нужны:
 
@@ -125,7 +131,7 @@ $ rails console
 
 require 'test_helper'
 
-class ActsAsYaffleTest < Test::Unit::TestCase
+class ActsAsYaffleTest < ActiveSupport::TestCase
 end
 ```
 
@@ -151,7 +157,7 @@ end
 
 ### Добавление метода класса
 
-Этот плагин ожидает, что мы добавим в модель метод с именем 'last_squawk'. Однако, у пользователей плагина уже может быть определен метод в модели 'last_squawk', который они используют для чего-то иного. Этот плагин позволит имени быть измененным, добавив метод класса 'yaffle_text_field'.
+Этот плагин ожидает, что мы добавим в модель метод с именем `last_squawk`. Однако, у пользователей плагина уже может быть определен метод в модели `last_squawk`, который они используют для чего-то иного. Этот плагин позволит имени быть измененным, добавив метод класса `yaffle_text_field`.
 
 Для начала напишем падающий тест, показывающий нужное нам поведение:
 
@@ -160,7 +166,7 @@ end
 
 require 'test_helper'
 
-class ActsAsYaffleTest < Test::Unit::TestCase
+class ActsAsYaffleTest < ActiveSupport::TestCase
 
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
     assert_equal "last_squawk", Hickwall.yaffle_text_field
@@ -197,12 +203,11 @@ $ rails generate model Hickwall last_squawk:string
 $ rails generate model Wickwall last_squawk:string last_tweet:string
 ```
 
-Теперь можно создать необходимые таблицы в вашей тестовой базе данных, перейдя в приложение-заглушку и мигрировав базу данных. Сначала
+Теперь можно создать необходимые таблицы в вашей тестовой базе данных, перейдя в приложение-заглушку и мигрировав базу данных. Сначала запустите:
 
 ```bash
 $ cd test/dummy
 $ rake db:migrate
-$ rake db:test:prepare
 ```
 
 Пока вы тут, измените модели Hickwall и Wickwall так, чтобы они знали, что они должны действовать как дятлы.
@@ -222,7 +227,7 @@ end
 
 ```
 
-Также добавим код, определяющий метод acts_as_yaffle.
+Также добавим код, определяющий метод `acts_as_yaffle`.
 
 ```ruby
 # yaffle/lib/yaffle/acts_as_yaffle.rb
@@ -263,7 +268,7 @@ ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
 
 ```
 
-Подбираемся ближе... Теперь мы реализуем код метода acts_as_yaffle, чтобы тесты проходили.
+Подбираемся ближе... Теперь мы реализуем код метода `acts_as_yaffle`, чтобы тесты проходили.
 
 ```ruby
 # yaffle/lib/yaffle/acts_as_yaffle.rb
@@ -303,7 +308,7 @@ ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
 # yaffle/test/acts_as_yaffle_test.rb
 require 'test_helper'
 
-class ActsAsYaffleTest < Test::Unit::TestCase
+class ActsAsYaffleTest < ActiveSupport::TestCase
 
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
     assert_equal "last_squawk", Hickwall.yaffle_text_field
@@ -365,7 +370,11 @@ ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
   7 tests, 7 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-NOTE: Использование `write_attribute` для записи в поле модели - это всего лишь пример того, как плагин может взаимодействовать с моделью, но не всегда правильный метод для использования. Например, также можно использовать `send("#{self.class.yaffle_text_field}=", string.to_squawk)`.
+NOTE: Использование `write_attribute` для записи в поле модели - это всего лишь пример того, как плагин может взаимодействовать с моделью, но не всегда правильный метод для использования. Например, также можно использовать:
+
+```ruby
+send("#{self.class.yaffle_text_field}=", string.to_squawk)
+```
 
 Генераторы
 ----------
