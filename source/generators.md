@@ -33,7 +33,7 @@ $ rails generate helper --help
 Создание своего генератора
 --------------------------
 
-Начиная с Rails 3.0, генераторы создаются на основе [Thor](https://github.com/wycats/thor). Thor преставляет мощные опции парсинга и великолепный API для взаимодействия с файлами. Например, давайте создадим генератор, создающий файл инициализатора с именем `initializer.rb` внутри `config/initializers`.
+Начиная с Rails 3.0, генераторы создаются на основе [Thor](https://github.com/erikhuda/thor). Thor преставляет мощные опции парсинга и великолепный API для взаимодействия с файлами. Например, давайте создадим генератор, создающий файл инициализатора с именем `initializer.rb` внутри `config/initializers`.
 
 Первым шагом является создание файла `lib/generators/initializer_generator.rb` со следующим содержимым:
 
@@ -45,7 +45,7 @@ class InitializerGenerator < Rails::Generators::Base
 end
 ```
 
-NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другим методам Thor находится в [документации по Thor](http://rdoc.info/github/wycats/thor/master/Thor/Actions.html)
+NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другим методам Thor находится в [документации по Thor](http://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
 
 Наш новый генератор очень прост: он наследуется от `Rails::Generators::Base` и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе запускается в порядке, в котором он определен. Наконец, мы вызываем метод `create_file`, который создаст файл в указанном месте с указанным содержимым. Если вы знакомы с Rails Application Templates API, API генераторов покажется вам очень знакомым.
 
@@ -169,7 +169,7 @@ end
 ```bash
 $ rails generate scaffold User name:string
       invoke  active_record
-      create    db/migrate/20091120125558_create_users.rb
+      create    db/migrate/20130924151154_create_users.rb
       create    app/models/user.rb
       invoke    test_unit
       create      test/models/user_test.rb
@@ -191,6 +191,9 @@ $ rails generate scaffold User name:string
       create      app/helpers/users_helper.rb
       invoke      test_unit
       create        test/helpers/users_helper_test.rb
+      invoke    jbuilder
+      create      app/views/users/index.json.jbuilder
+      create      app/views/users/show.json.jbuilder
       invoke  assets
       invoke    coffee
       create      app/assets/javascripts/users.js.coffee
@@ -202,7 +205,7 @@ $ rails generate scaffold User name:string
 
 Глядя на этот вывод, легко понять, как работают генераторы в Rails 3.0 и выше. Генератор скаффолда фактически не генерирует ничего, он просто вызывает другие. Это позволяет нам добавить/заменить/убрать любые из этих вызовов. Например, генератор скаффолда вызывает  генератор scaffold_controller, который вызывает генераторы erb, test_unit и helper. Поскольку у каждого генератора одна функция, их просто использовать повторно, избегая дублирования кода.
 
-Нашей первой настройкой рабочего процесса будет прекращение генерации таблиц стилей и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
+Нашей первой настройкой рабочего процесса будет прекращение генерации таблиц стилей, javascript и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
 
 ```ruby
 config.generators do |g|
@@ -210,20 +213,26 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
+  g.javascripts     false
 end
 ```
 
-Если мы создадим другой ресурс с помощью генератора скаффолда, мы увидим, что ни таблица стилей, ни фикстуры более не будут созданы. Если мы захотим настраивать его дальше, например использовать DataMapper и RSpec вместо Active Record и TestUnit, это достигается всего лишь добавлением соответствующих гемов в приложение и настройкой ваших генераторов.
+Если мы создадим другой ресурс с помощью генератора скаффолда, мы увидим, что ни таблица стилей, ни javascript, ни фикстуры более не будут созданы. Если мы захотим настраивать его дальше, например использовать DataMapper и RSpec вместо Active Record и TestUnit, это достигается всего лишь добавлением соответствующих гемов в приложение и настройкой ваших генераторов.
 
 Для демонстрации мы собираемся создать новый генератор хелперов, который просто добавляет несколько методов-ридеров для переменных экземпляра. Сначала мы создадим генератор в пространстве имен rails, так как тут rails ищет генераторы, используемые как хуки:
 
 ```bash
 $ rails generate generator rails/my_helper
+      create  lib/generators/rails/my_helper
+      create  lib/generators/rails/my_helper/my_helper_generator.rb
+      create  lib/generators/rails/my_helper/USAGE
+      create  lib/generators/rails/my_helper/templates
 ```
 
-После этого можно удалить директорию `templates` и метод класса `source_root` из нашего нового генератора, так как они нам не понадобятся. Таким образом, наш новый генератор будет выглядеть так:
+После этого можно удалить директорию `templates` и вызов метода класса `source_root` из нашего нового генератора, так как они нам не понадобятся. Добавив нижеследующий метод, наш новый генератор будет выглядеть так:
 
 ```ruby
+# lib/generators/rails/my_helper/my_helper_generator.rb
 class Rails::MyHelperGenerator < Rails::Generators::NamedBase
   def create_helper_file
     create_file "app/helpers/#{file_name}_helper.rb", <<-FILE
@@ -239,6 +248,7 @@ end
 
 ```bash
 $ rails generate my_helper products
+      create  app/helpers/products_helper.rb
 ```
 
 И следующий хелпер будет создан в `app/helpers`:
@@ -257,6 +267,7 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
+  g.javascripts     false
   g.helper          :my_helper
 end
 ```
@@ -277,6 +288,7 @@ $ rails generate scaffold Post body:text
 Для этого мы изменим генератор следующим образом:
 
 ```ruby
+# lib/generators/rails/my_helper/my_helper_generator.rb
 class Rails::MyHelperGenerator < Rails::Generators::NamedBase
   def create_helper_file
     create_file "app/helpers/#{file_name}_helper.rb", <<-FILE
@@ -320,6 +332,7 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
+  g.javascripts     false
 end
 ```
 
@@ -338,6 +351,7 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :shoulda, fixture: false
   g.stylesheets     false
+  g.javascripts     false
 
   # Добавим фолбэк!
   g.fallbacks[:shoulda] = :test_unit
@@ -349,7 +363,7 @@ end
 ```bash
 $ rails generate scaffold Comment body:text
       invoke  active_record
-      create    db/migrate/20091120151323_create_comments.rb
+      create    db/migrate/20130924143118_create_comments.rb
       create    app/models/comment.rb
       invoke    shoulda
       create      test/models/comment_test.rb
@@ -371,6 +385,9 @@ $ rails generate scaffold Comment body:text
       create      app/helpers/comments_helper.rb
       invoke      shoulda
       create        test/helpers/comments_helper_test.rb
+      invoke    jbuilder
+      create      app/views/comments/index.json.jbuilder
+      create      app/views/comments/show.json.jbuilder
       invoke  assets
       invoke    coffee
       create      app/assets/javascripts/comments.js.coffee
@@ -420,7 +437,7 @@ $ rails new thud -m https://gist.github.com/radar/722911/raw/
 
 Следующие методы доступны как для генераторов, так и для шаблонов Rails.
 
-NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](http://rdoc.info/github/wycats/thor/master/Thor/Actions.html)
+NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](http://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
 
 ### `gem`
 
@@ -539,7 +556,7 @@ vendor "sekrit.rb", '#top secret stuff'
 
 ```ruby
 vendor "seeds.rb" do
-  "puts 'in ur app, seeding ur database'"
+  "puts 'in your app, seeding your database'"
 end
 ```
 
