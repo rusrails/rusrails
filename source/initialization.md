@@ -19,7 +19,34 @@ TIP: Если желаете параллельно чтению просмат�
 Поехали!
 --------
 
-Давайте загрузим и инициализируем приложение. Все начинается в исполняемом файле `bin/rails` вашего приложения. Приложение Rails обычно стартует с помощью запуска `rails console` или `rails server`.
+Давайте загрузим и инициализируем приложение. Приложение Rails обычно стартует с помощью запуска `rails console` или `rails server`.
+
+### `railties/bin/rails`
+
+`rails` в команде `rails server` является исполняемым файлом ruby в вашем пути загрузки. Этот исполняемый файл содержит следующие строчки:
+
+```ruby
+version = ">= 0"
+load Gem.bin_path('railties', 'rails', version)
+```
+
+Если попытаетесь запустить эту команду в консоли Rails, то увидете, что она загружает `railties/bin/rails`. Часть файла `railties/bin/rails.rb` содержит следующий код:
+
+```ruby
+require "rails/cli"
+```
+
+Файл `railties/lib/rails/cli`, в свою очередь, вызывает `Rails::AppRailsLoader.exec_app_rails`.
+
+### `railties/lib/rails/app_rails_loader.rb`
+
+Основной целью функции `exec_app_rails` является запуск `bin/rails` вашего приложения. Если в текущей директории нет `bin/rails`, она будет переходить на уровень вверх, пока не найдет исполняемый файл `bin/rails`. Поэтому он может быть вызван с помощью команды `rails` из любого места внутри вашего приложения.
+
+Эквивалентом для `rails server` является запуск следующей команды:
+
+```bash
+$ exec ruby bin/rails server
+```
 
 ### `bin/rails`
 
@@ -28,7 +55,7 @@ TIP: Если желаете параллельно чтению просмат�
 ```ruby
 #!/usr/bin/env ruby
 APP_PATH = File.expand_path('../../config/application',  __FILE__)
-require File.expand_path('../../config/boot',  __FILE__)
+require_relative '../config/boot'
 require 'rails/commands'
 ```
 
@@ -42,7 +69,7 @@ require 'rails/commands'
 # Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 
-require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+require 'bundler/setup' if File.exist?(ENV['BUNDLE_GEMFILE'])
 ```
 
 В стандартном приложении Rails имеется `Gemfile`, объявляющий все зависимости приложения. `config/boot.rb` устанавливает `ENV['BUNDLE_GEMFILE']` как расположение этого файла. Затем, если Gemfile существует, будет затребован `bundler/setup`. Строка используется Bundler-ом для настройки путей загрузки для зависимостей вашего Gemfile.
@@ -77,7 +104,7 @@ require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
 ### `rails/commands.rb`
 
-Как только завершится `config/boot.rb`, следующим файлом, который будет затребован, является `rails/commands`, который запустит команду, основываясь на переданных аргументах. В нашем случае, массив `ARGV` просто содержит `server`, который извлекается в переменную `command` следующими строчками:
+Как только завершится `config/boot.rb`, следующим файлом, который будет затребован, является `rails/commands`, который помогает расширить псевдонимы. В нашем случае, массив `ARGV` просто содержит `server`, который будет передан дальше:
 
 ```ruby
 ARGV << '--help' if ARGV.empty?
@@ -93,27 +120,55 @@ aliases = {
 
 command = ARGV.shift
 command = aliases[command] || command
+
+require 'rails/commands/commands_tasks'
+
+Rails::CommandsTasks.new(ARGV).run_command!(command)
 ```
 
 TIP: Как видите, пустой список ARGV приведет к показу помощи Rails.
 
-Если бы мы использовали `s` вместо `server`, Rails использовал бы определенные в файле псевдонимы `aliases`, соответствующие их командам. С помощью команды `server` Rails запустит следующий код:
+Если бы мы использовали `s` вместо `server`, Rails использовал бы определенные тут псевдонимы `aliases` для поиска соответствующей команды.
+
+### `rails/commands/command_tasks.rb`
+
+Если кто-то напишет неверную команду rails, в ответ `run_command` выдаст сообщение об ошибке. Есл команда правильная, будет вызван метод с тем же именем.
 
 ```ruby
-when 'server'
-  # Change to the application's path if there is no config.ru file in current dir.
-  # This allows us to run `rails server` from other directories, but still get
-  # the main config.ru and properly set the tmp directory.
-  Dir.chdir(File.expand_path('../../', APP_PATH)) unless File.exists?(File.expand_path("config.ru"))
+COMMAND_WHITELIST = %(plugin generate destroy console server dbconsole application runner new version help)
 
-  require 'rails/commands/server'
+def run_command!(command)
+  if COMMAND_WHITELIST.include?(command)
+    send(command)
+  else
+    write_error_message(command)
+  end
+end
+```
+
+
+С помощью команды `server` Rails далее запустит следующий код:
+
+```ruby
+def set_application_directory!
+  Dir.chdir(File.expand_path('../../', APP_PATH)) unless
+  File.exist?(File.expand_path("config.ru"))
+end
+
+def server
+  set_application_directory!
+  require_command!("server")
+
   Rails::Server.new.tap do |server|
-    # We need to require application after the server sets environment,
-    # otherwise the --environment option given to the server won't propagate.
     require APP_PATH
     Dir.chdir(Rails.application.root)
     server.start
   end
+end
+
+def require_command!(command)
+  require "rails/commands/#{command}"
+end
 ```
 
 Этот файл изменит корень директории (путь на две директории выше `APP_PATH`, указывающего на `config/application.rb`), но только если не найден файл `config.ru`. Затем он затребует `rails/commands/server`, устанавливающий класс `Rails::Server`.
@@ -184,7 +239,7 @@ def parse_options(args)
   options = default_options
 
   # Don't evaluate CGI ISINDEX parameters.
-  # http://hoohoo.ncsa.uiuc.edu/cgi/cl.html
+  # http://www.meb.uni-bonn.de/docs/cgi/cl.html
   args.clear if ENV.include?("REQUEST_METHOD")
 
   options.merge! opt_parser.parse! args
@@ -199,12 +254,12 @@ end
 ```ruby
 def default_options
   {
-    :environment => ENV['RACK_ENV'] || "development",
-    :pid         => nil,
-    :Port        => 9292,
-    :Host        => "0.0.0.0",
-    :AccessLog   => [],
-    :config      => "config.ru"
+    environment: ENV['RACK_ENV'] || "development",
+    pid:         nil,
+    Port:        9292,
+    Host:        "0.0.0.0",
+    AccessLog:   [],
+    config:      "config.ru"
   }
 end
 ```
@@ -242,33 +297,38 @@ def parse!(args)
 
 ```ruby
 def start
-  url = "#{options[:SSLEnable] ? 'https' : 'http'}://#{options[:Host]}:#{options[:Port]}"
-  puts "=> Booting #{ActiveSupport::Inflector.demodulize(server)}"
-  puts "=> Rails #{Rails.version} application starting in #{Rails.env} on #{url}"
-  puts "=> Run `rails server -h` for more startup options"
+  print_boot_information
   trap(:INT) { exit }
-  puts "=> Ctrl-C to shutdown server" unless options[:daemonize]
+  create_tmp_directories
+  log_to_stdout if options[:log_stdout]
 
-  #Create required tmp directories if not found
-  %w(cache pids sessions sockets).each do |dir_to_make|
-    FileUtils.mkdir_p(Rails.root.join('tmp', dir_to_make))
+  super
+  ...
+end
+
+private
+
+  def print_boot_information
+    ...
+    puts "=> Run `rails server -h` for more startup options"
+    puts "=> Ctrl-C to shutdown server" unless options[:daemonize]
   end
 
-  unless options[:daemonize]
+  def create_tmp_directories
+    %w(cache pids sessions sockets).each do |dir_to_make|
+      FileUtils.mkdir_p(File.join(Rails.root, 'tmp', dir_to_make))
+    end
+  end
+
+  def log_to_stdout
     wrapped_app # touch the app so the logger is set up
 
     console = ActiveSupport::Logger.new($stdout)
     console.formatter = Rails.logger.formatter
+    console.level = Rails.logger.level
 
     Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
   end
-
-  super
-ensure
-  # The '-h' option calls exit before @options is set.
-  # If we call 'options' with it unset, we get double help banners.
-  puts 'Exiting' unless @options && options[:daemonize]
-end
 ```
 
 Это то место, где происходит первый вывод на экран при инициализации Rails. Этот метод создает ловушку (trap) для сигналов `INT`, поэтому, при нажатии  `CTRL-C`, сервер завершит процесс. Как видим дальше по коду, он создает директории `tmp/cache`, `tmp/pids`, `tmp/sessions` и `tmp/sockets`. Затем он вызывает `wrapped_app`, который ответственен за создание приложения Rack, а затем создает и присваивает экземпляр `ActiveSupport::Logger`.
@@ -426,9 +486,19 @@ def initialize!(group=:default) #:nodoc:
 end
 ```
 
-Как видите, инициализировать приложение можно лишь единожды. Также тут запускаются инициализаторы.
+Как видите, инициализировать приложение можно лишь единожды. Инициализаторы запускаются с помощью метода `run_initializers`, который определен в `railties/lib/rails/initializable.rb`
 
-Код инициализаторов сам по себе является сложным. Тут Rails проходит всех предков класса, ищет метод `initializers`, сортирует и запускает их. Например, класс `Engine` делает доступными все engine, предоставляя метод `initializers`.
+```ruby
+def run_initializers(group=:default, *args)
+  return if instance_variable_defined?(:@ran)
+  initializers.tsort_each do |initializer|
+    initializer.run(*args) if initializer.belongs_to?(group)
+  end
+  @ran = true
+end
+```
+
+Код run_initializers сам по себе является сложным. Тут Rails проходит всех предков класса, ищет тех, кто отвечает на метод `initializers`. Затем он сортирует предков по имени и запускает. Например, класс `Engine` делает доступными все engine, предоставляя в нем метод `initializers`.
 
 Класс `Rails::Application`, как определено в `railties/lib/rails/application.rb`, определяет инициализаторы `bootstrap`, `railtie` и `finisher`. Инициализаторы `bootstrap` подготавливает приложение (такие как инициализатор логгера), в то время как инициализаторы `finisher` (такие как создание стэка промежуточных программ) запускаются последними. Инициализаторы `railtie` – это инициализаторы, которые определены самим `Rails::Application` и запускаются между `bootstrap` и `finisher`.
 
