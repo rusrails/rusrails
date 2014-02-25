@@ -1,5 +1,5 @@
 Заметки о релизе Ruby on Rails 4.1
-===============================
+==================================
 
 Ключевые новинки в Rails 4.1:
 
@@ -15,15 +15,15 @@
 --------------------------------------------------------------------------------
 
 Обновление до Rails 4.1
-----------------------
+-----------------------
 
 Если вы обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.1, необходимо сначала обновиться до Rails 4.0 и убедиться, что приложение все еще выполняется так, как нужно.
 Список вещей, которые нужно выполнить для обновления доступен в руководстве
-[Обновление Rails](upgrading_ruby_on_rails.html#upgrading-from-rails-4-0-to-rails-4-1).
+[Обновление Rails](/upgrading-ruby-on-rails#upgrading-from-rails-4-0-to-rails-4-1).
 
 
 Основные изменения
---------------
+------------------
 
 ### Spring Application Preloader
 
@@ -59,7 +59,7 @@ Spring is running:
 Обратитесь к [Spring README](https://github.com/jonleighton/spring/blob/master/README.md),
 чтобы увидеть все возможности.
 
-Обратитесь к руководству по [Обновлению Rails](upgrading_ruby_on_rails.html#spring)
+Обратитесь к руководству по [Обновлению Rails](/upgrading-ruby-on-rails#spring)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### `config/secrets.yml`
@@ -79,7 +79,7 @@ development:
 
 `Rails.application.secrets.some_api_key` вернёт `SOMEKEY` в development окружении.
 
-Обратитесь к руководству по [Обновлению Rails](upgrading_ruby_on_rails.html#config-secrets-yml)
+Обратитесь к руководству по [Обновлению Rails](/upgrading-ruby-on-rails#config-secrets-yml)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### Action Pack Variants
@@ -314,10 +314,10 @@ Action Pack
 
 * Новая конфигурационная опция `config.action_dispatch.perform_deep_munge` для включения "deep munging" параметров, использующегося в связи с уязвимостью безопасности CVE-2013-0155. ([Pull Request](https://github.com/rails/rails/pull/13188))
 
-* Новая конфигурационная опция `config.action_dispatch.cookies_serializer` для определения сериализатора для подписанных и зашифрованных куки. (Pull Requests [1](https://github.com/rails/rails/pull/13692), [2](https://github.com/rails/rails/pull/13945) / [Подробнее](upgrading_ruby_on_rails.html#cookies-serializer))
+* Новая конфигурационная опция `config.action_dispatch.cookies_serializer` для определения сериализатора для подписанных и зашифрованных куки. (Pull Requests [1](https://github.com/rails/rails/pull/13692), [2](https://github.com/rails/rails/pull/13945) / [Подробнее](/upgrading-ruby-on-rails#cookies-serializer))
 
 * Добавлены `render :plain`, `render :html` и `render :body`. ([Pull Request](https://github.com/rails/rails/pull/14062) /
-  [Подробнее](upgrading_ruby_on_rails.html#rendering-content-from-string))
+  [Подробнее](/upgrading-ruby-on-rails#rendering-content-from-string))
 
 Action Mailer
 -------------
@@ -415,7 +415,7 @@ Active Record
 
 * Скоупы по умолчанию больше не переопределяются присоединенными условиями.
 
-  До этого изменения, при определении в модели `default_scope`, он переопределялся присоединенными условиями на то же поле. Теперь он мержится, как и любой другой скоуп. [Подробнее](upgrading_ruby_on_rails.html#changes-on-default-scopes).
+  До этого изменения, при определении в модели `default_scope`, он переопределялся присоединенными условиями на то же поле. Теперь он мержится, как и любой другой скоуп. [Подробнее](/upgrading-ruby-on-rails#changes-on-default-scopes).
 
 * Добавлен метод `ActiveRecord::Base.to_param` для удобного создания "красивых" URLов, используя
   атрибуты или методы модели.
@@ -519,11 +519,11 @@ Active Support
 ### Удалено
 
 * Удалена зависимость `MultiJSON`. Теперь, `ActiveSupport::JSON.decode`
-  больше не принимает хеш опций для `MultiJSON`. ([Pull Request](https://github.com/rails/rails/pull/10576) / [Подробнее](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  больше не принимает хеш опций для `MultiJSON`. ([Pull Request](https://github.com/rails/rails/pull/10576) / [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Удалена поддержка для хука `encode_json`, используемого для преобразования произвольных объектов в JSON. Данный функционал извлечен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Связанный Pull Request](https://github.com/rails/rails/pull/12183) /
-  [Подробнее](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Удалено без замены `ActiveSupport::JSON::Variable`.
 
@@ -571,12 +571,12 @@ Active Support
 * Устарело `ActiveSupport::JSON::Encoding::CircularReferenceError`. Данный функционал
   был выделен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Pull Request](https://github.com/rails/rails/pull/12785) /
-  [Подробности](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Устарела опция `ActiveSupport.encode_big_decimal_as_string`. Данный функционал
   был выделен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Pull Request](https://github.com/rails/rails/pull/13060) /
-  [Подробности](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Устарела произвольная сериализация `BigDecimal`. ([Pull Request](https://github.com/rails/rails/pull/13911))
 
@@ -585,11 +585,11 @@ Active Support
 * JSON encoder из `ActiveSupport` был переписан, для того, чтобы воспользоваться
   гемом JSON, а не создавать свой велосипед.
   ([Pull Request](https://github.com/rails/rails/pull/12183) /
-  [Подробности](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Улучшена совместимость с гемом JSON.
   ([Pull Request](https://github.com/rails/rails/pull/12862) /
-  [Подробности](upgrading_ruby_on_rails.html#changes-in-json-handling))
+  [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Добалены методы `ActiveSupport::Testing::TimeHelpers#travel` и `#travel_to`. Которые
   изменяют текущее время на заданное время или продолжительность, который вы укажите, с помощью стаба `Time.now` и
@@ -614,7 +614,7 @@ Active Support
 
 * `blank?` и `present?` гарантированно возвращают булевы синглтоны. ([Commit](https://github.com/rails/rails/commit/126dc47665c65cd129967cbd8a5926dddd0aa514))
 
-* По умолчанию новая конфигурация `I18n.enforce_available_locales` равна `true`, что означает, что `I18n` убедится, что все локали, передаваемые в него, должны быть объявленя в списке `available_locales`. ([Pull Request](https://github.com/rails/rails/commit/8e21ae37ad9fef6b7393a84f9b5f2e18a831e49a))
+* По умолчанию новая конфигурация `I18n.enforce_available_locales` равна `true`, что означает, что `I18n` убедится, что все локали, передаваемые в него, должны быть объявлены в списке `available_locales`. ([Pull Request](https://github.com/rails/rails/commit/8e21ae37ad9fef6b7393a84f9b5f2e18a831e49a))
 
 * Представлен Module#concerning: естественный и простой способ разделить ответственность внутри класса. ([Commit](https://github.com/rails/rails/commit/1eee0ca6de975b42524105a59e0521d18b38ab81))
 
