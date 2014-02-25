@@ -13,7 +13,7 @@
 Обновление до Rails 4.0
 -----------------------
 
-Если обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.0, необходимо сначала обновиться до Rails 3.2 и убедиться, что приложение все еще выполняется так, как нужно. Список вещей, которые нужно выполнить при обновлении доступен в руководстве [Обновление Rails](/upgrading-ruby-on-rails#upgrading-from-rails-3-2-to-rails-4-0).
+Если обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.0, необходимо сначала обновиться до Rails 3.2 и убедиться, что приложение все еще выполняется так, как нужно. Список вещей, которые нужно выполнить при обновлении доступен в руководстве [Обновление Ruby on Rails](/upgrading-ruby-on-rails#upgrading-from-rails-3-2-to-rails-4-0).
 
 TODO: Configuration changes in environment files
 
@@ -67,19 +67,19 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
  * **Strong parameters** ([коммит](https://github.com/rails/rails/commit/a8f6d5c6450a7fe058348a7f10a908352bb6c7fc)) - Позволяет обновлять объекты модели только разрешенными параметрами (`params.permit(:title, :text)`).
  * **Routing concerns** ([коммит](https://github.com/rails/rails/commit/0dd24728a088fcb4ae616bb5d62734aca5276b1b)) - В маршрутном DSL, выделяет общие суб-маршруты (`comments` из `/posts/1/comments` and `/videos/1/comments`).
  * **ActionController::Live** ([коммит](https://github.com/rails/rails/commit/af0a9f9eefaee3a8120cfd8d05cbc431af376da3)) - Потоковый JSON с помощью `response.stream`.
- * **Декларативные ETags** ([коммит](https://github.com/rails/rails/commit/ed5c938fa36995f06d4917d9543ba78ed506bb8d)) - Устанавливает заголовки ETag и Last-Modified с помощью `etag` и `fresh_when`.
+ * **Декларативные ETags** ([коммит](https://github.com/rails/rails/commit/ed5c938fa36995f06d4917d9543ba78ed506bb8d)) - Добавляет на уровне контроллера дополнения к etag, которые будут частью вычисления etag.
  * **[Кэширование Russian doll](http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works)** ([коммит](https://github.com/rails/rails/commit/4154bf012d2bec2aae79e4a49aa94a70d3e91d49)) - Кэширует вложенные фрагменты вьюх. Каждый фрагмент прекращается на основе набора зависимостей (ключа кэширования). Ключ кэширования - это обычно версия шаблона и объект модели.
  * **Turbolinks** ([коммит](https://github.com/rails/rails/commit/e35d8b18d0649c0ecc58f6b73df6b3c8d0c6bb74)) - Обслуживает только первую страницу HTML. Когда пользователь переходит на следующую страницу, использует pushState для обновления URL и использует AJAX для обновления title и body.
- * **Извлечение ActionView из ActionController** ([коммит](https://github.com/rails/rails/commit/78b0934dd1bb84e8f093fb8ef95ca99b297b51cd)) - ActionView вынесен из ActionPack.
+ * **Извлечение ActionView из ActionController** ([коммит](https://github.com/rails/rails/commit/78b0934dd1bb84e8f093fb8ef95ca99b297b51cd)) - ActionView был отделен от ActionPack, и будет вынесен в отдельный гем в Rails 4.1.
  * **Независимость от ActiveModel** ([коммит](https://github.com/rails/rails/commit/166dbaa7526a96fdf046f093f25b0a134b277a68)) - ActionPack больше не зависит от ActiveModel.
 
 ### Основное
 
- * **ActiveModel::Model** ([коммит](https://github.com/rails/rails/commit/3b822e91d1a6c4eab0064989bbd07aae3a6d0d08)) - `ActiveModel::Model` извлечен из ActiveRecord. `ActiveModel::Model` представляет валидации и `form_for` для обычных объектов Ruby.
+ * **ActiveModel::Model** ([коммит](https://github.com/rails/rails/commit/3b822e91d1a6c4eab0064989bbd07aae3a6d0d08)) - `ActiveModel::Model` - это миксин, чтобы обычные объекты Ruby могли работать с ActionPack "из коробки" (например, `form_for`).
  * **Новый API скоупов** ([коммит](https://github.com/rails/rails/commit/50cbc03d18c5984347965a94027879623fc44cce)) - Скоупы должны быть всегда вызываемыми.
  * **Выгрузка кэша схемы** ([коммит](https://github.com/rails/rails/commit/5ca4fc95818047108e69e22d200e7a4a22969477)) - Чтобы улучшить время загрузки Rails, вместо загрузки схемы непосредствненно из базы данных, загружает схему из файла выгрузки.
  * **Поддержка указания уровня изоляции транзакции** ([коммит](https://github.com/rails/rails/commit/392eeecc11a291e406db927a18b75f41b2658253)) - Выбирайте, что более важно - повторяемые чтения или улучшенное быстродействие (менее блокирующее).
- * **Dalli** ([коммит](https://github.com/rails/rails/commit/82663306f428a5bbc90c511458432afb26d2f238)) - Для хранилища сессии в memcache используется клиент Dalli.
+ * **Dalli** ([коммит](https://github.com/rails/rails/commit/82663306f428a5bbc90c511458432afb26d2f238)) - Используется клиент Dalli в качестве хранилища сессии в memcache.
  * **start &amp; finish для уведомлений** ([коммит](https://github.com/rails/rails/commit/f08f8750a512f741acb004d0cebe210c5f949f28)) - Инструменты Active Support сообщают подписчикам о начале и завершении уведомлений.
  * **Тредобезопасность по умолчанию** ([коммит](https://github.com/rails/rails/commit/5d416b907864d99af55ebaa400fff217e17570cd)) - Rails может быть запущен на тредовых серверах приложений без дополнительных настроек. Заметка: Проверьте, что используемые вами гемы тредобезопасны.
  * **Метод PATCH** ([коммит](https://github.com/rails/rails/commit/eed9f2539e3ab5a68e798802f464b8e4e95e619e)) - В Rails PATCH заменил PUT. PATCH использется для частичного обновления ресурсов.
@@ -116,7 +116,7 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 Railties
 --------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/railties/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/railties/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
@@ -137,7 +137,7 @@ Railties
 Action Mailer
 -------------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/actionmailer/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/actionmailer/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
@@ -146,7 +146,7 @@ Action Mailer
 Active Model
 ------------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/activemodel/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/activemodel/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
@@ -159,23 +159,35 @@ Active Model
 Active Support
 --------------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/activesupport/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/activesupport/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
-* Заменен устаревший гем `memcache-client` на  `dalli` в ActiveSupport::Cache::MemCacheStore.
+* Заменен устаревший гем `memcache-client` на  `dalli` в `ActiveSupport::Cache::MemCacheStore`.
 
-* Оптимизирован ActiveSupport::Cache::Entry для уменьшения расхода памяти и процессора.
+* Оптимизирован `ActiveSupport::Cache::Entry` для уменьшения расхода памяти и процессора.
 
 * Словоизменения теперь могут быть определены для локали. `singularize` и `pluralize` принимают локаль как дополнительный аргумент.
 
 * `Object#try` теперь будет возвращать nil вместо вызова NoMethodError, если вызывающий объект не реализует этот метод, но все еще можно получить старое поведение, используя новый метод `Object#try!`.
 
+* `String#to_date` теперь вызывает `ArgumentError: invalid date` вместо `NoMethodError: undefined method 'div' for nil:NilClass` при получения неверной даты. Это то же самое, что и `Date.parse`, и он принимает больше неправильных дат, чем 3.x, такие как:
+
+  ```
+  # ActiveSupport 3.x
+  "asdf".to_date # => NoMethodError: undefined method `div' for nil:NilClass
+  "333".to_date # => NoMethodError: undefined method `div' for nil:NilClass
+
+  # ActiveSupport 4
+  "asdf".to_date # => ArgumentError: invalid date
+  "333".to_date # => Fri, 29 Nov 2013
+  ```
+
 ### Устаревания
 
 * Устарел метод `ActiveSupport::TestCase#pending`, используйте вместо него `skip` из MiniTest.
 
-* ActiveSupport::Benchmarkable#silence устарел из-за недостатков в тредобезопасности. Он будет убран без замен в Rails 4.1.
+* `ActiveSupport::Benchmarkable#silence` устарел из-за недостатков в тредобезопасности. Он будет убран без замен в Rails 4.1.
 
 * Устарел `ActiveSupport::JSON::Variable`. Определяйте собственные методы `#as_json` и `#encode_json` для собственных строковых литер JSON.
 
@@ -188,7 +200,7 @@ Active Support
 Action Pack
 -----------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/actionpack/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
@@ -199,7 +211,7 @@ Action Pack
 Active Record
 -------------
 
-Обратитесь к [Changelog](https://github.com/rails/rails/blob/master/activerecord/CHANGELOG.md) за полными изменениями.
+Обратитесь к [Changelog](https://github.com/rails/rails/blob/4-0-stable/activerecord/CHANGELOG.md) за полными изменениями.
 
 ### Значимые изменения
 
@@ -249,6 +261,6 @@ Active Record
       * `find_all_by_...` может быть переписан с использованием `where(...)`.
       * `find_last_by_...` может быть переписан с использованием `where(...).last`.
       * `scoped_by_...` может быть переписан с использованием `where(...)`.
-      * `find_or_initialize_by_...` может быть переписан с использованием `where(...).first_or_initialize`.
-      * `find_or_create_by_...` может быть переписан с использованием `find_or_create_by(...)` or `where(...).first_or_create`.
-      * `find_or_create_by_...!` может быть переписан с использованием `find_or_create_by!(...)` or `where(...).first_or_create!`.
+      * `find_or_initialize_by_...` может быть переписан с использованием `find_or_initialize_by(...)`.
+      * `find_or_create_by_...` может быть переписан с использованием `find_or_create_by(...)`.
+      * `find_or_create_by_...!` может быть переписан с использованием `find_or_create_by!(...)`.

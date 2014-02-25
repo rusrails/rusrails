@@ -70,8 +70,6 @@ $ ruby script/plugin install git://github.com/rails/rails_upgrade.git
 
 Помимо Rails Upgrade tool, если нужна помощь, есть люди в IRC и [rubyonrails-talk](http://groups.google.com/group/rubyonrails-talk), которые, возможно, сталкивались с подобными проблемами. Напишите в свой блог о своем опыте обновления, чтобы другие смогли воспользоваться вашими знаниями!
 
-Подробнее - [The Path to Rails 3: Approaching the upgrade](http://omgbloglol.com/post/353978923/the-path-to-rails-3-approaching-the-upgrade)
-
 Создание приложения Rails 3.0
 -----------------------------
 
@@ -321,7 +319,7 @@ form_for @post, :remote => true
 * Теперь по умолчанию хелперы выводят HTML 5.
 * Хелпер формы label теперь берет значения из I18n с отдельным значением, таким образом `f.label :name` возьмет перевод `:name`.
 * Метка I18n для select теперь :en.helpers.select вместо :en.support.select.
-* Теперь не нужно помещать знак минуса в конце интерполяции руби в шаблоне ERb для того, чтобы убрать перевод строки в результирующем HTML.
+* Теперь не нужно помещать знак минуса в конце интерполяции руби в шаблоне ERB для того, чтобы убрать перевод строки в результирующем HTML.
 * В Action View добавлен хелпер `grouped_collection_select`.
 * Добавлен `content_for?`, позволяющий проверить существование содержимого во вьюхе до рендеринга.
 * Передача в хелперы форм `:value => nil` установит атрибут поля `value` как nil вместо значения по умолчанию
@@ -448,7 +446,7 @@ Active Record было уделено много внимания в Rails 3.0, 
 * `named_scope` в классе Active Record устарел и был переименован в просто `scope`.
 * В методах `scope` следует перейти к использованию методов relation, вместо метода поиска `:conditions => {}`, например `scope :since, lambda {|time| where("created_at > ?", time) }`.
 * `save(false)` устарел в пользу `save(:validate => false)`.
-* I18n сообщений об ошибках для ActiveRecord должна быть изменена с :en.activerecord.errors.template на `:en.errors.template`.
+* I18n сообщений об ошибках для Active Record должна быть изменена с :en.activerecord.errors.template на `:en.errors.template`.
 * `model.errors.on` устарел в пользу `model.errors[]`
 * validates_presence_of => validates... :presence => true
 * `ActiveRecord::Base.colorize_logging` и `config.active_record.colorize_logging` устарели в пользу `Rails::LogSubscriber.colorize_logging` и `config.colorize_logging`
@@ -546,11 +544,11 @@ Active Support
 Action Mailer
 -------------
 
-Action Mailer получил новый API в связи с заменой TMail на новый [Mail](http://github.com/mikel/mail) в качестве библиотеки Email. В самом Action Mailer была переписана практически каждая строчка кода. В результате теперь Action Mailer просто наследуется от Abstract Controller и оборачивает гем Mail в Rails DSL. Это значительно уменьшило количество кода и дублирование других библиотек в Action Mailer.
+Action Mailer получил новый API в связи с заменой TMail на новый [Mail](http://github.com/mikel/mail) в качестве библиотеки для электронных писем. В самом Action Mailer была переписана практически каждая строчка кода. В результате теперь Action Mailer просто наследуется от Abstract Controller и оборачивает гем Mail в Rails DSL. Это значительно уменьшило количество кода и дублирование других библиотек в Action Mailer.
 
 * По умолчанию все рассыльщики теперь находятся в `app/mailers`.
 * Теперь можно отослать email с использованием нового API тремя методами: `attachments`, `headers` and `mail`.
-* Теперь в ActionMailer имеется нативная поддержка для встроенных вложений с помощью метода `attachments.inline`.
+* Теперь в Action Mailer имеется нативная поддержка для встроенных вложений с помощью метода `attachments.inline`.
 * Методы рассылки Action Mailer теперь возвращают объекты `Mail::Message`, которые затем могут быть отосланы с помощью метода `deliver` на нимх.
 * Все методы доставки теперь абстрагированы в геме Mail.
 * Метод отправки письма может принимать хэш всех валидных полей заголовка письма в паре с их значением.

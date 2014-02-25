@@ -283,7 +283,7 @@ Action Pack
     end
     ```
 
-    Можно ограничить некоторые экшны от этого с использованием `:only` или `:except`. Подробности можно прочитать в документации по [`ActionController::Streaming`](http://api.rubyonrails.org/classes/ActionController/Streaming.html).
+    Можно ограничить некоторые экшны от этого с использованием `:only` или `:except`. Подробности можно прочитать в документации по [`ActionController::Streaming`](http://api.rubyonrails.org/v3.1.0/classes/ActionController/Streaming.html).
 
 * Маршрутный метод redirect теперь принимает хэш опций, меняющих только рассматриваемые части url, или объект, отвечающий на вызов, позволяя повторно использовать редиректы.
 
