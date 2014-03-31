@@ -199,7 +199,7 @@ ActiveRecord::FixtureSet.context_class.send :include, FixtureFileHelpers
 
 ### Обеспечение доступных локалей I18n
 
-Сейчас Rails 4.1 устанвавливает по умолчанию для опции I18n `enforce_available_locales` `true`, что означает, что он убедится, что все локали, переданные в него, должны быть объявлены в списке `available_locales`.
+Сейчас Rails 4.1 устанавливает по умолчанию для опции I18n `enforce_available_locales` `true`, что означает, что он убедится, что все локали, переданные в него, должны быть объявлены в списке `available_locales`.
 
 Чтобы это отключить (и позволить I18n принимать *любые* локали), добавьте следующую конфигурацию в свое приложение:
 
@@ -268,7 +268,7 @@ User.where(state: 'inactive')
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'pending' AND "users"."state" = 'inactive'
 ```
 
-Чтобы получить предыдущее поведение, необъодимо явно убрать условий `default_scope` с помощью `unscoped`, `unscope`, `rewhere` или `except`.
+Чтобы получить предыдущее поведение, необходимо явно убрать условие `default_scope` с помощью `unscoped`, `unscope`, `rewhere` или `except`.
 
 ```ruby
 class User < ActiveRecord::Base
