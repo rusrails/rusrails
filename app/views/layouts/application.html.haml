@@ -54,15 +54,15 @@
         .row-fluid
           .span12#footer
             %p
-              = link_to "GitHub", "https://github.com/morsbox/rusrails", id: :github_link
-              = link_to "Карта", map_path, :id => :morsbox_link
-              2010 - #{Date.today.year}
-              = link_to "Твиттер", "http://twitter.com/rusrails", id: :twitter_link
+              = link_to (image_tag 'github.png'), 'https://github.com/morsbox/rusrails', target: :blank
+              = link_to (image_tag 'twitter.png'), 'http://twitter.com/rusrails', target: :blank
               При поддержке
-              = link_to "Evrone.ru", "http://evrone.ru", id: :evrone_link
+              = link_to (image_tag 'evrone.png'), 'http://evrone.ru', target: :blank
+            %p{class: :date}
+              %b 2010 - #{Date.today.year}
             %p
               = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
-              , "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
+              "Rails", "Ruby on Rails" и логотип Rails - торговые марки D. H. Hansson
               = render "layouts/counter"
     .to_top{ style: "display: block"}
       .to_top_panel
