@@ -50,6 +50,12 @@ pages:
     revision: 70588be101fd3bc6beecca08dc884823158968dc
     date:     26/01/14
 
+  - title:    Основы Active Model
+    path:     active-model-basics
+    file:     active_model_basics.md
+    revision: 9aa1a3d85327fa0a3055b5b757a0be092ce582f7
+    date:     23/09/13
+
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
@@ -208,7 +214,6 @@ pages:
 
 plan:
   - file:     action_view_overview.md
-  - file:     active_model_basics.md
   - file:     active_support_instrumentation.md
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md

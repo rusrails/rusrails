@@ -10,6 +10,7 @@
     * [Колбэки Active Record](/active-record-callbacks)
     * [Связи (ассоциации) Active Record](/active-record-associations)
     * [Интерфейс запросов Active Record](/active-record-query-interface)
+    * [Основы Active Model](/active-model-basics)
 
 * **Вьюхи**
 

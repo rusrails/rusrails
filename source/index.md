@@ -26,6 +26,7 @@
 - [Колбэки Active Record](/active-record-callbacks) := Это руководство раскрывает, как вы можете применять колбэки (методы обратного вызова) Active Record.
 - [Связи (ассоциации) Active Record](/active-record-associations) := Это руководство раскрывает все связи, предоставленные Active Record.
 - [Интерфейс запросов Active Record](/active-record-query-interface) := Это руководство раскрывает интерфейс запросов к базе данных, предоставленный Active Record.
+- [Основы Active Model](/active-model-basics) := Это руководство познакомит вас со всем, что вам надо для начала использования моделей классов Active Model.
 
 ## Вьюхи
 
