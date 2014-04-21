@@ -53,8 +53,8 @@ pages:
   - title:    Основы Active Model
     path:     active-model-basics
     file:     active_model_basics.md
-    revision: aee24073d583ab3c5efd8435af5d2cc7ca01bbe1
-    date:     16/04/14
+    revision: 9aa1a3d85327fa0a3055b5b757a0be092ce582f7
+    date:     23/09/13
 
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
