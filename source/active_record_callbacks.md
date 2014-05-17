@@ -89,6 +89,7 @@ end
 * `around_create`
 * `after_create`
 * `after_save`
+* `after_commit/after_rollback`
 
 ### Обновление объекта
 
@@ -100,12 +101,14 @@ end
 * `around_update`
 * `after_update`
 * `after_save`
+* `after_commit/after_rollback`
 
 ### Уничтожение объекта
 
 * `before_destroy`
 * `around_destroy`
 * `after_destroy`
+* `after_commit/after_rollback`
 
 WARNING. `after_save` запускается и при создании, и при обновлении, но всегда _после_ более специфичных колбэков `after_create` и `after_update`, не зависимо от порядка, в котором запускаются макро-вызовы.
 
