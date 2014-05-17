@@ -704,14 +704,14 @@ SELECT * FROM posts WHERE id > 10 ORDER BY id asc LIMIT 20
 
 ```ruby
 Post.where(id: 10, trashed: false).unscope(where: :id)
-# => SELECT "posts".* FROM "posts" WHERE trashed = 0
+# SELECT "posts".* FROM "posts" WHERE trashed = 0
 ```
 
 Relation, использующий `unscope` повлияет на любой relation, с которым он слит:
 
 ```ruby
 Post.order('id asc').merge(Post.unscope(:order))
-# => SELECT "posts".* FROM "posts"
+# SELECT "posts".* FROM "posts"
 ```
 
 ### `only`
@@ -1228,55 +1228,6 @@ end
 category.posts.created_before(time)
 ```
 
-### Слияние скоупов
-
-Подобно условиям `where`, скоупы сливаются с использованием `AND`.
-
-```ruby
-class User < ActiveRecord::Base
-  scope :active, -> { where state: 'active' }
-  scope :inactive, -> { where state: 'inactive' }
-end
-
-User.active.inactive
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'inactive'
-```
-
-Можно комбинировать условия `scope` и `where`, и результирующий sql будет содержать все условия, соединенные с помощью `AND` .
-
-```ruby
-User.active.where(state: 'finished')
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'finished'
-```
-
-Если необходимо, чтобы сработало только последнее условие `where`, тогда можно использовать `Relation#merge`.
-
-```ruby
-User.active.merge(User.inactive)
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
-```
-
-Важным отличием является то, что `default_scope` будет переопределен условиями `scope` и `where`.
-
-```ruby
-class User < ActiveRecord::Base
-  default_scope { where state: 'pending' }
-  scope :active, -> { where state: 'active' }
-  scope :inactive, -> { where state: 'inactive' }
-end
-
-User.all
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'pending'
-
-User.active
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'active'
-
-User.where(state: 'inactive')
-# => SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
-```
-
-Как видите, `default_scope` был переопределен как условием `scope`, так и `where`.
-
 ### Применение скоупа по умолчанию
 
 Если хотите, чтобы скоуп был применен ко всем запросам к модели, можно использовать метод `default_scope` в самой модели.
@@ -1302,6 +1253,55 @@ class Client < ActiveRecord::Base
   end
 end
 ```
+
+### Слияние скоупов
+
+Подобно условиям `where`, скоупы сливаются с использованием `AND`.
+
+```ruby
+class User < ActiveRecord::Base
+  scope :active, -> { where state: 'active' }
+  scope :inactive, -> { where state: 'inactive' }
+end
+
+User.active.inactive
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'inactive'
+```
+
+Можно комбинировать условия `scope` и `where`, и результирующий sql будет содержать все условия, соединенные с помощью `AND`.
+
+```ruby
+User.active.where(state: 'finished')
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'finished'
+```
+
+Если необходимо, чтобы сработало только последнее условие `where`, тогда можно использовать `Relation#merge`.
+
+```ruby
+User.active.merge(User.inactive)
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
+```
+
+Важным предостережением является то, что `default_scope` будет переопределен условиями `scope` и `where`.
+
+```ruby
+class User < ActiveRecord::Base
+  default_scope { where state: 'pending' }
+  scope :active, -> { where state: 'active' }
+  scope :inactive, -> { where state: 'inactive' }
+end
+
+User.all
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'pending'
+
+User.active
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'active'
+
+User.where(state: 'inactive')
+# SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
+```
+
+Как видите, `default_scope` был переопределен как условием `scope`, так и `where`.
 
 ### Удаление всех скоупов
 
