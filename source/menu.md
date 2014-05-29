@@ -27,6 +27,7 @@ next_column
 * **Копаем глубже**
 
     * [Расширения ядра Active Support](/active-support-core-extensions)
+    * [Инструметарий Active Support](/active-support-instrumentation)
     * [Rails Internationalization API](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
