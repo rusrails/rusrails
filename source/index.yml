@@ -88,7 +88,7 @@ pages:
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
-    file:     active-support-instrumentation.md
+    file:     active_support_instrumentation.md
     revision: 220528548b43b949a752ed9bcbc2f83fa6c75560
     date:     27/10/2013
 
