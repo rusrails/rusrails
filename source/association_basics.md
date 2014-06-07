@@ -88,7 +88,7 @@ class Order < ActiveRecord::Base
 end
 ```
 
-![Диаграмма для связи belongs_to](/assets/guides/belongs_to.png)
+![Диаграмма для связи belongs_to](/images/belongs_to.png)
 
 NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если использовать множественное число в вышеприведенном примере для связи`customer` в модели `Order`, вам будет сообщено "uninitialized constant Order::Customers". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
 
@@ -121,7 +121,7 @@ class Supplier < ActiveRecord::Base
 end
 ```
 
-![Диаграмма для связи has_one](/assets/guides/has_one.png)
+![Диаграмма для связи has_one](/images/has_one.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -154,7 +154,7 @@ end
 
 NOTE: Имя другой модели указывается во множественном числе при объявлении связи `has_many`.
 
-![Диаграмма для связи has_many](/assets/guides/has_many.png)
+![Диаграмма для связи has_many](/images/has_many.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -196,7 +196,7 @@ class Patient < ActiveRecord::Base
 end
 ```
 
-![Диаграмма для связи has_many :through](/assets/guides/has_many_through.png)
+![Диаграмма для связи has_many :through](/images/has_many_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -277,7 +277,7 @@ class AccountHistory < ActiveRecord::Base
 end
 ```
 
-![Диаграмма для связи has_one :through](/assets/guides/has_one_through.png)
+![Диаграмма для связи has_one :through](/images/has_one_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -318,7 +318,7 @@ class Part < ActiveRecord::Base
 end
 ```
 
-![Диаграмма для связи has_and_belongs_to_many](/assets/guides/habtm.png)
+![Диаграмма для связи has_and_belongs_to_many](/images/habtm.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -468,7 +468,7 @@ class CreatePictures < ActiveRecord::Migration
 end
 ```
 
-![Диаграмма для полиморфной связи](/assets/guides/polymorphic.png)
+![Диаграмма для полиморфной связи](/images/polymorphic.png)
 
 ### Самоприсоединение
 
