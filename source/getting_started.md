@@ -365,7 +365,7 @@ Missing template articles/new, application/new with {locale:[:en], formats:[:htm
 <%= form_for :article, url: articles_path do |f| %>
 ```
 
-В этом примере в опцию `:url` передан хелпер `articless_path`. Чтобы увиеть, что с помощью него делает Rails, снова посмотрим на результат
+В этом примере в опцию `:url` передан хелпер `articles_path`. Чтобы увидеть, что с помощью него делает Rails, снова посмотрим на результат
 `rake routes`:
 
 ```bash
