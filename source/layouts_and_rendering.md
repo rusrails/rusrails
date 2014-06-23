@@ -236,15 +236,28 @@ render inline: "xml.p {'Horrid coding practice!'}", type: :builder
 
 #### Рендеринг текста
 
-Вы можете послать простой текст - совсем без разметки - обратно браузеру с использованием опции `:text` в `render`:
+Вы можете послать простой текст - совсем без разметки - обратно браузеру с использованием опции `:plain` в `render`:
 
 ```ruby
-render text: "OK"
+render plain: "OK"
 ```
 
 TIP: Рендеринг чистого текста наиболее полезен, когда вы делаете Ajax отклик, или отвечаете на запросы веб-сервиса, ожидающего что-то иное, чем HTML.
 
-NOTE: По умолчанию при использовании опции `:text` текст рендерится без использования текущего макета. Если хотите, чтобы Rails вложил текст в текущий макет, необходимо добавить опцию `layout: true`
+NOTE: По умолчанию при использовании опции `:plain` текст рендерится без использования текущего макета. Если хотите, чтобы Rails вложил текст в текущий макет, необходимо добавить опцию `layout: true`
+
+#### Рендеринг HTML
+
+Вы можете вернуть html, используя опцию `:html` метода `render`:
+
+```ruby
+render html: "<strong>Not Found</strong>".html_safe
+```
+
+TIP: Это полезно когда вы хотите отрендерить небольшой кусочек HTML кода.
+Однако, если у вас достаточно сложная разметка, стоит рассмотреть выделение её в отдельный файл.
+
+NOTE: Эта опция будет экранировать HTML, если строка не будет являться безопасной.
 
 #### Рендеринг JSON
 
@@ -275,6 +288,21 @@ render js: "alert('Hello Rails');"
 ```
 
 Это пошлет указанную строку в браузер с типом MIME `text/javascript`.
+
+#### Рендеринг чистого содержимого
+
+Вы можете вернуть чистый текст, без установки типа содержимого,
+используя опцию `:body`, метода `render`:
+
+```ruby
+render body: "raw"
+```
+
+TIP: Эта опция должна использоваться, только если вам не важен тип содержимого ответа.
+Использование `:plain` или `:html` уместнее в большинстве случаев.
+
+NOTE: Возвращенным откликом от этой опции будет `text/html` (если не будет переопределен),
+так как это тип содержимого по умолчанию у отклика Action Dispatch.
 
 #### Опции для `render`
 
@@ -471,33 +499,33 @@ end
     end
     ```
 
-* `posts_controller.rb`
+* `articles_controller.rb`
 
     ```ruby
-    class PostsController < ApplicationController
+    class ArticlesController < ApplicationController
     end
     ```
 
-* `special_posts_controller.rb`
+* `special_articles_controller.rb`
 
     ```ruby
-    class SpecialPostsController < PostsController
+    class SpecialArticlesController < PostsController
       layout "special"
     end
     ```
 
-* `old_posts_controller.rb`
+* `old_articles_controller.rb`
 
     ```ruby
-    class OldPostsController < SpecialPostsController
+    class OldArticlesController < SpecialPostsController
       layout false
 
       def show
-        @post = Post.find(params[:id])
+        @article = Article.find(params[:id])
       end
 
       def index
-        @old_posts = Post.older
+        @old_articles = Article.older
         render layout: "old"
       end
       # ...
@@ -507,10 +535,10 @@ end
 В этом приложении:
 
 * В целом, вьюхи будут рендериться в макет `main`
-* `PostsController#index` будет использовать макет `main`
-* `SpecialPostsController#index` будет использовать макет `special`
-* `OldPostsController#show` не будет использовать макет совсем
-* `OldPostsController#index` будет использовать макет `old`
+* `ArticlesController#index` будет использовать макет `main`
+* `SpecialArticlesController#index` будет использовать макет `special`
+* `OldArticlesController#show` не будет использовать макет совсем
+* `OldArticlesController#index` будет использовать макет `old`
 
 #### Избегание ошибок двойного рендера
 
@@ -1121,11 +1149,11 @@ Rails определяет имя партиала, изучая имя моде
 Также можно передавать произвольные локальные переменные в любой партиал, который Вы рендерите с помощью опции `locals: {}`:
 
 ```erb
-<%= render partial: "products", collection: @products,
+<%= render partial: "product", collection: @products,
            as: :item, locals: {title: "Products Page"} %>
 ```
 
-Отрендерит партиал `_products.html.erb` один на каждый экземпляр `product` в переменной экземпляра `@products`, передав экземпляр в партиал как локальную переменную по имени `item`, и для каждого партиала сделает доступной локальную переменную `title` со значением `Products Page`.
+В этом случае, партиал имеет доступ к локальной переменной `title` со значением "Products Page".
 
 TIP: Rails также создает доступную переменную счетчика в партиале, вызываемом коллекцией, названную по имени члена коллекции с добавленным `_counter`. Например, если рендерите `@products`, в партиале можете обратиться к `product_counter`, который говорит, сколько раз партиал был рендерен. Это не работает в сочетании с опцией `as: :value`.
 
