@@ -51,7 +51,7 @@ end
 Можно увидеть, как он работает, взглянув на результат `rails console`:
 
 ```ruby
-$ rails console
+$ bin/rails console
 >> p = Person.new(name: "John Doe")
 => #<Person id: nil, name: "John Doe", created_at: nil, updated_at: nil>
 >> p.new_record?
@@ -904,14 +904,14 @@ person.errors.size # => 0
 
 Поскольку каждое приложение обрабатывает подобные вещи по-разному, в Rails нет какого-то хелпера вьюхи для непосредственного создания этих сообщений. Однако, благодаря богатому набору методов, Rails в целом дает способ взаимодействия с валидациями, очень просто создать свой собственный. Кроме того, при генерации скаффолда, Rails поместит некоторый ERB into в `_form.html.erb`, созданный для отображения полного списка ошибок этой модели.
 
-Допустим, у нас имеется модель, сохраненная в переменную экземпляра `@post`, это выглядит следующим образом:
+Допустим, у нас имеется модель, сохраненная в переменную экземпляра `@article`, это выглядит следующим образом:
 
 ```erb
-<% if @post.errors.any? %>
+<% if @article.errors.any? %>
   <div id="error_explanation">
-    <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>
+    <h2><%= pluralize(@article.errors.count, "error") %> prohibited this article from being saved:</h2>
     <ul>
-    <% @post.errors.full_messages.each do |msg| %>
+    <% @article.errors.full_messages.each do |msg| %>
       <li><%= msg %></li>
     <% end %>
     </ul>
@@ -922,7 +922,7 @@ person.errors.size # => 0
 Более того, при использовании для создания форм хелперов форм Rails, когда у поля происходит ошибка валидации, оно создает дополнительный `<div>` вокруг содержимого.
 
 <div class="field_with_errors">
- <input id="post_title" name="post[title]" size="30" type="text" value="">
+ <input id="article_title" name="article[title]" size="30" type="text" value="">
 </div>
 
 Этот div можно стилизовать по желанию. К примеру, скаффолд по умолчанию добавляет это правило CSS:
