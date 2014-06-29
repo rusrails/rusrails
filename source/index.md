@@ -9,6 +9,7 @@
 
 Это перевод [Ruby on Rails Guides](http://guides.rubyonrails.org) для версии Rails 4.1. Переводы для ранних версий доступны в архиве или на гитхабе:
 
+* [Rails 4.0](https://github.com/morsbox/rusrails/tree/4.0/source)
 * [Rails 3.2](http://v32.rusrails.ru)
 * [Rails 3.1](https://github.com/morsbox/rusrails/tree/3.1.3/source)
 
