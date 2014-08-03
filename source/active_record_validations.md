@@ -672,7 +672,7 @@ end
 ```ruby
 class Computer < ActiveRecord::Base
   validates :mouse, presence: true,
-                    if: ["market.retail?", :desktop?]
+                    if: ["market.retail?", :desktop?],
                     unless: Proc.new { |c| c.trackpad.present? }
 end
 ```

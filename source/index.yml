@@ -17,8 +17,8 @@ pages:
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: b345fc25119fbeadaf0047ebd59f2f59af7deb16
-    date:     07/05/14
+    revision: d0af90592540225080d03ea2384da759f18620ff
+    date:     23/07/14
 
   - title:    Миграции базы данных Rails
     path:     rails-database-migrations
@@ -29,20 +29,20 @@ pages:
   - title:    Валидации Active Record
     path:     active-record-validations
     file:     active_record_validations.md
-    revision: d02c810e29080389ab26313ae75556081aa9ac63
-    date:     22/05/14
+    revision: b76269a692d744d8d4d9206da1b837676eb603d8
+    date:     11/07/14
 
   - title:    Колбэки Active Record
     path:     active-record-callbacks
     file:     active_record_callbacks.md
-    revision: 16f481b28bb1299e5aa5c610ca4c90be8482edc7
-    date:     10/04/14
+    revision: da5ac718859fe7eac599574334431348fc3e4361
+    date:     09/07/14
 
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: 982a19edc932caa3d58394b0f7076a191eff5a54
-    date:     13/04/14
+    revision: 0f9118ab6fc1376189777d6b6fbaa46d24d4ec74
+    date:     25/07/14
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
@@ -59,8 +59,8 @@ pages:
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
-    revision: d02c810e29080389ab26313ae75556081aa9ac63
-    date:     22/05/14
+    revision: e2960fb293840983ac99a8997b09b183b86b05c7
+    date:     23/06/14
 
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
@@ -89,8 +89,8 @@ pages:
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
     file:     active_support_instrumentation.md
-    revision: 220528548b43b949a752ed9bcbc2f83fa6c75560
-    date:     27/10/2013
+    revision: decd92b6fb1cca1621fc861d5c66b139575eea76
+    date:     22/05/2014
 
   - title:    API интернационализации Rails (I18n)
     path:     rails-internationalization-i18n-api
