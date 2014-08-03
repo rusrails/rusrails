@@ -103,7 +103,7 @@ class CreateOrders < ActiveRecord::Migration
     end
 
     create_table :orders do |t|
-      t.belongs_to :customer
+      t.belongs_to :customer, index: true
       t.datetime :order_date
       t.timestamps
     end
@@ -134,7 +134,7 @@ class CreateSuppliers < ActiveRecord::Migration
     end
 
     create_table :accounts do |t|
-      t.belongs_to :supplier
+      t.belongs_to :supplier, index: true
       t.string :account_number
       t.timestamps
     end
@@ -167,7 +167,7 @@ class CreateCustomers < ActiveRecord::Migration
     end
 
     create_table :orders do |t|
-      t.belongs_to :customer
+      t.belongs_to :customer, index: true
       t.datetime :order_date
       t.timestamps
     end
@@ -214,8 +214,8 @@ class CreateAppointments < ActiveRecord::Migration
     end
 
     create_table :appointments do |t|
-      t.belongs_to :physician
-      t.belongs_to :patient
+      t.belongs_to :physician, index: true
+      t.belongs_to :patient, index: true
       t.datetime :appointment_date
       t.timestamps
     end
@@ -290,13 +290,13 @@ class CreateAccountHistories < ActiveRecord::Migration
     end
 
     create_table :accounts do |t|
-      t.belongs_to :supplier
+      t.belongs_to :supplier, index: true
       t.string :account_number
       t.timestamps
     end
 
     create_table :account_histories do |t|
-      t.belongs_to :account
+      t.belongs_to :account, index: true
       t.integer :credit_rating
       t.timestamps
     end
@@ -336,8 +336,8 @@ class CreateAssembliesAndParts < ActiveRecord::Migration
     end
 
     create_table :assemblies_parts, id: false do |t|
-      t.belongs_to :assembly
-      t.belongs_to :part
+      t.belongs_to :assembly, index: true
+      t.belongs_to :part, index: true
     end
   end
 end
@@ -374,6 +374,8 @@ class CreateSuppliers < ActiveRecord::Migration
       t.string  :account_number
       t.timestamps
     end
+
+    add_index :accounts, :supplier_id
   end
 end
 ```
@@ -450,6 +452,8 @@ class CreatePictures < ActiveRecord::Migration
       t.string  :imageable_type
       t.timestamps
     end
+
+    add_index :pictures, :imageable_id
   end
 end
 ```
@@ -461,7 +465,7 @@ class CreatePictures < ActiveRecord::Migration
   def change
     create_table :pictures do |t|
       t.string :name
-      t.references :imageable, polymorphic: true
+      t.references :imageable, polymorphic: true, index: true
       t.timestamps
     end
   end
@@ -491,7 +495,7 @@ end
 class CreateEmployees < ActiveRecord::Migration
   def change
     create_table :employees do |t|
-      t.references :manager
+      t.references :manager, index: true
       t.timestamps
     end
   end
@@ -557,6 +561,8 @@ class CreateOrders < ActiveRecord::Migration
       t.string   :order_number
       t.integer  :customer_id
     end
+
+    add_index :orders, :customer_id
   end
 end
 ```
@@ -590,6 +596,9 @@ class CreateAssembliesPartsJoinTable < ActiveRecord::Migration
       t.integer :assembly_id
       t.integer :part_id
     end
+
+    add_index :assemblies_parts, :assembly_id
+    add_index :assemblies_parts, :part_id
   end
 end
 ```
@@ -1702,47 +1711,46 @@ WARNING: Если укажете свой собственный `select`, не 
 ```ruby
 class Person < ActiveRecord::Base
   has_many :readings
-  has_many :posts, through: :readings
+  has_many :articles, through: :readings
 end
 
-person = Person.create(name: 'John')
-post   = Post.create(name: 'a1')
-person.posts << post
-person.posts << post
-person.posts.inspect # => [#<Post id: 5, name: "a1">, #<Post id: 5, name: "a1">]
-Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, post_id: 5>, #<Reading id: 13, person_id: 5, post_id: 5>]
+article   = Article.create(name: 'a1')
+person.articles << article
+person.articles << article
+person.articles.inspect # => [#<Article id: 5, name: "a1">, #<Article id: 5, name: "a1">]
+Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, article_id: 5>, #<Reading id: 13, person_id: 5, article_id: 5>]
 ```
 
-В вышеописанной задаче два reading, и `person.posts` выявляет их оба, даже хотя эти записи указывают на один и тот же post.
+В вышеописанной задаче два reading, и `person.articles` выявляет их оба, даже хотя эти записи указывают на одну и ту же статью.
 
 Давайте установим `:distinct`:
 
 ```ruby
 class Person
   has_many :readings
-  has_many :posts, -> { distinct }, through: :readings
+  has_many :articles, -> { distinct }, through: :readings
 end
 
 person = Person.create(name: 'Honda')
-post   = Post.create(name: 'a1')
-person.posts << post
-person.posts << post
-person.posts.inspect # => [#<Post id: 7, name: "a1">]
-Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Reading id: 17, person_id: 7, post_id: 7>]
+article   = Article.create(name: 'a1')
+person.articles << article
+person.articles << article
+person.articles.inspect # => [#<Article id: 7, name: "a1">]
+Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, article_id: 7>, #<Reading id: 17, person_id: 7, article_id: 7>]
 ```
 
-В вышеописанной задаче все еще два reading. Однако `person.posts` показывает только один post, поскольку коллекция загружает только уникальные записи.
+В вышеописанной задаче все еще два reading. Однако `person.articles` показывает только одну статью, поскольку коллекция загружает только уникальные записи.
 
-Если вы хотите быть уверенными, что после вставки все записи сохраненной связи различны (и, таким образом, убедиться, что при росмотре связи никогда не будет дублирующихся записей), следует добавить уникальный индекс для самой таблицы. Например, если таблица называется `person_posts`, и вы хотите убедиться, что все публикации уникальны, следует добавить в миграции:
+Если вы хотите быть уверенными, что после вставки все записи сохраненной связи различны (и, таким образом, убедиться, что при просмотре связи никогда не будет дублирующихся записей), следует добавить уникальный индекс для самой таблицы. Например, если таблица называется `person_articles`, и вы хотите убедиться, что все публикации уникальны, следует добавить в миграции:
 
 ```ruby
-add_index :person_posts, :post, unique: true
+add_index :person_articles, :post, unique: true
 ```
 
-Отметьте, что проверка уникальности при использовании чего-то, наподобие `include?`, это субъект гонки условий. Не пытайтесь использовать `include?` для соблюдения уникальности в связи. Используя вышеприведенный пример с публикацией, нижеследующий код вызовет гонку, поскольку несколько пользователей могут использовать его одновременно:
+Отметьте, что проверка уникальности при использовании чего-то, наподобие `include?`, это субъект гонки условий. Не пытайтесь использовать `include?` для соблюдения уникальности в связи. Используя вышеприведенный пример со статьёй, нижеследующий код вызовет гонку, поскольку несколько пользователей могут использовать его одновременно:
 
 ```ruby
-person.posts << post unless person.posts.include?(post)
+person.articles << article unless person.articles.include?(post)
 ```
 
 ### Когда сохраняются объекты?
