@@ -17,8 +17,8 @@ pages:
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: b345fc25119fbeadaf0047ebd59f2f59af7deb16
-    date:     07/05/14
+    revision: d0af90592540225080d03ea2384da759f18620ff
+    date:     23/07/14
 
   - title:    Миграции базы данных Rails
     path:     rails-database-migrations
