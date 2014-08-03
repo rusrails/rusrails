@@ -260,27 +260,27 @@ WARNING. Любое исключение, кроме `ActiveRecord::Rollback` б
 Колбэки для отношений
 ---------------------
 
-Колбэки работают с отношениями между моделями, и даже могут быть определены ими. Представим пример, где пользователь имеет много публикаций. Публикации пользователя должны быть уничтожены, если уничтожается пользователь. Давайте добавим колбэк `after_destroy` в модель `User` через ее отношения с моделью `Post`.
+Колбэки работают с отношениями между моделями, и даже могут быть определены ими. Представим пример, где пользователь имеет много статей. Статьи пользователя должны быть уничтожены, если уничтожается пользователь. Давайте добавим колбэк `after_destroy` в модель `User` через ее отношения с моделью `Article`.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_many :posts, dependent: :destroy
+  has_many :articles, dependent: :destroy
 end
 
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   after_destroy :log_destroy_action
 
   def log_destroy_action
-    puts 'Post destroyed'
+    puts 'Article destroyed'
   end
 end
 
 >> user = User.first
 => #<User id: 1>
->> user.posts.create!
-=> #<Post id: 1, user_id: 1>
+>> user.articles.create!
+=> #<Article id: 1, user_id: 1>
 >> user.destroy
-Post destroyed
+Article destroyed
 => #<User id: 1>
 ```
 
@@ -327,7 +327,7 @@ end
 ```ruby
 class Comment < ActiveRecord::Base
   after_create :send_email_to_author, if: :author_wants_emails?,
-    unless: Proc.new { |comment| comment.post.ignore_comments? }
+    unless: Proc.new { |comment| comment.article.ignore_comments? }
 end
 ```
 
