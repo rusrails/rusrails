@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', " ~> 4.0.0"
+gem 'rails', " ~> 4.1.5"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
