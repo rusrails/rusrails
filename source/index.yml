@@ -219,7 +219,10 @@ pages:
     date:     18/02/14
 
 plan:
+  - file:     4_2_release_notes.md
   - file:     action_view_overview.md
+  - file:     active_job_basics.md
+  - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
