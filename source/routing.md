@@ -181,61 +181,61 @@ form_for @geocoder, url: geocoder_path do |f|
 
 ```ruby
 namespace :admin do
-  resources :posts, :comments
+  resources :articles, :comments
 end
 ```
 
-Это создаст ряд маршрутов для каждого контроллера `posts` и `comments`. Для `Admin::PostsController`, Rails создаст:
+Это создаст ряд маршрутов для каждого контроллера `articles` и `comments`. Для `Admin::ArticlesController`, Rails создаст:
 
-| Метод HTTP | Путь                  | Контроллер#Экшн     | Именнованнный хелпер      |
-| ---------- | --------------------- | ------------------- | ------------------------- |
-| GET        | /admin/posts          | admin/posts#index   | admin_posts_path          |
-| GET        | /admin/posts/new      | admin/posts#new     | new_admin_post_path       |
-| POST       | /admin/posts          | admin/posts#create  | admin_posts_path          |
-| GET        | /admin/posts/:id      | admin/posts#show    | admin_post_path(:id)      |
-| GET        | /admin/posts/:id/edit | admin/posts#edit    | edit_admin_post_path(:id) |
-| PATCH/PUT  | /admin/posts/:id      | admin/posts#update  | admin_post_path(:id)      |
-| DELETE     | /admin/posts/:id      | admin/posts#destroy | admin_post_path(:id)      |
+| Метод HTTP | Путь                     | Контроллер#Экшн        | Именнованнный хелпер         |
+| ---------- | ------------------------ | ---------------------- | ---------------------------- |
+| GET        | /admin/articles          | admin/articles#index   | admin_articles_path          |
+| GET        | /admin/articles/new      | admin/articles#new     | new_admin_article_path       |
+| POST       | /admin/articles          | admin/articles#create  | admin_articles_path          |
+| GET        | /admin/articles/:id      | admin/articles#show    | admin_article_path(:id)      |
+| GET        | /admin/articles/:id/edit | admin/articles#edit    | edit_admin_article_path(:id) |
+| PATCH/PUT  | /admin/articles/:id      | admin/articles#update  | admin_article_path(:id)      |
+| DELETE     | /admin/articles/:id      | admin/articles#destroy | admin_article_path(:id)      |
 
-Если хотите маршрут `/posts` (без префикса `/admin`) к `Admin::PostsController`, можете использовать:
+Если хотите маршрут `/articles` (без префикса `/admin`) к `Admin::ArticlesController`, можете использовать:
 
 ```ruby
 scope module: 'admin' do
-  resources :posts, :comments
+  resources :articles, :comments
 end
 ```
 
 или для отдельного случая:
 
 ```ruby
-resources :posts, module: 'admin'
+resources :articles, module: 'admin'
 ```
 
-Если хотите маршрут `/admin/posts` к `PostsController` (без префикса модуля `Admin::`), можно использовать:
+Если хотите маршрут `/admin/articles` к `ArticlesController` (без префикса модуля `Admin::`), можно использовать:
 
 ```ruby
 scope '/admin' do
-  resources :posts, :comments
+  resources :articles, :comments
 end
 ```
 
 или для отдельного случая:
 
 ```ruby
-resources :posts, path: '/admin/posts'
+resources :posts, path: '/admin/articles'
 ```
 
-В каждом из этих случаев, именнованные маршруты остаются теми же, что и без использования `scope`. В последнем случае, следующие пути соединят с `PostsController`:
+В каждом из этих случаев, именнованные маршруты остаются теми же, что и без использования `scope`. В последнем случае, следующие пути соединят с `ArticlesController`:
 
-| Метод HTTP | Путь                  | Контроллер#Экшн | Именнованнный хелпер |
-| ---------- | --------------------- | --------------- | -------------------- |
-| GET        | /admin/posts          | posts#index     | posts_path           |
-| GET        | /admin/posts/new      | posts#new       | new_post_path        |
-| POST       | /admin/posts          | posts#create    | posts_path           |
-| GET        | /admin/posts/:id      | posts#show      | post_path(:id)       |
-| GET        | /admin/posts/:id/edit | posts#edit      | edit_post_path(:id)  |
-| PUT        | /admin/posts/:id      | posts#update    | post_path(:id)       |
-| DELETE     | /admin/posts/:id      | posts#destroy   | post_path(:id)       |
+| Метод HTTP | Путь                     | Контроллер#Экшн      | Именнованнный хелпер   |
+| ---------- | ------------------------ | -------------------- | ---------------------- |
+| GET        | /admin/articles          | articles#index       | articles_path          |
+| GET        | /admin/articles/new      | articles#new         | new_article_path       |
+| POST       | /admin/articles          | articles#create      | articles_path          |
+| GET        | /admin/articles/:id      | articles#show        | article_path(:id)      |
+| GET        | /admin/articles/:id/edit | articles#edit        | edit_article_path(:id) |
+| PATCH/PUT  | /admin/articles/:id      | articles#update      | article_path(:id)      |
+| DELETE     | /admin/articles/:id      | articles#destroy     | article_path(:id)      |
 
 TIP: _Если хотите использовать другое пространство имен контроллера в блоке `namespace`, можно указать абсолютный путь контроллера, т.е: `get '/foo' => '/foo#index'`._
 
@@ -302,7 +302,7 @@ TIP: _Ресурсы никогда не должны быть вложены г
 Один из способов избежать глубокого вложения (как показано выше) является создание экшнов коллекции в пространстве имен родителя, чтобы чувствовать иерархию, но не вкладывать экшны элементов. Другими словами, создавать маршруты с минимальным количеством информации для однозначной идентификации ресурса, например так:
 
 ```ruby
-resources :posts do
+resources :articles do
   resources :comments, only: [:index, :new, :create]
 end
 resources :comments, only: [:show, :edit, :update, :destroy]
@@ -311,7 +311,7 @@ resources :comments, only: [:show, :edit, :update, :destroy]
 Эта идея балансирует на грани между наглядностью маршрутов и глубоким вложением. Существует сокращенный синтаксис для получения подобного с помощью опции `:shallow`:
 
 ```ruby
-resources :posts do
+resources :articles do
   resources :comments, shallow: true
 end
 ```
@@ -319,7 +319,7 @@ end
 Это создаст те же самые маршруты из первого примера. Также можно определить опцию `:shallow` в родительском ресурсе, в этом случае все вложенные ресурсы будут мелкие:
 
 ```ruby
-resources :posts, shallow: true do
+resources :articles, shallow: true do
   resources :comments
   resources :quotes
   resources :drafts
@@ -330,7 +330,7 @@ end
 
 ```ruby
 shallow do
-  resources :posts do
+  resources :articles do
     resources :comments
     resources :quotes
     resources :drafts
@@ -342,7 +342,7 @@ end
 
 ```ruby
 scope shallow_path: "sekret" do
-  resources :posts do
+  resources :articles do
     resources :comments, shallow: true
   end
 end
@@ -350,21 +350,21 @@ end
 
 Для ресурса комментариев будут созданы следующие маршруты:
 
-| Метод HTTP | Путь                                   | Контроллер#Экшн  | Именнованный хелпер |
-| ---------  | -------------------------------------- | ---------------- | ------------------- |
-| GET        | /posts/:post_id/comments(.:format)     | comments#index   | post_comments       |
-| POST       | /posts/:post_id/comments(.:format)     | comments#create  | post_comments       |
-| GET        | /posts/:post_id/comments/new(.:format) | comments#new     | new_post_comment    |
-| GET        | /sekret/comments/:id/edit(.:format)    | comments#edit    | edit_comment        |
-| GET        | /sekret/comments/:id(.:format)         | comments#show    | comment             |
-| PATCH/PUT  | /sekret/comments/:id(.:format)         | comments#update  | comment             |
-| DELETE     | /sekret/comments/:id(.:format)         | comments#destroy | comment             |
+| Метод HTTP | Путь                                         | Контроллер#Экшн   | Именнованный хелпер      |
+| ---------- | -------------------------------------------- | ----------------- | ------------------------ |
+| GET        | /articles/:article_id/comments(.:format)     | comments#index    | article_comments_path    |
+| POST       | /articles/:article_id/comments(.:format)     | comments#create   | article_comments_path    |
+| GET        | /articles/:article_id/comments/new(.:format) | comments#new      | new_article_comment_path |
+| GET        | /sekret/comments/:id/edit(.:format)          | comments#edit     | edit_comment_path        |
+| GET        | /sekret/comments/:id(.:format)               | comments#show     | comment_path             |
+| PATCH/PUT  | /sekret/comments/:id(.:format)               | comments#update   | comment_path             |
+| DELETE     | /sekret/comments/:id(.:format)               | comments#destroy  | comment_path             |
 
 Опция `:shallow_prefix` добавляет указанный параметр к именнованным хелперам:
 
 ```ruby
 scope shallow_prefix: "sekret" do
-  resources :posts do
+  resources :articles do
     resources :comments, shallow: true
   end
 end
@@ -372,15 +372,16 @@ end
 
 Для ресурса комментариев будут созданы следующие маршруты:
 
-| Метод HTTP | Путь                                   | Контроллер#Экшн  | Именнованный хелпер |
-| ---------  | -------------------------------------- | ---------------- | ------------------- |
-| GET        | /posts/:post_id/comments(.:format)     | comments#index   | post_comments       |
-| POST       | /posts/:post_id/comments(.:format)     | comments#create  | post_comments       |
-| GET        | /posts/:post_id/comments/new(.:format) | comments#new     | new_post_comment    |
-| GET        | /comments/:id/edit(.:format)           | comments#edit    | edit_sekret_comment |
-| GET        | /comments/:id(.:format)                | comments#show    | sekret_comment      |
-| PATCH/PUT  | /comments/:id(.:format)                | comments#update  | sekret_comment      |
-| DELETE     | /comments/:id(.:format)                | comments#destroy | sekret_comment      |
+| Метод HTTP | Путь                                         | Контроллер#Экшн   | Именнованный хелпер         |
+| ---------- | -------------------------------------------- | ----------------- | --------------------------- |
+| GET        | /articles/:article_id/comments(.:format)     | comments#index    | article_comments_path       |
+| POST       | /articles/:article_id/comments(.:format)     | comments#create   | article_comments_path       |
+| GET        | /articles/:article_id/comments/new(.:format) | comments#new      | new_article_comment_path    |
+| GET        | /comments/:id/edit(.:format)                 | comments#edit     | edit_sekret_comment_path    |
+| GET        | /comments/:id(.:format)                      | comments#show     | sekret_comment_path         |
+| PATCH/PUT  | /comments/:id(.:format)                      | comments#update   | sekret_comment_path         |
+| DELETE     | /comments/:id(.:format)                      | comments#destroy  | sekret_comment_path         |
+
 ### Концерны маршрутов
 
 Концерны маршрутов (Routing Concerns) позволяют объявлять обычные маршруты, которые затем могут быть повторно использованы внутри других ресурсов и маршрутов. Чтобы определить концерн:
@@ -400,7 +401,7 @@ end
 ```ruby
 resources :messages, concerns: :commentable
 
-resources :posts, concerns: [:commentable, :image_attachable]
+resources :articles, concerns: [:commentable, :image_attachable]
 ```
 
 Вышеуказанное эквивалентно:
@@ -410,7 +411,7 @@ resources :messages do
   resources :comments
 end
 
-resources :posts do
+resources :articles do
   resources :comments
   resources :images, only: :index
 end
@@ -419,7 +420,7 @@ end
 Также их можно использовать в любом месте внутри маршрутов, например, в вызове scope или namespace:
 
 ```ruby
-namespace :posts do
+namespace :articles do
   concerns :commentable
 end
 ```
@@ -551,7 +552,7 @@ get ':controller(/:action(/:id))'
 
 Если входящий запрос `/photos/show/1` обрабатывается этим маршрутом (так как не встретил какого-либо соответствующего маршрута в файле до этого), то результатом будет вызов экшна `show` в `PhotosController`, и результирующий параметр (1) будет доступен как `params[:id]`. Этот маршрут также свяжет входящий запрос `/photos` с `PhotosController`, поскольку `:action` и `:id` необязательные параметры, обозначенные скобками.
 
-### Динамические сегменты
+### (dynamic-segments) Динамические сегменты
 
 Можете настроить сколько угодно динамических сегментов в обычном маршруте. Всё, кроме `:controller` или `:action`, будет доступно для соответствующего экшна как часть хэша params. Таким образом, если настроите такой маршрут:
 
@@ -641,6 +642,8 @@ match 'photos', to: 'photos#show', via: :all
 
 NOTE: Маршрутизация запросов `GET` и `POST` одновременно в один экшн небезопасна. В основном, следует избегать маршрутизацию всех методов в экшн, если у вас нет веской причины делать так.
 
+NOTE: 'GET' в Rails не проверяет токен CSRF. Никогда не пишите в базу даннух в 'GET' запросах, подробнее о контрмерах CSRF смотрите в [руководстве по безопасности](/ruby-on-rails-security-guide#csrf-countermeasures).
+
 ### Ограничения сегмента
 
 Можно использовать опцию `:constraints` для соблюдения формата динамического сегмента:
@@ -658,26 +661,26 @@ get 'photos/:id', to: 'photos#show', id: /[A-Z]\d{5}/
 `:constraints` принимает регулярное выражение c тем ограничением, что якоря regexp не могут использоваться. Например, следующий маршрут не работает:
 
 ```ruby
-get '/:id', to: 'posts#show', constraints: {id: /^\d/}
+get '/:id', to: 'articles#show', constraints: {id: /^\d/}
 ```
 
 Однако отметьте, что нет необходимости использовать якоря, поскольку все маршруты заякорены изначально.
 
-Например, следующие маршруты приведут к `posts` со значениями `to_param` наподобие `1-hello-world`, которые всегда начинаются с цифры, и к `users` со значениями `to_param` наподобие `david`, которые никогда не начинаются с цифры, чтобы можно было использовать общее корневое пространство имен:
+Например, следующие маршруты приведут к `articles` со значениями `to_param` наподобие `1-hello-world`, которые всегда начинаются с цифры, и к `users` со значениями `to_param` наподобие `david`, которые никогда не начинаются с цифры, чтобы можно было использовать общее корневое пространство имен:
 
 ```ruby
-get '/:id', to: 'posts#show', constraints: { id: /\d.+/ }
+get '/:id', to: 'articles#show', constraints: { id: /\d.+/ }
 get '/:username', to: 'users#show'
 ```
 
 ### Ограничения, основанные на запросе
 
-Также можно ограничить маршрут, основываясь на любом методе в объекте [Request](/action-controller-overview#the-request-and-response-objects), который возвращает `String`.
+Также можно ограничить маршрут, основываясь на любом методе в [объекте Request](/action-controller-overview#the-request-and-response-objects), который возвращает `String`.
 
 Ограничение, основанное на запросе, определяется так же, как и сегментное ограничение:
 
 ```ruby
-get 'photos', constraints: {subdomain: 'admin'}
+get 'photos', to: 'photos#index', constraints: { subdomain: 'admin' }
 ```
 
 Также можно определить ограничения в форме блока:
@@ -689,6 +692,8 @@ namespace :admin do
   end
 end
 ```
+
+NOTE: Ограничения запроса работают, вызывая метод на [объекте Request](/action-controller-overview#the-request-and-response-objects) с тем же именем, что и ключ хэша, а затем сравнивают возвращенное значение со значением хэша. Следовательно, значения ограничений должны соответствовать возвращаемому типу соответствующего метода объекта Request. Например: `constraints: { subdomain: 'api' }` будет соответствовать поддомену `api`, как и ожидалось, однако, использование символа `constraints: { subdomain: :api }` не будет, так как `request.subdomain` возвращает `'api'` как строку.
 
 ### Продвинутые ограничения
 
@@ -705,7 +710,7 @@ class BlacklistConstraint
   end
 end
 
-TwitterClone::Application.routes.draw do
+Rails.application.routes.draw do
   get '*path', to: 'blacklist#index',
     constraints: BlacklistConstraint.new
 end
@@ -714,7 +719,7 @@ end
 Ограничения также можно определить как лямбду:
 
 ```ruby
-TwitterClone::Application.routes.draw do
+Rails.application.routes.draw do
   get '*path', to: 'blacklist#index',
     constraints: lambda { |request| Blacklist.retrieve_ips.include?(request.remote_ip) }
 end
@@ -765,20 +770,20 @@ get '*pages', to: 'pages#show', format: true
 Можно перенаправить любой путь на другой путь, используя хелпер `redirect` в вашем роутере:
 
 ```ruby
-get '/stories', to: redirect('/posts')
+get '/stories', to: redirect('/articles')
 ```
 
 Также можно повторно использовать динамические сегменты для соответствия пути, на который перенаправляем:
 
 ```ruby
-get '/stories/:name', to: redirect('/posts/%{name}')
+get '/stories/:name', to: redirect('/articles/%{name}')
 ```
 
 Также можно предоставить блок для перенаправления, который получает символизированные параметры пути и объект request:
 
 ```ruby
-get '/stories/:name', to: redirect {|path_params, req| "/posts/#{path_params[:name].pluralize}" }
-get '/stories', to: redirect {|path_params, req| "/posts/#{req.subdomain}" }
+get '/stories/:name', to: redirect { |path_params, req| "/articles/#{path_params[:name].pluralize}" }
+get '/stories', to: redirect { |path_params, req| "/articles/#{req.subdomain}" }
 ```
 
 Пожалуйста, отметьте, что это перенаправление является 301 "Moved Permanently". Учтите, что некоторые браузеры или прокси серверы закэшируют этот тип перенаправления, сделав старые страницы недоступными.
@@ -787,7 +792,7 @@ get '/stories', to: redirect {|path_params, req| "/posts/#{req.subdomain}" }
 
 ### Роутинг к приложениям Rack
 
-Вместо строки, подобной `'posts#index'`, соответствующей экшну `index` в `PostsController`, можно определить любое [приложение Rack](/rails-on-rack) как конечную точку совпадения.
+Вместо строки, подобной `'articles#index'`, соответствующей экшну `index` в `ArticlesController`, можно определить любое [приложение Rack](/rails-on-rack) как конечную точку совпадения.
 
 ```ruby
 match '/application.js', to: Sprockets, via: :all
@@ -795,7 +800,7 @@ match '/application.js', to: Sprockets, via: :all
 
 Пока `Sprockets` отвечает на `call` и возвращает `[status, headers, body]`, роутер не будет различать приложение Rack и экшн. Здесь подходит использование `via: :all`, если вы хотите позволить своему приложению Rack обрабатывать все методы так, как оно считает нужным.
 
-NOTE: Для любопытства, `'posts#index'` фактически расширяется до `PostsController.action(:index)`, который возвращает валидное приложение Rack.
+NOTE: Для любопытства, `'articles#index'` фактически расширяется до `ArticlesController.action(:index)`, который возвращает валидное приложение Rack.
 
 ### Использование `root`
 
@@ -831,7 +836,7 @@ get 'こんにちは', to: 'welcome#index'
 Настройка ресурсных маршрутов
 -----------------------------
 
-Хотя маршруты и хелперы по умолчанию, созданные `resources :posts`, обычно нормально работают, вы, возможно, захотите их настроить некоторым образом. Rails позволяет настроить практически любую часть ресурсных хелперов.
+Хотя маршруты и хелперы по умолчанию, созданные `resources :articles`, обычно нормально работают, вы, возможно, захотите их настроить некоторым образом. Rails позволяет настроить практически любую часть ресурсных хелперов.
 
 ### Определение используемого контроллера
 
@@ -870,7 +875,7 @@ NOTE: Поддерживается только обозначение дире�
 Можно использовать опцию `:constraints` для определения требуемого формата на неявном `id`. Например:
 
 ```ruby
-resources :photos, constraints: {id: /[A-Z][A-Z][0-9]+/}
+resources :photos, constraints: { id: /[A-Z][A-Z][0-9]+/ }
 ```
 
 Это объявление ограничивает параметр `:id` соответствием предоставленному регулярному выражению. Итак, в этом случае роутер больше не будет сопоставлять `/photos/1` этому маршруту. Вместо этого будет соответствовать `/photos/RR27`.
@@ -907,9 +912,10 @@ resources :photos, as: 'images'
 | GET        | /photos/:id/edit | photos#edit       | edit_image_path(:id) |
 | PATCH/PUT  | /photos/:id      | photos#update     | image_path(:id)      |
 | DELETE     | /photos/:id      | photos#destroy    | image_path(:id)      |
+
 ### Переопределение сегментов `new` и `edit`
 
-Опция `:path_names` позволяет переопределить автоматически создаваемые сегменты "new" и "edit" в путях:
+Опция `:path_names` позволяет переопределить автоматически создаваемые сегменты `new` и `edit` в путях:
 
 ```ruby
 resources :photos, path_names: { new: 'make', edit: 'change' }
@@ -964,15 +970,15 @@ NOTE: Пространство `namespace` автоматически добав
 
 ```ruby
 scope ':username' do
-  resources :posts
+  resources :articles
 end
 ```
 
-Это предоставит URL, такие как `/bob/posts/1` и позволит обратиться к части пути `username` в контроллерах, хелперах и вьюхах как `params[:username]`.
+Это предоставит URL, такие как `/bob/articles/1` и позволит обратиться к части пути `username` в контроллерах, хелперах и вьюхах как `params[:username]`.
 
 ### (restricting-the-routes-created) Ограничение создаваемых маршрутов
 
-По умолчанию Rails создает маршруты для всех семи экшнов по умолчанию (index, show, new, create, edit, update, and destroy) для каждого маршрута RESTful вашего приложения. Можно использовать опции `:only` и `:except` для точной настройки этого поведения. Опция `:only` говорит Rails создать только определенные маршруты:
+По умолчанию Rails создает маршруты для всех семи экшнов по умолчанию (`index`, `show`, `new`, `create`, `edit`, `update` и `destroy`) для каждого маршрута RESTful вашего приложения. Можно использовать опции `:only` и `:except` для точной настройки этого поведения. Опция `:only` говорит Rails создать только определенные маршруты:
 
 ```ruby
 resources :photos, only: [:index, :show]
@@ -1034,6 +1040,25 @@ end
 
 Это создаст маршрутные хелперы такие как `magazine_periodical_ads_url` и `edit_magazine_periodical_ad_path`.
 
+### Переопределение параметров именнованных маршрутов
+
+Опция `:param` переопределяет идентификатор ресурса по умолчанию `:id` (имя [динамического сегмента](#dynamic-segments), используемого для генерации маршрутов). К этому сегменту можно обратиться из контроллера с помощью `params[<:param>]`.
+
+```ruby
+resources :videos, param: :identifier
+```
+
+```
+     videos GET  /videos(.:format)                  videos#index
+            POST /videos(.:format)                  videos#create
+ new_videos GET  /videos/new(.:format)              videos#new
+edit_videos GET  /videos/:identifier/edit(.:format) videos#edit
+```
+
+```ruby
+Video.find_by(identifier: params[:identifier])
+```
+
 Осмотр и тестирование маршрутов
 -------------------------------
 
@@ -1063,7 +1088,7 @@ edit_user GET    /users/:id/edit(.:format) users#edit
 Можете ограничить перечень маршрутами, ведущими к определенному контроллеру, установкой переменной среды `CONTROLLER`:
 
 ```bash
-$ CONTROLLER=users rake routes
+$ CONTROLLER=users bin/rake routes
 ```
 
 TIP: Результат команды `rake routes` более читаемый, если у вас в окне терминала прокрутка, а не перенос строк.
