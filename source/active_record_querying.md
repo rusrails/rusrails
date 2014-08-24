@@ -91,9 +91,9 @@ Active Record выполнит запросы в базу данных за ва
 
 Active Record представляет несколько различных способов получения одиночного объекта.
 
-#### Использование первичного ключа
+#### `find`
 
-Используя `Model.find(primary_key, options = nil)`, можно получить объект, соответствующий определенному первичному ключу (_primary key_) и предоставленным опциям. Например:
+Используя метод `find`, можно получить объект, соответствующий определенному первичному ключу (_primary key_) и предоставленным опциям. Например:
 
 ```ruby
 # Ищет клиента с первичным ключом (id) 10.
@@ -107,11 +107,25 @@ SQL эквивалент этого такой:
 SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
 ```
 
-`Model.find(primary_key)` вызывает исключение `ActiveRecord::RecordNotFound`, если соответствующей записи не было найдено.
+Метод `find` вызывает исключение `ActiveRecord::RecordNotFound`, если соответствующей записи не было найдено.
+
+Этот метод также можно использовать для получения нескольких объектов. Вызовите метод `find` и передайте в него массив первичных ключей. Возвращенным результатом будет массив, содержащий все записи, соответствующие представленным _первичным ключам_. Например:
+
+```ruby
+# Найдем клиентов с первичными ключами 1 и 10.
+client = Client.find([1, 10]) # Или даже Client.find(1, 10)
+# => [#<Client id: 1, first_name: "Lifo">, #<Client id: 10, first_name: "Ryan">]
+```
+
+SQL эквивалент этого такой:
+
+```sql
+SELECT * FROM clients WHERE (clients.id IN (1,10))
+```
 
 #### `take`
 
-`Model.take` получает запись без какого-либо явного упорядочивания. Например:
+Метод `take` получает запись без какого-либо явного упорядочивания. Например:
 
 ```ruby
 client = Client.take
@@ -124,13 +138,31 @@ SQL эквивалент этого такой:
 SELECT * FROM clients LIMIT 1
 ```
 
-`Model.take` возвращает `nil`, если ни одной записи не найдено, и исключение не будет вызвано.
+Метод `take` возвращает `nil`, если ни одной записи не найдено, и исключение не будет вызвано.
+
+В метод `take` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
+
+```ruby
+client = Client.take(2)
+# => [
+  #<Client id: 1, first_name: "Lifo">,
+  #<Client id: 220, first_name: "Sara">
+]
+```
+
+SQL эквивалент этого такой:
+
+```sql
+SELECT * FROM clients LIMIT 2
+```
+
+Метод `take!` ведет себя подобно `take`, за исключеним того, что он вызовет `ActiveRecord::RecordNotFound`, если не найдено ни одной соответствующей записи.
 
 TIP: Получаемая запись может отличаться в зависимости от движка базы данных.
 
 #### `first`
 
-`Model.first` находит первую запись, упорядоченную по первичному ключу. Например:
+Метод `first` находит первую запись, упорядоченную по первичному ключу. Например:
 
 ```ruby
 client = Client.first
@@ -143,11 +175,30 @@ SQL эквивалент этого такой:
 SELECT * FROM clients ORDER BY clients.id ASC LIMIT 1
 ```
 
-`Model.first` возвращает `nil`, если не найдено соответствующей записи, и исключение не вызывается.
+Метод `first` возвращает `nil`, если не найдено соответствующей записи, и исключение не вызывается.
+
+В метод `first` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
+
+```ruby
+client = Client.first(3)
+# => [
+  #<Client id: 1, first_name: "Lifo">,
+  #<Client id: 2, first_name: "Fifo">,
+  #<Client id: 3, first_name: "Filo">
+]
+```
+
+SQL эквивалент этого такой:
+
+```sql
+SELECT * FROM clients ORDER BY clients.id ASC LIMIT 3
+```
+
+Метод `first!` ведет себя подобно `first`, за исключеним того, что он вызовет `ActiveRecord::RecordNotFound`, если не найдено ни одной соответствующей записи.
 
 #### `last`
 
-`Model.last` находит последнюю запись, упорядоченную по первичному ключу. Например:
+Метод `last` находит последнюю запись, упорядоченную по первичному ключу. Например:
 
 ```ruby
 client = Client.last
@@ -160,11 +211,30 @@ SQL эквивалент этого такой:
 SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 ```
 
-`Model.last` возвращает `nil`, если не найдено соответствующей записи, и исключение не вызывается.
+Метод `last` возвращает `nil`, если не найдено соответствующей записи, и исключение не вызывается.
+
+В метод `last` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
+
+```ruby
+client = Client.last(3)
+# => [
+  #<Client id: 219, first_name: "James">,
+  #<Client id: 220, first_name: "Sara">,
+  #<Client id: 221, first_name: "Russel">
+]
+```
+
+SQL эквивалент этого такой:
+
+```sql
+SELECT * FROM clients ORDER BY clients.id DESC LIMIT 3
+```
+
+Метод `last!` ведет себя подобно `last`, за исключеним того, что он вызовет `ActiveRecord::RecordNotFound`, если не найдено ни одной соответствующей записи.
 
 #### `find_by`
 
-`Model.find_by` ищет первую запись, соответствующую некоторым условиям. Например:
+Метод `find_by` ищет первую запись, соответствующую некоторым условиям. Например:
 
 ```ruby
 Client.find_by first_name: 'Lifo'
@@ -180,73 +250,17 @@ Client.find_by first_name: 'Jon'
 Client.where(first_name: 'Lifo').take
 ```
 
-#### `take!`
-
-`Model.take!` получает запись без какого-либо явного упорядочивания. Например:
+Метод `find_by!` ведет себя подобно `find_by`, за исключеним того, что он вызовет `ActiveRecord::RecordNotFound`, если не найдено ни одной соответствующей записи. Например:
 
 ```ruby
-client = Client.take!
-# => #<Client id: 1, first_name: "Lifo">
-```
-
-SQL эквивалент этого такой:
-
-```sql
-SELECT * FROM clients LIMIT 1
-```
-
-`Model.take!` вызывает `ActiveRecord::RecordNotFound`, если соответсвующей записи не было найдено.
-
-#### `first!`
-
-`Model.first!` находит первую запись, упорядоченную по первичному ключу. Например:
-
-```ruby
-client = Client.first!
-# => #<Client id: 1, first_name: "Lifo">
-```
-
-SQL эквивалент этого такой:
-
-```sql
-SELECT * FROM clients ORDER BY clients.id ASC LIMIT 1
-```
-
-`Model.first` вызывает `ActiveRecord::RecordNotFound`, если не найдено соответствующей записи.
-
-#### `last!`
-
-`Model.last!` находит последнюю запись, упорядоченную по первичному ключу. Например:
-
-```ruby
-client = Client.last!
-# => #<Client id: 221, first_name: "Russel">
-```
-
-SQL эквивалент этого такой:
-
-```sql
-SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
-```
-
-`Model.last` вызывает `ActiveRecord::RecordNotFound`, если не найдено соответствующей записи.
-
-#### `find_by!`
-
-`Model.find_by!` ищет первую запись, соответствующую некоторым условиям. Он вызывает `ActiveRecord::RecordNotFound`, если не найдено соответствующей записи. Например:
-
-```ruby
-Client.find_by! first_name: 'Lifo'
-# => #<Client id: 1, first_name: "Lifo">
-
-Client.find_by! first_name: 'Jon'
+Client.find_by! first_name: 'does not exist'
 # => ActiveRecord::RecordNotFound
 ```
 
 Это эквивалент записи:
 
 ```ruby
-Client.where(first_name: 'Lifo').take!
+Client.where(first_name: 'does not exist').take!
 ```
 
 ### Получение нескольких объектов
@@ -326,7 +340,7 @@ SELECT * FROM clients ORDER BY id DESC LIMIT 2
 ```ruby
 # Очень неэффективно, когда в таблице users тысячи строк.
 User.all.each do |user|
-  NewsLetter.weekly_deliver(user)
+  NewsMailer.weekly(user).deliver
 end
 ```
 
@@ -342,7 +356,15 @@ TIP: Методы `find_each` и `find_in_batches` предназначены д
 
 ```ruby
 User.find_each do |user|
-  NewsLetter.weekly_deliver(user)
+  NewsMailer.weekly(user).deliver
+end
+```
+
+Чтобы добавить условия в операцию `find_each`, можно добавить ее в цепочку с другими методами Active Record, такими как `where`:
+
+```ruby
+User.where(weekly_subscriber: true).find_each do |user|
+  NewsMailer.weekly(user).deliver
 end
 ```
 
@@ -358,7 +380,7 @@ end
 
 ```ruby
 User.find_each(batch_size: 5000) do |user|
-  NewsLetter.weekly_deliver(user)
+  NewsMailer.weekly(user).deliver
 end
 ```
 
@@ -370,7 +392,7 @@ end
 
 ```ruby
 User.find_each(start: 2000, batch_size: 5000) do |user|
-  NewsLetter.weekly_deliver(user)
+  NewsMailer.weekly(user).deliver
 end
 ```
 
@@ -470,8 +492,8 @@ Client.where('locked' => true)
 В случае отношений belongs_to, может быть использован ключ связи для указания модели, если как значение используется объект Active Record. Этот метод также работает с полиморфными отношениями.
 
 ```ruby
-Post.where(author: author)
-Author.joins(:posts).where(posts: { author: author })
+Article.where(author: author)
+Author.joins(:articles).where(articles: { author: author })
 ```
 
 NOTE: Значения не могут быть символами. Например, нельзя сделать `Client.where(status: :active)`.
@@ -509,7 +531,7 @@ SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 Запросы `NOT` в SQL могут быть созданы с помощью `where.not`.
 
 ```ruby
-Post.where.not(author: author)
+Article.where.not(author: author)
 ```
 
 Другими словами, этот запрос может быть создан с помощью вызова `where` без аргументов с далее присоединенным `not` с переданными условиями для `where`.
@@ -657,6 +679,23 @@ FROM orders
 GROUP BY date(created_at)
 ```
 
+### Общее количество сгруппированных элементов
+
+Чтобы получить общее количество сгруппированных элементов одним запросом, вызовите `count` после `group`.
+
+```ruby
+Order.group(:status).count
+# => { 'awaiting_approval' => 7, 'paid' => 12 }
+```
+
+SQL, который будет исполнен, будет выглядеть как-то так:
+
+```sql
+SELECT COUNT (*) AS count_all, status AS status
+FROM "orders"
+GROUP BY status
+```
+
 Владение
 --------
 
@@ -687,31 +726,31 @@ HAVING sum(price) > 100
 Можете указать определенные условия, которые будут убраны, используя метод `unscope`. Например:
 
 ```ruby
-Post.where('id > 10').limit(20).order('id asc').unscope(:order)
+Article.where('id > 10').limit(20).order('id asc').unscope(:order)
 ```
 
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM posts WHERE id > 10 LIMIT 20
+SELECT * FROM articles WHERE id > 10 LIMIT 20
 
 # Оригинальный запрос без `unscope`
-SELECT * FROM posts WHERE id > 10 ORDER BY id asc LIMIT 20
+SELECT * FROM articles WHERE id > 10 ORDER BY id asc LIMIT 20
 
 ```
 
-Дополнительно можно убрать определенные условия `where`. Например:
+Также можно убрать определенные условия `where`. Например:
 
 ```ruby
-Post.where(id: 10, trashed: false).unscope(where: :id)
-# SELECT "posts".* FROM "posts" WHERE trashed = 0
+Article.where(id: 10, trashed: false).unscope(where: :id)
+# SELECT "articles".* FROM "articles" WHERE trashed = 0
 ```
 
 Relation, использующий `unscope` повлияет на любой relation, с которым он слит:
 
 ```ruby
-Post.order('id asc').merge(Post.unscope(:order))
-# SELECT "posts".* FROM "posts"
+Article.order('id asc').merge(Article.unscope(:order))
+# SELECT "articles".* FROM "articles"
 ```
 
 ### `only`
@@ -719,16 +758,16 @@ Post.order('id asc').merge(Post.unscope(:order))
 Также можно переопределить условия, используя метод `only`. Например:
 
 ```ruby
-Post.where('id > 10').limit(20).order('id desc').only(:order, :where)
+Article.where('id > 10').limit(20).order('id desc').only(:order, :where)
 ```
 
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM posts WHERE id > 10 ORDER BY id DESC
+SELECT * FROM articles WHERE id > 10 ORDER BY id DESC
 
 # Оригинальный запрос без `only`
-SELECT "posts".* FROM "posts" WHERE (id > 10) ORDER BY id desc LIMIT 20
+SELECT "articles".* FROM "articles" WHERE (id > 10) ORDER BY id desc LIMIT 20
 
 ```
 
@@ -737,25 +776,27 @@ SELECT "posts".* FROM "posts" WHERE (id > 10) ORDER BY id desc LIMIT 20
 Метод `reorder` переопределяет сортировку скоупа по умолчанию. Например:
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   ..
   ..
   has_many :comments, -> { order('posted_at DESC') }
 end
 
-Post.find(10).comments.reorder('name')
+Article.find(10).comments.reorder('name')
 ```
 
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM posts WHERE id = 10 ORDER BY name
+SELECT * FROM articles WHERE id = 10
+SELECT * FROM comments WHERE article_id = 10 ORDER BY name
 ```
 
 В случае, если бы условие `reorder` не было бы использовано, запущенный SQL был бы:
 
 ```sql
-SELECT * FROM posts WHERE id = 10 ORDER BY posted_at DESC
+SELECT * FROM articles WHERE id = 10
+SELECT * FROM comments WHERE article_id = 10 ORDER BY posted_at DESC
 ```
 
 ### `reverse_order`
@@ -791,25 +832,25 @@ SELECT * FROM clients WHERE orders_count > 10 ORDER BY clients.id DESC
 Метод `rewhere` переопределяет существующее именнованное условие `where`. Например:
 
 ```ruby
-Post.where(trashed: true).rewhere(trashed: false)
+Article.where(trashed: true).rewhere(trashed: false)
 ```
 
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM posts WHERE `trashed` = 0
+SELECT * FROM articles WHERE `trashed` = 0
 ```
 
 В случае, когда не используется условие `rewhere`,
 
 ```ruby
-Post.where(trashed: true).where(trashed: false)
+Article.where(trashed: true).where(trashed: false)
 ```
 
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM posts WHERE `trashed` = 1 AND `trashed` = 0
+SELECT * FROM articles WHERE `trashed` = 1 AND `trashed` = 0
 ```
 
 Нулевой Relation
@@ -818,21 +859,21 @@ SELECT * FROM posts WHERE `trashed` = 1 AND `trashed` = 0
 Метод `none` возвращает сцепляемый relation без записей. Любые последующие условия, сцепленные с возвращенным relation, продолжат возвращать пустые relation. Это полезно в случаях, когда необходим сцепляемый отклик на метод или скоуп, который может вернуть пустые результаты.
 
 ```ruby
-Post.none # returns an empty Relation and fires no queries.
+Article.none # returns an empty Relation and fires no queries.
 ```
 
 ```ruby
-# От метода visible_posts ожидается, что он вернет Relation.
-@posts = current_user.visible_posts.where(name: params[:name])
+# От метода visible_articles ожидается, что он вернет Relation.
+@articles = current_user.visible_articles.where(name: params[:name])
 
-def visible_posts
+def visible_articles
   case role
   when 'Country Manager'
-    Post.where(country: country)
+    Article.where(country: country)
   when 'Reviewer'
-    Post.published
+    Article.published
   when 'Bad User'
-    Post.none # => если бы вернули [] или nil, код поломался бы в этом случае
+    Article.none # => если бы вернули [] или nil, код поломался бы в этом случае
   end
 end
 ```
@@ -934,8 +975,8 @@ item.with_lock do
 end
 ```
 
-Соединительные таблицы
-----------------------
+(joining-tables) Соединительные таблицы
+---------------------------------------
 
 Active Record предоставляет метод поиска с именем `joins` для определения условия `JOIN` в результирующем SQL. Есть разные способы определить метод `joins`:
 
@@ -959,21 +1000,21 @@ WARNING: Этот метод работает только с `INNER JOIN`.
 
 Active Record позволяет использовать имена [связей](/active-record-associations), определенных в модели, как ярлыки для определения условия `JOIN` этих связей при использовании метода `joins`.
 
-Например, рассмотрим следующие модели `Category`, `Post`, `Comment`, `Guest` и `Tag`:
+Например, рассмотрим следующие модели `Category`, `Article`, `Comment`, `Guest` и `Tag`:
 
 ```ruby
 class Category < ActiveRecord::Base
-  has_many :posts
+  has_many :articles
 end
 
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   belongs_to :category
   has_many :comments
   has_many :tags
 end
 
 class Comment < ActiveRecord::Base
-  belongs_to :post
+  belongs_to :article
   has_one :guest
 end
 
@@ -982,7 +1023,7 @@ class Guest < ActiveRecord::Base
 end
 
 class Tag < ActiveRecord::Base
-  belongs_to :post
+  belongs_to :article
 end
 ```
 
@@ -991,64 +1032,64 @@ end
 #### Соединение одиночной связи
 
 ```ruby
-Category.joins(:posts)
+Category.joins(:articles)
 ```
 
 Это создаст:
 
 ```sql
 SELECT categories.* FROM categories
-  INNER JOIN posts ON posts.category_id = categories.id
+  INNER JOIN articles ON articles.category_id = categories.id
 ```
 
-Или, по-русски, "возвратить объект Category для всех категорий с публикациями". Отметьте, что будут дублирующиеся категории, если имеется более одной публикации в одной категории. Если нужны уникальные категории, можно использовать `Category.joins(:posts).uniq`.
+Или, по-русски, "возвратить объект Category для всех категорий со статьями". Отметьте, что будут дублирующиеся категории, если имеется более одной статьи в одной категории. Если нужны уникальные категории, можно использовать `Category.joins(:articles).uniq`.
 
 #### Соединение нескольких связей
 
 ```ruby
-Post.joins(:category, :comments)
+Article.joins(:category, :comments)
 ```
 
 Это создаст:
 
 ```sql
-SELECT posts.* FROM posts
-  INNER JOIN categories ON posts.category_id = categories.id
-  INNER JOIN comments ON comments.post_id = posts.id
+SELECT articles.* FROM articles
+  INNER JOIN categories ON articles.category_id = categories.id
+  INNER JOIN comments ON comments.article_id = articles.id
 ```
 
-Или, по-русски, "возвратить все публикации, у которых есть категория и как минимум один комментарий". Отметьте, что публикации с несколькими комментариями будут показаны несколько раз.
+Или, по-русски, "возвратить все статьи, у которых есть категория и как минимум один комментарий". Отметьте, что статьи с несколькими комментариями будут показаны несколько раз.
 
 #### Соединение вложенных связей (одного уровня)
 
 ```ruby
-Post.joins(comments: :guest)
+Article.joins(comments: :guest)
 ```
 
 Это создаст:
 
 ```sql
-SELECT posts.* FROM posts
-  INNER JOIN comments ON comments.post_id = posts.id
+SELECT articles.* FROM articles
+  INNER JOIN comments ON comments.article_id = articles.id
   INNER JOIN guests ON guests.comment_id = comments.id
 ```
 
-Или, по-русски, "возвратить все публикации, имеющие комментарий, сделанный гостем".
+Или, по-русски, "возвратить все статьи, имеющие комментарий, сделанный гостем".
 
 #### Соединение вложенных связей (разных уровней)
 
 ```ruby
-+Category.joins(posts: [{ comments: :guest }, :tags])
++Category.joins(articles: [{ comments: :guest }, :tags])
 ```
 
 Это создаст:
 
 ```sql
 SELECT categories.* FROM categories
-  INNER JOIN posts ON posts.category_id = categories.id
-  INNER JOIN comments ON comments.post_id = posts.id
+  INNER JOIN articles ON articles.category_id = categories.id
+  INNER JOIN comments ON comments.article_id = articles.id
   INNER JOIN guests ON guests.comment_id = comments.id
-  INNER JOIN tags ON tags.post_id = posts.id
+  INNER JOIN tags ON tags.article_id = articles.id
 ```
 
 ### Определение условий в соединительных таблицах
@@ -1117,39 +1158,45 @@ Active Record позволяет нетерпеливо загружать лю�
 #### Массив нескольких связей
 
 ```ruby
-Post.includes(:category, :comments)
+Article.includes(:category, :comments)
 ```
 
-Это загрузит все публикации и связанные категорию и комментарии для каждой публикации.
+Это загрузит все статьи и связанные категорию и комментарии для каждой статьи.
 
 #### Вложенный хэш связей
 
 ```ruby
-Category.includes(posts: [{ comments: :guest }, :tags]).find(1)
+Category.includes(articles: [{ comments: :guest }, :tags]).find(1)
 ```
 
-Вышеприведенный код находит категории с id 1 и нетерпеливо загружает все публикации, связанные с найденной категорией. Кроме того, он также нетерпеливо загружает теги и комментарии каждой публикации. Гость, связанный с оставленным комментарием, также будет нетерпеливо загружен.
+Вышеприведенный код находит категории с id 1 и нетерпеливо загружает все статьи, связанные с найденной категорией. Кроме того, он также нетерпеливо загружает теги и комментарии каждой статьи. Гость, связанный с оставленным комментарием, также будет нетерпеливо загружен.
 
 ### Определение условий для нетерпеливой загрузки связей
 
-Хотя Active Record и позволяет определить условия для нетерпеливой загрузки связей, как и в `joins`, рекомендуем использовать вместо этого "joins":/active-record-query-interface/joining-tables.
+Хотя Active Record и позволяет определить условия для нетерпеливой загрузки связей, как и в `joins`, рекомендуем использовать вместо этого (joins)[#joining-tables].
 
 Однако, если вы сделаете так, то сможете использовать `where` как обычно.
 
 ```ruby
-Post.includes(:comments).where("comments.visible" => true)
+Article.includes(:comments).where("comments.visible" => true)
 ```
 
 Это сгенерирует запрос с ограничением `LEFT OUTER JOIN`, в то время как метод `joins` сгенерировал бы его с использованием функции `INNER JOIN`.
 
 ```ruby
-  SELECT "posts"."id" AS t0_r0, ... "comments"."updated_at" AS t1_r5 FROM "posts"
-    LEFT OUTER JOIN "comments" ON "comments"."post_id" = "posts"."id" WHERE (comments.visible = 1)
+  SELECT "articles"."id" AS t0_r0, ... "comments"."updated_at" AS t1_r5 FROM "articles"
+    LEFT OUTER JOIN "comments" ON "comments"."article_id" = "articles"."id" WHERE (comments.visible = 1)
 ```
 
 Если бы не было условия `where`, то сгенерировался бы обычный набор из двух запросов.
 
-Если, в случае с этим запросом `includes`, не будет ни одного комментария ни для одной публикации, все публикации все равно будут загружены. При использовании `joins` (INNER JOIN), соединительные условия **должны** соответствовать, иначе ни одной записи не будет возвращено.
+NOTE: Использование `where` подобным образом будет работать только, если вы передадите в него хэш. Для фрагментов SQL необходимо использовать `references` для принуждения соединения таблиц:
+
+```ruby
+Article.includes(:comments).where("comments.visible = true").references(:comments)
+```
+
+Если, в случае с этим запросом `includes`, не будет ни одного комментария ни для одной статьи, все статьи все равно будут загружены. При использовании `joins` (INNER JOIN), соединительные условия **должны** соответствовать, иначе ни одной записи не будет возвращено.
 
 Скоупы
 ------
@@ -1159,7 +1206,7 @@ Post.includes(:comments).where("comments.visible" => true)
 Для определения простого скоупа мы используем метод `scope` внутри класса, передав запрос, который хотим запустить при вызове скоупа:
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   scope :published, -> { where(published: true) }
 end
 ```
@@ -1167,7 +1214,7 @@ end
 Это в точности то же самое, что определение метода класса, и то, что именно вы используете, является вопросом профессионального предпочтения:
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   def self.published
     where(published: true)
   end
@@ -1177,7 +1224,7 @@ end
 Скоупы также сцепляются с другими скоупами:
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   scope :published,               -> { where(published: true) }
   scope :published_and_commented, -> { published.where("comments_count > 0") }
 end
@@ -1186,14 +1233,14 @@ end
 Для вызова этого скоупа `published`, можно вызвать его либо на классе:
 
 ```ruby
-Post.published # => [published posts]
+Article.published # => [опубликованные статьи]
 ```
 
-Либо на связи, состоящей из объектов `Post`:
+Либо на связи, состоящей из объектов `Article`:
 
 ```ruby
 category = Category.first
-category.posts.published # => [published posts belonging to this category]
+category.articles.published # => [опубликованные статьи, принадлежащие этой категории]
 ```
 
 ### Передача аргумента
@@ -1201,7 +1248,7 @@ category.posts.published # => [published posts belonging to this category]
 Скоуп может принимать аргументы:
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   scope :created_before, ->(time) { where("created_at < ?", time) }
 end
 ```
@@ -1209,13 +1256,13 @@ end
 Вызывайте скоуп, как будто это метод класса:
 
 ```ruby
-Post.created_before(Time.zone.now)
+Article.created_before(Time.zone.now)
 ```
 
 Однако, это всего лишь дублирование функциональности, которая должна быть предоставлена методом класса.
 
 ```ruby
-class Post < ActiveRecord::Base
+class Article < ActiveRecord::Base
   def self.created_before(time)
     where("created_at < ?", time)
   end
@@ -1225,7 +1272,7 @@ end
 Использование метода класса - более предпочтительный способ принятию аргументов скоупом. Эти методы также будут доступны на связанных объектах:
 
 ```ruby
-category.posts.created_before(time)
+category.articles.created_before(time)
 ```
 
 ### Применение скоупа по умолчанию
@@ -1431,6 +1478,11 @@ nick.save
 Client.find_by_sql("SELECT * FROM clients
   INNER JOIN orders ON clients.id = orders.client_id
   ORDER BY clients.created_at desc")
+# =>  [
+  #<Client id: 1, first_name: "Lucas" >,
+  #<Client id: 2, first_name: "Jan" >,
+  # ...
+]
 ```
 
 `find_by_sql` предоставляет простой способ создания произвольных запросов к базе данных и получения экземпляров объектов.
@@ -1441,7 +1493,11 @@ Client.find_by_sql("SELECT * FROM clients
 У `find_by_sql` есть близкий родственник, называемый `connection#select_all`. `select_all` получит объекты из базы данных, используя произвольный SQL, как и в `find_by_sql`, но не создаст их экземпляры. Вместо этого, вы получите массив хэшей, где каждый хэш указывает на запись.
 
 ```ruby
-Client.connection.select_all("SELECT * FROM clients WHERE id = '1'")
+Client.connection.select_all("SELECT first_name, created_at FROM clients WHERE id = '1'")
+# => [
+  {"first_name"=>"Rafael", "created_at"=>"2012-11-10 23:23:45.281189"},
+  {"first_name"=>"Eileen", "created_at"=>"2013-12-09 11:22:35.221282"}
+]
 ```
 
 `pluck`
@@ -1561,20 +1617,20 @@ Client.exists?
 
 ```ruby
 # на модели
-Post.any?
-Post.many?
+Article.any?
+Article.many?
 
 # на именнованном скоупе
-Post.recent.any?
-Post.recent.many?
+Article.recent.any?
+Article.recent.many?
 
 # на relation
-Post.where(published: true).any?
-Post.where(published: true).many?
+Article.where(published: true).any?
+Article.where(published: true).many?
 
 # на связи
-Post.first.categories.any?
-Post.first.categories.many?
+Article.first.categories.any?
+Article.first.categories.many?
 ```
 
 Вычисления
@@ -1663,60 +1719,79 @@ Client.sum("orders_count")
 Можно запустить EXPLAIN на запросах, вызываемых в relations. Например,
 
 ```ruby
-User.where(id: 1).joins(:posts).explain
+User.where(id: 1).joins(:articles).explain
 ```
 
-может выдать в MySQL.
+может выдать
 
 ```
-EXPLAIN for: SELECT `users`.* FROM `users` INNER JOIN `posts` ON `posts`.`user_id` = `users`.`id` WHERE `users`.`id` = 1
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------------+
-| id | select_type | table | type  | possible_keys | key     | key_len | ref   | rows | Extra       |
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------------+
-|  1 | SIMPLE      | users | const | PRIMARY       | PRIMARY | 4       | const |    1 |             |
-|  1 | SIMPLE      | posts | ALL   | NULL          | NULL    | NULL    | NULL  |    1 | Using where |
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------------+
+EXPLAIN for: SELECT `users`.* FROM `users` INNER JOIN `articles` ON `articles`.`user_id` = `users`.`id` WHERE `users`.`id` = 1
++----+-------------+----------+-------+---------------+
+| id | select_type | table    | type  | possible_keys |
++----+-------------+----------+-------+---------------+
+|  1 | SIMPLE      | users    | const | PRIMARY       |
+|  1 | SIMPLE      | articles | ALL   | NULL          |
++----+-------------+----------+-------+---------------+
++---------+---------+-------+------+-------------+
+| key     | key_len | ref   | rows | Extra       |
++---------+---------+-------+------+-------------+
+| PRIMARY | 4       | const |    1 |             |
+| NULL    | NULL    | NULL  |    1 | Using where |
++---------+---------+-------+------+-------------+
+
 2 rows in set (0.00 sec)
 ```
 
 Active Record применяет красивое форматирование, эмулирующее оболочку одной из баз данных. Таким образом, запуск того же запроса в адаптере PostgreSQL выдаст вместо этого
 
 ```
-EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "posts" ON "posts"."user_id" = "users"."id" WHERE "users"."id" = 1
+EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "articles" ON "articles"."user_id" = "users"."id" WHERE "users"."id" = 1
                                   QUERY PLAN
 ------------------------------------------------------------------------------
  Nested Loop Left Join  (cost=0.00..37.24 rows=8 width=0)
-   Join Filter: (posts.user_id = users.id)
+   Join Filter: (articles.user_id = users.id)
    ->  Index Scan using users_pkey on users  (cost=0.00..8.27 rows=1 width=4)
          Index Cond: (id = 1)
-   ->  Seq Scan on posts  (cost=0.00..28.88 rows=8 width=4)
-         Filter: (posts.user_id = 1)
+   ->  Seq Scan on articles  (cost=0.00..28.88 rows=8 width=4)
+         Filter: (articles.user_id = 1)
 (6 rows)
 ```
 
 Нетерпеливая загрузка может вызвать более одного запроса за раз, и некоторые запросы могут нуждаться в результате предыдущих. Поэтому `explain` фактически запускает запрос, а затем узнает о дальнейших планах по запросам. Например,
 
 ```ruby
-User.where(id: 1).includes(:posts).explain
+User.where(id: 1).includes(:articles).explain
 ```
 
-выдаст в MySQL.
+выдаст
 
 ```
-EXPLAIN for: SELECT `users`.* FROM `users`  WHERE `users`.`id` = 1
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------+
-| id | select_type | table | type  | possible_keys | key     | key_len | ref   | rows | Extra |
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------+
-|  1 | SIMPLE      | users | const | PRIMARY       | PRIMARY | 4       | const |    1 |       |
-+----+-------------+-------+-------+---------------+---------+---------+-------+------+-------+
++----+-------------+-------+-------+---------------+
+| id | select_type | table | type  | possible_keys |
++----+-------------+-------+-------+---------------+
+|  1 | SIMPLE      | users | const | PRIMARY       |
++----+-------------+-------+-------+---------------+
++---------+---------+-------+------+-------+
+| key     | key_len | ref   | rows | Extra |
++---------+---------+-------+------+-------+
+| PRIMARY | 4       | const |    1 |       |
++---------+---------+-------+------+-------+
+
 1 row in set (0.00 sec)
 
-EXPLAIN for: SELECT `posts`.* FROM `posts`  WHERE `posts`.`user_id` IN (1)
-+----+-------------+-------+------+---------------+------+---------+------+------+-------------+
-| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra       |
-+----+-------------+-------+------+---------------+------+---------+------+------+-------------+
-|  1 | SIMPLE      | posts | ALL  | NULL          | NULL | NULL    | NULL |    1 | Using where |
-+----+-------------+-------+------+---------------+------+---------+------+------+-------------+
+EXPLAIN for: SELECT `articles`.* FROM `articles`  WHERE `articles`.`user_id` IN (1)
++----+-------------+----------+------+---------------+
+| id | select_type | table    | type | possible_keys |
++----+-------------+----------+------+---------------+
+|  1 | SIMPLE      | articles | ALL  | NULL          |
++----+-------------+----------+------+---------------+
++------+---------+------+------+-------------+
+| key  | key_len | ref  | rows | Extra       |
++------+---------+------+------+-------------+
+| NULL | NULL    | NULL |    1 | Using where |
++------+---------+------+------+-------------+
+
+
 1 row in set (0.00 sec)
 ```
 
