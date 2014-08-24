@@ -320,52 +320,51 @@ CookieStore могут хранить около 4kB данных - намног
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information
 # (create the session table with "rails g active_record:session_migration")
-# YourApp::Application.config.session_store :active_record_store
-```
-
-Можно передать ключ `:serializer` для определения сериализатора для сериализации сессии:
-
-```ruby
-YourApp::Application.config.session_store :cookie_store, key: '_your_app_session', serializer: :json
-```
-
-Сериализатором по умолчанию для нового приложения является `:json`. Для совместимости со старыми приложениями используется `:marshal`, когда не указана опция `serializer`.
-
-Также возможно передать произвольный класс сериализатора с определенными публичными методами `load` и `dump`:
-
-```ruby
-YourApp::Application.config.session_store :cookie_store, key: '_your_app_session', serializer: MyCustomSerializer
+# Rails.application.config.session_store :active_record_store
 ```
 
 Rails настраивает ключ сессии (имя куки) при подписании данных сессии. Он также может быть изменен в `config/initializers/session_store.rb`:
 
 ```ruby
 # Be sure to restart your server when you modify this file.
-
-YourApp::Application.config.session_store :cookie_store, key: '_your_app_session'
+Rails.application.config.session_store :cookie_store, key: '_your_app_session'
 ```
 
 Можете также передать ключ `:domain` и определить имя домена для куки:
 
 ```ruby
 # Be sure to restart your server when you modify this file.
-
-YourApp::Application.config.session_store :cookie_store, key: '_your_app_session', domain: ".example.com"
+Rails.application.config.session_store :cookie_store, key: '_your_app_session', domain: ".example.com"
 ```
 
-Rails настраивает (для CookieStore) секретный ключ, используемый для подписания данных сессии. Он может быть изменен в `config/initializers/secret_token.rb`:
+Rails настраивает (для CookieStore) секретный ключ для подписания данных сессии. Он может быть изменен в `config/secrets.yml`
 
 ```ruby
 # Be sure to restart your server when you modify this file.
 
-# Your secret key for verifying the integrity of signed cookies.
+# Your secret key is used for verifying the integrity of signed cookies.
 # If you change this key, all old signed cookies will become invalid!
+
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-YourApp::Application.config.secret_key_base = '49d3f3de9ed86c74b94ad6bd0...'
+# You can use `rake secret` to generate a secure secret key.
+
+# Make sure the secrets in this file are kept private
+# if you're sharing your code publicly.
+
+development:
+  secret_key_base: a75d...
+
+test:
+  secret_key_base: 492f...
+
+# Do not keep production secrets in the repository,
+# instead read values from the environment.
+production:
+  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
 ```
 
-NOTE: Изменение секретного ключа при использовании CookieStore делает все предыдущие сессии невалидными.
+NOTE: Изменение секретного ключа при использовании `CookieStore` делает все предыдущие сессии невалидными.
 
 ### Доступ к сессии
 
@@ -543,6 +542,45 @@ end
 ```
 
 Отметьте, что если для удаления сессии устанавливался ключ в `nil`, то для удаления значения куки следует использовать `cookies.delete(:key)`.
+
+Rails также представляет подписанные куки и зашифрованные куки для хранения конфиденциальных данных. В подписанные куки добавляется криптографическая подпись значений куки для защиты их целостности. Зашифрованные куки шифруют значения в дополнение к их подписи, поэтому они не могут быть прочитаны пользователем. За подробностями обратитесь к [документации API](http://api.rubyonrails.org/classes/ActionDispatch/Cookies.html).
+
+Эти специальные куки используют сериализатор для сериализации назначенных значений в строку и десериализации их в объекты Ruby при чтении.
+
+Можно определить, какой сериализатор использовать:
+
+```ruby
+Rails.application.config.action_dispatch.cookies_serializer = :json
+```
+
+Для новых приложений сериализатором по умолчанию является `:json`. Для совметимости со старыми приложениями со существующими куки, используется `:marshal`, когда не определена опция `serializer`.
+
+Также можно установить этой опции `:hybrid`, в этом случае Rails десериализует существующие (сериализованные `Marshal`) куки при чтении и перезапишет их в формате `JSON`. Это полезно при миграции существующих приложений на сериализатор `:json`.
+
+Также возможно передать произвольный сериализатор, откликающийся на `load` и `dump`:
+
+```ruby
+Rails.application.config.action_dispatch.cookies_serializer = MyCustomSerializer
+```
+
+При использовании сериализатора `:json` или `:hybrid`, следует знать, что не все объекты Ruby могут быть сериализованы как JSON. Например, объекты `Date` и `Time` будут сериализованы как строки, и у хэшей ключи будут преобразованы в строки.
+
+```ruby
+class CookiesController < ApplicationController
+  def set_cookie
+    cookies.encrypted[:expiration_date] = Date.tomorrow # => Thu, 20 Mar 2014
+    redirect_to action: 'read_cookie'
+  end
+
+  def read_cookie
+    cookies.encrypted[:expiration_date] # => "2014-03-20"
+  end
+end
+```
+
+Желательно, чтобы в куки хранились только простые данные (строки и числа). Если храните сложные объекты, вам необходимо преобразовывать вручную при чтении значений в соответствующих запросах.
+
+Если вы храните сессию в куки, все перечисленное также применяется к хэшам `session` и `flash`.
 
 Рендеринг данных XML и JSON
 ---------------------------
@@ -954,7 +992,7 @@ Rails ведет лог-файл для каждой среды в папке `l
 
 ### Фильтрация параметров
 
-Можно фильтровать определенные параметры запросов в файлах лога, присоединив их к `config.filter_parameters` в настройках приложения. Эти параметры будут помечены в логе как [FILTERED].
+Можно фильтровать конфиденциальные параметры запросов в файлах лога, присоединив их к `config.filter_parameters` в настройках приложения. Эти параметры будут помечены в логе как [FILTERED].
 
 ```ruby
 config.filter_parameters << :password
@@ -962,7 +1000,7 @@ config.filter_parameters << :password
 
 ### Фильтрация редиректов
 
-Иногда нужно фильтровать из файлов лога некоторые деликатные ссылки, на которые редиректит ваше приложение. Это можно осуществить с использованием конфигурационной опции `config.filter_redirect`:
+Иногда нужно фильтровать из файлов лога некоторые конфиденциальные ссылки, на которые редиректит ваше приложение. Это можно осуществить с использованием конфигурационной опции `config.filter_redirect`:
 
 ```ruby
 config.filter_redirect << 's3.amazonaws.com'
@@ -1002,7 +1040,7 @@ class ApplicationController < ActionController::Base
   private
 
     def record_not_found
-      render text: "404 Not Found", status: 404
+      render plain: "404 Not Found", status: 404
     end
 end
 ```
@@ -1039,7 +1077,63 @@ class ClientsController < ApplicationController
 end
 ```
 
+WARNING: Не следует делать `rescue_from Exception` или `rescue_from StandardError`, если у вас нет веской причины, так как это вызовет серьезные сторонние эффекты (например, вы не сможете увидеть подробности и трейс исключения при разработке). Если хотите динамически создавать страницы ошибок, обратитесь к [Произвольная страница ошибок](#custom-errors-page).
+
 NOTE: Некоторые исключения перехватываемы только из класса `ApplicationController`, так как они вызываются до того, как контроллер будет инициализирован, и экшны будут выполнены. Смотрите [статью Pratik Naik](http://m.onkey.org/2008/7/20/rescue-from-dispatching) по этой теме.
+
+
+### (Custom errors page) Произвольная страница ошибок
+
+Можно настроить макет для страницы обработки ошибки с помощью контроллеров и вьюх. Сначала определите, что отображением страницы ошибок занимаются маршруты приложения.
+
+* `config/application.rb`
+
+  ```ruby
+  config.exceptions_app = self.routes
+  ```
+
+* `config/routes.rb`
+
+  ```ruby
+  get '/404', to: 'errors#not_found'
+  get '/422', to: 'errors#unprocessable_entity'
+  get '/500', to: 'errors#server_error'
+  ```
+
+Создайте контроллер и вьюхи.
+
+* `app/controllers/errors_controller.rb`
+
+  ```ruby
+  class ErrorsController < ActionController::Base
+    layout 'error'
+
+    def not_found
+      render status: :not_found
+    end
+
+    def unprocessable_entity
+      render status: :unprocessable_entity
+    end
+
+    def server_error
+      render status: :server_error
+    end
+  end
+  ```
+
+* `app/views`
+
+  ```
+    errors/
+      not_found.html.erb
+      unprocessable_entity.html.erb
+      server_error.html.erb
+    layouts/
+      error.html.erb
+  ```
+
+Не забывайте установить правильный код статуса в контроллере, как показано выше. Следует измегать использования базы данных или какие-либо сложные операции, так как пользователь уже на странице ошибке. Вызов еще одной ошибки на странице ошибки приведет к проблемам.
 
 Навязывание протокола HTTPS
 ---------------------------
