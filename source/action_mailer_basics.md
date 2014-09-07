@@ -22,7 +22,7 @@ Action Mailer позволяет отправлять электронные п�
 #### Создаем рассыльщик
 
 ```bash
-$ rails generate mailer UserMailer
+$ bin/rails generate mailer UserMailer
 create  app/mailers/user_mailer.rb
 invoke  erb
 create    app/views/user_mailer
@@ -122,8 +122,8 @@ Thanks for joining and have a great day!
 Во первых, давайте создадим простой скаффолд `User`:
 
 ```bash
-$ rails generate scaffold user name email login
-$ rake db:migrate
+$ bin/rails generate scaffold user name email login
+$ bin/rake db:migrate
 ```
 
 Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить UserMailer доставлять email каждому вновь созданному пользователю, изменив экшн create и вставив вызов `UserMailer.welcome_email` сразу после того, как пользователь был успешно сохранен:
@@ -138,7 +138,9 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         # Сказать UserMailer отослать приветственное письмо после сохранения
-        UserMailer.welcome_email(@user).deliver
+        UserMailer.welcome_email(@user).deliver_later # (Rails 4.2)
+        # UserMailer.welcome_email(@user).deliver     # (до Rails 4.2)
+
 
         format.html { redirect_to(@user, notice: 'User was successfully created.') }
         format.json { render json: @user, status: :created, location: @user }
@@ -151,7 +153,21 @@ class UsersController < ApplicationController
 end
 ```
 
-Метод `welcome_email` возвращает объект `Mail::Message`, которому затем можно сказать `deliver`, чтобы он сам себя отослал.
+NOTE: Поведением Active Job поумолчанию является запуск заданий ':inline'. Поэтому можно использовать `deliver_later` для отсылки писем прямо сейчас, а если позже решите отправлять письма в фоновой задаче, вам нужно будет всего лишь настроить Active Job для использования бэкэнда очередей (Sidekiq, Resque и т.п.).
+
+Если хотите отправлять письма прямо сейчас в любом случае (например, из крона) просто вызовите `deliver_now`:
+
+```ruby
+class SendWeeklySummary
+  def run
+    User.find_each do |user|
+      UserMailer.weekly_summary(user).deliver_now
+    end
+  end
+end
+```
+
+Метод `welcome_email` возвращает объект `ActionMailer::MessageDelivery`, которому затем можно сказать `deliver_now` или `deliver_later`, чтобы он сам себя отослал. Объект `ActionMailer::MessageDelivery` — это всего лишь обертка для `Mail::Message`. Если хотите исследовать, изменить или еще что-то сделать с объектом `Mail::Message`, к нему можно получить доступ с помощью метода `message` на объекте `ActionMailer::MessageDelivery`.
 
 ### Автоматическое кодирование значений заголовка
 
@@ -185,9 +201,11 @@ NOTE: Mail автоматически кодирует вложение в Base6
 
     ```ruby
     encoded_content = SpecialEncode(File.read('/path/to/filename.jpg'))
-    attachments['filename.jpg'] = {mime_type: 'application/x-gzip',
-                                   encoding: 'SpecialEncoding',
-                                   content: encoded_content }
+    attachments['filename.jpg'] = {
+      mime_type: 'application/x-gzip',
+      encoding: 'SpecialEncoding',
+      content: encoded_content
+    }
     ```
 
 NOTE: Если указать кодировку, Mail будет полагать, что ваше содержимое уже кодировано в ней и не попытается кодировать в Base64.
@@ -246,9 +264,9 @@ end
 ```ruby
 def welcome_email(user)
   @user = user
-  email_with_name = "#{@user.name} <#{@user.email}>"
+  email_with_name = %("#{@user.name}" <#{@user.email}>)
   mail(to: email_with_name, subject: 'Welcome to My Awesome Site')
-`end
+end
 ```
 
 ### Вьюхи рассыльщика
@@ -334,6 +352,21 @@ end
 ```ruby
 config.action_mailer.default_url_options = { host: 'example.com' }
 ```
+
+В связи с таким поведением в письме нельзя использовать любые хелперы `*_path`. Вместо них можно использовать связанные хелперы `*_url`. Например, вместо использования
+
+```
+<%= link_to 'welcome', welcome_path %>
+```
+
+Нужно использовать:
+
+```
+<%= link_to 'welcome', welcome_url %>
+```
+
+При использовании полного URL ваши ссылки в письмах будут работать.
+
 
 #### Создание URL с помощью `url_for`
 
@@ -512,7 +545,7 @@ Action Mailer теперь всего лишь наследуется от `Abst
 | `deliveries`            | Содержит массив всех электронных писем, отправленных через Action Mailer с помощью delivery_method :test. Очень полезно для юнит- и функционального тестирования.|
 | `default_options`       | Позволит вам установить значения по умолчанию для опций метода `mail` (`:from`, `:reply_to` и т.д.).|
 
-Подробное описание возможных конфигураций смотрите в [разделе про Action Mailer](/configuring-rails-applications#configuring-action-mailer) нашего руководства по конфигурированию приложений Rails.
+Подробное описание возможных конфигураций смотрите в [разделе про настройку Action Mailer](/configuring-rails-applications#configuring-action-mailer) нашего руководства по конфигурированию приложений Rails.
 
 ### Пример настройки Action Mailer
 
