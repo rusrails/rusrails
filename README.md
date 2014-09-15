@@ -1,3 +1,4 @@
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/morsbox/rusrails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 Официальный репозиторий проекта [RusRails.ru](http://rusrails.ru)
 =================================================================
 
