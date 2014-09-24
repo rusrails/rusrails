@@ -1251,7 +1251,7 @@ NOTE: Defined in `active_support/core_ext/string/filters.rb`.
 
 Также имеется разрушительная версия `String#squish!`.
 
-Отметьте, что он обрабатывает и пробелы ASCII, и Unicode, такие как монгольский разделитель гласных (U+180E).
+Отметьте, что он обрабатывает и ASCII, и Unicode пробелы.
 
 NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 

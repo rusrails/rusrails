@@ -340,7 +340,7 @@ SELECT * FROM clients ORDER BY id DESC LIMIT 2
 ```ruby
 # Очень неэффективно, когда в таблице users тысячи строк.
 User.all.each do |user|
-  NewsMailer.weekly(user).deliver
+  NewsMailer.weekly(user).deliver_now
 end
 ```
 
@@ -356,7 +356,7 @@ TIP: Методы `find_each` и `find_in_batches` предназначены д
 
 ```ruby
 User.find_each do |user|
-  NewsMailer.weekly(user).deliver
+  NewsMailer.weekly(user).deliver_now
 end
 ```
 
@@ -364,7 +364,7 @@ end
 
 ```ruby
 User.where(weekly_subscriber: true).find_each do |user|
-  NewsMailer.weekly(user).deliver
+  NewsMailer.weekly(user).deliver_now
 end
 ```
 
@@ -380,7 +380,7 @@ end
 
 ```ruby
 User.find_each(batch_size: 5000) do |user|
-  NewsMailer.weekly(user).deliver
+  NewsMailer.weekly(user).deliver_now
 end
 ```
 
@@ -392,7 +392,7 @@ end
 
 ```ruby
 User.find_each(start: 2000, batch_size: 5000) do |user|
-  NewsMailer.weekly(user).deliver
+  NewsMailer.weekly(user).deliver_now
 end
 ```
 
@@ -404,7 +404,7 @@ end
 
 ```ruby
 # Передает в add_invoices массив из 1000 счетов за раз.
-Invoice.find_in_batches(include: :invoice_lines) do |invoices|
+Invoice.find_in_batches do |invoices|
   export.add_invoices(invoices)
 end
 ```
@@ -413,7 +413,7 @@ NOTE: Опция `:include` позволяет назвать связи, кот
 
 ##### Опции для `find_in_batches`
 
-Метод `find_in_batches` принимает те же опции `:batch_size` и `:start`, как и `find_each`, а также большинство опций, допустимых для обычного метода `find`, за исключением `:order` и `:limit`, зарезервированных для внутреннего использования в `find_in_batches`.
+Метод `find_in_batches` принимает те же опции `:batch_size` и `:start`, как и `find_each`.
 
 Условия
 -------

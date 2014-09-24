@@ -1303,9 +1303,9 @@ end
 * `collection<<(object, ...)`
 * `collection.delete(object, ...)`
 * `collection.destroy(object, ...)`
-* `collection=objects`
+* `collection=(objects)`
 * `collection_singular_ids`
-* `collection_singular_ids=ids`
+* `collection_singular_ids=(ids)`
 * `collection.clear`
 * `collection.empty?`
 * `collection.size`
@@ -1381,7 +1381,7 @@ WARNING: Объекты будут в дополнение уничтожены,
 
 WARNING: Объекты будут _всегда_ удаляться из базы данных, игнорируя опцию `:dependent`.
 
-#### `collection=objects`
+#### `collection=(objects)`
 
 Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.
 
@@ -1393,7 +1393,7 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 @order_ids = @customer.order_ids
 ```
 
-#### `collection_singular_ids=ids`
+#### `collection_singular_ids=(ids)`
 
 Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.
 
@@ -1776,9 +1776,9 @@ person.articles << article unless person.articles.include?(post)
 * `collection<<(object, ...)`
 * `collection.delete(object, ...)`
 * `collection.destroy(object, ...)`
-* `collection=objects`
+* `collection=(objects)`
 * `collection_singular_ids`
-* `collection_singular_ids=ids`
+* `collection_singular_ids=(ids)`
 * `collection.clear`
 * `collection.empty?`
 * `collection.size`
@@ -1860,7 +1860,7 @@ WARNING: Это не запустит колбэки на соединитель
 @part.assemblies.destroy(@assembly1)
 ```
 
-#### `collection=objects`
+#### `collection=(objects)`
 
 Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.
 
@@ -1872,7 +1872,7 @@ WARNING: Это не запустит колбэки на соединитель
 @assembly_ids = @part.assembly_ids
 ```
 
-#### `collection_singular_ids=ids`
+#### `collection_singular_ids=(ids)`
 
 Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.
 

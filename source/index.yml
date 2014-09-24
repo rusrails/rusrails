@@ -11,8 +11,8 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: 41231ef6c6c6a6e546b69add28f04aafb9e0e952
-    date:     19/08/14
+    revision: ed7e8751542e72e360a80221321d69fa144a181c
+    date:     23/08/14
 
   - title:    Основы Active Record
     path:     active-record-basics
@@ -41,14 +41,14 @@ pages:
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: 0f9118ab6fc1376189777d6b6fbaa46d24d4ec74
-    date:     25/07/14
+    revision: 17a39c841d7ee9508da2b06eec72206ad3510881
+    date:     27/08/14
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
     file:     active_record_querying.md
-    revision: b494e94bc90b4d553a986242a6f44c4d6707a43f
-    date:     12/08/14
+    revision: 2e51d6f917a0008350e5e84523fbe6cab1956851
+    date:     12/09/14
 
   - title:    Основы Active Model
     path:     active-model-basics
@@ -83,8 +83,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: 077d28fb6652a94db190aa0239ceaee35404e0ff
-    date:     03/09/14
+    revision: 62955c77bf380fe39005c1a7de8b8fde769af2cd
+    date:     15/09/14
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
