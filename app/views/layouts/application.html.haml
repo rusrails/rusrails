@@ -46,7 +46,7 @@
               %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
             - if content_for?(:menu)
               .well.menu= yield(:menu)
-            - unless @page && @page.path == 'index'
+            -# unless @page && @page.path == 'index'
               .well{align: 'center'}
                 = render "shared/railsclub"
             .well
