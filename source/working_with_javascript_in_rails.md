@@ -82,7 +82,9 @@ paintIt = (element, backgroundColor, textColor) ->
     element.style.color = textColor
 
 $ ->
-  $("a[data-background-color]").click ->
+  $("a[data-background-color]").click (e) ->
+    e.preventDefault()
+
     backgroundColor = $(this).data("background-color")
     textColor = $(this).data("text-color")
     paintIt(this, backgroundColor, textColor)
@@ -112,7 +114,7 @@ Rails предоставляет ряд вспомогательных мето�
 [`form_for`](http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-form_for) - это хелпер, помогающий писать формы. `form_for` принимает опцию `:remote`. Она работает следующим образом:
 
 ```erb
-<%= form_for(@post, remote: true) do |f| %>
+<%= form_for(@article, remote: true) do |f| %>
   ...
 <% end %>
 ```
@@ -120,7 +122,7 @@ Rails предоставляет ряд вспомогательных мето�
 Это создаст следующий HTML:
 
 ```html
-<form accept-charset="UTF-8" action="/posts" class="new_post" data-remote="true" id="new_post" method="post">
+<form accept-charset="UTF-8" action="/articles" class="new_article" data-remote="true" id="new_article" method="post">
   ...
 </form>
 ```
@@ -131,10 +133,10 @@ Rails предоставляет ряд вспомогательных мето�
 
 ```coffeescript
 $(document).ready ->
-  $("#new_post").on("ajax:success", (e, data, status, xhr) ->
-    $("#new_post").append xhr.responseText
-  ).on "ajax:error", (e, xhr, status, error) ->
-    $("#new_post").append "<p>ERROR</p>"
+  $("#new_article").on("ajax:success", (e, data, status, xhr) ->
+    $("#new_article").append xhr.responseText
+   ).on "ajax:error", (e, xhr, status, error) ->
+    $("#new_article").append "<p>ERROR</p>"
 ```
 
 Очевидно, что хочется чего-то большего, но ведь это только начало. О событиях можно узнать подробнее [в вики jquery-ujs](https://github.com/rails/jquery-ujs/wiki/ajax).
@@ -144,7 +146,7 @@ $(document).ready ->
 [`form_tag`](http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-form_tag) очень похож на `form_for`. У него есть опция `:remote`, которую используют так:
 
 ```erb
-<%= form_tag('/posts', remote: true) do %>
+<%= form_tag('/articles', remote: true) do %>
   ...
 <% end %>
 ```
@@ -152,7 +154,7 @@ $(document).ready ->
 Это создаст следующий HTML:
 
 ```html
-<form accept-charset="UTF-8" action="/posts" data-remote="true" method="post">
+<form accept-charset="UTF-8" action="/articles" data-remote="true" method="post">
   ...
 </form>
 ```
@@ -164,19 +166,19 @@ $(document).ready ->
 [`link_to`](http://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-link_to) - это хелпер, помогающий создавать ссылки. У него есть опция `:remote`, которую используют следующим образом:
 
 ```erb
-<%= link_to "a post", @post, remote: true %>
+<%= link_to "an article", @article, remote: true %>
 ```
 
 что создаст
 
 ```html
-<a href="/posts/1" data-remote="true">a post</a>
+<a href="/articles/1" data-remote="true">an article</a>
 ```
 
 Можно привязаться к тем же событиям Ajax, что и в `form_for`. Вот пример. Предположим, имеется список публикаций, которые можно удалить одним щелчком. Нужно создать некоторый HTML, например так:
 
 ```erb
-<%= link_to "Delete post", @post, remote: true, method: :delete %>
+<%= link_to "Delete article", @article, remote: true, method: :delete %>
 ```
 
 и написать некоторый CoffeeScript:
@@ -184,7 +186,7 @@ $(document).ready ->
 ```coffeescript
 $ ->
   $("a[data-remote]").on "ajax:success", (e, data, status, xhr) ->
-    alert "The post was deleted."
+    alert "The article was deleted."
 ```
 
 ### button_to
@@ -192,14 +194,14 @@ $ ->
 [`button_to`](http://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-button_to) - это хелпер, помогающий создавать кнопки. У него есть опция `:remote`, которая вызывается так:
 
 ```erb
-<%= button_to "A post", @post, remote: true %>
+<%= button_to "An article", @article, remote: true %>
 ```
 
 это создаст
 
 ```html
-<form action="/posts/1" class="button_to" data-remote="true" method="post">
-  <div><input type="submit" value="A post"></div>
+<form action="/articles/1" class="button_to" data-remote="true" method="post">
+  <div><input type="submit" value="An article"></div>
 </form>
 ```
 
