@@ -107,8 +107,8 @@ pages:
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
-    revision: d4f0f836f5341ce17765a9bb40b08434ae7970e9
-    date:     20/08/14
+    revision: 25895427c38252c019a0e5bfe310183389c34d93
+    date:     03/10/14
 
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
@@ -173,8 +173,8 @@ pages:
   - title:    Rails on Rack
     path:     rails-on-rack
     file:     rails_on_rack.md
-    revision: f83dae831f03969c44e80b1d874b0fd00ddeef8a
-    date:     05/12/2013
+    revision: 19ef270923cfa498b904cb3cc4484c83e463f371
+    date:     06/06/2014
 
   - title:    Создание и настройка генераторов Rails
     path:     generators

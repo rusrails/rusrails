@@ -25,7 +25,7 @@ Rails on Rack
 
 ### Объект Rack приложения Rails
 
-`ApplicationName::Application` это основной объект приложения Rack в приложении Rails. Любой совместимый с Rack веб-сервер должен использовать объект `ApplicationName::Application` для обслуживания приложения Rails. `Rails.application` ссылается на тот же объект приложения.
+`Rails.application` это основной объект приложения Rack в приложении Rails. Любой совместимый с Rack веб-сервер должен использовать объект `Rails.application` для обслуживания приложения Rails. `Rails.application` ссылается на тот же объект приложения.
 
 ### `rails server`
 
@@ -107,7 +107,7 @@ NOTE: `ActionDispatch::MiddlewareStack` это эквивалент `Rack::Build
 В Rails имеется удобный таск rake для просмотра используемого стека промежуточных программ:
 
 ```bash
-$ rake middleware
+$ bin/rake middleware
 ```
 
 Для нового приложения Rails он может выдать что-то наподобие:
@@ -136,7 +136,7 @@ use ActionDispatch::ParamsParser
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
-run MyApp::Application.routes
+run Rails.application.routes
 ```
 
 Промежуточные программы по умолчанию, показанные здесь (и некоторые другие) описываются в разделе [Внутренние промежуточные программы](#internal-middleware-stack) ниже.
@@ -189,13 +189,13 @@ config.middleware.delete "Rack::Lock"
 Теперь, при просмотре стека промежуточных программ, вы увидите, что `Rack::Lock` больше не является его частью.
 
 ```bash
-$ rake middleware
+$ bin/rake middleware
 (in /Users/lifo/Rails/blog)
 use ActionDispatch::Static
 use #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x00000001c304c8>
 use Rack::Runtime
 ...
-run Blog::Application.routes
+run Rails.application.routes
 ```
 
 Если хотите убрать промежуточные программы, относящиеся к сессии, сделайте следующее:

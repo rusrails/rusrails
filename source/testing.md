@@ -766,6 +766,7 @@ end
 | `rake test:functionals` | Запускает все функциональные тесты из `test/controllers`, `test/mailers` и `test/functional` |
 | `rake test:helpers`     | Запускает все тесты хелперов из `test/helpers`                                               |
 | `rake test:integration` | Запускает все объединенные тесты из `test/integration`                                       |
+| `rake test:jobs`        | Запускает все тесты отложенных задач из `test/jobs`                                          |
 | `rake test:mailers`     | Запускает все тесты рассыльщиков из `test/mailers`                                           |
 | `rake test:models`      | Запускает все тесты моделей из `test/models`                                                 |
 | `rake test:units`       | Запускает все юнит-тесты из `test/models`, `test/helpers` и `test/unit`                      |
