@@ -65,6 +65,7 @@
 ## Заметки о релизах
 
 - [Руководство по обновлению Ruby on Rails](/upgrading-ruby-on-rails) := Это руководство поможет обновить приложения на последние версии Ruby on Rails.
+- [Заметки о релизе Ruby on Rails 4.2](/4_2_release_notes) := Заметки о релизе Rails 4.2
 - [Заметки о релизе Ruby on Rails 4.1](/4_1_release_notes) := Заметки о релизе Rails 4.1
 - [Заметки о релизе Ruby on Rails 4.0](/4_0_release_notes) := Заметки о релизе Rails 4.0
 - [Заметки о релизе Ruby on Rails 3.2](/3_2_release_notes) := Заметки о релизе Rails 3.2

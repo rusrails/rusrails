@@ -50,6 +50,7 @@ next_column
 * **Заметки о релизах**
 
     * [Руководство по обновлению Ruby on Rails](/upgrading-ruby-on-rails)
+    * [Заметки о релизе Ruby on Rails 4.2](/4_2_release_notes)
     * [Заметки о релизе Ruby on Rails 4.1](/4_1_release_notes)
     * [Заметки о релизе Ruby on Rails 4.0](/4_0_release_notes)
     * [Заметки о релизе Ruby on Rails 3.2](/3_2_release_notes)

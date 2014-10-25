@@ -218,8 +218,13 @@ pages:
     revision: 578839bbbd8c0ca670a9735aafdf49bd7c8587c8
     date:     18/02/14
 
+  - title:    Заметки о релизе Ruby on Rails 4.2
+    path:     4_2_release_notes
+    file:     4_2_release_notes.md
+    revision: b5571b3ccfbbfae7fea49c7934bb0348acceeeb4
+    date:     26/09/14
+
 plan:
-  - file:     4_2_release_notes.md
   - file:     action_view_overview.md
   - file:     active_job_basics.md
   - file:     active_record_postgresql.md
