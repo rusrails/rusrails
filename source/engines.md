@@ -224,7 +224,7 @@ create    app/assets/stylesheets/scaffold.css
 
 Далее для этой модели вызывается генератор `test_unit`, создающий тест модели в `test/models/blorgh/post_test.rb` (а не в `test/models/post_test.rb`) и фикстуру в `test/fixtures/blorgh/posts.yml` (а не в `test/fixtures/posts.yml`).
 
-После этого для ресурса вставляется строка в в файл `config/routes.rb` engine-а. Эта строка - просто `resources :posts`, файл `config/routes.rb` engine-а стал таким:
+После этого для ресурса вставляется строка в файл `config/routes.rb` engine-а. Эта строка - просто `resources :posts`, файл `config/routes.rb` engine-а стал таким:
 
 ```ruby
 Blorgh::Engine.routes.draw do
