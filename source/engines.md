@@ -224,7 +224,7 @@ create    app/assets/stylesheets/scaffold.css
 
 Далее для этой модели вызывается генератор `test_unit`, создающий тест модели в `test/models/blorgh/post_test.rb` (а не в `test/models/post_test.rb`) и фикстуру в `test/fixtures/blorgh/posts.yml` (а не в `test/fixtures/posts.yml`).
 
-После этого для ресурса вставляется строка в в файл `config/routes.rb` engine-а. Эта строка - просто `resources :posts`, файл `config/routes.rb` engine-а стал таким:
+После этого для ресурса вставляется строка в файл `config/routes.rb` engine-а. Эта строка - просто `resources :posts`, файл `config/routes.rb` engine-а стал таким:
 
 ```ruby
 Blorgh::Engine.routes.draw do
@@ -232,7 +232,7 @@ Blorgh::Engine.routes.draw do
 end
 ```
 
-Отметьте, что маршруты отрисовываются в объекте `Blorgh::Engine`, а не в классе `YourApp::Application`. Это так, поскольку маршруты engine ограничены самим engine и могут быть смонтированы в определенной точке, как показано в разделе [Директория `test`](#test-directory). Это также вызывает то, что маршруты engine изолированы от маршрутов приложения. Раздел [Маршруты](#routes) руководства описывает это подробнее.
+Отметьте, что маршруты отрисовываются в объекте `Blorgh::Engine`, а не в классе `YourApp::Application`. Это так, поскольку маршруты engine ограничены самим engine и могут быть смонтированы в определенной точке, как показано в разделе [Директория `test`](#test-directory). Это также из-за того, что маршруты engine изолированы от маршрутов приложения. Раздел [Маршруты](#routes) руководства описывает это подробнее.
 
 Затем вызывается генератор `scaffold_controller`, создавая контроллер с именем `Blorgh::PostsController` (в `app/controllers/blorgh/posts_controller.rb`) и соответствующие вьюхи в `app/views/blorgh/posts`. Этот генератор также создает тест для контроллера (`test/controllers/blorgh/posts_controller_test.rb`) и хелпер (`app/helpers/blorgh/posts_controller.rb`).
 
