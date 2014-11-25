@@ -32,7 +32,7 @@ NOTE: Это руководство не претендует на полную 
 <form accept-charset="UTF-8" action="/" method="post">
   <input name="utf8" type="hidden" value="&#x2713;" />
   <input name="authenticity_token" type="hidden" value="J7CBxfHalt49OSHp27hblqK20c9PgwJ108nDHX/8Cts=" />
-  Form contents
+  Содержимое формы
 </form>
 ```
 
