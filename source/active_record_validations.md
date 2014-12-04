@@ -207,6 +207,8 @@ end
 
 CAUTION: Не используйте `validates_associated` на обоих концах ваших связей, они будут вызывать друг друга в бесконечном цикле.
 
+Также, вы можете потребовать, чтобы указанный атрибут не соответствовал регулярному выражению, используя опцию `:without`.
+
 Для `validates_associated` сообщение об ошибке по умолчанию следующее _"is invalid"_. Заметьте, что каждый связанный объект имеет свою собственную коллекцию `errors`; ошибки не добавляются к вызывающей модели.
 
 ### `confirmation`
@@ -316,7 +318,7 @@ class Essay < ActiveRecord::Base
   validates :content, length: {
     minimum: 300,
     maximum: 400,
-    tokenizer: lambda { |str| str.scan(/\w+/) },
+    tokenizer: lambda { |str| str.split(/\s+/) },
     too_short: "must have at least %{count} words",
     too_long: "must have at most %{count} words"
   }
@@ -387,9 +389,15 @@ end
 
 При проведении валидации существования объекта, связанного отношением `has_one` или `has_many`, будет проверено, что объект ни `blank?`, ни `marked_for_destruction?`.
 
-Так как `false.blank?` это true, если хотите провести валидацию существования булева поля, нужно использовать `validates :field_name, inclusion: { in: [true, false] }`.
+Так как `false.blank?` это true, если хотите провести валидацию существования булева поля, нужно использовать одну из следующих валидаций:
 
-По умолчанию сообщение об ошибке _"can't be blank"_.
+```ruby
+validates :boolean_field_name, presence: true
+validates :boolean_field_name, inclusion: { in: [true, false] }
+validates :boolean_field_name, exclusion: { in: [nil] }
+```
+
+При использовании одной из этих валидаций, вы можете быть уверены, что значение не будет `nil`, которое в большинстве случаев преобразуется в `NULL` значение.
 
 ### `absence`
 
@@ -530,7 +538,7 @@ end
 ```ruby
 class Person < ActiveRecord::Base
   validates_each :name, :surname do |record, attr, value|
-    record.errors.add(attr, 'must start with upper case') if value =~ /\A[a-z]/
+    record.errors.add(attr, 'must start with upper case') if value =~ /\A[[:lower:]]/
   end
 end
 ```

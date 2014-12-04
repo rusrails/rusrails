@@ -1429,7 +1429,7 @@ NOTE: Определено в `active_support/core_ext/string/access.rb`.
 "hello".from(0)  # => "hello"
 "hello".from(2)  # => "llo"
 "hello".from(-2) # => "lo"
-"hello".from(10) # => "" если < 1.9, nil в 1.9
+"hello".from(10) # => nil
 ```
 
 NOTE: Определено в `active_support/core_ext/string/access.rb`.
@@ -1813,16 +1813,12 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 
 ```ruby
 def full_messages
-  full_messages = []
+  map { |attribute, message| full_message(attribute, message) }
+end
 
-  each do |attribute, messages|
-    ...
-    attr_name = attribute.to_s.gsub('.', '_').humanize
-    attr_name = @base.class.human_attribute_name(attribute, default: attr_name)
-    ...
-  end
-
-  full_messages
+def full_message
+  attr_name = attribute.to_s.tr('.', '_').humanize
+  attr_name = @base.class.human_attribute_name(attribute, default: attr_name)
 end
 ```
 
@@ -1930,20 +1926,6 @@ NOTE: Определено в `active_support/core_ext/numeric/bytes.rb`.
 # эквивалент для Time.current.advance(months: 4, years: 5)
 (4.months + 5.years).from_now
 ```
-
-Хотя эти примеры предоставляют точные вычисления при использовании в примерах выше, следует отметить, что это не так, если перед использованием конвертируется результат методов `months', `years', и т.п.:
-
-```ruby
-# эквивалент для 30.days.to_i.from_now
-1.month.to_i.from_now
-
-# эквивалент для 365.25.days.to_f.from_now
-1.year.to_f.from_now
-```
-
-В таких случаях, для точного вычисления даты и времени следует использовать основные классы Ruby [Date](http://ruby-doc.org/stdlib/libdoc/date/rdoc/Date.html) и [Time](http://ruby-doc.org/stdlib/libdoc/time/rdoc/Time.html).
-
-NOTE: Определено в `active_support/core_ext/numeric/time.rb`.
 
 ### Форматирование
 

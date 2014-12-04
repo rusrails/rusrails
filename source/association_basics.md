@@ -744,7 +744,7 @@ class Order < ActiveRecord::Base
 end
 ```
 
-Каждый экземпляр модели order будет иметь эти методы:
+Каждый экземпляр модели `Order` будет иметь эти методы:
 
 ```ruby
 customer
@@ -1324,16 +1324,16 @@ class Customer < ActiveRecord::Base
 end
 ```
 
-Каждый экземпляр модели customer будет иметь эти методы:
+Каждый экземпляр модели `Customer` будет иметь эти методы:
 
 ```ruby
 orders(force_reload = false)
 orders<<(object, ...)
 orders.delete(object, ...)
 orders.destroy(object, ...)
-orders=objects
+orders=(objects)
 order_ids
-order_ids=ids
+order_ids=(ids)
 orders.clear
 orders.empty?
 orders.size
@@ -1513,8 +1513,6 @@ end
 * `:nullify` приведет к тому, что внешние ключи будет установлен `NULL`. Колбэки не запускаются.
 * `:restrict_with_exception` приведет к вызову исключения, если есть какой-нибудь связанный объект
 * `:restrict_with_error` приведет к ошибке, добавляемой к владельцу, если есть какой-нибудь связанный объект
-
-NOTE: Эта опция игнорируется при использовании на связи опции `:through`.
 
 #### `:foreign_key`
 
@@ -1797,16 +1795,16 @@ class Part < ActiveRecord::Base
 end
 ```
 
-Каждый экземпляр модели part будет иметь эти методы:
+Каждый экземпляр модели `Part` будет иметь эти методы:
 
 ```ruby
 assemblies(force_reload = false)
 assemblies<<(object, ...)
 assemblies.delete(object, ...)
 assemblies.destroy(object, ...)
-assemblies=objects
+assemblies=(objects)
 assembly_ids
-assembly_ids=ids
+assembly_ids=(ids)
 assemblies.clear
 assemblies.empty?
 assemblies.size

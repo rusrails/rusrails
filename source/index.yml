@@ -11,26 +11,26 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: ed7e8751542e72e360a80221321d69fa144a181c
-    date:     23/08/14
+    revision: f28d1ddd507174ac233b773cc4f35c3c05ad32e7
+    date:     21/11/14
 
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: d0af90592540225080d03ea2384da759f18620ff
-    date:     23/07/14
+    revision: 1cfe432e178fb207962ee62f3a56b67aee4b27a3
+    date:     25/10/14
 
   - title:    Миграции базы данных Rails
     path:     rails-database-migrations
     file:     active_record_migrations.md
-    revision: 7a07b2217ad73bbe99234840ea721dae9ecb0d9a
-    date:     27/06/14
+    revision: 2a1afe6b372b9c8c59b875ebaa0e4f29e407afc2
+    date:     24/10/14
 
   - title:    Валидации Active Record
     path:     active-record-validations
     file:     active_record_validations.md
-    revision: b76269a692d744d8d4d9206da1b837676eb603d8
-    date:     11/07/14
+    revision: 9887a2cfe52f30d4a91e0d16fe57ecf96537b98c
+    date:     04/11/14
 
   - title:    Колбэки Active Record
     path:     active-record-callbacks
@@ -41,8 +41,8 @@ pages:
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: 17a39c841d7ee9508da2b06eec72206ad3510881
-    date:     27/08/14
+    revision: 263e9e468172b0f7ab6d048af260b0b50c2afa1c
+    date:     27/11/14
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
@@ -59,8 +59,8 @@ pages:
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
-    revision: e2960fb293840983ac99a8997b09b183b86b05c7
-    date:     23/06/14
+    revision: 67a605d3d4cf2a00b403bb31ca6c2dd98d2f04ba
+    date:     01/10/14
 
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
@@ -71,8 +71,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 7143e0da037a0f56801023e2f8c17867814fe7b1
-    date:     07/09/14
+    revision: 72c182264e049af3fe056e2e130e3087fbb3eee6
+    date:     25/10/14
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -83,8 +83,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: 62955c77bf380fe39005c1a7de8b8fde769af2cd
-    date:     15/09/14
+    revision: 5accf7a7716b236394ff2cd806ff5d25ffbf9776
+    date:     03/12/14
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
