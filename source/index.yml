@@ -229,6 +229,7 @@ plan:
   - file:     active_job_basics.md
   - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
+  - file:     constant_autoloading_and_reloading.md
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
   - file:     rails_application_templates.md
