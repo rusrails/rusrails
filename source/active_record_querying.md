@@ -980,7 +980,7 @@ end
 
 Active Record предоставляет метод поиска с именем `joins` для определения условия `JOIN` в результирующем SQL. Есть разные способы определить метод `joins`:
 
-### Использование строчного фрагмента SQL
+### Использование строкового фрагмента SQL
 
 Можете просто дать чистый SQL, определяющий условие `JOIN` в `joins`.
 
@@ -1094,7 +1094,7 @@ SELECT categories.* FROM categories
 
 ### Определение условий в соединительных таблицах
 
-В соединительных таблицах можно определить условия, используя надлежащие [массивные](/active-record-query-interface#array-conditions) и [строчные](/active-record-query-interface#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-query-interface#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
+В соединительных таблицах можно определить условия, используя надлежащие [массивные](/active-record-query-interface#array-conditions) и [строковые](/active-record-query-interface#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-query-interface#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight

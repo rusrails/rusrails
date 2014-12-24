@@ -221,8 +221,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
     file:     4_2_release_notes.md
-    revision: b5571b3ccfbbfae7fea49c7934bb0348acceeeb4
-    date:     26/09/14
+    revision: be1e0241f012f1151d2448b10e14b8b2eda26b84
+    date:     18/12/14
 
 plan:
   - file:     action_view_overview.md
