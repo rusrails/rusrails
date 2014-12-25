@@ -385,7 +385,7 @@ TIP: В отличие от `change_column` (и `change_column_default`), `chang
 
 Некоторые адаптеры могут поддерживать дополнительные опции; за подробностями обратитесь к документации API конкретных адаптеров.
 
-### (foreign-keys) Внешние ключи (Rails 4.2)
+### (foreign-keys) Внешние ключи
 
 Хотя это и не требуется, вы можете захотеть добавить ограничения внешнего ключа для [обеспечения ссылочной целостности](#active-record-and-referential-integrity).
 
@@ -436,7 +436,7 @@ Product.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 * `drop_table` (необходимо указать блок)
 * `drop_join_table` (необходимо указать блок)
 * `remove_timestamps`
-* `add_foreign_key` (Rails 4.2)
+* `add_foreign_key`
 * `rename_column`
 * `rename_index`
 * `remove_reference`

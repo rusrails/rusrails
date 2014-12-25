@@ -1293,7 +1293,7 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 
 NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 
-### (truncate_words) `truncate_words` (Rails 4.2)
+### (truncate_words) `truncate_words`
 
 Метод `truncate_words` возвращает копию получателя, сокращенную после заданного количества слов:
 
@@ -2846,7 +2846,7 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 
 ### Работа со значениями
 
-#### (transform_values) `transform_values` && `transform_values!` (Rails 4.2)
+#### (transform_values) `transform_values` && `transform_values!`
 
 Метод `transform_values` принимает блок и возвращает хэш, в котором операции из блока были применены к каждому из значений получателя.
 

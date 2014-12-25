@@ -39,7 +39,7 @@ class TrashableCleanupJob < ActiveJob::Base
 end
 ```
 
-TODO. За подробностями обратитесь к руководству по [основам Active Job](/active_job_basics).
+За подробностями обратитесь к руководству по [основам Active Job](/active_job_basics). (TODO)
 
 ### Асинхронные письма
 
@@ -682,7 +682,7 @@ Active Support
 *   Представлен `Concern#class_methods` как альтернатива `module ClassMethods`, а также `Kernel#concern` для избегания шаблонного `module Foo; extend ActiveSupport::Concern; end`.
     ([Commit](https://github.com/rails/rails/commit/b16c36e688970df2f96f793a759365b248b582ad))
 
-*   Новое [руководства](/constant_autoloading_and_reloading) про автозагрузку и перезагрузку констант.
+*   Новое [руководство](/constant_autoloading_and_reloading) про автозагрузку и перезагрузку констант. (TODO)
 
 Благодарности
 -------------
