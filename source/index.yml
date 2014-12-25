@@ -185,8 +185,8 @@ pages:
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
-    revision: b74490e4f25ef26de3906cd5cd9ca0193e873372
-    date:     18/02/2014
+    revision: 2ce3e9e8725f0593bf22b4990bec99a6b46d69b9
+    date:     18/12/2014
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
