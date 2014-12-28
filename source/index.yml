@@ -104,6 +104,12 @@ pages:
     revision: 3941b8da9fcba93c30dd8dc89af648872b809e5e
     date:     21/08/14
 
+  - title:    Основы Active Job
+    path:     active_job_basics
+    file:     active_job_basics.md
+    revision: 50a3e482ad23091890139d990cced9027a9a0d77
+    date:     12/12/14
+
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
@@ -226,7 +232,6 @@ pages:
 
 plan:
   - file:     action_view_overview.md
-  - file:     active_job_basics.md
   - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
   - file:     constant_autoloading_and_reloading.md

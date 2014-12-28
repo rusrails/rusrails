@@ -22,14 +22,18 @@
     * [Обзор Action Controller](/action-controller-overview)
     * [Роутинг Rails](/rails-routing)
 
-next_column
-
 * **Копаем глубже**
 
     * [Расширения ядра Active Support](/active-support-core-extensions)
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [Rails Internationalization API](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
+    * [Основы Active Job](/active_job_basics)
+
+next_column
+
+* **Копаем глубже**
+
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)

@@ -39,7 +39,7 @@ class TrashableCleanupJob < ActiveJob::Base
 end
 ```
 
-За подробностями обратитесь к руководству по [основам Active Job](/active_job_basics). (TODO)
+За подробностями обратитесь к руководству по [основам Active Job](/active_job_basics).
 
 ### Асинхронные письма
 
