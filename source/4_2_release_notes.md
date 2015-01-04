@@ -682,7 +682,7 @@ Active Support
 *   Представлен `Concern#class_methods` как альтернатива `module ClassMethods`, а также `Kernel#concern` для избегания шаблонного `module Foo; extend ActiveSupport::Concern; end`.
     ([Commit](https://github.com/rails/rails/commit/b16c36e688970df2f96f793a759365b248b582ad))
 
-*   Новое [руководство](/constant_autoloading_and_reloading) про автозагрузку и перезагрузку констант. (TODO)
+*   Новое [руководство](/constant_autoloading_and_reloading) про автозагрузку и перезагрузку констант.
 
 Благодарности
 -------------

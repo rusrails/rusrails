@@ -44,6 +44,7 @@ next_column
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Engine для начинающих](/engines)
     * [Процесс инициализации в Rails](/initialization)
+    * [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading)
 
 * **Расширяем Rails**
 

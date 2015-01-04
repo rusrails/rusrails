@@ -170,6 +170,12 @@ pages:
     revision: 56fa194daa171f50b73f08ec0a52f845dc0f5a51
     date:     10/02/14
 
+  - title:    Автозагрузка и перезагрузка констант
+    path:     constant_autoloading_and_reloading
+    file:     constant_autoloading_and_reloading.md
+    revision: 604df2c57e3aaa38557985d73ea1665021689bf9
+    date:     20/12/14
+
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
@@ -234,7 +240,6 @@ plan:
   - file:     action_view_overview.md
   - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
-  - file:     constant_autoloading_and_reloading.md
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
   - file:     rails_application_templates.md
