@@ -47,8 +47,8 @@ pages:
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
     file:     active_record_querying.md
-    revision: 2e51d6f917a0008350e5e84523fbe6cab1956851
-    date:     12/09/14
+    revision: 3686513de755762842f0dad949164dea80ad6b36
+    date:     17/01/15
 
   - title:    Основы Active Model
     path:     active-model-basics
