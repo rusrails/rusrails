@@ -1653,7 +1653,7 @@ end
 
 ```ruby
 class Customer < ActiveRecord::Base
-  as_many :orders, -> { includes :line_items }
+  has_many :orders, -> { includes :line_items }
 end
 
 class Order < ActiveRecord::Base
