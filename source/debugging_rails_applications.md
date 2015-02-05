@@ -24,17 +24,17 @@
 Хелпер `debug` возвратит тег \<pre>, который рендерит объект, с использованием формата YAML. Это создаст читаемые данные из объекта. Например, если у вас такой код во вьюхе:
 
 ```html+erb
-<%= debug @post %>
+<%= debug @article %>
 <p>
   <b>Title:</b>
-  <%= @post.title %>
+  <%= @article.title %>
 </p>
 ```
 
 Вы получите что-то наподобие этого:
 
 ```yaml
---- !ruby/object:Post
+--- !ruby/object Article
 attributes:
   updated_at: 2008-09-05 22:55:47
   body: It's a very helpful guide for debugging your Rails app.
@@ -53,10 +53,10 @@ Title: Rails debugging guide
 Отображение переменной экземпляра или любого другого объекта или метода в формате yaml может быть достигнуто следующим образом:
 
 ```html+erb
-<%= simple_format @post.to_yaml %>
+<%= simple_format @article.to_yaml %>
 <p>
   <b>Title:</b>
-  <%= @post.title %>
+  <%= @article.title %>
 </p>
 ```
 
@@ -65,7 +65,7 @@ Title: Rails debugging guide
 В результате получится что-то вроде этого во вашей вьюхе:
 
 ```yaml
---- !ruby/object:Post
+--- !ruby/object Article
 attributes:
 updated_at: 2008-09-05 22:55:47
 body: It's a very helpful guide for debugging your Rails app.
@@ -86,7 +86,7 @@ Title: Rails debugging guide
 <%= [1, 2, 3, 4, 5].inspect %>
 <p>
   <b>Title:</b>
-  <%= @post.title %>
+  <%= @article.title %>
 </p>
 ```
 
@@ -121,7 +121,7 @@ config.logger = Logger.new(STDOUT)
 config.logger = Log4r::Logger.new("Application Log")
 ```
 
-TIP: По умолчанию каждый лог создается в `RAILS_ROOT/log/` с именем файла лога `environment_name.log`.
+TIP: По умолчанию каждый лог создается в `RAILS_ROOT/log/` с файлом лога, названным по окружению, в котором запущено приложение.
 
 ### Уровни лога
 
@@ -136,7 +136,7 @@ ActiveRecord::Base.logger.level = 0 # в любое время
 
 Это полезно, когда вы хотите логировать при разработке или установке, но не хотите замусорить рабочий лог ненужной информацией.
 
-TIP: Уровень лога Rails по умолчанию это `info` в рабочем режиме и `debug` в режиме разработки и тестирования.
+TIP: Уровень лога Rails по умолчанию это `debug` в всех средах.
 
 ### Отправка сообщений
 
@@ -151,18 +151,18 @@ logger.fatal "Terminating application, raised unrecoverable error!!!"
 Вот пример метода, оборудованного дополнительным логированием, :
 
 ```ruby
-class PostsController < ApplicationController
+class ArticlesController < ApplicationController
   # ...
 
   def create
-    @post = Post.new(params[:post])
-    logger.debug "New post: #{@post.attributes.inspect}"
-    logger.debug "Post should be valid: #{@post.valid?}"
+    @article = Article.new(params[:article])
+    logger.debug "New article: #{@article.attributes.inspect}"
+    logger.debug "Article should be valid: #{@article.valid?}"
 
-    if @post.save
-      flash[:notice] = 'Post was successfully created.'
-      logger.debug "The post was saved and now the user is going to be redirected..."
-      redirect_to(@post)
+    if @article.save
+      flash[:notice] =  'Article was successfully created.'
+      logger.debug "The article was saved and now the user is going to be redirected..."
+      redirect_to(@article)
     else
       render action: "new"
     end
@@ -175,21 +175,21 @@ end
 Пример лога, сгенерированного при выполнении экшена контроллера:
 
 ```
-Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
+Processing ArticlesController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
   Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
 vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
-  Parameters: {"commit"=>"Create", "post"=>{"title"=>"Debugging Rails",
+  Parameters: {"commit"=>"Create", "article"=>{"title"=>"Debugging Rails",
  "body"=>"I'm learning how to print in logs!!!", "published"=>"0"},
- "authenticity_token"=>"2059c1286e93402e389127b1153204e0d1e275dd", "action"=>"create", "controller"=>"posts"}
-New post: {"updated_at"=>nil, "title"=>"Debugging Rails", "body"=>"I'm learning how to print in logs!!!",
+ "authenticity_token"=>"2059c1286e93402e389127b1153204e0d1e275dd", "action"=>"create", "controller"=>"articles"}
+New article: {"updated_at"=>nil, "title"=>"Debugging Rails", "body"=>"I'm learning how to print in logs!!!",
  "published"=>false, "created_at"=>nil}
-Post should be valid: true
-  Post Create (0.000443)   INSERT INTO "posts" ("updated_at", "title", "body", "published",
+Article should be valid: true
+  Article Create (0.000443)   INSERT INTO "articles" ("updated_at", "title", "body", "published",
  "created_at") VALUES('2008-09-08 14:52:54', 'Debugging Rails',
  'I''m learning how to print in logs!!!', 'f', '2008-09-08 14:52:54')
-The post was saved and now the user is going to be redirected...
-Redirected to #<Post:0x20af760>
-Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
+The article was saved and now the user is going to be redirected...
+Redirected to # Article:0x20af760>
+Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/articles]
 ```
 
 Добавление дополнительного логирования, подобного этому, облегчает поиск неожиданного или необычного поведения в ваших логах. Если добавляете дополнительное логирование, убедитесь в разумном использовании уровней лога, для избежания заполнения ваших рабочих логов ненужными мелочами.
@@ -207,7 +207,8 @@ logger.tagged("BCX") { logger.tagged("Jason") { logger.info "Stuff" } } # Logs "
 ```
 
 ### Воздействие логов на производительность
-У логирования всегда есть небольшое воздействие на производительность приложения rails, особенно при логировании на диск. Однако, тут есть несколько тонкостей:
+
+У логирования всегда будет небольшое воздействие на производительность приложения rails, особенно при логировании на диск. Однако, тут есть несколько тонкостей:
 
 При использовании уровня `:debug` гораздо большее пенальти производительности, чем у уровня `:fatal`, так как вычисляется и пишется в лог (т.е. на диск) гораздо большее количество строк.
 
@@ -225,7 +226,7 @@ logger.debug {"Person attributes hash: #{@person.attributes.inspect}"}
 
 Содержимое блока и, следовательно, интерполяция строки будут вычислены только, если включен уровень enabled. Экономия производительности будет реальна заментна только при больших количествах логирования, но это все равно хорошая практика применения.
 
-Отладка с помощью гема "debugger"
+Отладка с помощью гема "byebug"
 ---------------------------------
 
 Когда ваш код ведет себя неожиданным образом, можете печатать в логи или консоль, чтобы выявить проблему. К сожалению, иногда бывает, что такой способ отслеживания ошибки не эффективен в поиске причины проблемы. Когда вы фактически нуждаетесь в путешествии вглубь исполняемого кода, отладчик - это ваш лучший напарник.
@@ -234,248 +235,278 @@ logger.debug {"Person attributes hash: #{@person.attributes.inspect}"}
 
 ### Установка
 
-Вы можете использовать гем `debugger` для настройки точек останова и прохождения через живой код. Чтобы установить его, просто запустите:
+Вы можете использовать гем `byebug` для настройки точек останова и прохождения через живой код. Чтобы установить его, просто запустите:
 
 ```bash
-$ gem install debugger
+$ gem install byebug
 ```
 
-В Rails есть встроенная поддержка отладки, начиная с Rails 2.0. Внутри любого приложения на Rails можно вызывать отладчик, вызвав метод `debugger`.
+Внутри любого приложения на Rails можно вызывать отладчик, вызвав метод `byebug`.
 
 Вот пример:
 
 ```ruby
 class PeopleController < ApplicationController
   def new
-    debugger
+    byebug
     @person = Person.new
   end
 end
 ```
 
-Если вы видите это сообщение в консоли или логах:
-
-```
-***** Debugger requested, but was not available: Start server with --debugger to enable *****
-```
-
-Убедитесь, что запустили свой веб сервер с опцией `--debugger`:
-
-```bash
-$ rails server --debugger
-=> Booting WEBrick
-=> Rails 4.0.0 application starting on http://0.0.0.0:3000
-=> Debugger enabled
-...
-```
-
-TIP: В режиме development можно динамически вызвать `require \'debugger\'` вместо перезапуска сервера, даже если он был запущен без `--debugger`.
-
 ### Среда
 
-Как только приложение вызывает метод `debugger`, отладчик будет запущен в среде отладчика в окне терминала, в котором запущен сервер приложения, и будет представлена строка debugger `(rdb:n)`. _n_ это число тредов. Строка также показывает следующую линию кода, которая ожидает выполнения.
+Как только приложение вызывает метод `byebug`, отладчик будет запущен в среде отладчика в окне терминала, в котором запущен сервер приложения, и будет представлена строка debugger `(byebug)`. Перед строкой ввода будет отображен код возле строчки, которая выполняется, и текущая строчка будет помечена '=>'. Следующим образом:
+
+```
+[1, 10] in /PathTo/project/app/controllers/articles_controller.rb
+    3:
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     byebug
+=>  8:     @articles = Article.find_recent
+    9:
+   10:     respond_to do |format|
+   11:       format.html # index.html.erb
+   12:       format.json { render json: @articles }
+
+(byebug)
+```
 
 Если был получен запрос от браузера, закладка браузера, содержащая запрос, будет висеть, пока отладчик не закончит, и трассировка не закончит обрабатывать весь запрос.
 
 Например:
 
 ```bash
-@posts = Post.all
-(rdb:7)
+=> Booting WEBrick
+=> Rails 5.0.0 application starting in development on http://0.0.0.0:3000
+=> Run `rails server -h` for more startup options
+=> Notice: server is listening on all interfaces (0.0.0.0). Consider using 127.0.0.1 (--binding option)
+=> Ctrl-C to shutdown server
+[2014-04-11 13:11:47] INFO  WEBrick 1.3.1
+[2014-04-11 13:11:47] INFO  ruby 2.1.1 (2014-02-24) [i686-linux]
+[2014-04-11 13:11:47] INFO  WEBrick::HTTPServer#start: pid=6370 port=3000
+
+Started GET "/" for 127.0.0.1 at 2014-04-11 13:11:48 +0200
+  ActiveRecord::SchemaMigration Load (0.2ms)  SELECT "schema_migrations".* FROM "schema_migrations"
+Processing by ArticlesController#index as HTML
+
+[3, 12] in /PathTo/project/app/controllers/articles_controller.rb
+    3:
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     byebug
+=>  8:     @articles = Article.find_recent
+    9:
+   10:     respond_to do |format|
+   11:       format.html # index.html.erb
+   12:       format.json { render json: @articles }
+
+(byebug)
 ```
 
 Настало время изучить и покопаться в вашем приложении. Для начала хорошо бы попросить помощь у отладчика. Напишите: `help`
 
 ```
-(rdb:7) help
-ruby-debug help v0.10.2
+(byebug) help
+
+byebug 2.7.0
+
 Type 'help <command-name>' for help on a specific command
 
 Available commands:
-backtrace  delete   enable  help    next  quit     show    trace
-break      disable  eval    info    p     reload   source  undisplay
-catch      display  exit    irb     pp    restart  step    up
-condition  down     finish  list    ps    save     thread  var
-continue   edit     frame   method  putl  set      tmate   where
+backtrace  delete   enable  help       list    pry next  restart  source     up
+break      disable  eval    info       method  ps        save     step       var
+catch      display  exit    interrupt  next    putl      set      thread
+condition  down     finish  irb        p       quit      show     trace
+continue   edit     frame   kill       pp      reload    skip     undisplay
 ```
 
-TIP: Чтобы просмотреть помощь для любой команды, используйте `help <имя команды>` в консоли отладчика. Например: _`help var`_
+TIP: Чтобы просмотреть помощь для любой команды, используйте `help <имя команды>` в консоли отладчика. Например: _`help list`_. Можно сократить любую команду отладки, представив только неколько букв, чтобы отличить их от других команд, поэтому можно использовать `l` вместо команды `list`, к примеру.
 
-Следующая команда, которую мы изучим, одна из самых полезных: `list`. Можно сокращать любые отладочные команды, предоставляя только достаточные буквы для отличения их от других команд, поэтому можно использовать `l` для команды `list`.
-
-Эта команда показывает, где вы сейчас в коде, печатая 10 линий с текущей линией в центре; текущая линия в этом случая шестая и помеченная `=>`.
+Чтобы просмотреть предыдущие десять строчек, следует написать `list-` (or `l-`)
 
 ```
-(rdb:7) list
-[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
-   1  class PostsController < ApplicationController
-   2    # GET /posts
-   3    # GET /posts.json
-   4    def index
-   5      debugger
-=> 6      @posts = Post.all
-   7
-   8      respond_to do |format|
-   9        format.html # index.html.erb
-   10        format.json { render json: @posts }
-```
+(byebug) l-
 
-Если повторите команду `list`, сейчас уже используем лишь `l`, будут выведены следующие 10 линий файла.
+[1, 10] in /PathTo/project/app/controllers/articles_controller.rb
+   1  class ArticlesController < ApplicationController
+   2    before_action :set_article, only: [:show, :edit, :update, :destroy]
+   3
+   4    # GET /articles
+   5    # GET /articles.json
+   6    def index
+   7      byebug
+   8      @articles = Article.find_recent
+   9
+   10      respond_to do |format|
 
 ```
-(rdb:7) l
-[11, 20] in /PathTo/project/app/controllers/posts_controller.rb
-   11      end
-   12    end
-   13
-   14    # GET /posts/1
-   15    # GET /posts/1.json
-   16    def show
-   17      @post = Post.find(params[:id])
-   18
-   19      respond_to do |format|
-   20        format.html # show.html.erb
-```
 
-И так далее до конца текущего файла. Когда достигнут конец файла, команда `list` запустится снова с начала файла и продолжится опять до конца, обрабатывая файл как цикличный буфер.
-
-С другой стороны, чтобы увидеть предыдущие десять линий, следует написать `list-` или `l-`.
+Таким образом можно перемещаться внутри файла, чтобы просматривать код до и после строчки, где вы добавили вызов `byebug`. Наконец, чтобы снова просмотреть, где вы в коде, можно написать `list=`
 
 ```
-(rdb:7) l-
-[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
-   1  class PostsController < ApplicationController
-   2    # GET /posts
-   3    # GET /posts.json
-   4    def index
-   5      debugger
-   6      @posts = Post.all
-   7
-   8      respond_to do |format|
-   9        format.html # index.html.erb
-   10        format.json { render json: @posts }
-```
+(byebug) list=
 
-Таким образом можно перемещаться внутри файла, просматривая код до и после строки, в которую вы добавили `debugger`. Наконец, чтобы снова увидеть, где вы в коде сейчас, можно написать `list=`.
+[3, 12] in /PathTo/project/app/controllers/articles_controller.rb
+    3:
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     byebug
+=>  8:     @articles = Article.find_recent
+    9:
+   10:     respond_to do |format|
+   11:       format.html # index.html.erb
+   12:       format.json { render json: @articles }
 
-```
-(rdb:7) list=
-[1, 10] in /PathTo/project/app/controllers/posts_controller.rb
-   1  class PostsController < ApplicationController
-   2    # GET /posts
-   3    # GET /posts.json
-   4    def index
-   5      debugger
-=> 6      @posts = Post.all
-   7
-   8      respond_to do |format|
-   9        format.html # index.html.erb
-   10        format.json { render json: @posts }
+(byebug)
 ```
 
 ### Контекст
 
 Когда начинаете отладку своего приложения, вы будете помещены в различные контексты, так как проходите через различные части стека.
 
-debugger создает контекст, когда достигается точка останова или событие. У контекста есть информация о приостановленной программе, которая позволяет отладчику просматривать кадр стека, значения переменных с точки зрения отлаживаемой программы, и в нем содержится информация о месте, в котором отлаживаемая программа остановилась.
+Отладчик создает контекст, когда достигается точка останова или событие. У контекста есть информация о приостановленной программе, которая позволяет отладчику просматривать кадр стека, значения переменных с точки зрения отлаживаемой программы, и в нем содержится информация о месте, в котором отлаживаемая программа остановилась.
 
 В любое время можете вызвать команду `backtrace` (или ее псевдоним `where`), чтобы напечатать трассировку приложения. Это полезно для того, чтобы знать, где вы есть. Если вы когда-нибудь задумывались, как вы получили что-то в коде, то `backtrace` предоставит ответ.
 
 ```
-(rdb:5) where
-    #0 PostsController.index
-       at line /PathTo/project/app/controllers/posts_controller.rb:6
-    #1 Kernel.send
-       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
-    #2 ActionController::Base.perform_action_without_filters
-       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
-    #3 ActionController::Filters::InstanceMethods.call_filters(chain#ActionController::Fil...,...)
-       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb:617
+(byebug) where
+--> #0  ArticlesController.index
+      at /PathTo/project/test_app/app/controllers/articles_controller.rb:8
+    #1  ActionController::ImplicitRender.send_action(method#String, *args#Array)
+      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/implicit_render.rb:4
+    #2  AbstractController::Base.process_action(action#NilClass, *args#Array)
+      at /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb:189
+    #3  ActionController::Rendering.process_action(action#NilClass, *args#NilClass)
+      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/rendering.rb:10
 ...
 ```
 
-Можете перейти, куда хотите в этой трассировке (это изменит контекст) с использованием команды `frame _n_`, где _n_ это определенный номер кадра.
+Текущий фрейм помечен `-->`. В этом трейсе можно перемещаться, куда хотите (это изменит контекст), используя команду `frame _n_`, где _n_ это номер определенного фрейма. Если так сделать, `byebug` отобразит новый контекст.
 
 ```
-(rdb:5) frame 2
-#2 ActionController::Base.perform_action_without_filters
-       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
+(byebug) frame 2
+
+[184, 193] in /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb
+   184:       # is the intended way to override action dispatching.
+   185:       #
+   186:       # Notice that the first argument is the method to be dispatched
+   187:       # which is *not* necessarily the same as the action name.
+   188:       def process_action(method_name, *args)
+=> 189:         send_action(method_name, *args)
+   190:       end
+   191:
+   192:       # Actually call the method associated with the action. Override
+   193:       # this method if you wish to change how action methods are called,
+
+(byebug)
 ```
 
 Доступные переменные те же самые, как если бы вы запускали код строка за строкой. В конце концов, это то, что отлаживается.
 
-Перемещение по кадру стека: можете использовать команды `up [n]` (скоращенно `u`) и `down [n]` для того, чтобы изменить контекст на _n_ кадров вверх или вниз по стеку соответственно. _n_ по умолчанию равно одному. Up в этом случае перейдет к кадрам стека с большим номером, а down к кадрам с меньшим номером.
+Также можно использовать команды `up [n]` (сокращенно `u`) и `down [n]` чтобы изменить контекст на _n_ фреймов в стеке вверх или вниз соответственно. _n_ по умолчанию один. Вверх в этом случае обозначает фреймы с большим числом, а вниз — с меньшим числом.
 
-### Нити (threads)
+### Треды (threads)
 
-Отладчик может просматривать, останавливать, возобновлять и переключаться между запущенными нитями с использованием команды `thread` (или сокращенно `th`). У этой команды есть несколько опций:
+Отладчик может просматривать, останавливать, возобновлять и переключаться между запущенными тредами с использованием команды `thread` (или сокращенно `th`). У этой команды есть несколько опций:
 
-* `thread` показывает текущую нить
-* `thread list` используется для отображения всех нитей и их статусов. Символ плюс ` и число показывают текущую нить выполнения.
-* `thread stop _n_` останавливает нить _n_.
-* `thread resume _n_` возобновляет нить _n_.
-* `thread switch _n_` переключает контекст текущей нити на _n_.
+* `thread` показывает текущий тред
+* `thread list` используется для отображения всех тредов и их статусов. Символ плюс ` и число показывают текущий тред выполнения.
+* `thread stop _n_` останавливает тред _n_.
+* `thread resume _n_` возобновляет тред _n_.
+* `thread switch _n_` переключает контекст текущего треда на _n_.
 
-Эта команда очень полезна, в частности когда вы отлаживаете параллельные нити и нужно убедиться, что в коде нет состояния гонки.
+Эта команда очень полезна, в частности когда вы отлаживаете параллельные треды и нужно убедиться, что в коде нет состояния гонки.
 
 ### Просмотр переменных
 
 Любое выражение может быть вычислено в текущем контексте. Чтобы вычислить выражение, просто напечатайте его!
 
-Этот пример покажет, как можно напечатать instance_variables, определенные в текущем контексте:
+Следующий пример показывает, как вывести переменные экземпляра, определенные в текущим контексте:
 
 ```
-@posts = Post.all
-(rdb:11) instance_variables
-["@_response", "@action_name", "@url", "@_session", "@_cookies", "@performed_render", "@_flash", "@template", "@_params", "@before_filter_chain_aborted", "@request_origin", "@_headers", "@performed_redirect", "@_request"]
+[3, 12] in /PathTo/project/app/controllers/articles_controller.rb
+    3:
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     byebug
+=>  8:     @articles = Article.find_recent
+    9:
+   10:     respond_to do |format|
+   11:       format.html # index.html.erb
+   12:       format.json { render json: @articles }
+
+(byebug) instance_variables
+[:@_action_has_layout, :@_routes, :@_headers, :@_status, :@_request,
+ :@_response, :@_env, :@_prefixes, :@_lookup_context, :@_action_name,
+ :@_response_body, :@marked_for_same_origin_verification, :@_config]
 ```
 
-Как вы уже поняли, отображены все переменные, к которым есть доступ из контроллера. Этот перечень динамически обновляется по мере выполнения кода. Например, запустим следующую строку, используя `next` (мы рассмотрим эту команду чуть позднее в этом руководстве).
+Как вы могли заметить, отображены все переменные, к которым есть доступ из контроллера. Этот список обновляется динамически по мере выполнения кода.
+Например, выполним следующую строчку с помощью `next` (эту команду мы изучим позже).
 
 ```
-(rdb:11) next
-Processing PostsController#index (for 127.0.0.1 at 2008-09-04 19:51:34) [GET]
-  Session ID: BAh7BiIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNoSGFzaHsABjoKQHVzZWR7AA==--b16e91b992453a8cc201694d660147bba8b0fd0e
-  Parameters: {"action"=>"index", "controller"=>"posts"}
-/PathToProject/posts_controller.rb:8
-respond_to do |format|
+(byebug) next
+[5, 14] in /PathTo/project/app/controllers/articles_controller.rb
+   5     # GET /articles.json
+   6     def index
+   7       byebug
+   8       @articles = Article.find_recent
+   9
+=> 10       respond_to do |format|
+   11         format.html # index.html.erb
+   12        format.json { render json: @articles }
+   13      end
+   14    end
+   15
+(byebug)
 ```
 
 И затем снова спросим instance_variables:
 
 ```
-(rdb:11) instance_variables.include? "@posts"
+(byebug) instance_variables.include? "@articles"
 true
 ```
 
-Теперь `@posts` включена в переменные экземпляра, поскольку определяющая ее строка была выполнена.
+Теперь `@articles` включена в переменные экземпляра, поскольку определяющая ее строка была выполнена.
 
 TIP: Также можно шагнуть в режим **irb** с командой `irb` (конечно!). Таким образом, сессия irb будет запущена в контексте, который ее вызвал. Но предупреждаем: это эксперементальная особенность.
 
-Метод `var` это более удобный способ показать переменные и их значения:
+Метод `var` это более удобный способ показать переменные и их значения. Пускай `byebug` поможет нам с ней.
 
 ```
-var
-(rdb:1) v[ar] const <object>            показывает константы объекта
-(rdb:1) v[ar] g[lobal]                  показывает глобальные переменные
-(rdb:1) v[ar] i[nstance] <object>       показывает переменные экземпляра объекта
-(rdb:1) v[ar] l[ocal]                   показывает локальные переменные
+(byebug) help var
+v[ar] cl[ass]                   show class variables of self
+v[ar] const <object>            show constants of object
+v[ar] g[lobal]                  show global variables
+v[ar] i[nstance] <object>       show instance variables of object
+v[ar] l[ocal]                   show local variables
 ```
 
-Это отличный способ просмотреть значения переменных текущего контекста. Например:
+Это отличный способ просмотреть значения переменных текущего контекста. Например, чтобы проверить, что у нас нет локально определенных переменных в настоящий момент.
 
 ```
-(rdb:9) var local
-  __dbg_verbose_save => false
+(byebug) var local
+(byebug)
 ```
 
 Также можно просмотреть метод объекта следующим образом:
 
 ```
-(rdb:9) var instance Post.new
-@attributes = {"updated_at"=>nil, "body"=>nil, "title"=>nil, "published"=>nil, "created_at"...
+(byebug) var instance Article.new
+@_start_transaction_state = {}
+@aggregation_cache = {}
+@association_cache = {}
+@attributes = {"id"=>nil, "created_at"=>nil, "updated_at"=>nil}
 @attributes_cache = {}
-@new_record = true
+@changed_attributes = nil
+...
 ```
 
 TIP: Команды `p` (print) и `pp` (pretty print) могут использоваться для вычисления выражений Ruby и отображения значения переменных в консоли.
@@ -483,8 +514,8 @@ TIP: Команды `p` (print) и `pp` (pretty print) могут использ
 Можете также использовать `display` для запуска просмотра переменных. Это хороший способ трассировки значений переменной на протяжении выполнения.
 
 ```
-(rdb:1) display @recent_comments
-1: @recent_comments =
+(byebug) display @articles
+1: @articles = nil
 ```
 
 Переменные в отображаемом перечне будут печататься с их значениями после помещения в стек. Чтобы остановить отображение переменной, используйте `undisplay _n_`, где _n_ это номер переменной (1 в последнем примере).
@@ -495,79 +526,73 @@ TIP: Команды `p` (print) и `pp` (pretty print) могут использ
 
 Используйте `step` (сокращенно `s`) для продолжения запуска вашей программы до следующей логической точки останова и возврата контроля debugger.
 
-TIP: Также можно использовать <tt>step+ n</tt> и <tt>step- n</tt> для движения вперед или назад на `n` шагов соответственно.
+Также можете использовать _next_, которая похожа на step, но вызовы функции или метода, выполняемые в строке кода, выполняются без остановки.
 
-Также можете использовать _next_, которая похожа на step, но вызовы функции или метода, выполняемые в строке кода, выполняются без остановки. Как и со step, можно использовать знак плюса для перемещения на _n_ шагов.
+TIP: А также можно использовать `step n` или `next n` для перемещения на `n` шагов за раз.
 
 Разница между `next` и `step` в том, что `step` останавливается на следующей линии выполняемого кода, делая лишь один шаг, в то время как `next` перемещает на следующую строку без входа внутрь методов.
 
-Например, рассмотрим этот блок кода с включенным выражением `debugger`:
+Например, рассмотрим следующую ситуацию:
 
 ```ruby
-class Author < ActiveRecord::Base
-  has_one :editorial
-  has_many :comments
+Started GET "/" for 127.0.0.1 at 2014-04-11 13:39:23 +0200
+Processing by ArticlesController#index as HTML
 
-  def find_recent_comments(limit = 10)
-    debugger
-    @recent_comments ||= comments.where("created_at > ?", 1.week.ago).limit(limit)
-  end
-end
+[1, 8] in /home/davidr/Proyectos/test_app/app/models/article.rb
+   1: class Article < ActiveRecord::Base
+   2:
+   3:   def self.find_recent(limit = 10)
+   4:     byebug
+=> 5:     where('created_at > ?', 1.week.ago).limit(limit)
+   6:   end
+   7:
+   8: end
+
+(byebug)
 ```
 
-TIP: Можете использовать debugger при использовании `rails console`. Просто не забудьте вызвать `require "debugger"` перед вызовом метода `debugger`.
+Если используем `next`, мы хотим уйти глубже в в вызовы метода. Вместо этого, byebug перейдет на следующую строчку в том же контесте. В этом случае это будет последней строчкой метода, поэтому `byebug` перепрыгнет на следующую строчку предыдущего фрейма.
 
 ```
-$ rails console
-Loading development environment (Rails 4.0.0)
->> require "debugger"
-=> []
->> author = Author.first
-=> #<Author id: 1, first_name: "Bob", last_name: "Smith", created_at: "2008-07-31 12:46:10", updated_at: "2008-07-31 12:46:10">
->> author.find_recent_comments
-/PathTo/project/app/models/author.rb:11
-)
+(byebug) next
+Next went up a frame because previous frame finished
+
+[4, 13] in /PathTo/project/test_app/app/controllers/articles_controller.rb
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     @articles = Article.find_recent
+    8:
+=>  9:     respond_to do |format|
+   10:       format.html # index.html.erb
+   11:       format.json { render json: @articles }
+   12:     end
+   13:   end
+
+(byebug)
 ```
 
-С остановленным кодом, давайте оглянемся:
+Если используем `step` в той же ситуации, мы буквально шагнем на следующую инструкцию ruby для выполнения. В этом случае, метод activesupport `week`.
 
 ```
-(rdb:1) list
-[2, 9] in /PathTo/project/app/models/author.rb
-   2    has_one :editorial
-   3    has_many :comments
-   4
-   5    def find_recent_comments(limit = 10)
-   6      debugger
-=> 7      @recent_comments ||= comments.where("created_at > ?", 1.week.ago).limit(limit)
-   8    end
-   9  end
+(byebug) step
+
+[50, 59] in /PathToGems/activesupport-5.0.0/lib/active_support/core_ext/numeric/time.rb
+   50:     ActiveSupport::Duration.new(self * 24.hours, [[:days, self]])
+   51:   end
+   52:   alias :day :days
+   53:
+   54:   def weeks
+=> 55:     ActiveSupport::Duration.new(self * 7.days, [[:days, self * 7]])
+   56:   end
+   57:   alias :week :weeks
+   58:
+   59:   def fortnights
+
+(byebug)
 ```
 
-Вы в конце линии, но была ли эта линия выполнена? Можете просмотреть переменные экземпляра.
-
-```
-(rdb:1) var instance
-@attributes = {"updated_at"=>"2008-07-31 12:46:10", "id"=>"1", "first_name"=>"Bob", "las...
-@attributes_cache = {}
-```
-
-`@recent_comments` пока еще не определена, поэтому ясно, что эта линия еще не выполнялась. Используем команду `next` для движения дальше по коду:
-
-```
-(rdb:1) next
-/PathTo/project/app/models/author.rb:12
-@recent_comments
-(rdb:1) var instance
-@attributes = {"updated_at"=>"2008-07-31 12:46:10", "id"=>"1", "first_name"=>"Bob", "las...
-@attributes_cache = {}
-@comments = []
-@recent_comments = []
-```
-
-Теперь мы видим, что связь `@comments` была загружена и @recent_comments определена, поскольку линия была выполнена.
-
-Если хотите войти глубже в трассировку стека, можете переместиться на один шаг `step`, через ваши вызывающие методы и в код Rails. Это лучший способ поиска багов в вашем коде, а возможно и в Ruby or Rails.
+Это один из лучших способов найти ошибки в вашем коде, а возможно и в Ruby on Rails.
 
 ### Точки останова
 
@@ -575,28 +600,42 @@ Loading development environment (Rails 4.0.0)
 
 Можете добавлять точки останова динамически с помощью команды `break` (или просто `b`). Имеются 3 возможных способа ручного добавления точек останова:
 
-* `break line`: устанавливает точку останова в линии _line_ в текущем файле исходника.
-* `break file:line [if expression]`: устанавливает точку останова в линии номер _line_ в файле _file_. Если задано условие _expression_, оно должно быть вычислено и равняться _true_, чтобы запустить отладчик.
-* `break class(.|#)method [if expression]`: устанавливает точку останова в методе _method_ (. и # для метода класса и экземпляра соответственно), определенного в классе _class_. _expression_ работает так же, как и с file:line.
+* `break line`: устанавливает точку останова в строчке номер _line_ в текущем файле исходника.
+* `break file:line [if expression]`: устанавливает точку останова в строчке номер _line_ в файле _file_. Если задано выражение _expression_, оно должно быть вычислено в _true_, чтобы запустить отладчик.
+* `break class(.|\#)method [if expression]`: устанавливает точку останова в методе _method_ (. \# для метода класса и экземпляра соответственно), определенного в классе _class_. Выражение _expression_ работает так же, как и с file:line.
+
+Например, в предыдущей ситуации
 
 ```
-(rdb:5) break 10
-Breakpoint 1 file /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb, line 10
+[4, 13] in /PathTo/project/app/controllers/articles_controller.rb
+    4:   # GET /articles
+    5:   # GET /articles.json
+    6:   def index
+    7:     @articles = Article.find_recent
+    8:
+=>  9:     respond_to do |format|
+   10:       format.html # index.html.erb
+   11:       format.json { render json: @articles }
+   12:     end
+   13:   end
+
+(byebug) break 11
+Created breakpoint 1 at /PathTo/project/app/controllers/articles_controller.rb:11
 ```
 
 Используйте `info breakpoints _n_` или `info break _n_` для отображения перечня точек останова. Если укажете номер, отобразится только эта точка останова. В противном случае отобразятся все точки останова.
 
 ```
-(rdb:5) info breakpoints
+(byebug) info breakpoints
 Num Enb What
-  1 y   at filters.rb:10
+1   y   at /PathTo/project/app/controllers/articles_controller.rb:11
 ```
 
 Чтобы удалить точки останова: используйте команду `delete _n_` для устранения точки останова номер _n_. Если номер не указан, удалятся все точки останова, которые в данный момент активны..
 
 ```
-(rdb:5) delete 1
-(rdb:5) info breakpoints
+(byebug) delete 1
+(byebug) info breakpoints
 No breakpoints.
 ```
 
@@ -623,7 +662,6 @@ No breakpoints.
 Две команды позволяют открыть код из отладчика в редакторе:
 
 * `edit [file:line]`: редактирует файл _file_, используя редактор, определенный переменной среды EDITOR. Определенная линия _line_ также может быть задана.
-* `tmate _n_` (сокращенно `tm`): открывает текущий файл в TextMate. Она использует n-ный кадр, если задан _n_.
 
 ### Выход
 
@@ -633,21 +671,19 @@ No breakpoints.
 
 ### Настройки
 
-Гем `debugger` может автоматически показывать код, через который вы проходите, и перегружать его, когда вы изменяете его в редакторе. Вот несколько доступных опций:
+У `byebug` имеется несколько доступных опций для настройки его поведения:
 
-* `set reload`: презагрузить исходный код при изменении.
-* `set autolist`: Запускать команду `list` на каждой точке останова.
-* `set listsize _n_`: Установить количество линий кода для отображения по умолчанию _n_.
-* `set forcestep`: Убеждаться, что команды `next` и `step` всегда переходят на новую линию
+* `set autoreload`: Перезагрузить исходный код при изменении (по умолчанию true).
+* `set autolist`: Запускать команду `list` на каждой точке останова (по умолчанию true).
+* `set listsize _n_`: Установить количество строчек кода для отображения по умолчанию _n_
+(по умолчанию 10).
+* `set forcestep`: Убеждаться, что команды `next` и `step` всегда переходят на новую строчку.
 
 Можно просмотреть полный перечень, используя `help set`. Используйте `help set _subcommand_` для изучения определенной команды `set`.
 
-TIP: Эти настройки могут быть сохранены в файле `.rdebugrc` в домашней директории. debugger считывает эти глобальные настройки при запуске.
-
-Вот хорошее начало для `.rdebugrc`:
+TIP: Эти настройки могут быть сохранены в файле `.byebugrc` в домашней директории. debugger считывает эти глобальные настройки при запуске. Например:
 
 ```bash
-set autolist
 set forcestep
 set listsize 25
 ```
@@ -684,6 +720,7 @@ set listsize 25
 
 * [Домашняя страница ruby-debug](http://bashdb.sourceforge.net/ruby-debug/home-page.html)
 * [Домашняя страница debugger](https://github.com/cldwalker/debugger)
+* [Домашняя страница byebug](https://github.com/deivid-rodriguez/byebug)
 * [Статья: Debugging a Rails application with ruby-debug](http://www.sitepoint.com/debug-rails-app-ruby-debug/)
 * [Скринкаст Ryan Bates' debugging ruby (revised)](http://railscasts.com/episodes/54-debugging-ruby-revised)
 * [Скринкаст Ryan Bates' stack trace](http://railscasts.com/episodes/24-the-stack-trace)

@@ -125,8 +125,8 @@ pages:
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
     file:     debugging_rails_applications.md
-    revision: d262773ab7f0aae5de2d354ac2eca168e95b653d
-    date:     13/09/13
+    revision: 5cfaf5a46eb154f98ba8963bdcfade0afdc618ad
+    date:     14/01/15
 
   - title:    Конфигурирование приложений на Rails
     path:     configuring-rails-applications
