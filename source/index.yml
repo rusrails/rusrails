@@ -59,20 +59,20 @@ pages:
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
-    revision: 67a605d3d4cf2a00b403bb31ca6c2dd98d2f04ba
-    date:     01/10/14
+    revision: 8b18449c27336bb1861292ff1913df31cbe90f5f
+    date:     22/01/15
 
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
     file:     form_helpers.md
-    revision: 1fc2e704956a4a931006211fb8a032213a82dea2
-    date:     03/09/14
+    revision: 7ba24831d7f809d54e88607db8f7d21780efbdfb
+    date:     14/01/15
 
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 72c182264e049af3fe056e2e130e3087fbb3eee6
-    date:     25/10/14
+    revision: 5cfaf5a46eb154f98ba8963bdcfade0afdc618ad
+    date:     14/01/15
 
   - title:    Роутинг в Rails
     path:     rails-routing

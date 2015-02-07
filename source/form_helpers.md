@@ -251,7 +251,7 @@ end
 Итоговый HTML:
 
 ```html
-<form accept-charset="UTF-8" action="/articles/create" method="post" class="nifty_form">
+<form accept-charset="UTF-8" action="/articles" method="post" class="nifty_form">
   <input id="article_title" name="article[title]" type="text" />
   <textarea id="article_body" name="article[body]" cols="60" rows="12"></textarea>
   <input name="commit" type="submit" value="Create" />
@@ -276,7 +276,7 @@ end
 которая выдаст такой результат:
 
 ```html
-<form accept-charset="UTF-8" action="/people/create" class="new_person" id="new_person" method="post">
+<form accept-charset="UTF-8" action="/people" class="new_person" id="new_person" method="post">
   <input id="person_name" name="person[name]" type="text" />
   <input id="contact_detail_phone_number" name="contact_detail[phone_number]" type="text" />
 </form>
@@ -490,6 +490,12 @@ WARNING: При использовании `select` (или подобного �
 
 ```erb
 <%= collection_select(:person, :city_id, City.all, :id, :name) %>
+```
+
+Как и с другими хелперами, если вы хотите использовать `collection_select` в связке с form builder'ом привязанным к объекту `@person`, синтаксис будет следующим:
+
+```erb
+<%= f.collection_select(:city_id, City.all, :id, :name) %>
 ```
 
 Напомним, что `options_from_collection_for_select` в `collection_select` - то же самое, что и `options_for_select` в `select`.
