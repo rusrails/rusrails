@@ -1,8 +1,6 @@
 - if @page && @page.path == 'index'
   #main_page_banner.well
-    =# render "layouts/rsya", limit: 2
-    = render "shared/vexor"
-    =# render "shared/railsclub"
+    = render "shared/rsya", limit: 2
 
 - cache ['v1', @page] do
   = @page.rendered_body(self)
