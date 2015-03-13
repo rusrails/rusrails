@@ -1548,7 +1548,7 @@ class CommentsController < ApplicationController
 
 ![Простой вызов аутентификации HTTP](/images/getting_started/challenge.png)
 
-Также для приложений Rails доступны иные методы аутентификации. Двумя популярными аддонами для Rails, среди прочих, являются are the [Devise](https://github.com/plataformatec/devise)
+Также для приложений Rails доступны иные методы аутентификации. Двумя популярными аддонами для Rails, среди прочих, являются [Devise](https://github.com/plataformatec/devise)
 и [Authlogic](https://github.com/binarylogic/authlogic).
 
 ### Прочие мысли о безопасности
