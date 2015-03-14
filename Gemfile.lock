@@ -54,6 +54,7 @@ GEM
     factory_girl_rails (4.4.0)
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
+    git (1.2.9.1)
     haml (4.0.5)
       tilt
     haml-rails (0.5.3)
@@ -209,6 +210,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   database_cleaner
   factory_girl_rails
+  git
   haml-rails
   jquery-rails
   less-rails

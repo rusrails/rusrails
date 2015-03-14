@@ -24,6 +24,8 @@ gem 'unicorn'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 
+gem 'git', require: false
+
 group :development do
   gem 'quiet_assets'
   # Need for cap tasks for 3.2 branch
