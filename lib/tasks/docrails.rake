@@ -20,15 +20,23 @@ namespace :docrails do
       log = docrails.log(1).path(file).first
       outdated = log.author_date.to_date - Date.strptime(page['date'], '%d/%m/%Y')
       stats << page.merge(stat[:total])
-                            .merge(objectish: log.objectish, new_date: log.author_date, outdated: outdated.to_i)
+                   .merge(objectish: log.objectish, new_date: log.author_date, outdated: outdated.to_i)
+    end
+
+    config['plan'].each do |page|
+      file = "guides/source/#{page['file']}"
+      stat = docrails.diff('4b825dc642cb6eb9a060e54bf8d69288fbee4904').path(file).stats
+      log = docrails.log(1).path(file).first
+      stats << page.merge(stat[:total]).merge(new: true)
+                   .merge(objectish: log.objectish, new_date: log.author_date, outdated: 0)
     end
 
     stats.sort_by! { |stat| stat[:lines] + stat[:outdated] }
 
     stats.map do |stat|
-      puts '%40.40s: +/- %4s/%4s, outdated %4s days (%s %s)' % [stat['file'], stat[:insertions], stat[:deletions],
-                                                               stat[:outdated], stat[:objectish],
-                                                               stat[:new_date].strftime('%d/%m/%Y')]
+      puts '%s %40.40s: +/- %4s/%4s, outdated %4s days (%s %s)' %
+            [stat[:new] ? '*' : ' ', stat['file'], stat[:insertions], stat[:deletions],
+             stat[:outdated], stat[:objectish], stat[:new_date].strftime('%d/%m/%Y')]
     end
   end
 
