@@ -14,7 +14,7 @@ tmp
 webrat.log
 .sass-cache/
 tmp/
-
+diff.diff
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml

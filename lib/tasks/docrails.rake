@@ -32,6 +32,24 @@ namespace :docrails do
     end
   end
 
+  desc "make diff (use rake 'docrails:diff[file_name]' > diff.diff)"
+
+  task :diff, [:file_name] => :environment do |_, args|
+    page = config['pages'].detect { |page| page['file'] == args.file_name }
+    if page
+      file = "guides/source/#{page['file']}"
+      log = docrails.log(1).path(file).first
+      puts "-" * 80
+      puts "    revision: #{log.objectish}"
+      puts "    date:     #{log.author_date.strftime('%d/%m/%Y')}"
+      puts "-" * 80
+      puts docrails.diff(page['revision']).path(file).first.patch
+    else
+      puts "Page #{args.file_name} not found!"
+    end
+
+  end
+
   def docrails
     @docrails ||= if Dir.exists?(docrails_path)
       Git.open(docrails_path).tap(&:pull)
