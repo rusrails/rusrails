@@ -236,6 +236,10 @@ pages:
     revision: be1e0241f012f1151d2448b10e14b8b2eda26b84
     date:     18/12/2014
 
+images:
+  revision:   7aa500d2edcc2a2990e7a72799661d4a1227d441
+  date:       25/02/2014
+
 plan:
   - file:     action_view_overview.md
   - file:     active_record_postgresql.md

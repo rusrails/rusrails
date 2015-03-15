@@ -8,9 +8,19 @@ namespace :docrails do
 
     known_guides = (config['pages'] + config['plan'] + config['old']).map { |page| page['file'] }
     all_guides = Dir["#{docrails_path}/guides/source/*.md"].map { |file| file[/[^\/]+\z/]}
+    new_guides = all_guides - known_guides
+    removed_guides = known_guides - all_guides
 
-    puts 'New guides: ', (all_guides - known_guides).join(', ')
-    puts 'Removed guides: ', (known_guides - all_guides).join(', ')
+    puts 'New guides: ', new_guides.join(', ') if new_guides.present?
+    puts 'Removed guides: ', removed_guides.join(', ') if removed_guides.present?
+
+    images_stat = docrails.diff(config['images']['revision']).path('guides/assets/images').stats
+    if images_stat[:files].present?
+      puts "Updated images:"
+      images_stat[:files].each { |file, _| puts "  - %s" % file }
+    end
+
+    puts
 
     stats = []
 
