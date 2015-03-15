@@ -27,7 +27,8 @@ namespace :docrails do
 
     stats.map do |stat|
       puts '%40.40s: +/- %4s/%4s, outdated %4s days (%s %s)' % [stat['file'], stat[:insertions], stat[:deletions],
-                                                               stat[:outdated], stat[:objectish], stat[:new_date]]
+                                                               stat[:outdated], stat[:objectish],
+                                                               stat[:new_date].strftime('%d/%m/%Y')]
     end
   end
 

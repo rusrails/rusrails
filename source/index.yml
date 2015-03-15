@@ -172,9 +172,9 @@ pages:
 
   - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
-    file:     constant_autoloading_and_reloading.md
-    revision: 604df2c57e3aaa38557985d73ea1665021689bf9
-    date:     20/12/2014
+    file:     autoloading_and_reloading_constants.md
+    revision: 9814eb64275973abc66b1481b522c39b7083fff5
+    date:     18/02/2015
 
   - title:    Основы создания плагинов Rails
     path:     plugins
