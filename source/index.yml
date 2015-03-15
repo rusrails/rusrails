@@ -242,6 +242,8 @@ plan:
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md
   - file:     development_dependencies_install.md
+  - file:     maintenance_policy.md
+  - file:     profiling.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
 
