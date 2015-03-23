@@ -434,9 +434,9 @@ Active Record
   использовавшееся ранее в цепочке запросов. ([Commit](https://github.com/rails/rails/commit/f950b2699f97749ef706c6939a84dfc85f0b05f2))
 
 * Расширен метод `ActiveRecord::Base#cache_key`, который теперь принимает опциональный список timestamp
-  аттрибутов, из которых будет использоваться самое больше. ([Commit](https://github.com/rails/rails/commit/e94e97ca796c0759d8fcb8f946a3bbc60252d329))
+  атрибутов, из которых будет использоваться самое больше. ([Commit](https://github.com/rails/rails/commit/e94e97ca796c0759d8fcb8f946a3bbc60252d329))
 
-* Добавлен `ActiveRecord::Base#enum` для описания enum аттрибутов, в которых значения связаны с числами в базе данных, но могут быть запрошены с помощью имени. ([Commit](https://github.com/rails/rails/commit/db41eb8a6ea88b854bf5cd11070ea4245e1639c5))
+* Добавлен `ActiveRecord::Base#enum` для описания enum атрибутов, в которых значения связаны с числами в базе данных, но могут быть запрошены с помощью имени. ([Commit](https://github.com/rails/rails/commit/db41eb8a6ea88b854bf5cd11070ea4245e1639c5))
 
 * Приведение типов для значений json при записи, таким образом значение не изменится при чтении из базы данных. ([Pull Request](https://github.com/rails/rails/pull/12643))
 
@@ -464,7 +464,7 @@ Active Record
   `:inverse_of`, Active Record самостоятельно определит противоположную связь, основываясь на эвристике.
   ([Pull Request](https://github.com/rails/rails/pull/10886))
 
-* Оперирование псевдонимами атрибутов в ActiveRecord::Relation. При использовании символьных ключей, ActiveRecord теперь переведет имена-псевдонимы аттрибутов к фактическим именам столбцов, используемых в базе данных. ([Pull Request](https://github.com/rails/rails/pull/7839))
+* Оперирование псевдонимами атрибутов в ActiveRecord::Relation. При использовании символьных ключей, ActiveRecord теперь переведет имена-псевдонимы атрибутов к фактическим именам столбцов, используемых в базе данных. ([Pull Request](https://github.com/rails/rails/pull/7839))
 
 * Шаблоны ERB в фикстурах больше не вычисляются в контексте главного объекта.
   Методы хелперов, использующиеся в нескольких фикстурах, должны объявляться в модулях, включённых в `ActiveRecord::FixtureSet.context_class`. ([Pull Request](https://github.com/rails/rails/pull/13022))

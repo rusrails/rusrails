@@ -56,6 +56,12 @@ pages:
     revision: 9aa1a3d85327fa0a3055b5b757a0be092ce582f7
     date:     23/09/2013
 
+  - title:    Обзор Action View
+    path:     action-view-overview
+    file:     action_view_overview.md
+    revision: 4ffe46f5fe957cb39eb93fc9120fab2dc951b384
+    date:     19/02/2015
+
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
@@ -241,7 +247,6 @@ images:
   date:       25/02/2014
 
 plan:
-  - file:     action_view_overview.md
   - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
   - file:     contributing_to_ruby_on_rails.md
