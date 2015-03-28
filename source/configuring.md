@@ -506,7 +506,7 @@ config.middleware.delete "Rack::MethodOverride"
     ```
 
 
-### Конфигурирование Active Support
+### (configuring-active-support) Конфигурирование Active Support
 
 Имеется несколько конфигурационных настроек для Active Support:
 
