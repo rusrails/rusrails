@@ -166,6 +166,8 @@ create  app/controllers/welcome_controller.rb
 invoke  erb
 create    app/views/welcome
 create    app/views/welcome/index.html.erb
+invoke  test_unit
+create    test/controllers/welcome_controller_test.rb
 invoke  helper
 create    app/helpers/welcome_helper.rb
 invoke    test_unit
@@ -174,7 +176,7 @@ invoke  assets
 invoke    coffee
 create      app/assets/javascripts/welcome.js.coffee
 invoke    scss
-create      app/assets/stylesheets/welcome.css.scss
+create      app/assets/stylesheets/welcome.scss
 ```
 
 Наиболее важными из них являются, разумеется, контроллер, расположенный в `app/controllers/welcome_controller.rb`, и вьюха, расположенная в `app/views/welcome/index.html.erb`.
@@ -189,11 +191,7 @@ create      app/assets/stylesheets/welcome.css.scss
 
 Теперь, когда мы сделали контроллер и вьюху, нужно сказать Rails, что мы хотим увидеть "Hello Rails!". В нашем случае мы хотим это увидеть, когда зайдем в корневой URL нашего сайта, <http://localhost:3000>. Однако сейчас это место заняла тестовая страница "Welcome Aboard".
 
-Чтобы это исправить, удалите файл `index.html`, расположенный в директории `public` приложения.
-
-Так нужно сделать, так как Rails отдаст любой статичный файл из директории `public`, соответствующий маршруту, предпочтя его любому динамическому содержимому, создаваемому из контроллеров. Файл `index.html` особенный: он будет отдан, если запрос придет в корневой маршрут, т.е. http://localhost:3000. Если произойдет другой запрос, такой как http://localhost:3000/welcome, будет отдан файл `public/welcome.html`, но только если он существует.
-
-Теперь нужно сказать Rails, где находится настоящая домашняя страница.
+Теперь вам нужно сообщить Rails, где находится настоящая домашняя страница.
 
 Откройте файл `config/routes.rb` в редакторе.
 
