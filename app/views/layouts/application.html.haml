@@ -37,8 +37,7 @@
     .content-wrapper
       .container-fluid
         .row-fluid
-          .span9.content= yield
-          .span3
+          .span3.pull-right
             .well.social
               %h4 Принимаем пожелания и пулл реквесты!
               %iframe{allowtransparency: "true", frameborder: "0", height: "30", src: "http://ghbtns.com/github-btn.html?user=morsbox&repo=rusrails&type=watch&count=true&size=large", width: "180"}
@@ -48,6 +47,7 @@
               .well.menu= yield(:menu)
             .well
               = render "shared/rsya", limit: 4
+          .span9.content.pull-left= yield
         .row-fluid
           .span12#footer
             %p
