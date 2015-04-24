@@ -7,7 +7,6 @@
 * Как создать модели, контроллеры, миграции базы данных и юнит-тесты
 * Как запустить сервер для разработки
 * Как экспериментировать с объектами в интерактивной оболочке
-* Как профилировать и тестировать ваше новое творение
 
 NOTE: Этот самоучитель предполагает, что вы обладаете знаниями основ Rails, которые можно почерпнуть в [руководстве Rails для начинающих](/getting-started-with-rails).
 
@@ -23,7 +22,7 @@ NOTE: Этот самоучитель предполагает, что вы об
 * `rails dbconsole`
 * `rails new app_name`
 
-Каждую команду можно запустить с ```-h или --help``` для отображения подробной информации.
+Каждую команду можно запустить с `-h или --help` для отображения подробной информации.
 
 Давайте создадим простое приложение на Rails, чтобы рассмотреть все эти команды в контексте.
 
@@ -58,9 +57,9 @@ Rails создаст кучу всего с помощью такой мален
 
 ```bash
 $ cd commandsapp
-$ rails server
+$ bin/rails server
 => Booting WEBrick
-=> Rails 4.0.0 application starting in development on http://0.0.0.0:3000
+=> Rails 5.0.0 application starting in development on http://localhost:3000
 => Call with -d to detach
 => Ctrl-C to shutdown server
 [2013-08-07 02:00:01] INFO  WEBrick 1.3.1
@@ -75,10 +74,10 @@ INFO: Для запуска сервера также можно использ�
 Сервер может быть запущен на другом порту, при использовании опции `-p`. Среда по умолчанию может быть изменена с использованием `-e`.
 
 ```bash
-$ rails server -e production -p 4000
+$ bin/rails server -e production -p 4000
 ```
 
-Опция `-b` привязывает Rails к определенному IP, по умолчанию это 0.0.0.0. Можете запустить сервер, как демона, передав опцию `-d`.
+Опция `-b` привязывает Rails к определенному IP, по умолчанию это localhost. Можете запустить сервер, как демона, передав опцию `-d`.
 
 ### `rails generate`
 
@@ -87,7 +86,7 @@ $ rails server -e production -p 4000
 INFO: Также можно использовать псевдоним "g" для вызова команды `generate`: `rails g`.
 
 ```bash
-$ rails generate
+$ bin/rails generate
 Usage: rails generate GENERATOR [args] [options]
 
 ...
@@ -112,7 +111,7 @@ NOTE: Можно установить больше генераторов с п�
 INFO: Все консольные утилиты Rails имеют текст помощи. Как и с большинством утилит `*NIX`, можно попробовать `--help` или `-h` в конце, например `rails server --help`.
 
 ```bash
-$ rails generate controller
+$ bin/rails generate controller
 Usage: rails generate controller NAME [action action] [options]
 
 ...
@@ -127,35 +126,33 @@ Description:
     ...
 
 Example:
-    `rails generate controller CreditCard open debit credit close`
+    `rails generate controller CreditCards open debit credit close`
 
-    Credit card controller with URLs like /credit_card/debit.
-        Controller: app/controllers/credit_card_controller.rb
-        Test:       test/controllers/credit_card_controller_test.rb
-        Views:      app/views/credit_card/debit.html.erb [...]
-        Helper:     app/helpers/credit_card_helper.rb
+    Credit card controller with URLs like /credit_cards/debit.
+        Controller: app/controllers/credit_cards_controller.rb
+        Test:       test/controllers/credit_cards_controller_test.rb
+        Views:      app/views/credit_cards/debit.html.erb [...]
+        Helper:     app/helpers/credit_cards_helper.rb
 ```
 
 Генератор контроллера ожидает параметры в форме `generate controller ControllerName action1 action2`. Давайте создадим контроллер `Greetings` с экшном **hello**, который скажет нам что-нибудь приятное.
 
 ```bash
-$ rails generate controller Greetings hello
+$ bin/rails generate controller Greetings hello
      create  app/controllers/greetings_controller.rb
      route  get "greetings/hello"
      invoke  erb
      create    app/views/greetings
      create    app/views/greetings/hello.html.erb
-     invoke  test_unit
-     create    test/controllers/greetings_controller_test.rb
      invoke  helper
      create    app/helpers/greetings_helper.rb
      invoke    test_unit
      create      test/helpers/greetings_helper_test.rb
      invoke  assets
      invoke    coffee
-     create      app/assets/javascripts/greetings.js.coffee
+     create      app/assets/javascripts/greetings.coffee
      invoke    scss
-     create      app/assets/stylesheets/greetings.css.scss
+     create      app/assets/stylesheets/greetings.scss
 ```
 
 Что создалось? Создался ряд директорий в нашем приложении, и создались файл контроллера, файл вьюхи, файл функционального теста, хелпер для вьюхи, файл JavaScript и файл таблицы стилей.
@@ -180,7 +177,7 @@ end
 Запустим сервер с помощью `rails server`.
 
 ```bash
-$ rails server
+$ bin/rails server
 => Booting WEBrick...
 ```
 
@@ -191,7 +188,7 @@ INFO: В нормальном старом добром приложении н�
 В Rails также есть генератор для моделей данных.
 
 ```bash
-$ rails generate model
+$ bin/rails generate model
 Usage:
   rails generate model NAME [field[:type][:index] field[:type][:index]] [options]
 
@@ -214,7 +211,7 @@ NOTE: Список доступных типов полей можно узна�
 Давайте настроим простой ресурс, названный "HighScore", который будет отслеживать наши лучшие результаты в видеоиграх, в которые мы играли.
 
 ```bash
-$ rails generate scaffold HighScore game:string score:integer
+$ bin/rails generate scaffold HighScore game:string score:integer
     invoke  active_record
     create    db/migrate/20130717151933_create_high_scores.rb
     create    app/models/high_score.rb
@@ -236,26 +233,24 @@ $ rails generate scaffold HighScore game:string score:integer
     create      test/controllers/high_scores_controller_test.rb
     invoke    helper
     create      app/helpers/high_scores_helper.rb
-    invoke      test_unit
-    create        test/helpers/high_scores_helper_test.rb
     invoke    jbuilder
     create      app/views/high_scores/index.json.jbuilder
     create      app/views/high_scores/show.json.jbuilder
     invoke  assets
     invoke    coffee
-    create      app/assets/javascripts/high_scores.js.coffee
+    create      app/assets/javascripts/high_scores.coffee
     invoke    scss
-    create      app/assets/stylesheets/high_scores.css.scss
+    create      app/assets/stylesheets/high_scores.scss
     invoke  scss
-   identical    app/assets/stylesheets/scaffolds.css.scss
+   identical    app/assets/stylesheets/scaffolds.scss
 ```
 
 Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит тестов, таблиц стилей, создал вьюхи, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу `high_scores` и поля), позаботился о маршруте для *ресурса*, и создал новые тесты для всего этого.
 
-Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (находящийся в этом `20130717151933_create_high_scores.rb`), чтобы изменить схему базы данных. Какой базы данных? Базы данных sqlite3, которую создаст Rails, когда мы запустим команду `rake db:migrate`. Поговорим о Rake чуть позже.
+Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (находящийся в этом `20130717151933_create_high_scores.rb`), чтобы изменить схему базы данных. Какой базы данных? Базы данных SQLite3, которую создаст Rails, когда мы запустим команду `rake db:migrate`. Поговорим о Rake чуть позже.
 
 ```bash
-$ rake db:migrate
+$ bin/rake db:migrate
 ==  CreateHighScores: migrating ===============================================
 -- create_table(:high_scores)
    -> 0.0017s
@@ -267,7 +262,7 @@ INFO: Давайте поговорим об юнит тестах. Юнит т�
 Давайте взглянем на интерфейс, который Rails создал для нас.
 
 ```bash
-$ rails server
+$ bin/rails server
 ```
 
 Перейдите в браузер и откройте [http://localhost:3000/high_scores](http://localhost:3000/high_scores), теперь мы можем создать новый рекорд (55,160 в Space Invaders!)
@@ -281,16 +276,41 @@ INFO: Для вызова консоли также можно использо�
 Можно указать среду, в которой должна работать команда `console`.
 
 ```bash
-$ rails console staging
+$ bin/rails console staging
 ```
 
 Если нужно протестировать некоторый код без изменения каких-либо данных, можно это сделать, вызвав `rails console --sandbox`.
 
 ```bash
-$ rails console --sandbox
-Loading development environment in sandbox (Rails 4.0.0)
+$ bin/rails console --sandbox
+Loading development environment in sandbox (Rails 5.0.0)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
+```
+
+#### Объекты app и helper
+
+Внутри `rails console` имеется доступ к экземплярам `app` и `helper`.
+
+С помощью метода `app` доступны хелперы url и path, а также можно делать запросы.
+
+```bash
+>> app.root_path
+=> "/"
+
+>> app.get _
+Started GET "/" for 127.0.0.1 at 2014-06-19 10:41:57 -0300
+...
+```
+
+С помощью метода `helper` возможно получить доступ к хелперам Rails и вашего приложения.
+
+```bash
+>> helper.time_ago_in_words 30.days.ago
+=> "about 1 month"
+
+>> helper.my_custom_helper
+=> "my custom helper"
 ```
 
 ### `rails dbconsole`
@@ -304,7 +324,7 @@ INFO: Для вызова консоли базы данных также мож
 `runner` запускает код Ruby в контексте неинтерактивности Rails. Для примера:
 
 ```bash
-$ rails runner "Model.long_running_method"
+$ bin/rails runner "Model.long_running_method"
 ```
 
 INFO: Можно также использовать псевдоним "r" для вызова runner: `rails r`.
@@ -312,7 +332,13 @@ INFO: Можно также использовать псевдоним "r" дл
 Можно определить среду, в которой будет работать команда `runner`, используя переключатель `-e`:
 
 ```bash
-$ rails runner -e staging "Model.long_running_method"
+$ bin/rails runner -e staging "Model.long_running_method"
+```
+
+С помощью runner даже можно запускать код ruby, написанный в файле.
+
+```bash
+$ bin/rails runner lib/code_to_be_run.rb
 ```
 
 ### `rails destroy`
@@ -322,7 +348,7 @@ $ rails runner -e staging "Model.long_running_method"
 INFO: Также можно использовать псевдоним "d" для вызова команды destroy: `rails d`.
 
 ```bash
-$ rails generate model Oops
+$ bin/rails generate model Oops
       invoke  active_record
       create    db/migrate/20120528062523_create_oops.rb
       create    app/models/oops.rb
@@ -332,7 +358,7 @@ $ rails generate model Oops
 ```
 
 ```bash
-$ rails destroy model Oops
+$ bin/rails destroy model Oops
       invoke  active_record
       remove    db/migrate/20120528062523_create_oops.rb
       remove    app/models/oops.rb
@@ -348,41 +374,37 @@ Rake означает Ruby Make, отдельная утилита Ruby, зам�
 
 Можно получить список доступных задач Rake, который часто зависит от вашей текущей директории, написав `rake --tasks`. У кажой задачи есть описание, помогающее найти то, что вам необходимо.
 
-Чтобы получить полный бэктрейс для запущенной задачи rake, необходимо передать опцию ```--trace``` в командную строку, например ```rake db:create --trace```.
+Чтобы получить полный бэктрейс для запущенной задачи rake, необходимо передать опцию `--trace` в командную строку, например `rake db:create --trace`.
 
 ```bash
-$ rake --tasks
+$ bin/rake --tasks
 rake about              # List versions of all Rails frameworks and the environment
-rake assets:clean       # Remove compiled assets
+rake assets:clean       # Remove old compiled assets
+rake assets:clobber     # Remove compiled assets
 rake assets:precompile  # Compile all the assets named in config.assets.precompile
 rake db:create          # Create the database from config/database.yml for the current Rails.env
 ...
 rake log:clear          # Truncates all `*.log` files in log/ to zero bytes (specify which logs with LOGS=test,development)
 rake middleware         # Prints out your Rack middleware stack
 ...
-rake tmp:clear          # Clear session, cache, and socket files from tmp/ (narrow w/ tmp:sessions:clear, tmp:cache:clear, tmp:sockets:clear)
-rake tmp:create         # Creates tmp directories for sessions, cache, sockets, and pids
+rake tmp:clear          # Clear cache and socket files from tmp/ (narrow w/ tmp:cache:clear, tmp:sockets:clear)
+rake tmp:create         # Creates tmp directories for cache, sockets, and pids
 ```
 
-INFO: Для получения списка задач также можно использовать ```rake -T```.
+INFO: Для получения списка задач также можно использовать `rake -T`.
 
 ### `about`
 
 `rake about` предоставляет информацию о номерах версий Ruby, RubyGems, Rails, подкомпонентов Rails, папке вашего приложения, имени текущей среды Rails, адаптере базы данных вашего приложения и версии схемы. Это полезно, когда нужно попросить помощь, проверить патч безопасности, который может повлиять на вас, или просто хотите узнать статистику о текущей инсталляции Rails.
 
 ```bash
-$ rake about
+$ bin/rake about
 About your application's environment
-Ruby version              1.9.3 (x86_64-linux)
-RubyGems version          1.3.6
-Rack version              1.3
-Rails version             4.1.0
+Rails version             5.0.0
+Ruby version              2.2.1 (x86_64-linux)
+RubyGems version          2.4.5
+Rack version              1.6
 JavaScript Runtime        Node.js (V8)
-Active Record version     4.1.0
-Action Pack version       4.1.0
-Action View version       4.1.0
-Action Mailer version     4.1.0
-Active Support version    4.1.0
 Middleware                Rack::Sendfile, ActionDispatch::Static, Rack::Lock, #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x007ffd131a7c88>, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::RemoteIp, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActiveRecord::QueryCache, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, Rack::Head, Rack::ConditionalGet, Rack::ETag
 Application root          /home/foobar/commandsapp
 Environment               development
@@ -392,7 +414,9 @@ Database schema version   20110805173523
 
 ### `assets`
 
-Можно предварительно компилировать ресурсы (ассеты) в `app/assets`, используя `rake assets:precompile`, и удалять эти скомпилированные ресурсы, используя `rake assets:clean`.
+Можно предварительно компилировать ресурсы (ассеты) в `app/assets`, используя `rake assets:precompile`, и удалять эти скомпилированные ресурсы, используя `rake assets:clean`. Задача `assets:clean` позволяет откатывать деплои, которые все еще могут быть связаны со старыми ресурсами, в то врямя как создаются новые ресурсы.
+
+Если хотите полностью очистить `public/assets`, можно использовать `rake assets:clobber`.
 
 ### `db`
 
@@ -400,20 +424,12 @@ Database schema version   20110805173523
 
 Более подробно о миграциях написано в руководстве [Миграции](/rails-database-migrations).
 
-### `doc`
-
-В пространстве имен `doc:` имеются инструменты для создания документации для вашего приложения, документации API, руководств. Документация также может вырезаться, что полезно для сокращения вашего кода, если вы пишите приложения Rails для встраимовой платформы.
-
-* `rake doc:app` создает документацию для вашего приложения в `doc/app`.
-* `rake doc:guides` создает руководства Rails в `doc/guides`.
-* `rake doc:rails` создает документацию по API Rails в `doc/api`.
-
 ### `notes`
 
-`rake notes` ищет в вашем коде комментарии, начинающиеся с FIXME, OPTIMIZE или TODO. Поиск выполняется в файлах с разрешениями `.builder`, `.rb`, `.erb`, `.haml` и `.slim` для аннотаций как по умолчанию, так и произвольных.
+`rake notes` ищет в вашем коде комментарии, начинающиеся с FIXME, OPTIMIZE или TODO. Поиск выполняется в файлах с разрешениями `.builder`, `.rb`, `.rake`, `.yml`, `.yaml`, `.ruby`, `.css`, `.js` и `.erb` для аннотаций как по умолчанию, так и произвольных.
 
 ```bash
-$ rake notes
+$ bin/rake notes
 (in /home/foobar/commandsapp)
 app/controllers/admin/users_controller.rb:
   * [ 20] [TODO] any other way to do this?
@@ -424,10 +440,16 @@ app/models/school.rb:
   * [ 17] [FIXME]
 ```
 
+Можно добавить поддержку для нового расширения файла с помощью опции `config.annotations.register_extensions`, которая получает список расширений с соответствующим регулярным выражением.
+
+```ruby
+config.annotations.register_extensions("scss", "sass", "less") { |annotation| /\/\/\s*(#{annotation}):?\s*(.*)$/ }
+```
+
 Если ищете определенную аннотацию, скажем FIXME, используйте `rake notes:fixme`. Отметьте, что имя аннотации использовано в нижнем регистре.
 
 ```bash
-$ rake notes:fixme
+$ bin/rake notes:fixme
 (in /home/foobar/commandsapp)
 app/controllers/admin/users_controller.rb:
   * [132] high priority for next deploy
@@ -439,19 +461,19 @@ app/models/school.rb:
 Также можно использовать произвольные аннотации в своем коде и выводить их, используя `rake notes:custom`, определив аннотацию, используя переменную среды `ANNOTATION`.
 
 ```bash
-$ rake notes:custom ANNOTATION=BUG
+$ bin/rake notes:custom ANNOTATION=BUG
 (in /home/foobar/commandsapp)
-app/models/post.rb:
+app/models/article.rb:
   * [ 23] Have to fix this one before pushing!
 ```
 
 NOTE. При использовании определенных и произвольных аннотаций, имя аннотации (FIXME, BUG и т.д.) не отображается в строках результата.
 
-По умолчанию `rake notes` будет искать в директориях `app`, `config`, `lib`, `bin` и `test`. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды `SOURCE_ANNOTATION_DIRECTORIES`.
+По умолчанию `rake notes` будет искать в директориях `app`, `config`, `db`, `lib` и `test`. Если желаете искать в иных директориях, можно их предоставить как разделенный запятыми список в переменную среды `SOURCE_ANNOTATION_DIRECTORIES`.
 
 ```bash
 $ export SOURCE_ANNOTATION_DIRECTORIES='spec,vendor'
-$ rake notes
+$ bin/rake notes
 (in /home/foobar/commandsapp)
 app/models/user.rb:
   * [ 35] [FIXME] User should have a subscription at this point
@@ -471,15 +493,14 @@ Rails поставляется с набором тестов по имени `M
 
 ### `tmp`
 
-Директория `Rails.root/tmp` является, как любая *nix директория /tmp, местом для временных файлов, таких как сессии (если вы используете файловое хранение), файлы id процессов и кэшированные экшны.
+Директория `Rails.root/tmp` является, как любая *nix директория /tmp, местом для временных файлов, таких как файлы id процессов и кэшированные экшны.
 
 Задачи пространства имен `tmp:` поможет очистить и создать директорию `Rails.root/tmp`:
 
-* `rake tmp:cache:clear` очистит <tt>tmp/cache</tt>.
-* `rake tmp:sessions:clear` очистит <tt>tmp/sessions</tt>.
-* `rake tmp:sockets:clear` очистит <tt>tmp/sockets</tt>.
-* `rake tmp:clear` очистит все три: кэша, сессий и сокетов.
-* `rake tmp:create` создает временные директории для сессий, кэша, сокетов и идентификаторов процесса (pid).
+* `rake tmp:cache:clear` очистит `tmp/cache`.
+* `rake tmp:sockets:clear` очистит `tmp/sockets`.
+* `rake tmp:clear` очистит все файлы кэша и сокетов.
+* `rake tmp:create` создает временные директории для кэша, сокетов и идентификаторов процесса (pid).
 
 ### Прочее
 
@@ -502,8 +523,8 @@ end
 Чтобы передать аргументы в ваш задачу rake:
 
 ```ruby
-task :task_name, [:arg_1] => [:pre_1, :pre_2] do |t, args|
-  # Здесь можно использовать args
+task :task_name, [:arg_1] => [:prerequisite_1, :prerequisite_2] do |task, args|
+  argument_1 = args.arg_1
 end
 ```
 
@@ -521,9 +542,9 @@ end
 Вызов задач выглядит так:
 
 ```bash
-rake task_name
-rake "task_name[value 1]" # entire argument string should be quoted
-rake db:nothing
+$ bin/rake task_name
+$ bin/rake "task_name[value 1]" # entire argument string should be quoted
+$ bin/rake db:nothing
 ```
 
 NOTE: Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваша задача должен зависеть от задачи `environment`, который загрузит код вашего приложения.
