@@ -30,13 +30,13 @@
     * [Rails Internationalization API](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
     * [Основы Active Job](/active_job_basics)
+    * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
+    * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
-    * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line)
@@ -52,6 +52,10 @@ next_column
     * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
     * [Создание и настройка генераторов Rails](/generators)
+
+* **Вносим вклад в Ruby on Rails**
+
+    * [Вносим вклад в Ruby on Rails](/contributing_to_ruby_on_rails)
 
 * **Заметки о релизах**
 

@@ -200,6 +200,12 @@ pages:
     revision: c758093eca303704f52b45fd0660e13600b9b315
     date:     16/12/2013
 
+  - title:    Вносим вклад в Ruby on Rails
+    path:     contributing_to_ruby_on_rails
+    file:     contributing_to_ruby_on_rails.md
+    revision: 2e1d69ea97fb0123cf883bd0964b8be6d4906458
+    date:     11/04/2015
+
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
@@ -249,12 +255,14 @@ images:
 plan:
   - file:     active_record_postgresql.md
   - file:     api_documentation_guidelines.md
-  - file:     contributing_to_ruby_on_rails.md
+    todo: 1
   - file:     development_dependencies_install.md
+    todo: 3
   - file:     maintenance_policy.md
   - file:     profiling.md
   - file:     rails_application_templates.md
   - file:     ruby_on_rails_guides_guidelines.md
+    todo: 2
 
 old:
   - file:     2_2_release_notes.md
