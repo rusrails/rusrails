@@ -9,6 +9,7 @@ jQuery ->
     placement: 'bottom'
     content: $('.index-popover-content').html()
     template: '<div class="popover index-content"><div class="arrow"></div><div class="popover-content"></div></div>'
+    trigger: 'focus'
 
   $('.index-popover').click -> false
 
