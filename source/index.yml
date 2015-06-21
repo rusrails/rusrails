@@ -254,6 +254,7 @@ images:
 
 plan:
   - file:     active_record_postgresql.md
+  - file:     api_app.md
   - file:     api_documentation_guidelines.md
     todo: 1
   - file:     development_dependencies_install.md
