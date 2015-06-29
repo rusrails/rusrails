@@ -29,7 +29,7 @@ gem 'git', require: false
 group :development do
   gem 'quiet_assets'
   # Need for cap tasks for 3.2 branch
-  gem 'thinking-sphinx', require: false
+  # gem 'thinking-sphinx', require: false
 end
 
 group :development, :test do
