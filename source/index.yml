@@ -206,6 +206,12 @@ pages:
     revision: 2e1d69ea97fb0123cf883bd0964b8be6d4906458
     date:     11/04/2015
 
+  - title:    Рекомендации по документированию API
+    path:     api_documentation_guidelines
+    file:     api_documentation_guidelines.md
+    revision: 86b6c773378383c902c24b5b5917177bde4e8d62
+    date:     28/04/2015
+
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
@@ -255,8 +261,6 @@ images:
 plan:
   - file:     active_record_postgresql.md
   - file:     api_app.md
-  - file:     api_documentation_guidelines.md
-    todo: 1
   - file:     development_dependencies_install.md
     todo: 3
   - file:     maintenance_policy.md

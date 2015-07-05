@@ -56,6 +56,7 @@ next_column
 * **Вносим вклад в Ruby on Rails**
 
     * [Вносим вклад в Ruby on Rails](/contributing_to_ruby_on_rails)
+    * [Рекомендации по документированию API](/api_documentation_guidelines)
 
 * **Заметки о релизах**
 
