@@ -83,7 +83,7 @@ namespace :docrails do
   end
 
   def config
-    @config = YAML.load IO.read Rails.root.join 'source', 'index.yml'
+    @config ||= YAML.load IO.read Rails.root.join 'source', 'index.yml'
   end
 
 
