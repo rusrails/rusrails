@@ -32,12 +32,12 @@
     * [Основы Active Job](/active_job_basics)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
+    * [Отладка приложений на Rails](/debugging-rails-applications)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Руководство по командной строке Rails и задачам Rake](/a-guide-to-the-rails-command-line)
     * [Кэширование с Rails](/caching-with-rails-an-overview)
@@ -57,6 +57,7 @@ next_column
 
     * [Вносим вклад в Ruby on Rails](/contributing_to_ruby_on_rails)
     * [Рекомендации по документированию API](/api_documentation_guidelines)
+    * [Рекомендации для руководств по Ruby on Rails](/ruby_on_rails_guides_guidelines)
 
 * **Заметки о релизах**
 

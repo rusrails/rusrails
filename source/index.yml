@@ -212,6 +212,12 @@ pages:
     revision: 86b6c773378383c902c24b5b5917177bde4e8d62
     date:     28/04/2015
 
+  - title:    Рекомендации для руководств по Ruby on Rails
+    path:     ruby_on_rails_guides_guidelines
+    file:     ruby_on_rails_guides_guidelines.md
+    revision: 86b6c773378383c902c24b5b5917177bde4e8d62
+    date:     28/04/2015
+
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
@@ -266,8 +272,6 @@ plan:
   - file:     maintenance_policy.md
   - file:     profiling.md
   - file:     rails_application_templates.md
-  - file:     ruby_on_rails_guides_guidelines.md
-    todo: 2
 
 old:
   - file:     2_2_release_notes.md
