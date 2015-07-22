@@ -50,6 +50,12 @@ pages:
     revision: 8ac458ad2e252ba041d9f4e42b94bd5997a622be
     date:     14/04/2015
 
+  - title:    Active Record для PostgreSQL
+    path:     active-record-postgresql
+    file:     active_record_postgresql.md
+    revision: c0747e2f39a1c040c50e63fb41e23dfa6e30f2fc
+    date:     08/08/2015
+
   - title:    Основы Active Model
     path:     active-model-basics
     file:     active_model_basics.md
