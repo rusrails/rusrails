@@ -7,12 +7,16 @@ special:
     path:     menu
     file:     menu.md
 
+images:
+  revision:   14354f195540954a1dfc5c954d06389c9f71e986
+  date:       11/07/2015
+
 pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: f28d1ddd507174ac233b773cc4f35c3c05ad32e7
-    date:     21/11/2014
+    revision: 14354f195540954a1dfc5c954d06389c9f71e986
+    date:     11/07/2015
 
   - title:    Основы Active Record
     path:     active-record-basics
@@ -265,10 +269,6 @@ pages:
     file:     4_2_release_notes.md
     revision: be1e0241f012f1151d2448b10e14b8b2eda26b84
     date:     18/12/2014
-
-images:
-  revision:   7aa500d2edcc2a2990e7a72799661d4a1227d441
-  date:       25/02/2014
 
 plan:
   - file:     active_record_postgresql.md
