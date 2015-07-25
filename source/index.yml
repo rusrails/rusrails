@@ -218,6 +218,12 @@ pages:
     revision: 86b6c773378383c902c24b5b5917177bde4e8d62
     date:     28/04/2015
 
+  - title:    Рекомендации для руководств по Ruby on Rails
+    path:     development_dependencies_install
+    file:     development_dependencies_install.md
+    revision: 068ab23a33b245d8f481bb839549806280effe48
+    date:     18/06/2015
+
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
@@ -267,8 +273,6 @@ images:
 plan:
   - file:     active_record_postgresql.md
   - file:     api_app.md
-  - file:     development_dependencies_install.md
-    todo: 3
   - file:     maintenance_policy.md
   - file:     profiling.md
   - file:     rails_application_templates.md

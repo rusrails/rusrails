@@ -58,6 +58,7 @@ next_column
     * [Вносим вклад в Ruby on Rails](/contributing_to_ruby_on_rails)
     * [Рекомендации по документированию API](/api_documentation_guidelines)
     * [Рекомендации для руководств по Ruby on Rails](/ruby_on_rails_guides_guidelines)
+    * [Установка зависимостей для разработки](/development_dependencies_install)
 
 * **Заметки о релизах**
 

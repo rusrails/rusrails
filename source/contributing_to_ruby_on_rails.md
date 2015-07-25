@@ -127,7 +127,7 @@ WARNING: В docrails имеется очень строгая политика: 
 
 #### Сложный способ
 
-В случае, если вы не можете использовать Rails development box, смотрите [TODO: другое руководство](/development_dependencies_install).
+В случае, если вы не можете использовать Rails development box, смотрите [другое руководство](/development_dependencies_install).
 
 ### Клонирование репозитория Rails
 
