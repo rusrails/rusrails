@@ -892,7 +892,7 @@ end
 Item.transaction do
   i = Item.lock.first
   i.name = 'Jones'
-  i.save
+  i.save!
 end
 ```
 
@@ -1746,7 +1746,7 @@ EXPLAIN for: SELECT `users`.* FROM `users` INNER JOIN `articles` ON `articles`.`
 
 для MySQL.
 
-Active Record применяет красивое форматирование, эмулирующее оболочку одной из баз данных. Таким образом, запуск того же запроса в адаптере PostgreSQL выдаст вместо этого
+Active Record применяет красивое форматирование, эмулирующее оболочку соответствующей базы данных. Таким образом, запуск того же запроса в адаптере PostgreSQL выдаст вместо этого
 
 ```
 EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "articles" ON "articles"."user_id" = "users"."id" WHERE "users"."id" = 1
