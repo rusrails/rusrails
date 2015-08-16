@@ -201,8 +201,8 @@ pages:
   - title:    Создание и настройка генераторов Rails
     path:     generators
     file:     generators.md
-    revision: c758093eca303704f52b45fd0660e13600b9b315
-    date:     16/12/2013
+    revision: e6be33f1ddafdb3e85b9809d0280439fc83559ae
+    date:     25/06/2015
 
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
