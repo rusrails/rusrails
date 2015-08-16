@@ -17,6 +17,8 @@ Rails 3.0 это волшебство! Он приготовит вам ужин
 
 Эти заметки о релизе покрывают основные обновления, но не включают все мелкие багфиксы и изменения. Rails 3.0 содержит почти 4,000 комитов от более чем 250 авторов! Чтобы увидеть все, обратитесь к [списку комитов](http://github.com/rails/rails/commits/3-0-stable) в главном репозитории Rails на GitHub.
 
+--------------------------------------------------------------------------------
+
 Чтобы установить Rails 3:
 
 ```bash
@@ -83,7 +85,7 @@ $ cd myapp
 
 Сейчас Rails использует `Gemfile` в корне приложения, чтобы определить гемы, требуемые для запуска вашего приложения. Этот `Gemfile` обрабатывается [Bundler](http://github.com/carlhuda/bundler), который затем устанавливает все зависимости. Он может даже установить все зависимости локально в ваше приложение, и оно не будет зависеть от системных гемов.
 
-Подробнее: - [домашняя страница bundler](http://gembundler.com)
+Подробнее: - [домашняя страница bundler](http://bundler.io/)
 
 ### Живите на грани
 
@@ -132,7 +134,7 @@ Railties был обновлен, чтобы предоставить совме
 
 [Arel](http://github.com/brynary/arel) (или Active Relation) был принят в качестве основы Active Record, и теперь требуется в Rails. Arel предоставляет абстракцию SQL, упрощающую Active Record и предоставляющую основы для функционала relation в Active Record.
 
-Подробнее: - [Why I wrote Arel](http://magicscalingsprinkles.wordpress.com/2010/01/28/why-i-wrote-arel/).
+Подробнее: - [Why I wrote Arel](https://web.archive.org/web/20120718093140/http://magicscalingsprinkles.wordpress.com/2010/01/28/why-i-wrote-arel/).
 
 ### Извлечение Mail
 
@@ -278,7 +280,7 @@ NOTE. Старый стиль команд `map` все еще работает,
 Подробнее:
 
 * [The Rails 3 Router: Rack it Up](http://yehudakatz.com/2009/12/26/the-rails-3-router-rack-it-up/)
-* [Revamped Routes in Rails 3](http://rizwanreza.com/2009/12/20/revamped-routes-in-rails-3)
+* [Revamped Routes in Rails 3](https://medium.com/fusion-of-thoughts/revamped-routes-in-rails-3-b6d00654e5b0)
 * [Generic Actions in Rails 3](http://yehudakatz.com/2009/12/20/generic-actions-in-rails-3/)
 
 ### Action View
@@ -492,7 +494,7 @@ Active Support
 Вот основные изменения в Active Support:
 
 * Большая чистка всей библиотеки от неиспользуемых методов.
-* Active Support более не предоставляет внешние библиотеки [TZInfo](http://tzinfo.rubyforge.org/), [Memcache Client](http://deveiate.org/projects/RMemCache/) и [Builder](http://builder.rubyforge.org/), все они включены как зависимости и устанавливаются с помощью команды `bundle install`.
+* Active Support более не предоставляет внешние библиотеки TZInfo, Memcache Client и Builder, все они включены как зависимости и устанавливаются с помощью команды `bundle install`.
 * Безопасные буферы реализованы в `ActiveSupport::SafeBuffer`.
 * Добавлены `Array.uniq_by` и `Array.uniq_by!`.
 * Убран `Array#rand` и портирован `Array#sample` из Ruby 1.9.
