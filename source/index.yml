@@ -237,8 +237,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
     file:     3_0_release_notes.md
-    revision: 080fc9cad39a98b6973cd7a7106f1bcb10d3ad02
-    date:     20/01/2014
+    revision: f7b5f6d88a3e5a33eb622875e699432d45659f91
+    date:     15/06/2015
 
   - title:    Заметки о релизе Ruby on Rails 3.1
     path:     3_1_release_notes
@@ -261,8 +261,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes
     file:     4_1_release_notes.md
-    revision: 578839bbbd8c0ca670a9735aafdf49bd7c8587c8
-    date:     18/02/2014
+    revision: d495592541b031bc165c5fb0116a33e5cb943fb7
+    date:     28/02/2015
 
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
