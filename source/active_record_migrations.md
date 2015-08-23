@@ -26,7 +26,7 @@ class CreateProducts < ActiveRecord::Migration
       t.string :name
       t.text :description
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -193,7 +193,7 @@ $ bin/rails generate migration AddUserRefToProducts user:references
 ```ruby
 class AddUserRefToProducts < ActiveRecord::Migration
   def change
-    add_reference :products, :user, index: true
+    add_reference :products, :user, index: true, foreign_key: true
   end
 end
 ```
@@ -236,7 +236,7 @@ class CreateProducts < ActiveRecord::Migration
       t.string :name
       t.text :description
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -358,18 +358,18 @@ end
 change_column :products, :part_number, :text
 ```
 
-Он меняет тип столбца `part_number` в таблице `products` на `:text`.
+Он меняет тип столбца `part_number` в таблице `products` на `:text`. Отметьте, что команда `change_column` — необратима.
 
-Кроме `change_column`, методы `change_column_null` и `change_column_default` используются чтобы изменить возможность null или значение столбца по умолчанию.
+Кроме `change_column`, методы `change_column_null` и `change_column_default` используются чтобы изменить ограничение не-null или значение столбца по умолчанию.
 
 ```ruby
 change_column_null :products, :name, false
-change_column_default :products, :approved, false
+change_column_default :products, :approved, from: true, to: false
 ```
 
-Это настроит поле `:name` в products быть `NOT NULL` столбцом и установит значение по умолчанию для поля `:approved` как false.
+Это настроит поле `:name` в products быть `NOT NULL` столбцом и изменит значение по умолчанию для поля `:approved` с true на false.
 
-TIP: В отличие от `change_column` (и `change_column_default`), `change_column_null` — обратимый.
+Note: Также можно написать предыдущую миграцию `change_column_default` как `change_column_default :products, :approved, false`, но, в отличие от предыдущего примера, это сделало бы вашу миграцию необратимой.
 
 ### (Column Modifiers) Модификаторы столбца
 
@@ -382,6 +382,8 @@ TIP: В отличие от `change_column` (и `change_column_default`), `chang
 * `null`         Позволяет или запрещает значения `NULL` в столбце.
 * `default`      Позволяет установить значение по умолчанию для столбца. Отметьте, что если вы используете динамическое значение (такое как дату), значение по умолчанию будет вычислено лишь один раз (т.е. на дату, когда миграция будет применена).
 * `index`        Добавляет индекс для столбца.
+* `required`     Добавляет `required: true` для связей `belongs_to` и `null: false` к столбцу в миграции.
+
 
 Некоторые адаптеры могут поддерживать дополнительные опции; за подробностями обратитесь к документации API конкретных адаптеров.
 
@@ -395,10 +397,9 @@ add_foreign_key :articles, :authors
 
 Это добавит новый внешний ключ к столбцу `author_id` таблицы `articles`. Ключ ссылается на стобец `id` таблицы `authors`. Если имена стобцов не могут быть произведены из имен таблиц, можно использовать опции `:column` и `:primary_key`.
 
-Rails сгененрирует имя для каждого внешнего ключа, начинающееся с `fk_rails_` плюс 10 случайных символов. Также есть опция `:name`, если хотите указать другое имя.
+Rails сгененрирует имя для каждого внешнего ключа, начинающееся с `fk_rails_` плюс 10 символов, которые детерминированно генерируются на основе `from_table` и `column`. Также есть опция `:name`, если хотите указать другое имя.
 
-NOTE: Active Record поддерживает внешние ключи только для отдельных столбцов. Чтобы использовать составные внешние ключи, требуются `execute` и
-`structure.sql`.
+NOTE: Active Record поддерживает внешние ключи только для отдельных столбцов. Чтобы использовать составные внешние ключи, требуются `execute` и `structure.sql`. Смотрите [Экспорт схемы](#schema-dumping-and-you)
 
 Убрать внешний ключ также просто:
 
@@ -418,7 +419,7 @@ remove_foreign_key :accounts, name: :special_fk_name
 Если хелперов, предоставленных Active Record, недостаточно, можно использовать метод `execute` для запуска произвольного SQL:
 
 ```ruby
-Product.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
+Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 ```
 
 Больше подробностей и примеров отдельных методов содержится в документации по API. В частности, документация для [`ActiveRecord::ConnectionAdapters::SchemaStatements`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html) (который обеспечивает методы, доступные в методах `up`, `down` и `change`), [`ActiveRecord::ConnectionAdapters::TableDefinition`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html) (который обеспечивает методы, доступные у объекта, переданного методом `create_table`) и [`ActiveRecord::ConnectionAdapters::Table`](http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/Table.html) (который обеспечивает методы, доступные у объекта, переданного методом `change_table`).
@@ -444,11 +445,17 @@ Product.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
 
 `change_table` так же является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
 
+`remove_column` обратима, если предоставить тип столбца третим аргументом. Также предоставьте опции оригинально столбца, иначе Rails не сможет в точности пересоздать этот столбец при откате:
+
+```ruby
+remove_column :posts, :slug, :string, null: false, default: '', index: true
+```
+
 Если вы нуждаетесь в использовании иных методов, следует использовать `reversible` или писать методы `up` и `down` вместо метода `change`.
 
 ### (using-reversible) Использование `reversible`
 
-Комплексная миграция может включать процессы, которые Active Record не знает как обратить. Вы можете использовать `reversible`, чтобы указать что делать когда миграция требует отката. Например:
+Комплексная миграция может включать процессы, которые Active Record не знает как обратить. Вы можете использовать `reversible`, чтобы указать что делать когда запускается миграция и когда она требует отката. Например:
 
 ```ruby
 class ExampleMigration < ActiveRecord::Migration
@@ -572,6 +579,8 @@ end
 
 Подобная миграция так же может быть написана без использования `revert`, но это бы привело к ещё нескольким шагам: изменение порядка(следования) `create table` и `reversible`, замена `create_table` на `drop_table` и в конечном итоге изменение `up` `down` наоборот. Обо всём этом уже позаботился `revert`.
 
+NOTE: Если хотите добавить ограничения `CHECK`, как в вышеуказанных примерах, нужно использовать `structure.sql` в качестве метода экспорта. Смотрите [Экспорт схемы](#schema-dumping-and-you).
+
 Запуск миграций
 ---------------
 
@@ -621,8 +630,7 @@ $ bin/rake db:migrate:redo STEP=3
 
 Задача `db:reset` удалит базу данных и установит ее заново. Функционально это эквивалентно `rake db:drop db:setup`.
 
-NOTE. Это не то же самое, что запуск всех миграций. Оно использует только текущее содержимое файла `schema.rb`. Если миграция не может быть откачена,
-'rake db:reset' может не помочь вам. Подробнее об экспорте схемы смотрите раздел [Экспорт схемы](/rails-database-migrations#schema-dumping-and-you).
+NOTE. Это не то же самое, что запуск всех миграций. Оно использует только текущее содержимое файла `schema.rb`. Если миграция не может быть откачена, 'rake db:reset' может не помочь вам. Подробнее об экспорте схемы смотрите раздел [Экспорт схемы](#schema-dumping-and-you).
 
 ### Запуск определенных миграций
 
@@ -670,7 +678,7 @@ class CreateProducts < ActiveRecord::Migration
       create_table :products do |t|
         t.string :name
         t.text :description
-        t.timestamps
+        t.timestamps null: false
       end
     end
 
@@ -749,7 +757,7 @@ end
 
 Во многих случаях этого достаточно. Этот файл создается с помощью проверки базы данных и описывает свою структуру, используя `create_table`, `add_index` и так далее. Так как он не зависит от типа базы данных, он может быть загружен в любую базу данных, поддерживаемую Active Record. Это очень полезно, если Вы распространяете приложение, которое может быть запущено на разных базах данных.
 
-Однако, тут есть компромисс: `db/schema.rb` не может описать специфичные элементы базы данных, такие как триггеры или хранимые процедуры. В то время как в миграции вы можете выполнить произвольное выражение SQL, выгрузчик схемы не может воспроизвести эти выражения из базы данных. Если Вы используете подобные функции, нужно установить формат схемы :sql.
+Однако, тут есть компромисс: `db/schema.rb` не может описать специфичные элементы базы данных, такие как триггеры, хранимые процедуры или ограничения `CHECK`. В то время как в миграции вы можете выполнить произвольное выражение SQL, выгрузчик схемы не может воспроизвести эти выражения из базы данных. Если Вы используете подобные функции, нужно установить формат схемы :sql.
 
 Вместо использования выгрузчика схемы Active Records, структура базы данных будет выгружена с помощью инструмента, предназначенного для этой базы данных (с помощью задачи `db:structure:dump` Rake) в `db/structure.sql`. Например, для PostgreSQL используется утилита `pg_dump`. Для MySQL этот файл будет содержать результат `SHOW CREATE TABLE` для разных таблиц.
 
