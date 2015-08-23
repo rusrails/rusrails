@@ -52,24 +52,6 @@ class Server < ::Rack::Server
 end
 ```
 
-Вот как он загружает промежуточные программы:
-
-```ruby
-def middleware
-  middlewares = []
-  middlewares << [Rails::Rack::Debugger] if options[:debugger]
-  middlewares << [::Rack::ContentLength]
-  Hash.new(middlewares)
-end
-```
-
-`Rails::Rack::Debugger` в основном полезен только в окружении development. Следующая таблица объясняет назначение загружаемых промежуточных программ:
-
-| Промежуточная программа | Назначение                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------- |
-| `Rails::Rack::Debugger` | Запускает отладчик                                                              |
-| `Rack::ContentLength`   | Считает количество байт в отклике и устанавливает заголовок HTTP Content-Length |
-
 ### `rackup`
 
 Для использования `rackup` вместо рельсового `rails server`, следует поместить следующее в `config.ru` в корневой директории приложения Rails:
@@ -78,8 +60,6 @@ end
 # Rails.root/config.ru
 require ::File.expand_path('../config/environment', __FILE__)
 
-use Rails::Rack::Debugger
-use Rack::ContentLength
 run Rails.application
 ```
 
@@ -94,6 +74,10 @@ $ rackup config.ru
 ```bash
 $ rackup --help
 ```
+
+### Разработка и авто-перегрузка
+
+Промежуточные программы загружаются один раз и не отслеживаются на предмет изменений. Необходимо перезагрузить сервер, чтобы отразить изменения в запущенном приложении.
 
 Стек промежуточных программ Action Dispatcher
 ---------------------------------------------
@@ -224,7 +208,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActionDispatch::Static`**
 
-* Используется для раздачи статичных ресурсов. Отключена, если `config.serve_static_assets` является true.
+* Используется для раздачи статичных файлов. Отключена, если `config.serve_static_assets` является true.
 
 **`Rack::Lock`**
 
@@ -244,7 +228,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActionDispatch::RequestId`**
 
-* Создает для отклика уникальный заголовок `X-Request-Id` и включает метод `ActionDispatch::Request#uuid`.
+* Создает для отклика уникальный заголовок `X-Request-Id` и включает метод `ActionDispatch::Request#request_id`.
 
 **`Rails::Rack::Logger`**
 
@@ -268,7 +252,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActionDispatch::Callbacks`**
 
-* Запускает колбэки prepare до обслуживания запроса.
+* Предоставляет колбэки для запуска до и после обработки запроса.
 
 **`ActiveRecord::Migration::CheckPending`**
 
@@ -298,7 +282,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 * Парсит параметры запроса в `params`.
 
-**`ActionDispatch::Head`**
+**`Rack::Head`**
 
 * Преобразует запросы HEAD в запросы `GET` и обслуживает их соответствующим образом.
 
@@ -319,8 +303,6 @@ TIP: Можете использовать любые из этих промеж
 
 * [Official Rack Website](http://rack.github.io)
 * [Introducing Rack](http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html)
-* [Ruby on Rack #1 - Hello Rack!](http://m.onkey.org/ruby-on-rack-1-hello-rack)
-* [Ruby on Rack #2 - The Builder](http://m.onkey.org/ruby-on-rack-2-the-builder)
 
 ### Понимание промежуточных программ
 
