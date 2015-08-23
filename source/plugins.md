@@ -36,7 +36,7 @@ $ rails plugin new yaffle
 Как ее использовать и ее опции смотрите:
 
 ```bash
-$ rails plugin --help
+$ rails plugin new --help
 ```
 
 Тестирование своего нового плагина
@@ -47,7 +47,7 @@ $ rails plugin --help
 Вы должны увидеть:
 
 ```bash
-  2 tests, 2 assertions, 0 failures, 0 errors, 0 skips
+  1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
 ```
 
 Это сообщает вам, что все сгенерировалось правильно, и вы можете начать добавлять функционал.
@@ -75,19 +75,19 @@ end
 
 ```bash
     1) Error:
-  test_to_squawk_prepends_the_word_squawk(CoreExtTest):
-  NoMethodError: undefined method `to_squawk' for [Hello World](String)
-      test/core_ext_test.rb:5:in `test_to_squawk_prepends_the_word_squawk'
+  CoreExtTest#test_to_squawk_prepends_the_word_squawk:
+  NoMethodError: undefined method `to_squawk' for "Hello World":String
+    /path/to/yaffle/test/core_ext_test.rb:5:in `test_to_squawk_prepends_the_word_squawk'
 ```
 
 Отлично - теперь мы готовы начать разработку.
 
-В `lib/yaffle.rb` добавьте `require "yaffle/core_ext"`:
+В `lib/yaffle.rb` добавьте `require 'yaffle/core_ext'`:
 
 ```ruby
 # yaffle/lib/yaffle.rb
 
-require "yaffle/core_ext"
+require 'yaffle/core_ext'
 
 module Yaffle
 end
@@ -108,13 +108,13 @@ end
 Чтобы проверить, что этот метод делает то, что нужно, запустите юнит тесты с помощью `rake` из директории плагина.
 
 ```bash
-  3 tests, 3 assertions, 0 failures, 0 errors, 0 skips
+  2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
 ```
 
 Чтобы увидеть его в действии, измените директорию на test/dummy, запустите консоль и начните squawking:
 
 ```bash
-$ rails console
+$ bin/rails console
 >> "Hello World".to_squawk
 => "squawk! Hello World"
 ```
@@ -138,7 +138,7 @@ end
 ```ruby
 # yaffle/lib/yaffle.rb
 
-require "yaffle/core_ext"
+require 'yaffle/core_ext'
 require 'yaffle/acts_as_yaffle'
 
 module Yaffle
@@ -183,31 +183,31 @@ end
 
 ```
     1) Error:
-  test_a_hickwalls_yaffle_text_field_should_be_last_squawk(ActsAsYaffleTest):
+  ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
   NameError: uninitialized constant ActsAsYaffleTest::Hickwall
-      test/acts_as_yaffle_test.rb:6:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
+    /path/to/yaffle/test/acts_as_yaffle_test.rb:6:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
 
     2) Error:
-  test_a_wickwalls_yaffle_text_field_should_be_last_tweet(ActsAsYaffleTest):
+  ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
   NameError: uninitialized constant ActsAsYaffleTest::Wickwall
-      test/acts_as_yaffle_test.rb:10:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
+    /path/to/yaffle/test/acts_as_yaffle_test.rb:10:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
 
-  5 tests, 3 assertions, 0 failures, 2 errors, 0 skips
+  4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
 ```
 
 Это сообщает нам об отсутствии необходимых моделей (Hickwall и Wickwall), которые мы пытаемся протестировать. Эти модели можно с легкостью создать в нашем  "dummy" приложении Rails, запустив следующие команды в директории test/dummy:
 
 ```bash
 $ cd test/dummy
-$ rails generate model Hickwall last_squawk:string
-$ rails generate model Wickwall last_squawk:string last_tweet:string
+$ bin/rails generate model Hickwall last_squawk:string
+$ bin/rails generate model Wickwall last_squawk:string last_tweet:string
 ```
 
 Теперь можно создать необходимые таблицы в вашей тестовой базе данных, перейдя в приложение-заглушку и мигрировав базу данных. Сначала запустите:
 
 ```bash
 $ cd test/dummy
-$ rake db:migrate
+$ bin/rake db:migrate
 ```
 
 Пока вы тут, измените модели Hickwall и Wickwall так, чтобы они знали, что они должны действовать как дятлы.
@@ -246,25 +246,25 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
+ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
 ```
 
 Затем можно вернуться в корневую директорию плагина (`cd ../..`) и перезапустить тесты с помощью `rake`.
 
 ```
     1) Error:
-  test_a_hickwalls_yaffle_text_field_should_be_last_squawk(ActsAsYaffleTest):
-  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x000001016661b8>
-      /Users/xxx/.rvm/gems/ruby-1.9.2-p136@xxx/gems/activerecord-3.0.3/lib/active_record/base.rb:1008:in `method_missing'
-      test/acts_as_yaffle_test.rb:5:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
+  ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
+  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x007fd105e3b218>
+    activerecord (4.1.5) lib/active_record/dynamic_matchers.rb:26:in `method_missing'
+    /path/to/yaffle/test/acts_as_yaffle_test.rb:6:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
 
     2) Error:
-  test_a_wickwalls_yaffle_text_field_should_be_last_tweet(ActsAsYaffleTest):
-  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x00000101653748>
-      Users/xxx/.rvm/gems/ruby-1.9.2-p136@xxx/gems/activerecord-3.0.3/lib/active_record/base.rb:1008:in `method_missing'
-      test/acts_as_yaffle_test.rb:9:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
+  ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
+  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x007fd105e409c0>
+    activerecord (4.1.5) lib/active_record/dynamic_matchers.rb:26:in `method_missing'
+    /path/to/yaffle/test/acts_as_yaffle_test.rb:10:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
 
-  5 tests, 3 assertions, 0 failures, 2 errors, 0 skips
+  4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
 
 ```
 
@@ -289,13 +289,13 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
+ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
 ```
 
 Когда запустите `rake`, все тесты должны пройти:
 
 ```bash
-  5 tests, 5 assertions, 0 failures, 0 errors, 0 skips
+  4 runs, 4 assertions, 0 failures, 0 errors, 0 skips
 ```
 
 ### Добавление метода экземпляра
@@ -361,13 +361,13 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.send :include, Yaffle::ActsAsYaffle
+ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
 ```
 
 Запустите `rake` в последний раз, вы должны увидеть:
 
 ```
-  7 tests, 7 assertions, 0 failures, 0 errors, 0 skips
+  6 runs, 6 assertions, 0 failures, 0 errors, 0 skips
 ```
 
 NOTE: Использование `write_attribute` для записи в поле модели - это всего лишь пример того, как плагин может взаимодействовать с моделью, но не всегда правильный метод для использования. Например, также можно использовать:
@@ -411,12 +411,12 @@ gem 'yaffle', git: 'git://github.com/yaffle_watcher/yaffle.git'
 Как только ваши комментарии закончены, перейдите в директорию плагины и запустите:
 
 ```bash
-$ rake rdoc
+$ bundle exec rake rdoc
 ```
 
 ### Ссылки
 
 * [Developing a RubyGem using Bundler](https://github.com/radar/guides/blob/master/gem-development.md)
 * [Using .gemspecs as Intended](http://yehudakatz.com/2010/04/02/using-gemspecs-as-intended/)
-* [Gemspec Reference](http://docs.rubygems.org/read/chapter/20)
+* [Gemspec Reference](http://guides.rubygems.org/specification-reference/)
 * [GemPlugins: A Brief Introduction to the Future of Rails Plugins](http://www.intridea.com/blog/2008/6/11/gemplugins-a-brief-introduction-to-the-future-of-rails-plugins)
