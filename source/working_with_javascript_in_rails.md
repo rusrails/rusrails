@@ -285,7 +285,7 @@ Rails 4 поставляется с [гемом Turbolinks](https://github.com/r
 
 ### Как работает Turbolinks
 
-Turbolinks добавляет обработчик щелчков на всех `<a>` на странице. Если ваш браузер поддерживает [PushState](https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history#The_pushState(\).C2.A0method),
+Turbolinks добавляет обработчик щелчков на всех `<a>` на странице. Если ваш браузер поддерживает [PushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history#The_pushState()_method),
 Turbolinks сделает запрос Ajax для страницы, распарсит отклик и заменит полностью `<body>` страницы на `<body>` отклика. Затем он использует PushState для изменения URL на правильный, сохраняя семантику для обновления и предоставляя красивые URL.
 
 Единственное, что необходимо сделать для включения Turbolinks - это добавить его в свой Gemfile, и поместить `//= require turbolinks` в свой манифест CoffeeScript, обычно это `app/assets/javascripts/application.js`.
