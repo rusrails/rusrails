@@ -624,6 +624,8 @@ config.action_mailer.smtp_settings = {
   enable_starttls_auto: true  }
 ```
 
+NOTE. 15 июля 2014 Google усилили [меры безопасности](https://support.google.com/accounts/answer/6010255) и теперь блокируют попытки от приложений, которые они сочтут небезопасными. Вы можете изменить ваши настройки gmail [здесь](https://www.google.com/settings/security/lesssecureapps), чтобы позволить попытки, или использовать другой почтовый провайдер (ESP, email service provider) для отправки почты, заменив выше 'smtp.gmail.com' на адрес вашего провайдера.
+
 Тестирование рассыльщика
 ------------------------
 
