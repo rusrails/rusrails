@@ -1,8 +1,22 @@
 !!!
-%html
+%html(prefix="og: http://ogp.me/ns#")
   %head
     %meta{name: "keywords", content: "ruby on rails, Ruby, Rails, Rails3, Rails4, Rails 4.0, Rails 4.1 Rails 4.2 руководство, начинающим, самоучитель, manual, мануал, справочник, учебник, примеры, Руби, рельсы"}
     %meta{name: "description", content: "Ruby on Rails русские руководства, учебники, статьи"}
+
+    %meta{property: "twitter:card", content: "product"}
+    %meta{property: "twitter:site", content: "@rails"}
+    %meta{property: "twitter:title", content: opengraph_config[:og_title]}
+    %meta{property: "twitter:description", content: opengraph_config[:og_description]}
+    %meta{property: "twitter:creator", content: "@rails"}
+    %meta{property: "twitter:image", content: opengraph_config[:og_image]}
+
+    %meta{property: "og:type", content: opengraph_config[:og_type]}
+    %meta{property: "og:title", content: opengraph_config[:og_title]}
+    %meta{property: "og:description", content: opengraph_config[:og_description]}
+    %meta{property: "og:url", content: opengraph_config[:og_url]}
+    %meta{property: "og:image", content: opengraph_config[:og_image]}
+
     %title= title
     = stylesheet_link_tag "application"
     = csrf_meta_tag
