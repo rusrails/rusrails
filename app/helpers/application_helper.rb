@@ -9,9 +9,10 @@ module ApplicationHelper
   end
 
   def opengraph_config
-    { og_type: "website",
+    {
+      og_type: "website",
       og_title: title,
-      og_description: "Ruby on Rails русские руководства, учебники, статьи",
+      og_description: "Ruby on Rails руководства, учебники, статьи на русском языке",
       og_url: request.original_url,
       og_image: "http://rusrails.ru/assets/rusrails.png"
     }
