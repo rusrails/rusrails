@@ -2,7 +2,13 @@
 %html
   %head
     %meta{name: "keywords", content: "ruby on rails, Ruby, Rails, Rails3, Rails4, Rails 4.0, Rails 4.1 Rails 4.2 руководство, начинающим, самоучитель, manual, мануал, справочник, учебник, примеры, Руби, рельсы"}
-    %meta{name: "description", content: "Ruby on Rails русские руководства, учебники, статьи"}
+
+    %meta{property: "og:type", content: "article"}
+    %meta{property: "og:title", content: title}
+    %meta{property: "og:description", content: "Ruby on Rails русские руководства, учебники, статьи"}
+    %meta{property: "og:url", content: request.original_url}
+    %meta{property: "og:image", content: '/assets/rusrails.png'}
+
     %title= title
     = stylesheet_link_tag "application"
     = csrf_meta_tag
