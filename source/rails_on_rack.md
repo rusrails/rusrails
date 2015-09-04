@@ -191,7 +191,7 @@ config.middleware.delete "ActionDispatch::Session::CookieStore"
 config.middleware.delete "ActionDispatch::Flash"
 ```
 
-Чтобы убрать промежуточные программы, относящиеся к бразуеру,
+Чтобы убрать промежуточные программы, относящиеся к браузеру,
 
 ```ruby
 # config/application.rb
@@ -216,7 +216,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
 
-* Используется для кэширования в памяти. Этот кэш не является нитебезопасным (thread safe).
+* Используется для кэширования в памяти. Этот кэш не является тредобезопасным(thread safe).
 
 **`Rack::Runtime`**
 
@@ -276,7 +276,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActionDispatch::Flash`**
 
-* Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присовено значение.
+* Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присвоено значение.
 
 **`ActionDispatch::ParamsParser`**
 

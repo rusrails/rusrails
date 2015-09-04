@@ -1,0 +1,5 @@
+dependencies:
+  cache_directories:
+    - node_modules
+  pre:
+    - npm install yaspeller && node ./node_modules/.bin/yaspeller .
