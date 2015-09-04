@@ -9,6 +9,12 @@
     %meta{property: "og:url", content: opengraph_config[:og_url]}
     %meta{property: "og:image", content: opengraph_config[:og_image]}
 
+    %meta{property: "twitter:card:", content: "summary"}
+    %meta{property: "twitter:title", content: opengraph_config[:og_title]}
+    %meta{property: "twitter:description", content: opengraph_config[:og_description]}
+    %meta{property: "twitter:url", content: opengraph_config[:og_url]}
+    %meta{property: "twitter:image", content: opengraph_config[:og_image]}
+
     %title= title
     = stylesheet_link_tag "application"
     = csrf_meta_tag
