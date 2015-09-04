@@ -13,7 +13,7 @@ module ApplicationHelper
       og_title: title,
       og_description: "Ruby on Rails русские руководства, учебники, статьи",
       og_url: request.original_url,
-      og_image: "http://www.http://rusrails.ru/assets/rusrails.png"
+      og_image: "http://rusrails.ru/assets/rusrails.png"
     }
   end
 end
