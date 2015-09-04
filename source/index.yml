@@ -81,8 +81,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 72c5b517d49fcf11de180d1e1ff87bdd2eb0df59
-    date:     05/05/2015
+    revision: 10c73386ae21102334af6827b70e7e344a167a5b
+    date:     23/08/2015
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -93,8 +93,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: 9876a16904f817e11713bc85479dd70da1de454b
-    date:     30/07/2015
+    revision: bc36ffeec05692777f4ece09978a321feed2d818
+    date:     24/08/2015
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
@@ -111,8 +111,8 @@ pages:
   - title:    Основы Action Mailer
     path:     action-mailer-basics
     file:     action_mailer_basics.md
-    revision: 9cc438f5596a519bdccc36cd0763feb72040e45b
-    date:     03/07/2015
+    revision: 1896be9741acedfab315cec8f024094c08ec46ae
+    date:     08/08/2015
 
   - title:    Основы Active Job
     path:     active_job_basics
