@@ -6,9 +6,9 @@ Active Record для PostgreSQL
 После прочтения этого руководства, вы узнаете о том:
 
 * Как использовать типы данных PostgreSQL.
-* Как использовать первичные UUID ключи. 
+* Как использовать первичные UUID ключи.
 * Как сделать поиск по всему тексту, используя PostgreSQL.
-* Как возвращать ваши модели Active Record, используя представление базы данных. 
+* Как возвращать ваши модели Active Record, используя представление базы данных.
 
 --------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ Active Record для PostgreSQL
 
 
 Для начала работы с PostgreSQL взгляните на
-[Конфигурирование приложений на Rails](configuring.html#konfigurirovanie-bazy-dannyh-postgresql).
+[Конфигурирование приложений на Rails](/configuring#konfigurirovanie-bazy-dannyh-postgresql).
 Там описано как правильно настроить Active Record для PostgreSQL.
 
 Типы данных (Datatypes)
@@ -83,7 +83,7 @@ Book.where("array_length(ratings, 1) >= 3")
 
 * [Определение типа](http://www.postgresql.org/docs/current/static/hstore.html)
 
-NOTE: вам необходимо включить расширение `hstore` для использования hstore. 
+NOTE: вам необходимо включить расширение `hstore` для использования hstore.
 
 ```ruby
 # db/migrate/20131009135255_create_profiles.rb
@@ -242,7 +242,7 @@ article.save!
 * [pgcrypto generator function](http://www.postgresql.org/docs/current/static/pgcrypto.html#AEN159361)
 * [uuid-ossp generator functions](http://www.postgresql.org/docs/current/static/uuid-ossp.html)
 
-NOTE: Вам необходимо включить `pgcrypto` (только PostgreSQL >= 9.4) расширение для использования uuid. 
+NOTE: Вам необходимо включить `pgcrypto` (только PostgreSQL >= 9.4) расширение для использования uuid.
 
 ```ruby
 # db/migrate/20131220144913_create_revisions.rb
@@ -261,7 +261,7 @@ revision = Revision.first
 revision.identifier # => "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 ```
 
-Вы можете использовать `uuid` тип для определения ссылок в миграции: 
+Вы можете использовать `uuid` тип для определения ссылок в миграции:
 
 ```ruby
 # db/migrate/20150418012400_create_blog.rb
@@ -284,7 +284,7 @@ class Comment < ActiveRecord::Base
 end
 ```
 
-Смотрите [эту секцию](#uuid-primary-keys) с более подробными деталями, как использовать UUIDs как первичного ключа. 
+Смотрите [эту секцию](#uuid-primary-keys) с более подробными деталями, как использовать UUIDs как первичного ключа.
 
 ### Битовая строка (Bit String Types)
 
