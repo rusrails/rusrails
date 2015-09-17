@@ -277,7 +277,6 @@ pages:
     date:     18/12/2014
 
 plan:
-  - file:     active_record_postgresql.md
   - file:     api_app.md
   - file:     maintenance_policy.md
   - file:     profiling.md
