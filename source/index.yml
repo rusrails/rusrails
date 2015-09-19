@@ -129,8 +129,8 @@ pages:
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
-    revision: 3862c55049adc14efd8dc8bd4c4627e0b987d51c
-    date:     13/06/2015
+    revision: c7cc81d21171f85aee367adffa97b98e81c60cbd
+    date:     05/09/2015
 
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
