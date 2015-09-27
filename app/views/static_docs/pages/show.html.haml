@@ -1,9 +1,7 @@
 - if @page && @page.path == 'index'
   #main_page_banner.well
-    = link_to "http://railsclub.ru", target: :_blank do
-      = image_tag "railsclub.png"
-    -# = render "shared/rsya", limit: 2
-
+    = render "shared/adsense"
+  
 - cache ['v1', @page] do
   = @page.rendered_body(self)
 
