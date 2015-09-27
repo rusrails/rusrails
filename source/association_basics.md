@@ -99,13 +99,13 @@ class CreateOrders < ActiveRecord::Migration
   def change
     create_table :customers do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :orders do |t|
       t.belongs_to :customer, index: true
       t.datetime :order_date
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -130,15 +130,24 @@ class CreateSuppliers < ActiveRecord::Migration
   def change
     create_table :suppliers do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :accounts do |t|
       t.belongs_to :supplier, index: true
       t.string :account_number
-      t.timestamps
+      t.timestamps null: false
     end
   end
+end
+```
+
+В зависимости от применения, возможно потребуется создать индекс уникальности и/или ограничение внешнего ключа на указанный столбец таблицы accounts. В этом случае определение столбца может выглядеть так:
+
+```ruby
+create_table :accounts do |t|
+  t.belongs_to :supplier, index: true, unique: true, foreign_key: true
+  # ...
 end
 ```
 
@@ -163,13 +172,13 @@ class CreateCustomers < ActiveRecord::Migration
   def change
     create_table :customers do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :orders do |t|
       t.belongs_to :customer, index: true
       t.datetime :order_date
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -205,19 +214,19 @@ class CreateAppointments < ActiveRecord::Migration
   def change
     create_table :physicians do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :patients do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :appointments do |t|
       t.belongs_to :physician, index: true
       t.belongs_to :patient, index: true
       t.datetime :appointment_date
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -286,19 +295,19 @@ class CreateAccountHistories < ActiveRecord::Migration
   def change
     create_table :suppliers do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :accounts do |t|
       t.belongs_to :supplier, index: true
       t.string :account_number
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :account_histories do |t|
       t.belongs_to :account, index: true
       t.integer :credit_rating
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -327,12 +336,12 @@ class CreateAssembliesAndParts < ActiveRecord::Migration
   def change
     create_table :assemblies do |t|
       t.string :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :parts do |t|
       t.string :part_number
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :assemblies_parts, id: false do |t|
@@ -366,13 +375,13 @@ class CreateSuppliers < ActiveRecord::Migration
   def change
     create_table :suppliers do |t|
       t.string  :name
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :accounts do |t|
       t.integer :supplier_id
       t.string  :account_number
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :accounts, :supplier_id
@@ -450,10 +459,10 @@ class CreatePictures < ActiveRecord::Migration
       t.string  :name
       t.integer :imageable_id
       t.string  :imageable_type
-      t.timestamps
+      t.timestamps null: false
     end
 
-    add_index :pictures, :imageable_id
+    add_index :pictures, [:imageable_type, :imageable_id]
   end
 end
 ```
@@ -466,7 +475,7 @@ class CreatePictures < ActiveRecord::Migration
     create_table :pictures do |t|
       t.string :name
       t.references :imageable, polymorphic: true, index: true
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -496,7 +505,7 @@ class CreateEmployees < ActiveRecord::Migration
   def change
     create_table :employees do |t|
       t.references :manager, index: true
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
@@ -573,7 +582,7 @@ end
 
 Если вы создали связь `has_and_belongs_to_many`, необходимо обязательно создать соединительную таблицу. Если имя соединительной таблицы явно не указано с использованием опции `:join_table`, Active Record создает имя, используя алфавитный порядок имен классов. Поэтому соединение между моделями customer и order по умолчанию даст значение имени таблицы "customers_orders", так как "c" идет перед "o" в алфавитном порядке.
 
-WARNING: Приоритет между именами модели рассчитывается с использованием оператора `<` для `String`. Это означает, что если строки имеют разную длину. и в своей короткой части они равны, тогда более длинная строка рассматривается как большая, по сравнению с короткой. Например, кто-то ожидает, что таблицы "paper_boxes" и "papers" создадут соединительную таблицу "papers_paper_boxes" поскольку имя "paper_boxes" длинее, но фактически будет сгенерирована таблица с именем "paper_boxes_papers" (поскольку знак подчеркивания "\_" лексикографически _меньше_, чем "s" в обычной кодировке).
+WARNING: Приоритет между именами модели рассчитывается с использованием оператора `<=>` для `String`. Это означает, что если строки имеют разную длину. и в своей короткой части они равны, тогда более длинная строка рассматривается как большая, по сравнению с короткой. Например, кто-то ожидает, что таблицы "paper_boxes" и "papers" создадут соединительную таблицу "papers_paper_boxes" поскольку имя "paper_boxes" длинее, но фактически будет сгенерирована таблица с именем "paper_boxes_papers" (поскольку знак подчеркивания "\_" лексикографически _меньше_, чем "s" в обычной кодировке).
 
 Какое бы ни было имя, вы должны вручную сгенерировать соединительную таблицу в соответствующей миграции. Например, рассмотрим эти связи:
 
@@ -604,6 +613,19 @@ end
 ```
 
 Мы передаем `id: false` в `create_table`, так как эта таблица не представляет модель. Это необходимо, чтобы связь работала правильно. Если вы видите странное поведение в связи `has_and_belongs_to_many`, например, искаженные ID моделей, или исключения в связи с конфликтом ID, скорее всего вы забыли убрать первичный ключ.
+
+Также можно использовать метод `create_join_table`
+
+```ruby
+class CreateAssembliesPartsJoinTable < ActiveRecord::Migration
+  def change
+    create_join_table :assemblies, :parts do |t|
+      t.index :assembly_id
+      t.index :part_id
+    end
+  end
+end
+```
 
 ### Управление областью видимости связей
 
@@ -685,7 +707,7 @@ c.first_name = 'Manny'
 c.first_name == o.customer.first_name # => false
 ```
 
-Это произошло потому, что c и o.customer это два разных представления в памяти одних и тех же данных, и ни одно из них автоматически не обновляется при изменении другого. Active Record предоставляет опцию `:inverse_of`, чтобы вы могли его проинформировать об этих зависимостях:
+Это произошло потому, что `c` и `o.customer` это два разных представления в памяти одних и тех же данных, и ни одно из них автоматически не обновляется при изменении другого. Active Record предоставляет опцию `:inverse_of`, чтобы вы могли его проинформировать об этих зависимостях:
 
 ```ruby
 class Customer < ActiveRecord::Base
@@ -716,10 +738,10 @@ c.first_name == o.customer.first_name # => true
 
 Каждая связь попытается автоматически найти противоположную связь и установить опцию `:inverse_of` эвристически (основываясь на имени связи). Поддерживается большинство связей со стандартными именами. Однако, связям, содержащим следующие опции, противоположности не будут установлены автоматически:
 
-* :conditions
-* :through
-* :polymorphic
-* :foreign_key
+* `:conditions`
+* `:through`
+* `:polymorphic`
+* `:foreign_key`
 
 Подробная информация по связи belongs_to
 ----------------------------------------
@@ -796,7 +818,7 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 
 Работает так же, как и вышеприведенный `create_association`, но вызывает `ActiveRecord::RecordInvalid`, если запись невалидна.
 
-### Опции для `belongs_to`
+### (options-for-belongs-to) Опции для `belongs_to`
 
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `belongs_to`. Такая настройка легко выполнима с помощью передачи опций и блоков со скоупом при создании связи. Например, эта связь использует две такие опции:
 
@@ -814,10 +836,12 @@ end
 * `:counter_cache`
 * `:dependent`
 * `:foreign_key`
+* `:primary_key`
 * `:inverse_of`
 * `:polymorphic`
 * `:touch`
 * `:validate`
+* `:optional`
 
 #### `:autosave`
 
@@ -859,7 +883,9 @@ end
 
 С этим объявлением, Rails будет хранить в кэше актуальное значение и затем возвращать это значение в ответ на метод `size`.
 
-Хотя опция `:counter_cache` определяется в модели, включающей определение `belongs_to`, фактический столбец должен быть добавлен в _связанную_ модель. В вышеописанном случае, необходимо добавить столбец, названный `orders_count` в модель `Customer`. Имя столбца по умолчанию можно переопределить, если вы этого желаете:
+Хотя опция `:counter_cache` определяется в модели, включающей определение `belongs_to`, фактический столбец должен быть добавлен в _связанную_ (`has_many`) модель. В вышеописанном случае, необходимо добавить столбец, названный `orders_count` в модель `Customer`.
+
+Имя столбца по умолчанию можно переопределить, указав произвольное имя столбца в объявлении `counter_cache` вместо `true`. Например, для использования `count_of_orders` вместо `orders_count`:
 
 ```ruby
 class Order < ActiveRecord::Base
@@ -869,6 +895,8 @@ class Customer < ActiveRecord::Base
   has_many :orders
 end
 ```
+
+NOTE: Опцию :counter_cache необъодимо указывать только на стороне `belongs_to` связи.
 
 Столбцы кэша счетчика добавляются в список атрибутов модели только для чтения посредством `attr_readonly`.
 
@@ -894,6 +922,24 @@ end
 
 TIP: В любом случае, Rails не создаст столбцы внешнего ключа за вас. Вам необходимо явно определить их в своих миграциях.
 
+##### `:primary_key`
+
+По соглашению Rails предполагает, что для первичного ключа используется столбец `id` в таблице. Опция `:primary_key` позволяет указать иной столбец.
+
+Например, имеется таблица `users` с `guid` в качестве первичного ключа. Если мы хотим отдельную таблицу `todos`, содержащую внешний ключ `user_id` из столбца `guid`, для этого можно использовать `primary_key` следующим образом:
+
+```ruby
+class User < ActiveRecord::Base
+  self.primary_key = 'guid' # primary key is guid and not id
+end
+
+class Todo < ActiveRecord::Base
+  belongs_to :user, primary_key: 'guid'
+end
+```
+
+При выполнении `@user.todos.create`, у записи `@todo` будет значение `user_id` таким же, как значение `guid` у `@user`.
+
 #### `:inverse_of`
 
 Опция `:inverse_of` определяет имя связи `has_many` или `has_one`, являющейся противополжностью для этой связи. Не работает в комбинации с опциями `:polymorphic`.
@@ -914,7 +960,7 @@ end
 
 #### `:touch`
 
-Если установите опцию `:touch` в `:true`, то временные метки `updated_at` или `updated_on` на связанном объекте будут установлены в текущее время всякий раз, когда этот объект будет сохранен или уничтожен:
+Если установите опцию `:touch` в `true`, то временные метки `updated_at` или `updated_on` на связанном объекте будут установлены в текущее время всякий раз, когда этот объект будет сохранен или уничтожен:
 
 ```ruby
 class Order < ActiveRecord::Base
@@ -937,6 +983,10 @@ end
 #### `:validate`
 
 Если установите опцию `:validate` в `true`, тогда связанные объекты будут проходить валидацию всякий раз, когда вы сохраняете этот объект. По умолчанию она равна `false`: связанные объекты не проходят валидацию, когда этот объект сохраняется.
+
+##### `:optional`
+
+Если установить `:optional` в `true`, тогда наличие связанных объектов не будет валидироваться. По умолчанию установлено в `false`.
 
 ### Скоупы для `belongs_to`
 
@@ -1401,7 +1451,13 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 
 #### `collection.clear`
 
-Метод `collection.clear` убирает каждый объект из коллекции. Это уничтожает связанные объекты, если они связаны с `dependent: :destroy`, удаляет их непосредственно из базы данных, если `dependent: :delete_all`, и в противном случае устанавливает их внешние ключи в `NULL`.
+Метод `collection.clear` убирает каждый объект из коллекции в соответствии со стратегией, определенной опцией `dependent`. Если опция не указана, он следует стратегии по умолчанию. Стратегия по умолчанию для `has_many :through` это `delete_all`, а для связей `has_many` — установить их внешние ключи в `NULL`.
+
+```ruby
+@customer.orders.clear
+```
+
+WARNING: Объекты будут удалены, если они связаны с помощью `dependent: :destroy`, как и с помощью `dependent: :delete_all`.
 
 #### `collection.empty?`
 
@@ -1440,24 +1496,34 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 
 #### `collection.exists?(...)`
 
-Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и `ActiveRecord::Base.exists?`.
+Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
 
 #### `collection.build(attributes = {}, ...)`
 
-Метод `collection.build` возвращает один или более объектов связанного типа. Эти объекты будут экземплярами с переданными атрибутами, будет создана ссылка через их внешние ключи, но связанные объекты _не_ будут пока сохранены.
+Метод `collection.build` возвращает один или массив объектов связанного типа. Объект(ы) будут экземплярами с переданными атрибутами, будет создана ссылка через их внешние ключи, но связанные объекты _не_ будут пока сохранены.
 
 ```ruby
 @order = @customer.orders.build(order_date: Time.now,
                                 order_number: "A12345")
+
+@orders = @customer.orders.build([
+  { order_date: Time.now, order_number: "A12346" },
+  { order_date: Time.now, order_number: "A12347" }
+])
 ```
 
 #### `collection.create(attributes = {})`
 
-Метод `collection.create` возвращает новый объект связанного типа. Этот объект будет экземпляром с переданными атрибутами, будет создана ссылка через его внешний ключ, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен
+Метод `collection.create` возвращает один или массив новых объектов связанного типа. Объект(ы) будут экземплярами с переданными атрибутами, будет создана ссылка через его внешний ключ, и, если он пройдет валидации, определенные в связанной модели, связанный объект _будет_ сохранен
 
 ```ruby
 @order = @customer.orders.create(order_date: Time.now,
                                  order_number: "A12345")
+
+@orders = @customer.orders.create([
+  { order_date: Time.now, order_number: "A12346" },
+  { order_date: Time.now, order_number: "A12347" }
+])
 ```
 
 #### `collection.create!(attributes = {})`
@@ -1470,7 +1536,7 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 
 ```ruby
 class Customer < ActiveRecord::Base
-  has_many :orders, dependent: :delete_all, validate: :false
+  has_many :orders, dependent: :delete_all, validate: false
 end
 ```
 
@@ -1479,6 +1545,7 @@ end
 * `:as`
 * `:autosave`
 * `:class_name`
+* `:counter_cache`
 * `:dependent`
 * `:foreign_key`
 * `:inverse_of`
@@ -1505,6 +1572,10 @@ class Customer < ActiveRecord::Base
   has_many :orders, class_name: "Transaction"
 end
 ```
+
+##### `:counter_cache`
+
+Эта опция используется для настройки произвольно названного `:counter_cache`. Эту опцию нужно использовать только если вы изменили имя вашего `:counter_cache` у [связи belongs_to](#options-for-belongs-to).
 
 #### `:dependent`
 
@@ -1546,7 +1617,7 @@ end
 
 По соглашению, Rails предполагает, что столбец, используемый для хранения первичного ключа, это `id`. Вы можете переопределить это и явно определить первичный ключ с помощью опции `:primary_key`.
 
-Допустим, в таблице `users` есть `id` в качестве primary_key, но также имеется столбец `guid`. А также имеется требование, что таблица `todos` должна содержать значение столбца `guid`, а не значение `id`. Это достигается следующим образом
+Допустим, в таблице `users` есть `id` в качестве primary_key, но также имеется столбец `guid`. Имеется требование, что таблица `todos` должна содержать значение столбца `guid`, а не значение `id`. Это достигается следующим образом:
 
 ```ruby
 class User < ActiveRecord::Base
@@ -1554,7 +1625,7 @@ class User < ActiveRecord::Base
 end
 ```
 
-Теперь, если выполнить `@user.todos.create`, то в запись `@todo` значение `user_id` будет таким же, как значение `guid` в `@user`.
+Теперь, если выполнить `@todo = @user.todos.create`, то в запись `@todo` значение `user_id` будет таким же, как значение `guid` в `@user`.
 
 #### `:source`
 
@@ -1916,7 +1987,7 @@ WARNING: Это не запустит колбэки на соединитель
 
 #### `collection.exists?(...)`
 
-Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и `ActiveRecord::Base.exists?`.
+Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
 
 #### `collection.build(attributes = {})`
 
@@ -1944,8 +2015,8 @@ WARNING: Это не запустит колбэки на соединитель
 
 ```ruby
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, autosave: true,
-                                       readonly: true
+  has_and_belongs_to_many :assemblies, -> { readonly },
+                                       autosave: true
 end
 ```
 
@@ -1957,7 +2028,6 @@ end
 * `:foreign_key`
 * `:join_table`
 * `:validate`
-* `:readonly`
 
 #### `:association_foreign_key`
 
@@ -2204,3 +2274,57 @@ end
 * `proxy_association.owner` возвращает объект, в котором объявлена связь.
 * `proxy_association.reflection` возвращает объект reflection, описывающий связь.
 * `proxy_association.target` возвращает связанный объект для `belongs_to` или `has_one`, или коллекцию связанных объектов для `has_many` или `has_and_belongs_to_many`.
+
+Наследование с одной таблицей (STI)
+-----------------------------------
+
+Иногда хочется совместно использовать поля и поведения различными моделями. Скажем, у нас есть модели Car, Motorcycle и Bicycle. Мы хотим совместно использовать поля `color` и `price` и некоторые методы всеми из них, но иметь некоторое специфичное поведение для каждого, а также различные контроллеры.
+
+Rails позволяет сделать это достаточно просто. Сначала нужно сгенерировать базовую модель Vehicle:
+
+```bash
+$ rails generate model vehicle type:string color:string price:decimal{10.2}
+```
+
+Вы заметили, что мы добавили поле "type"? Так как все модели будут сохранены в одну таблицу базы данных, Rails сохранит в этот столбец имя модели, которая сохраняется. В нашем примере это может быть "Car", "Motorcycle" или "Bicycle." STI не работает без поля "type" в таблице.
+
+Затем мы сгенерируем три модели, унаследованные от Vehicle. Для этого можно использовать опцию `--parent=PARENT`, которая сгенерирует модель, унаследованную от указанного родителя и без эквивалентной миграции (так как таблица уже существует).
+
+Например, чтобы сгенерировать модель Car:
+
+```bash
+$ rails generate model car --parent=Vehicle
+```
+
+Сгенерированая модель будет выглядеть так:
+
+```ruby
+class Car < Vehicle
+end
+```
+
+Это означает, что все поведение, добавленное в Vehicle, доступно также для Car, такое как связи, публичные методы и так далее.
+
+Создание автомобиля сохранит его в таблице `vehicles` с "Car" в поле `type`:
+
+```ruby
+Car.create(color: 'Red', price: 10000)
+```
+
+сгенерирует следующий SQL:
+
+```sql
+INSERT INTO "vehicles" ("type", "color", "price") VALUES ('Car', 'Red', 10000)
+```
+
+Запрос записей автомобилей будет просто искать среди транспортных средств, которые являеются автомобилями:
+
+```ruby
+Car.all
+```
+
+запустит подобный запрос:
+
+```sql
+SELECT "vehicles".* FROM "vehicles" WHERE "vehicles"."type" IN ('Car')
+```
