@@ -1,9 +1,13 @@
-- if @page && @page.path == 'index'
-  #main_page_banner.well
-    = render "shared/adsense"
-  
+.banner= render "shared/adsense", position: 'top'
+
+-# - if @page && @page.path == 'index'
+-#   #main_page_banner.well
+-#     = 'Баннер 240x400'
+
 - cache ['v1', @page] do
   = @page.rendered_body(self)
+
+.banner= render "shared/adsense", position: 'bottom'
 
 - content_for :menu do
   - cache ['v1', @page, 'menu'] do
