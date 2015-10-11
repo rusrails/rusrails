@@ -53,6 +53,7 @@ next_column
     * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
     * [Создание и настройка генераторов Rails](/generators)
+    * [Использование Rails для API-приложений](/api-app)
 
 * **Вносим вклад в Ruby on Rails**
 

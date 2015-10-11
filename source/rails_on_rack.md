@@ -198,7 +198,7 @@ config.middleware.delete "ActionDispatch::Flash"
 config.middleware.delete "Rack::MethodOverride"
 ```
 
-### Стек внутренних промежуточных программ
+### (internal-middleware-stack) Стек внутренних промежуточных программ
 
 Значительная часть функционала Action Controller реализована как промежуточные программы. Следующий перечень объясняет назначение каждой из них:
 
