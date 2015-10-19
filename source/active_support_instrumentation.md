@@ -111,7 +111,7 @@ Action Controller
 | `:action`     | Экшн                                                      |
 | `:params`     | Хэш параметров запроса без фильтрации параметров          |
 | `:format`     | html/js/json/xml и.т.д.                                   |
-| `:method`     | Mетод HTTP запроса                                        |
+| `:method`     | Метод HTTP запроса                                        |
 | `:path`       | Путь запроса                                              |
 
 ```ruby
@@ -133,7 +133,7 @@ Action Controller
 | `:action`       | Экшн                                                      |
 | `:params`       | Хэш параметров запроса без фильтрации параметров          |
 | `:format`       | html/js/json/xml и.т.д.                                   |
-| `:method`       | Mетод HTTP запроса                                        |
+| `:method`       | Метод HTTP запроса                                        |
 | `:path`         | Путь запроса                                              |
 | `:status`       | Код статуса HTTP                                          |
 | `:view_runtime` | Количество времени, потраченного во вьюхе                 |
@@ -231,7 +231,7 @@ Active Record
 | `:name`          | Имя операции          |
 | `:connection_id` | `self.object_id`      |
 
-INFO. Aдаптеры будут добавлять свои собственные данные.
+INFO. Адаптеры будут добавлять свои собственные данные.
 
 ```ruby
 {

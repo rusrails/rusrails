@@ -8,7 +8,7 @@
 * Action Pack Variants (шаблоны, для разных устройств)
 * Предпросмотр писем Action Mailer
 
-Эти заметки о релизе покрывают только основные обновления. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку комитов](https://github.com/rails/rails/commits/master) в главном репозитории Rails на GitHub.
+Эти заметки о релизе покрывают только основные обновления. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/master) в главном репозитории Rails на GitHub.
 
 --------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ Spring является прелоадером для Rails приложений
 bin/rake test:models
 ```
 
-**Запуск Rails комманд:**
+**Запуск Rails команд:**
 
 ```
 bin/rails console
@@ -150,7 +150,7 @@ end
 
 ### Enum поля в Active Record
 
-Объявляйте в базе данных enum поле, в котором числа связываются со значениеми,
+Объявляйте в базе данных enum поле, в котором числа связываются со значениями,
 но могут быть запрошены по имени
 
 ```ruby
@@ -245,7 +245,7 @@ Railties
 * Удалёны устаревшие rake таски для запуска тестов: `rake test:uncommitted` и
   `rake test:recent`.
 
-### Значемые изменения
+### Значимые изменения
 
 * [Spring прелоадер](https://github.com/rails/spring) теперь устанавливается по умолчанию
   для новых приложений. Он использует группу development в Gemfile, поэтому не будет установлен в
@@ -260,7 +260,7 @@ Railties
 * Добавлен метод `Application#message_verifier` которы возвращает верификационное
   сообщение. ([Pull Request](https://github.com/rails/rails/pull/12995))
 
-* Файл `test_help.rb`, который требуется созданным по умолчанию тестом, автоматически сохраняет тестовую базу данных актуальной `db/schema.rb` (или `db/structure.sql`). Он вызывает ошибку, если перезагрузка схемы не решает проблемы отложенных миграций. Настраивается с мпомощью опции `config.active_record.maintain_test_schema = false`. ([Pull Request](https://github.com/rails/rails/pull/13528))
+* Файл `test_help.rb`, который требуется созданным по умолчанию тестом, автоматически сохраняет тестовую базу данных актуальной `db/schema.rb` (или `db/structure.sql`). Он вызывает ошибку, если перезагрузка схемы не решает проблемы отложенных миграций. Настраивается с помощью опции `config.active_record.maintain_test_schema = false`. ([Pull Request](https://github.com/rails/rails/pull/13528))
 
 Action Pack
 -----------
@@ -271,7 +271,7 @@ Action Pack
 
 ### Удалено
 
-* Удалён устаревшний Rails fallback для интеграционных тестов, используйте `ActionDispatch.test_app`.
+* Удалён устаревший Rails fallback для интеграционных тестов, используйте `ActionDispatch.test_app`.
 
 * Удалена устаревшая конфигурация `page_cache_extension`.
 
@@ -290,7 +290,7 @@ Action Pack
 | ActionController::Integration      | ActionDispatch::Integration     |
 | ActionController::IntegrationTest  | ActionDispatch::IntegrationTest |
 
-### Значемые изменения
+### Значимые изменения
 
 * `protect_from_forgery` также предотвращает от CSRF атак, проводимых через `<script>` теги.
   Обновите ваши тесты и используйте `xhr :get, :foo, format: :js` вместо
@@ -308,7 +308,7 @@ Action Pack
 * Полностью отделён Action View от Action Pack.
   ([Pull Request](https://github.com/rails/rails/pull/11032))
 
-* Логгируется, какие ключи были затронуты при "deep munging". ([Pull Request](https://github.com/rails/rails/pull/13813))
+* Логируется, какие ключи были затронуты при "deep munging". ([Pull Request](https://github.com/rails/rails/pull/13813))
 
 * Новая конфигурационная опция `config.action_dispatch.perform_deep_munge` для включения "deep munging" параметров, использующегося в связи с уязвимостью безопасности CVE-2013-0155. ([Pull Request](https://github.com/rails/rails/pull/13188))
 
@@ -324,9 +324,9 @@ Action Mailer
 [Changelog](https://github.com/rails/rails/blob/4-1-stable/actionmailer/CHANGELOG.md)
 для просмотра всех изменений.
 
-### Значемые изменения
+### Значимые изменения
 
-* Добавлена особенность предвариетльного просмотра писем на основе гема mail_view от 37 Signals. ([Commit](https://github.com/rails/rails/commit/d6dec7fcb6b8fddf8c170182d4fe64ecfc7b2261))
+* Добавлена особенность предварительного просмотра писем на основе гема mail_view от 37 Signals. ([Commit](https://github.com/rails/rails/commit/d6dec7fcb6b8fddf8c170182d4fe64ecfc7b2261))
 
 * Инструмент создания сообщений Action Mailer. Время, потраченное на генерацию сообщения,
   записывается в лог. ([Pull Request](https://github.com/rails/rails/pull/12556))
@@ -377,7 +377,7 @@ Active Record
 * Удален устаревший метод `type_cast_code` из ActiveRecord::ConnectionAdapters::Column.
 
 * Удален устаревший метод `ActiveRecord::Base#connection`.
-  Убедитесь, что вы обращяетесь к соединению через класс.
+  Убедитесь, что вы обращаетесь к соединению через класс.
 
 * Удалены устаревшие предупреждения `auto_explain_threshold_in_seconds`.
 
@@ -447,7 +447,7 @@ Active Record
   получит аргумент `nil`. Более конкретно - будет ошибка, если передаваемый аргумент
   не отвечает на `stringify_keys`. ([Pull Request](https://github.com/rails/rails/pull/9860))
 
-* `CollectionAssociation#first`/`#last` (например `has_many`) ограничевает
+* `CollectionAssociation#first`/`#last` (например `has_many`) ограничивает
   результат запроса оператором `LIMIT` в запросе на выборку, вместо загрузки полной коллекции.
   ([Pull Request](https://github.com/rails/rails/pull/12137))
 
@@ -467,7 +467,7 @@ Active Record
 * Шаблоны ERB в фикстурах больше не вычисляются в контексте главного объекта.
   Методы хелперов, использующиеся в нескольких фикстурах, должны объявляться в модулях, включённых в `ActiveRecord::FixtureSet.context_class`. ([Pull Request](https://github.com/rails/rails/pull/13022))
 
-* Не создается или сбарсывается тестовая база данных, если явно определен RAILS_ENV. ([Pull Request](https://github.com/rails/rails/pull/13629))
+* Не создается или сбрасывается тестовая база данных, если явно определен RAILS_ENV. ([Pull Request](https://github.com/rails/rails/pull/13629))
 
 * У `Relation` больше нет мутирующих методов, таких как `#map!` и `#delete_if`. Преобразовывайте в массив с помощью `#to_a` перед использованием этих методов. ([Pull Request](https://github.com/rails/rails/pull/13314))
 
@@ -484,7 +484,7 @@ Active Record
 
 * Миграция `change_column_null` стала обратимой. ([Commit](https://github.com/rails/rails/commit/724509a9d5322ff502aefa90dd282ba33a281a96))
 
-* Добавлен фалжок для отключения дампа схемы после миграции. Он установлен `false` по умолчанию в среде production для новых приложений. ([Pull Request](https://github.com/rails/rails/pull/13948))
+* Добавлен флажок для отключения дампа схемы после миграции. Он установлен `false` по умолчанию в среде production для новых приложений. ([Pull Request](https://github.com/rails/rails/pull/13948))
 
 Active Model
 ------------
@@ -589,7 +589,7 @@ Active Support
   ([Pull Request](https://github.com/rails/rails/pull/12862) /
   [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
-* Добалены методы `ActiveSupport::Testing::TimeHelpers#travel` и `#travel_to`. Которые
+* Добавлены методы `ActiveSupport::Testing::TimeHelpers#travel` и `#travel_to`. Которые
   изменяют текущее время на заданное время или продолжительность, который вы укажите, с помощью стаба `Time.now` и
   `Date.today`. ([Pull Request](https://github.com/rails/rails/pull/12824))
 

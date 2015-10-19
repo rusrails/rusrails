@@ -244,7 +244,7 @@ UserMailer.welcome(@user).deliver_later
 GlobalID
 --------
 
-Active Job поддерживает GlobalID для параметров. Это позволяет передавать объекты Active Record в ваши задачи, вместо пар класс/id, которые нужно затм десериализовать вручную. Раньше задачи выглядели так:
+Active Job поддерживает GlobalID для параметров. Это позволяет передавать объекты Active Record в ваши задачи, вместо пар класс/id, которые нужно затем десериализовать вручную. Раньше задачи выглядели так:
 
 ```ruby
 class TrashableCleanupJob < ActiveJob::Base

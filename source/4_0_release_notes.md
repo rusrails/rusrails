@@ -5,10 +5,10 @@
 
 * Ruby 2.0 предпочтителен; 1.9.3+ требуется
 * Строгие параметры (Strong Parameters)
-* Турболинки (Turbolinks)
+* Turbolinks
 * Кэширование "матрешкой" (Russian Doll Caching)
 
-Эти заметки о релизе покрывают только основные обновления. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку комитов](https://github.com/rails/rails/commits/4-0-stable) в главном репозитории Rails на GitHub.
+Эти заметки о релизе покрывают только основные обновления. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/4-0-stable) в главном репозитории Rails на GitHub.
 
 Обновление до Rails 4.0
 -----------------------
@@ -56,16 +56,16 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 * **Ruby 1.9.3** ([коммит](https://github.com/rails/rails/commit/a0380e808d3dbd2462df17f5d3b7fcd8bd812496)) - Предпочтителен Ruby 2.0; требуется 1.9.3+
 * **[Новая политика устареваний](http://www.youtube.com/watch?v=z6YgD6tVPQs)** - Устаревшие особенности показывают предупреждения в Rails 4.0, и будут убраны в Rails 4.1.
 * **Кэширование страниц и экшнов ActionPack** ([коммит](https://github.com/rails/rails/commit/b0a7068564f0c95e7ef28fc39d0335ed17d93e90)) - Кэширование страниц и экшнов было извлечено в отдельный гем. Кэширование страниц и экшнов требовало слишком много человеческого вмешательства (вручную прекращать кэш, когда обновляются лежащие в основе объекты модели). Вместо этого используйте кэширование по принципу "русской матрешки" (Russian doll caching).
-* **Обсерверы ActiveRecord** ([коммит](https://github.com/rails/rails/commit/ccecab3ba950a288b61a516bf9b6962e384aae0b)) - Обсерверы извелчены в отдельный гем. Обсерверы требовались только для кэширования страниц и экшнов и могли привести к спагетти-коду.
+* **Обсерверы ActiveRecord** ([коммит](https://github.com/rails/rails/commit/ccecab3ba950a288b61a516bf9b6962e384aae0b)) - Обсерверы извлечены в отдельный гем. Обсерверы требовались только для кэширования страниц и экшнов и могли привести к спагетти-коду.
 * **Хранилище сессии ActiveRecord** ([коммит](https://github.com/rails/rails/commit/0ffe19056c8e8b2f9ae9d487b896cad2ce9387ad)) - Хранилище сессии ActiveRecord извлечено в отдельный гем. Хранение сессий в SQL затратное. Используйте вместо него сессии куки, сессии memcache или произвольные хранилища сессии.
-* **Защита от массового нащначения ActiveModel** ([коммит](https://github.com/rails/rails/commit/f8c9a4d3e88181cee644f91e1342bfe896ca64c6)) - Защита от массового назначения Rails 3 устарела. Вместо нее исользуйте строгие параметры (strong parameters).
+* **Защита от массового назначения ActiveModel** ([коммит](https://github.com/rails/rails/commit/f8c9a4d3e88181cee644f91e1342bfe896ca64c6)) - Защита от массового назначения Rails 3 устарела. Вместо нее используйте строгие параметры (strong parameters).
 * **ActiveResource** ([коммит](https://github.com/rails/rails/commit/f1637bf2bb00490203503fbd943b73406e043d1d)) - ActiveResource извлечен в отдельный гем. ActiveResource не был широко используемым.
 * **убраны vendor/plugins** ([коммит](https://github.com/rails/rails/commit/853de2bd9ac572735fa6cf59fcf827e485a231c3)) - Для управления установленными гемами используйте Gemfile.
 
 ### ActionPack
 
 * **Strong parameters** ([коммит](https://github.com/rails/rails/commit/a8f6d5c6450a7fe058348a7f10a908352bb6c7fc)) - Позволяет обновлять объекты модели только разрешенными параметрами (`params.permit(:title, :text)`).
-* **Routing concerns** ([коммит](https://github.com/rails/rails/commit/0dd24728a088fcb4ae616bb5d62734aca5276b1b)) - В маршрутном DSL, выделяет общие суб-маршруты (`comments` из `/posts/1/comments` and `/videos/1/comments`).
+* **Routing concerns** ([коммит](https://github.com/rails/rails/commit/0dd24728a088fcb4ae616bb5d62734aca5276b1b)) - В маршрутном DSL, выделяет общие подмаршруты (`comments` из `/posts/1/comments` and `/videos/1/comments`).
 * **ActionController::Live** ([коммит](https://github.com/rails/rails/commit/af0a9f9eefaee3a8120cfd8d05cbc431af376da3)) - Потоковый JSON с помощью `response.stream`.
 * **Декларативные ETags** ([коммит](https://github.com/rails/rails/commit/ed5c938fa36995f06d4917d9543ba78ed506bb8d)) - Добавляет на уровне контроллера дополнения к etag, которые будут частью вычисления etag.
 * **[Кэширование Russian doll](http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works)** ([коммит](https://github.com/rails/rails/commit/4154bf012d2bec2aae79e4a49aa94a70d3e91d49)) - Кэширует вложенные фрагменты вьюх. Каждый фрагмент прекращается на основе набора зависимостей (ключа кэширования). Ключ кэширования - это обычно версия шаблона и объект модели.
@@ -77,7 +77,7 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 
 * **ActiveModel::Model** ([коммит](https://github.com/rails/rails/commit/3b822e91d1a6c4eab0064989bbd07aae3a6d0d08)) - `ActiveModel::Model` - это миксин, чтобы обычные объекты Ruby могли работать с ActionPack "из коробки" (например, `form_for`).
 * **Новый API скоупов** ([коммит](https://github.com/rails/rails/commit/50cbc03d18c5984347965a94027879623fc44cce)) - Скоупы должны быть всегда вызываемыми.
-* **Выгрузка кэша схемы** ([коммит](https://github.com/rails/rails/commit/5ca4fc95818047108e69e22d200e7a4a22969477)) - Чтобы улучшить время загрузки Rails, вместо загрузки схемы непосредствненно из базы данных, загружает схему из файла выгрузки.
+* **Выгрузка кэша схемы** ([коммит](https://github.com/rails/rails/commit/5ca4fc95818047108e69e22d200e7a4a22969477)) - Чтобы улучшить время загрузки Rails, вместо загрузки схемы непосредственно из базы данных, загружает схему из файла выгрузки.
 * **Поддержка указания уровня изоляции транзакции** ([коммит](https://github.com/rails/rails/commit/392eeecc11a291e406db927a18b75f41b2658253)) - Выбирайте, что более важно - повторяемые чтения или улучшенное быстродействие (менее блокирующее).
 * **Dalli** ([коммит](https://github.com/rails/rails/commit/82663306f428a5bbc90c511458432afb26d2f238)) - Используется клиент Dalli в качестве хранилища сессии в memcache.
 * **start &amp; finish для уведомлений** ([коммит](https://github.com/rails/rails/commit/f08f8750a512f741acb004d0cebe210c5f949f28)) - Инструменты Active Support сообщают подписчикам о начале и завершении уведомлений.
@@ -85,7 +85,7 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 
 NOTE: Убедитесь, что используемые вами гемы тредобезопасны.
 
-* **Метод PATCH** ([коммит](https://github.com/rails/rails/commit/eed9f2539e3ab5a68e798802f464b8e4e95e619e)) - В Rails PATCH заменил PUT. PATCH использется для частичного обновления ресурсов.
+* **Метод PATCH** ([коммит](https://github.com/rails/rails/commit/eed9f2539e3ab5a68e798802f464b8e4e95e619e)) - В Rails PATCH заменил PUT. PATCH используется для частичного обновления ресурсов.
 
 ### Безопасность
 
@@ -123,7 +123,7 @@ Railties
 
 ### Значимые изменения
 
-* Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие рейк-таски. ([Pull Request](https://github.com/rails/rails/pull/7878))
+* Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие rake-таски. ([Pull Request](https://github.com/rails/rails/pull/7878))
 
 * Исполняемые файлы приложения теперь находятся в директории `bin/`. Запустите `rake rails:update:bin` чтобы получить `bin/bundle`, `bin/rails` и `bin/rake`.
 
@@ -224,7 +224,7 @@ Active Record
       Метод `remove_column` принимает несколько имен столбцов; вместо использования `remove_columns` (который необратимый).
       Метод `change_table` также обратимый, если его блок не вызывает `remove`, `change` или `change_default`
 
-    * Новый метод `reversible` делает возможным определить код для исполнения при выполении или откате миграции.
+    * Новый метод `reversible` делает возможным определить код для исполнения при выполнении или откате миграции.
       Смотрите [Руководство по миграциям](/rails-database-migrations#using-reversible)
 
     * Новый метод `revert` обратит всю миграцию или  предоставленный блок.
