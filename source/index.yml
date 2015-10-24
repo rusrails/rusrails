@@ -165,8 +165,8 @@ pages:
   - title:    Asset Pipeline
     path:     asset-pipeline
     file:     asset_pipeline.md
-    revision: df280c4316c156a6c39b73cc34f42159cb75f0af
-    date:     25/03/2015
+    revision: 03615fc283f65cbfcc8aec62371bed4b48523fde
+    date:     13/08/2015
 
   - title:    Работа с JavaScript в Rails
     path:     working-with-javascript-in-rails
