@@ -210,6 +210,12 @@ pages:
     revision: e6be33f1ddafdb3e85b9809d0280439fc83559ae
     date:     25/06/2015
 
+  - title:    Использование Rails для API-приложений
+    path:     api-app
+    file:     api_app.md
+    revision: 24f9c03d52ad4c7f081cc7a9561946109b3ad500
+    date:     04/10/2015
+
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
     file:     contributing_to_ruby_on_rails.md
@@ -277,7 +283,6 @@ pages:
     date:     18/12/2014
 
 plan:
-  - file:     api_app.md
   - file:     maintenance_policy.md
   - file:     profiling.md
   - file:     rails_application_templates.md
