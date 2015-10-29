@@ -174,7 +174,7 @@ end
 
 >> person = Person.new
 >> person.valid?
->> person.errors.details[:name] #=> [{error: :blank}]
+>> person.errors.details[:name] # => [{error: :blank}]
 ```
 
 Использование `details` с собственным валидатором раскрыто в разделе [Работаем с ошибками валидации](#working-with-validation-errors).

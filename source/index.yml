@@ -33,8 +33,8 @@ pages:
   - title:    Валидации Active Record
     path:     active-record-validations
     file:     active_record_validations.md
-    revision: 29886d93048a4719872e228894559b477f87a278
-    date:     15/09/2015
+    revision: ccbf1597b793e8de11b2cd19dd18f18d0b0b2182
+    date:     19/09/2015
 
   - title:    Колбэки Active Record
     path:     active-record-callbacks
@@ -87,8 +87,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 10c73386ae21102334af6827b70e7e344a167a5b
-    date:     23/08/2015
+    revision: 119f38f7954bfd804435d4d60bc2bc61a4e86ade
+    date:     18/09/2015
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -99,8 +99,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: bc36ffeec05692777f4ece09978a321feed2d818
-    date:     24/08/2015
+    revision: a2f78cb947c8f25bcb450e548c77040b5d1c1f04
+    date:     20/09/2015
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
@@ -129,8 +129,8 @@ pages:
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
-    revision: c7cc81d21171f85aee367adffa97b98e81c60cbd
-    date:     05/09/2015
+    revision: 495722a95687e25114ae75608dd3107ac5d6611b
+    date:     07/10/2015
 
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
@@ -153,8 +153,8 @@ pages:
   - title:    Руководство по командной строке Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
-    revision: ab360318cfdb9beb6ebfd98e470e6a5588e074b8
-    date:     10/08/2015
+    revision: 24f9c03d52ad4c7f081cc7a9561946109b3ad500
+    date:     04/10/2015
 
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
@@ -195,8 +195,8 @@ pages:
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
-    revision: 71dcc40a2c0c7417cda97204a054b9f804b74759
-    date:     09/03/2015
+    revision: c98fd2512044c388f94c45015ea0570e862af483
+    date:     28/08/2015
 
   - title:    Rails on Rack
     path:     rails-on-rack
