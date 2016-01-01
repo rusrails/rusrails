@@ -26,7 +26,7 @@
 Для того, чтобы использовать доступные колбэки, их нужно зарегистрировать. Можно реализовать колбэки как обычные методы, а затем использовать макро-методы класса для их регистрации как колбэков.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   validates :login, :email, presence: true
 
   before_validation :ensure_login_has_a_value
@@ -43,7 +43,7 @@ end
 Макро-методы класса также могут получать блок. Их можно использовать, если код внутри блока такой короткий, что помещается в одну строку.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   validates :login, :email, presence: true
 
   before_create do
@@ -55,7 +55,7 @@ end
 Колбэки также могут быть зарегистрированы на выполнение при определенных событиях жизненного цикла:
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   before_validation :normalize_name, on: :create
 
   # :on также принимает массив
@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
 
   protected
     def normalize_name
-      self.name = self.name.downcase.titleize
+      self.name = name.downcase.titleize
     end
 
     def set_location
@@ -121,7 +121,7 @@ WARNING. `after_save` запускается и при создании, и пр
 У колбэков `after_initialize` и `after_find` нет пары `before_*`, но они могут быть зарегистрированы подобно другим колбэкам Active Record.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_initialize do |user|
     puts "You have initialized an object!"
   end
@@ -146,7 +146,7 @@ You have initialized an object!
 Колбэк `after_touch` будет вызван, когда на объекте Active Record вызван `touch`.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_touch do |user|
     puts "You have touched an object"
   end
@@ -163,14 +163,14 @@ You have touched an object
 Он может быть использован совместно с `belongs_to`:
 
 ```ruby
-class Employee < ActiveRecord::Base
+class Employee < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   belongs_to :company, touch: true
   after_touch do
     puts 'An Employee was touched'
   end
 end
 
-class Company < ActiveRecord::Base
+class Company < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   has_many :employees
   after_touch :log_when_employees_or_company_touched
 
@@ -263,7 +263,7 @@ WARNING. Любое исключение, кроме `ActiveRecord::Rollback` б
 Колбэки работают с отношениями между моделями, и даже могут быть определены ими. Представим пример, где пользователь имеет много статей. Статьи пользователя должны быть уничтожены, если уничтожается пользователь. Давайте добавим колбэк `after_destroy` в модель `User` через ее отношения с моделью `Article`.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   has_many :articles, dependent: :destroy
 end
 
@@ -294,7 +294,7 @@ Article destroyed
 Опции `:if` и `:unless` можно связать с символом, соответствующим имени метода условия, который будет вызван непосредственно перед вызовом колбэка. При использовании опции `:if`, колбэк не будет выполнен, если метод условия возвратит false; при использовании опции `:unless`, колбэк не будет выполнен, если метод условия возвратит true. Это самый распространенный вариант. При использовании такой формы регистрации, также возможно зарегистрировать несколько различных условий, которые будут вызваны для проверки, должен ли запуститься колбэк.
 
 ```ruby
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   before_save :normalize_card_number, if: :paid_with_card?
 end
 ```
@@ -304,7 +304,7 @@ end
 Также возможно использование строки, которая будет вычислена с помощью `eval`, и, следовательно, должна содержать валидный код Ruby. Этот вариант следует использовать только тогда, когда строка представляет действительно короткое условие.
 
 ```ruby
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   before_save :normalize_card_number, if: "paid_with_card?"
 end
 ```
@@ -314,7 +314,7 @@ end
 Наконец, можно связать `:if` и `:unless` с объектом `Proc`. Этот вариант более всего подходит при написании коротких методов, обычно в одну строку.
 
 ```ruby
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   before_save :normalize_card_number,
     if: Proc.new { |order| order.paid_with_card? }
 end
@@ -325,7 +325,7 @@ end
 При написании условных колбэков, возможно смешивание `:if` и `:unless` в одном объявлении колбэка.
 
 ```ruby
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_create :send_email_to_author, if: :author_wants_emails?,
     unless: Proc.new { |comment| comment.article.ignore_comments? }
 end
@@ -351,7 +351,7 @@ end
 При объявлении внутри класса, как выше, методы колбэка получают объект модели как параметр. Теперь можем использовать класс колбэка в модели:
 
 ```ruby
-class PictureFile < ActiveRecord::Base
+class PictureFile < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_destroy PictureFileCallbacks.new
 end
 ```
@@ -371,7 +371,7 @@ end
 Если метод колбэка объявляется таким образом, нет необходимости создавать экземпляр объекта `PictureFileCallbacks`.
 
 ```ruby
-class PictureFile < ActiveRecord::Base
+class PictureFile < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_destroy PictureFileCallbacks
 end
 ```
@@ -395,7 +395,7 @@ end
 Используя колбэк `after_commit`, можно учесть этот случай.
 
 ```ruby
-class PictureFile < ActiveRecord::Base
+class PictureFile < ApplicationRecord  # ActiveRecord::Base в Rails < 5.0
   after_commit :delete_picture_file_from_disk, on: [:destroy]
 
   def delete_picture_file_from_disk
@@ -407,5 +407,23 @@ end
 ```
 
 NOTE: опция `:on` определяет, когда будет запущен колбэк. Если не предоставить опцию `:on`, колбэк будет запущен для каждого действия.
+
+Так как принято использовать колбэк `after_commit` только при создании, сохранении или удалении, есть псевдонимы для этих операций: (Rails 5.0)
+
+* `after_create_commit`
+* `after_update_commit`
+* `after_destroy_commit`
+
+```ruby
+class PictureFile < ApplicationRecord
+  after_destroy_commit :delete_picture_file_from_disk
+
+  def delete_picture_file_from_disk
+    if File.exist?(filepath)
+      File.delete(filepath)
+    end
+  end
+end
+```
 
 WARNING: Колбэки `after_commit` и `after_rollback` гарантируют, что будут вызваны для всех созданных, обновленных или удаленных моделей внутри блока транзакции. Если какое-либо исключение вызовется в одном из этих колбэков, они будут проигнорированы, чтобы не препятствовать другим колбэкам. По сути, если код вашего колбэка может вызвать исключение, нужно для него вызвать rescue, и обработать его нужным образом в колбэке.
