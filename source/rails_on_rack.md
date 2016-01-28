@@ -292,7 +292,7 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`Rack::ETag`**
 
-* Добавляет заголовок ETag во все строковые header on all String bodies. ETags are used to validate cache.
+* Добавляет заголовок ETag во все строковые тела. ETags используются для проверки кэша.
 
 TIP: Можете использовать любые из этих промежуточных программ в своем стеке Rack.
 
