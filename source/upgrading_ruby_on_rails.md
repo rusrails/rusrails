@@ -46,7 +46,25 @@ Overwrite /myapp/config/application.rb? (enter "h" for help) [Ynaqdh]
 (Upgrading from Rails 4.2 to Rails 5.0) Обновление с Rails 4.2 на Rails 5.0
 ---------------------------------------------------------------------------
 
-### Прерывание цепочек колбэков, возвращая `false`
+### Ruby 2.2.2+
+
+ToDo...
+
+### Active Record models now inherit from ApplicationRecord by default
+
+В Rails 4.2 модель Active Record наследуется от `ActiveRecord::Base`. В Rails 5.0 все модели наследуются от `ApplicationRecord`.
+
+`ApplicationRecord` - это новый суперкласс для всех моделей приложения, аналогично контроллерам, наследуемым от `ApplicationController` вместо `ActionController::Base`. Это дает приложению единое место для настройки специфичного для приложения поведения моделей.
+
+При обновлении с Rails 4.2 до Rails 5.0 необходимо создать файл `application_record.rb` в `app/models/` и добавить следующее содержимое:
+
+```
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
+end
+```
+
+### Прерывание цепочек колбэков с помощью `throw(:abort)`
 
 В Rails 4.2 в Active Record и Active Model, когда колбэк 'before' возвращает `false`, вся цепочка цепочка колбэков прерывалась. Другими словами, последующие колбэки 'before' не выполнялись, как и действие, обернутое в колбэки.
 
