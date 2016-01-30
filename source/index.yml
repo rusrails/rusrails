@@ -8,8 +8,8 @@ special:
     file:     menu.md
 
 images:
-  revision:   14354f195540954a1dfc5c954d06389c9f71e986
-  date:       11/07/2015
+  revision:   71ff088a09d429657877ddfb58985d30df63fc8a
+  date:       08/09/2015
 
 pages:
   - title:    Rails для начинающих
@@ -45,8 +45,8 @@ pages:
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: d73a524b6e38edb3a67b4c6f1b4e12d772e7036e
-    date:     31/07/2015
+    revision: 14037b8d8e96520a19afdac826fe660ab2e17239
+    date:     30/01/2016
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
