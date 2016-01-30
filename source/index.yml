@@ -282,6 +282,12 @@ pages:
     revision: be1e0241f012f1151d2448b10e14b8b2eda26b84
     date:     18/12/2014
 
+  - title:    Заметки о релизе Ruby on Rails 5.0
+    path:     5_0_release_notes
+    file:     5_0_release_notes.md
+    revision: fd04a0cb09a9e7e518806022b4b8957e25b7abc6
+    date:     02/01/2016
+
 plan:
   - file:     maintenance_policy.md
   - file:     profiling.md

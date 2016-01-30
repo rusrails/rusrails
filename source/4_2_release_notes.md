@@ -484,18 +484,18 @@ Active Record
 
 За подробностями обратитесь к [Changelog][active-record].
 
-### Убрано
+### Удалено
 
-*   Убран `cache_attributes` и сотоварищи. Все атрибуты кэшируются.
+*   Удален `cache_attributes` и сотоварищи. Все атрибуты кэшируются.
     ([Pull Request](https://github.com/rails/rails/pull/15429))
 
-*   Убран устаревший метод `ActiveRecord::Base.quoted_locking_column`.
+*   Удален устаревший метод `ActiveRecord::Base.quoted_locking_column`.
     ([Pull Request](https://github.com/rails/rails/pull/15612))
 
-*   Убран устаревший метод `ActiveRecord::Migrator.proper_table_name`. Используйте вместо него метод экземпляра `proper_table_name` на  `ActiveRecord::Migration`.
+*   Удален устаревший метод `ActiveRecord::Migrator.proper_table_name`. Используйте вместо него метод экземпляра `proper_table_name` на  `ActiveRecord::Migration`.
     ([Pull Request](https://github.com/rails/rails/pull/15512))
 
-*   Убран неиспользуемый тип `:timestamp`. Прозрачно добавлен как псевдоним к `:datetime` во всех случаях. Исправлены несоответствия, когда типы столбцов используются вне Active Record, например для сериализации XML.
+*   Удален неиспользуемый тип `:timestamp`. Прозрачно добавлен как псевдоним к `:datetime` во всех случаях. Исправлены несоответствия, когда типы столбцов используются вне Active Record, например для сериализации XML.
     ([Pull Request](https://github.com/rails/rails/pull/15184))
 
 ### Устарело
@@ -598,9 +598,9 @@ Active Model
 
 За подробностями обратитесь к [Changelog][active-model].
 
-### Убрано
+### Удалено
 
-*   Убран устаревший `Validator#setup` без замены.
+*   Удален устаревший `Validator#setup` без замены.
     ([Pull Request](https://github.com/rails/rails/pull/10716))
 
 ### Устарело
@@ -632,12 +632,12 @@ Active Support
 
 За подробностями обратитесь к [Changelog][active-support].
 
-### Убрано
+### Удалено
 
-*   Убраны устаревшие `Numeric#ago`, `Numeric#until`, `Numeric#since`, `Numeric#from_now`.
+*   Удалены устаревшие `Numeric#ago`, `Numeric#until`, `Numeric#since`, `Numeric#from_now`.
     ([Commit](https://github.com/rails/rails/commit/f1eddea1e3f6faf93581c43651348f48b2b7d8bb))
 
-*   Убраны устаревшие ограничители на основе строки для `ActiveSupport::Callbacks`.
+*   Удалены устаревшие ограничители на основе строки для `ActiveSupport::Callbacks`.
     ([Pull Request](https://github.com/rails/rails/pull/15100))
 
 ### Устарело
