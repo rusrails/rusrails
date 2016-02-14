@@ -704,7 +704,7 @@ end
 
 ```ruby
 a = Author.first
-b = c.books.first
+b = a.books.first
 a.first_name == b.author.first_name # => true
 a.first_name = 'Manny'
 a.first_name == b.author.first_name # => false
@@ -725,8 +725,8 @@ end
 С этими изменениями Active Record загрузит только одну копию объекта author, предотвратив несоответствия и сделав приложение более эффективным:
 
 ```ruby
-a = author.first
-b = c.books.first
+a = Author.first
+b = a.books.first
 a.first_name == b.author.first_name # => true
 a.first_name = 'Manny'
 a.first_name == b.author.first_name # => true
