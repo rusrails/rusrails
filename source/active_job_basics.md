@@ -241,6 +241,17 @@ UserMailer.welcome(@user).deliver_now
 UserMailer.welcome(@user).deliver_later
 ```
 
+Интернационализация
+-------------------
+
+Каждая задача использует `I18n.locale` при создание. Это полезно, если вы отправляете письма асинхронно:
+
+```ruby
+I18n.locale = :eo
+ 
+UserMailer.welcome(@user).deliver_later # Email будет локализован в Эсперанто.
+```
+
 GlobalID
 --------
 
