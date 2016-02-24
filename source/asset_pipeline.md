@@ -364,7 +364,7 @@ NOTE. Если хотите использовать несколько файл
 //= require core
 //= require projects
 //= require tickets
-</plain>
+```
 
 сгенерирует этот HTML:
 
