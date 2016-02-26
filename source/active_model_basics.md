@@ -3,12 +3,12 @@
 
 Это руководство познакомит вас со всем необходимым для начала использования моделей классов. Active Model позволяет Actions Pack хелперам работать с объектами на чистом Ruby. Дополнительно, Active Model может помочь с созданием гибкой, настраиваемой ORM для использования вне фреймворка Rails.
 
-После прочтение данного руководства, вы сможете добавить к объектам на чистом Ruby:
+После прочтение данного руководства, вы узнаете:
 
-* Возможность вести себя как модель Active Record.
-* Колбэки и валидации, как в Active Record.
-* Сериализаторы.
-* Интеграцию с фреймворком интернационализации Rails (i18n).
+* Как ведет себя модель Active Record.
+* Как работают колбэки и валидации.
+* Как работают сериализаторы.
+* О фреймворке интернационализации Rails (i18n).
 
 --------------------------------------------------------------------------------
 
@@ -138,7 +138,7 @@ person.changed? # => false
 person.first_name = "First Name"
 person.first_name # => "First Name"
 
-# возвращает true, если был изменен хоть один атрибут
+# возвращает true, если хотя бы у одного из атрибутов есть несохраненное значение, иначе false
 person.changed? # => true
 
 # возвращает список измененных атрибутов
@@ -291,7 +291,7 @@ person.serializable_hash   # => {"name"=>"Bob"}
 
 #### ActiveModel::Serializers
 
-Rails предоставляет два сериализатора: `ActiveModel::Serializers::JSON` и `ActiveModel::Serializers::Xml`. Оба из этих модуля автоматически подключают `ActiveModel::Serialization`.
+Rails предоставляет сериализатор `ActiveModel::Serializers::JSON`. Этот модуль автоматически подключает `ActiveModel::Serialization`.
 
 ##### ActiveModel::Serializers::JSON
 
@@ -309,7 +309,7 @@ class Person
 end
 ```
 
-С помощью `as_json` можно получить хэш, представляющий модель.
+С помощью метода `as_json` можно получить хэш, представляющий модель.
 
 ```ruby
 person = Person.new
@@ -345,60 +345,6 @@ json = { name: 'Bob' }.to_json
 person = Person.new
 person.from_json(json) # => #<Person:0x00000100c773f0 @name="Bob">
 person.name            # => "Bob"
-```
-
-##### ActiveModel::Serializers::Xml
-
-Для использования `ActiveModel::Serializers::Xml` необходимо только изменить `ActiveModel::Serialization` на `ActiveModel::Serializers::Xml`.
-
-```ruby
-class Person
-  include ActiveModel::Serializers::Xml
-
-  attr_accessor :name
-
-  def attributes
-    {'name' => nil}
-  end
-end
-```
-
-С помощью `to_xml` можно получить XML, представляющий модель.
-
-```ruby
-person = Person.new
-person.to_xml # => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<person>\n  <name nil=\"true\"/>\n</person>\n"
-person.name = "Bob"
-person.to_xml # => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<person>\n  <name>Bob</name>\n</person>\n"
-```
-
-Из строки XML определяются атрибуты модели. В классе должен быть определен метод `attributes=`:
-
-```ruby
-class Person
-  include ActiveModel::Serializers::Xml
-
-  attr_accessor :name
-
-  def attributes=(hash)
-    hash.each do |key, value|
-      send("#{key}=", value)
-    end
-  end
-
-  def attributes
-    {'name' => nil}
-  end
-end
-```
-
-Теперь возможно создавать экземпляры person и устанавливать атрибуты с помощью `from_xml`.
-
-```ruby
-xml = { name: 'Bob' }.to_xml
-person = Person.new
-person.from_xml(xml) # => #<Person:0x00000100c773f0 @name="Bob">
-person.name          # => "Bob"
 ```
 
 ### Перевод
@@ -448,14 +394,14 @@ Person.human_attribute_name('name') # => "Nome"
     class PersonTest < ActiveSupport::TestCase
       include ActiveModel::Lint::Tests
 
-      def setup
+      setup do
         @model = Person.new
       end
     end
     ```
 
 ```bash
-$ rake test
+$ rails test
 
 Run options: --seed 14596
 
