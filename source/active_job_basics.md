@@ -57,11 +57,13 @@ $ bin/rails generate job guests_cleanup --queue urgent
 class GuestsCleanupJob < ActiveJob::Base
   queue_as :default
 
-  def perform(*args)
+  def perform(*guests)
     # Do something later
   end
 end
 ```
+
+Отметьте, что можно определить `perform` с любым количеством аргументов.
 
 ### Помещение задачи в очередь
 
@@ -69,25 +71,32 @@ end
 
 ```ruby
 # Помещенная в очередь задача выполнится, как только освободится система очередей.
-MyJob.perform_later record
+GuestsCleanupJob.perform_later guest
 ```
 
 ```ruby
 # Помещенная в очередь задача выполнится завтра в полдень.
-MyJob.set(wait_until: Date.tomorrow.noon).perform_later(record)
+GuestsCleanupJob.set(wait_until: Date.tomorrow.noon).perform_later(guest)
 ```
 
 ```ruby
 # Помещенная в очередь задача выполнится через неделю.
-MyJob.set(wait: 1.week).perform_later(record)
+GuestsCleanupJob.set(wait: 1.week).perform_later(guest)
 ```
+
+```ruby
+# `perform_now` и `perform_later` вызывают `perform`, поэтому
+# можно передать столько аргументов, сколько определено в последнем.
+GuestsCleanupJob.perform_later(guest1, guest2, filter: 'some_filter')
+```
+
 
 Вот и все!
 
 Запуск задач
 ------------
 
-Чтобы поместить задачу в очередь и выполнить ее, вам необходимо настроить бэкенд для очереди, т.е. вам нужно решить, какую стороннюю библиотеку для очереди Rails будет использовать. Rails не предоставляет сложную систему для работы с очередями, а просто выполняет задачу немедленно, если не настроен какой-либо адаптер.
+Чтобы поместить задачу в очередь и выполнить ее в production, вам необходимо настроить бэкенд для очереди, т.е. вам нужно решить, какую стороннюю библиотеку для очереди Rails будет использовать. Rails предоставляет только внутрипроцессную систему очереди, хранящую задачи в памяти. Если процесс упадет, или машина будет перезагружена, тогда в асинхронном бэкенде по умолчанию все оставшиеся задачи будут потеряны. Это может быть нормальным для маленьких приложений или некритичных задач, но для большей части серьезных приложений нужно подобрать сохраняющий бэкенд.
 
 ### Бэкенды
 
@@ -108,7 +117,16 @@ module YourApp
 end
 ```
 
-NOTE: Поскольку задачи запускаются параллельно с вашим Rails приложением, большинство библиотек для работы с очередями требуют запуска специфичной для библиотеки службы очереди (помимо старта вашего Rails приложения) для обработки задач. Для получения информации о том, как это сделать, обратитесь к документации соответствующей библиотеки.
+### Запуск бэкенда
+
+Поскольку задачи запускаются параллельно с вашим Rails приложением, большинство библиотек для работы с очередями требуют запуска специфичной для библиотеки службы очереди (помимо старта вашего Rails приложения) для обработки задач. Обратитесь к документации по библиотеке за инструкциями по запуска вашего бэкенда очереди.
+
+Вот неполный список документации:
+
+- [Sidekiq](https://github.com/mperham/sidekiq/wiki/Active-Job)
+- [Resque](https://github.com/resque/resque/wiki/ActiveJob)
+- [Sucker Punch](https://github.com/brandonhilkert/sucker_punch#active-job)
+- [Queue Classic](https://github.com/QueueClassic/queue_classic#active-job)
 
 Очереди
 -------
@@ -132,7 +150,7 @@ module YourApp
   end
 end
 
-# app/jobs/guests_cleanup.rb
+# app/jobs/guests_cleanup_job.rb
 class GuestsCleanupJob < ActiveJob::Base
   queue_as :low_priority
   #....
@@ -153,7 +171,7 @@ module YourApp
   end
 end
 
-# app/jobs/guests_cleanup.rb
+# app/jobs/guests_cleanup_job.rb
 class GuestsCleanupJob < ActiveJob::Base
   queue_as :low_priority
   #....
@@ -239,6 +257,17 @@ UserMailer.welcome(@user).deliver_now
 
 # Если хотите отправить письмо через Active Job, используйте #deliver_later
 UserMailer.welcome(@user).deliver_later
+```
+
+Интернационализация
+-------------------
+
+Каждая задача использует настройку `I18n.locale` при создании. Это полезно, если вы отправляете письма асинхронно:
+
+```ruby
+I18n.locale = :eo
+
+UserMailer.welcome(@user).deliver_later # Email будет локализован в Эсперанто.
 ```
 
 GlobalID
