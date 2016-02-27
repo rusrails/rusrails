@@ -13,7 +13,7 @@
 Что такое Action View?
 --------------------
 
-Action View и Action Controller — это два важных компонента Action Pack. В Rails веб-запросы обрабатываются Action Pack, который разделяет работу между контроллером (выполнение логики) и вьюхой (рендеринг шаблона). Обычно Action Controller будет ответственен за связь с базой данных и выполнение действий CRUD. Тогда Action View ответственен за компиляцию отклика.
+В Rails веб-запросы обрабатываются [Action Controller](/action-controller-overview) и Action View. Обычно Action Controller ответственен за связь с базой данных и выполнение действий CRUD. Тогда как Action View ответственен за компиляцию отклика.
 
 Шаблоны Action View пишутся с помощью тегов вложенного Ruby, смешанных с HTML. Чтобы избежать загромождения вьюх шаблонным кодом, общее поведение для форм, дат и строк представлено рядом хелпер-классов. В существующее приложение также легко добавлять новые хелперы.
 
@@ -141,6 +141,35 @@ xml.rss("version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/") do
 end
 ```
 
+#### Jbuilder
+[Jbuilder](https://github.com/rails/jbuilder) — это гем, поддерживаемый командой Rails и включенный в Rails Gemfile по умолчанию. Он похож на Builder, но используется для генерации JSON вместо XML.
+
+Если у вас его нет, можно добавить следующее в Gemfile:
+
+```ruby
+gem 'jbuilder'
+```
+
+Объект Jbuilder с именем `json` автоматически становится доступным в шаблонах с расширением `.jbuilder`.
+
+Вот простой пример:
+
+```ruby
+json.name("Alex")
+json.email("alex@example.com")
+```
+
+что создаст:
+
+```json
+{
+  "name": "Alex",
+  "email": "alex@example.com"
+}
+```
+
+Больше примеров и информации в [документации Jbuilder](https://github.com/rails/jbuilder#jbuilder).
+
 #### Кэширование шаблонов
 
 По умолчанию Rails компилирует каждый шаблон в метод перед тем, как рендерить его. Когда вы измените шаблон в режиме development, Rails проверит время изменения файла и перекомпилирует его.
@@ -206,7 +235,7 @@ end
 <%= render partial: "product" %>
 ```
 
-в product мы получим `@product` в локальной переменной `product`, как будто мы написали:
+в партиале `_product` мы получим `@product` в локальной переменной `product`, как будто мы написали:
 
 ```erb
 <%= render partial: "product", locals: { product: @product } %>
@@ -309,26 +338,6 @@ Article.create(body: 'Partial Layouts are cool!')
 </div>
 ```
 
-Партиал `_article` оборачивает `body` статьи в `div` с `id` статьи с помощью хелпера `div_for`:
-
-**articles/_article.html.erb**
-
-```html+erb
-<%= div_for(article) do %>
-  <p><%= article.body %></p>
-<% end %>
-```
-
-что отобразит следующее:
-
-```html
-<div class='box'>
-  <div id='article_1'>
-    <p>Partial Layouts are cool!</p>
-  </div>
-</div>
-```
-
 Отметьте, что у макета партиала есть доступ к локальной переменной `article`, переданной в вызов `render`. Однако, в отличие от макетов приложения, макеты партиалов должны начинаться с подчеркивания.
 
 Также можно отрендерить блок кода в макете партиала вместо вызова `yield`. Например, если у нас нет партиала `_article`, вместо него можно использовать это:
@@ -337,9 +346,9 @@ Article.create(body: 'Partial Layouts are cool!')
 
 ```html+erb
 <% render(layout: 'box', locals: { article: @article }) do %>
-  <%= div_for(article) do %>
+  <div>
     <p><%= article.body %></p>
-  <% end %>
+  </div>
 <% end %>
 ```
 
@@ -348,11 +357,9 @@ Article.create(body: 'Partial Layouts are cool!')
 Пути вьюх
 ---------
 
-При построении ответа, контроллер должен решить, где располагаются различные вьюхи.
+При построении отклика, контроллер должен решить, где располагаются различные вьюхи. По умолчанию он смотрит только в директории `app/views`.
 
-Мы можем добавить другие папки и дать им определенный приоритет при разрешении пути используя методы `prepend_view_path` и `append_view_path`.
-
-Это позволяет добавлять новые пути в начало или конец списка, использованного для разрешения этих путей.
+Мы можем добавить другие места и дать им определенный приоритет при разрешении пути с помощью методов `prepend_view_path` и `append_view_path`.
 
 ### Prepend view path
 
@@ -364,17 +371,7 @@ Article.create(body: 'Partial Layouts are cool!')
 prepend_view_path "app/views/#{request.subdomain}"
 ```
 
-Тогда наш список станет подобным:
-
-```
-[
-  ~/rails_app/app/views/<subdomain>,
-  ~/rails_app/app/views,
-  # ...
-]
-```
-
-Это добавит путь для subdomain в начало списка.
+Тогда Action View при разрешении вьюх будет искать сначала в этой директории.
 
 ### Append view path
 
@@ -553,7 +550,7 @@ end
 ```ruby
 atom_feed do |feed|
   feed.title("Articles Index")
-  feed.updated((@articles.first.created_at))
+  feed.updated(@articles.first.created_at)
 
   @articles.each do |article|
     feed.entry(article) do |entry|
@@ -727,7 +724,7 @@ select_hour(Time.now + 6.hours)
 
 ```ruby
 # Создает поле select для минут с предоставленным временем как значение по умолчанию
-select_minute(Time.now + 6.hours)
+select_minute(Time.now + 10.minutes)
 ```
 
 #### select_month
@@ -745,7 +742,7 @@ select_month(Date.today)
 
 ```ruby
 # Создает поле select для секунд с предоставленным временем как значение по умолчанию
-select_second(Time.now + 16.minutes)
+select_second(Time.now + 16.seconds)
 ```
 
 #### select_time
@@ -977,11 +974,11 @@ url_field(:user, :url)
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ActiveRecord::Base
+class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   belongs_to :author
 end
 
-class Author < ActiveRecord::Base
+class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   has_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1013,11 +1010,11 @@ collection_select(:article, :author_id, Author.all, :id, :name_with_initial, { p
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ActiveRecord::Base
+class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   belongs_to :author
 end
 
-class Author < ActiveRecord::Base
+class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   has_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1049,11 +1046,11 @@ collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initi
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ActiveRecord::Base
+class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   has_and_belongs_to_many :authors
 end
 
-class Author < ActiveRecord::Base
+class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   has_and_belongs_to_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1080,14 +1077,6 @@ collection_check_boxes(:article, :author_ids, Author.all, :id, :name_with_initia
 <input name="article[author_ids][]" type="hidden" value="" />
 ```
 
-#### country_options_for_select
-
-Возвращает строку из тегов option с практически всеми странами мира.
-
-#### country_select
-
-Возвращает теги select и option для заданного объекта и метода, с помощью country_options_for_select для создания списка тегов option.
-
 #### option_groups_from_collection_for_select
 
 Возвращает строку с тегами `option`, подобно `options_from_collection_for_select`, но группирует их тегами `optgroup` на основе отношений аргументов.
@@ -1095,12 +1084,12 @@ collection_check_boxes(:article, :author_ids, Author.all, :id, :name_with_initia
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Continent < ActiveRecord::Base
+class Continent < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   has_many :countries
   # attribs: id, name
 end
 
-class Country < ActiveRecord::Base
+class Country < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
   belongs_to :continent
   # attribs: id, name, continent_id
 end
@@ -1174,8 +1163,8 @@ select("article", "person_id", Person.all.collect { |p| [ p.name, p.id ] }, { in
 <select name="article[person_id]">
   <option value=""></option>
   <option value="1" selected="selected">David</option>
-  <option value="2">Sam</option>
-  <option value="3">Tobias</option>
+  <option value="2">Eileen</option>
+  <option value="3">Rafael</option>
 </select>
 ```
 
@@ -1473,12 +1462,12 @@ end
 Обрезает все теги ссылок в тексте, оставляя только текст ссылки.
 
 ```ruby
-strip_links("<a href="http://rubyonrails.org">Ruby on Rails</a>")
+strip_links('<a href="http://rubyonrails.org">Ruby on Rails</a>')
 # => Ruby on Rails
 ```
 
 ```ruby
-strip_links("emails to <a href="mailto:me@email.com">me@email.com</a>.")
+strip_links('emails to <a href="mailto:me@email.com">me@email.com</a>.')
 # => emails to me@email.com.
 ```
 
