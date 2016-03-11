@@ -322,7 +322,7 @@ Active Record
 
 * Реализован `ActiveRecord::Relation#explain`.
 
-* Реализован `AR::Base.silence_auto_explain`, позволяющий пользователю выборочно отключать автоматические EXPLAIN в блоке.
+* Реализован `ActiveRecord::Base.silence_auto_explain`, позволяющий пользователю выборочно отключать автоматические EXPLAIN в блоке.
 
 * Реализовано логирование автоматического EXPLAIN для медленных запросов. Новый конфигурационный параметр `config.active_record.auto_explain_threshold_in_seconds` определяет, что рассматривается как медленный запрос. Установите ему nil, чтобы отключить эту возможность. По умолчанию 0.5 в режиме development, и nil в режимах test и production. Rails 3.2 поддерживает эту возможность для SQLite, MySQL (адаптер mysql2) и PostgreSQL.
 
