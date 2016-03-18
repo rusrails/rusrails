@@ -81,8 +81,8 @@ pages:
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
     file:     form_helpers.md
-    revision: 7ba24831d7f809d54e88607db8f7d21780efbdfb
-    date:     14/01/2015
+    revision: 43edcc6c8faa96d91f9f5abb46af31f93ee17738
+    date:     24/02/2016
 
   - title:    Обзор Action Controller
     path:     action-controller-overview
