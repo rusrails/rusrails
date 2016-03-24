@@ -44,6 +44,9 @@
               %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
             - if content_for?(:menu)
               .well.menu= yield(:menu)
+            - if @page.try(:path) != 'index'
+              .well.banner300.banner
+                = render "shared/partners_banner"
             .well.banner300.banner
               = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left= yield
@@ -52,8 +55,6 @@
             %p
               = link_to (image_tag 'github.png'), 'https://github.com/morsbox/rusrails', target: :blank
               = link_to (image_tag 'twitter.png'), 'http://twitter.com/rusrails', target: :blank
-              При поддержке
-              = link_to (image_tag 'evrone.png'), 'http://evrone.ru', target: :blank
             %p
               = link_to "Лицензия CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/"
               "Rails", "Ruby on Rails" и логотип Rails - торговые марки DHH
