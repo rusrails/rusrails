@@ -28,7 +28,7 @@ config.action_controller.perform_caching = true
 ```
 
 NOTE: Изменение значения `config.action_controller.perform_caching` повлияет только на кэширование, предоставленное Action Controller.
-Например, это не повлияет на низкоуровневое кэширование, которое мы рассмотрим [ниже](#low-level-caching).
+Например, это не повлияет на низкоуровневое кэширование, которое мы рассмотрим [ниже](#nizkourovnevoe-keshirovanie).
 
 ### Кэширование страницы
 
