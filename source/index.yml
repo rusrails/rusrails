@@ -192,6 +192,12 @@ pages:
     revision: 45747a557241041d4ec4da5b6947ebd625601e99
     date:     13/04/2015
 
+  - title:    Обзор Action Cable
+    path:     action-cable-overview
+    file:     action_cable_overview.md
+    revision: 343e2647b39fa087444a94b6110e6d5809bc50eb
+    date:     05/04/2016
+
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
@@ -289,7 +295,6 @@ pages:
     date:     02/01/2016
 
 plan:
-  - file:     action_cable_overview.md
   - file:     maintenance_policy.md
   - file:     profiling.md
   - file:     rails_application_templates.md
