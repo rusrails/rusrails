@@ -49,7 +49,12 @@
             -#     = render "shared/partners_banner"
             .well.banner300.banner
               = render "shared/adsense", position: 'sidebar'
-          .span9.content.pull-left= yield
+          .span9.content.pull-left
+            -# .banner= render "shared/adsense", position: 'top'
+            .banner= render "shared/banner", url: 'https://mkdev.me/courses/ruby-on-rails-dlya-vzroslyh', image: 'partners/mkdev-hardcore.png'
+            = yield
+            .banner= render "shared/adsense", position: 'bottom'
+
         .row-fluid
           .span12#footer
             %p
