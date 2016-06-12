@@ -8,15 +8,15 @@ special:
     file:     menu.md
 
 images:
-  revision:   71ff088a09d429657877ddfb58985d30df63fc8a
-  date:       08/09/2015
+    revision: f9a29680682fe8c84ea634157927b9826cbf669f
+    date:     11/06/2016
 
 pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: 14354f195540954a1dfc5c954d06389c9f71e986
-    date:     11/07/2015
+    revision: f9a29680682fe8c84ea634157927b9826cbf669f
+    date:     11/06/2016
 
   - title:    Основы Active Record
     path:     active-record-basics
