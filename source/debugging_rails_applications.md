@@ -105,18 +105,18 @@ Title: Rails debugging guide
 
 Rails использует класс `ActiveSupport::Logger` для записи информации в лог. Другие логгеры, такие как `Log4R`, могут так же стать заменой.
 
-Альтернативный логгер можно определить в `environment.rb` или любом другом файле среды, например:
+Альтернативный логгер можно определить в `config/application.rb` или любом другом файле среды, например:
 
 ```ruby
-Rails.logger = Logger.new(STDOUT)
-Rails.logger = Log4r::Logger.new("Application Log")
+config.logger = Logger.new(STDOUT)
+config.logger = Log4r::Logger.new("Application Log")
 ```
 
 Или в разделе `Initializer` добавьте _одно из_ следующего
 
 ```ruby
-config.logger = Logger.new(STDOUT)
-config.logger = Log4r::Logger.new("Application Log")
+Rails.logger = Logger.new(STDOUT)
+Rails.logger = Log4r::Logger.new("Application Log")
 ```
 
 TIP: По умолчанию каждый лог создается в `Rails.root/log/` с файлом лога, названным по окружению, в котором запущено приложение.
@@ -277,15 +277,15 @@ end
 Например:
 
 ```bash
-=> Booting WEBrick
+=> Booting Puma
 => Rails 5.0.0 application starting in development on http://0.0.0.0:3000
 => Run `rails server -h` for more startup options
-=> Notice: server is listening on all interfaces (0.0.0.0). Consider using 127.0.0.1 (--binding option)
-=> Ctrl-C to shutdown server
-[2014-04-11 13:11:47] INFO  WEBrick 1.3.1
-[2014-04-11 13:11:47] INFO  ruby 2.2.2 (2015-04-13) [i686-linux]
-[2014-04-11 13:11:47] INFO  WEBrick::HTTPServer#start: pid=6370 port=3000
-
+Puma starting in single mode...
+* Version 3.4.0 (ruby 2.3.1-p112), codename: Owl Bowl Brawl
+* Min threads: 5, max threads: 5
+* Environment: development
+* Listening on tcp://localhost:3000
+Use Ctrl-C to stop
 Started GET "/" for 127.0.0.1 at 2014-04-11 13:11:48 +0200
   ActiveRecord::SchemaMigration Load (0.2ms)  SELECT "schema_migrations".* FROM "schema_migrations"
 Processing by ArticlesController#index as HTML
@@ -301,7 +301,6 @@ Processing by ArticlesController#index as HTML
    10:     respond_to do |format|
    11:       format.html # index.html.erb
    12:       format.json { render json: @articles }
-
 (byebug)
 ```
 
@@ -310,11 +309,45 @@ Processing by ArticlesController#index as HTML
 ```
 (byebug) help
 
-  h[elp][ <cmd>[ <subcmd>]]
+  break      -- Sets breakpoints in the source code
+  catch      -- Handles exception catchpoints
+  condition  -- Sets conditions on breakpoints
+  continue   -- Runs until program ends, hits a breakpoint or reaches a line
+  debug      -- Spawns a subdebugger
+  delete     -- Deletes breakpoints
+  disable    -- Disables breakpoints or displays
+  display    -- Evaluates expressions every time the debugger stops
+  down       -- Moves to a lower frame in the stack trace
+  edit       -- Edits source files
+  enable     -- Enables breakpoints or displays
+  finish     -- Runs the program until frame returns
+  frame      -- Moves to a frame in the call stack
+  help       -- Helps you using byebug
+  history    -- Shows byebug's history of commands
+  info       -- Shows several informations about the program being debugged
+  interrupt  -- Interrupts the program
+  irb        -- Starts an IRB session
+  kill       -- Sends a signal to the current process
+  list       -- Lists lines of source code
+  method     -- Shows methods of an object, class or module
+  next       -- Runs one or more lines of code
+  pry        -- Starts a Pry session
+  quit       -- Exits byebug
+  restart    -- Restarts the debugged program
+  save       -- Saves current byebug session to a file
+  set        -- Modifies byebug settings
+  show       -- Shows byebug settings
+  source     -- Restores a previously saved byebug session
+  step       -- Steps into blocks or methods one or more times
+  thread     -- Commands to manipulate threads
+  tracevar   -- Enables tracing of a global variable
+  undisplay  -- Stops displaying all or some expressions when program stops
+  untracevar -- Stops tracing a global variable
+  up         -- Moves to a higher frame in the stack trace
+  var        -- Shows variables and its values
+  where      -- Displays the backtrace
 
-  help                -- prints this help.
-  help <cmd>          -- prints help on command <cmd>.
-  help <cmd> <subcmd> -- prints help on <cmd>'s subcommand <subcmd>.
+(byebug)
 ```
 
 Чтобы просмотреть предыдущие десять строчек, следует написать `list-` (or `l-`).
@@ -352,7 +385,6 @@ Processing by ArticlesController#index as HTML
    10:     respond_to do |format|
    11:       format.html # index.html.erb
    12:       format.json { render json: @articles }
-
 (byebug)
 ```
 
@@ -367,49 +399,49 @@ Processing by ArticlesController#index as HTML
 ```
 (byebug) where
 --> #0  ArticlesController.index
-      at /PathTo/project/test_app/app/controllers/articles_controller.rb:8
-    #1  ActionController::ImplicitRender.send_action(method#String, *args#Array)
-      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/implicit_render.rb:4
+      at /PathToProject/app/controllers/articles_controller.rb:8
+    #1  ActionController::BasicImplicitRender.send_action(method#String, *args#Array)
+      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/basic_implicit_render.rb:4
     #2  AbstractController::Base.process_action(action#NilClass, *args#Array)
-      at /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb:189
-    #3  ActionController::Rendering.process_action(action#NilClass, *args#NilClass)
-      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/rendering.rb:10
+      at /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb:181
+    #3  ActionController::Rendering.process_action(action, *args)
+      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/rendering.rb:30
 ...
 ```
 
-Текущий фрейм помечен `-->`. В этом трейсе можно перемещаться, куда хотите (это изменит контекст), используя команду `frame _n_`, где _n_ это номер определенного фрейма. Если так сделать, `byebug` отобразит новый контекст.
+Текущий фрейм помечен `-->`. В этом трейсе можно перемещаться, куда хотите (это изменит контекст), используя команду `frame n`, где _n_ это номер определенного фрейма. Если так сделать, `byebug` отобразит новый контекст.
 
 ```
 (byebug) frame 2
 
-[184, 193] in /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb
-   184:       # is the intended way to override action dispatching.
-   185:       #
-   186:       # Notice that the first argument is the method to be dispatched
-   187:       # which is *not* necessarily the same as the action name.
-   188:       def process_action(method_name, *args)
-=> 189:         send_action(method_name, *args)
-   190:       end
-   191:
-   192:       # Actually call the method associated with the action. Override
-   193:       # this method if you wish to change how action methods are called,
+[176, 185] in /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb
+   176:       # is the intended way to override action dispatching.
+   177:       #
+   178:       # Notice that the first argument is the method to be dispatched
+   179:       # which is *not* necessarily the same as the action name.
+   180:       def process_action(method_name, *args)
+=> 181:         send_action(method_name, *args)
+   182:       end
+   183:
+   184:       # Actually call the method associated with the action. Override
+   185:       # this method if you wish to change how action methods are called,
 
 (byebug)
 ```
 
 Доступные переменные те же самые, как если бы вы запускали код строка за строкой. В конце концов, это то, что отлаживается.
 
-Также можно использовать команды `up [n]` (сокращенно `u`) и `down [n]` чтобы изменить контекст на _n_ фреймов в стеке вверх или вниз соответственно. _n_ по умолчанию один. Вверх в этом случае обозначает фреймы с большим числом, а вниз — с меньшим числом.
+Также можно использовать команды `up [n]` и `down [n]` чтобы изменить контекст на _n_ фреймов в стеке вверх или вниз соответственно. _n_ по умолчанию один. Вверх в этом случае обозначает фреймы с большим числом, а вниз — с меньшим числом.
 
 ### Треды (threads)
 
 Отладчик может просматривать, останавливать, возобновлять и переключаться между запущенными тредами с использованием команды `thread` (или сокращенно `th`). У этой команды есть несколько опций:
 
 * `thread`: показывает текущий тред
-* `thread list`: используется для отображения всех тредов и их статусов. Символ плюс + и число показывают текущий тред выполнения.
-* `thread stop _n_`: останавливает тред _n_.
-* `thread resume _n_`: возобновляет тред _n_.
-* `thread switch _n_`: переключает контекст текущего треда на _n_.
+* `thread list`: используется для отображения всех тредов и их статусов. Текущий тред помечается знаком плюс (+).
+* `thread stop n`: останавливает тред _n_.
+* `thread resume n`: возобновляет тред _n_.
+* `thread switch n`: переключает контекст текущего треда на _n_.
 
 Эта команда очень полезна, когда вы отлаживаете параллельные треды и нужно убедиться, что в коде нет состояния гонки.
 
@@ -433,9 +465,9 @@ Processing by ArticlesController#index as HTML
    12:       format.json { render json: @articles }
 
 (byebug) instance_variables
-[:@_action_has_layout, :@_routes, :@_headers, :@_status, :@_request,
- :@_response, :@_env, :@_prefixes, :@_lookup_context, :@_action_name,
- :@_response_body, :@marked_for_same_origin_verification, :@_config]
+[:@_action_has_layout, :@_routes, :@_request, :@_response, :@_lookup_context,
+ :@_action_name, :@_response_body, :@marked_for_same_origin_verification,
+ :@_config]
 ```
 
 Как вы могли заметить, отображены все переменные, к которым есть доступ из контроллера. Этот список обновляется динамически по мере выполнения кода.
@@ -443,6 +475,7 @@ Processing by ArticlesController#index as HTML
 
 ```
 (byebug) next
+
 [5, 14] in /PathTo/project/app/controllers/articles_controller.rb
    5     # GET /articles.json
    6     def index
@@ -462,25 +495,32 @@ Processing by ArticlesController#index as HTML
 
 ```
 (byebug) instance_variables
-[:@_action_has_layout, :@_routes, :@_headers, :@_status, :@_request,
- :@_response, :@_env, :@_prefixes, :@_lookup_context, :@_action_name,
- :@_response_body, :@marked_for_same_origin_verification, :@_config,
- :@articles]
+[:@_action_has_layout, :@_routes, :@_request, :@_response, :@_lookup_context,
+ :@_action_name, :@_response_body, :@marked_for_same_origin_verification,
+ :@_config, :@articles]
 ```
 
 Теперь `@articles` включена в переменные экземпляра, поскольку определяющая ее строка была выполнена.
 
-TIP: Также можно шагнуть в режим **irb** с командой `irb` (конечно!). Это запустит сессию irb в контексте, который ее вызвал. Но предупреждаем: это экспериментальная особенность.
+TIP: Также можно шагнуть в режим **irb** с командой `irb` (конечно!). Это запустит сессию irb в контексте, который ее вызвал.
 
 Метод `var` это более удобный способ показать переменные и их значения. Пускай `byebug` поможет нам с ней.
 
 ```
 (byebug) help var
-v[ar] cl[ass]                   show class variables of self
-v[ar] const <object>            show constants of object
-v[ar] g[lobal]                  show global variables
-v[ar] i[nstance] <object>       show instance variables of object
-v[ar] l[ocal]                   show local variables
+
+  [v]ar <subcommand>
+
+  Shows variables and its values
+
+
+  var all      -- Shows local, global and instance variables of self.
+  var args     -- Information about arguments of the current scope
+  var const    -- Shows constants of an object.
+  var global   -- Shows global variables.
+  var instance -- Shows instance variables of self or a specific object.
+  var local    -- Shows local variables in current scope.
+
 ```
 
 Это отличный способ просмотреть значения переменных текущего контекста. Например, чтобы проверить, что у нас нет локально определенных переменных в настоящий момент:
@@ -497,13 +537,15 @@ v[ar] l[ocal]                   show local variables
 @_start_transaction_state = {}
 @aggregation_cache = {}
 @association_cache = {}
-@attributes = {"id"=>nil, "created_at"=>nil, "updated_at"=>nil}
-@attributes_cache = {}
-@changed_attributes = nil
-...
+@attributes = #<ActiveRecord::AttributeSet:0x007fd0682a9b18 @attributes={"id"=>#<ActiveRecord::Attribute::FromDatabase:0x007fd0682a9a00 @name="id", @value_be...
+@destroyed = false
+@destroyed_by_association = nil
+@marked_for_destruction = false
+@new_record = true
+@readonly = false
+@transaction_state = nil
+@txn = nil
 ```
-
-TIP: Команды `p` (print) и `pp` (pretty print) могут использоваться для вычисления выражений Ruby и отображения значения переменных в консоли.
 
 Можете также использовать `display` для запуска просмотра переменных. Это хороший способ трассировки значений переменной на протяжении выполнения.
 
@@ -512,46 +554,36 @@ TIP: Команды `p` (print) и `pp` (pretty print) могут использ
 1: @articles = nil
 ```
 
-Переменные в отображаемом перечне будут печататься с их значениями после помещения в стек. Чтобы остановить отображение переменной, используйте `undisplay _n_`, где _n_ это номер переменной (1 в последнем примере).
+Переменные в отображаемом перечне будут печататься с их значениями после помещения в стек. Чтобы остановить отображение переменной, используйте `undisplay n`, где _n_ это номер переменной (1 в последнем примере).
 
 ### Шаг за шагом
 
 Теперь вы знаете, где находитесь в запущенной трассировке, и способны напечатать доступные переменные. Давайте продолжим и ознакомимся с выполнением приложения.
 
-Используйте `step` (сокращенно `s`) для продолжения запуска вашей программы до следующей логической точки останова и возврата контроля debugger.
-
-Также можете использовать `_next_`, которая похожа на `step`, но вызовы функции или метода, выполняемые в строке кода, выполняются без остановки.
-
-TIP: А также можно использовать `step n` или `next n` для перемещения на `n` шагов за раз.
-
-Разница между `next` и `step` в том, что `step` останавливается на следующей линии выполняемого кода, делая лишь один шаг, в то время как `next` перемещает на следующую строку без входа внутрь методов.
+Используйте `step` (сокращенно `s`) для продолжения запуска вашей программы до следующей логической точки останова и возврата контроля debugger. `_next_` похожа на `step`, но `step` останавливается на следующей строчке выполняемого кода, делая лишь один шаг, а `next` перемещает на следующую строку без входа внутрь методов.
 
 Например, рассмотрим следующую ситуацию:
 
-```ruby
+```
 Started GET "/" for 127.0.0.1 at 2014-04-11 13:39:23 +0200
 Processing by ArticlesController#index as HTML
 
-[1, 8] in /home/davidr/Proyectos/test_app/app/models/article.rb
-   1: class Article < ActiveRecord::Base
-   2:
-   3:   def self.find_recent(limit = 10)
-   4:     byebug
-=> 5:     where('created_at > ?', 1.week.ago).limit(limit)
-   6:   end
-   7:
-   8: end
+[1, 6] in /PathToProject/app/models/article.rb
+   1: class Article < ApplicationRecord
+   2:   def self.find_recent(limit = 10)
+   3:     byebug
+=> 4:     where('created_at > ?', 1.week.ago).limit(limit)
+   5:   end
+   6: end
 
 (byebug)
 ```
 
-Если используем `next`, мы хотим уйти глубже в вызовы метода. Вместо этого, byebug перейдет на следующую строчку в том же контексте. В этом случае это будет последней строчкой метода, поэтому `byebug` перепрыгнет на следующую строчку предыдущего фрейма.
+Если используем `next`, мы хотим уйти глубже в вызовы метода. Вместо этого, `byebug` перейдет на следующую строчку в том же контексте. В этом случае это будет последней строчкой текущего метода, поэтому `byebug` перейдет на следующую строчку вызывающего метода.
 
 ```
 (byebug) next
-Next went up a frame because previous frame finished
-
-[4, 13] in /PathTo/project/test_app/app/controllers/articles_controller.rb
+[4, 13] in /PathToProject/app/controllers/articles_controller.rb
     4:   # GET /articles
     5:   # GET /articles.json
     6:   def index
@@ -566,42 +598,44 @@ Next went up a frame because previous frame finished
 (byebug)
 ```
 
-Если используем `step` в той же ситуации, мы буквально шагнем на следующую инструкцию ruby для выполнения. В этом случае, в метод Active Support `week`.
+Если используем `step` в той же ситуации, `byebug` буквально шагнет на следующую инструкцию ruby для выполнения -- в этом случае, в метод Active Support `week`.
 
 ```
 (byebug) step
 
-[50, 59] in /PathToGems/activesupport-5.0.0/lib/active_support/core_ext/numeric/time.rb
-   50:     ActiveSupport::Duration.new(self * 24.hours, [[:days, self]])
-   51:   end
-   52:   alias :day :days
-   53:
-   54:   def weeks
-=> 55:     ActiveSupport::Duration.new(self * 7.days, [[:days, self * 7]])
-   56:   end
-   57:   alias :week :weeks
-   58:
-   59:   def fortnights
+[49, 58] in /PathToGems/activesupport-5.0.0/lib/active_support/core_ext/numeric/time.rb
+   49:
+   50:   # Returns a Duration instance matching the number of weeks provided.
+   51:   #
+   52:   #   2.weeks # => 14 days
+   53:   def weeks
+=> 54:     ActiveSupport::Duration.new(self * 7.days, [[:days, self * 7]])
+   55:   end
+   56:   alias :week :weeks
+   57:
+   58:   # Returns a Duration instance matching the number of fortnights provided.
 
 (byebug)
 ```
 
 Это один из лучших способов найти ошибки в вашем коде.
 
+TIP: Также можно использовать `step n` или `next n` для продвижения вперед на `n` шагов за раз.
+
 ### Точки останова
 
-Точка останова останавливает ваше приложение, когда достигается определенная точка в программе. В этой линии вызывается оболочка отладчика.
+Точка останова останавливает ваше приложение, когда достигается определенная точка в программе. В этой строчке вызывается оболочка отладчика.
 
 Можете добавлять точки останова динамически с помощью команды `break` (или просто `b`). Имеются 3 возможных способа ручного добавления точек останова:
 
-* `break line`: устанавливает точку останова в строчке номер _line_ в текущем файле исходника.
-* `break file:line [if expression]`: устанавливает точку останова в строчке номер _line_ в файле _file_. Если задано выражение _expression_, оно должно быть вычислено в _true_, чтобы запустить отладчик.
-* `break class(.|\#)method [if expression]`: устанавливает точку останова в методе _method_ (. и # для метода класса и экземпляра соответственно), определенного в классе _class_. Выражение _expression_ работает так же, как и с file:line.
+* `break n`: устанавливает точку останова в строчке номер _n_ в текущем файле исходника.
+* `break file:n [if expression]`: устанавливает точку останова в строчке номер _n_ в файле с именем _file_. Если задано выражение _expression_, оно должно быть вычислено в _true_, чтобы запустить отладчик.
+* `break class(.|\#)method [if expression]`: устанавливает точку останова в методе _method_ (. и # для метода класса и экземпляра соответственно), определенного в классе _class_. Выражение _expression_ работает так же, как и с file:n.
 
 Например, в предыдущей ситуации
 
 ```
-[4, 13] in /PathTo/project/app/controllers/articles_controller.rb
+[4, 13] in /PathToProject/app/controllers/articles_controller.rb
     4:   # GET /articles
     5:   # GET /articles.json
     6:   def index
@@ -614,18 +648,18 @@ Next went up a frame because previous frame finished
    13:   end
 
 (byebug) break 11
-Created breakpoint 1 at /PathTo/project/app/controllers/articles_controller.rb:11
+Successfully created breakpoint with id 1
 ```
 
-Используйте `info breakpoints _n_` или `info break _n_` для отображения перечня точек останова. Если укажете номер, отобразится только эта точка останова. В противном случае отобразятся все точки останова.
+Используйте `info breakpoints` для отображения перечня точек останова. Если укажете номер, отобразится только эта точка останова. В противном случае отобразятся все точки останова.
 
 ```
 (byebug) info breakpoints
 Num Enb What
-1   y   at /PathTo/project/app/controllers/articles_controller.rb:11
+1   y   at /PathToProject/app/controllers/articles_controller.rb:11
 ```
 
-Чтобы удалить точки останова: используйте команду `delete _n_` для устранения точки останова номер _n_. Если номер не указан, удалятся все точки останова, которые в данный момент активны.
+Чтобы удалить точки останова: используйте команду `delete n` для устранения точки останова номер _n_. Если номер не указан, удалятся все точки останова, которые в данный момент активны.
 
 ```
 (byebug) delete 1
@@ -635,8 +669,8 @@ No breakpoints.
 
 Также можно включить или отключить точки останова:
 
-* `enable breakpoints`: позволяет перечню _breakpoints_ или всем им, если перечень не определен, останавливать вашу программу. Это состояние по умолчанию для создаваемых точек останова.
-* `disable breakpoints`: _breakpoints_ не будут влиять на вашу программу.
+* `enable breakpoints [n [m [...]]]`: позволяет указанному перечню точек останова или всем им останавливать вашу программу. Это состояние по умолчанию для создаваемых точек останова.
+* `disable breakpoints [n [m [...]]]`: определенные (или все) точки останова не будут влиять на вашу программу.
 
 ### Ловля исключений
 
@@ -648,18 +682,18 @@ No breakpoints.
 
 Есть два способа возобновления выполнения приложения, которое было остановлено отладчиком:
 
-* `continue [line-specification]` (или `c`): возобновляет выполнение программы с адреса, где ваш скрипт был последний раз остановлен; любые точки останова, установленные на этом адресе будут пропущены. Дополнительный аргумент line-specification позволяет вам определить число линий для установки одноразовой точки останова, которая удаляется после того, как эта точка будет достигнута.
-* `finish [frame-number]` (или `fin`): выполняет, пока не возвратится выделенный кадр стека. Если номер кадра не задан, приложение будет запущено пока не возвратится текущий выделенный кадр. Текущий выделенный кадр начинается от самых последних, или с 0, если позиционирование кадров (т.е. up, down или frame) не было выполнено. Если задан номер кадра, будет выполняться, пока не вернется указанный кадр.
+* `continue [n]`: возобновляет выполнение программы с адреса, где ваш скрипт был последний раз остановлен; любые точки останова, установленные на этом адресе будут пропущены. Дополнительный аргумент `n` позволяет вам определить номер строчки для установки одноразовой точки останова, которая удаляется после того, как эта точка будет достигнута.
+* `finish [n]`: выполняет, пока не возвратится выделенный кадр стека. Если номер кадра не задан, приложение будет запущено пока не возвратится текущий выделенный кадр. Текущий выделенный кадр начинается от самых последних, или с 0, если позиционирование кадров (т.е. up, down или frame) не было выполнено. Если задан номер кадра, будет выполняться, пока не вернется указанный кадр.
 
 ### Редактирование
 
 Две команды позволяют открыть код из отладчика в редакторе:
 
-* `edit [file:line]`: редактирует файл _file_, используя редактор, определенный переменной среды EDITOR. Определенная линия _line_ также может быть задана.
+* `edit [file:n]`: редактирует файл _file_, используя редактор, определенный переменной среды EDITOR. Также может быть задана определенная строчка _n_.
 
 ### Выход
 
-Чтобы выйти из отладчика, используйте команду `quit` (сокращенно `q`), или ее псевдоним `exit`.
+Чтобы выйти из отладчика, используйте команду `quit` (сокращенно `q`). Или напишите `q!` чтобы пропустить подсказку `Really quit? (y/n)` и безусловно выйти.
 
 Простой выход пытается прекратить все нити в результате. Поэтому ваш сервер будет остановлен и нужно будет стартовать его снова.
 
@@ -667,18 +701,42 @@ No breakpoints.
 
 У `byebug` имеется несколько доступных опций для настройки его поведения:
 
-* `set autoreload`: Перезагрузить исходный код при изменении (по умолчанию true).
-* `set autolist`: Запускать команду `list` на каждой точке останова (по умолчанию true).
-* `set listsize _n_`: Установить количество строчек кода для отображения по умолчанию _n_
-(по умолчанию 10).
-* `set forcestep`: Убеждаться, что команды `next` и `step` всегда переходят на новую строчку.
+```
+(byebug) help set
 
-Можно просмотреть полный перечень, используя `help set`. Используйте `help set _subcommand_` для изучения определенной команды `set`.
+  set <setting> <value>
+
+  Modifies byebug settings
+
+  Boolean values take "on", "off", "true", "false", "1" or "0". If you
+  don't specify a value, the boolean setting will be enabled. Conversely,
+  you can use "set no<setting>" to disable them.
+
+  You can see these environment settings with the "show" command.
+
+  List of supported settings:
+
+  autosave       -- Automatically save command history record on exit
+  autolist       -- Invoke list command on every stop
+  width          -- Number of characters per line in byebug's output
+  autoirb        -- Invoke IRB on every stop
+  basename       -- <file>:<line> information after every stop uses short paths
+  linetrace      -- Enable line execution tracing
+  autopry        -- Invoke Pry on every stop
+  stack_on_error -- Display stack trace when `eval` raises an exception
+  fullpath       -- Display full file names in backtraces
+  histfile       -- File where cmd history is saved to. Default: ./.byebug_history
+  listsize       -- Set number of source lines to list by default
+  post_mortem    -- Enable/disable post-mortem mode
+  callstyle      -- Set how you want method call parameters to be displayed
+  histsize       -- Maximum number of commands that can be stored in byebug history
+  savefile       -- File where settings are saved to. Default: ~/.byebug_save
+```
 
 TIP: Эти настройки могут быть сохранены в файле `.byebugrc` в домашней директории. debugger считывает эти глобальные настройки при запуске. Например:
 
 ```bash
-set forcestep
+set callstyle short
 set listsize 25
 ```
 
@@ -737,7 +795,7 @@ NOTE: Только одна консоль может быть отрисова�
 
 ### Valgrind
 
-[Valgrind](http://valgrind.org/) - это приложение для Linux для обнаружения утечек памяти, основанных на C, и гонки условий.
+[Valgrind](http://valgrind.org/) - это приложение для обнаружения утечек памяти, связанных с C, и гонки условий.
 
 Имеются инструменты Valgrind, которые могут автоматически обнаруживать многие баги управления памятью и тредами, и подробно профилировать ваши программы. Например, если расширение C в интерпретаторе вызывает `malloc()`, но не вызывает должным образом `free()`, эта память не будет доступна, пока приложение не будет остановлено.
 
