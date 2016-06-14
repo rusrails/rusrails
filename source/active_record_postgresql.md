@@ -17,7 +17,7 @@ Active Record для PostgreSQL
 
 
 Для начала работы с PostgreSQL взгляните на
-[Конфигурирование приложений на Rails](/configuring#konfigurirovanie-bazy-dannyh-postgresql).
+[Конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
 Там описано как правильно настроить Active Record для PostgreSQL.
 
 Типы данных (Datatypes)
