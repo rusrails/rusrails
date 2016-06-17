@@ -1103,6 +1103,7 @@ NOTE: Если вы запускаете мультитредовую среду
   Rails.configuration.x.payment_processing.retries  # => 3
   Rails.configuration.x.super_debugger              # => true
   Rails.configuration.x.super_debugger.not_set      # => nil
+  ```
 
 Индексирование поисковыми движками
 ----------------------------------
