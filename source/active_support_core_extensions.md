@@ -241,6 +241,13 @@ end
 @person.try { |p| "#{p.first_name} #{p.last_name}" }
 ```
 
+Отметьте, что `try` поглотит ошибки об отсутствующем методе, возвратив вместо них nil. Если вы хотите защититься от ошибок, ипользуйте вместо него `try!`:
+
+```ruby
+@number.try(:nest)  # => nil
+@number.try!(:nest) # NoMethodError: undefined method `nest' for 1:Integer
+```
+
 NOTE: Определено в `active_support/core_ext/object/try.rb`.
 
 ### `class_eval(*args, &block)`
@@ -383,7 +390,7 @@ NOTE: Определено в `active_support/core_ext/object/to_query.rb`.
 Задав хэш опций по умолчанию, `with_options` предоставляет прокси на объект в блок. В блоке методы, вызванные на прокси, возвращаются получателю с прикрепленными опциями. Например, имеются такие дублирования:
 
 ```ruby
-class Account < ActiveRecord::Base
+class Account < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :products,  dependent: :destroy
   has_many :invoices,  dependent: :destroy
@@ -394,7 +401,7 @@ end
 заменяем:
 
 ```ruby
-class Account < ActiveRecord::Base
+class Account < ApplicationRecord
   with_options dependent: :destroy do |assoc|
     assoc.has_many :customers
     assoc.has_many :products
@@ -500,17 +507,17 @@ NOTE: Определено в `active_support/core_ext/object/inclusion.rb`.
 
 Используя чистый Ruby можно обернуть методы в другие методы, это называется _сцепление псевдонимов (alias chaining)_.
 
-Например, скажем, что вы хотите, чтобы params были строками в функциональных тестах, как и в реальных запросах, но также хотите удобно присваивать числа и другие типы значений. Чтобы это осуществить, следует обернуть `ActionController::TestCase#process` следующим образом в `test/test_helper.rb`:
+Например, скажем, что вы хотите, чтобы params были строками в функциональных тестах, как и в реальных запросах, но также хотите удобно присваивать числа и другие типы значений. Чтобы это осуществить, следует обернуть `ActionDispatch::IntegrationTest#process` следующим образом в `test/test_helper.rb`:
 
 ```ruby
-ActionController::TestCase.class_eval do
+ActionDispatch::IntegrationTest.class_eval do
   # сохраняем ссылку на оригинальный метод process
   alias_method :original_process, :process
 
   # теперь переопределяем process и передаем в original_process
-  def process(action, params=nil, session=nil, flash=nil, http_method='GET')
+  def process('GET', path, params: nil, headers: nil, env: nil, xhr: false)
     params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    original_process(action, params, session, flash, http_method)
+    original_process('GET', path, params: params)
   end
 end
 ```
@@ -520,10 +527,10 @@ end
 В такой технике имеется риск, в случае если `:original_process` уже есть. Чтобы избежать коллизий, некоторые выбирают определенные метки, характеризующие то, что сцепление означает:
 
 ```ruby
-ActionController::TestCase.class_eval do
+ActionDispatch::IntegrationTest.class_eval do
   def process_with_stringified_params(...)
     params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    process_without_stringified_params(action, params, session, flash, http_method)
+    process_without_stringified_params(method, path, params: params)
   end
   alias_method :process_without_stringified_params, :process
   alias_method :process, :process_with_stringified_params
@@ -533,10 +540,10 @@ end
 Метод `alias_method_chain` предоставляет ярлык для такого примера:
 
 ```ruby
-ActionController::TestCase.class_eval do
+ActionDispatch::IntegrationTest.class_eval do
   def process_with_stringified_params(...)
     params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    process_without_stringified_params(action, params, session, flash, http_method)
+    process_without_stringified_params(method, path, params: params)
   end
   alias_method_chain :process, :stringified_params
 end
@@ -551,7 +558,7 @@ NOTE: Определено в `active_support/core_ext/module/aliasing.rb`.
 В атрибутах модели есть ридер (reader), райтер (writer), и условие (predicate). Можно создать псевдоним к атрибуту модели, имеющему соответствующие три метода, за раз. Как и в других создающих псевдоним методах, новое имя - это первый аргумент, а старое имя - второй (мнемоническое правило такое: они идут в том же порядке, как если бы делалось присваивание):
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # Теперь можно обращаться к столбцу email как "login".
   # Это имеет больше смысла для кода аутентификации.
   alias_attribute :login, :email
@@ -615,8 +622,6 @@ module ActiveSupport
     mattr_accessor :load_once_paths
     mattr_accessor :autoloaded_constants
     mattr_accessor :explicitly_unloadable_constants
-    mattr_accessor :logger
-    mattr_accessor :log_activity
     mattr_accessor :constant_watch_stack
     mattr_accessor :constant_watch_stack_mutex
   end
@@ -691,76 +696,6 @@ M.parents       # => [X::Y, X, Object]
 ```
 
 NOTE: Определено в `active_support/core_ext/module/introspection.rb`.
-
-### Константы
-
-Метод `local_constants` возвращает имена констант, которые были определены в модуле получателя:
-
-```ruby
-module X
-  X1 = 1
-  X2 = 2
-  module Y
-    Y1 = :y1
-    X1 = :overrides_X1_above
-  end
-end
-
-X.local_constants    # => [:X1, :X2, :Y]
-X::Y.local_constants # => [:Y1, :X1]
-```
-
-Имена возвращаются как символы.
-
-NOTE: Определено в `active_support/core_ext/module/introspection.rb`.
-
-#### Qualified Constant Names
-
-Стандартные методы `const_defined?`, `const_get` и `const_set` принимают простые имена констант. Active Support расширяет это API на передачу полных имен констант.
-
-Новые методы - это `qualified_const_defined?`, `qualified_const_get` и `qualified_const_set`. Их аргументами предполагаются полные имена констант относительно получателя:
-
-```ruby
-Object.qualified_const_defined?("Math::PI")       # => true
-Object.qualified_const_get("Math::PI")            # => 3.141592653589793
-Object.qualified_const_set("Math::Phi", 1.618034) # => 1.618034
-```
-
-Аргументы могут быть и простыми именами констант:
-
-```ruby
-Math.qualified_const_get("E") # => 2.718281828459045
-```
-
-Эти методы аналогичны их встроенным коллегам. В частности, `qualified_constant_defined?` принимает опциональный второй аргумент, указывающий, хотите ли вы, чтобы этот метод искал в предках. Этот флажок учитывается для каждой константы в выражении во время прохода.
-
-Для примера, дано
-
-```ruby
-module M
-  X = 1
-end
-
-module N
-  class C
-    include M
-  end
-end
-```
-
-`qualified_const_defined?` ведет себя таким образом:
-
-```ruby
-N.qualified_const_defined?("C::X", false) # => false
-N.qualified_const_defined?("C::X", true)  # => true
-N.qualified_const_defined?("C::X")        # => true
-```
-
-Как показывает последний пример, второй аргумент по умолчанию true, как и в `const_defined?`.
-
-Для согласованности со встроенными методами принимаются только относительные пути. Абсолютные полные имена констант, такие как `::Math::PI`, вызывают `NameError`.
-
-NOTE: Определено в `active_support/core_ext/module/qualified_const.rb`.
 
 ### Reachable
 
@@ -848,7 +783,7 @@ NOTE: Определено в `active_support/core_ext/module/anonymous.rb`.
 Давайте представим, что у пользователей в неком приложении имеется информация о логинах в модели `User`, но имена и другие данные в отдельной модели `Profile`:
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one :profile
 end
 ```
@@ -856,7 +791,7 @@ end
 С такой конфигурацией имя пользователя получается через его профиль, `user.profile.name`, но можно обеспечить прямой доступ как к атрибуту:
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one :profile
 
   def name
@@ -868,7 +803,7 @@ end
 Это как раз то, что делает `delegate`:
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one :profile
 
   delegate :name, to: :profile
@@ -1009,7 +944,8 @@ class A
   class_attribute :x, instance_reader: false
 end
 
-A.new.x = 1 # NoMethodError
+A.new.x = 1
+A.new.x # NoMethodError
 ```
 
 Для удобства `class_attribute` определяет также условие экземпляра, являющееся двойным отрицанием того, что возвращает ридер экземпляра. В вышеописанном примере оно может вызываться `x?`.
@@ -1657,19 +1593,6 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 "Admin::Hotel::ReservationUtils".deconstantize # => "Admin::Hotel"
 ```
 
-Например, Active Support использует этот метод в `Module#qualified_const_set`:
-
-```ruby
-def qualified_const_set(path, value)
-  QualifiedConstUtils.raise_if_absolute(path)
-
-  const_name = path.demodulize
-  mod_name = path.deconstantize
-  mod = mod_name.empty? ? self : qualified_const_get(mod_name)
-  mod.const_set(const_name, value)
-end
-```
-
 NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 
 #### `parameterize`
@@ -1679,6 +1602,20 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 ```ruby
 "John Smith".parameterize # => "john-smith"
 "Kurt Gödel".parameterize # => "kurt-godel"
+```
+
+Чтобы сохранить регистр строки, установите аргументу `preserve_case` true. По умолчанию `preserve_case` установлен false.
+
+```ruby
+"John Smith".parameterize(preserve_case: true) # => "John-Smith"
+"Kurt Gödel".parameterize(preserve_case: true) # => "Kurt-Godel"
+```
+
+Чтобы использовать произвольный разделитель, переопределите аргумент `separator`.
+
+```ruby
+"John Smith".parameterize(separator: "_") # => "john\_smith"
+"Kurt Gödel".parameterize(separator: "_") # => "kurt\_godel"
 ```
 
 Фактически результирующая строка оборачивается в экземпляр `ActiveSupport::Multibyte::Chars`.
@@ -1724,7 +1661,7 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 Метод `constantize` решает выражение, ссылающееся на константу, в его получателе:
 
 ```ruby
-"Fixnum".constantize # => Fixnum
+"Integer".constantize # => Integer
 
 module M
   X = 1
@@ -1770,7 +1707,7 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 
   * Применяет словообразовательные правила к аргументу.
   * Удаляет любые предшествующие знаки подчеркивания.
-  * убирает суффикс "_id".
+  * убирает суффикс "\_id".
   * Заменяет знаки подчеркивания пробелами.
   * Переводит в нижний регистр все слова, кроме аббревиатур.
   * Озаглавливает первое слово.
@@ -1808,7 +1745,7 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 
 #### `foreign_key`
 
-Метод `foreign_key` дает имя столбца внешнего ключа из имени класса. Для этого он демодулизирует, подчеркивает и добавляет "_id":
+Метод `foreign_key` дает имя столбца внешнего ключа из имени класса. Для этого он демодулизирует, подчеркивает и добавляет "\_id":
 
 ```ruby
 "User".foreign_key           # => "user_id"
@@ -1816,7 +1753,7 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 "Admin::Session".foreign_key # => "session_id"
 ```
 
-Передайте аргумент false, если не хотите подчеркивание в "_id":
+Передайте аргумент false, если не хотите подчеркивание в "\_id":
 
 ```ruby
 "User".foreign_key(false) # => "userid"
@@ -1976,12 +1913,14 @@ NOTE: Определено в `active_support/core_ext/numeric/time.rb`
 Создает строковое представление числа, как удобочитаемое количество байт:
 
 ```ruby
-123.to_s(:human_size)            # => 123 Bytes
-1234.to_s(:human_size)           # => 1.21 KB
-12345.to_s(:human_size)          # => 12.1 KB
-1234567.to_s(:human_size)        # => 1.18 MB
-1234567890.to_s(:human_size)     # => 1.15 GB
-1234567890123.to_s(:human_size)  # => 1.12 TB
+123.to_s(:human_size)                  # => 123 Bytes
+1234.to_s(:human_size)                 # => 1.21 KB
+12345.to_s(:human_size)                # => 12.1 KB
+1234567.to_s(:human_size)              # => 1.18 MB
+1234567890.to_s(:human_size)           # => 1.15 GB
+1234567890123.to_s(:human_size)        # => 1.12 TB
+1234567890123456.to_s(:human_size)     # => 1.1 PB
+1234567890123456789.to_s(:human_size)  # => 1.07 EB
 ```
 
 Создает строковое представление числа, как удобочитаемое число словами:
@@ -2047,30 +1986,22 @@ NOTE: Определено в `active_support/core_ext/integer/inflections.rb`.
 
 ### `to_s`
 
-Метод `to_s` – это псевдоним для `to_formatted_s`. Он представляет удобный способ отображать значение BigDecimal в нотации с плавающей запятой:
+Метод `to_s` предоставляет спецификатор по умолчанию для "F". Это означает, что простой вызов `to_s` выведет представление с плавающей запятой вместо инженерной нотации:
 
 ```ruby
 BigDecimal.new(5.00, 6).to_s  # => "5.0"
 ```
 
-### `to_formatted_s`
-
-Метод `to_formatted_s` представляет спецификатор по умолчанию "F". Это означает, что простой вызов `to_formatted_s` или `to_s` выведет представление с плавающей запятой вместо инженерной нотации:
-
-```ruby
-BigDecimal.new(5.00, 6).to_formatted_s  # => "5.0"
-```
-
 а также поддерживаются эти символьные спецификаторы:
 
 ```ruby
-BigDecimal.new(5.00, 6).to_formatted_s(:db)  # => "5.0"
+BigDecimal.new(5.00, 6).to_s(:db)  # => "5.0"
 ```
 
 Инженерная нотация все еще поддерживается:
 
 ```ruby
-BigDecimal.new(5.00, 6).to_formatted_s("e")  # => "0.5E1"
+BigDecimal.new(5.00, 6).to_s("e")  # => "0.5E1"
 ```
 
 Расширения для `Enumerable`
@@ -2198,7 +2129,7 @@ Active Support расширяет API массивов для облегчени
 [].from(0)           # => []
 ```
 
-Методы `second`, `third`, `fourth` и `fifth` возвращают соответствующие элементы (`first` является встроенным). Благодаря социальной мудрости и всеобщей позитивной конструктивности, `forty_two` также доступен.
+Методы `second`, `third`, `fourth` и `fifth` возвращают соответствующие элементы, также как `second_to_last` и `third_to_last` (`first` и `last` являются встроенными). Благодаря социальной мудрости и всеобщей позитивной конструктивности, `forty_two` также доступен.
 
 ```ruby
 %w(a b c d).third # => "c"
@@ -2587,8 +2518,7 @@ NOTE: Определено в `active_support/core_ext/array/grouping.rb`.
 ```ruby
 XML_TYPE_NAMES = {
   "Symbol"     => "symbol",
-  "Fixnum"     => "integer",
-  "Bignum"     => "integer",
+  "Integer"    => "integer",
   "BigDecimal" => "decimal",
   "Float"      => "float",
   "TrueClass"  => "boolean",
@@ -3027,7 +2957,7 @@ INFO: В следующих методах вычисления имеют кр�
 
 #### `Date.current`
 
-Active Support определяет `Date.current` как сегодняшний день в текущей временной зоне. Он похож на `Date.today`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет `Date.yesterday` и `Date.tomorrow`, и условия экземпляра `past?`, `today?` и `future?`, все они зависят относительно `Date.current`.
+Active Support определяет `Date.current` как сегодняшний день в текущей временной зоне. Он похож на `Date.today`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет `Date.yesterday` и `Date.tomorrow`, и условия экземпляра `past?`, `today?`, `future?`, `on_weekday?` и `on_weekend?`, все они зависят от `Date.current`.
 
 #### Именованные даты
 
@@ -3406,6 +3336,8 @@ years_ago
 years_since
 prev_year (last_year)
 next_year
+on_weekday?
+on_weekend?
 ```
 
 Следующие методы переопределены, поэтому **не** нужно загружать `active_support/core_ext/date/calculations.rb` для них:
@@ -3592,6 +3524,8 @@ years_ago
 years_since
 prev_year (last_year)
 next_year
+on_weekday?
+on_weekend?
 ```
 
 Это аналоги. Обратитесь к их документации в предыдущих разделах, но примите во внимание следующие различия:

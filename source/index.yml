@@ -99,8 +99,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: a2f78cb947c8f25bcb450e548c77040b5d1c1f04
-    date:     20/09/2015
+    revision: d66a3fe8c0b5977c8c7bbff878b549fb4f01a95c
+    date:     16/06/2016
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
