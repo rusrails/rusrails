@@ -65,7 +65,7 @@ Active Record выполнит запросы в базу данных за ва
 * `having`
 * `includes`
 * `joins`
-* `left_outer_joins` (Rails 5.0)
+* `left_outer_joins`
 * `limit`
 * `lock`
 * `none`
@@ -1095,7 +1095,7 @@ Client.joins(:orders).where(orders: { created_at: time_range })
 
 Будут найдены все клиенты, имеющие созданные вчера заказы, снова используя выражение SQL `BETWEEN`.
 
-### `left_outer_joins` (Rails 5.0)
+### `left_outer_joins`
 
 Если хотите выбрать ряд записей, независимо от того, имеют ли они связанные записи, можно использовать метод `left_outer_joins`.
 
