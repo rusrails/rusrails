@@ -27,7 +27,11 @@
 ### Action Cable
 [Pull Request](https://github.com/rails/rails/pull/22586)
 
-ToDo...
+Action Cable — это новый фреймворк в Rails 5. Он с легкостью интегрирует [WebSockets](https://ru.wikipedia.org/wiki/WebSocket) с остальными частями вашего приложения Rails.
+
+Action Cable позволяет писать функционал реального времени на Ruby в стиле и формате остальной части приложения Rails, в то же время являясь производительным и масштабируемым. Он представляет полный стек, включая клиентский фреймворк на JavaScript и серверный фреймворк на Ruby. Вы получаете доступ к моделям, написанным с помощью Active Record или другой ORM.
+
+Подробности смотрите в руководстве [Обзор Action Cable](/action-cable-overview).
 
 ### Rails API
 [Pull Request](https://github.com/rails/rails/pull/19832)
@@ -36,7 +40,61 @@ ToDo...
 
 ### API атрибутов Active Record
 
-ToDo...
+Определяет в модели тип с атрибутом. Это позволит при необходимости переопределить тип существующих атрибутов. Это позволяет контролировать, как значения конвертируются в и из SQL при присвоении модели. Это также изменяет поведение значений, переданных в `ActiveRecord::Base.where`, что позволяет использовать наши объекты предметной области в большей части Active Record не полагаясь на особенности реализации или monkey patching.
+
+Некоторые из вещей, которые можно достичь с помощью этого:
+* Тип, распознанный Active Record, может быть переопределен.
+* Также может быть представлено значение по умолчанию.
+* Атрибутам не обязательно должен соответствовать столбец базы данных.
+
+```ruby
+
+# db/schema.rb
+create_table :store_listings, force: true do |t|
+  t.decimal :price_in_cents
+  t.string :my_string, default: "original default"
+end
+
+# app/models/store_listing.rb
+class StoreListing < ActiveRecord::Base
+end
+
+store_listing = StoreListing.new(price_in_cents: '10.1')
+
+# before
+store_listing.price_in_cents # => BigDecimal.new(10.1)
+StoreListing.new.my_string # => "original default"
+
+class StoreListing < ActiveRecord::Base
+  attribute :price_in_cents, :integer # настраиваемый тип
+  attribute :my_string, :string, default: "new default" # значение по умаолчанию
+  attribute :my_default_proc, :datetime, default: -> { Time.now } # значение по умолчанию
+  attribute :field_without_db_column, :integer, array: true
+end
+
+# after
+store_listing.price_in_cents # => 10
+StoreListing.new.my_string # => "new default"
+StoreListing.new.my_default_proc # => 2015-05-30 11:04:48 -0600
+model = StoreListing.new(field_without_db_column: ["1", "2", "3"])
+model.attributes #=> {field_without_db_column: [1, 2, 3]}
+```
+
+**Создание собственных типов:**
+
+Можно определить свои собственные типы, но они должны отвечать на методы для определенного типа значения. Метод +deserialize+ или +cast+ будет вызван на вашем объекте типа с необработанными данными из базы данных или от контроллера. Это полезно, к примеру, при осуществлении польовательских преобразований, таких как данные Money.
+
+**Запросы:**
+
+При вызове `ActiveRecord::Base.where`, он будет использовать тип, определенный классом модели, для конвертации значения в SQL, вызвав +serialize+ на вашем объекте типа.
+
+Это дает объектам способность указывать, как конвертировать значения при выполнении запросов SQL.
+
+**Отслеживание изменений (Dirty Tracking):**
+
+Тип атрибута дает возможность изменить способ, как выполняется отслеживание изменений.
+
+Подробности смотрите в его [документации](http://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html).
 
 ### Test Runner
 [Pull Request](https://github.com/rails/rails/pull/19216)
@@ -80,6 +138,9 @@ Railties
 *   Устарела `config.serve_static_files` в пользу `config.public_file_server.enabled`.
     ([Pull Request](https://github.com/rails/rails/pull/22173))
 
+*   Устарели задачи в пространстве имен `rails` в пользу пространства имен `app`. (например, задачи `rails:update` и `rails:template` переименованы в `app:update` и `app:template`.)
+    ([Pull Request](https://github.com/rails/rails/pull/23439))
+
 ### Значимые изменения
 
 *   Добавлен Rails test runner `bin/rails test`.
@@ -105,6 +166,27 @@ Railties
     ([Pull Request](https://github.com/rails/rails/pull/22457),
      [Pull Request](https://github.com/rails/rails/pull/22288))
 
+*   Новые приложения генерируются с включенным монитором событийной файловой системы на Linux и Mac OS X. Эта особенность может быть отключена, передав `--skip-listen` в генератор.
+    ([коммит](https://github.com/rails/rails/commit/de6ad5665d2679944a9ee9407826ba88395a1003),
+    [коммит](https://github.com/rails/rails/commit/94dbc48887bf39c241ee2ce1741ee680d773f202))
+
+*   Генерация приложений с опцией вывода лога в STDOUT в production с помощью переменной среды `RAILS_LOG_TO_STDOUT`.
+    ([Pull Request](https://github.com/rails/rails/pull/23734))
+
+*   Для новых приложений включен HSTS с заголовком IncludeSudomains.
+    ([Pull Request](https://github.com/rails/rails/pull/23852))
+
+*   Генератор приложения создает новый файл `config/spring.rb`, который сообщает Spring наблюдать за дополнительными распространенными файлами.
+    ([коммит](https://github.com/rails/rails/commit/b04d07337fd7bc17e88500e9d6bcd361885a45f8))
+
+*   Добавлена `--skip-action-mailer`, чтобы пропустить Action Mailer при генерации нового приложения.
+    ([Pull Request](https://github.com/rails/rails/pull/18288))
+
+*   Убрана директория `tmp/sessions` и задача очистки rake, связанная с ней.
+    ([Pull Request](https://github.com/rails/rails/pull/18314))
+
+*   Изменен `_form.html.erb`, генерируемый скаффолдом, чтобы использовались локальные переменные.
+    ([Pull Request](https://github.com/rails/rails/pull/13434))
 
 Action Pack
 -----------
@@ -178,6 +260,11 @@ Action Pack
 *   Устарел `redirect_to :back` в пользу `redirect_back`, который принимает аргумент `fallback_location`, устраняющий возможность `RedirectBackError`.
     ([Pull Request](https://github.com/rails/rails/pull/22506))
 
+*   В `ActionDispatch::IntegrationTest` и `ActionController::TestCase` устарели позиционные аргументы в пользу аргументов с ключевым словом. ([Pull Request](https://github.com/rails/rails/pull/18323))
+
+*   Устарели параметры пути `:controller` и `:action`.
+    ([Pull Request](https://github.com/rails/rails/pull/23980))
+
 ### Значимые изменения
 
 *   Добавлен `ActionController::Renderer` для рендера произвольных шаблонов вне экшнов контроллера.
@@ -216,6 +303,28 @@ Action Pack
 *   `ActionController::TestCase` будет перемещен в отдельный гем в Rails 5.1. Вместо него используйте `ActionDispatch::IntegrationTest`.
     ([коммит](https://github.com/rails/rails/commit/4414c5d1795e815b102571425974a8b1d46d932d))
 
+*   Rails будет генерировать только "слабые", в отличие от сильных ETag.
+    ([Pull Request](https://github.com/rails/rails/pull/17573))
+
+*   Экшны контроллера без явного вызова `render` и без соответствующих шаблонов будут неявно рендерить `head :no_content` вместо вызова ошибки.
+    (Pull Request [1](https://github.com/rails/rails/pull/19377),
+    [2](https://github.com/rails/rails/pull/23827))
+
+*   Добавлена опция для CSRF токенов для отдельной формы.
+    ([Pull Request](https://github.com/rails/rails/pull/22275))
+
+*   Добавлены кодировка запроса и парсинг отклика в интеграционные тесты.
+    ([Pull Request](https://github.com/rails/rails/pull/21671))
+
+*   Обновлены политики рендеринга по умолчанию, когда экшн контроллера не указывает явно отклик.
+    ([Pull Request](https://github.com/rails/rails/pull/23827))
+
+*   Добавлен `ActionController#helpers` для получения доступа к контексту вьюхи на уровне контроллера.
+    ([Pull Request](https://github.com/rails/rails/pull/24866))
+
+*   Показанные сообщения flash убираются перед сохранением в сессию.
+    ([Pull Request](https://github.com/rails/rails/pull/18721))
+
 Action View
 -------------
 
@@ -232,16 +341,19 @@ Action View
 *   Убрана опция `:rescue_format` для хелпера `translate`, так как она больше не поддерживается I18n.
     ([Pull Request](https://github.com/rails/rails/pull/20019))
 
+### Устарело
+
+*   Устарели хелперы `datetime_field` и `datetime_field_tag`. Тип ввода datetime был убран из спецификации HTML. Вместо них можно использовать `datetime_local_field` и `datetime_local_field_tag`.
+    ([Pull Request](https://github.com/rails/rails/pull/24385))
+
 ### Значимые изменения
 
 *   Изменен обработчик шаблонов по умолчанию с `ERB` на `Raw`.
     ([коммит](https://github.com/rails/rails/commit/4be859f0fdf7b3059a28d03c279f03f5938efc80))
 
-*   Рендеринг коллекций автоматически кэширует и извлекает несколько партиалов.
-    ([Pull Request](https://github.com/rails/rails/pull/18948))
-
-*   Позволяется определение явного кэширования коллекций с помощью директивы `# Template Collection: ...` в шаблонах.
-    ([Pull Request](https://github.com/rails/rails/pull/20781))
+*   Рендеринг коллекций может кэшировать и извлекать несколько партиалов за раз.
+    ([Pull Request](https://github.com/rails/rails/pull/18948),
+    [коммит](https://github.com/rails/rails/commit/e93f0f0f133717f9b06b1eaefd3442bd0ff43985))
 
 *   Добавлено универсальное сопоставление для явных зависимостей.
     ([Pull Request](https://github.com/rails/rails/pull/20904))
@@ -249,6 +361,8 @@ Action View
 *   `disable_with` сделано поведением по умолчанию для тегов submit. Отключает кнопку при отправке, чтобы предотвратить двойную отправку.
     ([Pull Request](https://github.com/rails/rails/pull/21135))
 
+*   Имя шаблона партиала больше не обязано быть валидным идентификатором Ruby.
+    ([коммит](https://github.com/rails/rails/commit/da9038e))
 
 Action Mailer
 -------------
@@ -276,6 +390,9 @@ Action Mailer
 
 *   Добавлена настройка `config.action_mailer.deliver_later_queue_name` для установления имени очереди рассыльщика.
     ([Pull Request](https://github.com/rails/rails/pull/18587))
+
+*   Добавлена поддержка кэширования фрагмента во вьюхах Action Mailer. Добавлена новая конфигурационная опция `config.action_mailer.perform_caching` для определения, должны ли ваши шаблоны осуществлять кэширование или нет.
+    ([Pull Request](https://github.com/rails/rails/pull/22825))
 
 Active Record
 -------------
@@ -328,6 +445,12 @@ Active Record
 *   Удалена поддержка гема `protected_attributes`.
     ([коммит](https://github.com/rails/rails/commit/f4fbc0301021f13ae05c8e941c8efc4ae351fdf9))
 
+*   Удалена поддержка для PostgreSQL версии ниже 9.1.
+    ([Pull Request](https://github.com/rails/rails/pull/23434))
+
+*   Удалена поддержка гема `activerecord-deprecated_finders`.
+    ([коммит](https://github.com/rails/rails/commit/78dab2a8569408658542e462a957ea5a35aa4679))
+
 ### Устарело
 
 *   Устарела передача класса в качестве значения запроса. Вместо этого нужно передавать строки.
@@ -338,9 +461,6 @@ Active Record
 
 *   Устарел `ActiveRecord::Base.errors_in_transactional_callbacks=`.
     ([коммит](https://github.com/rails/rails/commit/07d3d402341e81ada0214f2cb2be1da69eadfe72))
-
-*   Устарела передача значения `start` в `find_in_batches` и `find_each` в пользу значения `begin_at`.
-    ([Pull Request](https://github.com/rails/rails/pull/18961))
 
 *   Устарел `Relation#uniq`, вместо него используйте `Relation#distinct`.
     ([коммит](https://github.com/rails/rails/commit/adfab2dcf4003ca564d78d4425566dd2d9cd8b4f))
@@ -372,6 +492,12 @@ Active Record
 *   Устарела отправка аргумента `offset` в `find_nth`. Вместо этого используйте метод `offset` на relation.
     ([Pull Request](https://github.com/rails/rails/pull/22053))
 
+*   Устарели `{insert|update|delete}_sql` в `DatabaseStatements`. Вместо этого используйте публичные методы `{insert|update|delete}`.
+    ([Pull Request](https://github.com/rails/rails/pull/23086))
+
+*   Устарел `use_transactional_fixtures` в пользу `use_transactional_tests` для большей ясности.
+    ([Pull Request](https://github.com/rails/rails/pull/19282))
+
 ### Значимые изменения
 
 *   Добавлена опция `foreign_key` в `references` во время создания таблицы.
@@ -380,17 +506,12 @@ Active Record
 *   Новый API атрибутов.
     ([коммит](https://github.com/rails/rails/commit/8c752c7ac739d5a86d4136ab1e9d0142c4041e58))
 
-*   Добавлена опция `:enum_prefix`/`:enum_suffix` в определении `enum`.
-    ([Pull Request](https://github.com/rails/rails/pull/19813))
+*   Добавлена опция `:_prefix`/`:_suffix` в определении `enum`.
+    ([Pull Request](https://github.com/rails/rails/pull/19813),
+     [Pull Request](https://github.com/rails/rails/pull/20999))
 
 *   Добавлен `#cache_key` в `ActiveRecord::Relation`.
     ([Pull Request](https://github.com/rails/rails/pull/20884))
-
-*   Добавлен `ActiveRecord::Relation#outer_joins`.
-    ([Pull Request](https://github.com/rails/rails/pull/12071))
-
-*   `belongs_to` обязателен по умолчанию.
-    ([Pull Request](https://github.com/rails/rails/pull/18937)) - устарела опция `required` в пользу `optional` для `belongs_to`
 
 *   Изменено значение по умолчанию `null` для `timestamps` на `false`.
     ([коммит](https://github.com/rails/rails/commit/a939506f297b667291480f26fa32a373a18ae06a))
@@ -413,7 +534,7 @@ Active Record
 *   Добавлен `ActiveRecord::Base.suppress` предотвращающий получатель от сохранения в заданном блоке.
     ([Pull Request](https://github.com/rails/rails/pull/18910))
 
-*   `belongs_to` по умолчанию теперь вызывает ошибку валидации, если связь не существует. Это можно отключить для конкретной связи с помощью `optional: true`.
+*   `belongs_to` по умолчанию теперь вызывает ошибку валидации, если связь не существует. Это можно отключить для конкретной связи с помощью `optional: true`. Также устарела опция `required` в пользу `optional` для `belongs_to`.
     ([Pull Request](https://github.com/rails/rails/pull/18937))
 
 *   Добавлен `config.active_record.dump_schemas` для настройки поведения `db:structure:dump`.
@@ -455,6 +576,27 @@ Active Record
 *   `ApplicationRecord` - это новый суперкласс для всех моделей приложения, по аналогии с контроллерами приложения, являющимися подклассами `ApplicationController` вместо `ActionController::Base`. Это дает возможность приложениям иметь единое место для настройки специфичног для приложения поведения модели.
     ([Pull Request](https://github.com/rails/rails/pull/22567))
 
+*   Добавлены методы ActiveRecord `#second_to_last` и `#third_to_last`.
+    ([Pull Request](https://github.com/rails/rails/pull/23583))
+
+*   Добавлена возможность аннотации объектов базы данных (таблиц, столбцов, индексов) комментариями, хранимыми в метаданных базы данных для PostgreSQL & MySQL.
+    ([Pull Request](https://github.com/rails/rails/pull/22911))
+
+*   Добавлена поддержка подготовленных выражений (prepared statements) для адаптера `mysql2`, для mysql2 0.4.4+. Раньше это поддерживалось только устаревшим адаптером `mysql`. Чтобы включить, установите `prepared_statements: true` в config/database.yml.
+    ([Pull Request](https://github.com/rails/rails/pull/23461))
+
+*   Добавлена возможнось вызвать `ActionRecord::Relation#update` на реляционных объектах, который запустит валидации на колбэках на всех объектах в реляции.
+    ([Pull Request](https://github.com/rails/rails/pull/11898))
+
+*   Добавлена опция `:touch` в метод `save`, таким образом, записи могут быть сохранены без обновления временных меток.
+    ([Pull Request](https://github.com/rails/rails/pull/18225))
+
+*   Добавлена поддержка индексов по выражениям (expression indexes) и классов оператора (operator classes) для  PostgreSQL.
+    ([коммит](https://github.com/rails/rails/commit/edc2b7718725016e988089b5fb6d6fb9d6e16882))
+
+*   Добавлена опция `:index_errors` для добавления индексов к ошибкам вложенных атрибутов.
+    ([Pull Request](https://github.com/rails/rails/pull/19686))
+
 Active Model
 ------------
 
@@ -467,6 +609,9 @@ Active Model
 
 *   Удалена сериализация XML. Эта особенность была извлечена в гем [activemodel-serializers-xml](https://github.com/rails/activemodel-serializers-xml).
     ([Pull Request](https://github.com/rails/rails/pull/21161))
+
+*   Удален модуль `ActionController::ModelNaming`.
+    ([Pull Request](https://github.com/rails/rails/pull/18194))
 
 ### Устарело
 
@@ -507,15 +652,22 @@ Active Job
 *   `ActiveJob::Base.deserialize` делегируется в класс задачи. Это позволяет задачам присоединить произвольные метаданные при сериализации и прочитать их при выполнении.
     ([Pull Request](https://github.com/rails/rails/pull/18260))
 
+*   Добавлена возможность настроить адаптер очереди для каждой задачи без взаимного влияния друг на друга.
+    ([Pull Request](https://github.com/rails/rails/pull/16992))
+
 *   Сгенерированная задача теперь по умолчанию наследуется от `app/jobs/application_job.rb`.
     ([Pull Request](https://github.com/rails/rails/pull/19034))
 
-*   Позволяет `DelayedJob`, `Sidekiq`, `qu` и `que` возвращать `ActiveJob::Base` id задачи как `provider_job_id`.
+*   Позволяет `DelayedJob`, `Sidekiq`, `qu`, `que` и `queue_classic` возвращать `ActiveJob::Base` id задачи как `provider_job_id`.
     ([Pull Request](https://github.com/rails/rails/pull/20064),
-     [Pull Request](https://github.com/rails/rails/pull/20056))
+     [Pull Request](https://github.com/rails/rails/pull/20056),
+     [коммит](https://github.com/rails/rails/commit/68e3279163d06e6b04e043f91c9470e9259bbbe0))
 
 *   Реализован простой процессор `AsyncJob` и связанный `AsyncAdapter`, который складывает задачи в пул тредов `concurrent-ruby`.
     ([Pull Request](https://github.com/rails/rails/pull/21257))
+
+*   Изменен адаптер по умолчанию со встроенного на асинхронный. Это лучше по умолчанию, так как тогда тесты не будут ошибочно проходить, полагаясь на поведение, проходящее синхронно.
+    ([коммит](https://github.com/rails/rails/commit/625baa69d14881ac49ba2e5c7d9cac4b222d7022))
 
 Active Support
 --------------
@@ -548,6 +700,9 @@ Active Support
 *   Удален устаревший `ThreadSafe::Cache`. Вместо него используйте `Concurrent::Map`.
     ([Pull Request](https://github.com/rails/rails/pull/21679))
 
+*   Удален `Object#itself`, так как он реализован в Ruby 2.2.
+    ([Pull Request](https://github.com/rails/rails/pull/18244))
+
 ### Устарело
 
 *   Устарел `MissingSourceFile` в пользу `LoadError`.
@@ -573,6 +728,12 @@ Active Support
 *   Устарел `ActiveSupport::Cache::LocaleCache#set_cache_value` в пользу `write_cache_value`.
     ([Pull Request](https://github.com/rails/rails/pull/22215))
 
+*   Устарела передача аргументов в `assert_nothing_raised`.
+    ([Pull Request](https://github.com/rails/rails/pull/23789))
+
+*   Устарел `Module.local_constants` в пользу `Module.constants(false)`.
+    ([Pull Request](https://github.com/rails/rails/pull/23936))
+
 ### Значимые изменения
 
 *   Добавлены методы `#verified` и `#valid_message?` в `ActiveSupport::MessageVerifier`.
@@ -587,7 +748,7 @@ Active Support
 *   Изменена сортировка тестов по умолчанию с `:sorted` на `:random`.
     ([commit](https://github.com/rails/rails/commit/5f777e4b5ee2e3e8e6fd0e2a208ec2a4d25a960d))
 
-*   Добавлены методы `#on_weekend?`, `#next_weekday`, `#prev_weekday` в `Date`, `Time` и `DateTime`.
+*   Добавлены методы `#on_weekend?`, `#on_weekday?`, `#next_weekday`, `#prev_weekday` в `Date`, `Time` и `DateTime`.
     ([Pull Request](https://github.com/rails/rails/pull/18335))
 
 *   Добавлена опция `same_time` для `#next_week` и `#prev_week` в `Date`, `Time` и `DateTime`.
@@ -611,7 +772,7 @@ Active Support
 *   Добавлен `ActiveSupport::TimeZone#strptime`, позволяющий парсить время, как будто из заданной временной зоны.
     ([commit](https://github.com/rails/rails/commit/a5e507fa0b8180c3d97458a9b86c195e9857d8f6))
 
-*   Добавлены предикатные методы `Integer#positive?` и `Integer#negative?` в духе `Fixnum#zero?`.
+*   Добавлены предикатные методы `Integer#positive?` и `Integer#negative?` в духе `Integer#zero?`.
     ([commit](https://github.com/rails/rails/commit/e54277a45da3c86fecdfa930663d7692fd083daa))
 
 *   Добавлены восклицательные версии методов доступа в `ActiveSupport::OrderedOptions`, вызывающие `KeyError`, если значение `.blank?`.
@@ -626,6 +787,21 @@ Active Support
 *   Добавлен набор методов thread_m/cattr_accessor/reader/writer для объявления переменных класса и модуля, существующих отдельно для каждого треда.
     ([Pull Request](https://github.com/rails/rails/pull/22630))
 
+*   Добавлены методы `Array#second_to_last` и `Array#third_to_last`.
+    ([Pull Request](https://github.com/rails/rails/pull/23583))
+
+*   Добавлен метод `#on_weekday?` в `Date`, `Time` и `DateTime`.
+    ([Pull Request](https://github.com/rails/rails/pull/23687))
+
+*   Опубликованы API `ActiveSupport::Executor` и `ActiveSupport::Reloader`, чтобы позволить компонентам и библиотекам управлять и участвовать в выполнении кода приложения и процессе перезагрузки приложения.
+    ([Pull Request](https://github.com/rails/rails/pull/23807))
+
+*   Теперь `ActiveSupport::Duration` поддерживает форматирование и парсинг ISO8601.
+    ([Pull Request](https://github.com/rails/rails/pull/16917))
+
+*   В `TaggedLogging` добавлена возможнось логерам быть инициализированными несколько раз, и у них не будет общих тегов между собой.
+    ([Pull Request](https://github.com/rails/rails/pull/9065))
+
 Благодарности
 -------------
 
@@ -635,6 +811,7 @@ Active Support
 [action-pack]:    https://github.com/rails/rails/blob/5-0-stable/actionpack/CHANGELOG.md
 [action-view]:    https://github.com/rails/rails/blob/5-0-stable/actionview/CHANGELOG.md
 [action-mailer]:  https://github.com/rails/rails/blob/5-0-stable/actionmailer/CHANGELOG.md
+[action-cable]:   https://github.com/rails/rails/blob/5-0-stable/actioncable/CHANGELOG.md
 [active-record]:  https://github.com/rails/rails/blob/5-0-stable/activerecord/CHANGELOG.md
 [active-model]:   https://github.com/rails/rails/blob/5-0-stable/activemodel/CHANGELOG.md
 [active-support]: https://github.com/rails/rails/blob/5-0-stable/activesupport/CHANGELOG.md
