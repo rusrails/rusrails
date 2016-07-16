@@ -1,14 +1,24 @@
 # forked from https://github.com/lifo/docrails/blob/master/guides/rails_guides/markdown/renderer.rb
+class Rusrails::Markdown
+  def render(body)
+    engine.render(body)
+  end
 
-require 'redcarpet'
-require 'nokogiri'
-
-class Markdown
+  def engine
+    @engine ||= Redcarpet::Markdown.new(Renderer, {
+      no_intra_emphasis: true,
+      fenced_code_blocks: true,
+      autolink: true,
+      strikethrough: true,
+      superscript: true,
+      tables: true
+    })
+  end
 
   class Renderer < Redcarpet::Render::HTML
     attr_reader :headers
 
-    def initialize(options={})
+    def initialize(options = {})
       super
       @numeration = []
       @headers = []
@@ -87,7 +97,8 @@ HTML
       %Q(<img src='#{link}' title='#{title}' alt='#{alt_text}' class='img-polaroid' />)
     end
 
-  private
+    private
+
     def convert_footnotes(text)
       text.gsub(/\[<sup>(\d+)\]<\/sup>/i) do
         %(<sup class="footnote" id="footnote-#{$1}-ref">) +
@@ -130,20 +141,4 @@ HTML
       end
     end
   end
-
-  def render(body)
-    engine.render(body)
-  end
-
-  def engine
-    @engine ||= Redcarpet::Markdown.new(Renderer, {
-      no_intra_emphasis: true,
-      fenced_code_blocks: true,
-      autolink: true,
-      strikethrough: true,
-      superscript: true,
-      tables: true
-    })
-  end
-
 end

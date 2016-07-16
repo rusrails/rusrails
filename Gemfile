@@ -13,7 +13,7 @@ gem "less-rails"
 gem 'haml-rails'
 gem 'RedCloth'
 gem 'redcarpet'
-gem 'rails_config'
+gem 'config'
 gem 'twitter-bootstrap-rails'
 gem 'jquery-rails'
 
@@ -22,7 +22,7 @@ gem 'therubyracer'
 gem 'unicorn'
 
 gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails', '~> 4.0.0'
+gem 'coffee-rails'
 
 gem 'git', require: false
 
