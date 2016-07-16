@@ -1,4 +1,4 @@
-Rusrails::Application.configure do
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
@@ -19,14 +19,11 @@ Rusrails::Application.configure do
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
-  # Only use best-standards-support built into browsers
-  config.action_dispatch.best_standards_support = :builtin
+  config.active_record.migration_error = :page_load
 
   config.action_mailer.default_url_options = {host: "rusrails.dev"}
 
-  # Do not compress assets
-  config.assets.js_compressor = false
-
-  # Expands the lines which load the assets
   config.assets.debug = true
+  config.assets.digest = true
+  config.assets.raise_runtime_errors = true
 end

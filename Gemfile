@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', " ~> 4.1.16"
+gem 'rails', " ~> 4.2.7"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
@@ -28,6 +28,7 @@ gem 'git', require: false
 
 group :development do
   gem 'quiet_assets'
+  gem 'web-console', '~> 2.0'
   # Need for cap tasks for 3.2 branch
   # gem 'thinking-sphinx', require: false
 end

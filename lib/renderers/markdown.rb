@@ -25,7 +25,7 @@ HTML
     end
 
     def sanitizer
-      @sanitizer ||= HTML::FullSanitizer.new
+      @sanitizer ||= Rails::Html::FullSanitizer.new
     end
 
     def header(text, header_level)
