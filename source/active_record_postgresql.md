@@ -69,7 +69,7 @@ Book.create title: "Brave New World",
             tags: ["fantasy", "fiction"],
             ratings: [4, 5]
 
-## Книги с одним тегои
+## Книги с одним тегом
 Book.where("'fantasy' = ANY (tags)")
 
 ## Книги с несколькими тегами
