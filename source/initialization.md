@@ -1,7 +1,7 @@
 Процесс инициализации в Rails
 =============================
 
-Это руководство объясняет внутренние процессы инициализации в Rails, начиная с Rails 4. Это достаточно углубленное руководство, оно рекомендовано для продвинутых разработчиков на Rails.
+Это руководство объясняет внутренние процессы инициализации в Rails. Это достаточно углубленное руководство, оно рекомендовано для продвинутых разработчиков на Rails.
 
 После прочтения этого руководства вы узнаете:
 
@@ -10,7 +10,7 @@
 * Когда различные файлы подключаются в процессе загрузки.
 * Как определен и используется интерфейс Rails::Server.
 
-Это руководство рассмотрит каждый вызов методов, требуемых для загрузки стека Ruby on Rails для нового приложения на Rails 4, объяснив подробно каждую встреченную часть кода. Для целей этого руководства мы сосредоточимся на том, что произойдет при запуске `rails server` для загрузки вашего приложения.
+Это руководство рассмотрит каждый вызов методов, требуемых для загрузки стека Ruby on Rails для нового приложения на Rails, объяснив подробно каждую встреченную часть кода. Для целей этого руководства мы сосредоточимся на том, что произойдет при запуске `rails server` для загрузки вашего приложения.
 
 NOTE: Пути в этом руководстве указаны относительно Rails или приложения Rails, если не оговорено иное.
 
@@ -66,10 +66,9 @@ require 'rails/commands'
 `config/boot.rb` содержит:
 
 ```ruby
-# Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 
-require 'bundler/setup' if File.exist?(ENV['BUNDLE_GEMFILE'])
+require 'bundler/setup' # Set up gems listed in the Gemfile.
 ```
 
 В стандартном приложении Rails имеется `Gemfile`, объявляющий все зависимости приложения. `config/boot.rb` устанавливает `ENV['BUNDLE_GEMFILE']` как расположение этого файла. Затем, если Gemfile существует, будет затребован `bundler/setup`. Строка используется Bundler-ом для настройки путей загрузки для зависимостей вашего Gemfile.
@@ -114,7 +113,8 @@ aliases = {
   "c"  => "console",
   "s"  => "server",
   "db" => "dbconsole",
-  "r"  => "runner"
+  "r"  => "runner",
+  "t"  => "test"
 }
 
 command = ARGV.shift
@@ -129,7 +129,7 @@ TIP: Как видите, пустой список ARGV приведет к п�
 
 Если бы мы использовали `s` вместо `server`, Rails использовал бы определенные тут псевдонимы `aliases` для поиска соответствующей команды.
 
-### `rails/commands/command_tasks.rb`
+### `rails/commands/commands_tasks.rb`
 
 Если кто-то напишет неверную команду rails, в ответ `run_command` выдаст сообщение об ошибке. Если команда правильная, будет вызван метод с тем же именем.
 
@@ -138,14 +138,14 @@ COMMAND_WHITELIST = %w(plugin generate destroy console server dbconsole applicat
 
 def run_command!(command)
   command = parse_command(command)
+
   if COMMAND_WHITELIST.include?(command)
     send(command)
   else
-    write_error_message(command)
+    run_rake_task(command)
   end
 end
 ```
-
 
 С помощью команды `server` Rails далее запустит следующий код:
 
@@ -284,7 +284,7 @@ def parse!(args)
   args, options = args.dup, {}
 
   opt_parser = OptionParser.new do |opts|
-    opts.banner = "Usage: rails server [mongrel, thin, etc] [options]"
+    opts.banner = "Usage: rails server [puma, thin, etc] [options]"
     opts.on("-p", "--port=port", Integer,
             "Runs Rails on the specified port.", "Default: 3000") { |v| options[:Port] = v }
   ...
@@ -316,8 +316,6 @@ private
   def print_boot_information
     ...
     puts "=> Run `rails server -h` for more startup options"
-    ...
-    puts "=> Ctrl-C to shutdown server" unless options[:daemonize]
   end
 
   def create_tmp_directories
@@ -419,7 +417,7 @@ private
 ```ruby
 # This file is used by Rack-based servers to start the application.
 
-require ::File.expand_path('../config/environment',  __FILE__)
+require_relative 'config/environment'
 run <%= app_const %>
 ```
 
@@ -439,7 +437,7 @@ end
 Метод `initialize` из `Rack::Builder` принимает блок и выполняет его в рамках экземпляра `Rack::Builder`. Это то место, в котором происходит большая часть процесса инициализации Rails. Сперва запускается строчка `require` для `config/environment.rb` в `config.ru`:
 
 ```ruby
-require ::File.expand_path('../config/environment',  __FILE__)
+require_relative 'config/environment'
 ```
 
 ### `config/environment.rb`
@@ -449,7 +447,7 @@ require ::File.expand_path('../config/environment',  __FILE__)
 Этот файл начинается с затребования `config/application.rb`:
 
 ```ruby
-require File.expand_path('../application', __FILE__)
+require_relative 'application'
 ```
 
 ### `config/application.rb`
@@ -457,7 +455,7 @@ require File.expand_path('../application', __FILE__)
 Этот файл требует `config/boot.rb`:
 
 ```ruby
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 ```
 
 Но только если он не был затребован ранее, что уже было сделано в случае с `rails server`, но **не делалось** в случае с Passenger.
@@ -481,16 +479,17 @@ require 'rails/all'
 require "rails"
 
 %w(
-  active_record
-  action_controller
-  action_view
-  action_mailer
-  active_job
-  rails/test_unit
-  sprockets
-).each do |framework|
+  active_record/railtie
+  action_controller/railtie
+  action_view/railtie
+  action_mailer/railtie
+  active_job/railtie
+  action_cable/engine
+  rails/test_unit/railtie
+  sprockets/railtie
+).each do |railtie|
   begin
-    require "#{framework}/railtie"
+    require "#{railtie}"
   rescue LoadError
   end
 end
