@@ -375,7 +375,7 @@ App.cable.subscriptions.create "AppearanceChannel",
 
 ##### Клиент-серверное взаимодействие
 
-1. **Клиент** соединеняется с **Сервером** с помощью `App.cable = ActionCable.createConsumer("ws://cable.example.com")`. (`cable.js`). **Сервер** идентифицирует экземпляр этого соединения по `current_user`.
+1. **Клиент** соединяется с **Сервером** с помощью `App.cable = ActionCable.createConsumer("ws://cable.example.com")`. (`cable.js`). **Сервер** идентифицирует экземпляр этого соединения по `current_user`.
 
 2. **Клиент** подписывается на канал появлений с помощью `App.cable.subscriptions.create(channel: "AppearanceChannel")`. (`appearance.coffee`)
 

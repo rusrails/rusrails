@@ -602,7 +602,7 @@ Topic.create(title: nil).valid? # => true
 
 Значение `String` в `:message` может опционально содержать любые из `%{value}`, `%{attribute}` и `%{model}`, которые будут динамически заменены, когда валидация провалится.
 
-Значение `Proc` в `:message` задается с двумя аргументами: валидируемым объектом и хэшем с ключами `:model`, `:attribute` и `:value`.
+Значение `Proc` в `:message` задается с двумя аргументами: проверяемым объектом и хэшем с ключами `:model`, `:attribute` и `:value`.
 
 ```ruby
 class Person < ApplicationRecord
