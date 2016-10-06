@@ -970,13 +970,13 @@ Active Record предоставляет два метода поиска для
 Можете просто дать чистый SQL, определяющий условие `JOIN` в `joins`.
 
 ```ruby
-Author.joins("INNER JOIN posts ON posts.author_id = author.id AND posts.published = 't'")
+Author.joins("INNER JOIN posts ON posts.author_id = authors.id AND posts.published = 't'")
 ```
 
 Это приведет к следующему SQL:
 
 ```sql
-SELECT clients.* FROM clients INNER JOIN posts ON posts.author_id = author.id AND posts.published = 't'
+SELECT authors.* FROM authors INNER JOIN posts ON posts.author_id = authors.id AND posts.published = 't'
 ```
 
 #### Использование массива/хэша именованных связей
