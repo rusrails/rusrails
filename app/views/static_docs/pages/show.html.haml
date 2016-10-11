@@ -1,6 +1,6 @@
--# - if @page && @page.path == 'index'
--#   #main_page_banner.well
--#     = render "shared/partners_banner"
+- if @page && @page.path == 'index'
+  #main_page_banner.well
+    = render "shared/partners_banner"
 
 - cache ['v1', @page] do
   = @page.rendered_body(self)

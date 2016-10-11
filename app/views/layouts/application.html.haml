@@ -44,11 +44,11 @@
               %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
             - if content_for?(:menu)
               .well.menu= yield(:menu)
-            -# - if @page.try(:path) != 'index'
-            -#   .well.banner300.banner
-            -#     = render "shared/partners_banner"
-            .well.banner300.banner
-              = render "shared/adsense", position: 'sidebar'
+            - if @page.try(:path) != 'index'
+              .well.banner300.banner
+                = render "shared/partners_banner"
+            -# .well.banner300.banner
+            -#   = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left
             -# .banner= render "shared/adsense", position: 'top'
             .banner= render "shared/banner", url: 'https://mkdev.me/courses/ruby-on-rails-dlya-vzroslyh?utm_source=rusrails&utm_medium=banner&utm_campaign=ror_dlya_vzroslyh', image: 'partners/mkdev-hardcore.png'
