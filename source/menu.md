@@ -55,6 +55,7 @@ next_column
     * [Rails on Rack](/rails-on-rack)
     * [Создание и настройка генераторов Rails](/generators)
     * [Использование Rails для API-приложений](/api-app)
+    * [Шаблоны приложения Rails](/rails-application-templates)
 
 * **Вносим вклад в Ruby on Rails**
 
