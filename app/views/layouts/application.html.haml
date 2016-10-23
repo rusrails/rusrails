@@ -45,8 +45,8 @@
             - if content_for?(:menu)
               .well.menu= yield(:menu)
             - if @page.try(:path) != 'index'
-              .well.banner300.banner
-                = render "shared/banner", url: 'http://railsclub.ru/', image: 'partners/railsclub2016.png'
+              -# .well.banner300.banner
+              -#   = render "shared/banner", url: 'http://railsclub.ru/', image: 'partners/railsclub2016.png'
             .well.banner300.banner
               = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left
