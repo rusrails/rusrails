@@ -1,6 +1,6 @@
--# - if @page && @page.path == 'index'
--#   #main_page_banner.well
--#     = render "shared/banner", url: 'http://railsclub.ru/', image: 'partners/railsclub2016.png'
+- if @page && @page.path == 'index'
+  #main_page_banner.well
+    = render "shared/banner", url: 'http://rubyconference.by/', image: 'partners/rubyconf2017.png'
 
 - cache ['v1', @page] do
   = @page.rendered_body(self)
