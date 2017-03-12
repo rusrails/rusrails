@@ -237,8 +237,8 @@ pages:
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     ruby_on_rails_guides_guidelines
     file:     ruby_on_rails_guides_guidelines.md
-    revision: 86b6c773378383c902c24b5b5917177bde4e8d62
-    date:     28/04/2015
+    revision: b61a029782fb843eb30bec8f36784717fddc4ba8
+    date:     12/02/2017
 
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     development_dependencies_install
