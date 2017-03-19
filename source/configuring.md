@@ -161,7 +161,7 @@ Rails будет использовать эту конкретную настр
 
 * `config.assets.precompile` позволяет определить дополнительные ресурсы (иные, чем `application.css` и `application.js`), которые будут предварительно компилированы при запуске `rake assets:precompile`.
 
-* `config.assets.unknown_asset_fallback` позволяет изменить поведение файлопровода когда ресурс не в нем, если вы ипользуете sprockets-rails 3.2.0 или новее. По умолчанию `true`.
+* `config.assets.unknown_asset_fallback` позволяет изменить поведение файлопровода когда ресурс не в нем, если вы используете sprockets-rails 3.2.0 или новее. По умолчанию `true`.
 
 * `config.assets.prefix` определяет префикс из которого будут обслуживаться ресурсы. По умолчанию `/assets`.
 
@@ -270,7 +270,7 @@ config.middleware.use Magical::Unicorns
 config.middleware.insert_before Rack::Head, Magical::Unicorns
 ```
 
-Или можно вставить промужоточную программу на конкретное место с помощью индексов. Например, если хотите вставить промежуточную программу `Magical::Unicorns` наверх стека, это можно сделать так:
+Или можно вставить промежуточную программу на конкретное место с помощью индексов. Например, если хотите вставить промежуточную программу `Magical::Unicorns` наверх стека, это можно сделать так:
 
 ```ruby
 config.middleware.insert_before 0, Magical::Unicorns
