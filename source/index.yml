@@ -243,8 +243,8 @@ pages:
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     development_dependencies_install
     file:     development_dependencies_install.md
-    revision: 068ab23a33b245d8f481bb839549806280effe48
-    date:     18/06/2015
+    revision: 7718d470e9027fb1925237be65ba82f3ace660df
+    date:     20/02/2017
 
   - title:    Руководство по обновлению Ruby on Rails
     path:     upgrading-ruby-on-rails
