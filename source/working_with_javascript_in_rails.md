@@ -53,7 +53,7 @@ Rails использует технику "ненавязчивый JavaScript" 
 Некрасиво, правда? Можно вытащить определение функции из обработчика щелчка, и перевести его в CoffeeScript:
 
 ```coffeescript
-paintIt = (element, backgroundColor, textColor) ->
+@paintIt = (element, backgroundColor, textColor) ->
   element.style.backgroundColor = backgroundColor
   if textColor?
     element.style.color = textColor
@@ -76,7 +76,7 @@ paintIt = (element, backgroundColor, textColor) ->
 Совсем не DRY, да? Это можно исправить, используя события. Мы добавим атрибут `data-*` нашим ссылкам, а затем привяжем обработчик на событие щелчка для каждой ссылки, имеющей этот атрибут:
 
 ```coffeescript
-paintIt = (element, backgroundColor, textColor) ->
+@paintIt = (element, backgroundColor, textColor) ->
   element.style.backgroundColor = backgroundColor
   if textColor?
     element.style.color = textColor
@@ -107,7 +107,7 @@ Rails предоставляет ряд вспомогательных мето�
 
 Так как JavaScript ненавязчив, "Ajax-хелперы" Rails фактически состоят из двух частей: часть JavaScript и часть Ruby.
 
-[rails.js](https://github.com/rails/jquery-ujs/blob/master/src/rails.js) представляет часть для JavaScript, а хелперы вьюх на обычном Ruby добавляют подходящие теги в DOM. Затем CoffeeScript из rails.js смотрит на определенные атрибуты и добавляет соответствующие обработчики.
+Если вы не отключили Asset Pipeline, [rails-ujs](https://github.com/rails/rails-ujs/blob/master/src/rails-ujs.coffee) представляет часть для JavaScript, а хелперы вьюх на обычном Ruby добавляют подходящие теги в DOM.
 
 ### form_for
 
@@ -262,7 +262,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.js   {}
+        format.js
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }
@@ -281,19 +281,19 @@ $("<%= escape_javascript(render @user) %>").appendTo("#users");
 Turbolinks
 ----------
 
-Rails 4 поставляется с [гемом Turbolinks](https://github.com/rails/turbolinks). Этот гем использует Ajax для ускорения рендеринга страницы в большинстве приложений.
+Rails поставляется с [библиотекой Turbolinks](https://github.com/turbolinks/turbolinks), использующей Ajax для ускорения рендеринга страницы в большинстве приложений.
 
 ### Как работает Turbolinks
 
 Turbolinks добавляет обработчик щелчков на всех `<a>` на странице. Если ваш браузер поддерживает [PushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history#The_pushState%28%29_method),
 Turbolinks сделает запрос Ajax для страницы, распарсит отклик и заменит полностью `<body>` страницы на `<body>` отклика. Затем он использует PushState для изменения URL на правильный, сохраняя семантику для обновления и предоставляя красивые URL.
 
-Единственное, что необходимо сделать для включения Turbolinks - это добавить его в свой Gemfile, и поместить `//= require turbolinks` в свой манифест CoffeeScript, обычно это `app/assets/javascripts/application.js`.
+Единственное, что необходимо сделать для включения Turbolinks - это добавить его в свой Gemfile, и поместить `//= require turbolinks` в свой манифест JavaScript, обычно это `app/assets/javascripts/application.js`.
 
-Если хотите отключить Turbolinks для определенных ссылок, добавьте атрибут `data-no-turbolink` к тегу:
+Если хотите отключить Turbolinks для определенных ссылок, добавьте атрибут `data-turbolinks="false"` к тегу:
 
 ```html
-<a href="..." data-no-turbolink>No turbolinks here</a>.
+<a href="..." data-turbolinks="false">No turbolinks here</a>.
 ```
 
 ### События изменения страницы
@@ -308,11 +308,11 @@ $(document).ready ->
 Однако, поскольку Turbolinks переопределяет обычный процесс загрузки страницы, событие, на которое полагается вышеуказанный код, не произойдет. Если у вас есть подобный код, следует его изменить на следующий:
 
 ```coffeescript
-$(document).on "page:change", ->
+$(document).on "turbolinks:load", ->
   alert "page has loaded!"
 ```
 
-Подробности, включая другие возможные события, можно посмотреть [в Turbolinks README](https://github.com/rails/turbolinks/blob/master/README.md).
+Подробности, включая другие возможные события, можно посмотреть [в Turbolinks README](https://github.com/turbolinks/turbolinks/blob/master/README.md).
 
 Другие ресурсы
 --------------
