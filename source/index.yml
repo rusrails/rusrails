@@ -303,6 +303,7 @@ pages:
 plan:
   - file:     maintenance_policy.md
   - file:     profiling.md
+  - file:     5_1_release_notes.md
 
 old:
   - file:     2_2_release_notes.md
