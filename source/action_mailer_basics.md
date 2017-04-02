@@ -138,7 +138,7 @@ Thanks for joining and have a great day!
 
 ```bash
 $ bin/rails generate scaffold user name email login
-$ bin/rake db:migrate
+$ bin/rails db:migrate
 ```
 
 Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить `UserMailer` доставлять email каждому вновь созданному пользователю, изменив экшн `create` и вставив вызов `UserMailer.welcome_email` сразу после того, как пользователь был успешно сохранен:
@@ -166,7 +166,7 @@ class UsersController < ApplicationController
 end
 ```
 
-NOTE: Поведением Active Job по умолчанию является запуск заданий ':inline'. Поэтому можно использовать `deliver_later` для отсылки писем прямо сейчас, а если позже решите отправлять письма в фоновой задаче, вам нужно будет всего лишь настроить Active Job для использования бэкенда очередей (Sidekiq, Resque и т.п.).
+NOTE: Поведением Active Job по умолчанию является запуск заданий с помощью адаптера ':async'. Поэтому можно использовать `deliver_later` для отсылки писем прямо сейчас асинхронно. Адаптер Active Job по умолчанию запускает задания с помощью пула тредов внутри процесса. Это хорошо подходит для сред development/test, так как не требует какой-либо внешней инфраструктуры, но плохо подходит для production, так как он теряет отложенные задачи при перезагрузке. Если вам необходим сохраняющий бэкенд, нужно использовать адаптер Active Job, имеющий сохраняющий бэкенд (Sidekiq, Resque и т.п.).
 
 Если хотите отправлять письма прямо сейчас в любом случае (например, из крона) просто вызовите `deliver_now`:
 
@@ -215,7 +215,7 @@ NOTE: Mail автоматически кодирует вложение в Base6
     ```ruby
     encoded_content = SpecialEncode(File.read('/path/to/filename.jpg'))
     attachments['filename.jpg'] = {
-      mime_type: 'application/x-gzip',
+      mime_type: 'application/gzip',
       encoding: 'SpecialEncoding',
       content: encoded_content
     }
@@ -316,7 +316,7 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email,
          subject: 'Welcome to My Awesome Site') do |format|
       format.html { render 'another_template' }
-      format.text { render text: 'Render text' }
+      format.text { render plain: 'Render text' }
     end
   end
 
@@ -324,6 +324,22 @@ end
 ```
 
 Это отрендерит шаблон 'another_template.html.erb' для HTML части и использует 'Render text' для текстовой части. Команда `render` та же самая, что используется в Action Controller, поэтому можете использовать те же опции, такие как `:text`, `:inline` и т.д.
+
+#### Кэширование вьюх рассыльщика
+
+Во вьюхах рассыльщика можно кэшировать так же, как и во вьюхах приложения, с помощью метода `cache`.
+
+```
+<% cache do %>
+  <%= @company.name %>
+<% end %>
+```
+
+И чтобы использовать эту особенность, необходимо настроить приложение следующим образом:
+
+```
+  config.action_mailer.perform_caching = true
+```
 
 ### Макеты Action Mailer
 
@@ -424,7 +440,7 @@ config.action_mailer.default_url_options = { host: 'example.com' }
 <%= user_url(@user, host: 'example.com') %>
 ```
 
-NOTE: не `GET` ссылки требуют [jQuery UJS](https://github.com/rails/jquery-ujs)
+NOTE: не `GET` ссылки требуют [rails-ujs](https://github.com/rails/rails-ujs) или [jQuery UJS](https://github.com/rails/jquery-ujs)
 и не будут работать в шаблонах рассыльщика. Они будут заменятся на простые `GET` запросы.
 
 ### Добавление картинок во вьюхах Action Mailer
@@ -445,7 +461,7 @@ config.action_mailer.asset_host = 'http://example.com'
 
 ### Рассылка multipart email
 
-Action Mailer автоматически посылает multipart email, если имеются разные шаблоны для одного и того же экшна. Таким образом, для нашего примера UserMailer, если есть `welcome_email.text.erb` и `welcome_email.html.erb` в `app/views/user_mailer`, то Action Mailer автоматически пошлет multipart email с версиями HTML и текстовой, настроенными как разные части.
+Action Mailer автоматически посылает multipart email, если имеются разные шаблоны для одного и того же экшна. Таким образом, для нашего примера `UserMailer`, если есть `welcome_email.text.erb` и `welcome_email.html.erb` в `app/views/user_mailer`, то Action Mailer автоматически пошлет multipart email с версиями HTML и текстовой, настроенными как разные части.
 
 Порядок, в котором части будут вставлены, определяется `:parts_order` в методе `ActionMailer::Base.default`.
 
@@ -582,8 +598,8 @@ Action Mailer теперь всего лишь наследуется от `Abst
 | Конфигурация            | Описание |
 | ----------------------- | -------- |
 | `logger`                | logger используется для создания информации на ходу, если возможно. Можно установить как `nil` для отсутствия логирования. Совместим как с `Logger` в Ruby, так и с логгером `Log4r`.|
-| `smtp_settings`         | Позволяет подробную настройку для метода доставки `:smtp`:<ul><li>`:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение "localhost".</li><li>`:port`  - В случае, если ваш почтовый сервер не работает с 25 портом, можете изменить его.</li><li>`:domain` - Если необходимо определить домен HELO, это можно сделать здесь.</li><li>`:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.</li><li>`:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. </li><li>`:authentication` - Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов `:plain` (будет отправлять пароль в открытом виде), `:login` (будет отправлять пароль закодированным Base64) или `:cram_md5` (сочетает в себе механизм Challenge/Response для обмена информацией и криптографический алгоритм Message Digest 5 хэширования важной информации)</li><li>`:enable_starttls_auto` - Определяет, включен ли STARTTLS в вашем SMTP сервере и будет использовать это. По умолчанию, `true`.</li><li>`:openssl_verify_mode` - При использовании TLS, вы можете установить, как OpenSSL проверяет сертификат. Это действительно полезно, если вам нужно производить проверку самостоятельно созданного и/или группового сертификата. Вы можете использовать название проверяющей константы OpenSSL ('none', 'peer', 'client_once', 'fail_if_no_peer_cert') или непосредственно константу (`OpenSSL::SSL::VERIFY_NONE`, `OpenSSL::SSL::VERIFY_PEER`, ...).</li></ul>|
-| `sendmail_settings`     | Позволяет переопределить опции для метода доставки `:sendmail`.<ul><li>`:location` - Расположение исполняемого sendmail. По умолчанию `/usr/sbin/sendmail`.</li><li>`:arguments` - Аргументы командной строки. По умолчанию `-i -t`.</li></ul>|
+| `smtp_settings`         | Позволяет подробную настройку для метода доставки `:smtp`:<ul><li>`:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его изначальное значение "localhost".</li><li>`:port`  - В случае, если ваш почтовый сервер не работает с 25 портом, можете изменить его.</li><li>`:domain` - Если необходимо определить домен HELO, это можно сделать здесь.</li><li>`:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.</li><li>`:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой. </li><li>`:authentication` - Если почтовый сервер требует аутентификацию, здесь нужно определить тип аутентификации. Это один из символов `:plain` (будет отправлять пароль в открытом виде), `:login` (будет отправлять пароль закодированным Base64) или `:cram_md5` (сочетает в себе механизм Challenge/Response для обмена информацией и криптографический алгоритм Message Digest 5 хэширования важной информации)</li><li>`:enable_starttls_auto` - Определяет, включен ли STARTTLS в вашем SMTP сервере и будет использовать это. По умолчанию, `true`.</li><li>`:openssl_verify_mode` - При использовании TLS, вы можете установить, как OpenSSL проверяет сертификат. Это действительно полезно, если вам нужно производить проверку самостоятельно созданного и/или группового сертификата. Вы можете использовать название проверяющей константы OpenSSL ('none' или 'peer') или непосредственно константу (`OpenSSL::SSL::VERIFY_NONE` или `OpenSSL::SSL::VERIFY_PEER`).</li></ul>|
+| `sendmail_settings`     | Позволяет переопределить опции для метода доставки `:sendmail`.<ul><li>`:location` - Расположение исполняемого sendmail. По умолчанию `/usr/sbin/sendmail`.</li><li>`:arguments` - Аргументы командной строки. По умолчанию `-i`.</li></ul>|
 | `raise_delivery_errors` | Должны ли быть вызваны ошибки, если email не может быть доставлен. Это работает, если внешний сервер email настроен на немедленную доставку.|
 | `delivery_method`       | Определяет метод доставки. Возможные значения: <ul><li>`:smtp` (по умолчанию), может быть настроен с помощью `config.action_mailer.smtp_settings`.</li><li>`:sendmail`, может быть настроен с помощью  `config.action_mailer.sendmail_settings`.</li><li>`:file`: сохраняет письма в файлы; может быть настроен с помощью `config.action_mailer.file_settings`.</li><li>`:test`: сохраняет письма в массив `ActionMailer::Base.deliveries`.</li></ul>Подробнее смотрите в [API docs](http://api.rubyonrails.org/classes/ActionMailer/Base.html).|
 | `perform_deliveries`    | Определяет, должны ли методы deliver_* фактически выполняться. По умолчанию должны, но это можно отключить для функционального тестирования.|
@@ -601,7 +617,7 @@ config.action_mailer.delivery_method = :sendmail
 # Defaults to:
 # config.action_mailer.sendmail_settings = {
 #   location: '/usr/sbin/sendmail',
-#   arguments: '-i -t'
+#   arguments: '-i'
 # }
 config.action_mailer.perform_deliveries = true
 config.action_mailer.raise_delivery_errors = true
