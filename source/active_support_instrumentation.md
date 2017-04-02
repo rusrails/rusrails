@@ -110,6 +110,7 @@ Action Controller
 | `:controller` | Имя контроллера                                           |
 | `:action`     | Экшн                                                      |
 | `:params`     | Хэш параметров запроса без фильтрации параметров          |
+| `:headers`    | Заголовки запроса                                         |
 | `:format`     | html/js/json/xml и.т.д.                                   |
 | `:method`     | Метод HTTP запроса                                        |
 | `:path`       | Путь запроса                                              |
@@ -119,6 +120,7 @@ Action Controller
   controller: "PostsController",
   action: "new",
   params: { "action" => "new", "controller" => "posts" },
+  headers: #<ActionDispatch::Http::Headers:0x0055a67a519b88>,
   format: :html,
   method: "GET",
   path: "/posts/new"
@@ -132,6 +134,7 @@ Action Controller
 | `:controller`   | Имя контроллера                                           |
 | `:action`       | Экшн                                                      |
 | `:params`       | Хэш параметров запроса без фильтрации параметров          |
+| `:headers`      | Заголовки запроса                                         |
 | `:format`       | html/js/json/xml и.т.д.                                   |
 | `:method`       | Метод HTTP запроса                                        |
 | `:path`         | Путь запроса                                              |
@@ -144,6 +147,7 @@ Action Controller
   controller: "PostsController",
   action: "index",
   params: {"action" => "index", "controller" => "posts"},
+  headers: #<ActionDispatch::Http::Headers:0x0055a67a519b88>,
   format: :html,
   method: "GET",
   path: "/posts",
@@ -220,16 +224,36 @@ Action View
 }
 ```
 
+### render_collection.action_view
+
+| Ключ          | Значение                                  |
+| ------------- | ----------------------------------------- |
+| `:identifier` | Полный путь к шаблону                     |
+| `:count`      | Размер коллекции                          |
+| `:cache_hits` | Количество партиалов, извлеченных из кэша |
+
+`:cache_hits` включается, только если коллекция рендерится с `cached: true`.
+
+```ruby
+{
+  identifier: "/Users/adam/projects/notifications/app/views/posts/_post.html.erb",
+  count: 3,
+  cache_hits: 0
+}
+```
+
 Active Record
 -------------
 
 ### sql.active_record
 
-| Ключ             | Значение              |
-| ---------------- | --------------------- |
-| `:sql`           | выражение SQL         |
-| `:name`          | Имя операции          |
-| `:connection_id` | `self.object_id`      |
+| Ключ             | Значение                                      |
+| ---------------- | --------------------------------------------- |
+| `:sql`           | Выражение SQL                                 |
+| `:name`          | Имя операции                                  |
+| `:connection_id` | `self.object_id`                              |
+| `:binds`         | Связанные параметры                           |
+| `:cached`        | `true` если использованы кэшированные запросы |
 
 INFO. Адаптеры будут добавлять свои собственные данные.
 
@@ -241,14 +265,6 @@ INFO. Адаптеры будут добавлять свои собственн
   binds: []
 }
 ```
-
-### identity.active_record
-
-| Ключ             | Значение                                  |
-| ---------------- | ----------------------------------------- |
-| `:line`          | Главный ключ объекта для идентификации    |
-| `:name`          | Класс записи                              |
-| `:connection_id` | `self.object_id`                          |
 
 ### instantiation.active_record
 
@@ -400,6 +416,38 @@ INFO. Кеш хранилище может добавить свой ключ.
   key: 'name-of-complicated-computation'
 }
 ```
+
+Active Job
+--------
+
+### enqueue_at.active_job
+
+| Key          | Value                                       |
+| ------------ | ------------------------------------------- |
+| `:adapter`   | Объект QueueAdapter, обрабатывающий задание |
+| `:job`       | Объект задания                              |
+
+### enqueue.active_job
+
+| Key          | Value                                       |
+| ------------ | ------------------------------------------- |
+| `:adapter`   | Объект QueueAdapter, обрабатывающий задание |
+| `:job`       | Объект задания                              |
+
+### perform_start.active_job
+
+| Key          | Value                                       |
+| ------------ | ------------------------------------------- |
+| `:adapter`   | Объект QueueAdapter, обрабатывающий задание |
+| `:job`       | Объект задания                              |
+
+### perform.active_job
+
+| Key          | Value                                       |
+| ------------ | ------------------------------------------- |
+| `:adapter`   | Объект QueueAdapter, обрабатывающий задание |
+| `:job`       | Объект задания                              |
+
 
 Railties
 --------
