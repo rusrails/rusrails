@@ -213,8 +213,8 @@ pages:
   - title:    Создание и настройка генераторов Rails
     path:     generators
     file:     generators.md
-    revision: e6be33f1ddafdb3e85b9809d0280439fc83559ae
-    date:     25/06/2015
+    revision: 28e49c711e4694d59247c44d7a70510f99be2af3
+    date:     17/12/2016
 
   - title:    Использование Rails для API-приложений
     path:     api-app
