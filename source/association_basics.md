@@ -15,10 +15,10 @@
 В Rails _связь_ - это соединение между двумя моделями Active Record. Зачем нам нужны связи между моделями? Затем, что они позволяют сделать код для обычных операций проще и легче. Например, рассмотрим простое приложение на Rails, которое включает модель для авторов и модель для книг. Каждый автор может иметь много книг. Без связей объявление модели будет выглядеть так:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
 end
 ```
 
@@ -41,11 +41,11 @@ end
 Со связями Active Record можно упростить эти и другие операции, декларативно сказав Rails, что имеется соединение между двумя моделями. Вот пересмотренный код для создания авторов и книг:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, dependent: :destroy
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
 ```
@@ -85,7 +85,7 @@ Rails поддерживает шесть типов связей:
 Связь `belongs_to` устанавливает соединение один-к-одному с другой моделью, когда один экземпляр  объявляющей модели "принадлежит" одному экземпляру другой модели. Например, если в приложении есть авторы и книги, и одна книга может быть связана только с одним автором, нужно объявить модель book следующим образом:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
 ```
@@ -101,13 +101,13 @@ class CreateOrders < ActiveRecord::Migration[5.0]
   def change
     create_table :authors do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :books do |t|
       t.belongs_to :author, index: true
       t.datetime :published_at
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -118,7 +118,7 @@ end
 Связь `has_one` также устанавливает соединение один-к-одному с другой моделью, но в несколько ином смысле (и с другими последствиями). Эта связь показывает, что каждый экземпляр модели содержит или обладает одним экземпляром другой модели. Например, если каждый поставщик имеет только один аккаунт, можете объявить модель supplier подобно этому:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account
 end
 ```
@@ -132,13 +132,13 @@ class CreateSuppliers < ActiveRecord::Migration[5.0]
   def change
     create_table :suppliers do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :accounts do |t|
       t.belongs_to :supplier, index: true
       t.string :account_number
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -148,7 +148,7 @@ end
 
 ```ruby
 create_table :accounts do |t|
-  t.belongs_to :supplier, index: true, unique: true, foreign_key: true
+  t.belongs_to :supplier, index: { unique: true }, foreign_key: true
   # ...
 end
 ```
@@ -158,7 +158,7 @@ end
 Связь `has_many` указывает на соединение один-ко-многим с другой моделью. Эта связь часто бывает на "другой стороне" связи `belongs_to`. Эта связь указывает на то, что каждый экземпляр модели имеет ноль или более экземпляров другой модели. Например, в приложении, содержащем авторов и книги, модель author может быть объявлена следующим образом:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -174,13 +174,13 @@ class CreateAuthors < ActiveRecord::Migration[5.0]
   def change
     create_table :authors do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :books do |t|
       t.belongs_to :author, index: true
       t.datetime :published_at
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -191,17 +191,17 @@ end
 Связь `has_many :through` часто используется для настройки соединения многие-ко-многим с другой моделью. Эта связь указывает, что объявляющая модель может соответствовать нулю или более экземплярам другой модели _через_ третью модель. Например, рассмотрим поликлинику, где пациентам (patients) дают направления (appointments) к врачам (physicians). Соответствующие объявления связей будут выглядеть следующим образом:
 
 ```ruby
-class Physician < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Physician < ApplicationRecord
   has_many :appointments
   has_many :patients, through: :appointments
 end
 
-class Appointment < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Appointment < ApplicationRecord
   belongs_to :physician
   belongs_to :patient
 end
 
-class Patient < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Patient < ApplicationRecord
   has_many :appointments
   has_many :physicians, through: :appointments
 end
@@ -216,19 +216,19 @@ class CreateAppointments < ActiveRecord::Migration[5.0]
   def change
     create_table :physicians do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :patients do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :appointments do |t|
       t.belongs_to :physician, index: true
       t.belongs_to :patient, index: true
       t.datetime :appointment_date
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -248,17 +248,17 @@ WARNING: Автоматическое удаление соединительн�
 Связь `has_many :through` также полезна для настройки "ярлыков" через вложенные связи `has_many`. Например, если документ имеет много секций, а секция имеет много параграфов, иногда хочется получить просто коллекцию всех параграфов в документе. Это можно настроить следующим образом:
 
 ```ruby
-class Document < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Document < ApplicationRecord
   has_many :sections
   has_many :paragraphs, through: :sections
 end
 
-class Section < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Section < ApplicationRecord
   belongs_to :document
   has_many :paragraphs
 end
 
-class Paragraph < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Paragraph < ApplicationRecord
   belongs_to :section
 end
 ```
@@ -274,17 +274,17 @@ end
 Связь `has_one :through` настраивает соединение один-к-одному с другой моделью. Эта связь показывает, что объявляющая модель может быть связана с одним экземпляром другой модели _через_ третью модель. Например, если каждый поставщик имеет один аккаунт, и каждый аккаунт связан с одной историей аккаунта, тогда модели могут выглядеть так:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account
   has_one :account_history, through: :account
 end
 
-class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Account < ApplicationRecord
   belongs_to :supplier
   has_one :account_history
 end
 
-class AccountHistory < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class AccountHistory < ApplicationRecord
   belongs_to :account
 end
 ```
@@ -298,19 +298,19 @@ class CreateAccountHistories < ActiveRecord::Migration[5.0]
   def change
     create_table :suppliers do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :accounts do |t|
       t.belongs_to :supplier, index: true
       t.string :account_number
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :account_histories do |t|
       t.belongs_to :account, index: true
       t.integer :credit_rating
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -321,11 +321,11 @@ end
 Связь `has_and_belongs_to_many` создает прямое соединение многие-ко-многим с другой моделью, без промежуточной модели. Например, если ваше приложение включает узлы (assemblies) и детали (parts), где каждый узел имеет много деталей, и каждая деталь встречается во многих узлах, модели можно объявить таким образом:
 
 ```ruby
-class Assembly < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Assembly < ApplicationRecord
   has_and_belongs_to_many :parts
 end
 
-class Part < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Part < ApplicationRecord
   has_and_belongs_to_many :assemblies
 end
 ```
@@ -339,12 +339,12 @@ class CreateAssembliesAndParts < ActiveRecord::Migration[5.0]
   def change
     create_table :assemblies do |t|
       t.string :name
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :parts do |t|
       t.string :part_number
-      t.timestamps null: false
+      t.timestamps
     end
 
     create_table :assemblies_parts, id: false do |t|
@@ -362,11 +362,11 @@ end
 Различие в том, где помещен внешний ключ (он должен быть в таблице для класса, объявляющего связь `belongs_to`), но вы также должны думать о реальном значении данных. Отношение `has_one` говорит, что что-то принадлежит вам - то есть что что-то указывает на вас. Например, больше смысла в том, что поставщик владеет аккаунтом, чем в том, что аккаунт владеет поставщиком. Это означает, что правильные отношения подобны этому:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account
 end
 
-class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Account < ApplicationRecord
   belongs_to :supplier
 end
 ```
@@ -377,14 +377,14 @@ end
 class CreateSuppliers < ActiveRecord::Migration[5.0]
   def change
     create_table :suppliers do |t|
-      t.string  :name
-      t.timestamps null: false
+      t.string :name
+      t.timestamps
     end
 
     create_table :accounts do |t|
       t.integer :supplier_id
       t.string  :account_number
-      t.timestamps null: false
+      t.timestamps
     end
 
     add_index :accounts, :supplier_id
@@ -399,11 +399,11 @@ NOTE: Использование `t.integer :supplier_id` указывает и�
 Rails предлагает два разных способа объявления отношения многие-ко-многим между моделями. Простейший способ - использовать `has_and_belongs_to_many`, который позволяет создать связь напрямую:
 
 ```ruby
-class Assembly < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Assembly < ApplicationRecord
   has_and_belongs_to_many :parts
 end
 
-class Part < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Part < ApplicationRecord
   has_and_belongs_to_many :assemblies
 end
 ```
@@ -411,17 +411,17 @@ end
 Второй способ объявить отношение многие-ко-многим - использование `has_many :through`. Это осуществляет связь не напрямую, а через соединяющую модель:
 
 ```ruby
-class Assembly < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Assembly < ApplicationRecord
   has_many :manifests
   has_many :parts, through: :manifests
 end
 
-class Manifest < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Manifest < ApplicationRecord
   belongs_to :assembly
   belongs_to :part
 end
 
-class Part < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Part < ApplicationRecord
   has_many :manifests
   has_many :assemblies, through: :manifests
 end
@@ -436,15 +436,15 @@ end
 _Полиморфные связи_ - это немного более "навороченный" вид связей. С полиморфными связями модель может принадлежать более чем одной модели, на одиночной связи. Например, имеется модель изображения, которая принадлежит или модели работника, или модели продукта. Вот как это объявляется:
 
 ```ruby
-class Picture < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Picture < ApplicationRecord
   belongs_to :imageable, polymorphic: true
 end
 
-class Employee < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Employee < ApplicationRecord
   has_many :pictures, as: :imageable
 end
 
-class Product < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Product < ApplicationRecord
   has_many :pictures, as: :imageable
 end
 ```
@@ -462,7 +462,7 @@ class CreatePictures < ActiveRecord::Migration[5.0]
       t.string  :name
       t.integer :imageable_id
       t.string  :imageable_type
-      t.timestamps null: false
+      t.timestamps
     end
 
     add_index :pictures, [:imageable_type, :imageable_id]
@@ -478,7 +478,7 @@ class CreatePictures < ActiveRecord::Migration[5.0]
     create_table :pictures do |t|
       t.string :name
       t.references :imageable, polymorphic: true, index: true
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -491,7 +491,7 @@ end
 При разработке модели данных иногда находится модель, которая может иметь отношение сама к себе. Например, мы хотим хранить всех работников в одной модели базы данных, но нам нужно отслеживать отношения начальник-подчиненный. Эта ситуация может быть смоделирована с помощью связей, присоединяемых к себе:
 
 ```ruby
-class Employee < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Employee < ApplicationRecord
   has_many :subordinates, class_name: "Employee",
                           foreign_key: "manager_id"
 
@@ -508,7 +508,7 @@ class CreateEmployees < ActiveRecord::Migration[5.0]
   def change
     create_table :employees do |t|
       t.references :manager, index: true
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end
@@ -536,12 +536,12 @@ author.books.size            # используем кэшированную к�
 author.books.empty?          # используем кэшированную копию книг
 ```
 
-Но что если вы хотите перезагрузить кэш, так как данные могли быть изменены другой частью приложения? Всего лишь передайте `true` в вызов связи:
+Но что если вы хотите перезагрузить кэш, так как данные могли быть изменены другой частью приложения? Всего лишь вызовите `reload` на связи:
 
 ```ruby
 author.books                 # получаем книги из базы данных
 author.books.size            # используем кэшированную копию книг
-author.books(true).empty?    # отказываемся от кэшированной копии книг
+author.books.reload.empty?   # отказываемся от кэшированной копии книг
                              # и снова обращаемся к базе данных
 ```
 
@@ -558,7 +558,7 @@ author.books(true).empty?    # отказываемся от кэширован�
 Когда объявляете связь `belongs_to`, нужно создать внешние ключи, при необходимости. Например, рассмотрим эту модель:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
 ```
@@ -573,13 +573,28 @@ class CreateBooks < ActiveRecord::Migration[5.0]
       t.string   :book_number
       t.integer  :author_id
     end
-
-    add_index :books, :author_id
   end
 end
 ```
 
 Если создаете связь после того, как уже создали модель, лежащую в основе, необходимо не забыть создать миграцию `add_column` для предоставления необходимого внешнего ключа.
+
+Является хорошей практикой добавлять индекс на внешний ключ, чтобы улучшить быстродействие запросов, и ограничение на внешний ключ, чтобы убедиться в ссылочной целостности данных:
+
+```ruby
+class CreateBooks < ActiveRecord::Migration[5.0]
+  def change
+    create_table :books do |t|
+      t.datetime :published_at
+      t.string   :book_number
+      t.integer  :author_id
+    end
+
+    add_index :books, :author_id
+    add_foreign_key :books, :authors
+  end
+end
+```
 
 #### Создание соединительных таблиц для связей `has_and_belongs_to_many`
 
@@ -590,11 +605,11 @@ WARNING: Приоритет между именами модели рассчи�
 Какое бы ни было имя, вы должны вручную сгенерировать соединительную таблицу в соответствующей миграции. Например, рассмотрим эти связи:
 
 ```ruby
-class Assembly < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Assembly < ApplicationRecord
   has_and_belongs_to_many :parts
 end
 
-class Part < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Part < ApplicationRecord
   has_and_belongs_to_many :assemblies
 end
 ```
@@ -637,11 +652,11 @@ end
 ```ruby
 module MyApplication
   module Business
-    class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Supplier < ApplicationRecord
        has_one :account
     end
 
-    class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Account < ApplicationRecord
        belongs_to :supplier
     end
   end
@@ -653,13 +668,13 @@ end
 ```ruby
 module MyApplication
   module Business
-    class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Supplier < ApplicationRecord
        has_one :account
     end
   end
 
   module Billing
-    class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Account < ApplicationRecord
        belongs_to :supplier
     end
   end
@@ -671,14 +686,14 @@ end
 ```ruby
 module MyApplication
   module Business
-    class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Supplier < ApplicationRecord
        has_one :account,
         class_name: "MyApplication::Billing::Account"
     end
   end
 
   module Billing
-    class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+    class Account < ApplicationRecord
        belongs_to :supplier,
         class_name: "MyApplication::Business::Supplier"
     end
@@ -691,60 +706,83 @@ end
 Для связей нормально работать в двух направлениях, затребовав объявление в двух различных моделях:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
 ```
 
-По умолчанию, Active Record не знает о зависимости между этими двумя связями. Это может привести к двум несинхронизированным копиям объекта:
+Active Record попытается автоматически определить, что эти две модели образуют двунаправленную связь, основываясь на имени связи. Таким образом, Active Record загрузит только одну копию объекта `Author`, делая ваше приложение более эффективным и предотвращая несогласованные данные:
+
 
 ```ruby
 a = Author.first
 b = a.books.first
 a.first_name == b.author.first_name # => true
-a.first_name = 'Manny'
-a.first_name == b.author.first_name # => false
-```
-
-Это произошло потому, что `a` и `b.author` это два разных представления в памяти одних и тех же данных, и ни одно из них автоматически не обновляется при изменении другого. Active Record предоставляет опцию `:inverse_of`, чтобы вы могли его проинформировать об этих зависимостях:
-
-```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
-  has_many :books, inverse_of: :author
-end
-
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
-  belongs_to :author, inverse_of: :books
-end
-```
-
-С этими изменениями Active Record загрузит только одну копию объекта author, предотвратив несоответствия и сделав приложение более эффективным:
-
-```ruby
-a = Author.first
-b = a.books.first
-a.first_name == b.author.first_name # => true
-a.first_name = 'Manny'
+a.first_name = 'David'
 a.first_name == b.author.first_name # => true
 ```
 
-Имеется несколько ограничений в поддержке `inverse_of`:
-
-* Они не работают со связями `:through`.
-* Они не работают со связями `:polymorphic`.
-* Они не работают со связями `:as`.
-* Для связей `belongs_to` противоположные связи `has_many` игнорируются.
-
-Каждая связь попытается автоматически найти противоположную связь и установить опцию `:inverse_of` эвристически (основываясь на имени связи). Поддерживается большинство связей со стандартными именами. Однако, связям, содержащим следующие опции, противоположности не будут установлены автоматически:
+Active Record поддерживает автоматическое определение для большинства связей со стандартными именами. Однако, Active Record не будет автоматически определять двунаправленные связи, содержащие любые их следующих опций:
 
 * `:conditions`
 * `:through`
 * `:polymorphic`
+* `:class_name`
 * `:foreign_key`
+
+Например, рассмотрим следующие объявления моделей:
+
+```ruby
+class Author < ApplicationRecord
+  has_many :books
+end
+
+class Book < ApplicationRecord
+  belongs_to :writer, class_name: 'Author', foreign_key: 'author_id'
+end
+```
+
+Active Record больше не будет автоматически распознавать двунаправленную связь:
+
+```ruby
+a = Author.first
+b = a.books.first
+a.first_name == b.writer.first_name # => true
+a.first_name = 'David'
+a.first_name == b.writer.first_name # => false
+```
+
+Active Record представляет опцию `:inverse_of`, таким образом можно явно объявит двунаправленные связи:
+
+```ruby
+class Author < ApplicationRecord
+  has_many :books, inverse_of: 'writer'
+end
+
+class Book < ApplicationRecord
+  belongs_to :writer, class_name: 'Author', foreign_key: 'author_id'
+end
+```
+
+Включив опцию `:inverse_of` в объявлении связи `has_many`, Active Record будет распознавать двунаправленную связь:
+
+```ruby
+a = Author.first
+b = a.books.first
+a.first_name == b.writer.first_name # => true
+a.first_name = 'David'
+a.first_name == b.writer.first_name # => true
+```
+
+Имеется несколько ограничений в поддержке `:inverse_of`:
+
+* Они не работают со связями `:through`.
+* Они не работают со связями `:polymorphic`.
+* Они не работают со связями `:as`.
 
 Подробная информация по связи belongs_to
 ----------------------------------------
@@ -764,7 +802,7 @@ a.first_name == b.author.first_name # => true
 Во всех четырех методах `association` заменяется символом, переданным как первый аргумент в `belongs_to`. Например, имеем объявление:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
 ```
@@ -830,7 +868,7 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `belongs_to`. Такая настройка легко выполнима с помощью передачи опций и блоков со скоупом при создании связи. Например, эта связь использует две такие опции:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, dependent: :destroy,
     counter_cache: true
 end
@@ -859,7 +897,7 @@ end
 Если имя другой модели не может быть получено из имени связи, можете использовать опцию `:class_name` для предоставления имени модели. Например, если книга принадлежит автору, но фактическое имя модели, содержащей авторов, `Patron`, можете установить это следующим образом:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, class_name: "Patron"
 end
 ```
@@ -869,10 +907,10 @@ end
 Опция `:counter_cache` может быть использована, чтобы сделать поиск количества принадлежащих объектов более эффективным. Рассмотрим эти модели:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
 end
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -880,10 +918,10 @@ end
 С этими объявлениями запрос значения `@author.books.size` требует обращения к базе данных для выполнения запроса `COUNT(*)`. Чтобы этого избежать, можете добавить кэш счетчика в _принадлежащую_ модель:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, counter_cache: true
 end
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -895,10 +933,10 @@ end
 Имя столбца по умолчанию можно переопределить, указав произвольное имя столбца в объявлении `counter_cache` вместо `true`. Например, для использования `count_of_books` вместо `books_count`:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, counter_cache: :count_of_books
 end
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -909,14 +947,13 @@ NOTE: Опцию :counter_cache необходимо указывать толь
 
 #### `:dependent`
 
-Если установить опцию `:dependent` как:
+Устанавливает, что произойдет со связанными объектами, когда их владелец будет уничтожен:
 
-* `:destroy`, то, когда объект уничтожен, метод `destroy` будет вызван на его связанных объектах.
-* `:delete_all`, то, когда объект уничтожен, все его связанные объекты будут удалены непосредственно из базы данных без вызова их методов `destroy`.
-* `:nullify`, вызывает установление внешнему ключу `NULL`. Колбэки не запускаются.
-* `:restrict_with_exception`, вызывает исключение, если имеется связанная запись
-* `:restrict_with_error`, вызывает ошибку, добавляемую владеющей модели, если есть связанный объект
-
+* `:destroy` приводит к тому, что связанные объекты также будут уничтожены.
+* `:delete_all` приводит к тому, что связанные объекты будут удалены непосредственно из базы данных (колбэки не запускаются).
+* `:nullify` приводит к тому, что внешним ключам будет установлен `NULL` (колбэки не запускаются).
+* `:restrict_with_exception` приводит к тому, что будет вызвано исключение, если есть связанные записи.
+* `:restrict_with_error` приводит к тому, что к владельцу будет добавлена ошибка, если есть связанные записи.
 
 WARNING: Не следует определять эту опцию в связи `belongs_to`, которая соединена со связью `has_many` в другом классе. Это приведет к "битым" связям в записях вашей базы данных.
 
@@ -925,7 +962,7 @@ WARNING: Не следует определять эту опцию в связ�
 По соглашению Rails предполагает, что столбец, используемый для хранения внешнего ключа в этой модели, имеет имя модели с добавленным суффиксом `_id`. Опция `:foreign_key` позволяет установить имя внешнего ключа явно:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, class_name: "Patron",
                         foreign_key: "patron_id"
 end
@@ -940,11 +977,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 Например, имеется таблица `users` с `guid` в качестве первичного ключа. Если мы хотим отдельную таблицу `todos`, содержащую внешний ключ `user_id` из столбца `guid`, для этого можно использовать `primary_key` следующим образом:
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   self.primary_key = 'guid' # primary key is guid and not id
 end
 
-class Todo < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Todo < ApplicationRecord
   belongs_to :user, primary_key: 'guid'
 end
 ```
@@ -956,11 +993,11 @@ end
 Опция `:inverse_of` определяет имя связи `has_many` или `has_one`, являющейся противоположностью для этой связи. Не работает в комбинации с опциями `:polymorphic`.
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, inverse_of: :author
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, inverse_of: :books
 end
 ```
@@ -974,11 +1011,11 @@ end
 Если установите опцию `:touch` в `true`, то временные метки `updated_at` или `updated_on` на связанном объекте будут установлены в текущее время всякий раз, когда этот объект будет сохранен или уничтожен:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, touch: true
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -986,7 +1023,7 @@ end
 В этом случае, сохранение или уничтожение книги обновит временную метку на связанном авторе. Также можно определить конкретный атрибут временной метки для обновления:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, touch: :books_updated_at
 end
 ```
@@ -1004,7 +1041,7 @@ end
 Иногда хочется настроить запрос, используемый `belongs_to`. Такая настройка может быть достигнута с помощью блока скоупа. Например:
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, -> { where active: true },
                         dependent: :destroy
 end
@@ -1022,7 +1059,7 @@ end
 Метод `where` позволяет определить условия, которым должен отвечать связанный объект.
 
 ```ruby
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, -> { where active: true }
 end
 ```
@@ -1032,16 +1069,16 @@ end
 Метод `includes` можно использовать для определения связей второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим эти модели:
 
 ```ruby
-class LineItem < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class LineItem < ApplicationRecord
   belongs_to :book
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
   has_many :line_items
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -1049,16 +1086,16 @@ end
 Если вы часто получаете авторов непосредственно из элементов (`@line_item.book.author`), то можно улучшить эффективность кода, включив авторов в связь между книгой и ее элементами:
 
 ```ruby
-class LineItem < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class LineItem < ApplicationRecord
   belongs_to :book, -> { includes :author }
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
   has_many :line_items
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -1107,7 +1144,7 @@ end
 Во всех этих методах `association` заменяется на символ, переданный как первый аргумент в `has_one`. Например, имеем объявление:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account
 end
 ```
@@ -1171,7 +1208,7 @@ NOTE: При установлении новой связи `has_one` или `be
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `has_one`. Такая настройка легко выполнима с помощью передачи опции при создании связи. Например, эта связь использует две такие опции:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, class_name: "Billing", dependent: :nullify
 end
 ```
@@ -1203,7 +1240,7 @@ end
 Если имя другой модели не может быть образовано из имени связи, можете использовать опцию `:class_name` для предоставления имени модели. Например, если поставщик имеет аккаунт, но фактическое имя модели, содержащей аккаунты, это `Billing`, можете установить это следующим образом:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, class_name: "Billing"
 end
 ```
@@ -1225,7 +1262,7 @@ end
 По соглашению Rails предполагает, что столбец, используемый для хранения внешнего ключа в этой модели, имеет имя модели с добавленным суффиксом `_id`. Опция `:foreign_key` позволяет установить имя внешнего ключа явно:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, foreign_key: "supp_id"
 end
 ```
@@ -1237,11 +1274,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи. Не работает в комбинации с опциями `:through` или `:as`.
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, inverse_of: :supplier
 end
 
-class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Account < ApplicationRecord
   belongs_to :supplier, inverse_of: :account
 end
 ```
@@ -1271,7 +1308,7 @@ end
 Иногда хочется настроить запрос, используемый `has_one`. Такая настройка может быть достигнута с помощью блока скоупа. Например:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, -> { where active: true }
 end
 ```
@@ -1288,7 +1325,7 @@ end
 Метод `where` позволяет определить условия, которым должен отвечать связанный объект.
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, -> { where "confirmed = 1" }
 end
 ```
@@ -1298,16 +1335,16 @@ end
 Метод `includes` позволяет определить связи второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим эти модели:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account
 end
 
-class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Account < ApplicationRecord
   belongs_to :supplier
   belongs_to :representative
 end
 
-class Representative < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Representative < ApplicationRecord
   has_many :accounts
 end
 ```
@@ -1315,16 +1352,16 @@ end
 Если вы часто получаете representatives непосредственно из suppliers (`@supplier.account.representative`), то можно улучшить эффективность кода, включив representatives в связь между suppliers и accounts:
 
 ```ruby
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_one :account, -> { includes :representative }
 end
 
-class Account < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Account < ApplicationRecord
   belongs_to :supplier
   belongs_to :representative
 end
 
-class Representative < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Representative < ApplicationRecord
   has_many :accounts
 end
 ```
@@ -1386,7 +1423,7 @@ end
 Во всех этих методах `collection` заменяется символом, переданным как первый аргумент в `has_many`, и `collection_singular` заменяется версией в единственном числе этого символа. Например, имеем объявление:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 ```
@@ -1450,7 +1487,7 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 
 #### `collection=(objects)`
 
-Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.
+Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости. Изменения сохраняются в базу данных.
 
 #### `collection_singular_ids`
 
@@ -1462,7 +1499,7 @@ WARNING: Объекты будут _всегда_ удаляться из баз
 
 #### `collection_singular_ids=(ids)`
 
-Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.
+Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости. Изменения сохраняются в базу данных.
 
 #### `collection.clear`
 
@@ -1548,7 +1585,7 @@ WARNING: Объекты будут удалены, если они связан�
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `has_many`. Такая настройка легко выполнима с помощью передачи опций при создании связи. Например, эта связь использует две такие опции:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, dependent: :delete_all, validate: false
 end
 ```
@@ -1581,7 +1618,7 @@ end
 Если имя другой модели не может быть произведено из имени связи, можете использовать опцию `:class_name` для предоставления имени модели. Например, если автор имеет много книг, но фактическое имя модели, содержащей книги, это `Transaction`, можете установить это следующим образом:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, class_name: "Transaction"
 end
 ```
@@ -1617,11 +1654,11 @@ TIP: В любом случае, Rails не создаст столбцы вне
 Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи. Не работает в комбинации с опциями `:through` или `:as`.
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, inverse_of: :author
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author, inverse_of: :books
 end
 ```
@@ -1633,7 +1670,7 @@ end
 Допустим, в таблице `users` есть `id` в качестве primary_key, но также имеется столбец `guid`. Имеется требование, что таблица `todos` должна содержать значение столбца `guid`, а не значение `id`. Это достигается следующим образом:
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   has_many :todos, primary_key: :guid
 end
 ```
@@ -1661,7 +1698,7 @@ end
 Иногда хочется настроить запрос, используемый `has_many`. Такая настройка может быть достигнута с помощью блока скоупа. Например:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, -> { where processed: true }
 end
 ```
@@ -1684,7 +1721,7 @@ end
 Метод `where` позволяет определить условия, которым должен отвечать связанный объект.
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :confirmed_books, -> { where "confirmed = 1" },
     class_name: "Book"
 end
@@ -1693,7 +1730,7 @@ end
 Также можно задать условия хэшем:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :confirmed_books, -> { where confirmed: true },
                               class_name: "Book"
 end
@@ -1710,7 +1747,7 @@ end
 Метод `group` доставляет имя атрибута, по которому группируется результирующий набор, используя выражение `GROUP BY` в поисковом SQL.
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :line_items, -> { group 'books.id' },
                         through: :books
 end
@@ -1721,16 +1758,16 @@ end
 Можете использовать метод `includes` для определения связей второго порядка, которые должны быть нетерпеливо загружены, когда эта связь используется. Например, рассмотрим эти модели:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
   has_many :line_items
 end
 
-class LineItem < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class LineItem < ApplicationRecord
   belongs_to :book
 end
 ```
@@ -1738,16 +1775,16 @@ end
 Если вы часто получаете элементы прямо из авторов (`@author.books.line_items`), тогда можете сделать свой код более эффективным, включив элементы в связь от авторов к книгам:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, -> { includes :line_items }
 end
 
-class Book < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Book < ApplicationRecord
   belongs_to :author
   has_many :line_items
 end
 
-class LineItem < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class LineItem < ApplicationRecord
   belongs_to :book
 end
 ```
@@ -1757,7 +1794,7 @@ end
 Метод `limit` позволяет ограничить общее количество объектов, которые будут выбраны через связь.
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :recent_books,
     -> { order('published_at desc').limit(100) },
     class_name: "Book",
@@ -1773,7 +1810,7 @@ end
 Метод `order` предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии `ORDER BY`).
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, -> { order "date_confirmed DESC" }
 end
 ```
@@ -1793,7 +1830,7 @@ WARNING: Если укажете свой собственный `select`, не 
 Используйте метод `distinct`, чтобы убирать дубликаты из коллекции. Это полезно в сочетании с опцией `:through`.
 
 ```ruby
-class Person < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Person < ApplicationRecord
   has_many :readings
   has_many :articles, through: :readings
 end
@@ -1802,7 +1839,7 @@ article   = Article.create(name: 'a1')
 person.articles << article
 person.articles << article
 person.articles.inspect # => [#<Article id: 5, name: "a1">, #<Article id: 5, name: "a1">]
-Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, article_id: 5>, #<Reading id: 13, person_id: 5, article_id: 5>]
+Reading.all.inspect     # => [#<Reading id: 12, person_id: 5, article_id: 5>, #<Reading id: 13, person_id: 5, article_id: 5>]
 ```
 
 В вышеописанной задаче два reading, и `person.articles` выявляет их оба, даже хотя эти записи указывают на одну и ту же статью.
@@ -1820,7 +1857,7 @@ article   = Article.create(name: 'a1')
 person.articles << article
 person.articles << article
 person.articles.inspect # => [#<Article id: 7, name: "a1">]
-Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, article_id: 7>, #<Reading id: 17, person_id: 7, article_id: 7>]
+Reading.all.inspect     # => [#<Reading id: 16, person_id: 7, article_id: 7>, #<Reading id: 17, person_id: 7, article_id: 7>]
 ```
 
 В вышеописанной задаче все еще два reading. Однако `person.articles` показывает только одну статью, поскольку коллекция загружает только уникальные записи.
@@ -1885,7 +1922,7 @@ person.articles << article unless person.articles.include?(post)
 Во всех этих методах `collection` заменяется символом, переданным как первый аргумент в `has_and_belongs_to_many`, а `collection_singular` заменяется версией в единственном числе этого символа. Например, имеем объявление:
 
 ```ruby
-class Part < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Part < ApplicationRecord
   has_and_belongs_to_many :assemblies
 end
 ```
@@ -1943,11 +1980,9 @@ NOTE: Этот метод - просто синоним к `collection.concat` �
 @part.assemblies.delete(@assembly1)
 ```
 
-WARNING: Это не запустит колбэки на соединительных записях.
-
 ##### `collection.destroy(object, ...)`
 
-Метод `collection.destroy` убирает один или более объектов из коллекции. запуская `destroy` на каждой записи в соединительной таблице, включая запуск колбэков. Это не уничтожает объекты.
+Метод `collection.destroy` убирает один или более объектов из коллекции, удаляя записи в соединительной таблице. Это не уничтожает объекты.
 
 ```ruby
 @part.assemblies.destroy(@assembly1)
@@ -1955,7 +1990,7 @@ WARNING: Это не запустит колбэки на соединитель
 
 #### `collection=(objects)`
 
-Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости.
+Метод `collection=` делает коллекцию содержащей только представленные объекты, добавляя и удаляя по мере необходимости. Изменения записываются в базу данных.
 
 #### `collection_singular_ids`
 
@@ -1967,7 +2002,7 @@ WARNING: Это не запустит колбэки на соединитель
 
 #### `collection_singular_ids=(ids)`
 
-Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости.
+Метод `collection_singular_ids=` делает коллекцию содержащей только объекты, идентифицированные представленными значениями первичного ключа, добавляя и удаляя по мере необходимости. Изменения записываются в базу данных.
 
 #### `collection.clear`
 
@@ -2036,7 +2071,7 @@ WARNING: Это не запустит колбэки на соединитель
 Хотя Rails использует разумные значения по умолчанию, работающие во многих ситуациях, бывают случаи, когда хочется изменить поведение связи `has_and_belongs_to_many`. Такая настройка легко выполнима с помощью передачи опции при создании связи. Например, эта связь использует две такие опции:
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies, -> { readonly },
                                        autosave: true
 end
@@ -2058,7 +2093,7 @@ end
 TIP: Опции `:foreign_key` и `:association_foreign_key` полезны при настройке присоединения к себе многие-ко-многим. Например:
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   has_and_belongs_to_many :friends,
       class_name: "User",
       foreign_key: "this_user_id",
@@ -2075,7 +2110,7 @@ end
 Если имя другой модели не может быть произведено из имени связи, можете использовать опцию `:class_name` для предоставления имени модели. Например, если часть имеет много узлов, но фактическое имя модели, содержащей узлы - это `Gadget`, можете установить это следующим образом:
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies, class_name: "Gadget"
 end
 ```
@@ -2085,7 +2120,7 @@ end
 По соглашению Rails предполагает, что столбец в соединительной таблице, используемый для хранения внешнего ключа, указываемого на эту модель, имеет имя модели с добавленным суффиксом `_id`. Опция `:foreign_key` позволяет установить имя внешнего ключа явно:
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   has_and_belongs_to_many :friends,
       class_name: "User",
       foreign_key: "this_user_id",
@@ -2106,7 +2141,7 @@ end
 Иногда хочется настроить запрос, используемый `has_many`. Такая настройка может быть достигнута с помощью блока скоупа. Например:
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies, -> { where active: true }
 end
 ```
@@ -2129,7 +2164,7 @@ end
 Метод `where` позволяет определить условия, которым должен отвечать связанный объект.
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies,
     -> { where "factory = 'Seattle'" }
 end
@@ -2138,7 +2173,7 @@ end
 Также можно задать условия хэшем:
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies,
     -> { where factory: 'Seattle' }
 end
@@ -2155,7 +2190,7 @@ end
 Метод `group` доставляет имя атрибута, по которому группируется результирующий набор, используя выражение `GROUP BY` в поисковом SQL.
 
 ```ruby
-class Parts < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Parts < ApplicationRecord
   has_and_belongs_to_many :assemblies, -> { group "factory" }
 end
 ```
@@ -2169,7 +2204,7 @@ end
 Метод `limit` позволяет ограничить общее количество объектов, которые будут выбраны через связь.
 
 ```ruby
-class Customer < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Customer < ApplicationRecord
   has_and_belongs_to_many :assemblies,
     -> { order("created_at DESC").limit(50) }
 end
@@ -2184,7 +2219,7 @@ end
 Метод `order` предписывает порядок, в котором связанные объекты будут получены (в синтаксисе SQL, используемом в условии `ORDER BY`).
 
 ```ruby
-class Customer < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Customer < ApplicationRecord
   has_and_belongs_to_many :assemblies,
     -> { order "assembly_name ASC" }
 end
@@ -2229,7 +2264,7 @@ end
 Колбэки связи объявляются с помощью добавления опций в объявление связи. Например:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, before_add: :check_credit_limit
 
   def check_credit_limit(book)
@@ -2243,7 +2278,7 @@ Rails передает добавляемый или удаляемый объе
 Можете помещать колбэки в очередь на отдельное событие, передав их как массив:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books,
     before_add: [:check_credit_limit, :calculate_shipping_charges]
 
@@ -2264,7 +2299,7 @@ end
 Вы не ограничены функциональностью, которую Rails автоматически встраивает в выданные по связи объекты. Можете расширять эти объекты через анонимные модули, добавления новых методов поиска, создания и иных методов. Например:
 
 ```ruby
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books do
     def find_by_book_prefix(book_number)
       find_by(category_id: book_number[0..2])
@@ -2282,11 +2317,11 @@ module FindRecentExtension
   end
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :books, -> { extending FindRecentExtension }
 end
 
-class Supplier < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Supplier < ApplicationRecord
   has_many :deliveries, -> { extending FindRecentExtension }
 end
 ```

@@ -850,13 +850,13 @@ Rails знает, что все эти поля должны быть часть
 Active Record представляет поддержку на уровне модели с помощью метода `accepts_nested_attributes_for`:
 
 ```ruby
-class Person < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Person < ApplicationRecord
   has_many :addresses
   accepts_nested_attributes_for :addresses
 
 end
 
-class Address < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Address < ApplicationRecord
   belongs_to :person
 end
 ```
@@ -940,7 +940,7 @@ private
 Можно позволить пользователям удалять связанные объекты, передав `allow_destroy: true` в `accepts_nested_attributes_for`
 
 ```ruby
-class Person < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Person < ApplicationRecord
   has_many :addresses
   accepts_nested_attributes_for :addresses, allow_destroy: true
 end
@@ -978,7 +978,7 @@ end
 Часто полезно игнорировать наборы полей, которые пользователь не заполнял. Этим можно управлять, передав `:reject_if` proc в `accepts_nested_attributes_for`. Этот proc будет вызван для каждого хэша атрибутов, отправляемого формой. Если proc возвращает `false`, тогда Active Record не создаст связанный объект для этого хэша. Следующий пример пытается создать адрес, если установлен атрибут `kind`.
 
 ```ruby
-class Person < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Person < ApplicationRecord
   has_many :addresses
   accepts_nested_attributes_for :addresses, reject_if: lambda {|attributes| attributes['kind'].blank?}
 end

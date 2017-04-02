@@ -974,11 +974,11 @@ url_field(:user, :url)
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   belongs_to :author
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1010,11 +1010,11 @@ collection_select(:article, :author_id, Author.all, :id, :name_with_initial, { p
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   belongs_to :author
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1046,11 +1046,11 @@ collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initi
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   has_and_belongs_to_many :authors
 end
 
-class Author < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Author < ApplicationRecord
   has_and_belongs_to_many :articles
   def name_with_initial
     "#{first_name.first}. #{last_name}"
@@ -1084,12 +1084,12 @@ collection_check_boxes(:article, :author_ids, Author.all, :id, :name_with_initia
 Пример структуры объекта для использования с этим методом:
 
 ```ruby
-class Continent < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Continent < ApplicationRecord
   has_many :countries
   # attribs: id, name
 end
 
-class Country < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Country < ApplicationRecord
   belongs_to :continent
   # attribs: id, name, continent_id
 end

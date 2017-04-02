@@ -21,7 +21,7 @@
 TIP: Все модели используют `id` как первичный ключ, если не указано иное.
 
 ```ruby
-class Client < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Client < ApplicationRecord
   has_one :address
   has_many :orders
   has_and_belongs_to_many :roles
@@ -29,19 +29,19 @@ end
 ```
 
 ```ruby
-class Address < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Address < ApplicationRecord
   belongs_to :client
 end
 ```
 
 ```ruby
-class Order < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Order < ApplicationRecord
   belongs_to :client, counter_cache: true
 end
 ```
 
 ```ruby
-class Role < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Role < ApplicationRecord
   has_and_belongs_to_many :clients
 end
 ```
@@ -757,7 +757,7 @@ SELECT "articles".* FROM "articles" WHERE (id > 10) ORDER BY id desc LIMIT 20
 Метод `reorder` переопределяет сортировку скоупа по умолчанию. Например:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   ..
   ..
   has_many :comments, -> { order('posted_at DESC') }
@@ -908,7 +908,7 @@ c2.save # Raises a ActiveRecord::StaleObjectError
 Для переопределения имени столбца `lock_version`, `ActiveRecord::Base` предоставляет атрибут класса `locking_column`:
 
 ```ruby
-class Client < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Client < ApplicationRecord
   self.locking_column = :lock_client_column
 end
 ```
@@ -986,26 +986,26 @@ Active Record позволяет использовать имена [связе
 Например, рассмотрим следующие модели `Category`, `Article`, `Comment`, `Guest` и `Tag`:
 
 ```ruby
-class Category < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Category < ApplicationRecord
   has_many :articles
 end
 
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   belongs_to :category
   has_many :comments
   has_many :tags
 end
 
-class Comment < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Comment < ApplicationRecord
   belongs_to :article
   has_one :guest
 end
 
-class Guest < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Guest < ApplicationRecord
   belongs_to :comment
 end
 
-class Tag < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Tag < ApplicationRecord
   belongs_to :article
 end
 ```
@@ -1209,7 +1209,7 @@ Article.includes(:comments).where("comments.visible = true").references(:comment
 Для определения простого скоупа мы используем метод `scope` внутри класса, передав запрос, который хотим запустить при вызове скоупа:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   scope :published, -> { where(published: true) }
 end
 ```
@@ -1217,7 +1217,7 @@ end
 Это в точности то же самое, что определение метода класса, и то, что именно вы используете, является вопросом профессионального предпочтения:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   def self.published
     where(published: true)
   end
@@ -1227,7 +1227,7 @@ end
 Скоупы также сцепляются с другими скоупами:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   scope :published,               -> { where(published: true) }
   scope :published_and_commented, -> { published.where("comments_count > 0") }
 end
@@ -1251,7 +1251,7 @@ category.articles.published # => [опубликованные статьи, п�
 Скоуп может принимать аргументы:
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   scope :created_before, ->(time) { where("created_at < ?", time) }
 end
 ```
@@ -1265,7 +1265,7 @@ Article.created_before(Time.zone.now)
 Однако, это всего лишь дублирование функциональности, которая должна быть предоставлена методом класса.
 
 ```ruby
-class Article < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Article < ApplicationRecord
   def self.created_before(time)
     where("created_at < ?", time)
   end
@@ -1283,7 +1283,7 @@ category.articles.created_before(time)
 Если хотите, чтобы скоуп был применен ко всем запросам к модели, можно использовать метод `default_scope` в самой модели.
 
 ```ruby
-class Client < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Client < ApplicationRecord
   default_scope { where("removed_at IS NULL") }
 end
 ```
@@ -1297,7 +1297,7 @@ SELECT * FROM clients WHERE removed_at IS NULL
 Если необходимо сделать более сложные вещи со скоупом по умолчанию, альтернативно его можно определить как метод класса:
 
 ```ruby
-class Client < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Client < ApplicationRecord
   def self.default_scope
     # Должен возвращать ActiveRecord::Relation.
   end
@@ -1320,7 +1320,7 @@ Client.unscoped.new # => #<Client id: nil, active: nil>
 Подобно условиям `where`, скоупы сливаются с использованием `AND`.
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   scope :active, -> { where state: 'active' }
   scope :inactive, -> { where state: 'inactive' }
 end
@@ -1346,7 +1346,7 @@ User.active.merge(User.inactive)
 Важным предостережением является то, что `default_scope` будет переопределен условиями `scope` и `where`.
 
 ```ruby
-class User < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class User < ApplicationRecord
   default_scope { where state: 'pending' }
   scope :active, -> { where state: 'active' }
   scope :inactive, -> { where state: 'inactive' }
@@ -1640,7 +1640,7 @@ Client.pluck(:id, :name)
 В отличие от `select`, `pluck` непосредственно конвертирует результат запроса в массив Ruby, без создания объектов `ActiveRecord`. Это означает лучшую производительность для больших или часто используемых запросов. Однако любые переопределения методов в модели будут недоступны. Например:
 
 ```ruby
-class Client < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Client < ApplicationRecord
   def name
     "I am #{super}"
   end
@@ -1673,7 +1673,7 @@ Person.ids
 ```
 
 ```ruby
-class Person < ApplicationRecord  # ActiveRecord::Base до Rails 5.0
+class Person < ApplicationRecord
   self.primary_key = "person_id"
 end
 
