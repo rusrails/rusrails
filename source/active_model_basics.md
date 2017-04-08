@@ -8,7 +8,7 @@
 * Как ведет себя модель Active Record.
 * Как работают колбэки и валидации.
 * Как работают сериализаторы.
-* О фреймворке интернационализации Rails (i18n).
+* Как Active Model интегрируется с фреймворком интернационализации Rails (i18n).
 
 --------------------------------------------------------------------------------
 
@@ -138,16 +138,16 @@ person.changed? # => false
 person.first_name = "First Name"
 person.first_name # => "First Name"
 
-# возвращает true, если хотя бы у одного из атрибутов есть несохраненное значение, иначе false
+# возвращает true, если хотя бы у одного из атрибутов есть несохраненное значение.
 person.changed? # => true
 
 # возвращает список измененных атрибутов
 person.changed # => ["first_name"]
 
-# возвращает "хэш" измененных атрибутов с их первоначальными значениями
+# возвращает Hash с измененными атрибутами с их первоначальными значениями
 person.changed_attributes # => {"first_name"=>nil}
 
-# возвращает "хэш" изменений, с именами атрибутов и их значений, массив значений содержит старое и новое значение атрибута.
+# возвращает Hash с измененениями, с именами атрибутов и их значений, массив значений содержит старое и новое значение атрибута.
 person.changes # => {"first_name"=>[nil, "First Name"]}
 ```
 
@@ -161,14 +161,14 @@ person.first_name # => "First Name"
 person.first_name_changed? # => true
 ```
 
-Отслеживает, какое было предыдущее значение атрибута.
+Отслеживает предыдущее значение атрибута.
 
 ```ruby
 # метод доступа attr_name_was
 person.first_name_was # => nil
 ```
 
-Отслеживает старое и новое значение измененного атрибута. Возвращает массив, если изменяли, иначе nil.
+Отслеживает старое и новое значение измененного атрибута. Возвращает массив, если изменяли, в противном случае nil.
 
 ```ruby
 # attr_name_change
@@ -178,7 +178,7 @@ person.last_name_change # => nil
 
 ### Валидации
 
-Модуль `ActiveModel::Validations` добавляет возможность проверять объекты класса, как в Active Record.
+Модуль `ActiveModel::Validations` добавляет возможность проверять объекты, как в Active Record.
 
 ```ruby
 class Person
@@ -226,7 +226,7 @@ Person.model_name.singular_route_key  # => "person"
 
 ### Модель
 
-`ActiveModel::Model` добавляет классу возможность работать из коробки с Action Pack и Action View.
+`ActiveModel::Model` добавляет для класса возможность работать из коробки с Action Pack и Action View.
 
 ```ruby
 class EmailContact
@@ -266,7 +266,7 @@ email_contact.persisted? # => false
 
 ### Сериализация
 
-`ActiveModel::Serialization` представляет простую сериализацию для вашего объекта. Вам необходимо объявить хэш атрибутов, содержащий атрибуты, которые вы хотите сериализовать. Атрибуты должны быть строками, не символами.
+`ActiveModel::Serialization` представляет простую сериализацию для вашего объекта. Вам необходимо объявить Hash, содержащий атрибуты, которые вы хотите сериализовать. Атрибуты должны быть строками, не символами.
 
 ```ruby
 class Person
@@ -280,7 +280,7 @@ class Person
 end
 ```
 
-Теперь будет доступен сериализованный хэш вашего объекта с помощью `serializable_hash`.
+Теперь будет доступен сериализованный Hash вашего объекта с помощью `serializable_hash`.
 
 ```ruby
 person = Person.new
@@ -291,11 +291,11 @@ person.serializable_hash   # => {"name"=>"Bob"}
 
 #### ActiveModel::Serializers
 
-Rails предоставляет сериализатор `ActiveModel::Serializers::JSON`. Этот модуль автоматически подключает `ActiveModel::Serialization`.
+Active Model также предоставляет модуль `ActiveModel::Serializers::JSON` для сериализации/десериализации JSON. Этот модуль автоматически подключает ранее обсужденный модуль `ActiveModel::Serialization`.
 
 ##### ActiveModel::Serializers::JSON
 
-Для использования `ActiveModel::Serializers::JSON` необходимо только изменить `ActiveModel::Serialization` на `ActiveModel::Serializers::JSON`.
+Для использования `ActiveModel::Serializers::JSON` необходимо только изменить модуль, который вы подключали, с `ActiveModel::Serialization` на `ActiveModel::Serializers::JSON`.
 
 ```ruby
 class Person
@@ -309,7 +309,7 @@ class Person
 end
 ```
 
-С помощью метода `as_json` можно получить хэш, представляющий модель.
+Метод `as_json`, подобно `serializable_hash`, предоставляет Hash, представляющий модель.
 
 ```ruby
 person = Person.new
@@ -318,7 +318,7 @@ person.name = "Bob"
 person.as_json # => {"name"=>"Bob"}
 ```
 
-Из строки JSON определяются атрибуты модели. В классе должен быть определен метод `attributes=`:
+Также можно определить атрибуты для модели из строки JSON. Однако, в классе нужно определить метод `attributes=`:
 
 ```ruby
 class Person
@@ -338,7 +338,7 @@ class Person
 end
 ```
 
-Теперь возможно создавать экземпляры person и устанавливать атрибуты с помощью `from_json`.
+Теперь возможно создавать экземпляры `Person` и устанавливать атрибуты с помощью `from_json`.
 
 ```ruby
 json = { name: 'Bob' }.to_json
@@ -357,7 +357,7 @@ class Person
 end
 ```
 
-С помощью `human_attribute_name` можно преобразовывать имена атрибутов в более человечный формат. Человечный формат определяется в вашем файле локали.
+С помощью метода `human_attribute_name` можно преобразовывать имена атрибутов в более удобочитаемый формат. Удобочитаемый формат определяется в ваших файлах локалей.
 
 * config/locales/app.pt-BR.yml
 
@@ -377,16 +377,15 @@ Person.human_attribute_name('name') # => "Nome"
 
 `ActiveModel::Lint::Tests` позволяет проверить, соответствует ли объект Active Model API.
 
-* app/models/person.rb
+* `app/models/person.rb`
 
     ```ruby
     class Person
       include ActiveModel::Model
-
     end
     ```
 
-* test/models/person_test.rb
+* `test/models/person_test.rb`
 
     ```ruby
     require 'test_helper'
@@ -418,14 +417,14 @@ Finished in 0.024899s, 240.9735 runs/s, 1204.8677 assertions/s.
 
 ### SecurePassword
 
-`ActiveModel::SecurePassword` представляет способ безопасно хранить любой пароль в зашифрованной форме. При включении этого модуля предоставляется метод класса `has_secure_password`, определяющий акцессор с именем `password` с определенными валидациями на нем.
+`ActiveModel::SecurePassword` представляет способ безопасно хранить любой пароль в зашифрованной форме. При включении этого модуля предоставляется метод класса `has_secure_password`, определяющий акцессор `password` с определенными валидациями на нем.
 
 #### Требования
 
 `ActiveModel::SecurePassword` зависит от [`bcrypt`](https://github.com/codahale/bcrypt-ruby 'BCrypt'), поэтому включите этот гем в свой Gemfile для корректного использования `ActiveModel::SecurePassword`. Чтобы он работал, в модели должен быть акцессор с именем `password_digest`. `has_secure_password` добавит следующие валидации на акцессор `password`:
 
 1. Пароль должен существовать.
-2. Пароль должен совпадать с подтверждением.
+2. Пароль должен совпадать с подтверждением (проверяется если передан `password_confirmation`).
 3. Максимальная длина пароля 72 (требуется `bcrypt`, от которого зависит ActiveModel::SecurePassword)
 
 #### Примеры
@@ -450,6 +449,10 @@ person.valid? # => false
 # Когда длина пароля превышает 72.
 person.password = person.password_confirmation = 'a' * 100
 person.valid? # => false
+
+# Когда предоставлен только пароль без password_confirmation.
+person.password = 'aditya'
+person.valid? # => true
 
 # Когда проходят все валидации.
 person.password = person.password_confirmation = 'aditya'
