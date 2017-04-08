@@ -15,7 +15,7 @@
 Это руководство описывает, как создать плагин, движимый тестами (TDD), который будет:
 
 * Расширять классы ядра Ruby, такие как Hash и String.
-* Добавлять методы в `ActiveRecord::Base` в традициях плагинов 'acts_as'.
+* Добавлять методы в `ApplicationRecord` в традициях плагинов 'acts_as'.
 * Представлять информацию о том, где разместить генераторы в вашем плагине.
 
 Для целей этого руководства представьте на момент, что вы заядлый любитель птиц. Вашей любимой птицей является дятел (Yaffle), и вы хотите создать плагин, позволяющий другим разработчикам пользоваться особенностями дятлов.
@@ -23,7 +23,7 @@
 Настройка
 ---------
 
-В настоящий момент плагины Rails создаются как гемы, _gem_. Они могут использоваться различными приложениями с помощью RubyGems и Bundler.
+В настоящий момент плагины Rails создаются как гемы, _gem_. Они могут использоваться различными приложениями Rails с помощью RubyGems и Bundler.
 
 ### Создание гема.
 
@@ -42,7 +42,7 @@ $ rails plugin new --help
 Тестирование своего нового плагина
 ----------------------------------
 
-Можете перейти в директорию, содержащую плагин, запустить команду `bundle install`, и запустить сгенерированный тест с использованием команды `rake`.
+Можете перейти в директорию, содержащую плагин, запустить команду `bundle install`, и запустить сгенерированный тест с использованием команды `bin/test`.
 
 Вы должны увидеть:
 
@@ -55,7 +55,7 @@ $ rails plugin new --help
 Расширение классов ядра
 -----------------------
 
-Этот раздел объясняет, как добавить метод в String, который будет доступен везде в вашем приложении rails.
+Этот раздел объясняет, как добавить метод в String, который будет доступен везде в вашем приложении Rails.
 
 В следующем примере мы добавим метод в String с именем `to_squawk`. Для начала создайте новый файл теста с несколькими утверждениями:
 
@@ -71,13 +71,23 @@ class CoreExtTest < ActiveSupport::TestCase
 end
 ```
 
-Запустите `rake` для запуска теста. Этот тест должен провалиться, так как мы еще не реализовали метод `to_squawk`:
+Запустите `bin/test` для запуска теста. Этот тест должен провалиться, так как мы еще не реализовали метод `to_squawk`:
 
 ```bash
-    1) Error:
-  CoreExtTest#test_to_squawk_prepends_the_word_squawk:
-  NoMethodError: undefined method `to_squawk' for "Hello World":String
-    /path/to/yaffle/test/core_ext_test.rb:5:in `test_to_squawk_prepends_the_word_squawk'
+E
+
+Error:
+CoreExtTest#test_to_squawk_prepends_the_word_squawk:
+NoMethodError: undefined method `to_squawk' for "Hello World":String
+
+
+bin/test /path/to/yaffle/test/core_ext_test.rb:4
+
+.
+
+Finished in 0.003358s, 595.6483 runs/s, 297.8242 assertions/s.
+
+2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
 ```
 
 Отлично - теперь мы готовы начать разработку.
@@ -105,7 +115,7 @@ String.class_eval do
 end
 ```
 
-Чтобы проверить, что этот метод делает то, что нужно, запустите юнит тесты с помощью `rake` из директории плагина.
+Чтобы проверить, что этот метод делает то, что нужно, запустите юнит тесты с помощью `bin/test` из директории плагина.
 
 ```bash
   2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
@@ -167,7 +177,6 @@ end
 require 'test_helper'
 
 class ActsAsYaffleTest < ActiveSupport::TestCase
-
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
     assert_equal "last_squawk", Hickwall.yaffle_text_field
   end
@@ -175,24 +184,36 @@ class ActsAsYaffleTest < ActiveSupport::TestCase
   def test_a_wickwalls_yaffle_text_field_should_be_last_tweet
     assert_equal "last_tweet", Wickwall.yaffle_text_field
   end
-
 end
 ```
 
-При запуске `rake` вы увидите следующее:
+При запуске `bin/test` вы увидите следующее:
 
 ```
-    1) Error:
-  ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
-  NameError: uninitialized constant ActsAsYaffleTest::Hickwall
-    /path/to/yaffle/test/acts_as_yaffle_test.rb:6:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
+# Running:
 
-    2) Error:
-  ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
-  NameError: uninitialized constant ActsAsYaffleTest::Wickwall
-    /path/to/yaffle/test/acts_as_yaffle_test.rb:10:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
+..E
 
-  4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
+Error:
+ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
+NameError: uninitialized constant ActsAsYaffleTest::Wickwall
+
+bin/test /path/to/yaffle/test/acts_as_yaffle_test.rb:8
+
+E
+
+Error:
+ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
+NameError: uninitialized constant ActsAsYaffleTest::Hickwall
+
+
+bin/test /path/to/yaffle/test/acts_as_yaffle_test.rb:4
+
+
+
+Finished in 0.004812s, 831.2949 runs/s, 415.6475 assertions/s.
+
+4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
 ```
 
 Это сообщает нам об отсутствии необходимых моделей (Hickwall и Wickwall), которые мы пытаемся протестировать. Эти модели можно с легкостью создать в нашем  "dummy" приложении Rails, запустив следующие команды в директории test/dummy:
@@ -207,7 +228,7 @@ $ bin/rails generate model Wickwall last_squawk:string last_tweet:string
 
 ```bash
 $ cd test/dummy
-$ bin/rake db:migrate
+$ bin/rails db:migrate
 ```
 
 Пока вы тут, измените модели Hickwall и Wickwall так, чтобы они знали, что они должны действовать как дятлы.
@@ -215,22 +236,22 @@ $ bin/rake db:migrate
 ```ruby
 # test/dummy/app/models/hickwall.rb
 
-class Hickwall < ActiveRecord::Base
+class Hickwall < ApplicationRecord
   acts_as_yaffle
 end
 
 # test/dummy/app/models/wickwall.rb
 
-class Wickwall < ActiveRecord::Base
+class Wickwall < ApplicationRecord
   acts_as_yaffle yaffle_text_field: :last_tweet
 end
-
 ```
 
 Также добавим код, определяющий метод `acts_as_yaffle`.
 
 ```ruby
 # yaffle/lib/yaffle/acts_as_yaffle.rb
+
 module Yaffle
   module ActsAsYaffle
     extend ActiveSupport::Concern
@@ -246,26 +267,43 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
+# test/dummy/app/models/application_record.rb
+
+class ApplicationRecord < ActiveRecord::Base
+  include Yaffle::ActsAsYaffle
+
+  self.abstract_class = true
+end
 ```
 
-Затем можно вернуться в корневую директорию плагина (`cd ../..`) и перезапустить тесты с помощью `rake`.
+Затем можно вернуться в корневую директорию плагина (`cd ../..`) и перезапустить тесты с помощью `bin/test`.
 
 ```
-    1) Error:
-  ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
-  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x007fd105e3b218>
-    activerecord (4.1.5) lib/active_record/dynamic_matchers.rb:26:in `method_missing'
-    /path/to/yaffle/test/acts_as_yaffle_test.rb:6:in `test_a_hickwalls_yaffle_text_field_should_be_last_squawk'
+# Running:
 
-    2) Error:
-  ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
-  NoMethodError: undefined method `yaffle_text_field' for #<Class:0x007fd105e409c0>
-    activerecord (4.1.5) lib/active_record/dynamic_matchers.rb:26:in `method_missing'
-    /path/to/yaffle/test/acts_as_yaffle_test.rb:10:in `test_a_wickwalls_yaffle_text_field_should_be_last_tweet'
+.E
 
-  4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
+Error:
+ActsAsYaffleTest#test_a_hickwalls_yaffle_text_field_should_be_last_squawk:
+NoMethodError: undefined method `yaffle_text_field' for #<Class:0x0055974ebbe9d8>
 
+
+bin/test /path/to/yaffle/test/acts_as_yaffle_test.rb:4
+
+E
+
+Error:
+ActsAsYaffleTest#test_a_wickwalls_yaffle_text_field_should_be_last_tweet:
+NoMethodError: undefined method `yaffle_text_field' for #<Class:0x0055974eb8cfc8>
+
+
+bin/test /path/to/yaffle/test/acts_as_yaffle_test.rb:8
+
+.
+
+Finished in 0.008263s, 484.0999 runs/s, 242.0500 assertions/s.
+
+4 runs, 2 assertions, 0 failures, 2 errors, 0 skips
 ```
 
 Подбираемся ближе... Теперь мы реализуем код метода `acts_as_yaffle`, чтобы тесты проходили.
@@ -275,7 +313,7 @@ ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
 
 module Yaffle
   module ActsAsYaffle
-   extend ActiveSupport::Concern
+    extend ActiveSupport::Concern
 
     included do
     end
@@ -289,10 +327,16 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
+# test/dummy/app/models/application_record.rb
+
+class ApplicationRecord < ActiveRecord::Base
+  include Yaffle::ActsAsYaffle
+
+  self.abstract_class = true
+end
 ```
 
-Когда запустите `rake`, все тесты должны пройти:
+Когда запустите `bin/test`, все тесты должны пройти:
 
 ```bash
   4 runs, 4 assertions, 0 failures, 0 errors, 0 skips
@@ -309,7 +353,6 @@ ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
 require 'test_helper'
 
 class ActsAsYaffleTest < ActiveSupport::TestCase
-
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
     assert_equal "last_squawk", Hickwall.yaffle_text_field
   end
@@ -361,10 +404,16 @@ module Yaffle
   end
 end
 
-ActiveRecord::Base.include(Yaffle::ActsAsYaffle)
+# test/dummy/app/models/application_record.rb
+
+class ApplicationRecord < ActiveRecord::Base
+  include Yaffle::ActsAsYaffle
+
+  self.abstract_class = true
+end
 ```
 
-Запустите `rake` в последний раз, вы должны увидеть:
+Запустите `bin/test` в последний раз, вы должны увидеть:
 
 ```
   6 runs, 6 assertions, 0 failures, 0 errors, 0 skips
