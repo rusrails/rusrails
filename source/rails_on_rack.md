@@ -58,7 +58,7 @@ end
 
 ```ruby
 # Rails.root/config.ru
-require ::File.expand_path('../config/environment', __FILE__)
+require_relative 'config/environment'
 
 run Rails.application
 ```
@@ -88,10 +88,10 @@ NOTE: `ActionDispatch::MiddlewareStack` это эквивалент `Rack::Build
 
 ### Просмотр стека промежуточных программ
 
-В Rails имеется удобный таск rake для просмотра используемого стека промежуточных программ:
+В Rails имеется удобная задача для просмотра используемого стека промежуточных программ:
 
 ```bash
-$ bin/rake middleware
+$ bin/rails middleware
 ```
 
 Для нового приложения Rails он может выдать что-то наподобие:
@@ -99,24 +99,22 @@ $ bin/rake middleware
 ```ruby
 use Rack::Sendfile
 use ActionDispatch::Static
-use Rack::Lock
-use #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x000000029a0838>
+use ActionDispatch::Executor
+use ActiveSupport::Cache::Strategy::LocalCache::Middleware
 use Rack::Runtime
 use Rack::MethodOverride
 use ActionDispatch::RequestId
 use Rails::Rack::Logger
 use ActionDispatch::ShowExceptions
+use WebConsole::Middleware
 use ActionDispatch::DebugExceptions
 use ActionDispatch::RemoteIp
 use ActionDispatch::Reloader
 use ActionDispatch::Callbacks
 use ActiveRecord::Migration::CheckPending
-use ActiveRecord::ConnectionAdapters::ConnectionManagement
-use ActiveRecord::QueryCache
 use ActionDispatch::Cookies
 use ActionDispatch::Session::CookieStore
 use ActionDispatch::Flash
-use ActionDispatch::ParamsParser
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
@@ -145,9 +143,9 @@ Rails предоставляет простой конфигурационных
 # Добавить Rack::BounceFavicon в конец
 config.middleware.use Rack::BounceFavicon
 
-# Добавить Lifo::Cache после ActiveRecord::QueryCache.
+# Добавить Lifo::Cache после ActionDispatch::Executor.
 # Передать аргумент { page_cache: false } в Lifo::Cache.
-config.middleware.insert_after ActiveRecord::QueryCache, Lifo::Cache, page_cache: false
+config.middleware.insert_after ActionDispatch::Executor, Lifo::Cache, page_cache: false
 ```
 
 #### Перемена местами промежуточных программ
@@ -167,17 +165,16 @@ config.middleware.swap ActionDispatch::ShowExceptions, Lifo::ShowExceptions
 
 ```ruby
 # config/application.rb
-config.middleware.delete "Rack::Lock"
+config.middleware.delete "Rack::Runtime"
 ```
 
-Теперь, при просмотре стека промежуточных программ, вы увидите, что `Rack::Lock` больше не является его частью.
+Теперь, при просмотре стека промежуточных программ, вы увидите, что `Rack::Runtime` больше не является его частью.
 
 ```bash
-$ bin/rake middleware
+$ bin/rails middleware
 (in /Users/lifo/Rails/blog)
 use ActionDispatch::Static
 use #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x00000001c304c8>
-use Rack::Runtime
 ...
 run Rails.application.routes
 ```
@@ -186,16 +183,16 @@ run Rails.application.routes
 
 ```ruby
 # config/application.rb
-config.middleware.delete "ActionDispatch::Cookies"
-config.middleware.delete "ActionDispatch::Session::CookieStore"
-config.middleware.delete "ActionDispatch::Flash"
+config.middleware.delete ActionDispatch::Cookies
+config.middleware.delete ActionDispatch::Session::CookieStore
+config.middleware.delete ActionDispatch::Flash
 ```
 
 Чтобы убрать промежуточные программы, относящиеся к браузеру,
 
 ```ruby
 # config/application.rb
-config.middleware.delete "Rack::MethodOverride"
+config.middleware.delete Rack::MethodOverride
 ```
 
 ### (internal-middleware-stack) Стек внутренних промежуточных программ
@@ -208,11 +205,15 @@ config.middleware.delete "Rack::MethodOverride"
 
 **`ActionDispatch::Static`**
 
-* Используется для раздачи статичных файлов. Отключена, если `config.serve_static_assets` является true.
+* Используется для раздачи статичных файлов из директории public. Отключена, если `onfig.public_file_server.enabled` является false.
 
 **`Rack::Lock`**
 
 * Устанавливает флажок `env["rack.multithread"]` в `false` и оборачивает приложение в Mutex.
+
+**`ActionDispatch::Executor`**
+
+* Используется для перезагрузки тредобезопасного кода при разработке.
 
 **`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
 
@@ -258,14 +259,6 @@ config.middleware.delete "Rack::MethodOverride"
 
 * Проверяет отложенные миграции и вызывает `ActiveRecord::PendingMigrationError`, если какие-то миграции отложены.
 
-**`ActiveRecord::ConnectionAdapters::ConnectionManagement`**
-
-* Очищает активные соединения после каждого запроса, если ключ `rack.test` в среде запроса не установлен в `true`.
-
-**`ActiveRecord::QueryCache`**
-
-* Включает кэширование запросов Active Record.
-
 **`ActionDispatch::Cookies`**
 
 * Устанавливает для запроса куки.
@@ -277,10 +270,6 @@ config.middleware.delete "Rack::MethodOverride"
 **`ActionDispatch::Flash`**
 
 * Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присвоено значение.
-
-**`ActionDispatch::ParamsParser`**
-
-* Парсит параметры запроса в `params`.
 
 **`Rack::Head`**
 
