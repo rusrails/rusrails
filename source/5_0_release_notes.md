@@ -382,7 +382,7 @@ Action Mailer
 *   Поиск шаблонов теперь учитывает локаль по умолчанию и фолбэки I18n.
     ([коммит](https://github.com/rails/rails/commit/ecb1981b))
 
-*   Рассыльщикам, создаваемым генератором, добавляется суффикс `_mailer`, в соответствии с соглашениями об именовании, использованными в контроллерах и задачах.
+*   Рассыльщикам, создаваемым генератором, добавляется суффикс `_mailer`, в соответствии с соглашениями об именовании, использованными в контроллерах и заданиях.
     ([Pull Request](https://github.com/rails/rails/pull/18074))
 
 *   Добавлены `assert_enqueued_emails` и `assert_no_enqueued_emails`.
@@ -649,21 +649,21 @@ Active Job
 
 ### Значимые изменения
 
-*   `ActiveJob::Base.deserialize` делегируется в класс задачи. Это позволяет задачам присоединить произвольные метаданные при сериализации и прочитать их при выполнении.
+*   `ActiveJob::Base.deserialize` делегируется в класс задания. Это позволяет заданиям присоединить произвольные метаданные при сериализации и прочитать их при выполнении.
     ([Pull Request](https://github.com/rails/rails/pull/18260))
 
-*   Добавлена возможность настроить адаптер очереди для каждой задачи без взаимного влияния друг на друга.
+*   Добавлена возможность настроить адаптер очереди для каждого задания без взаимного влияния друг на друга.
     ([Pull Request](https://github.com/rails/rails/pull/16992))
 
-*   Сгенерированная задача теперь по умолчанию наследуется от `app/jobs/application_job.rb`.
+*   Сгенерированное задания теперь по умолчанию наследуется от `app/jobs/application_job.rb`.
     ([Pull Request](https://github.com/rails/rails/pull/19034))
 
-*   Позволяет `DelayedJob`, `Sidekiq`, `qu`, `que` и `queue_classic` возвращать `ActiveJob::Base` id задачи как `provider_job_id`.
+*   Позволяет `DelayedJob`, `Sidekiq`, `qu`, `que` и `queue_classic` возвращать `ActiveJob::Base` id задания как `provider_job_id`.
     ([Pull Request](https://github.com/rails/rails/pull/20064),
      [Pull Request](https://github.com/rails/rails/pull/20056),
      [коммит](https://github.com/rails/rails/commit/68e3279163d06e6b04e043f91c9470e9259bbbe0))
 
-*   Реализован простой процессор `AsyncJob` и связанный `AsyncAdapter`, который складывает задачи в пул тредов `concurrent-ruby`.
+*   Реализован простой процессор `AsyncJob` и связанный `AsyncAdapter`, который складывает задания в пул тредов `concurrent-ruby`.
     ([Pull Request](https://github.com/rails/rails/pull/21257))
 
 *   Изменен адаптер по умолчанию со встроенного на асинхронный. Это лучше по умолчанию, так как тогда тесты не будут ошибочно проходить, полагаясь на поведение, проходящее синхронно.

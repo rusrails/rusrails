@@ -644,9 +644,9 @@ config.middleware.delete Rack::MethodOverride
     config.active_job.default_queue_name = :medium_priority
     ```
 
-* `config.active_job.queue_name_prefix` позволяет установить опциональный непустой префикс к названию очереди для всех задач. По умолчанию пустой и не используется.
+* `config.active_job.queue_name_prefix` позволяет установить опциональный непустой префикс к названию очереди для всех заданий. По умолчанию пустой и не используется.
 
-    Со следующей настройкой задачи будут добавляться в очередь `production_high_priority`, при запуске в production:
+    Со следующей настройкой задания будут добавляться в очередь `production_high_priority`, при запуске в production:
     ```ruby
     config.active_job.queue_name_prefix = Rails.env
     ```
@@ -660,7 +660,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_job.queue_name_delimiter` имеет значение по умолчанию `'_'`. Если `queue_name_prefix` установлена, тогда `queue_name_delimiter` соединяет префикс и название очереди без префикса.
 
-    Со следующей настройкой задачи будут добавлять в очередь `video_server.low_priority`:
+    Со следующей настройкой задания будут добавлять в очередь `video_server.low_priority`:
 
     ```ruby
     # префикс должен быть установлен для использования разделителя
