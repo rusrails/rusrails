@@ -261,14 +261,14 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
     file:     3_0_release_notes.md
-    revision: f7b5f6d88a3e5a33eb622875e699432d45659f91
-    date:     15/06/2015
+    revision: 2ea3342c56444272bfe395f2d23828d0f93f3e96
+    date:     06/08/2016
 
   - title:    Заметки о релизе Ruby on Rails 3.1
     path:     3_1_release_notes
     file:     3_1_release_notes.md
-    revision: f7b5f6d88a3e5a33eb622875e699432d45659f91
-    date:     15/06/2015
+    revision: b4c92be4711cdaa5ba8f49bd46a7962c12d78633
+    date:     19/08/2016
 
   - title:    Заметки о релизе Ruby on Rails 3.2
     path:     3_2_release_notes
@@ -279,8 +279,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.0
     path:     4_0_release_notes
     file:     4_0_release_notes.md
-    revision: f7b5f6d88a3e5a33eb622875e699432d45659f91
-    date:     15/06/2015
+    revision: 14783cf5690ba0398b4bad864a84772da4313df9
+    date:     15/04/2016
 
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes
@@ -291,8 +291,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
     file:     4_2_release_notes.md
-    revision: 1a61496ae5945c0412a3e1692c5909635fb9f27b
-    date:     08/02/2016
+    revision: 63884a1e359fb22d62bb47f030a9d62830a7e8ad
+    date:     06/06/2016
 
   - title:    Заметки о релизе Ruby on Rails 5.0
     path:     5_0_release_notes
