@@ -75,6 +75,11 @@ If `return` is needed it is recommended to explicitly define a method.
 
 Пожалуйста, используйте американский английский (*color*, *center*, *modularize* и т.д.). Обратитесь к [списку различий в написании американских и британских английских слов](http://en.wikipedia.org/wiki/American_and_British_English_spelling_differences).
 
+Оксфордская запятая
+-------------------
+
+Пожалуйста, используйте [оксфордскую запятую](https://ru.wikipedia.org/wiki/Серийная_запятая) ("red, white, and blue" вместо "red, white and blue").
+
 (example-code) Пример кода
 --------------------------
 
@@ -214,7 +219,7 @@ WARNING: Использование `+...+` для моноширинного ш
 
 ```
 $ echo "+:to_param+" | rdoc --pipe
-#=> <p><code>:to_param</code></p>
+# => <p><code>:to_param</code></p>
 ```
 
 ### Обычный шрифт
