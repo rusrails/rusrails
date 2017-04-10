@@ -189,8 +189,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
-    revision: 45747a557241041d4ec4da5b6947ebd625601e99
-    date:     13/04/2015
+    revision: 28a7c98fe665e40f40d4c69c0729ad0c0436bef2
+    date:     26/05/2016
 
   - title:    Обзор Action Cable
     path:     action-cable-overview
