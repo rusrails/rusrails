@@ -52,7 +52,7 @@ fixtures/              integration/           models/                application
 
 Схожим образом можно изменить конфигурацию среды. В этом случае можно изменить тестовую среду, изменяя опции в `config/environments/test.rb`.
 
-+NOTE: Ваши тесты запускаются с `RAILS_ENV=test`.
+NOTE: Ваши тесты запускаются с `RAILS_ENV=test`.
 
 ### Rails встретился с Minitest
 
