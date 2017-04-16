@@ -125,7 +125,7 @@ run Rails.application.routes
 
 ### Настройка стека промежуточных программ
 
-Rails предоставляет простой конфигурационных интерфейс `config.middleware` для добавления, удаления и изменения промежуточных программ в стеке промежуточных программ, из `application.rb` или конфигурационного файла определенной среды `environments/&lt;environment&gt;.rb`.
+Rails предоставляет простой конфигурационных интерфейс `config.middleware` для добавления, удаления и изменения промежуточных программ в стеке промежуточных программ, из `application.rb` или конфигурационного файла определенной среды `environments/<environment>.rb`.
 
 #### Добавление промежуточной программы
 
@@ -205,7 +205,7 @@ config.middleware.delete Rack::MethodOverride
 
 **`ActionDispatch::Static`**
 
-* Используется для раздачи статичных файлов из директории public. Отключена, если `onfig.public_file_server.enabled` является false.
+* Используется для раздачи статичных файлов из директории public. Отключена, если `config.public_file_server.enabled` является false.
 
 **`Rack::Lock`**
 
