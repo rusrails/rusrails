@@ -885,15 +885,6 @@ Mime::Type.register 'application/json-patch+json', :json_patch
 
 Так как JSON Patch только недавно был добавлен в RFC, пока еще нет множества замечательных библиотек Ruby. Один из имеющихся гемов [hana](https://github.com/tenderlove/hana) от Aaron Patterson, но в нем еще нет полной поддержки нескольких последних изменений в спецификации.
 
-(upgrading-from-rails-3-2-to-rails-4-0) Обновление с Rails 3.2 на Rails 4.0
--------------------------------------
-
-NOTE: This section is a work in progress.
-
-Если версия Rails вашего приложения сейчас старше чем 3.2.x, следует сперва обновиться до Rails 3.2, перед попыткой обновиться до Rails 4.0.
-
-Следующие изменения предназначены для обновления вашего приложения на Rails 4.0.
-
 ### Gemfile
 
 Rails 4.0 убрал группу `assets` из Gemfile. Вам нужно убрать эту строчку из Gemfile перед обновлением. Также следует обновить файл приложения (`config/application.rb`):
