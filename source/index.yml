@@ -300,10 +300,15 @@ pages:
     revision: 7718d470e9027fb1925237be65ba82f3ace660df
     date:     20/02/2017
 
+  - title:    Заметки о релизе Ruby on Rails 5.1
+    path:     5_1_release_notes
+    file:     5_1_release_notes.md
+    revision: 7902c01d1faa27fb9fa0f03bdfb90725780cf540
+    date:     28/04/2017
+
 plan:
   - file:     maintenance_policy.md
   - file:     profiling.md
-  - file:     5_1_release_notes.md
 
 old:
   - file:     2_2_release_notes.md
