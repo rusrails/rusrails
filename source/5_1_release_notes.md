@@ -423,7 +423,7 @@ Active Record
 *   Устаревший `sanitize_conditions` заменен в пользу `sanitize_sql`.
     ([Pull Request](https://github.com/rails/rails/pull/25999))
 
-*   Устаревший `supports_migrations?` заменен на адаптеры соединения.
+*   Устарел `supports_migrations?` в адаптерах соединения.
     ([Pull Request](https://github.com/rails/rails/pull/28172))
 
 *   Устарел `Migrator.schema_migrations_table_name`, вместо него используйте `SchemaMigration.table_name`.
