@@ -301,21 +301,19 @@ end
 
 С методом `new`, определенным в `ArticlesController`, если обновите <http://localhost:3000/articles/new>, увидите другую ошибку:
 
-![Template is missing for articles/new](/images/getting_started/template_is_missing_articles_new.png)
+![Template is missing for articles/new](http://guides.rubyonrails.org/images/getting_started/template_is_missing_articles_new.png)
 
 Вы получили эту ошибку, поскольку Rails ожидает, что обычные экшны, такие как этот, имеют связанные с ними вьюхи для отображения их информации. Когда нет доступных вьюх, Rails вызовет исключение.
 
 В вышеприведенном изображении конец строки был обрезан. Давайте посмотрим на полное сообщение об ошибке:
 
->Missing template articles/new, application/new with {locale:[:en], formats:[:html], handlers:[:erb, :builder, :coffee]}. Searched in: * "/path/to/blog/app/views"
+>ArticlesController#new is missing a template for this request format and variant. request.formats: ["text/html"] request.variant: [] NOTE! For XHR/Ajax or API requests, this action would normally respond with 204 No Content: an empty white screen. Since you're loading it in a web browser, we assume that you expected to actually render a template, not… nothing, so we're showing an error to be extra-clear. If you expect 204 No Content, carry on. That's what you'll get from an XHR or API request. Give it a shot.
 
 Как много букв! Давайте быстро пробежимся и поймем, что означает каждая часть.
 
 Первая часть указывает, какой шаблон отсутствует. В нашем случае, шаблон `articles/new`. Rails сперва ищет этот шаблон. Если не находит, он пытается загрузить шаблон с именем `application/new`. Он так ищет, поскольку `ArticlesController` унаследован от `ApplicationController`.
 
-Следующая часть сообщения содержит хэш. Ключ `:locale` в этом хэше просто показывает, на каком языке должен быть получен шаблон. По умолчанию это английский шаблон - или "en". Следующий ключ `:formats` определяет формат шаблона для отдачи в отклик. Формат по умолчанию `:html`, таким образом, Rails ищет шаблон HTML. Последний ключ, `:handlers`, говорит нам, какие _обработчики шаблона_ могут быть использованы для рендеринга нашего шаблона. `:erb` в основном используется для шаблонов HTML, `:builder` используется для шаблонов XML, и `:coffee` использует CoffeeScript для создания шаблонов JavaScript.
-
-Заключительная часть этого сообщения говорит нам, где Rails искал шаблоны. Шаблоны в простом приложении Rails, таком как наше, содержатся в одном месте, но в более сложных приложениях, они могут находиться в разных местах.
+Следующая часть сообщения содержит `request.formats`, который определяет формат шаблона для отдачи в отклик. Формат по умолчанию `text/html`, поскольку мы запросили эту страницу через браузер, поэтому Rails ищет шаблон HTML. `request.variants` указывает, какие физические устройства будут обслуживаться в отклике, и помогает Rails определять, какой шаблон использовать в отклике. Он пустой из-за того, что информация не предоставлена.
 
 Простейшим шаблоном, работающим в данном случае, будет расположенный в `app/views/articles/new.html.erb`. Расширение этого файла важно: первое расширение это _формат_ шаблона, а второе расширение это _обработчик_, который будет использован. Rails пытается найти шаблон с именем `articles/new` в `app/views` приложения. Форматом для этого шаблона может быть только `html`, а обработчиком должен быть один из `erb`, `builder` или `coffee`. Поскольку мы хотим создать новую форму HTML, будем использовать язык `ERB`, разработанный, чтобы внедрять Ruby в HTML.
 
