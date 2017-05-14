@@ -219,8 +219,8 @@ pages:
   - title:    Использование Rails для API-приложений
     path:     api-app
     file:     api_app.md
-    revision: 24f9c03d52ad4c7f081cc7a9561946109b3ad500
-    date:     04/10/2015
+    revision: e464b3cb3b32f968758f21549b17e4d0338e9dd0
+    date:     16/05/2016
 
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
