@@ -1,4 +1,4 @@
-# forked from https://github.com/lifo/docrails/blob/master/guides/rails_guides/markdown/renderer.rb
+# forked from https://github.com/rails/rails/blob/master/guides/rails_guides/markdown/renderer.rb
 class Rusrails::Markdown
   def render(body)
     engine.render(body)

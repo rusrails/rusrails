@@ -48,7 +48,7 @@
 Хотите помочь с переводами?
 ---------------------------
 
-Для удобного перевода, каждое руководство привязано к определенной ревизии [rails/docrails](https://github.com/rails/docrails/tree/master/guides/source),
+Для удобного перевода, каждое руководство привязано к определенной ревизии [rails/rails](https://github.com/rails/rails/tree/master/guides/source),
 в файле [source/index.yml](https://github.com/morsbox/rusrails/blob/master/source/index.yml).
 Таким образом, указывается заголовок на русском, имя файла, url, ревизия и дата коммита.
 

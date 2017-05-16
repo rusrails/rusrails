@@ -73,12 +73,12 @@ namespace :docrails do
     @docrails ||= if Dir.exists?(docrails_path)
       Git.open(docrails_path).tap(&:pull)
     else
-      Git.clone 'git@github.com:rails/docrails.git', 'docrails', path: docrails_path(false)
+      Git.clone 'git@github.com:rails/rails.git', 'rails', path: docrails_path(false)
     end
   end
 
   def docrails_path(inside = true)
-    path = ['tmp', inside ? 'docrails' : nil].compact
+    path = ['tmp', inside ? 'rails' : nil].compact
     Rails.root.join(*path)
   end
 
