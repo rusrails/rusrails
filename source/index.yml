@@ -207,8 +207,8 @@ pages:
   - title:    Rails on Rack
     path:     rails-on-rack
     file:     rails_on_rack.md
-    revision: e7bb3cd4aed7bc973186ae38312796d573ecafcf
-    date:     31/10/2016
+    revision: c134a17b3d740ab1578cdd8da8aba3909910feb2
+    date:     10/04/2017
 
   - title:    Создание и настройка генераторов Rails
     path:     generators
