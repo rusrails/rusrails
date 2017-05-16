@@ -87,8 +87,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 30433253eda59656b1060d6ccc5e1b8e5913c331
-    date:     23/11/2016
+    revision: f77a6be8d23f048ced4fac54f1f4caea5e0749d7
+    date:     29/03/2017
 
   - title:    Роутинг в Rails
     path:     rails-routing
