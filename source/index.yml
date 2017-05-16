@@ -231,8 +231,8 @@ pages:
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
     file:     api_documentation_guidelines.md
-    revision: 006cd081ebce6b61188b625c016f28c84fcb6988
-    date:     20/06/2016
+    revision: 668f8691f1017042e238497d1a5b7b8bf1c43819
+    date:     08/04/2017
 
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     ruby_on_rails_guides_guidelines
