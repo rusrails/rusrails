@@ -54,7 +54,7 @@ $ exec ruby bin/rails server
 
 ```ruby
 #!/usr/bin/env ruby
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
+APP_PATH = File.expand_path('../config/application', __dir__)
 require_relative '../config/boot'
 require 'rails/commands'
 ```
@@ -66,7 +66,7 @@ require 'rails/commands'
 `config/boot.rb` содержит:
 
 ```ruby
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
 require 'bundler/setup' # Set up gems listed in the Gemfile.
 ```
@@ -105,7 +105,7 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 Как только завершится `config/boot.rb`, следующим файлом, который будет затребован, является `rails/commands`, который помогает расширить псевдонимы. В нашем случае, массив `ARGV` просто содержит `server`, который будет передан дальше:
 
 ```ruby
-ARGV << '--help' if ARGV.empty?
+require "rails/command"
 
 aliases = {
   "g"  => "generate",
@@ -120,29 +120,31 @@ aliases = {
 command = ARGV.shift
 command = aliases[command] || command
 
-require 'rails/commands/commands_tasks'
-
-Rails::CommandsTasks.new(ARGV).run_command!(command)
+Rails::Command.invoke command, ARGV
 ```
-
-TIP: Как видите, пустой список ARGV приведет к показу помощи Rails.
 
 Если бы мы использовали `s` вместо `server`, Rails использовал бы определенные тут псевдонимы `aliases` для поиска соответствующей команды.
 
-### `rails/commands/commands_tasks.rb`
+### `rails/command.rb`
 
-Если кто-то напишет неверную команду rails, в ответ `run_command` выдаст сообщение об ошибке. Если команда правильная, будет вызван метод с тем же именем.
+Когда кто-то вводит команду Rails, `invoke` пытается найти команду для данного пространства имен и выполнить команду, если она найдена.
+
+Как показано, `Rails::Command` выводит справку автоматически, если `args` пустой.
 
 ```ruby
-COMMAND_WHITELIST = %w(plugin generate destroy console server dbconsole application runner new version help)
-
-def run_command!(command)
-  command = parse_command(command)
-
-  if COMMAND_WHITELIST.include?(command)
-    send(command)
-  else
-    run_rake_task(command)
+module Rails::Command
+  class << self
+    def invoke(namespace, args = [], **config)
+      namespace = namespace.to_s
+      namespace = "help" if namespace.blank? || HELP_MAPPINGS.include?(namespace)
+      namespace = "version" if %w( -v --version ).include? namespace
+    
+      if command = find_by_namespace(namespace)
+        command.perform(namespace, args, config)
+      else
+        find_by_namespace("rake").perform(namespace, args, config)
+      end
+    end
   end
 end
 ```
@@ -150,49 +152,34 @@ end
 С помощью команды `server` Rails далее запустит следующий код:
 
 ```ruby
-def set_application_directory!
-  Dir.chdir(File.expand_path('../../', APP_PATH)) unless File.exist?(File.expand_path("config.ru"))
-end
-
-def server
-  set_application_directory!
-  require_command!("server")
-
-  Rails::Server.new.tap do |server|
-    # We need to require application after the server sets environment,
-    # otherwise the --environment option given to the server won't propagate.
-    require APP_PATH
-    Dir.chdir(Rails.application.root)
-    server.start
+module Rails
+  module Command
+    class ServerCommand < Base # :nodoc:
+      def perform
+        set_application_directory!
+  
+        Rails::Server.new.tap do |server|
+          # Require application after server sets environment to propagate
+          # the --environment option.
+          require APP_PATH
+          Dir.chdir(Rails.application.root)
+          server.start
+        end
+      end
+    end
   end
 end
-
-def require_command!(command)
-  require "rails/commands/#{command}"
-end
 ```
 
-Этот файл изменит корень директории (путь на две директории выше `APP_PATH`, указывающего на `config/application.rb`), но только если не найден файл `config.ru`. Затем он затребует `rails/commands/server`, устанавливающий класс `Rails::Server`.
-
-```ruby
-require 'fileutils'
-require 'optparse'
-require 'action_dispatch'
-require 'rails'
-
-module Rails
-  class Server < ::Rack::Server
-```
-
-`fileutils` и `optparse` - это стандартные библиотеки Ruby, представляющие вспомогательные функции для работы с файлами и парсинга опций.
+Этот файл изменит корень директории (путь на две директории выше `APP_PATH`, указывающего на `config/application.rb`), но только если не найден файл `config.ru`. Затем он запускает класс `Rails::Server`.
 
 ### `actionpack/lib/action_dispatch.rb`
 
 Action Dispatch - это компонент маршрутизации фреймворка Rails. Он добавляет такой функционал, как роутинг, сессию и промежуточные программы.
 
-### `rails/commands/server.rb`
+### `rails/commands/server/server_command.rb`
 
-Класс `Rails::Server` определен в этом файле, как унаследованный от `Rack::Server`. Когда вызывается `Rails::Server.new`, вызывается метод `initialize` в `rails/commands/server.rb`:
+Класс `Rails::Server` определен в этом файле, как унаследованный от `Rack::Server`. Когда вызывается `Rails::Server.new`, вызывается метод `initialize` в `rails/commands/server/server_command.rb`:
 
 ```ruby
 def initialize(*)
@@ -218,7 +205,7 @@ end
 
 В нашем случае, `options` будут `nil`, поэтому в этом методе ничего не происходит.
 
-После завершения `super` в `Rack::Server`, мы возвращаемся в `rails/commands/server.rb`. Далее вызывается `set_environment` в контексте объекта `Rails::Server`, и этот метод, на первый взгляд, не делает слишком многого:
+После завершения `super` в `Rack::Server`, мы возвращаемся в `rails/commands/server/server_command.rb`. Далее вызывается `set_environment` в контексте объекта `Rails::Server`, и этот метод, на первый взгляд, не делает слишком многого:
 
 ```ruby
 def set_environment
@@ -255,17 +242,15 @@ end
 
 ```ruby
 def default_options
-  environment  = ENV['RACK_ENV'] || 'development'
-  default_host = environment == 'development' ? 'localhost' : '0.0.0.0'
-
-  {
-    :environment => environment,
-    :pid         => nil,
-    :Port        => 9292,
-    :Host        => default_host,
-    :AccessLog   => [],
-    :config      => "config.ru"
-  }
+  super.merge(
+    Port:               ENV.fetch("PORT", 3000).to_i,
+    Host:               ENV.fetch("HOST", "localhost").dup,
+    DoNotReverseLookup: true,
+    environment:        (ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "development").dup,
+    daemonize:          false,
+    caching:            nil,
+    pid:                Options::DEFAULT_PID_PATH,
+    restart_cmd:        restart_command)
 end
 ```
 
@@ -277,20 +262,21 @@ def opt_parser
 end
 ```
 
-Класс опций **определен** в `Rack::Server`, но переопределен в `Rails::Server`, чтобы он мог принимать различные аргументы. Его метод `parse!` начинается со следующего:
+Класс опций **определен** в `Rack::Server`, но переопределен в `Rails::Server`, чтобы он мог принимать различные аргументы. Его метод `parse!` выглядит следующим образом:
 
 ```ruby
 def parse!(args)
   args, options = args.dup, {}
 
-  opt_parser = OptionParser.new do |opts|
-    opts.banner = "Usage: rails server [puma, thin, etc] [options]"
-    opts.on("-p", "--port=port", Integer,
-            "Runs Rails on the specified port.", "Default: 3000") { |v| options[:Port] = v }
-  ...
+  option_parser(options).parse! args
+  
+  options[:log_stdout] = options[:daemonize].blank? && (options[:environment] || Rails.env) == "development"
+  options[:server]     = args.shift
+  options
+end
 ```
 
-Этот метод установит ключи для `options`, которые затем будут доступны Rails для определения того, как должен быть запущен его сервер. После того, как `initialize` будет закончен, мы вернемся обратно в `rails/server`, где требуется `APP_PATH` (который был установлен ранее).
+Этот метод установит ключи для `options`, которые затем будут доступны Rails для определения того, как должен быть запущен его сервер. После того, как `initialize` будет закончен, мы вернемся обратно к серверной команде, где требуется `APP_PATH` (который был установлен ранее).
 
 ### `config/application`
 
@@ -305,6 +291,7 @@ def start
   print_boot_information
   trap(:INT) { exit }
   create_tmp_directories
+  setup_dev_caching
   log_to_stdout if options[:log_stdout]
 
   super
@@ -323,19 +310,27 @@ private
       FileUtils.mkdir_p(File.join(Rails.root, 'tmp', dir_to_make))
     end
   end
+ 
+  def setup_dev_caching
+    if options[:environment] == "development"
+      Rails::DevCaching.enable_by_argument(options[:caching])
+    end
+  end
 
   def log_to_stdout
     wrapped_app # touch the app so the logger is set up
 
-    console = ActiveSupport::Logger.new($stdout)
+    console = ActiveSupport::Logger.new(STDOUT)
     console.formatter = Rails.logger.formatter
     console.level = Rails.logger.level
 
-    Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
+    unless ActiveSupport::Logger.logger_outputs_to?(Rails.logger, STDOUT)
+      Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
+    end
   end
 ```
 
-Это то место, где происходит первый вывод на экран при инициализации Rails. Этот метод создает ловушку (trap) для сигналов `INT`, поэтому, при нажатии  `CTRL-C`, сервер завершит процесс. Как видим дальше по коду, он создает директории `tmp/cache`, `tmp/pids` и `tmp/sockets`. Затем он вызывает `wrapped_app`, который ответственен за создание приложения Rack, а затем создает и присваивает экземпляр `ActiveSupport::Logger`.
+Это то место, где происходит первый вывод на экран при инициализации Rails. Этот метод создает ловушку (trap) для сигналов `INT`, поэтому, при нажатии  `CTRL-C`, сервер завершит процесс. Как видим дальше по коду, он создает директории `tmp/cache`, `tmp/pids` и `tmp/sockets`. Затем он включает кэширование в development, если `rails server` вызывается с `--dev-caching`. Наконец, он вызывает `wrapped_app`, который ответственен за создание приложения Rack, а затем создает и присваивает экземпляр `ActiveSupport::Logger`.
 
 Метод `super` вызовет `Rack::Server.start`, определение которого выглядит так:
 
@@ -489,7 +484,7 @@ require "rails"
   sprockets/railtie
 ).each do |railtie|
   begin
-    require "#{railtie}"
+    require railtie
   rescue LoadError
   end
 end
@@ -591,7 +586,7 @@ DEFAULT_OPTIONS = {
 }
 
 def self.run(app, options = {})
-  options  = DEFAULT_OPTIONS.merge(options)
+  options = DEFAULT_OPTIONS.merge(options)
 
   if options[:Verbose]
     app = Rack::CommonLogger.new(app, STDOUT)
