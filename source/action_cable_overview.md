@@ -42,10 +42,10 @@ module ApplicationCable
       self.current_user = find_verified_user
     end
 
-    protected
+    private
       def find_verified_user
-        if current_user = User.find_by(id: cookies.signed[:user_id])
-          current_user
+        if verified_user = User.find_by(id: cookies.signed[:user_id])
+          verified_user
         else
           reject_unauthorized_connection
         end
@@ -192,7 +192,7 @@ WebNotificationsChannel.broadcast_to(
 )
 ```
 
-Вызов `WebNotificationsChannel.broadcast_to` помещает сообщение в очередь pubsub текущего адаптера подписки (по умолчанию Redis) под отдельным именем трансляции для каждого пользователя. Для пользователя с ID 1, имя трансляции будет `web_notifications:1`.
+Вызов `WebNotificationsChannel.broadcast_to` помещает сообщение в очередь pubsub текущего адаптера подписки (по умолчанию `redis` для production и `async` для development и test сред) под отдельным именем трансляции для каждого пользователя. Для пользователя с ID 1, имя трансляции будет `web_notifications:1`.
 
 Канал проинструктирован писать в поток все, что приходит в `web_notifications:1`, непосредственно на клиент, вызывая колбэк `received`.
 
@@ -359,7 +359,7 @@ App.cable.subscriptions.create "AppearanceChannel",
   buttonSelector = "[data-behavior~=appear_away]"
 
   install: ->
-    $(document).on "page:change.appearance", =>
+    $(document).on "turbolinks:load.appearance", =>
       @appear()
 
     $(document).on "click.appearance", buttonSelector, =>
@@ -438,7 +438,7 @@ WebNotificationsChannel.broadcast_to(
 
 ### Адаптер подписки
 
-По умолчанию Action Cable ищет конфигурационный файл в `config/cable.yml`. Этот файл должен указывать адаптер и URL для каждой среды Rails. Подробности об адаптерах смотрите в разделе [Зависимости](#dependencies).
+По умолчанию Action Cable ищет конфигурационный файл в `config/cable.yml`. Этот файл должен указывать адаптер для каждой среды Rails. Подробности об адаптерах смотрите в разделе [Зависимости](#dependencies).
 
 ```yaml
 development:
@@ -450,7 +450,24 @@ test:
 production:
   adapter: redis
   url: redis://10.10.3.153:6381
+  channel_prefix: appname_production
 ```
+
+#### Конфигурация адаптера
+
+Ниже приведен список адаптеров подписки, доступных для конечных пользователей.
+
+##### Адаптер async
+
+Асинхронный адаптер предназначен для development/testing сред и не должен использоваться в production.
+
+##### Адаптер redis
+
+Action Cable содержит два адаптера Redis: "normal" Redis и Событийный Redis. Оба адаптера требуют от пользователей предоставления URL, указывающего на сервер Redis. Кроме того, может быть предоставлен channel_prefix, чтобы избежать конфликта имен каналов при использовании одного и того же сервера Redis для нескольких приложений. Смотрите [документацию Redis PubSub](https://redis.io/topics/pubsub#database-amp-scoping) для получения дополнительной информации.
+
+##### Адаптер PostgreSQL
+
+Адаптер PostgreSQL использует пул подключений Active Record и, соответственно, конфигурацию базы данных приложения `config/database.yml` для ее подключения. Это может измениться в будущем. [#27214](https://github.com/rails/rails/issues/27214)
 
 ### Допустимые домены запроса
 
