@@ -241,12 +241,6 @@ json.email("alex@example.com")
 <%= render partial: "product", locals: { product: @product } %>
 ```
 
-С помощью опции `as` можно указать другое имя для локальной переменной. Например, если мы хотим, чтобы она была `item` вместо `product`, можно сделать:
-
-```erb
-<%= render partial: "product", as: "item" %>
-```
-
 Опцию `object` можно использовать, чтобы непосредственно указать, какой объект рендерится в партиале; полезно, когда объект шаблона находится где-то еще (например, в другой переменной экземпляра или в локальной переменной).
 
 Например, вместо:
@@ -261,10 +255,16 @@ json.email("alex@example.com")
 <%= render partial: "product", object: @item %>
 ```
 
-Опции `object` и `as` можно использовать вместе:
+С помощью опции `as` мы можем указать другое имя для данной локальной переменной. Например, если бы мы хотели, чтобы оно было `item` вместо` product`, мы бы сделали:
 
 ```erb
 <%= render partial: "product", object: @item, as: "item" %>
+```
+
+Это эквивалентно:
+
+```erb
+<%= render partial: "product", locals: { item: @item } %>
 ```
 
 #### Рендеринг коллекций
@@ -426,7 +426,7 @@ image_path("edit.png") # => /assets/edit-2d1a2db63fc738690021fedb5a65b68e.png
 
 #### image_url
 
-Вычисляет url ресурса картинки в директории `app/assets/images`. Он вызовет `image_path` и соединит с вашим текущим хостом или хостом ресурсов.
+Вычисляет URL ресурса картинки в директории `app/assets/images`. Он вызовет `image_path` и соединит с вашим текущим хостом или хостом ресурсов.
 
 ```ruby
 image_url("edit.png") # => http://www.example.com/assets/edit.png
@@ -477,7 +477,7 @@ javascript_path "common" # => /assets/common.js
 
 #### javascript_url
 
-Вычисляет url ресурса JavaScript в директории `app/assets/javascripts`. Он вызовет `javascript_path` и соединит с вашим текущим хостом или хостом ресурсов.
+Вычисляет URL ресурса JavaScript в директории `app/assets/javascripts`. Он вызовет `javascript_path` и соединит с вашим текущим хостом или хостом ресурсов.
 
 ```ruby
 javascript_url "common" # => http://www.example.com/assets/common.js
@@ -514,7 +514,7 @@ stylesheet_path "application" # => /assets/application.css
 
 #### stylesheet_url
 
-Вычисляет url ресурса таблицы стилей в директории `app/assets/stylesheets`. Он вызовет `stylesheet_path` и соединит с вашим текущим хостом или хостом ресурсов.
+Вычисляет URL ресурса таблицы стилей в директории `app/assets/stylesheets`. Он вызовет `stylesheet_path` и соединит с вашим текущим хостом или хостом ресурсов.
 
 ```ruby
 stylesheet_url "application" # => http://www.example.com/assets/application.css
@@ -583,7 +583,7 @@ end
 
 #### cache
 
-Метод для кэширования фрагмента вьюхи, в отличие от целого экшна или страницы. Эта техника полезна для кэширования кусочков, таких как меню, списки заголовков, статичные фрагменты HTML и так далее. Этот метод принимает блок, содержащий код, который вы хотите закэшировать. Подробности смотрите в  `ActionController::Caching::Fragments`.
+Метод для кэширования фрагмента вьюхи, в отличие от целого экшна или страницы. Эта техника полезна для кэширования кусочков, таких как меню, списки заголовков, статичные фрагменты HTML и так далее. Этот метод принимает блок, содержащий код, который вы хотите закэшировать. Подробности смотрите в  `AbstractController::Caching::Fragments`.
 
 ```erb
 <% cache do %>
@@ -1232,7 +1232,7 @@ file_field_tag 'attachment'
 
 #### form_tag
 
-Начинает тег form, указывающий action url, настроенный с помощью `url_for_options`, как в `ActionController::Base#url_for`.
+Начинает тег form, указывающий action URL, настроенный с помощью `url_for_options`, как в `ActionController::Base#url_for`.
 
 ```html+erb
 <%= form_tag '/articles' do %>
@@ -1404,7 +1404,7 @@ number_to_percentage(100, precision: 0)        # => 100%
 
 #### number_to_phone
 
-Форматирует число в телефонный номер США.
+Форматирует число в телефонный номер (по умолчанию США).
 
 ```ruby
 number_to_phone(1235551234) # => 123-555-1234
@@ -1423,8 +1423,8 @@ number_with_delimiter(12345678) # => 12,345,678
 Форматирует число с помощью определенного уровня точности, по умолчанию 3.
 
 ```ruby
-number_with_precision(111.2345)     # => 111.235
-number_with_precision(111.2345, 2)  # => 111.23
+number_with_precision(111.2345)                # => 111.235
+number_with_precision(111.2345, precision: 2)  # => 111.23
 ```
 
 ### SanitizeHelper
@@ -1478,7 +1478,8 @@ strip_links('Blog: <a href="http://myblog.com/">Visit</a>.')
 
 #### strip_tags(html)
 
-Обрезает все теги HTML из html, включая комментарии. Он использует html-scanner tokenizer, поэтому способность парсинга ограничена этим html-scanner.
+Обрезает все теги HTML из html, включая комментарии.
+Эта функция доступна, если подключен гем rails-html-sanitizer.
 
 ```ruby
 strip_tags("Strip <i>these</i> tags!")
