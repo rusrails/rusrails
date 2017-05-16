@@ -1122,7 +1122,7 @@ Rails 4.0 убрал псевдоним `j` для `ERB::Util#json_escape`, та
 
 #### Cache
 
-Метод кеширования изменился между Rails 3.x и 4.0. Вы должны [изменить пространство имен](http://guides.rubyonrails.org/caching_with_rails.html#activesupport-cache-store) и развертывать с холодным кешем.
+Метод кэширования изменился между Rails 3.x и 4.0. Вы должны [изменить пространство имен](/caching-with-rails-an-overview#activesupport-cache-store) и развертывать с холодным кэшем.
 
 ### Порядок загрузки хелперов
 
