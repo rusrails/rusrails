@@ -278,7 +278,7 @@ end
 
 ```bash
 => Booting Puma
-=> Rails 5.0.0 application starting in development on http://0.0.0.0:3000
+=> Rails 5.1.0 application starting in development on http://0.0.0.0:3000
 => Run `rails server -h` for more startup options
 Puma starting in single mode...
 * Version 3.4.0 (ruby 2.3.1-p112), codename: Owl Bowl Brawl
@@ -401,11 +401,11 @@ Processing by ArticlesController#index as HTML
 --> #0  ArticlesController.index
       at /PathToProject/app/controllers/articles_controller.rb:8
     #1  ActionController::BasicImplicitRender.send_action(method#String, *args#Array)
-      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/basic_implicit_render.rb:4
+      at /PathToGems/actionpack-5.1.0/lib/action_controller/metal/basic_implicit_render.rb:4
     #2  AbstractController::Base.process_action(action#NilClass, *args#Array)
-      at /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb:181
+      at /PathToGems/actionpack-5.1.0/lib/abstract_controller/base.rb:181
     #3  ActionController::Rendering.process_action(action, *args)
-      at /PathToGems/actionpack-5.0.0/lib/action_controller/metal/rendering.rb:30
+      at /PathToGems/actionpack-5.1.0/lib/action_controller/metal/rendering.rb:30
 ...
 ```
 
@@ -414,7 +414,7 @@ Processing by ArticlesController#index as HTML
 ```
 (byebug) frame 2
 
-[176, 185] in /PathToGems/actionpack-5.0.0/lib/abstract_controller/base.rb
+[176, 185] in /PathToGems/actionpack-5.1.0/lib/abstract_controller/base.rb
    176:       # is the intended way to override action dispatching.
    177:       #
    178:       # Notice that the first argument is the method to be dispatched
@@ -544,7 +544,6 @@ TIP: Также можно шагнуть в режим **irb** с команд�
 @new_record = true
 @readonly = false
 @transaction_state = nil
-@txn = nil
 ```
 
 Можете также использовать `display` для запуска просмотра переменных. Это хороший способ трассировки значений переменной на протяжении выполнения.
@@ -603,13 +602,13 @@ Processing by ArticlesController#index as HTML
 ```
 (byebug) step
 
-[49, 58] in /PathToGems/activesupport-5.0.0/lib/active_support/core_ext/numeric/time.rb
+[49, 58] in /PathToGems/activesupport-5.1.0/lib/active_support/core_ext/numeric/time.rb
    49:
    50:   # Returns a Duration instance matching the number of weeks provided.
    51:   #
    52:   #   2.weeks # => 14 days
    53:   def weeks
-=> 54:     ActiveSupport::Duration.new(self * 7.days, [[:days, self * 7]])
+=> 54:     ActiveSupport::Duration.weeks(self)
    55:   end
    56:   alias :week :weeks
    57:
@@ -812,6 +811,7 @@ NOTE: Только одна консоль может быть отрисова�
 * [Exception Notifier](https://github.com/smartinez87/exception_notification/tree/master): Предоставляет объект рассыльщика и набор шаблонов по умолчанию для отправки уведомлений по email, когда происходят ошибки в приложении в Rails.
 * [Better Errors](https://github.com/charliesome/better_errors): Заменяет стандартную страницу ошибки Rails новой, содержащей больше контекстной информации, такой как исходный код и просмотр переменных.
 * [RailsPanel](https://github.com/dejan/rails_panel): Расширение для Chrome для разработки на Rails, которое подхватывает изменения в development.log. Всю информацию о запросах к приложению Rails можно смотреть в браузере, в панели Developer Tools. Предоставляет обзор времени db/rendering/total, списка параметров, отрендеренных вьюх и так далее.
+* [Pry](https://github.com/pry/pry) альтернатива IRB и интерактивная консоль для разработчиков.
 
 Ссылки
 ------
