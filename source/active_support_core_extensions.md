@@ -128,36 +128,50 @@ NOTE: Определено в `active_support/core_ext/object/blank.rb`.
 
 ### `duplicable?`
 
-Некоторые фундаментальные объекты в Ruby являются одноэлементными. Например, в течение жизненного цикла программы число 1 всегда относится к одному экземпляру:
+В Ruby 2.4 большинство объектов могут дублироваться с помощью `dup` или `clone`, за исключением методов и определенных чисел. Хотя Ruby 2.2 и 2.3 не могут дублировать `nil`, `false`, `true` и символы, а также экземпляры `Float`, `Fixnum` и `Bignum`.
 
 ```ruby
-1.object_id                 # => 3
-Math.cos(0).to_i.object_id  # => 3
+"foo".dup        # => "foo"
+"".dup           # => ""
+1.method(:+).dup # => TypeError: allocator undefined for Method
+Complex(0).dup   # => TypeError: can't copy Complex
 ```
 
-Следовательно, нет никакого способа дублировать эти объекты с помощью `dup` или `clone`:
+Active Support предоставляет `duplicable?` для запроса к объекту об этом:
 
 ```ruby
-true.dup  # => TypeError: can't dup TrueClass
+"foo".duplicable?        # => true
+"".duplicable?           # => true
+Rational(1).duplicable?  # => false
+Complex(1).duplicable?   # => false
+1.method(:+).duplicable? # => false
 ```
 
-Некоторые числа, не являющиеся одноэлементными, также не могут быть дублированы:
+`duplicable?` соответствует `dup` Ruby согласно версии Ruby.
+
+Так, в 2.4:
 
 ```ruby
-0.0.clone        # => allocator undefined for Float
-(2**1024).clone  # => allocator undefined for Bignum
+nil.dup                 # => nil
+:my_symbol.dup          # => :my_symbol
+1.dup                   # => 1
+
+nil.duplicable?         # => true
+:my_symbol.duplicable?  # => true
+1.duplicable?           # => true
 ```
 
-Active Support предоставляет `duplicable?` для программного запроса к объекту о таком свойстве:
+В то время как в 2.2 и 2.3:
 
 ```ruby
-"foo".duplicable? # => true
-"".duplicable?    # => true
-0.0.duplicable?   # => false
-false.duplicable? # => false
-```
+nil.dup                 # => TypeError: can't dup NilClass
+:my_symbol.dup          # => TypeError: can't dup Symbol
+1.dup                   # => TypeError: can't dup Fixnum
 
-По определению все объекты являются `duplicable?`, кроме объектов `nil`, `false`, `true`, символов, чисел, классов и модулей.
+nil.duplicable?         # => false
+:my_symbol.duplicable?  # => false
+1.duplicable?           # => false
+```
 
 WARNING. Любой класс может запретить дублирование, убрав `dup` и `clone`, или вызвав исключение в них. Таким образом, только `rescue` может сказать, является ли данный отдельный объект дублируемым. `duplicable?` зависит от жестко заданного вышеуказанного перечня, но он намного быстрее, чем `rescue`. Используйте его, только если знаете, что жесткий перечень достаточен в конкретном случае.
 
@@ -361,7 +375,7 @@ account.to_query('company[name]')
 
 поэтому результат готов для использования в строке запроса.
 
-Массивы возвращают результат применения `to_query` к каждому элементу с `_key_[]` как ключом, и соединяет результат с помощью "&":
+Массивы возвращают результат применения `to_query` к каждому элементу с `key[]` как ключом, и соединяет результат с помощью "&":
 
 ```ruby
 [3.4, -45.6].to_query('sample')
@@ -502,54 +516,6 @@ NOTE: Определено в `active_support/core_ext/object/inclusion.rb`.
 
 Расширения для `Module`
 ---------------------
-
-### `alias_method_chain`
-
-Используя чистый Ruby можно обернуть методы в другие методы, это называется _сцепление псевдонимов (alias chaining)_.
-
-Например, скажем, что вы хотите, чтобы params были строками в функциональных тестах, как и в реальных запросах, но также хотите удобно присваивать числа и другие типы значений. Чтобы это осуществить, следует обернуть `ActionDispatch::IntegrationTest#process` следующим образом в `test/test_helper.rb`:
-
-```ruby
-ActionDispatch::IntegrationTest.class_eval do
-  # сохраняем ссылку на оригинальный метод process
-  alias_method :original_process, :process
-
-  # теперь переопределяем process и передаем в original_process
-  def process('GET', path, params: nil, headers: nil, env: nil, xhr: false)
-    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    original_process('GET', path, params: params)
-  end
-end
-```
-
-Таким образом передают работу методы `get`, `post` и т.д..
-
-В такой технике имеется риск, в случае если `:original_process` уже есть. Чтобы избежать коллизий, некоторые выбирают определенные метки, характеризующие то, что сцепление означает:
-
-```ruby
-ActionDispatch::IntegrationTest.class_eval do
-  def process_with_stringified_params(...)
-    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    process_without_stringified_params(method, path, params: params)
-  end
-  alias_method :process_without_stringified_params, :process
-  alias_method :process, :process_with_stringified_params
-end
-```
-
-Метод `alias_method_chain` предоставляет ярлык для такого примера:
-
-```ruby
-ActionDispatch::IntegrationTest.class_eval do
-  def process_with_stringified_params(...)
-    params = Hash[*params.map {|k, v| [k, v.to_s]}.flatten]
-    process_without_stringified_params(method, path, params: params)
-  end
-  alias_method_chain :process, :stringified_params
-end
-```
-
-NOTE: Определено в `active_support/core_ext/module/aliasing.rb`.
 
 ### Атрибуты
 
@@ -2021,7 +1987,7 @@ BigDecimal.new(5.00, 6).to_s("e")  # => "0.5E1"
 ```ruby
 [[1, 2], [2, 3], [3, 4]].sum    # => [1, 2, 2, 3, 3, 4]
 %w(foo bar baz).sum             # => "foobarbaz"
-{a: 1, b: 2, c: 3}.sum # => [:b, 2, :c, 3, :a, 1]
+{a: 1, b: 2, c: 3}.sum          # => [:b, 2, :c, 3, :a, 1]
 ```
 
 Сумма пустой коллекции равна нулю по умолчанию, но это может быть настроено:
@@ -2637,7 +2603,7 @@ NOTE: Определено в `active_support/core_ext/hash/except.rb`.
 
 ```ruby
 {nil => nil, 1 => 1, a: :a}.transform_keys { |key| key.to_s.upcase }
-# => {"" => nil, "A" => :a, "1" => 1}
+# => {"" => nil, "1" => 1, "A" => :a}
 ```
 
 В случае коллизии будет выбрано одно из значений. Выбранное значение не всегда будет одним и тем же для одного и того же хэша:
@@ -2679,7 +2645,7 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 
 ```ruby
 {nil => nil, 1 => 1, a: :a}.stringify_keys
-# => {"" => nil, "a" => :a, "1" => 1}
+# => {"" => nil, "1" => 1, "a" => :a}
 ```
 
 В случае коллизии будет выбрано одно из значений. Выбранное значение не всегда будет одним и тем же для одного и того же хэша:
@@ -2721,7 +2687,7 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 
 ```ruby
 {nil => nil, 1 => 1, "a" => "a"}.symbolize_keys
-# => {1=>1, nil=>nil, :a=>"a"}
+# => {nil=>nil, 1=>1, :a=>"a"}
 ```
 
 WARNING. Отметьте в предыдущем примере, что только один ключ был приведен к символу.
@@ -2798,7 +2764,7 @@ NOTE: Определено в `active_support/core_ext/hash/transform_values.rb`
 
 ```ruby
 {a: 1, b: 2, c: 3}.slice(:a, :c)
-# => {:c=>3, :a=>1}
+# => {:a=>1, :c=>3}
 
 {a: 1, b: 2, c: 3}.slice(:b, :X)
 # => {:b=>2} # несуществующие ключи игнорируются
@@ -2891,6 +2857,20 @@ end
 ```
 
 NOTE: Определено в `active_support/core_ext/regexp.rb`.
+
+### `match?`
+
+Rails реализует `Regexp#match?` для версий Ruby ниже 2.4:
+
+```ruby
+/oo/.match?('foo')    # => true
+/oo/.match?('bar')    # => false
+/oo/.match?('foo', 1) # => true
+```
+
+Бэкпорт имеет тот же интерфейс, где отсутствуют побочные эффекты в вызывающем методе, например, не устанавливает `$1` и ему подобное, но он не имеет преимуществ в скорости. Его цель состоит в том, чтобы предоставить возможность писать код, совместимый с версией 2.4. Rails сам использует это условие внутри, например.
+
+Активная поддержка  `Regex # match?`, Только если она не присутствует, так что код, выполняющийся под версией 2.4 или более поздней, запускает исходную версию и повышает производительность.
 
 Расширения для `Range`
 --------------------
