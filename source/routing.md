@@ -1,4 +1,4 @@
-Роутинг в  Rails
+Роутинг в Rails
 ================
 
 Это руководство охватывает открытые для пользователя функции роутинга Rails.
@@ -136,8 +136,7 @@ resources :videos
 get 'profile', to: 'users#show'
 ```
 
-Передавая `String` в `to:` ожидается следующий формат - `controller#action`.
-Когда используется `Symbol`, то параметр `to:` должен быть заменен на `action:`. Когда используется `String` без `#`, параметр `to:` должен быть заменен на `controller:`:
+Передавая `String` в `to:` ожидается следующий формат - `controller#action`. Когда используется `Symbol`, то опция `to:` должна быть заменена на `action:`. Когда используется `String` без `#`, опция `to:` должна быть заменена на `controller:`:
 
 ```ruby
 get 'profile', action: :show, controller: 'users'
