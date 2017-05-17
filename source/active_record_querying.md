@@ -1355,7 +1355,7 @@ class Client < ApplicationRecord
 end
 ```
 
-NOTE: `default_scope` также применяется при создании записи. Он не применяется при обновлении записи. То есть:
+NOTE: `default_scope` также применяется при создании записи, когда аргументы скоупа передаются как `Hash`. Он не применяется при обновлении записи. То есть:
 
 ```ruby
 class Client < ApplicationRecord
@@ -1364,6 +1364,16 @@ end
 
 Client.new          # => #<Client id: nil, active: true>
 Client.unscoped.new # => #<Client id: nil, active: nil>
+```
+
+Имейте в виду, что когда передаются в формате `Array`, аргументы запроса `default_scope` не могут быть преобразованы в `Hash` для назначения атрибутов по умолчанию. То есть:
+
+```ruby
+class Client < ApplicationRecord
+  default_scope { where("active = ?", true) }
+end
+
+Client.new # => #<Client id: nil, active: nil>
 ```
 
 ### Слияние скоупов
@@ -1961,4 +1971,4 @@ EXPLAIN for: SELECT `articles`.* FROM `articles`  WHERE `articles`.`user_id` IN 
 
 * MariaDB: [EXPLAIN](https://mariadb.com/kb/en/mariadb/explain/)
 
-* PostgreSQL: [Using EXPLAIN](http://www.postgresql.org/docs/current/static/using-explain.html)
+* PostgreSQL: [Using EXPLAIN](https://postgrespro.ru/docs/postgrespro/9.6/using-explain)
