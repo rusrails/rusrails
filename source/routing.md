@@ -136,7 +136,7 @@ resources :videos
 get 'profile', to: 'users#show'
 ```
 
-Передавая `String` в `to:` ожидается следующий формат - `controller#action`. Когда используется `Symbol`, то опция `to:` должна быть заменена на `action:`. Когда используется `String` без `#`, опция `to:` должна быть заменена на `controller:`:
+Передавая `String` в `to:` ожидается следующий формат - `controller#action`. Когда используется `Symbol`, опция `to:` должна быть заменена на `action:`. Когда используется `String` без `#`, опция `to:` должна быть заменена на `controller:`:
 
 ```ruby
 get 'profile', action: :show, controller: 'users'
