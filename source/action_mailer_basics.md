@@ -440,7 +440,7 @@ config.action_mailer.default_url_options = { host: 'example.com' }
 <%= user_url(@user, host: 'example.com') %>
 ```
 
-NOTE: не `GET` ссылки требуют [rails-ujs](https://github.com/rails/rails-ujs) или [jQuery UJS](https://github.com/rails/jquery-ujs)
+NOTE: не `GET` ссылки требуют [rails-ujs](https://github.com/rails/rails/blob/master/actionview/app/assets/javascripts) или [jQuery UJS](https://github.com/rails/jquery-ujs)
 и не будут работать в шаблонах рассыльщика. Они будут заменятся на простые `GET` запросы.
 
 ### Добавление картинок во вьюхах Action Mailer

@@ -117,8 +117,8 @@ pages:
   - title:    Основы Action Mailer
     path:     action-mailer-basics
     file:     action_mailer_basics.md
-    revision: 9cc2f50f9cc3191fd796af68d09826c67c02a572
-    date:     19/03/2017
+    revision: 40f226ae94a726ca8935062a8aac50af8cad1de9
+    date:     29/03/2017
 
   - title:    Основы Active Job
     path:     active_job_basics
