@@ -28,7 +28,7 @@ Rails предлагает четыре стандартных места для
 
 В целом, работа по конфигурированию Rails означает как настройку компонентов Rails, так и настройку самого Rails. Конфигурационный файл `config/application.rb` и конфигурационные файлы конкретных сред (такие как `config/environments/production.rb`) позволяют определить различные настройки, которые можно придать всем компонентам.
 
-Например, файл `config/application.rb` включает эту настройку:
+Например, вы можете добавить эту настройку в файл `config/application.rb`:
 
 ```ruby
 config.time_zone = 'Central Time (US & Canada)'
@@ -528,6 +528,8 @@ config.middleware.delete Rack::MethodOverride
 * `config.action_view.automatically_disable_submit_tag` определяет, должен ли submit_tag автоматически отключаться при клике, это по умолчанию `true`.
 
 * `config.action_view.debug_missing_translation` определяет, должны ли ключи отсутствующих переводов оборачиваться в тег `<span>`. Это по умолчанию `true`.
+
+* `config.action_view.form_with_generates_remote_forms` определяет, должны ли `form_with` создавать remote формы или нет. Это по умолчанию `true`.
 
 ### (configuring-action-mailer) Конфигурирование Action Mailer
 
