@@ -87,8 +87,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: 30433253eda59656b1060d6ccc5e1b8e5913c331
-    date:     23/11/2016
+    revision: f77a6be8d23f048ced4fac54f1f4caea5e0749d7
+    date:     29/03/2017
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -147,14 +147,14 @@ pages:
   - title:    Конфигурирование приложений на Rails
     path:     configuring-rails-applications
     file:     configuring.md
-    revision: fd3c6eadbbc1fbd4782138a28a87cb96df3ca450
-    date:     04/03/2017
+    revision: c2e3e0d2096836bfb6072af70bd0914a960a50fe
+    date:     25/04/2017
 
   - title:    Руководство по командной строке Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
-    revision: 3e4b7ecc285bdc3fbecc758613bcc2ff4f7f31ad
-    date:     31/12/2016
+    revision: 430f1e02fafd30a08edfa2b1e8032eb7e0e729cc
+    date:     25/03/2017
 
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
@@ -213,8 +213,8 @@ pages:
   - title:    Создание и настройка генераторов Rails
     path:     generators
     file:     generators.md
-    revision: 28e49c711e4694d59247c44d7a70510f99be2af3
-    date:     17/12/2016
+    revision: 767f29e181bdbbec2f96bb09822924eea18c2e9f
+    date:     17/04/2017
 
   - title:    Использование Rails для API-приложений
     path:     api-app
