@@ -225,8 +225,8 @@ pages:
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
     file:     contributing_to_ruby_on_rails.md
-    revision: d81f2953f4c4399b0bf7188944025675f066dc78
-    date:     28/01/2017
+    revision: d48008f16438c2c9c9c7295f550568b82b95ef9e
+    date:     14/05/2017
 
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
