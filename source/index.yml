@@ -306,8 +306,13 @@ pages:
     revision: 7902c01d1faa27fb9fa0f03bdfb90725780cf540
     date:     28/04/2017
 
+  - title:    Политика поддержки (версий)
+    path:     maintenance-policy
+    file:     maintenance_policy.md
+    revision: 5c0d00072d1309dbc77bb5d97e42956bac3e8684
+    date:     20/03/2017
+
 plan:
-  - file:     maintenance_policy.md
   - file:     profiling.md
 
 old:
