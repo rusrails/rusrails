@@ -10,6 +10,7 @@ Engine для начинающих
 * Как встраивать особенности в engine.
 * Как внедрять engine в приложение.
 * Как переопределить функционал engine из приложения.
+* Избегайте загрузки Rails фреймворков с помощью Загружаемых и Настраиваемых Хуков
 
 Что такое engine?
 -----------------
@@ -1001,3 +1002,117 @@ module MyEngine
   end
 end
 ```
+
+Загружаемые хуки (On Load Hooks) Active Support
+----------------------------
+
+Active Support - это компонент Ruby on Rails, отвечающий за предоставление расширений для языка Ruby, утилит и множества других вещей.
+
+Rails-код часто может ссылаться на загрузку приложения. Rails отвечает за порядок загрузки этих фреймворков, поэтому когда вы загружаете фреймворки, такие как `ActiveRecord::Base`, преждевременно вы нарушаете неявный контракт, который ваше приложение имеет с Rails. Более того, загружая код, такой как `ActiveRecord::Base` при загрузке вашего приложения, вы загружаете целые фреймворки, которые могут замедлять время загрузки и могут привести к конфликтам с порядком загрузки и загрузкой вашего приложения.
+
+Загружаемые хуки - это API, который позволяет вам подключиться к этому процессу инициализации без нарушения контракта загрузки с помощью Rails. Это также позволит уменьшить снижжение производительности загрузки и избежать конфликтов.
+
+## Что делает `on_load` хук?
+
+Since Ruby is a dynamic language, some code will cause different Rails frameworks to load. Take this snippet for instance:
+
+Поскольку Ruby является динамическим языком, некоторый код будет вызывать различные фреймворки Rails для загрузки. Возьмем этот фрагмент, например:
+
+```ruby
+ActiveRecord::Base.include(MyActiveRecordHelper)
+```
+
+Этот фрагмент означает, что когда этот файл загружен, он будет взаимодействовать с `ActiveRecord::Base`. Это взаимодействие заставляет Ruby искать определение этой константы и требовать ее. Это приводит к загрузке всего фреймворка Active Record при загрузке.
+
+`ActiveSupport.on_load` - это механизм, который может быть использован для того, чтобы отложить загрузку кода до тех пор, пока он действительно не понадобится. Вышеуказанный фрагмент можно изменить на:
+
+```ruby
+ActiveSupport.on_load(:active_record) { include MyActiveRecordHelper }
+```
+
+Этот новый фрагмент будет только включать `MyActiveRecordHelper`, когда `ActiveRecord::Base` загружается.
+
+## Как это работает?
+
+В фреймворке Rails эти хуки вызываются, когда загружается конкретная библиотека. Например, когда загружается `ActionController::Base`, вызывается хук `:action_controller_base`. Это означает, что все вызовы `ActiveSupport.on_load` с помощью `:action_controller_base` хуков будут вызываться в контексте `ActionController::Base` (это значит, что `self` будет `ActionController::Base`).
+
+## Изменение кода для использования `on_load` хуков
+
+Изменение кода, как правило, достаточно просто. Если у вас есть строка кода, которая ссылается на фреймворк Rails, такой как `ActiveRecord::Base`, вы можете обернуть этот код в хук `on_load`.
+
+### Пример 1
+
+```ruby
+ActiveRecord::Base.include(MyActiveRecordHelper)
+```
+
+станет
+
+```ruby
+ActiveSupport.on_load(:active_record) { include MyActiveRecordHelper } # self ссылается здесь на ActiveRecord::Base, поэтому мы можем использовать просто #include
+```
+
+### Пример 2
+
+```ruby
+ActionController::Base.prepend(MyActionControllerHelper)
+```
+
+станет
+
+```ruby
+ActiveSupport.on_load(:action_controller_base) { prepend MyActionControllerHelper } # self ссылается здесь на ActionController::Base, поэтому мы можем использовать просто #prepend
+```
+
+### Пример 3
+
+```ruby
+ActiveRecord::Base.include_root_in_json = true
+```
+
+станет
+
+```ruby
+ActiveSupport.on_load(:active_record) { self.include_root_in_json = true } # self ссылается здесь на ActiveRecord::Base
+```
+
+## Доступные Hooks
+
+Это хуки, которые вы можете использовать в своем коде.
+
+Чтобы подключиться к процессу инициализации одного из следующих классов, используйте доступный хук.
+
+| Класс                             | Доступные Hooks                      |
+| --------------------------------- | ------------------------------------ |
+| `ActionCable`                     | `action_cable`                       |
+| `ActionController::API`           | `action_controller_api`              |
+| `ActionController::API`           | `action_controller`                  |
+| `ActionController::Base`          | `action_controller_base`             |
+| `ActionController::Base`          | `action_controller`                  |
+| `ActionController::TestCase`      | `action_controller_test_case`        |
+| `ActionDispatch::IntegrationTest` | `action_dispatch_integration_test`   |
+| `ActionMailer::Base`              | `action_mailer`                      |
+| `ActionMailer::TestCase`          | `action_mailer_test_case`            |
+| `ActionView::Base`                | `action_view`                        |
+| `ActionView::TestCase`            | `action_view_test_case`              |
+| `ActiveJob::Base`                 | `active_job`                         |
+| `ActiveJob::TestCase`             | `active_job_test_case`               |
+| `ActiveRecord::Base`              | `active_record`                      |
+| `ActiveSupport::TestCase`         | `active_support_test_case`           |
+| `i18n`                            | `i18n`                               |
+
+## Настраиваемые хуки
+
+Это доступные настраиваемые хуки. Они не подключаются к какому-либо конкретному фреймворку, вместо этого они запускаются в контексте всего приложения.
+
+
+| Хук                    | Случаи применения                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `before_configuration` | Первый настраиваемый блок для запуска. Вызывается до запуска любых инициализаторов.              |
+| `before_initialize`    | Второй настраиваемый блок для запуска. Вызывается перед инициализацией фреймворков.                |
+| `before_eager_load`    | Третий настраиваемый блок для запуска. Не запускается, если для `config.cache_classes` установлено значение false. |
+| `after_initialize`     | Последний настраиваемый блок для запуска. Вызывается после инициализации фреймворков.                   |
+
+### Пример
+
+`config.before_configuration { puts 'I am called before any initializers' }`
