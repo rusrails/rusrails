@@ -56,7 +56,7 @@ Rails 5.1 имеет встроенную поддержку для написа
 
 [Pull Request](https://github.com/rails/rails/pull/28038)
 
-Сейчас Rails позволяет управлять секретными данными приложения безопасным образом, созданным на основе гема [sekrets](https://github.com/ahoward/sekrets).
+Сейчас Rails позволяет управлять секретными данными приложения безопасным образом, вдохновленные гемом [sekrets](https://github.com/ahoward/sekrets).
 
 Запустите `bin/rails secrets:setup` для настройки нового зашифрованного файла с секретными данными. Это также сгенерирует мастер-ключ, который должен храниться вне репозитория. Тогда сами секретные данные могут безопасно добавляться в систему контроля версий в зашифрованной форме.
 
@@ -270,9 +270,6 @@ Action Cable
 *   Добавлена поддержка `channel_prefix` к Redis и событийным адаптерам Redis в `cable.yml`, чтобы избежать коллизии имен при использовании одного и того же сервера Redis с несколькими приложениями.
     ([Pull Request](https://github.com/rails/rails/pull/27425))
 
-*   По умолчанию разрешены соединения с того же домена.
-    ([commit](https://github.com/rails/rails/commit/dae404473409fcab0e07976aec626df670e52282))
-
 *   Для данных трансляции добавлен хук `ActiveSupport::Notifications`.
     ([Pull Request](https://github.com/rails/rails/pull/24988))
 
@@ -294,9 +291,6 @@ Action Pack
     ([Commit](https://github.com/rails/rails/commit/d7be30e8babf5e37a891522869e7b0191b79b757))
 
 ### Устарело
-
-*   Устарели параметры пути `:controller` и `:action`.
-    ([Pull Request](https://github.com/rails/rails/pull/23980))
 
 *   Устарел `config.action_controller.raise_on_unfiltered_parameters`. Он ничего не делает в Rails 5.1.
     ([Commit](https://github.com/rails/rails/commit/c6640fb62b10db26004a998d2ece98baede509e5))
@@ -350,9 +344,6 @@ Action Mailer
 За подробностями обратитесь к [Changelog][action-mailer].
 
 ### Значимые изменения
-
-*   Обработка исключений: используйте `rescue_from` для обработки исключений, вызванных экшнами рассыльщика, доставкой сообщения и отложенными заданиями доставки.
-    ([commit](https://github.com/rails/rails/commit/e35b98e6f5c54330245645f2ed40d56c74538902))
 
 *   Разрешена установка произвольного типа содержимого, когда включены вложения и тело установлено как inline.
     ([Pull Request](https://github.com/rails/rails/pull/27227))
