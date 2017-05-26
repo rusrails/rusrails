@@ -51,7 +51,7 @@
               = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left
             -# .banner= render "shared/adsense", position: 'top'
-            .banner= render "shared/banner", url: 'https://mkdev.me/courses/ruby-on-rails-dlya-vzroslyh?utm_source=rusrails&utm_medium=banner&utm_campaign=ror_dlya_vzroslyh', image: 'partners/mkdev-hardcore.png'
+            .banner= render "shared/banner", mkdev_random_banner
             = yield
             .banner= render "shared/adsense", position: 'bottom'
 
