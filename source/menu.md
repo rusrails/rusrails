@@ -63,6 +63,7 @@ next_column
     * [Рекомендации по документированию API](/api_documentation_guidelines)
     * [Рекомендации для руководств по Ruby on Rails](/ruby_on_rails_guides_guidelines)
     * [Установка зависимостей для разработки](/development_dependencies_install)
+    * [Политика поддержки (версий)](/maintenance-policy)
 
 * **Заметки о релизах**
 
