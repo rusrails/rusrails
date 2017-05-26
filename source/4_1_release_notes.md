@@ -517,7 +517,7 @@ Active Support
 ### Удалено
 
 * Удалена зависимость `MultiJSON`. Теперь, `ActiveSupport::JSON.decode`
-  больше не принимает хеш опций для `MultiJSON`. ([Pull Request](https://github.com/rails/rails/pull/10576) / [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
+  больше не принимает хэш опций для `MultiJSON`. ([Pull Request](https://github.com/rails/rails/pull/10576) / [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
 
 * Удалена поддержка для хука `encode_json`, используемого для преобразования произвольных объектов в JSON. Данный функционал извлечен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Связанный Pull Request](https://github.com/rails/rails/pull/12183) /
