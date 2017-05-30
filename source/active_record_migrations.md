@@ -128,7 +128,7 @@ class AddPartNumberToProducts < ActiveRecord::Migration[5.0]
 end
 ```
 
-Точно так же, вы можете сгенерировать миграцию для удаления столбца из командной строки:
+Точно также, вы можете сгенерировать миграцию для удаления столбца из командной строки:
 
 ```bash
 $ bin/rails generate migration RemovePartNumberFromProducts part_number:string
@@ -451,7 +451,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 * rename_index
 * rename_table
 
-`change_table` так же является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
+`change_table` также является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
 
 `remove_column` обратима, если предоставить тип столбца третьим аргументом. Также предоставьте опции оригинально столбца, иначе Rails не сможет в точности пересоздать этот столбец при откате:
 
