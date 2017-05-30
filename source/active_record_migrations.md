@@ -128,7 +128,7 @@ class AddPartNumberToProducts < ActiveRecord::Migration[5.0]
 end
 ```
 
-Точно так же, вы можете сгенерировать миграцию для удаления столбца из командной строки:
+Точно также, вы можете сгенерировать миграцию для удаления столбца из командной строки:
 
 ```bash
 $ bin/rails generate migration RemovePartNumberFromProducts part_number:string
@@ -451,7 +451,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 * rename_index
 * rename_table
 
-`change_table` так же является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
+`change_table` также является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
 
 `remove_column` обратима, если предоставить тип столбца третьим аргументом. Также предоставьте опции оригинально столбца, иначе Rails не сможет в точности пересоздать этот столбец при откате:
 
@@ -540,7 +540,7 @@ end
 
 ### (reverting-previous-migrations) Возвращение к предыдущим миграциям
 
-Вы можете использовать возможность Active Record откатить миграции используя `revert` метод:
+Вы можете использовать возможность Active Record, чтобы откатить миграции с помощью `revert` метода:
 
 ```ruby
 require_relative '20121212123456_example_migration'
@@ -556,7 +556,7 @@ class FixupExampleMigration < ActiveRecord::Migration[5.0]
 end
 ```
 
-Метод `revert` так же может принимает блок. Это может быть полезным для отката выбранной части предыдущих миграций. Для примера, давайте представим что `ExampleMigration` закоммичена, а позже мы решили, что было бы лучше использовать валидации Active Record, вместо ограничения `CHECK`, для проверки zipcode.
+Метод `revert` также может принимать блок. Это может быть полезно для отката выбранной части предыдущих миграций. Для примера, давайте представим что `ExampleMigration` закоммичена, а позже мы решили, что было бы лучше использовать валидации Active Record, вместо ограничения `CHECK`, для проверки zipcode.
 
 ```ruby
 class DontUseConstraintForZipcodeValidationMigration < ActiveRecord::Migration[5.0]
@@ -585,7 +585,7 @@ class DontUseConstraintForZipcodeValidationMigration < ActiveRecord::Migration[5
 end
 ```
 
-Подобная миграция так же может быть написана без использования `revert`, но это бы привело к ещё нескольким шагам: изменение порядка(следования) `create table` и `reversible`, замена `create_table` на `drop_table` и в конечном итоге изменение `up` `down` наоборот. Обо всём этом уже позаботился `revert`.
+Подобная миграция также может быть написана без использования `revert`, но это бы привело к ещё нескольким шагам: изменение порядка (следования) `create table` и `reversible`, замена `create_table` на `drop_table` и в конечном итоге изменение `up` на `down` и наоборот. Обо всём этом уже позаботился `revert`.
 
 NOTE: Если хотите добавить ограничения `CHECK`, как в вышеуказанных примерах, нужно использовать `structure.sql` в качестве метода экспорта. Смотрите [Экспорт схемы](#schema-dumping-and-you).
 
