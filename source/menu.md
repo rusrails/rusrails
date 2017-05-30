@@ -65,10 +65,6 @@ next_column
     * [Установка зависимостей для разработки](/development_dependencies_install)
     * [Политика поддержки (версий)](/maintenance-policy)
 
-* **Политика поддержки (версий)**
-
-    * [Политика поддержки (версий)](/maintenance-policy)
-
 * **Заметки о релизах**
 
     * [Руководство по обновлению Ruby on Rails](/upgrading-ruby-on-rails)
