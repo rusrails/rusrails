@@ -540,7 +540,7 @@ end
 
 ### (reverting-previous-migrations) Возвращение к предыдущим миграциям
 
-Вы можете использовать возможность Active Record откатить миграции используя `revert` метод:
+Вы можете использовать возможность Active Record, чтобы откатить миграции с помощью `revert` метода:
 
 ```ruby
 require_relative '20121212123456_example_migration'
