@@ -123,8 +123,8 @@ pages:
   - title:    Основы Active Job
     path:     active_job_basics
     file:     active_job_basics.md
-    revision: 8ee16836982b79a14198c75006672677f1f55947
-    date:     19/03/2017
+    revision: de499d6775efb433ff6b6ffb3503f67e18b54ee9
+    date:     10/05/2017
 
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
