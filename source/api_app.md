@@ -132,16 +132,17 @@ API-приложение поставляется со следующими пр
 - `ActiveSupport::Cache::Strategy::LocalCache::Middleware`
 - `Rack::Runtime`
 - `ActionDispatch::RequestId`
+- `ActionDispatch::RemoteIp`
 - `Rails::Rack::Logger`
 - `ActionDispatch::ShowExceptions`
 - `ActionDispatch::DebugExceptions`
-- `ActionDispatch::RemoteIp`
 - `ActionDispatch::Reloader`
 - `ActionDispatch::Callbacks`
 - `ActiveRecord::Migration::CheckPending`
 - `Rack::Head`
 - `Rack::ConditionalGet`
 - `Rack::ETag`
+- `MyApi::Application::Routes`
 
 Смотрите раздел по [внутренним промежуточным программам](/rails-on-rack#internal-middleware-stack) руководства по Rack, чтобы узнать подробности о них.
 
@@ -280,6 +281,7 @@ API-приложение (использующее `ActionController::API`) по
 - `ActionController::Rescue`: Поддержка для `rescue_from`.
 - `ActionController::Instrumentation`: Поддержка для инструментальных хуков, определенных Action Controller (подробности относительно этого смотрите в [руководстве по инструментарию](/active-support-instrumentation#action-controller)).
 - `ActionController::ParamsWrapper`: Оборачивает хэш параметров во вложенный хэш, таким образом, к примеру, не нужно указывать корневые элементы при посылка запросов POST.
+- `ActionController::Head`: Поддержка возврата ответа без тела сообщения, только заголовки
 
 Другие плагины могут добавлять дополнительные модули. Список всех модулей, включенных в `ActionController::API` можно получить в консоли rails:
 
