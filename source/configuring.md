@@ -460,6 +460,8 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_dispatch.encrypted_signed_cookie_salt` устанавливает значение соли для подписанных зашифрованных куки. По умолчанию `'signed encrypted cookie'`.
 
+* `config.action_dispatch.authenticated_encrypted_cookie_salt` устанавливает значение соли для аутентификационных зашифрованных куки. По умолчанию `'authenticated encrypted cookie'`.
+
 * `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в [Руководстве по безопасности](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
 
 * `config.action_dispatch.rescue_responses` конфигурирует, какие исключения назначаются статусу HTTP. Он принимает хэш и можно указать пары исключение/статус. По умолчанию он определен как:
@@ -488,10 +490,7 @@ config.middleware.delete Rack::MethodOverride
 
   Любое ненастроенное исключение приведет к 500 Internal Server Error.
 
-
 * `ActionDispatch::Callbacks.before` принимает блок кода для запуска до запроса.
-
-* `ActionDispatch::Callbacks.to_prepare` принимает блок для запуска после `ActionDispatch::Callbacks.before`, но до запроса. Запускается для каждого запроса в режиме `development`, но лишь единожды в `production` или режиме с `cache_classes`, установленной `true`.
 
 * `ActionDispatch::Callbacks.after` принимает блок кода для запуска после запроса.
 
@@ -1158,7 +1157,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `finisher_hook`: Представляет хук после завершения процесса инициализации приложения, а также запускает все блоки `config.after_initialize` для приложения, railties и engine-ов.
 
-* `set_routes_reloader`: Конфигурирует Action Dispatch, перезагружая файл маршрутов с использованием `ActionDispatch::Callbacks.to_prepare`.
+* `set_routes_reloader`: Конфигурирует Action Dispatch, перезагружая файл маршрутов с использованием `ActiveSupport::Callbacks.to_run`.
 
 * `disable_dependency_loading`: Отключает автоматическую загрузку зависимостей, если `config.eager_load` установлена true.
 
