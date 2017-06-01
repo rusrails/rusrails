@@ -102,11 +102,12 @@ use ActiveSupport::Cache::Strategy::LocalCache::Middleware
 use Rack::Runtime
 use Rack::MethodOverride
 use ActionDispatch::RequestId
+use ActionDispatch::RemoteIp
+use Sprockets::Rails::QuietAssets
 use Rails::Rack::Logger
 use ActionDispatch::ShowExceptions
 use WebConsole::Middleware
 use ActionDispatch::DebugExceptions
-use ActionDispatch::RemoteIp
 use ActionDispatch::Reloader
 use ActionDispatch::Callbacks
 use ActiveRecord::Migration::CheckPending
@@ -116,7 +117,7 @@ use ActionDispatch::Flash
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
-run Rails.application.routes
+run MyApp.application.routes
 ```
 
 Промежуточные программы по умолчанию, показанные здесь (и некоторые другие) описываются в разделе [Внутренние промежуточные программы](#internal-middleware-stack) ниже.
@@ -229,6 +230,14 @@ config.middleware.delete Rack::MethodOverride
 
 * Создает для отклика уникальный заголовок `X-Request-Id` и включает метод `ActionDispatch::Request#request_id`.
 
+**`ActionDispatch::RemoteIp`**
+
+* Проверяет на IP-спуфинг атаки.
+
+**`Sprockets::Rails::QuietAssets`**
+
+* Подавляет вывод логгера для запросов актива (asset requests).
+
 **`Rails::Rack::Logger`**
 
 * Уведомляет логи, что начался запрос. После выполнения запроса, глушит все логи.
@@ -240,10 +249,6 @@ config.middleware.delete Rack::MethodOverride
 **`ActionDispatch::DebugExceptions`**
 
 * Ответственна за логирование исключений и показа отладочной страницы, если запрос локальный.
-
-**`ActionDispatch::RemoteIp`**
-
-* Проверяет на атаки с ложных IP.
 
 **`ActionDispatch::Reloader`**
 
