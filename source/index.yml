@@ -15,8 +15,8 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: 6cc153959ac04a39d4081a2cf23e1ff83c4efe3b
-    date:     30/05/2017
+    revision: d49866a8d0ae9069d4c875a979de50a61f2ad663
+    date:     01/06/2017
 
   - title:    Основы Active Record
     path:     active-record-basics
@@ -45,8 +45,8 @@ pages:
   - title:    Связи Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: e1567d0d3a3c0ae1f4da1fb8b5b77a85767fb6ae
-    date:     04/03/2017
+    revision: 43b09b0c9ccc70f6514c441970d0d0ac03ce525b
+    date:     24/05/2017
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
@@ -69,14 +69,14 @@ pages:
   - title:    Обзор Action View
     path:     action-view-overview
     file:     action_view_overview.md
-    revision: 4c3afea7dfb380f6357c9ebceac973bfa20151f6
-    date:     20/11/2016
+    revision: 062e5f2b068fbce74102d7301b58a3cd7c5da883
+    date:     20/05/2017
 
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
     file:     layouts_and_rendering.md
-    revision: eb4aba0052a0a51d26ec31640fc833e3848dc9e8
-    date:     11/02/2017
+    revision: 062e5f2b068fbce74102d7301b58a3cd7c5da883
+    date:     20/05/2017
 
   - title:    Хелперы форм Rails
     path:     rails-form-helpers
@@ -87,8 +87,8 @@ pages:
   - title:    Обзор Action Controller
     path:     action-controller-overview
     file:     action_controller_overview.md
-    revision: f77a6be8d23f048ced4fac54f1f4caea5e0749d7
-    date:     29/03/2017
+    revision: 4f3955657736796664aa8d6f6d149ef9b213b058
+    date:     13/05/2017
 
   - title:    Роутинг в Rails
     path:     rails-routing
@@ -117,8 +117,8 @@ pages:
   - title:    Основы Action Mailer
     path:     action-mailer-basics
     file:     action_mailer_basics.md
-    revision: 40f226ae94a726ca8935062a8aac50af8cad1de9
-    date:     29/03/2017
+    revision: c7dd4a7a9f20216091399a30a9750a8cf598798e
+    date:     25/05/2017
 
   - title:    Основы Active Job
     path:     active_job_basics
@@ -129,8 +129,8 @@ pages:
   - title:    Руководство по тестированию приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
-    revision: 46adb59b3474351e95ddc2357e67d169d6ffec51
-    date:     28/04/2017
+    revision: e40c7031844d81379dd7fb530e52156b97df0f9c
+    date:     29/05/2017
 
   - title:    Руководство Ruby On Rails по безопасности
     path:     ruby-on-rails-security-guide
@@ -165,14 +165,14 @@ pages:
   - title:    Asset Pipeline
     path:     asset-pipeline
     file:     asset_pipeline.md
-    revision: 5a09b3fd6b22dda7b77dfa47d6ace210ea84f43a
-    date:     16/03/2017
+    revision: 6cc153959ac04a39d4081a2cf23e1ff83c4efe3b
+    date:     30/05/2017
 
   - title:    Работа с JavaScript в Rails
     path:     working-with-javascript-in-rails
     file:     working_with_javascript_in_rails.md
-    revision: bff2ef921f15b19dac482aa0aec22198afcd3249
-    date:     11/05/2017
+    revision: 3508909dc8afb76d3781a7282a1cbc4bb5b07a93
+    date:     21/05/2017
 
   - title:    Engine для начинающих
     path:     engines
@@ -213,8 +213,8 @@ pages:
   - title:    Создание и настройка генераторов Rails
     path:     generators
     file:     generators.md
-    revision: 767f29e181bdbbec2f96bb09822924eea18c2e9f
-    date:     17/04/2017
+    revision: 40bdbce191ad90dfea43dad51fac5c4726b89392
+    date:     15/05/2017
 
   - title:    Использование Rails для API-приложений
     path:     api-app
@@ -231,8 +231,8 @@ pages:
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
     file:     api_documentation_guidelines.md
-    revision: 668f8691f1017042e238497d1a5b7b8bf1c43819
-    date:     08/04/2017
+    revision: d414881a342d849d65810a037c0b1baff8538e41
+    date:     22/05/2017
 
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     ruby_on_rails_guides_guidelines
@@ -255,8 +255,8 @@ pages:
   - title:    Руководство по шаблонам приложения Rails
     path:     rails-application-templates
     file:     rails_application_templates.md
-    revision: 73874a163f82dfb326c65a3e414d04b180b9074b
-    date:     18/05/2016
+    revision: 40bdbce191ad90dfea43dad51fac5c4726b89392
+    date:     15/05/2017
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes

@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 Что такое Action View?
---------------------
+----------------------
 
 В Rails веб-запросы обрабатываются [Action Controller](/action-controller-overview) и Action View. Обычно Action Controller ответственен за связь с базой данных и выполнение действий CRUD. Тогда как Action View ответственен за компиляцию отклика.
 
@@ -403,7 +403,7 @@ image_tag("rails.png") # => <img src="http://assets.example.com/images/rails.png
 
 #### auto_discovery_link_tag
 
-Возвращает тег ссылки, которую могут использовать браузеры и агрегаторы новостей для автоматического определения RSS или ленты Atom.
+Возвращает тег ссылки, которую могут использовать браузеры и агрегаторы новостей для автоматического определения RSS, Atom или ленты JSON.
 
 ```ruby
 auto_discovery_link_tag(:rss, "http://www.example.com/feed.rss", { title: "RSS Feed" }) # =>
