@@ -114,7 +114,7 @@ SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
 
 ```ruby
 # Найдем клиентов с первичными ключами 1 и 10.
-client = Client.find([1, 10]) # Или даже Client.find(1, 10)
+clients = Client.find([1, 10]) # Или даже Client.find(1, 10)
 # => [#<Client id: 1, first_name: "Lifo">, #<Client id: 10, first_name: "Ryan">]
 ```
 
@@ -144,7 +144,7 @@ SELECT * FROM clients LIMIT 1
 В метод `take` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
 
 ```ruby
-client = Client.take(2)
+clients = Client.take(2)
 # => [
 #   #<Client id: 1, first_name: "Lifo">,
 #   #<Client id: 220, first_name: "Sara">
@@ -183,7 +183,7 @@ SELECT * FROM clients ORDER BY clients.id ASC LIMIT 1
 В метод `first` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
 
 ```ruby
-client = Client.first(3)
+clients = Client.first(3)
 # => [
 #   #<Client id: 1, first_name: "Lifo">,
 #   #<Client id: 2, first_name: "Fifo">,
@@ -234,7 +234,7 @@ SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 В метод `last` можно передать числовой аргумент, чтобы вернуть это количество результатов. Например
 
 ```ruby
-client = Client.last(3)
+clients = Client.last(3)
 # => [
 #   #<Client id: 219, first_name: "James">,
 #   #<Client id: 220, first_name: "Sara">,
@@ -540,6 +540,18 @@ Client.where.not(locked: true)
 
 ```sql
 SELECT * FROM clients WHERE (clients.locked != 1)
+```
+
+### Условия OR
+
+Условия `OR` между двумя отношениями могут быть построены путем вызова `or` на первом отношении и передачи второго в качестве аргумента.
+
+```ruby
+Client.where(locked: true).or(Client.where(orders_count: [1,3,5]))
+```
+
+```sql
+SELECT * FROM clients WHERE (clients.locked = 1 OR clients.orders_count IN (1,3,5))
 ```
 
 (ordering) Сортировка
