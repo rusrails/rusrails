@@ -596,7 +596,7 @@ Sprockets также устанавливает HTTP заголовок `Cache-C
 
 ```ruby
 group :production do
-  gem 'therubyracer'
+  gem 'mini_racer'
 end
 ```
 

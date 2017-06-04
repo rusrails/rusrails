@@ -619,6 +619,7 @@ class ArticlesController < ApplicationController
   <tr>
     <th>Title</th>
     <th>Text</th>
+    <th></th>
   </tr>
 
   <% @articles.each do |article| %>
