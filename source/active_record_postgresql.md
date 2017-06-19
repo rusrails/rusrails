@@ -6,29 +6,28 @@ Active Record для PostgreSQL
 После прочтения этого руководства, вы узнаете о том:
 
 * Как использовать типы данных PostgreSQL.
-* Как использовать первичные UUID ключи.
-* Как сделать поиск по всему тексту, используя PostgreSQL.
+* Как использовать первичные ключи UUID.
+* Как реализовать полнотекстовый поиск с помощью PostgreSQL.
 * Как возвращать ваши модели Active Record, используя представление базы данных.
 
 --------------------------------------------------------------------------------
 
-Для использования адаптера PostgreSQL вам необходимо как минимум использовать установленную версию 9.1.
+Для использования адаптера PostgreSQL необходимо установить как минимум версию 9.1.
 Предыдущие версии не поддерживаются.
 
-
 Для начала работы с PostgreSQL взгляните на
-[Конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
+[конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
 Там описано как правильно настроить Active Record для PostgreSQL.
 
-Типы данных (Datatypes)
----------
+Типы данных
+-----------
 
 PostgreSQL предлагает достаточное количество специфичных типов данных. Далее представлен список типов, которые поддерживаются адаптером PostgreSQL.
 
-### Bytea
+### Двоичные типы данных
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-binary.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/functions-binarystring.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-binary.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-binarystring.html)
 
 ```ruby
 # db/migrate/20140207133952_create_documents.rb
@@ -45,10 +44,10 @@ data = File.read(Rails.root + "tmp/output.pdf")
 Document.create payload: data
 ```
 
-### Массив (Array)
+### Массивы
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/arrays.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/functions-array.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/arrays.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-array.html)
 
 ```ruby
 # db/migrate/20140207133952_create_books.rb
@@ -75,16 +74,16 @@ Book.where("'fantasy' = ANY (tags)")
 ## Книги с несколькими тегами
 Book.where("tags @> ARRAY[?]::varchar[]", ["fantasy", "fiction"])
 
-## Книги с рейтином больше 3
+## Книги с рейтингом 3 и более
 Book.where("array_length(ratings, 1) >= 3")
 ```
 
 ### Hstore
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/hstore.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/hstore.html#AEN167712)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/hstore.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/hstore.html#idm45576084647360)
 
-NOTE: Вам необходимо включить расширение `hstore` для использования hstore.
+NOTE: Чтобы использовать hstore, необходимо включить расширение `hstore`.
 
 ```ruby
 # db/migrate/20131009135255_create_profiles.rb
@@ -112,10 +111,10 @@ Profile.where("settings->'color' = ?", "yellow")
 # => #<ActiveRecord::Relation [#<Profile id: 1, settings: {"color"=>"yellow", "resolution"=>"1280x1024"}>]>
 ```
 
-### JSON
+### Типы JSON
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-json.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/functions-json.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-json.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-json.html)
 
 ```ruby
 # db/migrate/20131220144913_create_events.rb
@@ -138,12 +137,12 @@ event.payload # => {"kind"=>"user_renamed", "change"=>["jack", "john"]}
 Event.where("payload->>'kind' = ?", "user_renamed")
 ```
 
-### Диапазон (Range Types)
+### Диапазонные типы
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/rangetypes.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/functions-range.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/rangetypes.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-range.html)
 
-Данный тип преобразуется в Ruby [`Range`](http://www.ruby-doc.org/core-2.2.2/Range.html) объекты.
+Этот тип преобразуется в Ruby [`Range`](http://www.ruby-doc.org/core-2.2.2/Range.html) объекты.
 
 ```ruby
 # db/migrate/20130923065404_create_events.rb
@@ -161,10 +160,10 @@ Event.create(duration: Date.new(2014, 2, 11)..Date.new(2014, 2, 12))
 event = Event.first
 event.duration # => Tue, 11 Feb 2014...Thu, 13 Feb 2014
 
-## Все события в данную дату
+## Все события в заданную дату
 Event.where("duration @> ?::date", Date.new(2014, 2, 12))
 
-## Работает с цепочкой связей
+## Работает с границами диапазона
 event = Event.
   select("lower(duration) AS starts_at").
   select("upper(duration) AS ends_at").first
@@ -173,11 +172,11 @@ event.starts_at # => Tue, 11 Feb 2014
 event.ends_at # => Thu, 13 Feb 2014
 ```
 
-### Составной тип (Composite Types)
+### Составные типы
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/rowtypes.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/rowtypes.html)
 
-На данный момент нет специальной поддержки для составных типов. Они преобразуются к нормальным текстовым столбцам:
+На данный момент нет специальной поддержки для составных типов. Они преобразуются к обычным текстовым столбцам:
 
 ```sql
 CREATE TYPE full_address AS
@@ -212,11 +211,11 @@ contact.address = "(Paris,Rue Basse)"
 contact.save!
 ```
 
-### Перечисляемые типы (Enumerated Types)
+### Типы перечислений
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-enum.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-enum.html)
 
-На данный момент нет специальной поддержки для перечисляемых типов. Они преобразуются к нормальным текстовым столбцам:
+На данный момент нет специальной поддержки для типов перечислений. Они преобразуются к обычным текстовым столбцам:
 
 ```ruby
 # db/migrate/20131220144913_create_articles.rb
@@ -229,7 +228,7 @@ def up
   end
 end
 
-# NOTE: Важно удалить таблицу перед удалением enum.
+# NOTE: Не забываем удалить таблицу перед удалением enum.
 def down
   drop_table :articles
 
@@ -251,7 +250,7 @@ article.status = "published"
 article.save!
 ```
 
-Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](http://www.postgresql.org/docs/current/static/sql-altertype.html):
+Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](https://postgrespro.ru/docs/postgrespro/9.6/sql-altertype.html):
 
 ```ruby
 # db/migrate/20150720144913_add_new_state_to_articles.rb
@@ -278,13 +277,13 @@ SELECT n.nspname AS enum_schema,
       JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
 ```
 
-### UUID
+### Тип UUID
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-uuid.html)
-* [pgcrypto generator function](http://www.postgresql.org/docs/current/static/pgcrypto.html#AEN159361)
-* [uuid-ossp generator functions](http://www.postgresql.org/docs/current/static/uuid-ossp.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-uuid.html)
+* [pgcrypto generator function](https://postgrespro.ru/docs/postgrespro/9.6/pgcrypto.html#idm45576081674672)
+* [uuid-ossp generator functions](https://postgrespro.ru/docs/postgrespro/9.6/uuid-ossp.html)
 
-NOTE: Вам необходимо включить `pgcrypto` (только PostgreSQL >= 9.4) расширение для использования uuid.
+NOTE: Для использования uuid необходимо включить расширение `pgcrypto` (только PostgreSQL >= 9.4).
 
 ```ruby
 # db/migrate/20131220144913_create_revisions.rb
@@ -303,7 +302,7 @@ revision = Revision.first
 revision.identifier # => "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 ```
 
-Вы можете использовать `uuid` тип для определения ссылок в миграции:
+Вы можете использовать тип `uuid` для определения ссылок в миграции:
 
 ```ruby
 # db/migrate/20150418012400_create_blog.rb
@@ -326,12 +325,12 @@ class Comment < ApplicationRecord
 end
 ```
 
-Смотрите [эту секцию](#uuid-primary-keys) с более подробными деталями, как использовать UUIDs как первичного ключа.
+Смотрите [этот раздел](#uuid-primary-keys) для получения более подробной информации об использовании UUID в качестве первичного ключа.
 
-### Битовая строка (Bit String Types)
+### Битовые строки
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-bit.html)
-* [Функции и операторы](http://www.postgresql.org/docs/current/static/functions-bitstring.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-bit.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-bitstring.html)
 
 ```ruby
 # db/migrate/20131220144913_create_users.rb
@@ -352,13 +351,12 @@ user.settings # => 10101111
 user.save!
 ```
 
-### Адреса в сети (Network Address Types)
+### Типы, описывающие сетевые адреса
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-net-types.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-net-types.html)
 
-Типы `inet` и `cidr` типы преобразуются в Ruby объекты
-[`IPAddr`](http://www.ruby-doc.org/stdlib-2.2.2/libdoc/ipaddr/rdoc/IPAddr.html)
-Тип `macaddr` преобразуется в нормальный текст.
+Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](http://www.ruby-doc.org/stdlib-2.2.2/libdoc/ipaddr/rdoc/IPAddr.html) объекты.
+Тип `macaddr` преобразуется в обычный текст.
 
 ```ruby
 # db/migrate/20140508144913_create_devices.rb
@@ -387,17 +385,17 @@ macbook.address
 # => "32:01:16:6d:05:ef"
 ```
 
-### Геометрический тип данных (Geometric Types)
+### Геометрические типы
 
-* [Определение типа](http://www.postgresql.org/docs/current/static/datatype-geometric.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-geometric.html)
 
-Все геометрические типы данных, за исключением `points` преобразуются в нормальный текст.
-А `point` тип соответствует массиву, содержащему координаты `x` и `y`.
+Все геометрические типы, за исключением `points` преобразуются в обычный текст.
+А тип `point` соответствует массиву, содержащему координаты `x` и `y`.
 
-(uuid-primary-keys) UUID первичные ключи
---------------------
+(uuid-primary-keys) Первичные ключи UUID
+----------------------------------------
 
-NOTE: Вам необходимо включить `pgcrypto` (только PostgreSQL >= 9.4) или `uuid-ossp` расширение для генерации случайных UUIDs.
+NOTE: Для генерации случайных UUIDs необходимо включить расширение `pgcrypto` (только PostgreSQL >= 9.4) или `uuid-ossp`.
 
 ```ruby
 # db/migrate/20131220144913_create_devices.rb
@@ -417,8 +415,8 @@ device.id # => "814865cd-5a1d-4771-9306-4268f188fe9e"
 
 NOTE: Предполагается, что используется `gen_random_uuid()` (из `uuid-pgcrypto`) при отсутствии опции `:default`, переданной в `create_table`.
 
-Поиск по всему тексту
----------------------
+Полнотекстовый поиск
+--------------------
 
 ```ruby
 # db/migrate/20131220144913_create_documents.rb
@@ -442,11 +440,11 @@ Document.where("to_tsvector('english', title || ' ' || body) @@ to_tsquery(?)",
 ```
 
 Представление базы данных
-------------------
+-------------------------
 
-* [view creation](http://www.postgresql.org/docs/current/static/sql-createview.html)
+* [view creation](https://postgrespro.ru/docs/postgrespro/9.6/sql-createview.html)
 
-Представим, что вам надо работать со старой базой данных, содержащей следующую таблицу:
+Представим, что нам нужно работать со старой базой данных, содержащей следующую таблицу:
 
 ```
 rails_pg_guide=# \d "TBL_ART"
@@ -462,8 +460,8 @@ Indexes:
     "TBL_ART_pkey" PRIMARY KEY, btree ("INT_ID")
 ```
 
-Данная таблица не следует общепринятым Rails соглашениям.
-Т.к. простые представление PostgreSQL обновляются по умолчанию, то мы можем их обернуть, как дальше:
+Данная таблица не соответствует общепринятым Rails соглашениям.
+Т.к. простые представление PostgreSQL обновляются по умолчанию, то можно обернуть их следующим образом:
 
 ```ruby
 # db/migrate/20131220144913_create_articles_view.rb
@@ -497,7 +495,6 @@ second = Article.create! title: "Brace yourself",
 Article.count # => 2
 first.archive!
 Article.count # => 1
-
 ```
 
-NOTE: Данное приложение описывает `Articles` не в архиве. Представление также работают с состояниями, так что мы можем исключить `Articles`, которые в архиве, напрямую.
+NOTE: Это приложение обслуживает только не архивированные `Articles`. Представление также допускает условия, при которых можно напрямую исключать архивные `Articles`.
