@@ -832,7 +832,7 @@ Active Support
 *   Добавлен `file_fixture` в `ActiveSupport::TestCase`. Он представляет простой механизм для доступа к файлам с примерами в ваших тестовых случаях.
     ([Pull Request](https://github.com/rails/rails/pull/18658))
 
-*   Добавлен `#without` в `Enumerable` и `Array`, возвращающий копию enumerable без определенных элементов.
+*   Добавлен `#without` в `Enumerable` и `Array`, возвращающий копию перечисления без определенных элементов.
     ([Pull Request](https://github.com/rails/rails/pull/19157))
 
 *   Добавлены `ActiveSupport::ArrayInquirer` и `Array#inquiry`.
