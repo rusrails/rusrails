@@ -1001,7 +1001,7 @@ NOTE: Определено в `active_support/core_ext/class/subclasses.rb`.
 
 #### `descendants`
 
-Метод `descendants` возвращает все классы, которые являются <tt>&lt;</tt> к его получателю:
+Метод `descendants` возвращает все классы, которые являются `<` к его получателю:
 
 ```ruby
 class C; end
