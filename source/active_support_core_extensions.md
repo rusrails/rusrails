@@ -975,7 +975,7 @@ end
 
 NOTE: Определено в `active_support/core_ext/class/attribute_accessors.rb`.
 
-### Субклассы и потомки
+### Подклассы и потомки
 
 #### `subclasses`
 
