@@ -498,8 +498,6 @@ Article.where(author: author)
 Author.joins(:articles).where(articles: { author: author })
 ```
 
-NOTE: Значения не могут быть символами. Например, нельзя сделать `Client.where(status: :active)`.
-
 #### Интервальные условия
 
 ```ruby

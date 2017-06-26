@@ -742,7 +742,9 @@ m.anonymous? # => false
 
 NOTE: Определено в `active_support/core_ext/module/anonymous.rb`.
 
-### Передача метода
+### Делегирование метода
+
+#### `delegate`
 
 Макрос `delegate` предлагает простой способ передать методы.
 
@@ -826,13 +828,29 @@ delegate :size, to: :attachment, prefix: :avatar
 
 NOTE: Определено в `active_support/core_ext/module/delegation.rb`
 
+#### `delegate_missing_to`
+
+Представьте, что нужно делегировать все, отсутствующее в объекте `User` в` Profile`. Макрос `delegate_missing_to` позволяет реализовать это быстро:
+
+```ruby
+class User < ApplicationRecord
+  has_one :profile
+
+  delegate_missing_to :profile
+end
+```
+
+Целью может быть все что угодно, вызываемое внутри объекта, например, переменные экземпляра, методы, константы и т.д. Делегируются только публичные методы цели.
+
+NOTE: Определено в `active_support/core_ext/module/delegation.rb`.
+
 ### Переопределение методов
 
 Бывают ситуации, когда нужно определить метод с помощью `define_method`, но вы не знаете, существует ли уже метод с таким именем. Если так, то выдается предупреждение, если оно включено. Такое поведение хоть и не ошибочно, но не элегантно.
 
 Метод `redefine_method` предотвращает такое потенциальное предупреждение, предварительно убирая существующий метод, если нужно.
 
-NOTE: Определено в `active_support/core_ext/module/remove_method.rb`
+NOTE: Определено в `active_support/core_ext/module/remove_method.rb`.
 
 (extensions-to-class) Расширения для `Class`
 --------------------
@@ -920,7 +938,7 @@ A.new.x # NoMethodError
 
 Если не нужен предикат, передайте `instance_predicate: false`, и он не будет определен.
 
-NOTE: Определено в `active_support/core_ext/class/attribute.rb`
+NOTE: Определено в `active_support/core_ext/class/attribute.rb`.
 
 #### `cattr_reader`, `cattr_writer` и `cattr_accessor`
 
@@ -928,9 +946,8 @@ NOTE: Определено в `active_support/core_ext/class/attribute.rb`
 
 ```ruby
 class MysqlAdapter < AbstractAdapter
-  # Generates class methods to access @@emulate_booleans.
-  cattr_accessor :emulate_booleans
-  self.emulate_booleans = true
+  # Создает методы класса для доступа к @@emulate_booleans.
+  cattr_accessor :emulate_booleans, default: true
 end
 ```
 
@@ -939,8 +956,7 @@ end
 ```ruby
 module ActionView
   class Base
-    cattr_accessor :field_error_proc
-    @@field_error_proc = Proc.new{ ... }
+    cattr_accessor :field_error_proc, default: Proc.new { ... }
   end
 end
 ```
@@ -952,7 +968,7 @@ end
 ```ruby
 class MysqlAdapter < AbstractAdapter
   # Создает методы класса для доступа к @@emulate_booleans со значением по умолчанию true.
-  cattr_accessor(:emulate_booleans) { true }
+  cattr_accessor :emulate_booleans, default: true
 end
 ```
 
@@ -1227,7 +1243,7 @@ Active Support определяет псевдонимы `String#start_with?` и
 "foo".ends_with?("o")   # => true
 ```
 
-NOTE: Определены в `active_support/core_ext/string/starts_ends_with.rb`.
+NOTE: Определено в `active_support/core_ext/string/starts_ends_with.rb`.
 
 ### `strip_heredoc`
 

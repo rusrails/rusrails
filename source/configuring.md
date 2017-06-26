@@ -148,8 +148,6 @@ Rails будет использовать эту конкретную настр
 
 * `config.assets.enabled` это флажок, контролирующий, будет ли включен файлопровод (asset pipeline). По умолчанию он устанавливается `true`.
 
-* `config.assets.raise_runtime_errors` Установка этому флажку `true` включит дополнительную проверку ошибок во время выполнения. Рекомендован в `config/environments/development.rb` для минимизации неожиданного поведения при деплое в `production`.
-
 * `config.assets.css_compressor` определяет используемый компрессор CSS. По умолчанию установлен `sass-rails`. Единственное альтернативное значение в настоящий момент это `:yui`, использующее гем `yui-compressor`.
 
 * `config.assets.js_compressor` определяет используемый компрессор JavaScript. Возможные варианты `:closure`, `:uglifier` и `:yui` требуют использование гемов `closure-compiler`, `uglifier` или `yui-compressor` соответственно.
