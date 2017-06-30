@@ -63,9 +63,9 @@ Overwrite /myapp/config/application.rb? (enter "h" for help) [Ynaqdh]
 
 Подробнее о внесенных изменениях в Rails 5.1 смотрите в [заметках о релизе](/5_1_release_notes).
 
-### Верхнеуровневый `HashWithIndifferentAccess` в скором времени устареет.
+### Высокоуровневый `HashWithIndifferentAccess` в скором времени устареет.
 
-Если ваше приложение использует верхнеуровневый класс `HashWithIndifferentAccess`, то вам следует вместо него постепенно переходить на `ActiveSupport::HashWithIndifferentAccess`.
+Если ваше приложение использует высокоуровневый класс `HashWithIndifferentAccess`, то вам следует вместо него постепенно переходить на `ActiveSupport::HashWithIndifferentAccess`.
 
 Это всего лишь постепенное устаревание, которое означает, что ваш код не будет прерываться в данный момент и не будет отображаться предостережение об устаревании, но эта константа в будущем будет удалена.
 
