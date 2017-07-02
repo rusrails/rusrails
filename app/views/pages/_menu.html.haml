@@ -3,4 +3,4 @@
     - unless header[0].empty?
       %li
         = content_tag "h#{header[0].length + 3}" do
-          = link_to "#{header[0].join '.'}. #{header[2]}".html_safe, "##{header[1]}"
+          = link_to "#{header[0].join '.'}. #{header[2]}".html_safe, "##{header[1]}-n#{header[0].join ''}"
