@@ -8,8 +8,8 @@ special:
     file:     menu.md
 
 images:
-    revision: 53b43df3a40e77ceb64c1e3ee8e7190e1ac6d70e
-    date:     25/04/2017
+    revision: 6642b112cd7cbff690a003db9e4fb0704e659b6d
+    date:     02/07/2017
 
 pages:
   - title:    Rails для начинающих
