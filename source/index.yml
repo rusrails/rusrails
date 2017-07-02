@@ -312,8 +312,7 @@ pages:
     revision: 5c0d00072d1309dbc77bb5d97e42956bac3e8684
     date:     20/03/2017
 
-plan:
-  - file:     profiling.md
+plan: []
 
 old:
   - file:     2_2_release_notes.md
