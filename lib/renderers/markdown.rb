@@ -48,7 +48,7 @@ HTML
         @numeration[header_level] ||= 0
         @numeration[header_level] += 1
         @numeration = @numeration[0..header_level]
-        num_link = %(<a href="##{hid}-n#{@numeration[-2]}#{@numeration[-1]}">#{@numeration.compact.join('.')}.</a>)
+        num_link = %(<a href="##{hid}">#{@numeration.compact.join('.')}.</a>)
       else
         @numeration = []
         num_link = ''
@@ -56,7 +56,7 @@ HTML
 
       @headers << [@numeration.compact, hid, text]
 
-      %(<h#{header_level} id='#{hid}-n#{@numeration[-2]}#{@numeration[-1]}' class='inside_page_header'>#{num_link} #{text}</h#{header_level}>)
+      %(<h#{header_level} id='#{hid}' class='inside_page_header'>#{num_link} #{text}</h#{header_level}>)
     end
 
     def paragraph(text)
