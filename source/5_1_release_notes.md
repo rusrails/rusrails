@@ -518,7 +518,7 @@ Active Support
 
 ### Устарело
 
-*   Верхнеуровневый класс `HashWithIndifferentAccess` устарел в пользу `ActiveSupport::HashWithIndifferentAccess`.
+*   Высокоуровневый класс `HashWithIndifferentAccess` устарел в пользу `ActiveSupport::HashWithIndifferentAccess`.
     ([Pull Request](https://github.com/rails/rails/pull/28157))
 
 *   Устарела передача строк в опции условий `:if` и `:unless` для методов `set_callback` и `skip_callback`.
