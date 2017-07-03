@@ -22,6 +22,8 @@ class Rusrails::Markdown
       super
       @numeration = []
       @headers = []
+      @hid_container = []
+      @hid_hash = {}
     end
 
     def block_code(code, language)
@@ -43,6 +45,21 @@ HTML
       header_level += 1
       text.gsub!(/\A\s*\(([^\)]+)\)/, '')
       hid = sanitizer.sanitize($1 || text).parameterize
+
+      @hid_container << hid
+
+      if @hid_container.include? hid
+        if @hid_hash[hid].present?
+          @hid_hash[hid] = @hid_hash[hid] + 1
+        else
+          prev_count_hid_container = @hid_container.count(hid) - 1
+          @hid_hash[hid] = prev_count_hid_container if prev_count_hid_container != 0
+        end
+        
+        hid.concat (@hid_hash[hid].to_i + 1).to_s if @hid_hash[hid].present?
+      else
+        @hid_hash[hid] = @hid_container.count(hid)
+      end
 
       if header_level > 2
         @numeration[header_level] ||= 0
