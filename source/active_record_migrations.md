@@ -556,7 +556,7 @@ class FixupExampleMigration < ActiveRecord::Migration[5.0]
 end
 ```
 
-Метод `revert` также может принимать блок. Это может быть полезно для отката выбранной части предыдущих миграций. Для примера, давайте представим что `ExampleMigration` закоммичена, а позже мы решили, что было бы лучше использовать валидации Active Record, вместо ограничения `CHECK`, для проверки zipcode.
+Метод `revert` также может принимать блок. Это может быть полезно для отката выбранной части предыдущих миграций. Для примера, давайте представим, что `ExampleMigration` закоммичена, а позже мы решили, что было бы лучше использовать валидации Active Record, вместо ограничения `CHECK`, для проверки zipcode.
 
 ```ruby
 class DontUseConstraintForZipcodeValidationMigration < ActiveRecord::Migration[5.0]
