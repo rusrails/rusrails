@@ -421,3 +421,32 @@ end
 ```
 
 WARNING: Колбэки `after_commit` и `after_rollback` вызываются для всех созданных, обновленных или удаленных моделей внутри блока транзакции. Однако, если какое-либо исключение вызовется в одном из этих колбэков, это исключение всплывет, и любые оставшиеся методы `after_commit` или `after_rollback` _не_ будут выполнены. По сути, если код вашего колбэка может вызвать исключение, нужно для него вызвать rescue, и обработать его в колбэке, чтобы позволить запуститься другим колбэкам.
+
+WARNING. Одновременное использование `after_create_commit` и `after_update_commit` в одной и той же модели переопределит колбэк, который был первым из них зарегистрирован.
+
+```ruby
+class User < ApplicationRecord
+  after_create_commit :log_user_saved_to_db
+  after_update_commit :log_user_saved_to_db
+
+  private
+  def log_user_saved_to_db
+    puts 'User was saved to database'
+  end
+end
+
+# prints nothing
+>> @user = User.create
+
+# updating @user
+>> @user.save
+=> User was saved to database
+```
+
+Чтобы зарегистрировать колбэки как для create, так и для update экшнов, используйте `after_commit`.
+
+```ruby
+class User < ApplicationRecord
+  after_commit :log_user_saved_to_db, on: [:create, :update]
+end
+```
