@@ -435,10 +435,10 @@ class User < ApplicationRecord
   end
 end
 
-# prints nothing
+# ничего не выводит
 >> @user = User.create
 
-# updating @user
+# обновление @user
 >> @user.save
 => User was saved to database
 ```
