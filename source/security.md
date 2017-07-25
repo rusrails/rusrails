@@ -1031,6 +1031,6 @@ Rails.application.secrets.some_api_key! # => вызовет KeyError: key not fo
 Картина безопасности меняется, и важно идти в ногу со временем, поскольку пропуск новой уязвимости может быть катастрофическим. Ниже перечислены дополнительные источники о безопасности (Rails):
 
 * Подпишитесь на [рассылку](http://groups.google.com/group/rubyonrails-security) о безопасности Rails.
-* [Brakeman - cканер безопасности Rails](http://brakemanscanner.org/) - Для выполнения статического анализа безопасности для Rails приложений.
+* [Brakeman - сканер безопасности Rails](http://brakemanscanner.org/) - Для выполнения статического анализа безопасности для Rails приложений.
 * [Будьте в курсе о других уровнях приложений](http://secunia.com/) (у них тоже есть еженедельная рассылка).
 * [Хороший блог по безопасности](https://www.owasp.org), включающий [Шпаргалку по XSS.](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
