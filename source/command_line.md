@@ -526,7 +526,8 @@ Rails поставляется с набором тестов по имени `M
 
 * `rails tmp:cache:clear` очистит `tmp/cache`.
 * `rails tmp:sockets:clear` очистит `tmp/sockets`.
-* `rails tmp:clear` очистит все файлы кэша и сокетов.
+* `rails tmp:screenshots:clear` очистит `tmp/screenshots`.
+* `rails tmp:clear` очистит все файлы кэша, сокетов и скриншотов.
 * `rails tmp:create` создает временные директории для кэша, сокетов и идентификаторов процесса (pid).
 
 ### Прочее

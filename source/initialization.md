@@ -85,7 +85,7 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 * arel
 * builder
 * bundler
-* erubis
+* erubi
 * i18n
 * mail
 * mime-types

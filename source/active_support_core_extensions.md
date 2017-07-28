@@ -913,8 +913,7 @@ a2.x # => 2, переопределено в a2
 ```ruby
 module ActiveRecord
   class Base
-    class_attribute :table_name_prefix, instance_writer: false
-    self.table_name_prefix = ""
+    class_attribute :table_name_prefix, instance_writer: false, default: "my"
   end
 end
 ```
