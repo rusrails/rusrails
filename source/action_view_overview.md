@@ -448,25 +448,6 @@ image_tag("icon.png") # => <img src="/assets/icon.png" alt="Icon" />
 javascript_include_tag "common" # => <script src="/assets/common.js"></script>
 ```
 
-Если приложение не использует файлопровод, чтобы включить JavaScript библиотеку jQuery, передайте `:defaults` как источник. При использовании `:defaults`, если существует `application.js` в директории `app/assets/javascripts`, он также будет включен.
-
-```ruby
-javascript_include_tag :defaults
-```
-
-Также можно включить все файлы JavaScript в директории `app/assets/javascripts` с помощью `:all` в качестве источника.
-
-```ruby
-javascript_include_tag :all
-```
-
-Также можно кэшировать несколько файлов JavaScript в один файл, что требует меньше HTTP-соединений для скачивания и может быть лучше сжато gzip (что сделает передачу быстрее). Кэширование произойдет, только если `ActionController::Base.perform_caching` установлена в true (по умолчанию для окружения production, но не для development).
-
-```ruby
-javascript_include_tag :all, cache: true # =>
-  <script src="/javascripts/all.js"></script>
-```
-
 #### javascript_path
 
 Вычисляет путь до ресурса JavaScript в директории `app/assets/javascripts`. Если у имени файла источника нет расширения, будет добавлено `.js`. Будут переданы полные пути от корня документа. Используется внутри `javascript_include_tag` для создания пути к скрипту.
@@ -489,19 +470,6 @@ javascript_url "common" # => http://www.example.com/assets/common.js
 
 ```ruby
 stylesheet_link_tag "application" # => <link href="/assets/application.css" media="screen" rel="stylesheet" />
-```
-
-Также можно включить все стили из директории таблиц стилей, используя `:all` в качестве источника:
-
-```ruby
-stylesheet_link_tag :all
-```
-
-Также можно кэшировать несколько таблиц стилей в один файл, что требует меньше HTTP-соединений для скачивания и может быть лучше сжато gzip (что сделает передачу быстрее). Кэширование произойдет, только если `ActionController::Base.perform_caching` установлена в true (по умолчанию для окружения production, но не для development).
-
-```ruby
-stylesheet_link_tag :all, cache: true
-# => <link href="/assets/all.css" media="screen" rel="stylesheet" />
 ```
 
 #### stylesheet_path

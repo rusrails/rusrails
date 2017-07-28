@@ -478,7 +478,7 @@ resources :photos do
 end
 ```
 
-Это распознает `/photos/1/preview` с GET, и направит в экшн `preview` контроллера `PhotosController`, со значением id ресурса, переданным в `params[:id]`. Это также создаст хелперы `preview_photo_url` и `preview_photo_path`.
+Это распознает `/photos/1/preview` с GET, и направит в экшн `preview` контроллера `PhotosController`, со значением id ресурса, переданным в `params[:id]`. Это также создаст хелперы `photo_preview_url` и `photo_preview_path`.
 
 В блоке маршрутов к элементу каждое имя маршрута определяет метод HTTP,
 с которым он будет распознан. Тут можно использовать `get`, `patch`, `put`, `post` или `delete`.

@@ -221,6 +221,16 @@ Rails 5 добавляет возможность запускать задач�
 <% # Template Dependency: recordings/threads/events/* %>
 ```
 
+### `ActionView::Helpers::RecordTagHelper` перемещен в отдельный гем (record_tag_helper)
+
+`content_tag_for` и `div_for` были убраны в пользу использования `content_tag`. Чтобы продолжить использовать это, добавьте гем `record_tag_helper` в свой Gemfile:
+
+```ruby
+gem 'record_tag_helper', '~> 1.0'
+```
+
+За подробностями обратитесь к [#18411](https://github.com/rails/rails/issues/18411).
+
 ### Убрана поддержка гема `protected_attributes`
 
 Гем `protected_attributes` больше не поддерживается в Rails 5.

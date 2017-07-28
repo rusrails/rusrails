@@ -378,6 +378,21 @@ config.middleware.delete Rack::MethodOverride
 
 * `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans` регулирует, должен ли ActiveRecord рассматривать все столбцы `tinyint(1)` как boolean. По умолчанию `true`.
 
+Адаптер SQLite3Adapter добавляет еще одну опцию конфигурации:
+
+* `ActiveRecord::ConnectionAdapters::SQLite3Adapter.represent_boolean_as_integer` указывает, хранятся ли булевые значения в базах данных sqlite3 как 1 и 0 или 't' и 'f'. Выходное значение `ActiveRecord::ConnectionAdapters::SQLite3Adapter.represent_boolean_as_integer`, установленное в false устарело. Базы данных SQLite использовали 't' и 'f' для сериализации булевых значений, и следует преобразовать старые данные в 1 и 0 (их нативную булевую сериализацию), прежде чем устанавливать этот флаг в true. Преобразование можно выполнить с помощью rake task
+
+    ```ruby
+    ExampleModel.where("boolean_column = 't'").update_all(boolean_column: 1)
+    ExampleModel.where("boolean_column = 'f'").update_all(boolean_column: 0)
+    ```
+
+  для всех моделей и всех булевых столбцов, после чего флаг должен быть установлен в true с помощью добавления следующего в файл application.rb:
+
+    ```ruby
+    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
+    ```
+
 Дампер схемы добавляет дополнительную конфигурационную опцию:
 
 * `ActiveRecord::SchemaDumper.ignore_tables` принимает массив таблиц, которые _не_ должны быть включены в любой создаваемый файл схемы. Эта настройка будет проигнорирована в любом случае, кроме `ActiveRecord::Base.schema_format == :ruby`.
@@ -403,6 +418,8 @@ config.middleware.delete Rack::MethodOverride
 * `config.action_controller.forgery_protection_origin_check` настраивает,должен ли сверяться заголовок HTTP `Origin` с доменом сайта в качестве дополнительной защиты от подделки межсайтовых запросов.
 
 * `config.action_controller.per_form_csrf_tokens` настраивает, должны ли токены CSRF быть валидными только для метода/экшна, для которого они сгенерированы.
+
+* `config.action_controller.default_protect_from_forgery` определяет, будет ли добавлена защита от подделки в `ActionController:Base`. Значением по умолчанию является false. Стоит отметить, что это включено по умолчанию при загрузке значений для Rails 5.2.
 
 * `config.action_controller.relative_url_root` может использоваться, что бы сообщить Rails, [деплой происходит в субдиректорию](#deploy-to-a-subdirectory-relative-url-root). По умолчанию `ENV['RAILS_RELATIVE_URL_ROOT']`.
 
