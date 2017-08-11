@@ -92,7 +92,7 @@ NOTE: `ActionDispatch::MiddlewareStack` это эквивалент `Rack::Build
 $ bin/rails middleware
 ```
 
-Для нового приложения Rails он может выдать что-то наподобие:
+Для свежесгенерированного приложения Rails он может выдать что-то наподобие:
 
 ```ruby
 use Rack::Sendfile

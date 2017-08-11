@@ -260,7 +260,7 @@ Railties
 * Добавлен метод `Application#message_verifier` которы возвращает верификационное
   сообщение. ([Pull Request](https://github.com/rails/rails/pull/12995))
 
-* Файл `test_help.rb`, который требуется созданным по умолчанию тестом, автоматически сохраняет тестовую базу данных актуальной `db/schema.rb` (или `db/structure.sql`). Он вызывает ошибку, если перезагрузка схемы не решает проблемы отложенных миграций. Настраивается с помощью опции `config.active_record.maintain_test_schema = false`. ([Pull Request](https://github.com/rails/rails/pull/13528))
+* Файл `test_help.rb`, который требуется сгенерированным по умолчанию тестом, автоматически сохраняет тестовую базу данных актуальной `db/schema.rb` (или `db/structure.sql`). Он вызывает ошибку, если перезагрузка схемы не решает проблемы отложенных миграций. Настраивается с помощью опции `config.active_record.maintain_test_schema = false`. ([Pull Request](https://github.com/rails/rails/pull/13528))
 
 Action Pack
 -----------
@@ -328,7 +328,7 @@ Action Mailer
 
 * Добавлена особенность предварительного просмотра писем на основе гема mail_view от 37 Signals. ([Commit](https://github.com/rails/rails/commit/d6dec7fcb6b8fddf8c170182d4fe64ecfc7b2261))
 
-* Инструмент создания сообщений Action Mailer. Время, потраченное на генерацию сообщения,
+* Инструмент генерации сообщений Action Mailer. Время, потраченное на генерацию сообщения,
   записывается в лог. ([Pull Request](https://github.com/rails/rails/pull/12556))
 
 Active Record
@@ -601,7 +601,7 @@ Active Support
   Так же добавлены псевдонимы `midday`, `noon`, `at_midday`, `at_noon` и
   `at_middle_of_day`. ([Pull Request](https://github.com/rails/rails/pull/10879))
 
-* Добавлены `Date#all_week/month/quarter/year` для создания интервалов дат. ([Pull Request](https://github.com/rails/rails/pull/9685))
+* Добавлены `Date#all_week/month/quarter/year` для генерации интервалов дат. ([Pull Request](https://github.com/rails/rails/pull/9685))
 
 * Добавлены `Time.zone.yesterday` и `Time.zone.tomorrow`. ([Pull Request](https://github.com/rails/rails/pull/12822))
 
