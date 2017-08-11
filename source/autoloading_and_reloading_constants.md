@@ -351,7 +351,7 @@ config.autoload_paths << "#{Rails.root}/lib"
 
 `config.autoload_paths` недоступна для изменения из конфигурационных файлов, относящихся к окружению.
 
-Значение `autoload_paths` можно просмотреть. В только что созданном приложении она (отредактировано):
+Значение `autoload_paths` можно просмотреть. В только что сгенерированном приложении она (отредактировано):
 
 ```
 $ bin/rails r 'puts ActiveSupport::Dependencies.autoload_paths'
