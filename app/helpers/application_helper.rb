@@ -36,6 +36,10 @@ module ApplicationHelper
         url: 'https://mkdev.me/mentors/zverok?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=shepelev',
         image: 'partners/mkdev/shepelev.png'
       },
+      {
+        url: 'https://mkdev.me/mentors/Mehonoshin?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=mekhonoshin',
+        image: 'partners/mkdev/mekhonoshin.png'
+      },
     ].sample
   end
 end
