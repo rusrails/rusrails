@@ -236,7 +236,7 @@ config.middleware.delete Rack::MethodOverride
 
 **`Sprockets::Rails::QuietAssets`**
 
-* Подавляет вывод логгера для запросов актива (asset requests).
+* Подавляет вывод логгера для запросов ассета.
 
 **`Rails::Rack::Logger`**
 
