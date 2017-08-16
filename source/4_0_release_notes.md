@@ -123,7 +123,7 @@ Railties
 
 ### Значимые изменения
 
-* Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие rake-таски. ([Pull Request](https://github.com/rails/rails/pull/7878))
+* Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие задачи rake. ([Pull Request](https://github.com/rails/rails/pull/7878))
 
 * Исполняемые файлы приложения теперь находятся в директории `bin/`. Запустите `rake rails:update:bin` чтобы получить `bin/bundle`, `bin/rails` и `bin/rake`.
 

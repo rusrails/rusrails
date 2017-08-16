@@ -721,7 +721,7 @@ Active Job
 *   Добавлена возможность настроить адаптер очереди для каждого задания без взаимного влияния друг на друга.
     ([Pull Request](https://github.com/rails/rails/pull/16992))
 
-*   Сгенерированное задания теперь по умолчанию наследуется от `app/jobs/application_job.rb`.
+*   Сгенерированное задание теперь по умолчанию наследуется от `app/jobs/application_job.rb`.
     ([Pull Request](https://github.com/rails/rails/pull/19034))
 
 *   Позволяет `DelayedJob`, `Sidekiq`, `qu`, `que` и `queue_classic` возвращать `ActiveJob::Base` id задания как `provider_job_id`.
