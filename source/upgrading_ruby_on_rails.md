@@ -406,7 +406,7 @@ end
 
 ```ruby
 # Установите `:info`, соответствующий текущему значению по умолчанию, или
-# ecnfyjdbnt `:debug` для переключения в будущее значение по умолчанию.
+# установите `:debug` для переключения в будущее значение по умолчанию.
 config.log_level = :info
 ```
 
@@ -1109,7 +1109,7 @@ config.middleware.insert_before(Rack::Lock, ActionDispatch::BestStandardsSupport
 
 Также найдите в своих настройках сред `config.action_dispatch.best_standards_support`, и уберите эту строчку, если она есть.
 
-* В Rails 4.0 при прекомпиляции ресурсов не будут больше автоматически копироваться не-JS/CSS ресурсы из `vendor/assets` и `lib/assets`. Разработчики приложений Rails и engine-ов должны поместить эти ресурсы в `app/assets` или настроить `config.assets.precompile`.
+* В Rails 4.0 при прекомпиляции ассетов не будут больше автоматически копироваться не-JS/CSS ассеты из `vendor/assets` и `lib/assets`. Разработчики приложений Rails и engine-ов должны поместить эти ассеты в `app/assets` или настроить `config.assets.precompile`.
 
 * В Rails 4.0 вызывается `ActionController::UnknownFormat`, когда экшн не обрабатывает формат запроса. По умолчанию исключение обрабатывается, откликаясь с помощью 406 Not Acceptable, но теперь это можно переопределить. В Rails 3 всегда возвращался 406 Not Acceptable. Без возможности переопределения.
 
@@ -1242,7 +1242,7 @@ config.assets.enabled = true
 config.assets.version = '1.0'
 ```
 
-Если ваше приложение использует маршрут "/assets" для ресурса, можно изменить префикс, используемый для файлов, чтобы избежать конфликтов:
+Если ваше приложение использует маршрут "/assets" для ресурса, можно изменить префикс, используемый для ассетов, чтобы избежать конфликтов:
 
 ```ruby
 # Defaults to '/assets'
@@ -1334,6 +1334,6 @@ AppName::Application.config.session_store :cookie_store, key: 'SOMETHINGNEW'
 $ bin/rake db:sessions:clear
 ```
 
-### Убрать опции :cache и :concat в ресурсных хелперах во вьюхах
+### Убрать опции :cache и :concat в ассетных хелперах во вьюхах
 
-* Вместе с Asset Pipeline опции :cache и :concat больше не используются, удалите их из вьюх.
+* Вместе с файлопроводом опции :cache и :concat больше не используются, удалите эти опции из вьюх.
