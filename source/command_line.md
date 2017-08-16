@@ -538,7 +538,7 @@ Rails поставляется с набором тестов по имени `M
 
 ### Пользовательские задачи Rake
 
-Пользовательские задачи rake имеют расширение `.rake` и располагаются в`Rails.root/lib/tasks`. Эти пользовательские задачи rake можно создать с помощью команды `bin/rails generate task`.
+Пользовательские задачи rake имеют расширение `.rake` и располагаются в `Rails.root/lib/tasks`. Эти пользовательские задачи rake можно создать с помощью команды `bin/rails generate task`.
 
 ```ruby
 desc "I am short, but comprehensive description for my cool task"

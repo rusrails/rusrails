@@ -27,7 +27,7 @@ Rails on Rack
 
 ### `rails server`
 
-`rails server` выполняет основную работу по созданию объекта `Rack::Server` и запуску веб-сервера.
+`rails server` выполняет основную задачу по созданию объекта `Rack::Server` и запуску веб-сервера.
 
 Вот как `rails server` создает экземпляр `Rack::Server`
 

@@ -141,7 +141,9 @@ $ bin/rails generate scaffold user name email login
 $ bin/rails db:migrate
 ```
 
-Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить `UserMailer` доставлять email каждому вновь созданному пользователю, изменив экшн `create` и вставив вызов `UserMailer.welcome_email` сразу после того, как пользователь был успешно сохранен:
+Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить `UserMailer` доставлять email каждому вновь созданному пользователю, изменив экшн `create` и вставив вызов `UserMailer.welcome_email` сразу после того, как пользователь был успешно сохранен.
+
+Action Mailer прекрасно интегрирован с Active Job, поэтому можно отправлять электронную почту вне цикла запрос-ответ, таким образом что пользователю не нужно ждать выполнения отправки:
 
 ```ruby
 class UsersController < ApplicationController
@@ -660,7 +662,7 @@ class SandboxEmailInterceptor
 end
 ```
 
-Чтобы перехватчик начал работать, его необходимо зарегистрировать с помощью фреймворка Action Mailer. Это можно сделать в файле инициализатора `config/initializers/sandbox_email_interceptor.rb`
+Прежде чем перехватчик сможет выполнить свое задание, необходимо зарегистрировать его с помощью фреймворка Action Mailer. Это можно сделать в файле инициализатора `config/initializers/sandbox_email_interceptor.rb`
 
 ```ruby
 if Rails.env.staging?
