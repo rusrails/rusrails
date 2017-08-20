@@ -43,7 +43,7 @@ get '/patients/:id', to: 'patients#show', as: 'patient'
 и ваше приложение содержит код в контроллере:
 
 ```ruby
-@patient = Patient.find(17)
+@patient = Patient.find(params[:id])
 ```
 
 и такой в соответствующей вьюхе:
@@ -412,7 +412,7 @@ resources :articles do
 end
 ```
 
-Также их можно использовать в любом месте внутри маршрутов, например, в вызове scope или namespace:
+Также их можно использовать в любом месте внутри маршрутов, например, в вызове `scope` или `namespace`:
 
 ```ruby
 namespace :articles do

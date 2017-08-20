@@ -117,7 +117,7 @@ use ActionDispatch::Flash
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
-run MyApp.application.routes
+run MyApp::Application.routes
 ```
 
 Промежуточные программы по умолчанию, показанные здесь (и некоторые другие) описываются в разделе [Внутренние промежуточные программы](#internal-middleware-stack) ниже.
@@ -293,7 +293,7 @@ TIP: Можете использовать любые из этих промеж
 
 ### Обучение Rack
 
-* [Official Rack Website](http://rack.github.io)
+* [Official Rack Website](https://rack.github.io)
 * [Introducing Rack](http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html)
 
 ### Понимание промежуточных программ

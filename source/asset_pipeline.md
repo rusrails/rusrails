@@ -181,10 +181,10 @@ app/assets/javascripts/sub/something.js
 
 Можно просмотреть путь поиска, проинспектировав `Rails.application.config.assets.paths` в консоли Rails.
 
-Помимо стандартных путей `assets/*` в файлопровод могут быть добавлены дополнительные (полные) пути в `config/application.rb`. Например:
+Помимо стандартных путей `assets/*` в файлопровод могут быть добавлены дополнительные (полные) пути в `config/initializers/assets.rb`. Например:
 
 ```ruby
-config.assets.paths << Rails.root.join("lib", "videoplayer", "flash")
+Rails.application.config.assets.paths << Rails.root.join("lib", "videoplayer", "flash")
 ```
 
 Пути обходятся в том порядке, в котором они выводятся в пути поиска. По умолчанию это означает, что имеют преимущество файлы в `app/assets`, они перекроют соответствующие пути в `lib` и `vendor`.
@@ -721,7 +721,7 @@ http://mycdnsubdomain.fictional-cdn.com/assets/smile.png
 
 ### Сжатие CSS
 
-Одним из вариантов для сжатия CSS является YUI. [YUI CSS compressor](http://developer.yahoo.com/yui/compressor/css.html) представляет минификацию.
+Одним из вариантов для сжатия CSS является YUI. [YUI CSS compressor](https://yui.github.io/yuicompressor/css.html) предоставляет минификацию.
 
 Следующая строка включает сжатие YUI и требует гем `yui-compressor`.
 

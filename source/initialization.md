@@ -75,13 +75,15 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 
 Стандартное Rails приложение зависит от нескольких гемов, а именно:
 
+* actioncable
 * actionmailer
 * actionpack
 * actionview
+* activejob
 * activemodel
 * activerecord
+* activestorage
 * activesupport
-* activejob
 * arel
 * builder
 * bundler
@@ -105,7 +107,7 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 Как только завершится `config/boot.rb`, следующим файлом, который будет затребован, является `rails/commands`, который помогает расширить псевдонимы. В нашем случае, массив `ARGV` просто содержит `server`, который будет передан дальше:
 
 ```ruby
-require "rails/command"
+require_relative "command"
 
 aliases = {
   "g"  => "generate",
@@ -138,7 +140,7 @@ module Rails::Command
       namespace = namespace.to_s
       namespace = "help" if namespace.blank? || HELP_MAPPINGS.include?(namespace)
       namespace = "version" if %w( -v --version ).include? namespace
-    
+
       if command = find_by_namespace(namespace)
         command.perform(namespace, args, config)
       else
@@ -157,7 +159,7 @@ module Rails
     class ServerCommand < Base # :nodoc:
       def perform
         set_application_directory!
-  
+
         Rails::Server.new.tap do |server|
           # Require application after server sets environment to propagate
           # the --environment option.
@@ -269,7 +271,7 @@ def parse!(args)
   args, options = args.dup, {}
 
   option_parser(options).parse! args
-  
+
   options[:log_stdout] = options[:daemonize].blank? && (options[:environment] || Rails.env) == "development"
   options[:server]     = args.shift
   options
@@ -480,6 +482,7 @@ require "rails"
   action_mailer/railtie
   active_job/railtie
   action_cable/engine
+  active_storage/engine
   rails/test_unit/railtie
   sprockets/railtie
 ).each do |railtie|
