@@ -79,7 +79,7 @@ class ArticleTest < ActiveSupport::TestCase
 end
 ```
 
-Построчное изучение этого файла поможет вам ориентироваться в коде тестирования и терминологии Rails.
+Построчное изучение этого файла поможет ориентироваться в коде тестирования и терминологии Rails.
 
 ```ruby
 require 'test_helper'
@@ -335,9 +335,10 @@ Rails добавляет некоторые свои утверждения в �
 * [`ActiveSupport::TestCase`](http://api.rubyonrails.org/classes/ActiveSupport/TestCase.html)
 * [`ActionMailer::TestCase`](http://api.rubyonrails.org/classes/ActionMailer/TestCase.html)
 * [`ActionView::TestCase`](http://api.rubyonrails.org/classes/ActionView/TestCase.html)
-* [`ActionDispatch::IntegrationTest`](http://api.rubyonrails.org/classes/ActionDispatch/IntegrationTest.html)
 * [`ActiveJob::TestCase`](http://api.rubyonrails.org/classes/ActiveJob/TestCase.html)
+* [`ActionDispatch::IntegrationTest`](http://api.rubyonrails.org/classes/ActionDispatch/IntegrationTest.html)
 * [`ActionDispatch::SystemTestCase`](http://api.rubyonrails.org/classes/ActionDispatch/SystemTestCase.html)
+* [`Rails::Generators::TestCase`](http://api.rubyonrails.org/classes/Rails/Generators/TestCase.html)
 
 Каждый из этих классов включает `Minitest::Assertions`, позволяя использовать все основные утверждения в наших тестах.
 
@@ -416,7 +417,8 @@ You can run multiple files and directories at the same time:
 By default test failures and errors are reported inline during a run.
 
 Rails options:
-    -e, --environment ENV            Run tests in the ENV environment
+    -w, --warnings                   Run with Ruby warnings enabled
+    -e, --environment                Run tests in the ENV environment
     -b, --backtrace                  Show the complete backtrace
     -d, --defer-output               Output test failures and errors after the test run
     -f, --fail-fast                  Abort test run on first failure or error

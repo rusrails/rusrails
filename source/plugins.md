@@ -62,7 +62,7 @@ $ rails plugin new --help
 ```ruby
 # yaffle/test/core_ext_test.rb
 
-require 'test_helper'
+require "test_helper"
 
 class CoreExtTest < ActiveSupport::TestCase
   def test_to_squawk_prepends_the_word_squawk
@@ -92,14 +92,16 @@ Finished in 0.003358s, 595.6483 runs/s, 297.8242 assertions/s.
 
 Отлично - теперь мы готовы начать разработку.
 
-В `lib/yaffle.rb` добавьте `require 'yaffle/core_ext'`:
+В `lib/yaffle.rb` добавьте `require "yaffle/core_ext"`:
 
 ```ruby
 # yaffle/lib/yaffle.rb
 
-require 'yaffle/core_ext'
+require "yaffle/railtie"
+require "yaffle/core_ext"
 
 module Yaffle
+  # Тут какой-нибудь код...
 end
 ```
 
@@ -108,7 +110,7 @@ end
 ```ruby
 # yaffle/lib/yaffle/core_ext.rb
 
-String.class_eval do
+class String
   def to_squawk
     "squawk! #{self}".strip
   end
@@ -139,7 +141,7 @@ $ bin/rails console
 ```ruby
 # yaffle/test/acts_as_yaffle_test.rb
 
-require 'test_helper'
+require "test_helper"
 
 class ActsAsYaffleTest < ActiveSupport::TestCase
 end
@@ -148,10 +150,12 @@ end
 ```ruby
 # yaffle/lib/yaffle.rb
 
-require 'yaffle/core_ext'
-require 'yaffle/acts_as_yaffle'
+require "yaffle/railtie"
+require "yaffle/core_ext"
+require "yaffle/acts_as_yaffle"
 
 module Yaffle
+  # Тут какой-нибудь код...
 end
 ```
 
@@ -160,7 +164,6 @@ end
 
 module Yaffle
   module ActsAsYaffle
-    # your code will go here
   end
 end
 ```
@@ -174,7 +177,7 @@ end
 ```ruby
 # yaffle/test/acts_as_yaffle_test.rb
 
-require 'test_helper'
+require "test_helper"
 
 class ActsAsYaffleTest < ActiveSupport::TestCase
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
@@ -256,12 +259,8 @@ module Yaffle
   module ActsAsYaffle
     extend ActiveSupport::Concern
 
-    included do
-    end
-
-    module ClassMethods
+    class_methods do
       def acts_as_yaffle(options = {})
-        # тут будет ваш код
       end
     end
   end
@@ -315,10 +314,7 @@ module Yaffle
   module ActsAsYaffle
     extend ActiveSupport::Concern
 
-    included do
-    end
-
-    module ClassMethods
+    class_methods do
       def acts_as_yaffle(options = {})
         cattr_accessor :yaffle_text_field, default: (options[:yaffle_text_field] || :last_squawk).to_s
       end
@@ -349,7 +345,7 @@ end
 
 ```ruby
 # yaffle/test/acts_as_yaffle_test.rb
-require 'test_helper'
+require "test_helper"
 
 class ActsAsYaffleTest < ActiveSupport::TestCase
   def test_a_hickwalls_yaffle_text_field_should_be_last_squawk
@@ -384,19 +380,15 @@ module Yaffle
     extend ActiveSupport::Concern
 
     included do
-    end
-
-    module ClassMethods
-      def acts_as_yaffle(options = {})
-        cattr_accessor :yaffle_text_field, default: (options[:yaffle_text_field] || :last_squawk).to_s
-
-        include Yaffle::ActsAsYaffle::LocalInstanceMethods
+      def squawk(string)
+        write_attribute(self.class.yaffle_text_field, string.to_squawk)
       end
     end
 
-    module LocalInstanceMethods
-      def squawk(string)
-        write_attribute(self.class.yaffle_text_field, string.to_squawk)
+    class_methods do
+      def acts_as_yaffle(options = {})
+        cattr_accessor :yaffle_text_field, default: (options[:yaffle_text_field] || :last_squawk).to_s
+
       end
     end
   end
@@ -426,7 +418,7 @@ send("#{self.class.yaffle_text_field}=", string.to_squawk)
 Генераторы
 ----------
 
-Генераторы могут быть включены в ваш гем простым их добавлением в директорию lib/generators вашего плагина. Подробнее о создании генераторов смотрите в [руководстве по генераторам](/generators)
+Генераторы могут быть включены в гем простым добавлением в директорию lib/generators плагина. Подробнее о создании генераторов смотрите в [руководстве по генераторам](/generators).
 
 Публикация вашего гема
 ----------------------
@@ -434,12 +426,12 @@ send("#{self.class.yaffle_text_field}=", string.to_squawk)
 Плагины в виде гемов, которые в текущий момент в разработке, могут с легкостью быть доступны из любого репозитория Git. Чтобы поделиться гемом Yaffle с другими, просто передайте код в репозиторий Git (такой как GitHub) и добавьте строчку в Gemfile требуемого приложения:
 
 ```ruby
-gem 'yaffle', git: 'git://github.com/yaffle_watcher/yaffle.git'
+gem "yaffle", git: "https://github.com/rails/yaffle.git"
 ```
 
 После запуска `bundle install` функционал вашего гема будет доступен в приложении.
 
-Когда гем будет готов стать доступным в виде формального релиза, он может быть опубликован на [RubyGems](http://www.rubygems.org). Подробнее о публикации гемов на RubyGems смотрите: [Creating and Publishing Your First Ruby Gem](http://blog.thepete.net/2010/11/creating-and-publishing-your-first-ruby.html)
+Когда гем будет готов стать доступным в виде формального релиза, он может быть опубликован на [RubyGems](https://www.rubygems.org). Подробнее о публикации гемов на RubyGems смотрите: [Publishing Your First Ruby Gem](http://guides.rubygems.org/publishing)
 
 Документация RDoc
 -----------------
@@ -453,7 +445,7 @@ gem 'yaffle', git: 'git://github.com/yaffle_watcher/yaffle.git'
 * Как добавить функционал в приложение (несколько примеров обычных ситуаций использования)
 * Предупреждения, хитрости или подсказки, которые могут помочь пользователям и сохранить их время
 
-Как только README готов, пройдитесь и добавьте комментарии rdoc ко всем методам, которые будут использовать разработчики. Также принято добавить комментарии '#:nodoc:' к тем частям кода, которые не включены в публичный API.
+Как только README готов, пройдитесь и добавьте комментарии rdoc ко всем методам, которые будут использовать разработчики. Также принято добавить комментарии `#:nodoc:` к тем частям кода, которые не включены в публичный API.
 
 Как только ваши комментарии закончены, перейдите в директорию плагины и запустите:
 
