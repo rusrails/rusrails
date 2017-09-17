@@ -96,7 +96,7 @@ global-908e25f4bf641868d8683022a5b62f54.css
 Более подробно:
 
 * [Optimize caching](http://code.google.com/speed/page-speed/docs/caching.html)
-* [Revving Filenames: don’t use querystring](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/)
+* [Revving Filenames: don't use querystring](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/)
 
 (how-to-use-the-asset-pipeline) Как использовать файлопровод (Asset Pipeline)
 -----------------------------------------------------------------------------
@@ -251,7 +251,7 @@ WARNING: Если вы прекомпилируете ассеты (смотри
 
 Этот фрагмент кода записывает путь к определенному указанному ассету. Этот пример имеет смысл если имеется изображение в одном из путей загрузки ассетов, такое как `app/assets/images/image.png`, на которое тут будет ссылка. Если это изображение уже имеется в `public/assets` как файл с меткой, то будет ссылка на него.
 
-Если хотите использовать [data URI](http://ru.wikipedia.org/wiki/Data:_URL) - метод встраивания данных изображения непосредственно в файл CSS - используйте хелпер `asset_data_uri`.
+Если хотите использовать [data URI](https://ru.wikipedia.org/wiki/Data:_URL) - метод встраивания данных изображения непосредственно в файл CSS - используйте хелпер `asset_data_uri`.
 
 ```css
 #logo { background: url(<%= asset_data_uri 'logo.png' %>) }

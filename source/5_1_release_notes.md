@@ -522,7 +522,7 @@ Active Support
     ([Pull Request](https://github.com/rails/rails/pull/28157))
 
 *   Устарела передача строк в опции условий `:if` и `:unless` для методов `set_callback` и `skip_callback`.
-    ([Commit](https://github.com/rails/rails/commit/0952552)
+    ([Commit](https://github.com/rails/rails/commit/0952552))
 
 ### Значимые изменения
 

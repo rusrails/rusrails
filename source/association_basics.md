@@ -654,11 +654,11 @@ end
 module MyApplication
   module Business
     class Supplier < ApplicationRecord
-       has_one :account
+      has_one :account
     end
 
     class Account < ApplicationRecord
-       belongs_to :supplier
+      belongs_to :supplier
     end
   end
 end
@@ -670,13 +670,13 @@ end
 module MyApplication
   module Business
     class Supplier < ApplicationRecord
-       has_one :account
+      has_one :account
     end
   end
 
   module Billing
     class Account < ApplicationRecord
-       belongs_to :supplier
+      belongs_to :supplier
     end
   end
 end
@@ -688,14 +688,14 @@ end
 module MyApplication
   module Business
     class Supplier < ApplicationRecord
-       has_one :account,
+      has_one :account,
         class_name: "MyApplication::Billing::Account"
     end
   end
 
   module Billing
     class Account < ApplicationRecord
-       belongs_to :supplier,
+      belongs_to :supplier,
         class_name: "MyApplication::Business::Supplier"
     end
   end
@@ -950,13 +950,10 @@ NOTE: Опцию `:counter_cache` необходимо указывать тол
 
 #### `:dependent`
 
-Устанавливает, что произойдет со связанными объектами, когда их владелец будет уничтожен:
+Если установить опцию `:dependent` в:
 
-* `:destroy` приводит к тому, что связанные объекты также будут уничтожены.
-* `:delete_all` приводит к тому, что связанные объекты будут удалены непосредственно из базы данных (колбэки не запускаются).
-* `:nullify` приводит к тому, что внешним ключам будет установлен `NULL` (колбэки не запускаются).
-* `:restrict_with_exception` приводит к тому, что будет вызвано исключение, если есть связанные записи.
-* `:restrict_with_error` приводит к тому, что к владельцу будет добавлена ошибка, если есть связанные записи.
+* `:destroy`, когда объект будет уничтожен, `destroy` будет вызван на его связанных объектах.
+* `:delete`, когда объект будет уничтожен, все его связанные объекты будут удалены прямо из базы данных без вызова метода `destroy`.
 
 WARNING: Не следует определять эту опцию в связи `belongs_to`, которая соединена со связью `has_many` в другом классе. Это приведет к "битым" связям в записях вашей базы данных.
 

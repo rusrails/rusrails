@@ -76,7 +76,7 @@ $ sudo pacman -S sqlite
 
 Или скомпилируйте порт `databases/sqlite3`.
 
-Получите последнюю версию [Bundler](http://bundler.io/)
+Получите последнюю версию [Bundler](https://bundler.io/)
 
 ```bash
 $ gem install bundler

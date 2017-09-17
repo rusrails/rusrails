@@ -19,7 +19,7 @@
 
 Action Controller это C в аббревиатуре MVC. После того, как роутер определит, какой контроллер использовать для обработки запроса, контроллер ответственен за осмысление запроса и генерацию подходящего ответа. К счастью, Action Controller делает за вас большую часть грязной работы и использует элегантные соглашения, чтобы сделать это по возможности максимально просто.
 
-Для большинства приложений, основанных на [RESTful](http://ru.wikipedia.org/wiki/REST), контроллер получает запрос (это невидимо для вас, как для разработчика), извлекает или сохраняет данные в модели и использует вьюху для создания результирующего HTML. Если контроллеру необходимо работать немного по другому, не проблема, это всего лишь наиболее распространенный способ работы контроллера.
+Для большинства приложений, основанных на [RESTful](https://ru.wikipedia.org/wiki/REST), контроллер получает запрос (это невидимо для вас, как для разработчика), извлекает или сохраняет данные в модели и использует вьюху для создания результирующего HTML. Если контроллеру необходимо работать немного по другому, не проблема, это всего лишь наиболее распространенный способ работы контроллера.
 
 Таким образом, контроллер можно рассматривать как посредника между моделями и вьюхами. Он делает данные модели доступными вьюхе, так что она может отображать эти данные пользователю, и он сохраняет или обновляет данные от пользователя в модель.
 
@@ -346,34 +346,18 @@ Rails.application.config.session_store :cookie_store, key: '_your_app_session'
 Rails.application.config.session_store :cookie_store, key: '_your_app_session', domain: ".example.com"
 ```
 
-Rails устанавливает (для CookieStore) секретный ключ, используемый для подписания данных сессии. Он может быть изменен в `config/secrets.yml`
+Rails устанавливает (для CookieStore) секретный ключ, используемый для подписания данных сессии, в `config/credentials.yml.enc`. Он может быть изменен с помощью `bin/rails credentials:edit`.
 
 ```ruby
-# Be sure to restart your server when you modify this file.
+# amazon:
+#   access_key_id: 123
+#   secret_access_key: 345
 
-# Your secret key is used for verifying the integrity of signed cookies.
-# If you change this key, all old signed cookies will become invalid!
-
-# Make sure the secret is at least 30 characters and all random,
-# no regular words or you'll be exposed to dictionary attacks.
-# You can use `rails secret` to generate a secure secret key.
-
-# Make sure the secrets in this file are kept private
-# if you're sharing your code publicly.
-
-development:
-  secret_key_base: a75d...
-
-test:
-  secret_key_base: 492f...
-
-# Do not keep production secrets in the repository,
-# instead read values from the environment.
-production:
-  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+# Used as the base secret for all MessageVerifiers in Rails, including the one protecting cookies.
+secret_key_base: 492f...
 ```
 
-NOTE: Изменение секретного ключа при использовании `CookieStore` делает все предыдущие сессии невалидными.
+NOTE: Изменение secret_key_base при использовании `CookieStore` делает все предыдущие сессии невалидными.
 
 ### Доступ к сессии
 

@@ -92,8 +92,6 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 * mail
 * mime-types
 * rack
-* rack-cache
-* rack-mount
 * rack-test
 * rails
 * railties

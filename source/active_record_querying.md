@@ -1499,7 +1499,7 @@ book.available?   # => false
 (Method Chaining) Цепочки методов
 ---------------------------------
 
-В Active Record есть полезный приём программирования [Method Chaining](http://en.wikipedia.org/wiki/Method_chaining),
+В Active Record есть полезный приём программирования [Method Chaining](https://en.wikipedia.org/wiki/Method_chaining),
 который позволяет нам комбинировать множество Active Record методов.
 
 Можно сцепить несколько методов в единое выражение, если предыдущий вызываемый метод возвращает

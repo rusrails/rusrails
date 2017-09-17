@@ -850,7 +850,9 @@ NOTE: Определено в `active_support/core_ext/module/delegation.rb`.
 
 Метод `redefine_method` предотвращает такое потенциальное предупреждение, предварительно убирая существующий метод, если нужно.
 
-NOTE: Определено в `active_support/core_ext/module/remove_method.rb`.
+Также можно использовать `silence_redefinition_of_method`, если необходимо определить заменяющий метод отдельно (потому что используется `delegate`, например).
+
+NOTE: Определено в `active_support/core_ext/module/redefine_method.rb`.
 
 (extensions-to-class) Расширения для `Class`
 --------------------------------------------
@@ -1970,7 +1972,7 @@ NOTE: Определено в `active_support/core_ext/integer/inflections.rb`.
 Метод `to_s` предоставляет спецификатор по умолчанию для "F". Это означает, что простой вызов `to_s` приведет к представлению с плавающей запятой вместо инженерной нотации:
 
 ```ruby
-BigDecimal.new(5.00, 6).to_s  # => "5.0"
+BigDecimal.new(5.00, 6).to_s       # => "5.0"
 ```
 
 а также поддерживаются эти спецификаторы символа:
@@ -3598,7 +3600,7 @@ Time.current
 now = Time.current
 # => Mon, 09 Aug 2010 23:20:05 UTC +00:00
 now + 1.year
-#  => Tue, 09 Aug 2011 23:21:11 UTC +00:00
+# => Tue, 09 Aug 2011 23:21:11 UTC +00:00
 now - 1.week
 # => Mon, 02 Aug 2010 23:21:11 UTC +00:00
 ```
