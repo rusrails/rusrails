@@ -1385,9 +1385,9 @@ end
 Client.new # => #<Client id: nil, active: nil>
 ```
 
-### Слияние скоупов
+### Объединение скоупов
 
-Подобно условиям `where`, скоупы сливаются с использованием `AND`.
+Подобно условиям `where`, скоупы объединяются с использованием `AND`.
 
 ```ruby
 class User < ApplicationRecord
@@ -1413,7 +1413,7 @@ User.active.merge(User.inactive)
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
 ```
 
-Важным предостережением является то, что `default_scope` будет переопределен условиями `scope` и `where`.
+Важным предостережением является то, что `default_scope` переопределяется условиями `scope` и `where`.
 
 ```ruby
 class User < ApplicationRecord
@@ -1432,7 +1432,7 @@ User.where(state: 'inactive')
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'inactive'
 ```
 
-Как видите, `default_scope` был переопределен как условием `scope`, так и `where`.
+Как видите, `default_scope` объединяется как со `scope`, так и с `where` условиями.
 
 ### Удаление всех скоупов
 
