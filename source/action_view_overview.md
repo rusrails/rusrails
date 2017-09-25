@@ -5,7 +5,7 @@
 
 * Что такое Action View, и как его использовать вместе с Rails.
 * Как лучше использовать шаблоны, партиалы и макеты.
-* Какие хелперы предоставлены Action View, и как сделать свои собственные.
+* Какие хелперы предоставлены Action View.
 * Как использовать локализованные вьюхи.
 
 --------------------------------------------------------------------------------
@@ -398,7 +398,7 @@ WIP: Тут перечислены не все хелперы. За полным
 
 ```ruby
 config.action_controller.asset_host = "assets.example.com"
-image_tag("rails.png") # => <img src="http://assets.example.com/images/rails.png" alt="Rails" />
+image_tag("rails.png") # => <img src="http://assets.example.com/images/rails.png" />
 ```
 
 #### auto_discovery_link_tag
@@ -437,7 +437,7 @@ image_url("edit.png") # => http://www.example.com/assets/edit.png
 Возвращает тег картинки HTML для источника. Источником может быть полный путь или файл, существующий в директории `app/assets/images`.
 
 ```ruby
-image_tag("icon.png") # => <img src="/assets/icon.png" alt="Icon" />
+image_tag("icon.png") # => <img src="/assets/icon.png" />
 ```
 
 #### javascript_include_tag

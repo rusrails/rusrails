@@ -838,7 +838,7 @@ create    test/controllers/articles_controller_test.rb
 $ bin/rails generate test_unit:scaffold article
 ...
 invoke  test_unit
-create test/controllers/articles_controller_test.rb
+create    test/controllers/articles_controller_test.rb
 ...
 ```
 
@@ -969,7 +969,7 @@ end
 
 ### Установка заголовков и переменных CGI
 
-[Заголовки HTTP](http://tools.ietf.org/search/rfc2616#section-5.3) и [переменные CGI](http://tools.ietf.org/search/rfc3875#section-4.1) могут быть переданы как заголовки:
+[Заголовки HTTP](https://tools.ietf.org/search/rfc2616#section-5.3) и [переменные CGI](https://tools.ietf.org/search/rfc3875#section-4.1) могут быть переданы как заголовки:
 
 ```ruby
 # устанавливаем заголовок HTTP

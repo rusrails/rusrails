@@ -73,7 +73,7 @@ If `return` is needed it is recommended to explicitly define a method.
 (english) Английский язык
 -------------------------
 
-Пожалуйста, используйте американский английский (*color*, *center*, *modularize* и т.д.). Обратитесь к [списку различий в написании американских и британских английских слов](http://en.wikipedia.org/wiki/American_and_British_English_spelling_differences).
+Пожалуйста, используйте американский английский (*color*, *center*, *modularize* и т.д.). Обратитесь к [списку различий в написании американских и британских английских слов](https://en.wikipedia.org/wiki/American_and_British_English_spelling_differences).
 
 Оксфордская запятая
 -------------------
@@ -325,7 +325,7 @@ end
 
 ```ruby
 # image_tag("icon.png")
-#   # => <img alt="Icon" src="/assets/icon.png" />
+#   # => <img src="/assets/icon.png" />
 ```
 
 Хотя поведением по умолчанию для `#image_tag` является всегда возвращать `/images/icon.png`, учитывая полный стек Rails (включая Asset Pipeline), мы можем увидеть вышеуказанный результат.

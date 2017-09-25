@@ -517,7 +517,7 @@ DSL миграций был расширен поддержкой определ
 
 Или, "а-а-а-а, почему мои тесты падают!!!?", или "мой виджет `<script>` сломался!!"
 
-Защита от подделки межсайтовых запросов (CSRF) сейчас также покрывает GET запросы с откликами JavaScript. Это предотвращает посторонним сайтам ссылаться на ваши Javascript с помощью тега `<script>` для извлечения конфиденциальных данных.
+Защита от подделки межсайтовых запросов (CSRF) сейчас также покрывает GET запросы с откликами JavaScript. Это предотвращает посторонним сайтам ссылаться на ваши JavaScript с помощью тега `<script>` для извлечения конфиденциальных данных.
 
 Это означает, что ваши функциональные и интеграционные тесты, использующие
 
@@ -913,7 +913,7 @@ end
 
 #### Заметка о типах медиа
 
-Корректировка для метода `PATCH` [определяет, что с `PATCH` должен использоваться тип медиа 'diff' ](http://www.rfc-editor.org/errata_search.php?rfc=5789). Один из таких форматов [JSON Patch](http://tools.ietf.org/html/rfc6902). Хотя Rails не поддерживает JSON Patch, такую поддержку легко добавить:
+Корректировка для метода `PATCH` [определяет, что с `PATCH` должен использоваться тип медиа 'diff' ](http://www.rfc-editor.org/errata_search.php?rfc=5789). Один из таких форматов [JSON Patch](https://tools.ietf.org/html/rfc6902). Хотя Rails не поддерживает JSON Patch, такую поддержку легко добавить:
 
 ```
 # в вашем контроллере
@@ -1102,7 +1102,7 @@ get 'こんにちは', controller: 'welcome', action: 'index'
   get '/' => 'root#index'
 ```
 
-* В Rails 4.0 убрана промежуточная программа `ActionDispatch::BestStandardsSupport`, `<!DOCTYPE html>` уже включает режим стандартов в соответствии с http://msdn.microsoft.com/en-us/library/jj676915(v=vs.85).aspx, а заголовок ChromeFrame был перемещен в `config.action_dispatch.default_headers`.
+* В Rails 4.0 убрана промежуточная программа `ActionDispatch::BestStandardsSupport`, `<!DOCTYPE html>` уже включает режим стандартов в соответствии с https://msdn.microsoft.com/en-us/library/jj676915(v=vs.85).aspx, а заголовок ChromeFrame был перемещен в `config.action_dispatch.default_headers`.
 
 Помните, что вы также должны убрать все упоминания промежуточной программы из кода своего приложения, например:
 

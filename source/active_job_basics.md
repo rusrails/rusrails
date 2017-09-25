@@ -133,6 +133,7 @@ end
 
 - [Sidekiq](https://github.com/mperham/sidekiq/wiki/Active-Job)
 - [Resque](https://github.com/resque/resque/wiki/ActiveJob)
+- [Sneakers](https://github.com/jondot/sneakers/wiki/How-To:-Rails-Background-Jobs-with-ActiveJob)
 - [Sucker Punch](https://github.com/brandonhilkert/sucker_punch#active-job)
 - [Queue Classic](https://github.com/QueueClassic/queue_classic#active-job)
 
@@ -322,7 +323,7 @@ class GuestsCleanupJob < ApplicationJob
   queue_as :default
 
   rescue_from(ActiveRecord::RecordNotFound) do |exception|
-   # Сделать что-то с этим исключением
+    # Сделать что-то с этим исключением
   end
 
   def perform
@@ -330,6 +331,26 @@ class GuestsCleanupJob < ApplicationJob
   end
 end
 ```
+
+### Повторная отправка или отмена неудачных заданий
+
+Также возможно повторить отправку или отменить задание, если во время выполнения было вызвано исключение.
+
+Например:
+
+```ruby
+class RemoteServiceJob < ApplicationJob
+  retry_on CustomAppException # по умолчанию, ожидание: 3 сек., попыток: 5
+
+  discard_on ActiveJob::DeserializationError
+
+  def perform(*args)
+    # Может быть вызвано CustomAppException или ActiveJob::DeserializationError
+  end
+end
+```
+
+Более подробную информацию смотрите в документации по API для [ActiveJob::Exceptions](http://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html).
 
 ### Десериализация
 

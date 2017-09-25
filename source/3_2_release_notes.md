@@ -76,7 +76,7 @@ $ cd myapp
 
 Сейчас Rails использует `Gemfile` в корне приложения, чтобы определить гемы, требуемые для запуска вашего приложения. Этот `Gemfile` обрабатывается [Bundler](http://github.com/carlhuda/bundler), который затем устанавливает все зависимости. Он может даже установить все зависимости локально в ваше приложение, и оно не будет зависеть от системных гемов.
 
-Подробнее: - [домашняя страница Bundler](http://bundler.io/)
+Подробнее: - [домашняя страница Bundler](https://bundler.io/)
 
 ### Живите на грани
 
@@ -290,7 +290,7 @@ Action Pack
     ```ruby
     @items.each do |item|
       content_tag_for(:li, item) do
-         Title: <%= item.title %>
+        Title: <%= item.title %>
       end
     end
     ```
