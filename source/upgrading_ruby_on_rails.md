@@ -562,11 +562,11 @@ NOTE: Пользовательские задачи rake по умолчанию
       secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
     ```
 
-2. Использовать существующий `secret_key_base` из инициализатора `secret_token.rb`, чтобы установить переменную среды SECRET_KEY_BASE для всех пользователей, под которыми запускается приложение Rails в среде production. Альтернативно, можно просто скопировать существующий `secret_key_base` из инициализатора `secret_token.rb` в `secrets.yml` в секцию `production`, заменив '<%= ENV["SECRET_KEY_BASE"] %>'.
+2. Использовать существующий `secret_key_base` из инициализатора `secret_token.rb`, чтобы установить переменную среды SECRET_KEY_BASE для всех пользователей, под которыми запускается приложение Rails в среде production. Альтернативно, можно просто скопировать существующий `secret_key_base` из инициализатора `secret_token.rb` в `secrets.yml` в разделе `production`, заменив '<%= ENV["SECRET_KEY_BASE"] %>'.
 
 3. Убрать инициализатор `secret_token.rb`.
 
-4. Использовать `rake secret` для генерации ключей для секций `development` и `test`.
+4. Использовать `rake secret` для генерации ключей для раздела `development` и `test`.
 
 5. Перезапустить сервер.
 

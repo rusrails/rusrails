@@ -480,7 +480,7 @@ Rails
 * Время начала
 * Время окончания
 * Уникальный ID этого события
-* Информация (описывается в предыдущей секции)
+* Информация (описывается в предыдущем разделе)
 
 ```ruby
 ActiveSupport::Notifications.subscribe "process_action.action_controller" do |name, started, finished, unique_id, data|
