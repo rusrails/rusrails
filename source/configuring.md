@@ -841,7 +841,7 @@ NOTE: В этом руководстве мы используем базу да
 
 #### Конфигурирование базы данных MySQL или MariaDB
 
-Если вы выбрали MySQL или MariaDB вместо SQLite3, ваш `config/database.yml` будет выглядеть немного по другому. Вот секция development:
+Если вы выбрали MySQL или MariaDB вместо SQLite3, ваш `config/database.yml` будет выглядеть немного по другому. Вот раздел development:
 
 ```yaml
 development:
@@ -888,7 +888,7 @@ production:
 
 #### Конфигурирование базы данных SQLite3 для платформы JRuby
 
-Если вы выбрали SQLite3 и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот секция development:
+Если вы выбрали SQLite3 и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот раздел development:
 
 ```yaml
 development:
@@ -898,7 +898,7 @@ development:
 
 #### Конфигурирование базы данных MySQL или MariaDB для платформы JRuby
 
-Если вы выбрали MySQL или MariaDB и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот секция development:
+Если вы выбрали MySQL или MariaDB и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот раздел development:
 
 ```yaml
 development:
@@ -910,7 +910,7 @@ development:
 
 #### Конфигурирование базы данных PostgreSQL для платформы JRuby
 
-Если вы выбрали PostgreSQL и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот секция development:
+Если вы выбрали PostgreSQL и используете JRuby, ваш `config/database.yml` будет выглядеть немного по-другому. Вот раздел development:
 
 ```yaml
 development:
@@ -921,7 +921,7 @@ development:
   password:
 ```
 
-Измените username и password в секции `development` на правильные.
+Измените username и password в разделе `development` на правильные.
 
 ### (creating-rails-environments) Создание сред Rails
 
