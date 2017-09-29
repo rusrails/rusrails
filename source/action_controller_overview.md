@@ -905,7 +905,7 @@ class ClientsController < ApplicationController
 end
 ```
 
-Для того, чтобы этот пример заработал, нужно добавить PDF тип MIME в Rails. Это можно сделать, добавив следующую строку в файл `config/initializers/mime_types.rb`:
+Для того, чтобы этот пример заработал, нужно добавить PDF тип MIME в Rails. Это можно сделать, добавив следующую строчку в файл `config/initializers/mime_types.rb`:
 
 ```ruby
 Mime::Type.register "application/pdf", :pdf

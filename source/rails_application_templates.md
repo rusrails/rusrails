@@ -96,9 +96,9 @@ end
 
 ### `environment/application(data=nil, options={}, &block)`
 
-Добавляет строку внутрь класса `Application` в `config/application.rb`.
+Добавляет строчку внутрь класса `Application` в `config/application.rb`.
 
-Если указана `options[:env]`, строка добавляется в соответствующий файл в `config/environments`.
+Если указана `options[:env]`, строчка добавляется в соответствующий файл в `config/environments`.
 
 ```ruby
 environment 'config.action_mailer.default_url_options = {host: "http://yourwebsite.example.com"}', env: 'production'
