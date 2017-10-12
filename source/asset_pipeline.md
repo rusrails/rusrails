@@ -181,7 +181,7 @@ app/assets/javascripts/sub/something.js
 
 Можно просмотреть путь поиска, проинспектировав `Rails.application.config.assets.paths` в консоли Rails.
 
-Помимо стандартных путей `assets/*` в файлопровод могут быть добавлены дополнительные (полные) пути в `config/initializers/assets.rb`. Например:
+Помимо стандартных путей `assets/*` в файлопровод могут быть добавлены дополнительные (полностью ограниченные) пути в `config/initializers/assets.rb`. Например:
 
 ```ruby
 Rails.application.config.assets.paths << Rails.root.join("lib", "videoplayer", "flash")

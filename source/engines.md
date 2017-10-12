@@ -854,7 +854,7 @@ end
 module Blorgh::Concerns::Models::Article
   extend ActiveSupport::Concern
 
-  # 'included do' приводит к тому, что включенный код будет выполнен в
+  # 'included do' приводит к тому, что включенный код будет вычислен в
   # контексте того, где он подключен (article.rb), вместо того, чтобы быть
   # выполненным в контексте модуля (blorgh/concerns/models/article).
   included do
