@@ -224,6 +224,16 @@ user = User.find_by(name: 'David')
 user.destroy
 ```
 
+Если необходимо удалить сразу несколько записей, можно использовать метод `destroy_all`:
+
+```ruby
+# найти и удалить всех пользователей с именем David
+User.where(name: 'David').destroy_all
+
+# удалить всех пользователей
+User.destroy_all
+```
+
 Валидации
 ---------
 

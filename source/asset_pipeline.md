@@ -22,7 +22,7 @@ Asset Pipeline
 rails new appname --skip-sprockets
 ```
 
-Rails автоматически добавляет гемы `sass-rails`, `coffee-rails` и `uglifier` в ваш Gemfile, которые используются Sprockets для компрессии ассетов:
+Rails автоматически добавляет гемы `sass-rails`, `coffee-rails` и `uglifier` в ваш `Gemfile`, которые используются Sprockets для компрессии ассетов:
 
 ```ruby
 gem 'sass-rails'
@@ -30,7 +30,7 @@ gem 'uglifier'
 gem 'coffee-rails'
 ```
 
-Использование опции `--skip-sprockets` предотвратит Rails от их добавления в Gemfile, поэтому, если вы позже решите включить файлопровод, будет необходимо добавить эти гемы в Gemfile. Также, создание приложения с опцией `--skip-sprockets` сгенерирует немного иной файл `config/application.rb`, с закомментированным выражением требования sprockets railtie. Необходимо раскомментировать эту строчку, чтобы в дальнейшем включить файлопровод:
+Использование опции `--skip-sprockets` предотвратит Rails от их добавления в `Gemfile`, поэтому, если вы позже решите включить файлопровод, будет необходимо добавить эти гемы в Gemfile. Также, создание приложения с опцией `--skip-sprockets` сгенерирует немного иной файл `config/application.rb`, с закомментированным выражением требования sprockets railtie. Необходимо раскомментировать эту строчку, чтобы в дальнейшем включить файлопровод:
 
 ```ruby
 # require "sprockets/railtie"
@@ -95,7 +95,7 @@ global-908e25f4bf641868d8683022a5b62f54.css
 
 Более подробно:
 
-* [Optimize caching](http://code.google.com/speed/page-speed/docs/caching.html)
+* [Optimize caching](https://developers.google.com/speed/docs/insights/LeverageBrowserCaching)
 * [Revving Filenames: don't use querystring](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/)
 
 (how-to-use-the-asset-pipeline) Как использовать файлопровод (Asset Pipeline)
@@ -109,7 +109,7 @@ global-908e25f4bf641868d8683022a5b62f54.css
 
 ### Ассеты конкретного контроллера
 
-При генерации скаффолда или контроллера, Rails также генерирует файл JavaScript (или файл CoffeeScript, если гем `coffee-rails` имеется в `Gemfile`) и файл CSS (или файл SCSS, если `sass-rails` имеется в `Gemfile`) для этого контроллера. Дополнительно при генерации скаффолда, Rails генерирует файл scaffolds.css (или scaffolds.scss, если `sass-rails` находится в `Gemfile`.)
+При генерации скаффолда или контроллера, Rails также генерирует файл JavaScript (или файл CoffeeScript, если гем `coffee-rails` имеется в `Gemfile`) и файл CSS (или файл SCSS, если `sass-rails` имеется в `Gemfile`) для этого контроллера. Дополнительно при генерации скаффолда, Rails генерирует файл `scaffolds.css` (или `scaffolds.scss`, если `sass-rails` находится в `Gemfile`.)
 
 Например, если генерируете `ProjectsController`, Rails также добавит новый файл `app/assets/javascripts/projects.coffee` и еще один `app/assets/stylesheets/projects.scss`. По умолчанию эти файлы будут готовы к немедленному использованию вашим приложением, с помощью директивы `require_tree`. Смотрите [Файлы манифеста и директивы](#manifest-files-and-directives) о подробностях `require_tree`.
 
@@ -119,7 +119,7 @@ global-908e25f4bf641868d8683022a5b62f54.css
 
 При этом убедитесь, что не используете директиву `require_tree`, так как она приведет к тому, что ассеты будут включены более одного раза.
 
-WARNING: При использовании прекомпиляции ассетов, необходимо убедиться, что ассеты контроллера будут прекомпилированы при варианте загрузки их на основе страницы. По умолчанию файлы .coffee и .scss не будут прекомпилированы отдельно. Смотрите [Прекомпиляция ассетов](#in-production) о подробностях работы прекомпиляции.
+WARNING: При использовании прекомпиляции ассетов, необходимо убедиться, что ассеты контроллера будут прекомпилированы при варианте загрузки их на основе страницы. По умолчанию файлы `.coffee` и `.scss` не будут прекомпилированы отдельно. Смотрите [Прекомпиляция ассетов](#in-production) о подробностях работы прекомпиляции.
 
 NOTE: Вам необходим runtime, поддерживаемый ExecJS, чтобы использовать CoffeeScript. Если используете macOS или Windows, у вас уже имеется JavaScript runtime, установленный в операционной системе. Обратитесь к документации по [ExecJS](https://github.com/rails/execjs#readme), чтобы узнать обо всех поддерживаемых JavaScript runtime-ах.
 
@@ -488,7 +488,7 @@ NOTE. Условие отбора (и другие части прекомпил
 Rails.application.config.assets.precompile += %w( admin.js admin.css )
 ```
 
-NOTE. Всегда определяйте ожидаемое имя скомпилированного файла, оканчивающееся на .js или .css, даже если хотите добавить в массив прекомпиляции файлы Sass или CoffeeScript.
+NOTE. Всегда определяйте ожидаемое имя скомпилированного файла, оканчивающееся на `.js` или `.css`, даже если хотите добавить в массив прекомпиляции файлы Sass или CoffeeScript.
 
 Задача также генерирует `.sprockets-manifest-md5hash.json` (где `md5hash` - это хэш MD5), который содержит список всех ваших ассетов и соответствующие им метки. Это используется методами хелпера Rails, чтобы избежать направления запроса в Sprockets. Обычный файл манифеста выглядит так:
 
@@ -582,7 +582,7 @@ Sprockets также устанавливает HTTP-заголовок `Cache-C
 
 Этот режим использует больше памяти, имеет худшее быстродействие, чем по-умолчанию, и не рекомендуется.
 
-Если приложение размещается в системе без существующего JavaScript runtimes, возможно понадобится добавить в Gemfile следующий фрагмент кода:
+Если приложение размещается в системе без существующего JavaScript runtimes, возможно понадобится добавить в `Gemfile` следующий фрагмент кода:
 
 ```ruby
 group :production do
@@ -739,7 +739,7 @@ config.assets.css_compressor = :sass
 
 Возможные варианты для сжатия JavaScript это `:closure`, `:uglifier` and `:yui`. Они требуют использование гемов `closure-compiler`, `uglifier` или `yui-compressor` соответственно.
 
-Gemfile по умолчанию включает [uglifier](https://github.com/lautis/uglifier). Этот гем оборачивает [UglifierJS](https://github.com/mishoo/UglifyJS) (написанный для NodeJS) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
+`Gemfile` по умолчанию включает [uglifier](https://github.com/lautis/uglifier). Этот гем оборачивает [UglifierJS](https://github.com/mishoo/UglifyJS) (написанный для NodeJS) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
 
 Следующая строчка вызывает `uglifier` для сжатия JavaScript.
 
@@ -835,7 +835,7 @@ end
 Создание препроцессора в вашей библиотеке или геме
 --------------------------------------------------
 
-Sprockets использует Процессоры, Трансформеры, Компрессоры и Экспортеры для расширения функциональности Sprockets. Обратитесь к [Расширение Sprockets](https://github.com/rails/sprockets/blob/master/guides/extending_sprockets.md), чтобы узнать больше об этом. Здесь мы зарегистрировали препроцессор, чтобы добавить комментарий в конец text/css (.css) файлов.
+Sprockets использует Процессоры, Трансформеры, Компрессоры и Экспортеры для расширения функциональности Sprockets. Обратитесь к [Расширение Sprockets](https://github.com/rails/sprockets/blob/master/guides/extending_sprockets.md), чтобы узнать больше об этом. Здесь мы зарегистрировали препроцессор, чтобы добавить комментарий в конец text/css (`.css`) файлов.
 
 ```ruby
 module AddComment

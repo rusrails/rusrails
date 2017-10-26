@@ -349,7 +349,7 @@ Rails.application.config.session_store :cookie_store, key: '_your_app_session', 
 Rails устанавливает (для CookieStore) секретный ключ, используемый для подписания данных сессии, в `config/credentials.yml.enc`. Он может быть изменен с помощью `bin/rails credentials:edit`.
 
 ```ruby
-# amazon:
+# aws:
 #   access_key_id: 123
 #   secret_access_key: 345
 
@@ -586,8 +586,8 @@ class UsersController < ApplicationController
     @users = User.all
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render xml: @users}
-      format.json { render json: @users}
+      format.xml  { render xml: @users }
+      format.json { render json: @users }
     end
   end
 end
@@ -715,9 +715,9 @@ end
 Если вы генерируете подобную форму:
 
 ```erb
-<%= form_for @user do |f| %>
-  <%= f.text_field :username %>
-  <%= f.text_field :password %>
+<%= form_with model: @user, local: true do |form| %>
+  <%= form.text_field :username %>
+  <%= form.text_field :password %>
 <% end %>
 ```
 
@@ -1021,7 +1021,7 @@ config.filter_redirect.concat ['s3.amazonaws.com', /private_path/]
 
 ### Дефолтные шаблоны 500 и 404
 
-По умолчанию приложение в среде production будет рендерить или 404, или 500 сообщение об ошибке, в среде development будут вызываться все необрабатываемые исключения. Эти сообщения содержатся в статичных файлах HTML в папке `public`, в `404.html` и `500.html` соответственно. Можно настроить эти файлы, добавив дополнительную информацию и стили, но помните, что они статичные; т.е. нельзя использовать ERB, SCSS, CoffeeScript или макеты для них.
+По умолчанию приложение в среде production будет рендерить или 404, или 500 сообщение об ошибке, в среде development будут вызываться все необрабатываемые исключения. Эти сообщения содержатся в статичных файлах HTML в папке public, в `404.html` и `500.html` соответственно. Можно настроить эти файлы, добавив дополнительную информацию и стили, но помните, что они статичные; т.е. нельзя использовать ERB, SCSS, CoffeeScript или макеты для них.
 
 ### `rescue_from`
 

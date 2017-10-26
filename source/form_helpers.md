@@ -251,10 +251,12 @@ end
 Итоговый HTML:
 
 ```html
-<form accept-charset="UTF-8" action="/articles" method="post" class="nifty_form">
-  <input id="article_title" name="article[title]" type="text" />
-  <textarea id="article_body" name="article[body]" cols="60" rows="12"></textarea>
-  <input name="commit" type="submit" value="Create" />
+<form class="nifty_form" id="new_article" action="/articles" accept-charset="UTF-8" method="post">
+  <input name="utf8" type="hidden" value="&#x2713;" />
+  <input type="hidden" name="authenticity_token" value="NRkFyRWxdYNfUg7vYxLOp2SLf93lvnl+QwDWorR42Dp6yZXPhHEb6arhDOIWcqGit8jfnrPwL781/xlrzj63TA==" />
+  <input type="text" name="article[title]" id="article_title" />
+  <textarea name="article[body]" id="article_body" cols="60" rows="12"></textarea>
+  <input type="submit" name="commit" value="Create" data-disable-with="Create" />
 </form>
 ```
 
@@ -276,9 +278,11 @@ end
 которая выдаст такой результат:
 
 ```html
-<form accept-charset="UTF-8" action="/people" class="new_person" id="new_person" method="post">
-  <input id="person_name" name="person[name]" type="text" />
-  <input id="contact_detail_phone_number" name="contact_detail[phone_number]" type="text" />
+<form class="new_person" id="new_person" action="/people" accept-charset="UTF-8" method="post">
+  <input name="utf8" type="hidden" value="&#x2713;" />
+  <input type="hidden" name="authenticity_token" value="bL13x72pldyDD8bgtkjKQakJCpd4A8JdXGbfksxBDHdf1uC0kCMqe2tvVdUYfidJt0fj3ihC4NxiVHv8GVYxJA==" />
+  <input type="text" name="person[name]" id="person_name" />
+  <input type="text" name="contact_detail[phone_number]" id="contact_detail_phone_number" />
 </form>
 ```
 

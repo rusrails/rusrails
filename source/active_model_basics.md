@@ -421,7 +421,7 @@ Finished in 0.024899s, 240.9735 runs/s, 1204.8677 assertions/s.
 
 #### Требования
 
-`ActiveModel::SecurePassword` зависит от [`bcrypt`](https://github.com/codahale/bcrypt-ruby 'BCrypt'), поэтому включите этот гем в свой Gemfile для корректного использования `ActiveModel::SecurePassword`. Чтобы он работал, в модели должен быть акцессор с именем `password_digest`. `has_secure_password` добавит следующие валидации на акцессор `password`:
+`ActiveModel::SecurePassword` зависит от [`bcrypt`](https://github.com/codahale/bcrypt-ruby 'BCrypt'), поэтому включите этот гем в свой `Gemfile` для корректного использования `ActiveModel::SecurePassword`. Чтобы он работал, в модели должен быть акцессор с именем `password_digest`. `has_secure_password` добавит следующие валидации на акцессор `password`:
 
 1. Пароль должен существовать.
 2. Пароль должен совпадать с подтверждением (проверяется если передан `password_confirmation`).

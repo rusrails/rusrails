@@ -461,9 +461,9 @@ production:
 
 Асинхронный адаптер предназначен для development/testing сред и не должен использоваться в production.
 
-##### Адаптер redis
+##### Адаптер Redis
 
-Action Cable содержит два адаптера Redis: "normal" Redis и Событийный Redis. Оба адаптера требуют от пользователей предоставления URL, указывающего на сервер Redis. Кроме того, может быть предоставлен channel_prefix, чтобы избежать конфликта имен каналов при использовании одного и того же сервера Redis для нескольких приложений. Смотрите [документацию Redis PubSub](https://redis.io/topics/pubsub#database-amp-scoping) для получения дополнительной информации.
+Адаптер Redis требует от пользователей предоставления URL, указывающего на сервер Redis. Кроме того, может быть предоставлен `channel_prefix`, чтобы избежать конфликта имен каналов при использовании одного и того же сервера Redis для нескольких приложений. Смотрите [документацию Redis PubSub](https://redis.io/topics/pubsub#database-amp-scoping) для получения дополнительной информации.
 
 ##### Адаптер PostgreSQL
 
@@ -549,7 +549,7 @@ bundle exec puma -p 28080 cable/config.ru
 
 ## (dependencies) Зависимости
 
-Action Cable предоставляет интерфейс адаптера подписки для обработки его pubsub внутренностей. По умолчанию включены адаптеры асинхронный, встроенный, PostgreSQL, событийный Redis и не событийный Redis. В новых приложениях Rails по умолчанию асинхронный (`async`) адаптер.
+Action Cable предоставляет интерфейс адаптера подписки для обработки его pubsub внутренностей. По умолчанию включены адаптеры асинхронный, встроенный, PostgreSQL, и адаптеры Redis. В новых приложениях Rails по умолчанию используется асинхронный (`async`) адаптер.
 
 Часть Ruby этих вещей создана на основе [websocket-driver](https://github.com/faye/websocket-driver-ruby),
 [nio4r](https://github.com/celluloid/nio4r) и [concurrent-ruby](https://github.com/ruby-concurrency/concurrent-ruby).
