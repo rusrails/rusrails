@@ -113,19 +113,19 @@ $ cd blog
 |app/                   |Содержит контроллеры, модели, вьюхи, хелперы, рассыльщики, каналы, задания и ассеты вашего приложения. Мы рассмотрим эту папку подробнее далее.|
 |bin/                   |Содержит Rails скрипты которые стартуют ваше приложение, также директория может содержать другие скрипты которые вы используете для настройки, обновления, деплоя или запуска.|
 |config/                |Конфигурации маршрутов, базы данных вашего приложения, и т.д. Более подробно это раскрыто в [Конфигурирование приложений на Rails](/configuring-rails-applications)|
-|config.ru              |Конфигурация Rack для серверов, основанных на Rack, используемых для запуска приложения.|
+|config.ru              |Конфигурация Rack для серверов, основанных на Rack, используемых для запуска приложения. Подробнее о Rack смотрите на [сайте Rack](https://rack.github.io/).|
 |db/                    |Содержит текущую схему вашей базы данных, а также миграции базы данных.|
-|Gemfile<br>Gemfile.lock|Эти файлы позволяют указать, какие зависимости от гемов нужны для вашего приложения на Rails. Эти файлы используются гемом Bundler. Подробнее о Bundler смотрите на [сайте Bundler](https://bundler.io)|
+|Gemfile<br>Gemfile.lock|Эти файлы позволяют указать, какие зависимости от гемов нужны для вашего приложения на Rails. Эти файлы используются гемом Bundler. Подробнее о Bundler смотрите на [сайте Bundler](https://bundler.io).|
 |lib/                   |Внешние модули для вашего приложения.|
 |log/                   |Файлы логов приложения.|
 |package.json           |Этот файл позволяет указать, какие зависимости npm необходимы для приложения Rails. Этот файл используется Yarn. Подробнее о Yarn смотрите на [сайте Yarn](https://yarnpkg.com/lang/en/).|
 |public/                |Единственная папка, которая доступна извне как есть. Содержит статичные файлы и скомпилированные ассеты.|
-|Rakefile               |Этот файл находит и загружает задачи, которые могут быть запущены в командной строке. Определенная задача доступна во всех компонентах Rails. Вместо изменения Rakefile, можно добавить свои собственные задачи, добавив файлы в директорию `lib/tasks` приложения.|
+|Rakefile               |Этот файл находит и загружает задачи, которые могут быть запущены в командной строке. Определенная задача доступна во всех компонентах Rails. Вместо изменения `Rakefile`, можно добавить свои собственные задачи, добавив файлы в директорию `lib/tasks` приложения.|
 |README.md              |Это вводный мануал для вашего приложения. Его следует отредактировать, чтобы рассказать остальным, что ваше приложение делает, как его настроить, и т.п.|
 |test/                  |Юнит-тесты, фикстуры и прочий аппарат тестирования. Это раскрывается в руководстве [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)|
 |tmp/                   |Временные файлы (такие как файлы кэша и pid)|
 |vendor/                |Место для кода внешних разработчиков. В типичном приложении на Rails включает внешние гемы.|
-|.gitignore             |Этот файл сообщает git, какие файлы (явно или по шаблону) ему следует игнорировать. Подробнее об игнорировании файлов смотрите [GitHub - Ignoring files](https://help.github.com/articles/ignoring-files).
+|.gitignore             |Этот файл сообщает git, какие файлы (явно или по шаблону) ему следует игнорировать. Подробнее об игнорировании файлов смотрите [GitHub - Ignoring files](https://help.github.com/articles/ignoring-files).|
 |.ruby-version          |Этот файл содержит дефолтную версию Ruby.|
 
 Hello, Rails!
@@ -250,16 +250,17 @@ end
 
 ```bash
 $ bin/rails routes
-      Prefix Verb   URI Pattern                  Controller#Action
-    articles GET    /articles(.:format)          articles#index
-             POST   /articles(.:format)          articles#create
- new_article GET    /articles/new(.:format)      articles#new
-edit_article GET    /articles/:id/edit(.:format) articles#edit
-     article GET    /articles/:id(.:format)      articles#show
-             PATCH  /articles/:id(.:format)      articles#update
-             PUT    /articles/:id(.:format)      articles#update
-             DELETE /articles/:id(.:format)      articles#destroy
-        root GET    /                            welcome#index
+       Prefix Verb   URI Pattern                  Controller#Action
+welcome_index GET    /welcome/index(.:format)     welcome#index
+     articles GET    /articles(.:format)          articles#index
+              POST   /articles(.:format)          articles#create
+  new_article GET    /articles/new(.:format)      articles#new
+ edit_article GET    /articles/:id/edit(.:format) articles#edit
+      article GET    /articles/:id(.:format)      articles#show
+              PATCH  /articles/:id(.:format)      articles#update
+              PUT    /articles/:id(.:format)      articles#update
+              DELETE /articles/:id(.:format)      articles#destroy
+         root GET    /                            welcome#index
 ```
 
 В следующем разделе мы добавим возможность создания новых статей и сможем просматривать их. Это буквы "C" и "R" из CRUD: create и read. Форма для этого будет выглядеть так:
@@ -374,16 +375,17 @@ end
 
 ```bash
 $ bin/rails routes
-      Prefix Verb   URI Pattern                  Controller#Action
-    articles GET    /articles(.:format)          articles#index
-             POST   /articles(.:format)          articles#create
- new_article GET    /articles/new(.:format)      articles#new
-edit_article GET    /articles/:id/edit(.:format) articles#edit
-     article GET    /articles/:id(.:format)      articles#show
-             PATCH  /articles/:id(.:format)      articles#update
-             PUT    /articles/:id(.:format)      articles#update
-             DELETE /articles/:id(.:format)      articles#destroy
-        root GET    /                            welcome#index
+       Prefix Verb   URI Pattern                  Controller#Action
+welcome_index GET    /welcome/index(.:format)     welcome#index
+     articles GET    /articles(.:format)          articles#index
+              POST   /articles(.:format)          articles#create
+  new_article GET    /articles/new(.:format)      articles#new
+ edit_article GET    /articles/:id/edit(.:format) articles#edit
+      article GET    /articles/:id(.:format)      articles#show
+              PATCH  /articles/:id(.:format)      articles#update
+              PUT    /articles/:id(.:format)      articles#update
+              DELETE /articles/:id(.:format)      articles#destroy
+         root GET    /                            welcome#index
 ```
 
 Хелпер `articles_path` сообщает Rails указать форме на URI Pattern, связанный с префиксом `articles`; и форма пошлет (по умолчанию) запрос `POST` на этот маршрут. Он связан с экшном `create` текущего контроллера, `ArticlesController`.
@@ -484,7 +486,7 @@ Rails запустит эту команду миграции и сообщит,
 ==  CreateArticles: migrated (0.0020s) =========================================
 ```
 
-NOTE. Так как вы работаете по умолчанию в среде development, эта команда будет применена к базе данных, определенной в разделе `development` вашего файла `config/database.yml`. Если хотите запустить миграции в другой среде, например в production, следует явно передать ее при вызове команды: `bin/rails db:migrate RAILS_ENV=production`.
+NOTE: Так как вы работаете по умолчанию в среде development, эта команда будет применена к базе данных, определенной в разделе `development` вашего файла `config/database.yml`. Если хотите запустить миграции в другой среде, например в production, следует явно передать ее при вызове команды: `bin/rails db:migrate RAILS_ENV=production`.
 
 ### Сохранение данных в контроллере
 

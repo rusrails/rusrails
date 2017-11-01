@@ -476,6 +476,12 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_dispatch.authenticated_encrypted_cookie_salt` устанавливает значение соли для аутентификационных зашифрованных куки. По умолчанию `'authenticated encrypted cookie'`.
 
+* `config.action_dispatch.encrypted_cookie_cipher` устанавливает алгоритм шифрования, который будет использоваться для зашифрованных куки. По умолчанию `"aes-256-gcm"`.
+
+* `config.action_dispatch.signed_cookie_digest` устанавливает хэш-функцию, которая будет использоваться для подписанных куки. По умолчанию `"SHA1"`.
+
+* `config.action_dispatch.cookies_rotations` позволяет чередовать секреты, шифры и хэш-функции для зашифрованных и подписанных куки.
+
 * `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в [Руководстве по безопасности](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
 
 * `config.action_dispatch.rescue_responses` конфигурирует, какие исключения назначаются статусу HTTP. Он принимает хэш и можно указать пары исключение/статус. По умолчанию он определен как:
@@ -538,7 +544,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_view.raise_on_missing_translations` определяет, должно ли быть вызвано исключение для отсутствующих переводов.
 
-* `config.action_view.automatically_disable_submit_tag` определяет, должен ли submit_tag автоматически отключаться при клике, это по умолчанию `true`.
+* `config.action_view.automatically_disable_submit_tag` определяет, должен ли `submit_tag` автоматически отключаться при клике, это по умолчанию `true`.
 
 * `config.action_view.debug_missing_translation` определяет, должны ли ключи отсутствующих переводов оборачиваться в тег `<span>`. Это по умолчанию `true`.
 

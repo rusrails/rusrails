@@ -67,23 +67,25 @@ end
 <h1>Listing Books</h1>
 
 <table>
-  <tr>
-    <th>Title</th>
-    <th>Summary</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Content</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
 
-<% @books.each do |book| %>
-  <tr>
-    <td><%= book.title %></td>
-    <td><%= book.content %></td>
-    <td><%= link_to "Show", book %></td>
-    <td><%= link_to "Edit", edit_book_path(book) %></td>
-    <td><%= link_to "Remove", book, method: :delete, data: { confirm: "Are you sure?" } %></td>
-  </tr>
-<% end %>
+  <tbody>
+    <% @books.each do |book| %>
+      <tr>
+        <td><%= book.title %></td>
+        <td><%= book.content %></td>
+        <td><%= link_to "Show", book %></td>
+        <td><%= link_to "Edit", edit_book_path(book) %></td>
+        <td><%= link_to "Destroy", book, method: :delete, data: { confirm: "Are you sure?" } %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 
 <br>
@@ -217,12 +219,12 @@ NOTE: По умолчанию при использовании опции `:pla
 Вы можете вернуть HTML, используя опцию `:html` метода `render`:
 
 ```ruby
-render html: "<strong>Not Found</strong>".html_safe
+render html: helpers.tag.strong('Not Found')
 ```
 
 TIP: Это полезно когда вы хотите отрендерить небольшой кусочек HTML кода. Однако, если у вас достаточно сложная разметка, стоит рассмотреть выделение её в файл шаблона.
 
-NOTE: Когда используется опция `html:`, HTML объекты будут экранироваться, если строка не помечена как HTML-безопасная с помощью метода `html_safe`.
+NOTE: Когда используется опция `html:`, HTML объекты будут экранироваться, если строка не состоит из API, поддерживающих `html_safe`.
 
 #### Рендеринг JSON
 

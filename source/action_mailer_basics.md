@@ -72,8 +72,8 @@ end
 class UserMailer < ApplicationMailer
   default from: 'notifications@example.com'
 
-  def welcome_email(user)
-    @user = user
+  def welcome_email
+    @user = params[:user]
     @url  = 'http://example.com/login'
     mail(to: @user.email, subject: 'Welcome to My Awesome Site')
   end
@@ -141,7 +141,7 @@ $ bin/rails generate scaffold user name email login
 $ bin/rails db:migrate
 ```
 
-Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить `UserMailer` доставлять email каждому вновь созданному пользователю, изменив экшн `create` и вставив вызов `UserMailer.welcome_email` сразу после того, как пользователь был успешно сохранен.
+Теперь, когда у нас есть модель user, с которой мы играем, надо всего лишь отредактировать `app/controllers/users_controller.rb`, чтобы поручить `UserMailer` доставлять email каждому вновь созданному пользователю, изменив экшн `create` и вставив вызов `UserMailer.with(user: @user).welcome_email` сразу после того, как пользователь был успешно сохранен.
 
 Action Mailer прекрасно интегрирован с Active Job, поэтому можно отправлять электронную почту вне цикла запрос-ответ, таким образом что пользователю не нужно ждать выполнения отправки:
 
@@ -155,7 +155,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         # Сказать UserMailer отослать приветственное письмо после сохранения
-        UserMailer.welcome_email(@user).deliver_later
+        UserMailer.with(user: @user).welcome_email.deliver_later
 
         format.html { redirect_to(@user, notice: 'User was successfully created.') }
         format.json { render json: @user, status: :created, location: @user }
@@ -176,11 +176,13 @@ NOTE: Поведением Active Job по умолчанию является �
 class SendWeeklySummary
   def run
     User.find_each do |user|
-      UserMailer.weekly_summary(user).deliver_now
+      UserMailer.with(user: user).weekly_summary.deliver_now
     end
   end
 end
 ```
+
+Любая пара ключ/значение, переданная в `with`, просто становится `params` для экшна рассыльщика. Поэтому `with(user: @user, account: @user.account)` делает `params[:user]` и `params[:account]` доступными в экшне рассыльщика. Это такой же params, который есть в контроллерах.
 
 Метод `welcome_email` возвращает объект `ActionMailer::MessageDelivery`, которому затем можно сказать `deliver_now` или `deliver_later`, чтобы он сам себя отослал. Объект `ActionMailer::MessageDelivery` — это всего лишь обертка для `Mail::Message`. Если хотите исследовать, изменить или еще что-то сделать с объектом `Mail::Message`, к нему можно получить доступ с помощью метода `message` на объекте `ActionMailer::MessageDelivery`.
 
@@ -259,7 +261,7 @@ Action Mailer 3.0 создает встроенные вложения, кото
 
 ```ruby
 class AdminMailer < ApplicationMailer
-  default to: Proc.new { Admin.pluck(:email) },
+  default to: -> { Admin.pluck(:email) },
           from: 'notification@example.com'
 
   def new_registration(user)
@@ -276,8 +278,8 @@ end
 Иногда хочется показать имена людей вместо их электронных адресов, при получении ими email. Фокус в том, что формат адреса email следующий `"Full Name" <email>`.
 
 ```ruby
-def welcome_email(user)
-  @user = user
+def welcome_email
+  @user = params[:user]
   email_with_name = %("#{@user.name}" <#{@user.email}>)
   mail(to: email_with_name, subject: 'Welcome to My Awesome Site')
 end
@@ -293,8 +295,8 @@ end
 class UserMailer < ApplicationMailer
   default from: 'notifications@example.com'
 
-  def welcome_email(user)
-    @user = user
+  def welcome_email
+    @user = params[:user]
     @url  = 'http://example.com/login'
     mail(to: @user.email,
          subject: 'Welcome to My Awesome Site',
@@ -312,8 +314,8 @@ end
 class UserMailer < ApplicationMailer
   default from: 'notifications@example.com'
 
-  def welcome_email(user)
-    @user = user
+  def welcome_email
+    @user = params[:user]
     @url  = 'http://example.com/login'
     mail(to: @user.email,
          subject: 'Welcome to My Awesome Site') do |format|
@@ -364,8 +366,8 @@ end
 
 ```ruby
 class UserMailer < ApplicationMailer
-  def welcome_email(user)
-    mail(to: user.email) do |format|
+  def welcome_email
+    mail(to: params[:user].email) do |format|
       format.html { render layout: 'my_layout' }
       format.text
     end
@@ -382,7 +384,7 @@ end
 ```ruby
 class UserMailerPreview < ActionMailer::Preview
   def welcome_email
-    UserMailer.welcome_email(User.first)
+    UserMailer.with(user: User.first).welcome_email
   end
 end
 ```
@@ -476,12 +478,12 @@ Action Mailer автоматически посылает multipart email, ес�
 
 ```ruby
 class UserMailer < ApplicationMailer
-  def welcome_email(user, company)
-    @user = user
+  def welcome_email
+    @user = params[:user]
     @url  = user_url(@user)
-    delivery_options = { user_name: company.smtp_user,
-                         password: company.smtp_password,
-                         address: company.smtp_host }
+    delivery_options = { user_name: params[:company].smtp_user,
+                         password: params[:company].smtp_password,
+                         address: params[:company].smtp_host }
     mail(to: @user.email,
          subject: "Please see the Terms and Conditions attached",
          delivery_method_options: delivery_options)
@@ -495,9 +497,9 @@ end
 
 ```ruby
 class UserMailer < ApplicationMailer
-  def welcome_email(user, email_body)
-    mail(to: user.email,
-         body: email_body,
+  def welcome_email
+    mail(to: params[:user].email,
+         body: params[:email_body],
          content_type: "text/html",
          subject: "Already rendered!")
   end
@@ -545,23 +547,42 @@ Action Mailer позволяет определить `before_action`, `after_ac
 
 * `before_action` можно использовать для заполнения объекта mail значениями по умолчанию, `delivery_method_options` или вставки заголовков по умолчанию и вложений.
 
+```ruby
+class InvitationsMailer < ApplicationMailer
+  before_action { @inviter, @invitee = params[:inviter], params[:invitee] }
+  before_action { @account = params[:inviter].account }
+
+  default to:       -> { @invitee.email_address },
+          from:     -> { common_address(@inviter) },
+          reply_to: -> { @inviter.email_address_with_name }
+
+  def account_invitation
+    mail subject: "#{@inviter.name} invited you to their Basecamp (#{@account.name})"
+  end
+
+  def project_invitation
+    @project    = params[:project]
+    @summarizer = ProjectInvitationSummarizer.new(@project.bucket)
+
+    mail subject: "#{@inviter.name.familiar} added you to a project in Basecamp (#{@account.name})"
+  end
+end
+```
+
 * `after_action` можно использовать для подобной настройки, как и в `before_action`, но используя переменные экземпляра, установленные в экшне рассыльщика.
 
 ```ruby
 class UserMailer < ApplicationMailer
+  before_action { @business, @user = params[:business], params[:user] }
+
   after_action :set_delivery_options,
                :prevent_delivery_to_guests,
                :set_business_headers
 
-  def feedback_message(business, user)
-    @business = business
-    @user = user
-    mail
+  def feedback_message
   end
 
-  def campaign_message(business, user)
-    @business = business
-    @user = user
+  def campaign_message
   end
 
   private

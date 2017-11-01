@@ -129,7 +129,7 @@ remove_foreign_key :accounts, column: :owner_id
 
 ### `respond_with` / метод класса `respond_to`
 
-Методы `respond_with` и соответствующий метод класса `respond_to` были перемещены в гем [responders](https://github.com/plataformatec/responders). Добавьте `gem 'responders', '~> 2.0'` в свой Gemfile для использования:
+Методы `respond_with` и соответствующий метод класса `respond_to` были перемещены в гем [responders](https://github.com/plataformatec/responders). Добавьте `gem 'responders', '~> 2.0'` в свой `Gemfile` для использования:
 
 ```ruby
 # app/controllers/users_controller.rb
