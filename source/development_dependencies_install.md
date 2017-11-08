@@ -329,7 +329,7 @@ $ sudo systemctl start redis
 # portmaster databases/redis
 ```
 
-### Настройка Active Storage
+### Настройка Active Storage (Rails 5.2)
 
 При работе с Active Storage важно отметить, что следует устанавливать зависимости JavaScript во время работы над этим разделом кодовой базы. Чтобы установить эти зависимости, в системе должен быть доступен Yarn, пакетный менеджер Node.js. Предпосылкой для установки этого пакетного менеджера является установка [Node.js](https://nodejs.org).
 
