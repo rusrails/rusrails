@@ -44,9 +44,9 @@
               %a.twitter-follow-button{"data-lang" => "ru", href: "https://twitter.com/rusrails"}
             - if content_for?(:menu)
               .well.menu= yield(:menu)
-            - if @page.try(:path) != 'index'
-              .well.banner300.banner
-                = render "shared/banner", url: 'http://bit.ly/rbybnr1', image: 'partners/spherecon2017.jpg'
+            -# - if @page.try(:path) != 'index'
+            -#   .well.banner300.banner
+            -#     = render "shared/banner", url: 'http://bit.ly/rbybnr1', image: 'partners/spherecon2017.jpg'
             .well.banner300.banner
               = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left
