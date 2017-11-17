@@ -54,6 +54,7 @@ next_column
     * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
     * [Создание и настройка генераторов Rails](/generators)
+    * [Треды и выполнение кода в Rails](/threading_and_code_execution)
     * [Использование Rails для API-приложений](/api-app)
     * [Шаблоны приложения Rails](/rails-application-templates)
 

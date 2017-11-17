@@ -312,7 +312,7 @@ pages:
     revision: 5c0d00072d1309dbc77bb5d97e42956bac3e8684
     date:     20/03/2017
 
-  - title:    Потоки выполнения и выполнение кода
+  - title:    Треды и выполнение кода в Rails
     path:     threading_and_code_execution
     file:     threading_and_code_execution.md
     revision: b5cd7d5b511361062f67ebad45ab38393970fc47
