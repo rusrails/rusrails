@@ -21,25 +21,30 @@ module ApplicationHelper
   def mkdev_random_banner
     [
       {
-        url: 'https://mkdev.me/specializations?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=expertise',
-        image: 'partners/mkdev/expertise.png'
+        url: 'https://mkdev.me/?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=blackfriday',
+        image: 'partners/mkdev/blackfriday.png'
       },
-      {
-        url: 'https://mkdev.me/mentors/aya-soft?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=ageev',
-        image: 'partners/mkdev/ageev.png'
-      },
-      {
-        url: 'https://mkdev.me/mentors/xiting?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=takarlikov',
-        image: 'partners/mkdev/takarlikov.png'
-      },
-      {
-        url: 'https://mkdev.me/mentors/zverok?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=shepelev',
-        image: 'partners/mkdev/shepelev.png'
-      },
-      {
-        url: 'https://mkdev.me/mentors/Mehonoshin?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=mekhonoshin',
-        image: 'partners/mkdev/mekhonoshin.png'
-      },
+
+      # {
+      #   url: 'https://mkdev.me/specializations?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=expertise',
+      #   image: 'partners/mkdev/expertise.png'
+      # },
+      # {
+      #   url: 'https://mkdev.me/mentors/aya-soft?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=ageev',
+      #   image: 'partners/mkdev/ageev.png'
+      # },
+      # {
+      #   url: 'https://mkdev.me/mentors/xiting?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=takarlikov',
+      #   image: 'partners/mkdev/takarlikov.png'
+      # },
+      # {
+      #   url: 'https://mkdev.me/mentors/zverok?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=shepelev',
+      #   image: 'partners/mkdev/shepelev.png'
+      # },
+      # {
+      #   url: 'https://mkdev.me/mentors/Mehonoshin?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=mekhonoshin',
+      #   image: 'partners/mkdev/mekhonoshin.png'
+      # },
     ].sample
   end
 end
