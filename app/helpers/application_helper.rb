@@ -21,7 +21,7 @@ module ApplicationHelper
   def mkdev_random_banner
     [
       {
-        url: 'https://mkdev.me/?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=blackfriday',
+        url: 'http://lp.mkdev.me/blackfriday2017?utm_source=rusrails&utm_medium=banner&utm_campaign=blackfriday',
         image: 'partners/mkdev/blackfriday.png'
       },
 
