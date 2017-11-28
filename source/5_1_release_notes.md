@@ -261,7 +261,7 @@ Railties
     ([Pull Request](https://github.com/rails/rails/pull/25257))
 
 Action Cable
------------
+------------
 
 За подробностями обратитесь к [Changelog][action-cable].
 
