@@ -13,7 +13,7 @@
 RDoc
 ----
 
-[Документация Rails API](http://api.rubyonrails.org) генерируется с помощью [RDoc](http://docs.seattlerb.org/rdoc/). Чтобы ее сгенерировать, убедитесь, что вы в корневой директории rails, запустите `bundle install` и выполните:
+[Документация Rails API](http://api.rubyonrails.org) генерируется с помощью [RDoc](https://ruby.github.io/rdoc/). Чтобы ее сгенерировать, убедитесь, что вы в корневой директории rails, запустите `bundle install` и выполните:
 
 ```bash
   bundle exec rake rdoc
@@ -21,7 +21,7 @@ RDoc
 
 Итоговые файлы HTML будут в директории ./doc/rdoc.
 
-Обратитесь к документации RDoc за помощью с [разметкой](http://docs.seattlerb.org/rdoc/RDoc/Markup.html), а также примите во внимание эти [дополнительные директивы](http://docs.seattlerb.org/rdoc/RDoc/Parser/Ruby.html).
+Обратитесь к документации RDoc за помощью с [разметкой](https://ruby.github.io/rdoc/RDoc/Markup.html), а также примите во внимание эти [дополнительные директивы](https://ruby.github.io/rdoc/RDoc/Parser/Ruby.html).
 
 (wording) Формулировки
 ----------------------

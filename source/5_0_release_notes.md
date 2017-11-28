@@ -629,7 +629,7 @@ Active Record
 *   Добавлена возможность аннотации объектов базы данных (таблиц, столбцов, индексов) комментариями, хранимыми в метаданных базы данных для PostgreSQL & MySQL.
     ([Pull Request](https://github.com/rails/rails/pull/22911))
 
-*   Добавлена поддержка подготовленных выражений (prepared statements) для адаптера `mysql2`, для mysql2 0.4.4+. Раньше это поддерживалось только устаревшим адаптером `mysql`. Чтобы включить, установите `prepared_statements: true` в config/database.yml.
+*   Добавлена поддержка подготовленных выражений (prepared statements) для адаптера `mysql2`, для mysql2 0.4.4+. Раньше это поддерживалось только устаревшим адаптером `mysql`. Чтобы включить, установите `prepared_statements: true` в `config/database.yml`.
     ([Pull Request](https://github.com/rails/rails/pull/23461))
 
 *   Добавлена возможность вызвать `ActionRecord::Relation#update` на реляционных объектах, который запустит валидации на колбэках на всех объектах в реляции.

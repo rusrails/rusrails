@@ -47,7 +47,7 @@ User.find(session[:user_id])
 
 NOTE: _ID сессии - это 32-символьная случайная шестнадцатеричная строка._
 
-ID сессии генерируется с помощью `SecureRandom.hex`, который генерирует случайную шестнадцатеричную строку с помощью зависимых от платформы методов (таких как OpenSSL, /dev/urandom или Win32) генерации криптографически устойчивых случайных чисел. В настоящее время не представляется возможным брутфорсить ID сессии Rails.
+ID сессии генерируется с помощью `SecureRandom.hex`, который генерирует случайную шестнадцатеричную строку с помощью зависимых от платформы методов (таких как OpenSSL, /dev/urandom или Win32 CryptoAPI) генерации криптографически устойчивых случайных чисел. В настоящее время не представляется возможным брутфорсить ID сессии Rails.
 
 ### Похищение сессии
 
@@ -132,7 +132,7 @@ end
 
 Хотя можно установить столько ротаций, сколько необходимо для того, чтобы не было много ротаций в любой момент времени.
 
-Для получения дополнительной информации о ротации ключа с зашифрованными и подписанными сообщениями, а также о различных опциях, которые принимает метод `rotate`, обратитесь, пожалуйста, к документации по [MessageEncryptor API](api.rubyonrails.org/classes/ActiveSupport/MessageEncryptor.html) и [MessageVerifier API](api.rubyonrails.org/classes/ActiveSupport/MessageVerifier.html).
+Для получения дополнительной информации о ротации ключа с зашифрованными и подписанными сообщениями, а также о различных опциях, которые принимает метод `rotate`, обратитесь, пожалуйста, к документации по [MessageEncryptor API](http://api.rubyonrails.org/classes/ActiveSupport/MessageEncryptor.html) и [MessageVerifier API](http://api.rubyonrails.org/classes/ActiveSupport/MessageVerifier.html).
 
 ### Атаки воспроизведения для сессий CookieStore
 
@@ -1059,7 +1059,7 @@ Rails.application.credentials.some_api_key! # => вызовет KeyError: :some_
 
 Картина безопасности меняется, и важно идти в ногу со временем, поскольку пропуск новой уязвимости может быть катастрофическим. Ниже перечислены дополнительные источники о безопасности (Rails):
 
-* Подпишитесь на [рассылку](https://groups.google.com/group/rubyonrails-security) о безопасности Rails.
+* Подпишитесь на [рассылку](https://groups.google.com/forum/#!forum/rubyonrails-security) о безопасности Rails.
 * [Brakeman - сканер безопасности Rails](https://brakemanscanner.org/) - Для выполнения статического анализа безопасности для Rails приложений.
 * [Будьте в курсе о других уровнях приложений.](http://secunia.com/) (у них тоже есть еженедельная рассылка).
 * [Хороший блог по безопасности](https://www.owasp.org), включающий [Шпаргалку по XSS.](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet).

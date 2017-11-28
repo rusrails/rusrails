@@ -272,37 +272,39 @@ end
 
 Ниже представлена выдержка утверждений, которые вы можете использовать с [`Minitest`](https://github.com/seattlerb/minitest), библиотекой тестирования, используемой Rails по умолчанию. Параметр `[msg]` - это опциональное строковое сообщение, которое вы можете указать для того, чтобы сделать сообщение о провале более ясным.
 
-| Утверждение                                               | Назначение |
-| --------------------------------------------------------- | ---------- |
-| `assert( test, [msg] )`                                   | Утверждает, что `test` истинно.|
-| `assert_not( test, [msg] )`                               | Утверждает, что `test` ложно.|
-| `assert_equal( expected, actual, [msg] )`                 | Утверждает, что `expected == actual` истинно.|
-| `assert_not_equal( expected, actual, [msg] )`             | Утверждает, что `expected != actual` истинно.|
-| `assert_same( expected, actual, [msg] )`                  | Утверждает, что `expected.equal?(actual)` истинно.|
-| `assert_not_same( expected, actual, [msg] )`              | Утверждает, что `expected.equal?(actual)` ложно.|
-| `assert_nil( obj, [msg] )`                                | Утверждает, что `obj.nil?` истинно.|
-| `assert_not_nil( obj, [msg] )`                            | Утверждает, что `obj.nil?` ложно.|
-| `assert_empty( obj, [msg] )`                              | Утверждает, что `obj` является `empty?`.|
-| `assert_not_empty( obj, [msg] )`                          | Утверждает, что `obj` не является `empty?`.|
-| `assert_match( regexp, string, [msg] )`                   | Утверждает, что строка соответствует регулярному выражению.|
-| `assert_no_match( regexp, string, [msg] )`                | Утверждает, что строка не соответствует регулярному выражению.|
-| `assert_includes( collection, obj, [msg] )`               | Утверждает, что `obj` находится в `collection`.|
-| `assert_not_includes( collection, obj, [msg] )`           | Утверждает, что `obj` не находится в `collection`.|
-| `assert_in_delta( expected, actual, [delta], [msg] )`     | Утверждает, что между числами `expected` и `actual` разницу `delta`.|
-| `assert_not_in_delta( expected, actual, [delta], [msg] )` | Утверждает, что между числами `expected` и `actual` разница, отличная от `delta`.|
-| `assert_throws( symbol, [msg] ) { block }`                | Утверждает, что переданный блок бросает symbol.|
-| `assert_raises( exception1, exception2, ... ) { block }`  | Утверждает, что переданный блок генерирует одно из переданных исключений.|
-| `assert_instance_of( class, obj, [msg] )`                 | Утверждает, что `obj` является экземпляром `class`.|
-| `assert_not_instance_of( class, obj, [msg] )`             | Утверждает, что `obj` не является экземпляром `class`.|
-| `assert_kind_of( class, obj, [msg] )`                     | Утверждает, что `obj` является экземпляром `class` или класса, наследуемого от него.|
-| `assert_not_kind_of( class, obj, [msg] )`                 | Утверждает, что `obj` не является экземпляром `class` или класса, наследуемого от него.|
-| `assert_respond_to( obj, symbol, [msg] )`                 | Утверждает, что `obj` отвечает на `symbol`.|
-| `assert_not_respond_to( obj, symbol, [msg] )`             | Утверждает, что `obj` не отвечает на `symbol`.|
-| `assert_operator( obj1, operator, [obj2], [msg] )`        | Утверждает, что `obj1.operator(obj2)` истинно.|
-| `assert_not_operator( obj1, operator, [obj2], [msg] )`    | Утверждает, что `obj1.operator(obj2)` ложно.|
-| `assert_predicate ( obj, predicate, [msg] )`              | Утверждает, что `obj.predicate` истинно, т.е. `assert_predicate str, :empty?`|
-| `assert_not_predicate ( obj, predicate, [msg] )`          | Утверждает, что `obj.predicate` ложно, т.е. `assert_not_predicate str, :empty?`|
-| `flunk( [msg] )`                                          | Утверждает провал. Это полезно для явного указания теста, который еще не закончен.|
+| Утверждение                                                    | Назначение |
+| -------------------------------------------------------------- | ---------- |
+| `assert( test, [msg] )`                                        | Утверждает, что `test` истинно.|
+| `assert_not( test, [msg] )`                                    | Утверждает, что `test` ложно.|
+| `assert_equal( expected, actual, [msg] )`                      | Утверждает, что `expected == actual` истинно.|
+| `assert_not_equal( expected, actual, [msg] )`                  | Утверждает, что `expected != actual` истинно.|
+| `assert_same( expected, actual, [msg] )`                       | Утверждает, что `expected.equal?(actual)` истинно.|
+| `assert_not_same( expected, actual, [msg] )`                   | Утверждает, что `expected.equal?(actual)` ложно.|
+| `assert_nil( obj, [msg] )`                                     | Утверждает, что `obj.nil?` истинно.|
+| `assert_not_nil( obj, [msg] )`                                 | Утверждает, что `obj.nil?` ложно.|
+| `assert_empty( obj, [msg] )`                                   | Утверждает, что `obj` является `empty?`.|
+| `assert_not_empty( obj, [msg] )`                               | Утверждает, что `obj` не является `empty?`.|
+| `assert_match( regexp, string, [msg] )`                        | Утверждает, что строка соответствует регулярному выражению.|
+| `assert_no_match( regexp, string, [msg] )`                     | Утверждает, что строка не соответствует регулярному выражению.|
+| `assert_includes( collection, obj, [msg] )`                    | Утверждает, что `obj` находится в `collection`.|
+| `assert_not_includes( collection, obj, [msg] )`                | Утверждает, что `obj` не находится в `collection`.|
+| `assert_in_delta( expected, actual, [delta], [msg] )`          | Утверждает, что между числами `expected` и `actual` разницу `delta`.|
+| `assert_not_in_delta( expected, actual, [delta], [msg] )`      | Утверждает, что между числами `expected` и `actual` разница, отличная от `delta`.|
+| `assert_in_epsilon ( expected, actual, [epsilon], [msg] )`     | Утверждает, что между числами `expected` и `actual` относительная погрешность меньше, чем `epsilon`.|
+| `assert_not_in_epsilon ( expected, actual, [epsilon], [msg] )` | Утверждает, что между числами `expected` и `actual` относительная погрешность не меньше, чем `epsilon`.|
+| `assert_throws( symbol, [msg] ) { block }`                     | Утверждает, что переданный блок бросает symbol.|
+| `assert_raises( exception1, exception2, ... ) { block }`       | Утверждает, что переданный блок генерирует одно из переданных исключений.|
+| `assert_instance_of( class, obj, [msg] )`                      | Утверждает, что `obj` является экземпляром `class`.|
+| `assert_not_instance_of( class, obj, [msg] )`                  | Утверждает, что `obj` не является экземпляром `class`.|
+| `assert_kind_of( class, obj, [msg] )`                          | Утверждает, что `obj` является экземпляром `class` или класса, наследуемого от него.|
+| `assert_not_kind_of( class, obj, [msg] )`                      | Утверждает, что `obj` не является экземпляром `class` или класса, наследуемого от него.|
+| `assert_respond_to( obj, symbol, [msg] )`                      | Утверждает, что `obj` отвечает на `symbol`.|
+| `assert_not_respond_to( obj, symbol, [msg] )`                  | Утверждает, что `obj` не отвечает на `symbol`.|
+| `assert_operator( obj1, operator, [obj2], [msg] )`             | Утверждает, что `obj1.operator(obj2)` истинно.|
+| `assert_not_operator( obj1, operator, [obj2], [msg] )`         | Утверждает, что `obj1.operator(obj2)` ложно.|
+| `assert_predicate ( obj, predicate, [msg] )`                   | Утверждает, что `obj.predicate` истинно, т.е. `assert_predicate str, :empty?`|
+| `assert_not_predicate ( obj, predicate, [msg] )`               | Утверждает, что `obj.predicate` ложно, т.е. `assert_not_predicate str, :empty?`|
+| `flunk( [msg] )`                                               | Утверждает провал. Это полезно для явного указания теста, который еще не закончен.|
 
 Представленный выше список утверждений поддерживается minitest. Более полный и более актуальный список всех доступных утверждений смотрите в [документации Minitest API](http://docs.seattlerb.org/minitest/), в частности [`Minitest::Assertions`](http://docs.seattlerb.org/minitest/Minitest/Assertions.html)
 
@@ -586,7 +588,7 @@ end
 
 При генерации нового приложения или скаффолда, в тестовой директории будет создан файл `application_system_test_case.rb`. Это то самое место, где должны находиться все настройки для ваших системных тестов.
 
-Если хотите изменить настройки по умолчанию, надо изменить то, с помощью чего "запускаются" ваши системные тесты. Скажем, вы хотите изменить драйвер с Selenium на Poltergeist. Сначала добавьте гем `poltergeist` в свой Gemfile. Затем сделайте в своем файле `application_system_test_case.rb` следующее:
+Если хотите изменить настройки по умолчанию, надо изменить то, с помощью чего "запускаются" ваши системные тесты. Скажем, вы хотите изменить драйвер с Selenium на Poltergeist. Сначала добавьте гем `poltergeist` в свой `Gemfile`. Затем сделайте в своем файле `application_system_test_case.rb` следующее:
 
 ```ruby
 require "test_helper"
@@ -604,6 +606,16 @@ require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: :firefox
+end
+```
+
+Если необходимо использовать headless-браузер, можно использовать Headless Chrome или Headless Firefox, добавив `headless_chrome` или `headless_firefox` в аргумент `:using`.
+
+```ruby
+require "test_helper"
+
+class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  driven_by :selenium, using: :headless_chrome
 end
 ```
 

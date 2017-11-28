@@ -2934,6 +2934,32 @@ NOTE: Определено в `active_support/core_ext/range/overlaps.rb`.
 
 NOTE: Все следующие методы определены в `active_support/core_ext/date/calculations.rb`.
 
+```ruby
+yesterday
+tomorrow
+beginning_of_week (at_beginning_of_week)
+end_of_week (at_end_of_week)
+monday
+sunday
+weeks_ago
+prev_week (last_week)
+next_week
+months_ago
+months_since
+beginning_of_month (at_beginning_of_month)
+end_of_month (at_end_of_month)
+last_month
+beginning_of_quarter (at_beginning_of_quarter)
+end_of_quarter (at_end_of_quarter)
+beginning_of_year (at_beginning_of_year)
+end_of_year (at_end_of_year)
+years_ago
+years_since
+last_year
+on_weekday?
+on_weekend?
+```
+
 INFO: Следующие методы вычисления имеют [временную пропасть](https://ru.wikipedia.org/wiki/Григорианский_календарь) в октябре 1582 года, когда дней с 5 по 14 (включительно) просто не существовало. Это руководство не документирует свое поведение в те дни для краткости, но достаточно сказать, будет происходит то, что от них ожидается. То есть, `Date.new(1582, 10, 4).tomorrow` возвратит `Date.new(1582, 10, 15)`, и так далее. Пожалуйста, проверьте `test/core_ext/date_ext_test.rb` в тестовом наборе Active Support, чтобы понять ожидаемое поведение.
 
 #### `Date.current`
@@ -2941,68 +2967,6 @@ INFO: Следующие методы вычисления имеют [врем�
 Active Support определяет `Date.current` как сегодняшний день в текущей временной зоне. Он похож на `Date.today`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет `Date.yesterday` и `Date.tomorrow`, и предикаты экземпляра `past?`, `today?`, `future?`, `on_weekday?` и `on_weekend?`, все они зависят от `Date.current`.
 
 #### Именованные даты
-
-##### `prev_year`, `next_year`
-
-В Ruby 1.9 `prev_year` и `next_year` возвращают дату с тем же днем/месяцем в предыдущем или следующем году:
-
-```ruby
-d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
-d.prev_year              # => Fri, 08 May 2009
-d.next_year              # => Sun, 08 May 2011
-```
-
-Если датой является 29 февраля високосного года, возвратится 28-е:
-
-```ruby
-d = Date.new(2000, 2, 29) # => Tue, 29 Feb 2000
-d.prev_year               # => Sun, 28 Feb 1999
-d.next_year               # => Wed, 28 Feb 2001
-```
-
-У `prev_year` есть псевдоним `last_year`.
-
-##### `prev_month`, `next_month`
-
-В Ruby 1.9 `prev_month` и `next_month` возвращает дату с тем же днем в предыдущем или следующем месяце:
-
-```ruby
-d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
-d.prev_month             # => Thu, 08 Apr 2010
-d.next_month             # => Tue, 08 Jun 2010
-```
-
-Если такой день не существует, возвращается последний день соответствующего месяца:
-
-```ruby
-Date.new(2000, 5, 31).prev_month # => Sun, 30 Apr 2000
-Date.new(2000, 3, 31).prev_month # => Tue, 29 Feb 2000
-Date.new(2000, 5, 31).next_month # => Fri, 30 Jun 2000
-Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
-```
-
-У `prev_month` есть псевдоним `last_month`.
-
-##### `prev_quarter`, `next_quarter`
-
-Похожи на `prev_month` и `next_month`. Возвращают дату с тем же днем в предыдущем или следующем квартале:
-
-```ruby
-t = Time.local(2010, 5, 8) # => Sat, 08 May 2010
-t.prev_quarter             # => Mon, 08 Feb 2010
-t.next_quarter             # => Sun, 08 Aug 2010
-```
-
-Если такой день не существует, возвращается последний день соответствующего месяца:
-
-```ruby
-Time.local(2000, 7, 31).prev_quarter  # => Sun, 30 Apr 2000
-Time.local(2000, 5, 31).prev_quarter  # => Tue, 29 Feb 2000
-Time.local(2000, 10, 31).prev_quarter # => Mon, 30 Oct 2000
-Time.local(2000, 11, 31).next_quarter # => Wed, 28 Feb 2001
-```
-
-`prev_quarter` имеет псевдоним `last_quarter`.
 
 ##### `beginning_of_week`, `end_of_week`
 
@@ -3117,6 +3081,8 @@ Date.new(2012, 2, 29).years_ago(3)     # => Sat, 28 Feb 2009
 Date.new(2012, 2, 29).years_since(3)   # => Sat, 28 Feb 2015
 ```
 
+`last_year` это сокращение для `#years_ago(1)`.
+
 ##### `months_ago`, `months_since`
 
 Методы `months_ago` и `months_since` работают аналогично, но для месяцев:
@@ -3132,6 +3098,8 @@ Date.new(2010, 4, 30).months_since(2) # => Wed, 30 Jun 2010
 Date.new(2010, 4, 30).months_ago(2)    # => Sun, 28 Feb 2010
 Date.new(2009, 12, 31).months_since(2) # => Sun, 28 Feb 2010
 ```
+
+`last_month` это сокращение для `#months_ago(1)`.
 
 ##### `weeks_ago`
 
@@ -3291,35 +3259,7 @@ WARNING: `DateTime` не знает о правилах DST (переходов 
 
 NOTE: Все нижеследующие методы определены в `active_support/core_ext/date_time/calculations.rb`.
 
-Класс `DateTime` является подклассом `Date`, поэтому загрузив `active_support/core_ext/date/calculations.rb` вы унаследуете эти методы и их псевдонимы, за исключением того, что они будут всегда возвращать дату и время:
-
-```ruby
-yesterday
-tomorrow
-beginning_of_week (at_beginning_of_week)
-end_of_week (at_end_of_week)
-monday
-sunday
-weeks_ago
-prev_week (last_week)
-next_week
-months_ago
-months_since
-beginning_of_month (at_beginning_of_month)
-end_of_month (at_end_of_month)
-prev_month (last_month)
-next_month
-beginning_of_quarter (at_beginning_of_quarter)
-end_of_quarter (at_end_of_quarter)
-beginning_of_year (at_beginning_of_year)
-end_of_year (at_end_of_year)
-years_ago
-years_since
-prev_year (last_year)
-next_year
-on_weekday?
-on_weekend?
-```
+Класс `DateTime` является подклассом `Date`, поэтому загрузив `active_support/core_ext/date/calculations.rb` будут унаследованы эти методы и их псевдонимы, за исключением того, что они будут всегда возвращать дату и время.
 
 Следующие методы переопределены, поэтому **не** нужно загружать `active_support/core_ext/date/calculations.rb` для них:
 
@@ -3467,8 +3407,6 @@ DateTime.new(1582, 10, 4, 23) + 1.hour
 
 NOTE: Все следующие методы определены в `active_support/core_ext/time/calculations.rb`.
 
-Active Support добавляет к `Time` множество методов, доступных для `DateTime`:
-
 ```ruby
 past?
 today?
@@ -3480,6 +3418,8 @@ change
 advance
 ago
 since (in)
+prev_day
+next_day
 beginning_of_day (midnight, at_midnight, at_beginning_of_day)
 end_of_day
 beginning_of_hour (at_beginning_of_hour)
@@ -3495,15 +3435,17 @@ months_ago
 months_since
 beginning_of_month (at_beginning_of_month)
 end_of_month (at_end_of_month)
-prev_month (last_month)
+prev_month
 next_month
+last_month
 beginning_of_quarter (at_beginning_of_quarter)
 end_of_quarter (at_end_of_quarter)
 beginning_of_year (at_beginning_of_year)
 end_of_year (at_end_of_year)
 years_ago
 years_since
-prev_year (last_year)
+prev_year
+last_year
 next_year
 on_weekday?
 on_weekend?
@@ -3560,6 +3502,74 @@ now.all_quarter
 now.all_year
 # => Fri, 01 Jan 2010 00:00:00 UTC +00:00..Fri, 31 Dec 2010 23:59:59 UTC +00:00
 ```
+
+#### `prev_day`, `next_day`
+
+В Ruby 1.9 `prev_day` и `next_day` возвращают дату для последнего или следующего дня:
+
+```ruby
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.prev_day               # => Fri, 07 May 2010
+d.next_day               # => Sun, 09 May 2010
+```
+
+#### `prev_month`, `next_month`
+
+В Ruby 1.9 `prev_month` и `next_month` возвращают дату с тем же днем в предыдущем или следующем месяце:
+
+```ruby
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.prev_month             # => Thu, 08 Apr 2010
+d.next_month             # => Tue, 08 Jun 2010
+```
+
+Если такой день не существует, возвращается последний день соответствующего месяца:
+
+```ruby
+Date.new(2000, 5, 31).prev_month # => Sun, 30 Apr 2000
+Date.new(2000, 3, 31).prev_month # => Tue, 29 Feb 2000
+Date.new(2000, 5, 31).next_month # => Fri, 30 Jun 2000
+Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
+```
+
+#### `prev_year`, `next_year`
+
+В Ruby 1.9 `prev_year` и `next_year` возвращают дату с тем же днем/месяцем в предыдущем или следующем году:
+
+```ruby
+d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
+d.prev_year              # => Fri, 08 May 2009
+d.next_year              # => Sun, 08 May 2011
+```
+
+Если датой является 29 февраля високосного года, возвратится 28-е:
+
+```ruby
+d = Date.new(2000, 2, 29) # => Tue, 29 Feb 2000
+d.prev_year               # => Sun, 28 Feb 1999
+d.next_year               # => Wed, 28 Feb 2001
+```
+
+#### `prev_quarter`, `next_quarter`
+
+`prev_quarter` и `next_quarter` возвращают дату с тем же днем в предыдущем или следующем квартале:
+
+```ruby
+t = Time.local(2010, 5, 8) # => 2010-05-08 00:00:00 0300
+t.prev_quarter             # => 2010-02-08 00:00:00 0200
+t.next_quarter             # => 2010-08-08 00:00:00 0300
+```
+
+Если такой день не существует, возвращается последний день соответствующего месяца:
+
+```ruby
+Time.local(2000, 7, 31).prev_quarter  # => 2000-04-30 00:00:00 0300
+Time.local(2000, 5, 31).prev_quarter  # => 2000-02-29 00:00:00 0200
+Time.local(2000, 10, 31).prev_quarter # => 2000-07-31 00:00:00 0300
+Time.local(2000, 11, 31).next_quarter # => 2001-03-01 00:00:00 0200
+```
+
+`prev_quarter` имеет псевдоним `last_quarter`.
 
 ### Конструкторы Time
 

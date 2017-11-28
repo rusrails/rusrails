@@ -142,7 +142,6 @@ API-приложение поставляется со следующими пр
 - `Rack::Head`
 - `Rack::ConditionalGet`
 - `Rack::ETag`
-- `MyApi::Application::Routes`
 
 Смотрите раздел по [внутренним промежуточным программам](/rails-on-rack#internal-middleware-stack) руководства по Rack, чтобы узнать подробности о них.
 
@@ -304,7 +303,10 @@ $ bin/rails c
 Некоторые распространенные модули, которые вы, возможно, захотите добавить:
 
 - `AbstractController::Translation`: Поддержка для методов локализации `l`  и перевода `t`.
-- `ActionController::HttpAuthentication::Basic` (или `Digest`, или `Token`): Поддержка для простой, дайджестной или токенной аутентификация HTTP.
+- Поддержка для простой, дайджестной или токенной аутентификация HTTP:
+  * `ActionController::HttpAuthentication::Basic::ControllerMethods`,
+  * `ActionController::HttpAuthentication::Digest::ControllerMethods`,
+  * `ActionController::HttpAuthentication::Token::ControllerMethods`
 - `ActionView::Layouts`: Поддержка для макетов при рендеринге.
 - `ActionController::MimeResponds`: Поддержка для `respond_to`.
 - `ActionController::Cookies`: Поддержка для `cookies`, что включает поддержку для подписанных и зашифрованных куки. Он требует промежуточную программу для куки.

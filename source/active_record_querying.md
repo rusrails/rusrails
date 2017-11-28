@@ -400,7 +400,7 @@ end
 `find_in_batches` работает на классах модели, как показано выше, а также на relation:
 
 ```ruby
-Invoice.pending.find_in_batches do |invoice|
+Invoice.pending.find_in_batches do |invoices|
   pending_invoices_export.add_invoices(invoices)
 end
 ```
@@ -785,7 +785,7 @@ SQL, который будет выполнен:
 SELECT * FROM articles WHERE id > 10 ORDER BY id DESC
 
 # Оригинальный запрос без `only`
-SELECT "articles".* FROM "articles" WHERE (id > 10) ORDER BY id desc LIMIT 20
+SELECT * FROM articles WHERE id > 10 ORDER BY id DESC LIMIT 20
 
 ```
 
@@ -806,14 +806,14 @@ Article.find(10).comments.reorder('name')
 SQL, который будет выполнен:
 
 ```sql
-SELECT * FROM articles WHERE id = 10
+SELECT * FROM articles WHERE id = 10 LIMIT 1
 SELECT * FROM comments WHERE article_id = 10 ORDER BY name
 ```
 
 В случае, когда условие `reorder` не было использовано, запущенный SQL будет:
 
 ```sql
-SELECT * FROM articles WHERE id = 10
+SELECT * FROM articles WHERE id = 10 LIMIT 1
 SELECT * FROM comments WHERE article_id = 10 ORDER BY posted_at DESC
 ```
 
@@ -1074,7 +1074,7 @@ Article.joins(:category, :comments)
 
 ```sql
 SELECT articles.* FROM articles
-  INNER JOIN categories ON articles.category_id = categories.id
+  INNER JOIN categories ON categories.id = articles.category_id
   INNER JOIN comments ON comments.article_id = articles.id
 ```
 
@@ -1661,10 +1661,10 @@ Client.find_by_sql("SELECT * FROM clients
 
 ### `select_all`
 
-У `find_by_sql` есть близкий родственник, называемый `connection#select_all`. `select_all` получит объекты из базы данных, используя произвольный SQL, как и в `find_by_sql`, но не создаст их экземпляры. Вместо этого, вы получите массив хэшей, где каждый хэш указывает на запись.
+У `find_by_sql` есть близкий родственник, называемый `connection#select_all`. `select_all` получит объекты из базы данных, используя произвольный SQL, как и в `find_by_sql`, но не создаст их экземпляры. Этот метод вернет экземпляр класса `ActiveRecord::Result` и вызвав `to_hash` на этом объекте вернет массив хэшей, где каждый хэш указывает на запись.
 
 ```ruby
-Client.connection.select_all("SELECT first_name, created_at FROM clients WHERE id = '1'")
+Client.connection.select_all("SELECT first_name, created_at FROM clients WHERE id = '1'").to_hash
 # => [
 #   {"first_name"=>"Rafael", "created_at"=>"2012-11-10 23:23:45.281189"},
 #   {"first_name"=>"Eileen", "created_at"=>"2013-12-09 11:22:35.221282"}
@@ -1811,14 +1811,14 @@ Article.first.categories.many?
 
 ```ruby
 Client.count
-# SELECT count(*) AS count_all FROM clients
+# SELECT COUNT(*) FROM clients
 ```
 
 Или на relation:
 
 ```ruby
 Client.where(first_name: 'Ryan').count
-# SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
+# SELECT COUNT(*) FROM clients WHERE (first_name = 'Ryan')
 ```
 
 Можно также использовать различные методы поиска на relation для выполнения сложных вычислений:
@@ -1830,9 +1830,9 @@ Client.includes("orders").where(first_name: 'Ryan', orders: { status: 'received'
 Что выполнит:
 
 ```sql
-SELECT count(DISTINCT clients.id) AS count_all FROM clients
-  LEFT OUTER JOIN orders ON orders.client_id = clients.id WHERE
-  (clients.first_name = 'Ryan' AND orders.status = 'received')
+SELECT COUNT(DISTINCT clients.id) FROM clients
+  LEFT OUTER JOIN orders ON orders.client_id = clients.id
+  WHERE (clients.first_name = 'Ryan' AND orders.status = 'received')
 ```
 
 ### Количество

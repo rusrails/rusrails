@@ -290,6 +290,10 @@ Action Pack
 *   Удалены устаревшие методы, относящиеся к фильтрам контроллера.
     ([Commit](https://github.com/rails/rails/commit/d7be30e8babf5e37a891522869e7b0191b79b757))
 
+*   Удалена устаревшая поддержка `:text` и `:nothing` в `render`.
+    ([Commit](https://github.com/rails/rails/commit/79a5ea9eadb4d43b62afacedc0706cbe88c54496), 
+    [Commit](https://github.com/rails/rails/commit/57e1c99a280bdc1b324936a690350320a1cd8111))
+
 ### Устарело
 
 *   Устарел `config.action_controller.raise_on_unfiltered_parameters`. Он ничего не делает в Rails 5.1.
