@@ -142,9 +142,9 @@ end
 ```
 
 #### Jbuilder
-[Jbuilder](https://github.com/rails/jbuilder) — это гем, поддерживаемый командой Rails и включенный в Rails Gemfile по умолчанию. Он похож на Builder, но используется для генерации JSON вместо XML.
+[Jbuilder](https://github.com/rails/jbuilder) — это гем, поддерживаемый командой Rails и включенный в Rails `Gemfile` по умолчанию. Он похож на Builder, но используется для генерации JSON вместо XML.
 
-Если у вас его нет, можно добавить следующее в Gemfile:
+Если у вас его нет, можно добавить следующее в `Gemfile`:
 
 ```ruby
 gem 'jbuilder'
@@ -1145,7 +1145,7 @@ select("article", "person_id", Person.all.collect { |p| [ p.name, p.id ] }, { in
 Возвращает теги select и option для заданного объекта и метода, используя `time_zone_options_for_select` для создания списка тегов option.
 
 ```ruby
-time_zone_select( "user", "time_zone")
+time_zone_select("user", "time_zone")
 ```
 
 #### date_field

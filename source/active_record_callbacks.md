@@ -206,6 +206,7 @@ An Employee was touched
 * `save!`
 * `save(validate: false)`
 * `toggle!`
+* `touch`
 * `update_attribute`
 * `update`
 * `update!`
@@ -238,7 +239,6 @@ NOTE: Методы `find_by_*` и `find_by_*!` это динамические �
 * `increment`
 * `increment_counter`
 * `toggle`
-* `touch`
 * `update_column`
 * `update_columns`
 * `update_all`

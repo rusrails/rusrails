@@ -60,7 +60,7 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 * **Хранилище сессии ActiveRecord** ([коммит](https://github.com/rails/rails/commit/0ffe19056c8e8b2f9ae9d487b896cad2ce9387ad)) - Хранилище сессии ActiveRecord извлечено в отдельный гем. Хранение сессий в SQL затратное. Используйте вместо него сессии куки, сессии memcache или произвольные хранилища сессии.
 * **Защита от массового назначения ActiveModel** ([коммит](https://github.com/rails/rails/commit/f8c9a4d3e88181cee644f91e1342bfe896ca64c6)) - Защита от массового назначения Rails 3 устарела. Вместо нее используйте строгие параметры (strong parameters).
 * **ActiveResource** ([коммит](https://github.com/rails/rails/commit/f1637bf2bb00490203503fbd943b73406e043d1d)) - ActiveResource извлечен в отдельный гем. ActiveResource не был широко используемым.
-* **убраны vendor/plugins** ([коммит](https://github.com/rails/rails/commit/853de2bd9ac572735fa6cf59fcf827e485a231c3)) - Для управления установленными гемами используйте Gemfile.
+* **убраны vendor/plugins** ([коммит](https://github.com/rails/rails/commit/853de2bd9ac572735fa6cf59fcf827e485a231c3)) - Для управления установленными гемами используйте `Gemfile`.
 
 ### ActionPack
 
