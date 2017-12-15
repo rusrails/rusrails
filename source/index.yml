@@ -321,8 +321,8 @@ pages:
   - title:    Обзор Active Storage
     path:     active_storage_overview
     file:     active_storage_overview.md
-    revision: 
-    date:     05/12/2017
+    revision: 33721a71e39d5a228ae3cd7949fa83198dc3eaa9
+    date:     09/01/2018
 
 plan: []
 

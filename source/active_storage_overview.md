@@ -1,50 +1,33 @@
-Active Storage
-==============
+Обзор Active Storage
+====================
 
-This guide covers how to attach files to your Active Record models.
+В этом руководстве описывается, как прикреплять файлы к моделям Active Record.
 
-After reading this guide, you will know:
+После прочтения этого руководства вы узнаете:
 
-* How to attach one or many files to a record.
-* How to delete an attached file.
-* How to link to an attached file.
-* How to use variants to transform images.
-* How to generate an image representation of a non-image file, such as a PDF or a video.
-* How to send file uploads directly from browsers to a storage service,
-  bypassing your application servers.
-* How to clean up files stored during testing.
-* How to implement support for additional storage services.
+* Как прикрепить один или несколько файлов к записи.
+* Как удалить прикрепленный файл.
+* Как создать ссылку на прикрепленный файл.
+* Как использовать варианты (variants) для преобразования изображений.
+* Как генерировать изображение файла, который не является изображением, например, PDF или видео.
+* Как загружать файлы из браузеров прямо в сервисы хранения (storage service), минуя application серверы.
+* Как очистить файлы, сохраненные во время тестирования.
+* Как реализовать поддержку дополнительных сервисов хранения.
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
-What is Active Storage?
------------------------
+Что такое Active Storage?
+-------------------------
 
-Active Storage facilitates uploading files to a cloud storage service like
-Amazon S3, Google Cloud Storage, or Microsoft Azure Storage and attaching those
-files to Active Record objects. It comes with a local disk-based service for
-development and testing and supports mirroring files to subordinate services for
-backups and migrations.
+Active Storage облегчает загрузку файлов в облачные хранилища данных, такие как Amazon S3, Google Cloud Storage или Microsoft Azure Storage, и прикрепляет эти файлы к объектам Active Record. Он поставляется с локальным на основе диска сервисом для разработки и тестирования, и поддерживает отзеркаливание (mirroring) файлов в подчиненных сервисах для резервного копирования и миграций.
 
-Using Active Storage, an application can transform image uploads with
-[ImageMagick](https://www.imagemagick.org), generate image representations of
-non-image uploads like PDFs and videos, and extract metadata from arbitrary
-files.
+Используя Active Storage приложение может преобразовывать изображения при загрузке с помощью [ImageMagick](https://www.imagemagick.org), генерировать изображение файла, который не является изображением, такого, например, как PDF или видео, и извлекать метаданные из произвольных файлов.
 
-## Setup
+## Установка
 
-Active Storage uses two tables in your application’s database named
-`active_storage_blobs` and `active_storage_attachments`. After upgrading your
-application to Rails 5.2, run `rails active_storage:install` to generate a
-migration that creates these tables. Use `rails db:migrate` to run the
-migration.
+Active Storage использует две таблицы в базе данных приложения названные `active_storage_blobs` и `active_storage_attachments`. После апгрейда приложения до Rails 5.2, нужно запустить `rails active_storage:install`, чтобы сгенерировать миграцию, которая создает эти таблицы. Используйте `rails db:migrate` для запуска миграций.
 
-You need not run `rails active_storage:install` in a new Rails 5.2 application:
-the migration is generated automatically.
-
-Declare Active Storage services in `config/storage.yml`. For each service your
-application uses, provide a name and the requisite configuration. The example
-below declares three services named `local`, `test`, and `s3`:
+Сервисы Active Storage объявляются в `config/storage.yml`. Для каждого сервиса, используемого в приложении, стоит указать имя и необходимую конфигурацию. В нижеприведенном примере объявляются три сервиса с именами `local`, `test` и `amazon`:
 
 ```yaml
 local:
@@ -55,68 +38,63 @@ test:
   service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
 
-s3:
+amazon:
   service: S3
   access_key_id: ""
   secret_access_key: ""
 ```
 
-Tell Active Storage which service to use by setting
-`Rails.application.config.active_storage.service`. Because each environment will
-likely use a different service, it is recommended to do this on a
-per-environment basis. To use the disk service from the previous example in the
-development environment, you would add the following to
-config/environments/development.rb:
+Скажите Active Storage, какой сервис использовать, установив `Rails.application.config.active_storage.service`. Поскольку каждая среда, скорее всего, использует различные сервисы, рекомендуется делать это отдельно для каждого окружения. Чтобы использовать сервис диска из предыдущего примера в среде разработки, нужно добавить следующее в `config/environments/development.rb`:
 
 ```ruby
-# Store files locally.
+# Хранение файлов локально.
 config.active_storage.service = :local
 ```
 
-To use the s3 service in production, you add the following to
+Чтобы использовать сервис Amazon S3 в production, необходимо добавить следующее в
 `config/environments/production.rb`:
 
 ```ruby
-# Store files in S3.
-config.active_storage.service = :s3
+# Хранить файлы в Amazon S3.
+config.active_storage.service = :amazon
 ```
 
-Continue reading for more information on the built-in service adapters (e.g.
-`Disk` and `S3`) and the configuration they require.
+Подробнее о встроенных адаптерах сервиса (например, `Disk` и `S3`) и требуемой конфигурации написано ниже.
 
-### Disk Service
+### Сервис Disk
 
-Declare a Disk service in `config/storage.yml`:
+Объявление сервиса Disk в `config/storage.yml`:
 
-``` yaml
+```yaml
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 ```
 
-### Amazon S3 Service
+### Сервис Amazon S3
 
-Declare an S3 service in `config/storage.yml`:
+Объявление сервиса S3 в `config/storage.yml`:
 
-``` yaml
-s3:
+```yaml
+amazon:
   service: S3
   access_key_id: ""
   secret_access_key: ""
   region: ""
   bucket: ""
 ```
-Also, add the S3 client gem to your Gemfile:
 
-``` ruby
+Кроме того, необходимо добавить гем [`aws-sdk-s3`](https://github.com/aws/aws-sdk-ruby) в `Gemfile`:
+
+```ruby
 gem "aws-sdk-s3", require: false
 ```
 
-### Microsoft Azure Storage Service
+### Сервис Microsoft Azure Storage
 
-Declare an Azure Storage service in `config/storage.yml`:
+Объявление сервиса Azure Storage в `config/storage.yml`:
 
-``` yaml
+```yaml
 azure:
   service: AzureStorage
   path: ""
@@ -125,52 +103,55 @@ azure:
   container: ""
 ```
 
-Also, add the Microsoft Azure Storage client gem to your Gemfile:
+Кроме того, необходимо добавить гем [`azure-storage`](https://github.com/Azure/azure-storage-ruby) в `Gemfile`:
 
-``` ruby
+```ruby
 gem "azure-storage", require: false
 ```
 
-### Google Cloud Storage Service
+### Сервис Google Cloud Storage
 
-Declare a Google Cloud Storage service in `config/storage.yml`:
+Объявление сервиса Google Cloud Storage в `config/storage.yml`:
 
-``` yaml
+```yaml
 google:
   service: GCS
-  keyfile: {
-    type: "service_account",
-    project_id: "",
-    private_key_id: "",
-    private_key: "",
-    client_email: "",
-    client_id: "",
-    auth_uri: "https://accounts.google.com/o/oauth2/auth",
-    token_uri: "https://accounts.google.com/o/oauth2/token",
-    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-    client_x509_cert_url: ""
-  }
+  credentials: <%= Rails.root.join("path/to/keyfile.json") %>
   project: ""
   bucket: ""
 ```
 
-Also, add the Google Cloud Storage client gem to your Gemfile:
+Опционально можно предоставить хэш credentials вместо пути к keyfile:
 
-``` ruby
+```yaml
+google:
+  service: GCS
+  credentials:
+    type: "service_account"
+    project_id: ""
+    private_key_id: <%= Rails.application.credentials.dig(:gcs, :private_key_id) %>
+    private_key: <%= Rails.application.credentials.dig(:gcs, :private_key) %>
+    client_email: ""
+    client_id: ""
+    auth_uri: "https://accounts.google.com/o/oauth2/auth"
+    token_uri: "https://accounts.google.com/o/oauth2/token"
+    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+    client_x509_cert_url: ""
+  project: ""
+  bucket: ""
+```
+
+Кроме того, необходимо добавить гем [`google-cloud-storage`](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-storage) в `Gemfile`:
+
+```ruby
 gem "google-cloud-storage", "~> 1.3", require: false
 ```
 
-### Mirror Service
+### Сервис Mirror
 
-You can keep multiple services in sync by defining a mirror service. When a file
-is uploaded or deleted, it's done across all the mirrored services. Mirrored
-services can be used to facilitate a migration between services in production.
-You can start mirroring to the new service, copy existing files from the old
-service to the new, then go all-in on the new service. Define each of the
-services you'd like to use as described above and reference them from a mirrored
-service.
+Существует возможность синхронизировать несколько сервисов, определив сервис mirror. Когда файл загружается или удаляется, это происходит для всех зеркальных (mirrored) сервисов. Зеркальные сервисы могут использоваться для облегчения миграции между сервисами в production. Можно начать отзеркаливать на новый сервис, скопировать существующие файлы со старого сервиса в новый, а затем полностью перейти на новый сервис. Определим каждый из требуемых сервисов, как описано выше, и будем ссылаться на них с помощью зеркального сервиса.
 
-``` yaml
+```yaml
 s3_west_coast:
   service: S3
   access_key_id: ""
@@ -192,31 +173,29 @@ production:
     - s3_west_coast
 ```
 
-NOTE: Files are served from the primary service.
+NOTE: Файлы отдаются из основного сервиса.
 
-Attach Files to a Model
------------------------
+Прикрепление файлов к записям
+-----------------------------
 
 ### `has_one_attached`
 
-The `has_one_attached` macro sets up a one-to-one mapping between records and
-files. Each record can have one file attached to it.
+Макрос `has_one_attached` устанавливает сопоставление (mapping) один-к-одному между записями и файлами. Каждая запись может содержать один прикрепленный файл.
 
-For example, suppose your application has a User model. If you want each user to
-have an avatar, define the `User` model like this:
+Например, предположим, что в приложении имеется модель `User`. Если необходимо, чтобы у каждого пользователя был аватар, нужно определить модель `User` следующим образом:
 
-``` ruby
+```ruby
 class User < ApplicationRecord
   has_one_attached :avatar
 end
 ```
 
-You can create a user with an avatar:
+Далее можно создать пользователя с аватаром:
 
-``` ruby
+```ruby
 class SignupController < ApplicationController
   def create
-    user = Users.create!(user_params)
+    user = User.create!(user_params)
     session[:user_id] = user.id
     redirect_to root_path
   end
@@ -228,13 +207,13 @@ class SignupController < ApplicationController
 end
 ```
 
-Call `avatar.attach` to attach an avatar to an existing user:
+Вызов `avatar.attach` прикрепляет аватар к существующему пользователю:
 
 ```ruby
 Current.user.avatar.attach(params[:avatar])
 ```
 
-Call `avatar.attached?` to determine whether a particular user has an avatar:
+Вызов `avatar.attached?` определяет, есть ли у конкретного пользователя аватар:
 
 ```ruby
 Current.user.avatar.attached?
@@ -242,11 +221,9 @@ Current.user.avatar.attached?
 
 ### `has_many_attached`
 
-The `has_many_attached` macro sets up a one-to-many relationship between records
-and files. Each record can have many files attached to it.
+Макрос `has_many_attached` устанавливает отношение один-ко-многим между записями и файлами. У каждой записи может быть много прикрепленных файлов.
 
-For example, suppose your application has a `Message` model. If you want each
-message to have many images, define the Message model like this:
+Например, предположим, что в приложении имеется модель `Message`. Если необходимо, чтобы у каждого сообщения было много изображений, нужно определить модель `Message` следующим образом:
 
 ```ruby
 class Message < ApplicationRecord
@@ -254,7 +231,7 @@ class Message < ApplicationRecord
 end
 ```
 
-You can create a message with images:
+Далее можно создать сообщение с изображениями:
 
 ```ruby
 class MessagesController < ApplicationController
@@ -270,80 +247,68 @@ class MessagesController < ApplicationController
 end
 ```
 
-Call `images.attach` to add new images to an existing message:
+Вызов `images.attach` добавляет новые изображения к существующему сообщению:
 
 ```ruby
 @message.images.attach(params[:images])
 ```
 
-Call `images.attached?` to determine whether a particular message has any images:
+Вызов `images.attached?` определяет, есть ли у конкретного сообщения какие-либо изображения:
 
 ```ruby
 @message.images.attached?
 ```
 
-Remove File Attached to Model
+Удаление прикрепленных файлов
 -----------------------------
 
-To remove an attachment from a model, call `purge` on the attachment. Removal
-can be done in the background if your application is setup to use Active Job.
-Purging deletes the blob and the file from the storage service.
+Чтобы удалить прикрепленный файл из модели, необходимо вызвать `purge` на нем. Удаление может быть выполнено в фоновом режиме, если приложение использует Active Job. `purge` удаляет blob и файл из сервиса хранения.
 
 ```ruby
-# Synchronously destroy the avatar and actual resource files.
+# Синхронно уничтожить аватар и фактические файлы ресурса.
 user.avatar.purge
 
-# Destroy the associated models and actual resource files async, via Active Job.
+# Асинхронно уничтожить связанные модели и фактические файлы ресурса с помощью Active Job.
 user.avatar.purge_later
 ```
 
-Link to Attachments
--------------------
+Создание ссылок на файлы
+------------------------
 
-Generate a permanent URL for the blob that points to the application. Upon
-access, a redirect to the actual service endpoint is returned. This indirection
-decouples the public URL from the actual one, and allows, for example, mirroring
-attachments in different services for high-availability. The redirection has an
-HTTP expiration of 5 min.
+Сгенерируем постоянный URL для blob, который указывает на приложение. При доступе возвращается редирект на фактическую конечную точку сервиса. Эта косвенная адресация (indirection) отделяет публичный URL от фактического, и позволяет, например, отзеркаливание прикрепленных файлов в разных сервисах для высокой доступности. Перенаправление имеет HTTP-прекращение 5 минут.
 
 ```ruby
 url_for(user.avatar)
 ```
 
-To create a download link, use the `rails_blob_{path|url}` helper. Using this
-helper allows you to set the disposition.
+Чтобы создать ссылку для скачивания, необходимо использовать хелпер `rails_blob_{path|url}`. С помощью этого хелпера можно установить disposition.
 
 ```ruby
 rails_blob_path(user.avatar, disposition: "attachment")
 ```
 
-Transform Images
-----------------
+Преобразование изображений
+--------------------------
 
-To create variation of the image, call `variant` on the Blob.
-You can pass any [MiniMagick](https://github.com/minimagick/minimagick)
-supported transformation to the method.
+Чтобы создать вариацию изображения, следует вызвать `variant` на Blob.
+Также возможно передать любое преобразование, поддерживаемое [MiniMagick](https://github.com/minimagick/minimagick), методу.
 
-To enable variants, add `mini_magick` to your Gemfile:
+Чтобы включить варианты, добавьте `mini_magick` в `Gemfile`:
 
-``` ruby
+```ruby
 gem 'mini_magick'
 ```
 
-When the browser hits the variant URL, ActiveStorage will lazy transform the
-original blob into the format you specified and redirect to its new service
-location.
+Когда браузер обращается к URL варианта, Active Storage будет лениво преобразовывать исходный blob в указанный формат и перенаправлять его в новую локацию сервиса.
 
 ```erb
 <%= image_tag user.avatar.variant(resize: "100x100") %>
 ```
 
-Preview Non-image Files
------------------------
+Предварительный просмотр файлов
+-------------------------------
 
-Some non-image files can be previewed: that is, they can be presented as images.
-For example, a video file can be previewed by extracting its first frame. Out of
-the box, Active Storage supports previewing videos and PDF documents.
+Некоторые файлы, который не являются изображениями, могут быть предварительно просмотрены: то есть они могут быть представлены как изображения. Например, видеофайл можно предварительно просмотреть, извлекая его первый кадр. Из коробки Active Storage поддерживает предварительный просмотр видео и документов PDF.
 
 ```erb
 <ul>
@@ -355,64 +320,59 @@ the box, Active Storage supports previewing videos and PDF documents.
 </ul>
 ```
 
-WARNING: Extracting previews requires third-party applications, `ffmpeg` for
-video and `mutool` for PDFs. These libraries are not provided by Rails. You must
-install them yourself to use the built-in previewers. Before you install and use
-third-party software, make sure you understand the licensing implications of
-doing so.
+WARNING: Для извлечения превью необходимы сторонние приложения, `ffmpeg` для видео и `mutool` для PDF. Эти библиотеки не предоставляются Rails. Необходимо установить их самостоятельно, чтобы использовать встроенные средства предварительного просмотра. Перед установкой и использованием стороннего программного обеспечения убедитесь, что понимаете последствия лицензирования этого.
 
-Upload Directly to Service
---------------------------
+Прямые загрузки
+---------------
 
-Active Storage, with its included JavaScript library, supports uploading
-directly from the client to the cloud.
+Active Storage со встроенной библиотекой JavaScript поддерживает загрузку прямо от клиента в облако.
 
-### Direct upload installation
+### Установка прямой загрузки
 
-1. Include `activestorage.js` in your application's JavaScript bundle.
+1. Включите `activestorage.js` в комплект JavaScript приложения.
 
-    Using the asset pipeline:
+    Используя файлопровод:
 
     ```js
     //= require activestorage
 
     ```
 
-    Using the npm package:
+    Используя пакет npm:
 
     ```js
     import * as ActiveStorage from "activestorage"
     ActiveStorage.start()
     ```
 
-2. Annotate file inputs with the direct upload URL.
+2. Установите в true значение `direct_upload` поля для загрузки файла.
 
     ```ruby
     <%= form.file_field :attachments, multiple: true, direct_upload: true %>
     ```
-3. That's it! Uploads begin upon form submission.
+3. Вот и все! Загрузки начинаются с момента отправки формы.
 
-### Direct upload JavaScript events
+### События JavaScript прямой загрузки
 
-| Event name | Event target | Event data (`event.detail`) | Description |
+| Имя события | Цель события | Данные события (`event.detail`) | Описание |
 | --- | --- | --- | --- |
-| `direct-uploads:start` | `<form>` | None | A form containing files for direct upload fields was submitted. |
-| `direct-upload:initialize` | `<input>` | `{id, file}` | Dispatched for every file after form submission. |
-| `direct-upload:start` | `<input>` | `{id, file}` | A direct upload is starting. |
-| `direct-upload:before-blob-request` | `<input>` | `{id, file, xhr}` | Before making a request to your application for direct upload metadata. |
-| `direct-upload:before-storage-request` | `<input>` | `{id, file, xhr}` | Before making a request to store a file. |
-| `direct-upload:progress` | `<input>` | `{id, file, progress}` | As requests to store files progress. |
-| `direct-upload:error` | `<input>` | `{id, file, error}` | An error occurred. An `alert` will display unless this event is canceled. |
-| `direct-upload:end` | `<input>` | `{id, file}` | A direct upload has ended. |
-| `direct-uploads:end` | `<form>` | None | All direct uploads have ended. |
+| `direct-uploads:start`                 | `<form>`  | None                   | Форма, содержащая файлы для прямой загрузки полей была отправлена. |
+| `direct-upload:initialize`             | `<input>` | `{id, file}`           | Вызывается для каждого файла после отправки формы. |
+| `direct-upload:start`                  | `<input>` | `{id, file}`           | Прямая загрузка начинается. |
+| `direct-upload:before-blob-request`    | `<input>` | `{id, file, xhr}`      | Перед тем, как сделать запрос к приложению для прямой загрузки метаданных. |
+| `direct-upload:before-storage-request` | `<input>` | `{id, file, xhr}`      | Перед тем, как сделать запрос на сохранение файла. |
+| `direct-upload:progress`               | `<input>` | `{id, file, progress}` | По мере прогресса сохранения файлов. |
+| `direct-upload:error`                  | `<input>` | `{id, file, error}`    | Произошла ошибка. Отображается `alert`, если это событие не отменено. |
+| `direct-upload:end`                    | `<input>` | `{id, file}`           | Прямая загрузка закончилась. |
+| `direct-uploads:end`                   | `<form>`  | None                   | Все прямые загрузки закончились. |
 
-### Example
+### Пример
 
-You can use these events to show the progress of an upload.
+Также можно использовать эти события, чтобы показывать ход загрузки.
 
 ![direct-uploads](https://user-images.githubusercontent.com/5355/28694528-16e69d0c-72f8-11e7-91a7-c0b8cfc90391.gif)
 
-To show the uploaded files in a form:
+Чтобы показать загруженные файлы в форме:
 
 ```js
 // direct_uploads.js
@@ -455,7 +415,7 @@ addEventListener("direct-upload:end", event => {
 })
 ```
 
-Add styles:
+Добавление стилей:
 
 ```css
 /* direct_uploads.css */
@@ -499,16 +459,12 @@ input[type=file][data-direct-upload-url][disabled] {
 }
 ```
 
-Clean up Stored Files Store During System Tests
------------------------------------------------
+Очистка файлов сохраненных во время системных тестов
+----------------------------------------------------
 
-System tests clean up test data by rolling back a transaction. Because destroy
-is never called on an object, the attached files are never cleaned up. If you
-want to clear the files, you can do it in an `after_teardown` callback. Doing it
-here ensures that all connections created during the test are complete and
-you won't receive an error from ActiveStorage saying it can't find a file.
+Системные тесты очищают тестовые данные, откатывая транзакцию. Поскольку уничтожение никогда не вызывается на объекте, прикрепленные файлы никогда не очищаются. Если необходимо очистить файлы, можно сделать это в колбэке `after_teardown`. Выполнение этого здесь гарантирует, что все соединения, созданные во время теста, будут завершены и не будет получено сообщение об ошибке из Active Storage, в котором говорится, что он не может найти файл.
 
-``` ruby
+```ruby
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
 
@@ -523,25 +479,19 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 end
 ```
 
-If your system tests verify the deletion of a model with attachments and you're
-using Active Job, set your test environment to use the inline queue adapter so
-the purge job is executed immediately rather at an unknown time in the future.
+Если системные тесты проверяют удаление модели с прикрепленными файлами, и используется Active Job, необходимо установить тестовую среду для использования встроенного адаптера очереди, поэтому задание на `purge` выполняется немедленно, а не когда-нибудь потом.
 
-You may also want to use a separate service definition for the test environment
-so your tests don't delete the files you create during development.
+Также можно использовать отдельное определение сервиса для тестовой среды, чтобы тесты не удаляли файлы, созданные во время разработки.
 
-``` ruby
-# Use inline job processing to make things happen immediately
+```ruby
+# Использование встроенной обработки задания, чтобы все произошло немедленно
 config.active_job.queue_adapter = :inline
 
-# Separate file storage in the test environment
+# Отдельное хранилище файлов в тестовой среде
 config.active_storage.service = :local_test
 ```
 
-Support Additional Cloud Services
----------------------------------
+Реализация поддержки других облачных сервисов
+---------------------------------------------
 
-If you need to support a cloud service other than these, you will need to
-implement the Service. Each service extends
-[`ActiveStorage::Service`](https://github.com/rails/rails/blob/master/activestorage/lib/active_storage/service.rb)
-by implementing the methods necessary to upload and download files to the cloud.
+Если необходимо поддерживать облачный сервис, отличный от имеющихся, необходимо, необходимо реализовать Service. Каждый сервис расширяет [`ActiveStorage::Service`](https://github.com/rails/rails/blob/master/activestorage/lib/active_storage/service.rb), реализуя методы, требуемые для загрузки и скачивания файлов в облако.
