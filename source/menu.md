@@ -35,12 +35,12 @@
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
+    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
     * [Кэширование с Rails](/caching-with-rails-an-overview)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
