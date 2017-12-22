@@ -593,7 +593,7 @@ Active Record
 *   Добавлена поддержка нативного типа данных JSON в MySQL.
     ([Pull Request](https://github.com/rails/rails/pull/21110))
 
-*   Добавлена поддержка для параллельного удаления индексов в PostgreSQL.
+*   Добавлена поддержка для конкурентного удаления индексов в PostgreSQL.
     ([Pull Request](https://github.com/rails/rails/pull/21317))
 
 *   Добавлены методы `#views` и `#view_exists?` на адаптерах соединений.
