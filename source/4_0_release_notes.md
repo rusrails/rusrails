@@ -247,7 +247,7 @@ Active Record
 
 * Убрана IdentityMap.
 
-* Убран автоматический запуск запросов EXPLAIN. Опция `active_record.auto_explain_threshold_in_seconds` больше не используется и должна быть убрана.
+* Убрано автоматическое выполнение запросов EXPLAIN. Опция `active_record.auto_explain_threshold_in_seconds` больше не используется и должна быть убрана.
 
 * Добавлены `ActiveRecord::NullRelation` и `ActiveRecord::Relation#none`, реализующие паттерн нулевого объекта для класса Relation.
 

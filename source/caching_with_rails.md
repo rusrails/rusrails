@@ -416,7 +416,7 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
 
     # Если запрос устарел в соответствии с заданной временной меткой или значением
-    # etag (т.е. нуждается в обработке снова), тогда запускаем этот блок
+    # etag (т.е. нуждается в обработке снова), тогда выполняем этот блок
     if stale?(last_modified: @product.updated_at.utc, etag: @product.cache_key)
       respond_to do |wants|
         # ... обычное создание отклика

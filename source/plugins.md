@@ -23,7 +23,7 @@
 Настройка
 ---------
 
-В настоящий момент плагины Rails создаются как гемы, _gem_. Они могут использоваться различными приложениями Rails с помощью RubyGems и Bundler.
+В настоящее время плагины Rails создаются как гемы (_gemified plugins_). Они могут использоваться сразу несколькими приложениями Rails с помощью RubyGems и Bundler.
 
 ### Создание гема.
 
@@ -431,7 +431,7 @@ gem "yaffle", git: "https://github.com/rails/yaffle.git"
 
 После запуска `bundle install` функционал вашего гема будет доступен в приложении.
 
-Когда гем будет готов стать доступным в виде формального релиза, он может быть опубликован на [RubyGems](https://www.rubygems.org). Подробнее о публикации гемов на RubyGems смотрите: [Publishing Your First Ruby Gem](http://guides.rubygems.org/publishing)
+Когда гем готов к официальному релизу, он может быть опубликован на [RubyGems](https://rubygems.org). Подробнее о публикации гемов на RubyGems смотрите: [Publishing your gem](http://guides.rubygems.org/publishing)
 
 Документация RDoc
 -----------------
