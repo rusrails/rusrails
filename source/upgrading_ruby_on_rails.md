@@ -1,5 +1,5 @@
-Руководство по обновлению Ruby on Rails
-=======================================
+Апгрейд Ruby on Rails
+=====================
 
 Это руководство раскрывает шаги, которые нужно сделать, чтобы обновить свое приложение на новую версию Ruby on Rails. Эти шаги также доступны в отдельных руководствах по релизам.
 
@@ -57,6 +57,16 @@ Overwrite /myapp/config/application.rb? (enter "h" for help) [Ynaqdh]
 ```
 
 Не забывайте просматривать разницу, чтобы увидеть какие-либо неожидаемые изменения.
+
+(Upgrading from Rails 5.1 to Rails 5.2) Апгрейд с Rails 5.1 на Rails 5.2
+------------------------------------------------------------------------
+
+Подробнее о внесенных изменениях в Rails 5.2 смотрите в [заметках о релизе](/5_2_release_notes).
+
+### Bootsnap
+
+Rails 5.2 добавляет гем bootsnap в [вновь сгенерированный Gemfile приложения](https://github.com/rails/rails/pull/29313).
+Задача `app:update` устанавливает его в `boot.rb`. Если необходимо использовать его, добавьте в Gemfile, иначе измените `boot.rb`, чтобы не использовать bootsnap.
 
 (Upgrading from Rails 5.0 to Rails 5.1) Обновление с Rails 5.0 на Rails 5.1
 -------------------------------------
@@ -466,7 +476,7 @@ gem 'rails-deprecated_sanitizer'
 
 ### Тестирование DOM в Rails
 
-[Модуль `TagAssertions`](http://api.rubyonrails.org/classes/ActionDispatch/Assertions/TagAssertions.html) (содержащий методы, такие как `assert_tag`), [устарел](https://github.com/rails/rails/blob/6061472b8c310158a2a2e8e9a6b81a1aef6b60fe/actionpack/lib/action_dispatch/testing/assertions/dom.rb) в пользу методов `assert_select` из модуля `SelectorAssertions`, который был извлечен в [гем rails-dom-testing](https://github.com/rails/rails-dom-testing).
+[Модуль `TagAssertions`](http://api.rubyonrails.org/v4.1/classes/ActionDispatch/Assertions/TagAssertions.html) (содержащий методы, такие как `assert_tag`), [устарел](https://github.com/rails/rails/blob/6061472b8c310158a2a2e8e9a6b81a1aef6b60fe/actionpack/lib/action_dispatch/testing/assertions/dom.rb) в пользу методов `assert_select` из модуля `SelectorAssertions`, который был извлечен в [гем rails-dom-testing](https://github.com/rails/rails-dom-testing).
 
 ### Маскировка токенов аутентификации
 
@@ -1113,7 +1123,7 @@ config.middleware.insert_before(Rack::Lock, ActionDispatch::BestStandardsSupport
 
 Также найдите в своих настройках сред `config.action_dispatch.best_standards_support`, и уберите эту строчку, если она есть.
 
-* В Rails 4.0 при прекомпиляции ассетов не будут больше автоматически копироваться не-JS/CSS ассеты из `vendor/assets` и `lib/assets`. Разработчики приложений Rails и engine-ов должны поместить эти ассеты в `app/assets` или настроить `config.assets.precompile`.
+* В Rails 4.0 при прекомпиляции ассетов не будут больше автоматически копироваться не-JS/CSS ассеты из `vendor/assets` и `lib/assets`. Разработчики приложений на Rails и engine-ов должны поместить эти ассеты в `app/assets` или настроить `config.assets.precompile`.
 
 * В Rails 4.0 вызывается `ActionController::UnknownFormat`, когда экшн не обрабатывает формат запроса. По умолчанию исключение обрабатывается, откликаясь с помощью 406 Not Acceptable, но теперь это можно переопределить. В Rails 3 всегда возвращался 406 Not Acceptable. Без возможности переопределения.
 

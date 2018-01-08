@@ -62,8 +62,6 @@ Rails будет использовать эту конкретную настр
 
 * `config.cache_classes` контролирует, будут ли классы и модули приложения перезагружены при каждом запросе. По умолчанию `false` в режиме development и true в режимах test и production.
 
-* `config.action_view.cache_template_loading` контролирует, будут ли шаблоны перезагружены при каждом запросе. Умолчания те же, что и для `config.cache_classes`.
-
 * `config.beginning_of_week` устанавливает начало недели по умолчанию для приложения. Принимает символ валидного дня недели (например, `:monday`).
 
 * `config.cache_store` конфигурирует, какое хранилище кэша использовать для кэширования Rails. Опции включают один из символов `:memory_store`, `:file_store`, `:mem_cache_store`, `:null_store` или объект, реализующий API кэша. По умолчанию `:file_store`.
@@ -195,11 +193,13 @@ end
 
 * `helper` определяет, генерировать ли хелперы. По умолчанию `true`.
 
-* `integration_tool` определяет интеграционный инструмент, используемый для генерации интеграционных тестов. По умолчанию `test_unit`.
+* `integration_tool` определяет интеграционный инструмент, используемый для генерации интеграционных тестов. По умолчанию `:test_unit`.
+
+* `system_tests` определяет интеграционный инструмент, используемый для генерации системных тестов. По умолчанию `:test_unit`.
 
 * `javascripts` включает в генераторах хук для файлов JavaScript. Используется в Rails при запуске генератора `scaffold`. По умолчанию `true`.
 
-* `javascript_engine` конфигурирует используемый движок (например, coffee) при генерации ассетов. По умолчанию `js`.
+* `javascript_engine` конфигурирует используемый движок (например, coffee) при генерации ассетов. По умолчанию `:js`.
 
 * `orm` определяет используемую orm. По умолчанию `false` и используется Active Record.
 
@@ -341,6 +341,10 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_record.schema_migrations_table_name` позволяет установить строку, которая будет использоваться как имя таблицы для миграций схемы.
 
+* `config.active_record.internal_metadata_table_name` позволяет установить строку, которая будет использоваться как имя таблицы для внутренних метаданных.
+
+* `config.active_record.protected_environments` позволяет установить массив имен сред, где деструктивные экшны должны быть запрещены.
+
 * `config.active_record.pluralize_table_names` определяет, должен Rails искать имена таблиц базы данных в единственном или множественном числе. Если установлено `true` (по умолчанию), то класс Customer будет использовать таблицу `customers`. Если установить `false`, то класс Customers будет использовать таблицу `customer`.
 
 * `config.active_record.default_timezone` определяет, использовать `Time.local` (если установлено `:local`) или `Time.utc` (если установлено `:utc`) для считывания даты и времени из базы данных. По умолчанию `:utc`.
@@ -394,7 +398,7 @@ config.middleware.delete Rack::MethodOverride
 
 Дампер схемы добавляет дополнительную конфигурационную опцию:
 
-* `ActiveRecord::SchemaDumper.ignore_tables` принимает массив таблиц, которые _не_ должны быть включены в любой генерируемый файл схемы. Эта настройка будет проигнорирована в любом случае, кроме `ActiveRecord::Base.schema_format == :ruby`.
+* `ActiveRecord::SchemaDumper.ignore_tables` принимает массив таблиц, которые _не_ должны быть включены в любой генерируемый файл схемы.
 
 ### Конфигурирование Action Controller
 
@@ -482,7 +486,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_dispatch.cookies_rotations` позволяет чередовать секреты, шифры и хэш-функции для зашифрованных и подписанных куки.
 
-* `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в [Руководстве по безопасности](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
+* `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
 
 * `config.action_dispatch.rescue_responses` конфигурирует, какие исключения назначаются статусу HTTP. Он принимает хэш и можно указать пары исключение/статус. По умолчанию он определен как:
 
@@ -517,6 +521,8 @@ config.middleware.delete Rack::MethodOverride
 ### Конфигурирование Action View
 
 `config.action_view` включает несколько конфигурационных настроек:
+
+* `config.action_view.cache_template_loading` контролирует, будут ли шаблоны перезагружены при каждом запросе. Значение по умолчанию устанавливается для `config.cache_classes`.
 
 * `config.action_view.field_error_proc` предоставляет генератор HTML для отображения ошибок, приходящих от Active Model. По умолчанию:
 
@@ -637,6 +643,8 @@ config.middleware.delete Rack::MethodOverride
 * `config.active_support.use_standard_json_time_format` включает или отключает сериализацию дат в формат ISO 8601. По умолчанию `true`.
 
 * `config.active_support.time_precision` устанавливает точность значений времени, кодируемого в JSON. По умолчанию `3`.
+
+* `config.active_support.use_sha1_digests` указывает, следует ли использовать SHA-1 вместо MD5 для генерации дайджестов для неконфиденциальных (non-sensitive) данных, таких как заголовок ETag. По умолчанию false.
 
 * `ActiveSupport::Logger.silencer` устанавливают `false`, чтобы отключить возможность silence logging в блоке. По умолчанию `true`.
 

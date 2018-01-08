@@ -633,7 +633,7 @@ match 'photos', to: 'photos#show', via: :all
 
 NOTE: Роутинг запросов `GET` и `POST` одновременно в один экшн небезопасен. В основном, следует избегать роутинг всех методов в экшн, если нет веской причины делать так.
 
-NOTE: `GET` в Rails не проверяет токен CSRF. Никогда не пишите в базу данных из `GET` запросов, подробнее о контрмерах CSRF смотрите в [руководстве по безопасности](/ruby-on-rails-security-guide#csrf-countermeasures).
+NOTE: `GET` в Rails не проверяет токен CSRF. Никогда не пишите в базу данных из `GET` запросов, подробнее о контрмерах CSRF смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#csrf-countermeasures).
 
 ### Ограничения сегмента
 
@@ -841,6 +841,49 @@ root to: "home#index"
 ```ruby
 get 'こんにちは', to: 'welcome#index'
 ```
+
+### Прямые маршруты
+
+Можно создавать собственные хелперы URL напрямую. Например:
+
+```ruby
+direct :homepage do
+  "http://www.rubyonrails.org"
+end
+
+# >> homepage_url
+# => "http://www.rubyonrails.org"
+```
+
+Возвращаемое значение блока должно быть валидным аргументом для метода `url_for`. Таким образом, можно передать валидный строковый URL, хэш, массив, экземпляр Active Model или класс Active Model.
+
+```ruby
+direct :commentable do |model|
+  [ model, anchor: model.dom_id ]
+end
+
+direct :main do
+  { controller: 'pages', action: 'index', subdomain: 'www' }
+end
+```
+
+### Using `resolve`
+
+Метод `resolve` позволяет настраивать полиморфное сопоставление моделей. Например:
+
+``` ruby
+resource :basket
+
+resolve("Basket") { [:basket] }
+```
+
+``` erb
+<%= form_for @basket do |form| %>
+  <!-- basket form -->
+<% end %>
+```
+
+Это сгенерирует URL в единственном числе `/basket` вместо обычного `/baskets/:id`.
 
 Настройка ресурсных маршрутов
 -----------------------------
