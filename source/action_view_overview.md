@@ -1321,7 +1321,7 @@ date_field_tag "dob"
 
 ### JavaScriptHelper
 
-Предоставляет функционал для работы с JavaScript в ваших вьюхах.
+Предоставляет функциональность для работы с JavaScript в ваших вьюхах.
 
 #### escape_javascript
 
@@ -1494,4 +1494,4 @@ end
 
 Затем можно добавить специальные вьюхи, такие как `app/views/articles/show.expert.html.erb` которые будут отображены только пользователям expert.
 
-Подробнее об API интернационализации Rails (I18n) можно прочитать [тут](/rails-internationalization-i18n-api).
+Подробнее об API интернационализации Rails (I18n) можно прочитать в руководстве [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api).

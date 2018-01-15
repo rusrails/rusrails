@@ -482,9 +482,9 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_dispatch.encrypted_cookie_cipher` устанавливает алгоритм шифрования, который будет использоваться для зашифрованных куки. По умолчанию `"aes-256-gcm"`.
 
-* `config.action_dispatch.signed_cookie_digest` устанавливает хэш-функцию, которая будет использоваться для подписанных куки. По умолчанию `"SHA1"`.
+* `config.action_dispatch.signed_cookie_digest` устанавливает дайджест, который будет использоваться для подписанных куки. По умолчанию `"SHA1"`.
 
-* `config.action_dispatch.cookies_rotations` позволяет чередовать секреты, шифры и хэш-функции для зашифрованных и подписанных куки.
+* `config.action_dispatch.cookies_rotations` позволяет чередовать секреты, шифры и дайджесты для зашифрованных и подписанных куки.
 
 * `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
 
@@ -581,7 +581,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_mailer.raise_delivery_errors` определяет, должна ли вызываться ошибка, если доставка письма не может быть завершена. По умолчанию `true`.
 
-* `config.action_mailer.delivery_method` определяет метод доставки, по умолчанию `:smtp`. За подробностями обращайтесь [к разделу по настройке в руководстве по Action Mailer](/action_mailer_basics#action-mailer-configuration)
+* `config.action_mailer.delivery_method` определяет метод доставки, по умолчанию `:smtp`. За подробностями обращайтесь к разделу по настройке в руководстве [Основы Action Mailer](/action_mailer_basics#action-mailer-configuration)
 
 * `config.action_mailer.perform_deliveries` определяет, должна ли почта фактически доставляться. По умолчанию `true`; удобно установить ее `false` при тестировании.
 
@@ -644,7 +644,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_support.time_precision` устанавливает точность значений времени, кодируемого в JSON. По умолчанию `3`.
 
-* `config.active_support.use_sha1_digests` указывает, следует ли использовать SHA-1 вместо MD5 для генерации дайджестов для неконфиденциальных (non-sensitive) данных, таких как заголовок ETag. По умолчанию false.
+* `config.active_support.use_sha1_digests` указывает, следует ли использовать SHA-1 вместо MD5 для генерации дайджестов для не конфиденциальных (non-sensitive) данных, таких как заголовок ETag. По умолчанию false.
 
 * `ActiveSupport::Logger.silencer` устанавливают `false`, чтобы отключить возможность silence logging в блоке. По умолчанию `true`.
 

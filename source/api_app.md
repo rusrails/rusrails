@@ -278,9 +278,9 @@ API-приложение (использующее `ActionController::API`) по
 - `ActionController::DataStreaming`: Поддержка для `send_file` и `send_data`.
 - `AbstractController::Callbacks`: Поддержка для `before_action` и подобных хелперов.
 - `ActionController::Rescue`: Поддержка для `rescue_from`.
-- `ActionController::Instrumentation`: Поддержка для инструментальных хуков, определенных Action Controller (подробности относительно этого смотрите в [руководстве по инструментарию](/active-support-instrumentation#action-controller)).
+- `ActionController::Instrumentation`: Поддержка для инструментальных хуков, определенных Action Controller (подробности относительно этого смотрите в руководстве [Инструментарий Active Support](/active-support-instrumentation#action-controller)).
 - `ActionController::ParamsWrapper`: Оборачивает хэш параметров во вложенный хэш, таким образом, к примеру, не нужно указывать корневые элементы при посылка запросов POST.
-- `ActionController::Head`: Поддержка возврата ответа без тела сообщения, только заголовки
+- `ActionController::Head`: Поддержка возврата отклика без тела сообщения, только заголовки
 
 Другие плагины могут добавлять дополнительные модули. Список всех модулей, включенных в `ActionController::API` можно получить в консоли rails:
 
@@ -303,7 +303,7 @@ $ bin/rails c
 Некоторые распространенные модули, которые вы, возможно, захотите добавить:
 
 - `AbstractController::Translation`: Поддержка для методов локализации `l`  и перевода `t`.
-- Поддержка для простой, дайджестной или токенной аутентификация HTTP:
+- Поддержка для простой, дайджестной или токенной аутентификации HTTP:
   * `ActionController::HttpAuthentication::Basic::ControllerMethods`,
   * `ActionController::HttpAuthentication::Digest::ControllerMethods`,
   * `ActionController::HttpAuthentication::Token::ControllerMethods`

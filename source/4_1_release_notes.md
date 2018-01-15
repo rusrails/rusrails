@@ -8,20 +8,19 @@
 * Action Pack Variants (шаблоны, для разных устройств)
 * Предпросмотр писем Action Mailer
 
-Эти заметки о релизе покрывают только основные обновления. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/master) в главном репозитории Rails на GitHub.
+Эти заметки о релизе покрывают только основные изменения. Чтобы узнать о различных багфиксах и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/4-1-stable) в главном репозитории Rails на GitHub.
 
 --------------------------------------------------------------------------------
 
-Обновление до Rails 4.1
------------------------
+Апгрейд до Rails 4.1
+--------------------
 
-Если вы обновляете существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.1, необходимо сначала обновиться до Rails 4.0 и убедиться, что приложение все еще выполняется так, как нужно.
-Список вещей, которые нужно выполнить для обновления доступен в руководстве
-[Обновление Rails](/upgrading-ruby-on-rails#upgrading-from-rails-4-0-to-rails-4-1).
+Прежде чем апгрейдить существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 4.1, необходимо сначала произвести апгрейд до Rails 4.0 и убедиться, что приложение все еще выполняется так, как нужно.
+Список вещей, которые нужно выполнить для апгрейда доступен в руководстве
+[Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#upgrading-from-rails-4-0-to-rails-4-1).
 
-
-Основные изменения
-------------------
+Основные особенности
+--------------------
 
 ### Spring Application Preloader
 
@@ -56,7 +55,7 @@ Spring is running:
 Обратитесь к [Spring README](https://github.com/jonleighton/spring/blob/master/README.md),
 чтобы увидеть все возможности.
 
-Обратитесь к руководству по [Обновлению Rails](/upgrading-ruby-on-rails#spring)
+Обратитесь к руководству [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#spring)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### `config/secrets.yml`
@@ -76,7 +75,7 @@ development:
 
 `Rails.application.secrets.some_api_key` вернёт `SOMEKEY` в development окружении.
 
-Обратитесь к руководству по [Обновлению Rails](/upgrading-ruby-on-rails#config-secrets-yml)
+Обратитесь к руководству [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#config-secrets-yml)
 - как мигрировать существующее приложение, чтобы использовать данную возможность.
 
 ### Action Pack Variants
@@ -219,7 +218,7 @@ end
 
 Защита от подделки межсайтовых запросов (CSRF) сейчас также покрывает GET запросы с откликами JavaScript. Это предотвращает от ссылок сторонних сайтов на ваши JavaScript URL и попыток запуска его для извлечения конфиденциальных данных.
 
-Это означает, что каждый из ваших тестов, который использует `.js` URL, теперь будет провален CSRF защитой, если не используется `xhr`. Обновите ваши тесты, чтобы быть уверенными в XmlHttp запросах. Вместо `post :create, format: :js`, переключитесь на явное
+Это означает, что каждый из ваших тестов, который использует `.js` URL, теперь будет провален CSRF защитой, если не используется `xhr`. Произведите апгрейд тестов, чтобы быть уверенными в XmlHttpRequests. Вместо `post :create, format: :js`, переключитесь на явное
 `xhr :post, :create, format: :js`.
 
 Railties
@@ -518,7 +517,7 @@ Active Support
 * Удалена зависимость `MultiJSON`. Теперь, `ActiveSupport::JSON.decode`
   больше не принимает хэш опций для `MultiJSON`. ([Pull Request](https://github.com/rails/rails/pull/10576) / [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
 
-* Удалена поддержка для хука `encode_json`, используемого для преобразования произвольных объектов в JSON. Данный функционал извлечен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
+* Удалена поддержка для хука `encode_json`, используемого для преобразования произвольных объектов в JSON. Данная функциональность извлечена в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Связанный Pull Request](https://github.com/rails/rails/pull/12183) /
   [Подробнее](/upgrading-ruby-on-rails#changes-in-json-handling))
 
@@ -565,13 +564,13 @@ Active Support
 * Устарело имя подключаемой директории `active_support/core_ext/object/to_json`. Подключайте
   `active_support/core_ext/object/json` взамен. ([Pull Request](https://github.com/rails/rails/pull/12203))
 
-* Устарело `ActiveSupport::JSON::Encoding::CircularReferenceError`. Данный функционал
-  был выделен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
+* Устарело `ActiveSupport::JSON::Encoding::CircularReferenceError`. Данная функциональность
+  была выделена в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Pull Request](https://github.com/rails/rails/pull/12785) /
   [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
-* Устарела опция `ActiveSupport.encode_big_decimal_as_string`. Данный функционал
-  был выделен в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
+* Устарела опция `ActiveSupport.encode_big_decimal_as_string`. Данная функциональность
+  была выделена в гем [activesupport-json_encoder](https://github.com/rails/activesupport-json_encoder).
   ([Pull Request](https://github.com/rails/rails/pull/13060) /
   [Подробности](/upgrading-ruby-on-rails#changes-in-json-handling))
 
