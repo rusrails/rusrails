@@ -318,6 +318,12 @@ pages:
     revision: b5cd7d5b511361062f67ebad45ab38393970fc47
     date:     16/11/2017
 
+  - title:    Обзор Active Storage
+    path:     active_storage_overview
+    file:     active_storage_overview.md
+    revision: 33721a71e39d5a228ae3cd7949fa83198dc3eaa9
+    date:     09/01/2018
+
 plan: []
 
 old:

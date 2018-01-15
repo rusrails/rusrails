@@ -86,7 +86,7 @@ InvitationsMailer.with(inviter: person_a, invitee: person_b)
 
 [Pull Request](https://github.com/rails/rails/pull/23138)
 
-Rails 5.1 добавляет в DSL роутинга два новых метода, `resolve` и `direct`. Метод `resolve` позволяет настроить полиморфное соответствие моделей.
+Rails 5.1 добавляет в DSL роутинга два новых метода, `resolve` и `direct`. Метод `resolve` позволяет настроить полиморфное сопоставление моделей.
 
 ``` ruby
 resource :basket
@@ -349,7 +349,7 @@ Action Mailer
 
 ### Значимые изменения
 
-*   Разрешена установка произвольного типа содержимого, когда включены вложения и тело установлено как inline.
+*   Разрешена установка произвольного типа содержимого, когда включены прикрепленные файлы и тело установлено как inline.
     ([Pull Request](https://github.com/rails/rails/pull/27227))
 
 *   Разрешена передача lambda в качестве значений в метод `default`.
