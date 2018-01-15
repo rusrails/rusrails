@@ -340,7 +340,7 @@ INFO: Можно также использовать псевдоним "r" дл
 $ bin/rails runner -e staging "Model.long_running_method"
 ```
 
-С помощью runner даже можно запускать код ruby, написанный в файле.
+С помощью runner даже можно выполнять код ruby, написанный в файле.
 
 ```bash
 $ bin/rails runner lib/code_to_be_run.rb
