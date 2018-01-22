@@ -71,6 +71,15 @@ local:
   root: <%= Rails.root.join("storage") %>
 ```
 
+Можно опционально указать хост для генерации URL (по умолчанию используется `http://localhost:3000`):
+
+```yaml
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+  host: http://myapp.test
+ ```
+
 ### Сервис Amazon S3
 
 Объявление сервиса S3 в `config/storage.yml`:

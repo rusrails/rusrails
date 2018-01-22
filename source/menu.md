@@ -17,7 +17,7 @@
 
     * [Обзор Action View](/action-view-overview)
     * [Макеты и рендеринг в Rails](/layouts-and-rendering-in-rails)
-    * [Хелперы форм Action View](/rails-form-helpers)
+    * [Хелперы форм в Action View](/rails-form-helpers)
 
 * **Контроллеры**
 
@@ -31,11 +31,12 @@
     * [Rails Internationalization API](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
     * [Основы Active Job](/active_job_basics)
+    * [Обзор Active Storage](/active_storage_overview)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
+    * [Командная строка в Rails](/a-guide-to-the-rails-command-line)
 
 next_column
 
@@ -56,7 +57,7 @@ next_column
     * [Создание и настройка генераторов Rails](/generators)
     * [Треды и выполнение кода в Rails](/threading_and_code_execution)
     * [Использование Rails для API-приложений](/api-app)
-    * [Шаблоны приложения Rails](/rails-application-templates)
+    * [Шаблоны приложения на Rails](/rails-application-templates)
 
 * **Вносим вклад в Ruby on Rails**
 
@@ -68,7 +69,7 @@ next_column
 
 * **Заметки о релизах**
 
-    * [Руководство по обновлению Ruby on Rails](/upgrading-ruby-on-rails)
+    * [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails)
     * [Заметки о релизе Ruby on Rails 5.1](/5_1_release_notes)
     * [Заметки о релизе Ruby on Rails 5.0](/5_0_release_notes)
     * [Заметки о релизе Ruby on Rails 4.2](/4_2_release_notes)

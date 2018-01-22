@@ -632,7 +632,7 @@ Action Mailer теперь всего лишь наследуется от `Abst
 | `deliveries`            | Содержит массив всех электронных писем, отправленных через Action Mailer с помощью delivery_method :test. Очень полезно для юнит- и функционального тестирования.|
 | `default_options`       | Позволит вам установить значения по умолчанию для опций метода `mail` (`:from`, `:reply_to` и т.д.).|
 
-Подробное описание возможных конфигураций смотрите в [разделе про настройку Action Mailer](/configuring-rails-applications#configuring-action-mailer) нашего руководства по конфигурированию приложений Rails.
+Подробное описание возможных конфигураций смотрите в [разделе про настройку Action Mailer](/configuring-rails-applications#configuring-action-mailer) нашего руководства по конфигурированию приложений на Rails.
 
 ### Пример настройки Action Mailer
 
@@ -663,7 +663,7 @@ config.action_mailer.smtp_settings = {
   user_name:            '<username>',
   password:             '<password>',
   authentication:       'plain',
-  enable_starttls_auto: true  }
+  enable_starttls_auto: true }
 ```
 
 Note: 15 июля 2014 Google усилили [меры безопасности](https://support.google.com/accounts/answer/6010255) и теперь блокируют попытки от приложений, которые они сочтут небезопасными. Вы можете изменить ваши настройки gmail [здесь](https://www.google.com/settings/security/lesssecureapps), чтобы позволить попытки. Если ваша учетная запись Gmail активирована с использованием двухфакторной аутентификации, вам нужно будет установить [пароль приложения](https://myaccount.google.com/apppasswords) и использовать ее вместо обычного пароля. Кроме того, вы можете использовать другой почтовый провайдер (ESP, email service provider) для отправки почты, заменив выше 'smtp.gmail.com' на адрес вашего провайдера.
@@ -671,7 +671,7 @@ Note: 15 июля 2014 Google усилили [меры безопасности]
 Тестирование рассыльщика
 ------------------------
 
-Подробные инструкции, как тестировать ваши рассыльщики, можно найти в [руководстве по тестированию](a-guide-to-testing-rails-applications#testing-your-mailers)
+Подробные инструкции, как тестировать ваши рассыльщики, можно найти в руководстве [Тестирование приложений на Rails](a-guide-to-testing-rails-applications#testing-your-mailers)
 
 Перехват писем
 --------------

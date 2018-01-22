@@ -541,6 +541,13 @@ Active Storage (Rails 5.2)
 | `:key`       | Защищенный токен    |
 | `:service`   | Имя сервиса         |
 
+### service_delete_prefixed.active_storage
+
+| Ключ         | Значение            |
+| ------------ | ------------------- |
+| `:prefix`    | Префикс ключа       |
+| `:service`   | Имя сервиса         |
+
 ### service_exist.active_storage
 
 | Ключ         | Значение                            |
