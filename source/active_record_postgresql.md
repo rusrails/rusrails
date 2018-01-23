@@ -15,8 +15,7 @@ Active Record для PostgreSQL
 Для использования адаптера PostgreSQL необходимо установить как минимум версию 9.1.
 Предыдущие версии не поддерживаются.
 
-Для начала работы с PostgreSQL взгляните на
-[конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
+Для начала работы с PostgreSQL почитайте руководство [Конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
 Там описано как правильно настроить Active Record для PostgreSQL.
 
 Типы данных

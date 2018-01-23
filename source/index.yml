@@ -24,7 +24,7 @@ pages:
     revision: 4e8082f5fadac475dd8abfe592931fbb9be39bef
     date:     19/12/2017
 
-  - title:    Миграции базы данных Rails
+  - title:    Миграции Active Record
     path:     rails-database-migrations
     file:     active_record_migrations.md
     revision: 95b6a198ef4a94dc060faa70284ffdfae51006f6
@@ -42,7 +42,7 @@ pages:
     revision: 17ea5bf80809d11c337a30e4059cab8d8eb00d01
     date:     13/11/2017
 
-  - title:    Связи Active Record
+  - title:    Связи (ассоциации) Active Record
     path:     active-record-associations
     file:     association_basics.md
     revision: 1ac67a5ed60040755c96b0bc8a4ec7f44d581765
@@ -150,7 +150,7 @@ pages:
     revision: a2aa18f897dbcd503ed3b782258a44b21ca752bd
     date:     18/01/2018
 
-  - title:    Командная строка в Rails
+  - title:    Командная строка Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
     revision: 07ec810ac0c1425918220921a335ae8a20f82763
@@ -210,7 +210,7 @@ pages:
     revision: 5fb36d03dba0eb5309788b53372ebe7dd980639d
     date:     27/11/2017
 
-  - title:    Создание и настройка генераторов Rails
+  - title:    Создание и настройка генераторов и шаблонов Rails
     path:     generators
     file:     generators.md
     revision: 60863eed51a6c9523522e59c024400003ab16903
@@ -252,7 +252,7 @@ pages:
     revision: face13715eab2e5a8be24516ac804ee457c7eed2
     date:     18/01/2018
 
-  - title:    Шаблоны приложения на Rails
+  - title:    Шаблоны приложения Rails
     path:     rails-application-templates
     file:     rails_application_templates.md
     revision: 40bdbce191ad90dfea43dad51fac5c4726b89392

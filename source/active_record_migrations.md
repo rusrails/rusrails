@@ -323,7 +323,7 @@ create_join_table :products, :categories, table_name: :categorization
 По умолчанию `create_join_table` создаст два столбца без опций, но можно определить эти опции с использованием опции `:column_options`. Например,
 
 ```ruby
-create_join_table :products, :categories, column_options: {null: true}
+create_join_table :products, :categories, column_options: { null: true }
 ```
 
 создаст `product_id` и `category_id` с опцией `:null` равной `true`.
