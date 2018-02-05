@@ -553,7 +553,7 @@ Active Support
 
 * Удалён устаревший метод `#filter` для объектов фильтра, используйте взамен соответствующие методы (т.е. `#before` для предварительного фильтра).
 
-* Убрано неправильное преобразование 'cow' => 'kine' из инфлектора по-умолчанию. ([Commit](https://github.com/rails/rails/commit/c300dca9963bda78b8f358dbcb59cabcdc5e1dc9))
+* Убрано неправильное преобразование 'cow' => 'kine' из инфлектора по умолчанию. ([Commit](https://github.com/rails/rails/commit/c300dca9963bda78b8f358dbcb59cabcdc5e1dc9))
 
 ### Устарело
 

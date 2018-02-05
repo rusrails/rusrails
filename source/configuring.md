@@ -42,7 +42,7 @@ config.active_record.schema_format = :ruby
 
 Rails будет использовать эту конкретную настройку для конфигурирования Active Record.
 
-### Общие настройки Rails
+### (rails-general-configuration) Общие настройки Rails
 
 Эти конфигурационные методы вызываются на объекте `Rails::Railtie`, таком как подкласс `Rails::Engine` или `Rails::Application`.
 
@@ -58,7 +58,7 @@ Rails будет использовать эту конкретную настр
 
 * `config.autoload_once_paths` принимает массив путей, по которым Rails будет загружать константы, не стирающиеся между запросами. Уместна, если `config.cache_classes` является `false`, что является в режиме development по умолчанию. В противном случае все автозагрузки происходят только раз. Все элементы этого массива также должны быть в `autoload_paths`. По умолчанию пустой массив.
 
-* `config.autoload_paths` принимает массив путей, по которым Rails будет автоматически загружать константы.По умолчанию все директории в `app`.
+* `config.autoload_paths` принимает массив путей, по которым Rails будет автоматически загружать константы.По умолчанию все директории в `app`. Больше не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading#autoload-paths-and-eager-load-paths)
 
 * `config.cache_classes` контролирует, будут ли классы и модули приложения перезагружены при каждом запросе. По умолчанию `false` в режиме development и true в режимах test и production.
 
@@ -458,7 +458,10 @@ config.middleware.delete Rack::MethodOverride
     config.action_dispatch.default_headers = {
       'X-Frame-Options' => 'SAMEORIGIN',
       'X-XSS-Protection' => '1; mode=block',
-      'X-Content-Type-Options' => 'nosniff'
+      'X-Content-Type-Options' => 'nosniff',
+      'X-Download-Options' => 'noopen',
+      'X-Permitted-Cross-Domain-Policies' => 'none',
+      'Referrer-Policy' => 'strict-origin-when-cross-origin'
     }
     ```
 
@@ -708,11 +711,46 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_job.logger` принимает логгер, соответствующий интерфейсу Log4r или дефолтного класса Ruby Logger, который затем используется для логирования информации от Action Job. Вы можете получить этот логгер вызвав `logger` в классе Active Job или экземпляре Active Job. Установите его в `nil`, чтобы отключить логирование.
 
+* `config.active_job.custom_serializers` позволяет устанавливать собственные сериализаторы аргументов. По умолчанию используется `[]`.
+
 ### Конфигурация Action Cable
 
 * `config.action_cable.url` принимает строку с URL, на котором размещается ваш сервер Action Cable. Следует использовать эту опцию, если вы запускаете серверы Action Cable отдельно от основного приложения.
 
 * `config.action_cable.mount_path` принимает строку, куда монтировать Action Cable, как часть процесса основного сервера. По умолчанию `/cable`. Ей можно указать nil, чтобы не монтировать Action Cable как часть вашего обычного сервера Rails.
+
+### Конфигурирование Active Storage
+
+`config.active_storage` предоставляет следующие опции конфигурации:
+
+* `config.active_storage.analyzers` принимает массив классов, указывающий анализаторы, доступные для blobs в Active Storage. По умолчанию используется `[ActiveStorage::Analyzer::ImageAnalyzer, ActiveStorage::Analyzer::VideoAnalyzer]`. Первый может извлекать ширину и высоту blob изображения; последний может извлекать ширину, высоту, длительность, угол и соотношение сторон blob видео.
+
+* `config.active_storage.previewers` принимает массив классов, указывающий на предпросмотрщики изображений, доступные для blobs в Active Storage. По умолчанию используется `[ActiveStorage::Previewer::PDFPreviewer, ActiveStorage::Previewer::VideoPreviewer]`. Первый может генерировать миниатюру из первой страницы blob PDF; последний из соответствующего кадра blob видео.
+
+* `config.active_storage.paths` принимает хэш опций, с указанием мест расположения команд предпросмотрщика/анализатора. По умолчанию используется `{}`, что означает, что команды будут искать по дефолтному пути. Можно включить любую из следующих опций:
+    * `:ffprobe` - Место расположения исполняемого ffprobe.
+    * `:mutool` - Место расположения исполняемого mutool.
+    * `:ffmpeg` - Место расположения исполняемого ffmpeg.
+
+   ```ruby
+   config.active_storage.paths[:ffprobe] = '/usr/local/bin/ffprobe'
+   ```
+
+* `config.active_storage.variable_content_types` принимает массив строк, указывающий типы содержимого, которые Active Storage может преобразовывать через ImageMagick. По умолчанию используется `%w(image/png image/gif image/jpg image/jpeg image/vnd.adobe.photoshop)`.
+
+* `config.active_storage.content_types_to_serve_as_binary` принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве прикрепленного файла, а не встроенного. По умолчанию используется `%w(text/html text/javascript image/svg+xml application/postscript application/x-shockwave-flash text/xml application/xml application/xhtml+xml)`.
+
+* `config.active_storage.queue` может быть использован для установки имени очереди Active Job, используемой для выполнения заданий, таких как анализ содержимого blob или очистки (purging) блога.
+
+  ```ruby
+  config.active_job.queue = :low_priority
+  ```
+
+* `config.active_storage.logger` может быть использован для установки логгера, используемого Active Storage. Принимает логгер, соответствующий интерфейсу Log4r или дефолтному классу Logger в Ruby.
+
+  ```ruby
+  config.active_job.logger = ActiveSupport::Logger.new(STDOUT)
+  ```
 
 ### Конфигурирование базы данных
 

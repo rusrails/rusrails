@@ -55,7 +55,7 @@ class GuestsCleanupJob < ApplicationJob
   queue_as :default
 
   def perform(*guests)
-    # Do something later
+    # Сделать что-нибудь позже
   end
 end
 ```
@@ -221,7 +221,7 @@ NOTE: Убедитесь, что ваш бэкенд для очередей "с
 
 Колбэки
 -------
- 
+
 Active Job предоставляет хуки для включения логики на протяжение жизненного цикла задания. Подобно другим колбэкам в Rails, можно реализовывать колбэки как обычные методы и использовать макрос-метод класса, чтобы зарегистрировать их в качестве колбэков:
 
 ```ruby
@@ -235,7 +235,7 @@ class GuestsCleanupJob < ApplicationJob
   end
 
   private
-    def around_cleanup(job)
+    def around_cleanup
       # Делаем что-то перед perform
       yield
       # Делаем что-то после perform
@@ -286,8 +286,23 @@ I18n.locale = :eo
 UserMailer.welcome(@user).deliver_later # Email будет локализован в Эсперанто.
 ```
 
-GlobalID
---------
+Поддерживаемые типы аргументов
+------------------------------
+
+ActiveJob по умолчанию поддерживает следующие типы аргументов:
+
+- Базовые типы (`NilClass`, `String`, `Integer`, `Float`, `BigDecimal`, `TrueClass`, `FalseClass`)
+- `Symbol`
+- `ActiveSupport::Duration`
+- `Date`
+- `Time`
+- `DateTime`
+- `ActiveSupport::TimeWithZone`
+- `Hash`. Ключи должны быть типа `String` или `Symbol`
+- `ActiveSupport::HashWithIndifferentAccess`
+- `Array`
+
+### GlobalID
 
 Active Job поддерживает GlobalID для параметров. Это позволяет передавать объекты Active Record в ваши задания, вместо пар класс/id, которые нужно затем десериализовать вручную. Раньше задания выглядели так:
 
@@ -311,6 +326,40 @@ end
 ```
 
 Это работает с любым классом, в который подмешан `GlobalID::Identification`, который по умолчанию был подмешан в классы Active Record.
+
+### Сериализаторы
+
+Можно расширить список поддерживаемых типов для аргументов. Для этого необходимо определить свой собственный сериализатор.
+
+```ruby
+class MoneySerializer < ActiveJob::Serializers::ObjectSerializer
+  # Проверяем, должен ли этот объект быть сериализован с использованием этого сериализатора.
+  def serialize?(argument)
+    argument.is_a? Money
+  end
+
+  # Преобразование объекта к более простому представителю, используя поддерживаемые типы объектов.
+  # Рекомендуемым представителем является хэш с определенным ключом. Ключи могут быть только базового типа.
+  # Необходимо вызвать `super`, чтобы добавить собственный тип сериализатора в хэш.
+  def serialize(object)
+    super(
+      "cents" => object.cents,
+      "currency" => object.currency
+    )
+  end
+
+  # Преобразование сериализованного значения в надлежащий объект
+  def deserialize(hash)
+    Money.new hash["cents"], hash["currency"]
+  end
+end
+```
+
+И теперь необходимо просто добавить этот сериализатор в список:
+
+```ruby
+Rails.application.config.active_job.custom_serializers << MySpecialSerializer
+```
 
 Исключения
 ----------
