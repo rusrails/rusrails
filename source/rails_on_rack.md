@@ -118,6 +118,7 @@ use ActionDispatch::ContentSecurityPolicy::Middleware
 use Rack::Head
 use Rack::ConditionalGet
 use Rack::ETag
+use Rack::TempfileReaper
 run MyApp::Application.routes
 ```
 
@@ -275,6 +276,10 @@ config.middleware.delete Rack::MethodOverride
 
 * Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присвоено значение.
 
+**`ActionDispatch::ContentSecurityPolicy::Middleware`**
+
+* Предоставляет DSL для настройки заголовка Content-Security-Policy.
+
 **`Rack::Head`**
 
 * Преобразует запросы HEAD в запросы `GET` и обслуживает их соответствующим образом.
@@ -287,10 +292,14 @@ config.middleware.delete Rack::MethodOverride
 
 * Добавляет заголовок ETag во все строковые тела. ETags используются для проверки кэша.
 
+**`Rack::TempfileReaper`**
+
+* Очищает временные файлы, используемые для буферизации multipart запросов.
+
 TIP: Можете использовать любые из этих промежуточных программ в своем стеке Rack.
 
 (resources) Источники
----------
+---------------------
 
 ### Обучение Rack
 

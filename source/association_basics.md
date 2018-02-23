@@ -564,38 +564,31 @@ class Book < ApplicationRecord
 end
 ```
 
-Это объявление нуждается в создании подходящего внешнего ключа в таблице books:
+Это объявление нуждается в поддержке соответствующим столбцом внешнего ключа в таблице books. Для совершенно новой таблицы миграция может выглядеть примерно так:
 
 ```ruby
 class CreateBooks < ActiveRecord::Migration[5.0]
   def change
     create_table :books do |t|
-      t.datetime :published_at
-      t.string   :book_number
-      t.integer  :author_id
+      t.datetime   :published_at
+      t.string     :book_number
+      t.references :author
     end
   end
 end
 ```
 
-Если создаете связь после того, как уже создали модель, лежащую в основе, необходимо не забыть создать миграцию `add_column` для предоставления необходимого внешнего ключа.
-
-Является хорошей практикой добавлять индекс на внешний ключ, чтобы улучшить быстродействие запросов, и ограничение на внешний ключ, чтобы убедиться в ссылочной целостности данных:
+В то время как для существующей таблицы, это может выглядеть следующим образом:
 
 ```ruby
-class CreateBooks < ActiveRecord::Migration[5.0]
+class AddAuthorToBooks < ActiveRecord::Migration[5.0]
   def change
-    create_table :books do |t|
-      t.datetime :published_at
-      t.string   :book_number
-      t.integer  :author_id
-    end
-
-    add_index :books, :author_id
-    add_foreign_key :books, :authors
+    add_reference :books, :author
   end
 end
 ```
+
+Если необходимо [принудительно использовать ссылочную целостность на уровне базы данных](/rails-database-migrations#foreign-keys), добавьте опцию `foreign_key: true` в вышеприведенное объявление 'reference' столбца.
 
 #### Создание соединительных таблиц для связей `has_and_belongs_to_many`
 

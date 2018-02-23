@@ -15,14 +15,14 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started-with-rails
     file:     getting_started.md
-    revision: c3d1fd13da0996182389c4ae83e971134e6d81f0
-    date:     09/10/2017
+    revision: d4eb0dc89ee6b476e2e10869dc282a96f956c6c7
+    date:     18/02/2018
 
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: 4e8082f5fadac475dd8abfe592931fbb9be39bef
-    date:     19/12/2017
+    revision: e08e7453457395680607726a56c97e8a01f3bcd0
+    date:     24/01/2018
 
   - title:    Миграции Active Record
     path:     rails-database-migrations
@@ -39,14 +39,14 @@ pages:
   - title:    Колбэки Active Record
     path:     active-record-callbacks
     file:     active_record_callbacks.md
-    revision: 17ea5bf80809d11c337a30e4059cab8d8eb00d01
-    date:     13/11/2017
+    revision: 5645149d3a27054450bd1130ff5715504638a5f5
+    date:     15/02/2018
 
   - title:    Связи (ассоциации) Active Record
     path:     active-record-associations
     file:     association_basics.md
-    revision: 1ac67a5ed60040755c96b0bc8a4ec7f44d581765
-    date:     19/01/2018
+    revision: cb8da7aca4d426058d3c67b8f206224e5856770e
+    date:     26/01/2018
 
   - title:    Интерфейс запросов Active Record
     path:     active-record-query-interface
@@ -99,8 +99,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: e4a6a23aa77185127ce9609777820fab14a689bb
-    date:     15/12/2017
+    revision: d4eb0dc89ee6b476e2e10869dc282a96f956c6c7
+    date:     18/02/2018
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
@@ -123,20 +123,20 @@ pages:
   - title:    Основы Active Job
     path:     active_job_basics
     file:     active_job_basics.md
-    revision: 9291a813694b4b443557c282ba1fbb0c8b909d27
-    date:     18/09/2017
+    revision: 3933e5bc9fc4c975b14941316e9119796fd558e0
+    date:     18/02/2018
 
   - title:    Тестирование приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
-    revision: 4f9f68e7a6178ac8462f85469ddd577678b0b412
-    date:     13/01/2018
+    revision: a713fdae4eb4f7ccd34932edc61561a96b8d9f35
+    date:     17/02/2018
 
   - title:    Безопасность приложений на Rails
     path:     ruby-on-rails-security-guide
     file:     security.md
-    revision: 0ce768168610e97d4a726aa77aae748777e69465
-    date:     09/01/2018
+    revision: 013fd84373ca5dd49d42170a82648ada5a2025bb
+    date:     08/02/2018
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
@@ -147,26 +147,26 @@ pages:
   - title:    Конфигурирование приложений на Rails
     path:     configuring-rails-applications
     file:     configuring.md
-    revision: a2aa18f897dbcd503ed3b782258a44b21ca752bd
-    date:     18/01/2018
+    revision: a5f7357a3dff2617ba13a274feb8d8ac2492f26a
+    date:     10/02/2018
 
   - title:    Командная строка Rails
     path:     a-guide-to-the-rails-command-line
     file:     command_line.md
-    revision: 07ec810ac0c1425918220921a335ae8a20f82763
-    date:     10/11/2017
+    revision: d4eb0dc89ee6b476e2e10869dc282a96f956c6c7
+    date:     18/02/2018
 
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails-an-overview
     file:     caching_with_rails.md
-    revision: d034f488f9c2d694bcad9950df0310ca869956e0
-    date:     08/01/2018
+    revision: 8f98054ef96f9335667071c70a7cf7d82ee92b07
+    date:     18/02/2018
 
   - title:    Asset Pipeline
     path:     asset-pipeline
     file:     asset_pipeline.md
-    revision: b6baf0c88411824ce99f1ad4b9de64fa37ad96ea
-    date:     30/11/2017
+    revision: 091806388a757b30c85b5888dabc3f705af440ef
+    date:     28/01/2018
 
   - title:    Работа с JavaScript в Rails
     path:     working-with-javascript-in-rails
@@ -189,8 +189,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
-    revision: a235b9f9d1656b6f47d1100f2fd07130ddaf1fa1
-    date:     01/11/2017
+    revision: 27e5c76a77cbca90836ad4fc3a861d9c47cf8588
+    date:     12/02/2018
 
   - title:    Обзор Action Cable
     path:     action-cable-overview
@@ -207,8 +207,8 @@ pages:
   - title:    Rails on Rack
     path:     rails-on-rack
     file:     rails_on_rack.md
-    revision: 5fb36d03dba0eb5309788b53372ebe7dd980639d
-    date:     27/11/2017
+    revision: 54bb2f74b5156b4251582842b0edc8e216958e01
+    date:     31/01/2018
 
   - title:    Создание и настройка генераторов и шаблонов Rails
     path:     generators
@@ -225,8 +225,8 @@ pages:
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
     file:     contributing_to_ruby_on_rails.md
-    revision: 475a0f887ce4087443fdf7c5f3f066c90fb00126
-    date:     17/12/2017
+    revision: 97e9331317a15dbd4a865daaa1d5255a0820597e
+    date:     24/01/2018
 
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
@@ -249,8 +249,8 @@ pages:
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
-    revision: face13715eab2e5a8be24516ac804ee457c7eed2
-    date:     18/01/2018
+    revision: d4eb0dc89ee6b476e2e10869dc282a96f956c6c7
+    date:     18/02/2018
 
   - title:    Шаблоны приложения Rails
     path:     rails-application-templates
@@ -321,8 +321,8 @@ pages:
   - title:    Обзор Active Storage
     path:     active_storage_overview
     file:     active_storage_overview.md
-    revision: 6fb3ac1536d60bc12cf531e83e4060fe1fdf3d87
-    date:     17/01/2018
+    revision: b6bbedf1a8f12fdc8814acb547a36640814f22ca
+    date:     16/02/2018
 
 plan: []
 
