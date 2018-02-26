@@ -121,7 +121,7 @@ Railties
 
 ### Значимые изменения
 
-* Новые места для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие задачи rake. ([Pull Request](https://github.com/rails/rails/pull/7878))
+* Новые места расположения для тестов `test/models`, `test/helpers`, `test/controllers` и `test/mailers`. Также добавлены соответствующие задачи rake. ([Pull Request](https://github.com/rails/rails/pull/7878))
 
 * Исполняемые файлы приложения теперь находятся в директории `bin/`. Запустите `rake rails:update:bin` чтобы получить `bin/bundle`, `bin/rails` и `bin/rake`.
 
@@ -164,7 +164,7 @@ Active Support
 
 ### Значимые изменения
 
-* Заменен устаревший гем `memcache-client` на  `dalli` в `ActiveSupport::Cache::MemCacheStore`.
+* Заменен устаревший гем `memcache-client` на `dalli` в `ActiveSupport::Cache::MemCacheStore`.
 
 * Оптимизирован `ActiveSupport::Cache::Entry` для уменьшения расхода памяти и процессора.
 
@@ -225,7 +225,7 @@ Active Record
     * Новый метод `reversible` делает возможным определить код для исполнения при выполнении или откате миграции.
       Смотрите руководство [Миграции Active Record](/rails-database-migrations#using-reversible)
 
-    * Новый метод `revert` обратит всю миграцию или  предоставленный блок.
+    * Новый метод `revert` обратит всю миграцию или предоставленный блок.
       Если миграция откатывается, данная миграция / блок выполняется обычно.
       Смотрите руководство [Миграции Active Record](/rails-database-migrations#reverting-previous-migrations)
 

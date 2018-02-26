@@ -80,8 +80,8 @@ development:
 
 ### Action Pack Variants
 
-Мы часто хотим рендерить разные типы шаблонов HTML/JSON/XML - для телефонов,
-планшетов и десктопных компьютеров. С помощью Variants - это легко.
+Мы часто хотим рендерить разные типы шаблонов HTML/JSON/XML для телефонов,
+планшетов и десктопных браузеров. С помощью Variants - это легко.
 
 Запрос Variants - это специальный формат запроса, например `:tablet`,
 `:phone`, или `:desktop`.
@@ -141,7 +141,7 @@ end
 так же можно увидеть полный список писем - http://localhost:3000/rails/mailers.
 
 По умолчанию, эти превью-классы располагаются в `test/mailers/previews`.
-Директорию можно легко изменить используя `preview_path` опцию.
+Директорию можно легко изменить используя опцию `preview_path`.
 
 Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/ActionMailer/Base.html)
 за подробным описанием.
@@ -216,7 +216,7 @@ end
 
 ### CSRF защита от `<script>` тегов
 
-Защита от подделки межсайтовых запросов (CSRF) сейчас также покрывает GET запросы с откликами JavaScript. Это предотвращает от ссылок сторонних сайтов на ваши JavaScript URL и попыток запуска его для извлечения конфиденциальных данных.
+Защита от межсайтовой подделки запроса (CSRF) сейчас также покрывает GET запросы с откликами JavaScript. Это предотвращает от ссылок сторонних сайтов на ваши JavaScript URL и попыток запуска его для извлечения конфиденциальных данных.
 
 Это означает, что каждый из ваших тестов, который использует `.js` URL, теперь будет провален CSRF защитой, если не используется `xhr`. Произведите апгрейд тестов, чтобы быть уверенными в XmlHttpRequests. Вместо `post :create, format: :js`, переключитесь на явное
 `xhr :post, :create, format: :js`.
@@ -238,7 +238,7 @@ Railties
 
 * Удалён устаревший метод `ActiveRecord::Generators::ActiveModel#update_attributes` в пользу `ActiveRecord::Generators::ActiveModel#update`.
 
-* Удалёна устаревшая `config.whiny_nils` опция.
+* Удалёна устаревшая опция `config.whiny_nils`.
 
 * Удалёны устаревшая задача rake для запуска тестов: `rake test:uncommitted` и
   `rake test:recent`.
@@ -348,7 +348,7 @@ Active Record
 * Удалёно устаревшее использование `scope` без передачи вызываемого объекта.
 
 * Удалён устаревший метод `transaction_joinable=` в пользу `begin_transaction`
-  с опцией `d:joinable`.
+  с опцией `:joinable`.
 
 * Удалён устаревший метод `decrement_open_transactions`.
 
@@ -381,7 +381,7 @@ Active Record
 
 * Удалена устаревшая опция `:distinct` из `Relation#count`.
 
-* Удалены устаревшие методы  `partial_updates`, `partial_updates?` и
+* Удалены устаревшие методы `partial_updates`, `partial_updates?` и
   `partial_updates=`.
 
 * Удален устаревший метод `scoped`.
@@ -460,14 +460,14 @@ Active Record
   `:inverse_of`, Active Record самостоятельно определит противоположную связь, основываясь на эвристике.
   ([Pull Request](https://github.com/rails/rails/pull/10886))
 
-* Оперирование псевдонимами атрибутов в ActiveRecord::Relation. При использовании символьных ключей, ActiveRecord теперь переведет имена-псевдонимы атрибутов к фактическим именам столбцов, используемых в базе данных. ([Pull Request](https://github.com/rails/rails/pull/7839))
+* Обработка псевдоним-атрибутов в ActiveRecord::Relation. При использовании символьных ключей ActiveRecord теперь переведет имена псевдоним-атрибутов к фактическим именам столбцов, используемых в базе данных. ([Pull Request](https://github.com/rails/rails/pull/7839))
 
 * Шаблоны ERB в фикстурах больше не вычисляются в контексте главного объекта.
   Методы хелперов, использующиеся в нескольких фикстурах, должны объявляться в модулях, включённых в `ActiveRecord::FixtureSet.context_class`. ([Pull Request](https://github.com/rails/rails/pull/13022))
 
 * Не создается или сбрасывается тестовая база данных, если явно определен RAILS_ENV. ([Pull Request](https://github.com/rails/rails/pull/13629))
 
-* У `Relation` больше нет мутирующих методов, таких как `#map!` и `#delete_if`. Преобразовывайте в массив с помощью `#to_a` перед использованием этих методов. ([Pull Request](https://github.com/rails/rails/pull/13314))
+* У `Relation` больше нет мутирующих методов (мутаторов), таких как `#map!` и `#delete_if`. Преобразовывайте в массив с помощью `#to_a` перед использованием этих методов. ([Pull Request](https://github.com/rails/rails/pull/13314))
 
 * `find_in_batches`, `find_each`, `Result#each` и `Enumerable#index_by` теперь возвращают `Enumerator`, который может вычислять свой размер. ([Pull Request](https://github.com/rails/rails/pull/13938))
 
@@ -497,7 +497,7 @@ Active Model
 
 ### Значимые изменения
 
-*  В `ActiveModel::Dirty` добавлены новые методы API `reset_changes` и `changes_applied`, которые контролируют изменения состояния.
+* В `ActiveModel::Dirty` добавлены новые методы API `reset_changes` и `changes_applied`, которые контролируют изменения состояния.
 
 * Возможность определить несколько контекстов при определении валидации. ([Pull Request](https://github.com/rails/rails/pull/13754))
 
@@ -596,7 +596,7 @@ Active Support
 * Добавлен метод `Numeric#in_milliseconds`, например `1.hour.in_milliseconds`, результат которого можно скармливать в функции JavaScript, такие как `getTime()`. ([Commit](https://github.com/rails/rails/commit/423249504a2b468d7a273cbe6accf4f21cb0e643))
 
 * Добавлены методы `Date#middle_of_day`, `DateTime#middle_of_day` и `Time#middle_of_day`.
-  Так же добавлены псевдонимы `midday`, `noon`, `at_midday`, `at_noon` и
+  Также добавлены псевдонимы `midday`, `noon`, `at_midday`, `at_noon` и
   `at_middle_of_day`. ([Pull Request](https://github.com/rails/rails/pull/10879))
 
 * Добавлены `Date#all_week/month/quarter/year` для генерации интервалов дат. ([Pull Request](https://github.com/rails/rails/pull/9685))

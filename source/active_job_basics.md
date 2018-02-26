@@ -169,7 +169,7 @@ end
 # production и в staging_low_priority в среде staging
 ```
 
-Разделитель префикса имени очереди по умолчанию '\_'.  Его можно изменить, установив `config.active_job.queue_name_delimiter` в `application.rb`:
+Разделитель префикса имени очереди по умолчанию '\_'. Его можно изменить, установив `config.active_job.queue_name_delimiter` в `application.rb`:
 
 ```ruby
 # config/application.rb

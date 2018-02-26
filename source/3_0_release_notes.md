@@ -219,7 +219,7 @@ Action Pack
 * `cookie_verifier_secret` устарел, вместо этого теперь назначается `Rails.application.config.cookie_secret`, и был перемещен в отдельный файл: `config/initializers/cookie_verification_secret.rb`.
 * `session_store` настраивалось в `ActionController::Base.session`, а теперь перемещено в `Rails.application.config.session_store`. Значения по умолчанию устанавливаются в `config/initializers/session_store.rb`.
 * `cookies.secure` позволяет устанавливать зашифрованные значения куки с помощью `cookie.secure[:key] => value`.
-* `cookies.permanent` позволяет устанавливать постоянные значения  хэш куки `cookie.permanent[:key] => value`, вызывая исключение на шифрованных значениях, если не проходит верификация.
+* `cookies.permanent` позволяет устанавливать постоянные значения хэш куки `cookie.permanent[:key] => value`, вызывая исключение на шифрованных значениях, если не проходит верификация.
 * Теперь можно передать `:notice => 'This is a flash message'` или `:alert => 'Something went wrong'` в вызове `format` внутри блока `respond_to`. Хэш `flash[]` все еще работает по-прежнему.
 * Теперь в контроллеры добавился метод `respond_with`, упрощающий старые блоки `format`.
 * Добавленный `ActionController::Responder` дает гибкость в том, как будут получены сгенерированные вами отклики.
@@ -229,7 +229,7 @@ Action Pack
 * `filter_parameter_logging` устарел в пользу `config.filter_parameters << :password`.
 
 Подробнее:
-* [Render Options in Rails 3](http://www.engineyard.com/blog/2010/render-options-in-rails-3/)
+* [Render Options in Rails 3](https://www.engineyard.com/blog/render-options-in-rails-3)
 * [Three reasons to love ActionController::Responder](http://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder)
 
 ### Action Dispatch
@@ -477,7 +477,7 @@ Active Resource
 * Добавлена поддержка для ошибок в формате JSON.
 * Гарантировано, что `load` работает с числовыми массивами.
 * Распознается отклик 410 от удаленного (remote) ресурса, как то, что ресурс был удален (deleted).
-* Добавлена возможность установить настройки SSL на соединениях Active Resource.
+* Добавлена возможность установить опции SSL на соединениях Active Resource.
 * Настройки тайм-аута соединения также влияют на `Net::HTTP` `open_timeout`.
 
 Устарело:
@@ -496,7 +496,7 @@ Active Support
 * Active Support более не предоставляет внешние библиотеки TZInfo, Memcache Client и Builder, все они включены как зависимости и устанавливаются с помощью команды `bundle install`.
 * Безопасные буферы реализованы в `ActiveSupport::SafeBuffer`.
 * Добавлены `Array.uniq_by` и `Array.uniq_by!`.
-* Убран `Array#rand` и портирован `Array#sample` из Ruby 1.9.
+* Убран `Array#rand` и бэкпортирован `Array#sample` из Ruby 1.9.
 * Пофикшен баг в `TimeZone.seconds_to_utc_offset`, возвращающий неправильное значение.
 * Добавлена промежуточная программа `ActiveSupport::Notifications`.
 * `ActiveSupport.use_standard_json_time_format` теперь по умолчанию true.

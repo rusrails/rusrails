@@ -43,7 +43,7 @@ end
 
 ### Асинхронные письма
 
-Созданный на основе Active Job, сейчас Action Mailer имеет метод `#deliver_later`, добавляющий отсылку вашего письма с помощью очереди, таким образом, не блокируя контроллер или модель. если очередь асинхронная (встроенная очередь по умолчанию будет блокировать).
+Созданный на основе Active Job, сейчас Action Mailer имеет метод `deliver_later`, добавляющий отсылку вашего письма с помощью очереди, таким образом, не блокируя контроллер или модель. если очередь асинхронная (встроенная очередь по умолчанию будет блокировать).
 
 Отсылка писем прямо сейчас все еще возможна с помощью `deliver_now`.
 
@@ -69,7 +69,7 @@ post.comments
 post.comments(true)
 ```
 
-Важно подчеркнуть то, что, как подчеркивают вышеприведенные примеры, подготовленные выражения не кэшируют значения, переданные в вызов метода, они только являются шаблонами для них.
+Важно подчеркнуть то, что, как подчеркивают вышеприведенные примеры, подготовленные выражения не кэшируют значения, переданные в вызов метода, они только являются местозаполнителями для них.
 
 Кэширование не используется в следующих сценариях:
 
@@ -113,7 +113,7 @@ remove_foreign_key :accounts, :branches
 remove_foreign_key :accounts, column: :owner_id
 ```
 
-Смотрите полное описание в документации API для  [add_foreign_key](http://api.rubyonrails.org/v4.2.0/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_foreign_key)
+Смотрите полное описание в документации API для [add_foreign_key](http://api.rubyonrails.org/v4.2.0/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_foreign_key)
 и [remove_foreign_key](http://api.rubyonrails.org/v4.2.0/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_foreign_key).
 
 Несовместимости
@@ -340,7 +340,7 @@ Railties
 *   Представлена опция `--skip-turbolinks` для генератора приложения, чтобы не генерировать интеграцию с turbolinks.
     ([Commit](https://github.com/rails/rails/commit/bf17c8a531bc8059d50ad731398002a3e7162a7d))
 
-*   Представлен скрипт `bin/setup` как соглашение для  автоматической настройки для быстрого развертывания вашего приложения.
+*   Представлен скрипт `bin/setup` как соглашение для автоматической настройки для быстрого развертывания вашего приложения.
     ([Pull Request](https://github.com/rails/rails/pull/15189))
 
 *   Изменено значение по умолчанию для `config.assets.digest` на `true` в среде development.
@@ -486,7 +486,7 @@ Action View
 *   Представлена специальная локальная переменная `#{partial_name}_iteration` для использования с партиалами, рендерящимися с коллекцией. Она предоставляет доступ к текущему состоянию итерации с помощью методов `index`, `size`, `first?` и `last?`.
     ([Pull Request](https://github.com/rails/rails/pull/7698))
 
-*   Placeholder I18n следует тем же соглашениям, что и `label` I18n.
+*   Местозаполнитель I18n следует тем же соглашениям, что и `label` I18n.
     ([Pull Request](https://github.com/rails/rails/pull/16438))
 
 
@@ -528,7 +528,7 @@ Active Record
 *   Удален устаревший метод `ActiveRecord::Base.quoted_locking_column`.
     ([Pull Request](https://github.com/rails/rails/pull/15612))
 
-*   Удален устаревший метод `ActiveRecord::Migrator.proper_table_name`. Используйте вместо него метод экземпляра `proper_table_name` на  `ActiveRecord::Migration`.
+*   Удален устаревший метод `ActiveRecord::Migrator.proper_table_name`. Используйте вместо него метод экземпляра `proper_table_name` на `ActiveRecord::Migration`.
     ([Pull Request](https://github.com/rails/rails/pull/15512))
 
 *   Удален неиспользуемый тип `:timestamp`. Прозрачно добавлен как псевдоним к `:datetime` во всех случаях. Исправлены несоответствия, когда типы столбцов используются вне Active Record, например для сериализации XML.
@@ -548,7 +548,7 @@ Active Record
 
 *   Устарела недоделанная поддержка интервальных значений PostgreSQL с исключенными концами (полуинтервалов). Сейчас мы переводим интервалы PostgreSQL в интервалы Ruby. Это преобразование не полностью возможно, поскольку интервалы Ruby не поддерживают исключение концов.
 
-    Текущее решение увеличения конца интервала не корректно и устарело. Для подтипов, в которых мы не знаем как увеличить (т.е. где не определен `succ`), он вызовет `ArgumentError` для интервалов с исключенными концами.
+    Текущее решение увеличения конца интервала неправильное и устарело. Для подтипов, в которых мы не знаем как увеличить (т.е. где не определен `succ`), он вызовет `ArgumentError` для интервалов с исключенными концами.
 
     ([Commit](https://github.com/rails/rails/commit/91949e48cf41af9f3e4ffba3e5eecf9b0a08bfc3))
 
@@ -591,10 +591,10 @@ Active Record
 *   Представлен `ActiveRecord::Base#validate!`, вызывающий `ActiveRecord::RecordInvalid`, если запись невалидна.
     ([Pull Request](https://github.com/rails/rails/pull/8639))
 
-*   Представлен `#validate` в качестве псевдонима для `#valid?`.
+*   Представлен `validate` в качестве псевдонима для `valid?`.
     ([Pull Request](https://github.com/rails/rails/pull/14456))
 
-*   `#touch` теперь принимает несколько атрибутов, которые будут затронуты за раз.
+*   `touch` теперь принимает несколько атрибутов, которые будут затронуты за раз.
     ([Pull Request](https://github.com/rails/rails/pull/14423))
 
 *   Адаптер PostgreSQL теперь поддерживает тип данных `jsonb` в PostgreSQL 9.4+.
@@ -619,7 +619,7 @@ Active Record
 *   Добавлен `ActiveRecord::Base#pretty_print` для красивого отображения моделей.
     ([Pull Request](https://github.com/rails/rails/pull/15172))
 
-*   `ActiveRecord::Base#reload` теперь ведет себя так же, как `m = Model.find(m.id)`, что означает, что он больше не помнит дополнительные атрибуты из кастомного `SELECT`.
+*   `ActiveRecord::Base#reload` теперь ведет себя так же, как `m = Model.find(m.id)`, что означает, что он больше не помнит дополнительные атрибуты из собственного `SELECT`.
     ([Pull Request](https://github.com/rails/rails/pull/15866))
 
 *   `ActiveRecord::Base#reflections` теперь возвращает хэш со строковыми ключами вместо символьных ключей.
@@ -649,7 +649,7 @@ Active Model
 
 ### Значимые изменения
 
-*   Представлен `#validate` в качестве псевдонима для `#valid?`.
+*   Представлен `validate` в качестве псевдонима для `valid?`.
     ([Pull Request](https://github.com/rails/rails/pull/14456))
 
 *   Представлен метод `restore_attributes` в `ActiveModel::Dirty` для восстановления измененных (dirty) атрибутов их предыдущими значениями.
