@@ -239,7 +239,7 @@ end
 
 * `ActionDispatch::RequestId` создает уникальный заголовок X-Request-Id, доступный для отклика, и включает метод `ActionDispatch::Request#uuid`.
 
-* `ActionDispatch::RemoteIp` проверяет на атаки с ложных IP и получает валидный `client_ip` из заголовков запроса. Конфигурируется с помощью настроек `config.action_dispatch.ip_spoofing_check` и `config.action_dispatch.trusted_proxies`.
+* `ActionDispatch::RemoteIp` проверяет на атаки с ложных IP и получает валидный `client_ip` из заголовков запроса. Конфигурируется с помощью опций `config.action_dispatch.ip_spoofing_check` и `config.action_dispatch.trusted_proxies`.
 
 * `Rack::Sendfile` перехватывает отклики, чьи тела были обслужены файлом, и заменяет их специфичным для сервером заголовком X-Sendfile. Конфигурируется с помощью `config.action_dispatch.x_sendfile_header`.
 
@@ -249,7 +249,7 @@ end
 
 * `ActionDispatch::Session::CookieStore` ответственно за хранение сессии в куки. Для этого может использоваться альтернативная промежуточная программа, при изменении `config.action_controller.session_store` на альтернативное значение. Кроме того, переданные туда опции могут быть сконфигурированы `config.action_controller.session_options`.
 
-* `ActionDispatch::Flash` настраивает ключи `flash`. Доступно только если у `config.action_controller.session_store` установлено значение.
+* `ActionDispatch::Flash` настраивает ключи `flash`. Доступно, только если у `config.action_controller.session_store` установлено значение.
 
 * `Rack::MethodOverride` позволяет методу быть переопределенным, если установлен `params[:_method]`. Это промежуточная программа, поддерживающая типы методов HTTP PATCH, PUT и DELETE.
 
@@ -353,21 +353,21 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_record.error_on_ignored_order` определяет, должна ли быть вызвана ошибка, если во время порционного (batch) запроса была проигнорирована сортировка или лимит. Опцией может быть либо `true` (вызывается ошибка), либо `false` (предупреждение). По умолчанию `false`.
 
-* `config.active_record.timestamped_migrations` регулирует, должны ли миграции нумероваться серийными номерами или временными метками. По умолчанию `true` для использования временных меток, которые более предпочтительны если над одним проектом работают несколько разработчиков.
+* `config.active_record.timestamped_migrations` регулирует, должны ли миграции нумероваться серийными номерами или временными метками. По умолчанию `true` для использования временных меток, которые более предпочтительны, если над одним проектом работают несколько разработчиков.
 
-* `config.active_record.lock_optimistically` регулирует, должен ли Active Record использовать оптимистичную блокировку. По умолчанию `true`.
+* `config.active_record.lock_optimistically` регулирует, должен ли Active Record использовать оптимистическую блокировку. По умолчанию `true`.
 
 * `config.active_record.cache_timestamp_format` управляет форматом значения временной метки в ключе кэширования. По умолчанию `:nsec`.
 
 * `config.active_record.record_timestamps` это булево значение, управляющее, должна ли происходить временная метка операций модели `create` и `update`. Значение по умолчанию `true`.
 
-* `config.active_record.partial_writes` это булево значение, управляющее, должны ли использоваться частичные записи (т.е. обновления только тех атрибутов, которые помечены dirty). Отметьте, что при использовании частичной записи также можно использовать оптимистичную блокировку `config.active_record.lock_optimistically`, так как конкурентные обновления могут записывать атрибуты, основываясь на возможном устаревшем статусе чтения. Значение по умолчанию `true`.
+* `config.active_record.partial_writes` это булево значение, управляющее, должны ли использоваться частичные записи (т.е. обновления только тех атрибутов, которые помечены dirty). Отметьте, что при использовании частичной записи также можно использовать оптимистическую блокировку `config.active_record.lock_optimistically`, так как конкурентные обновления могут записывать атрибуты, основываясь на возможном устаревшем статусе чтения. Значение по умолчанию `true`.
 
 * `config.active_record.maintain_test_schema` это булево значение, управляющее, должен ли Active Record пытаться сохранять вашу тестовую базу данных актуальной с `db/schema.rb` (или `db/structure.sql`) при запуске тестов. По умолчанию `true`.
 
 * `config.active_record.dump_schema_after_migration` это флажок, управляющий, должен ли происходить дамп схемы (`db/schema.rb` или `db/structure.sql`) при запуске миграций. Он установлен `false` в `config/environments/production.rb`, генерируемом Rails. Значение по умолчанию `true`, если эта конфигурация не установлена.
 
-* `config.active_record.dump_schemas` управляет, какие схемы баз данных будут дампиться при вызове `db:structure:dump`.  Опции: `:schema_search_path` (по умолчанию), при которой дампится любая схема, перечисленная в `schema_search_path`,  `:all`, при которой дампятся все схемы, независимо от `schema_search_path`, или строки со схемами, разделенными через запятую.
+* `config.active_record.dump_schemas` управляет, какие схемы баз данных будут дампиться при вызове `db:structure:dump`. Опции: `:schema_search_path` (по умолчанию), при которой дампится любая схема, перечисленная в `schema_search_path`, `:all`, при которой дампятся все схемы, независимо от `schema_search_path`, или строки со схемами, разделенными через запятую.
 
 * `config.active_record.belongs_to_required_by_default` это булево значение и управляет, будет ли валидация записи падать, если отсутствует связь `belongs_to`.
 
@@ -418,7 +418,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_controller.allow_forgery_protection` включает или отключает защиту от CSRF. По умолчанию `false` в режиме тестирования и `true` в остальных режимах.
 
-* `config.action_controller.forgery_protection_origin_check` настраивает,должен ли сверяться заголовок HTTP `Origin` с доменом сайта в качестве дополнительной защиты от подделки межсайтовых запросов.
+* `config.action_controller.forgery_protection_origin_check` настраивает,должен ли сверяться заголовок HTTP `Origin` с доменом сайта в качестве дополнительной защиты от межсайтовой подделки запроса.
 
 * `config.action_controller.per_form_csrf_tokens` настраивает, должны ли токены CSRF быть валидными только для метода/экшна, для которого они сгенерированы.
 
@@ -567,9 +567,9 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_mailer.logger` принимает логгер, соответствующий интерфейсу Log4r или класса Ruby по умолчанию Logger, который затем используется для логирования информации от Action Mailer. Установите его в `nil`, чтобы отключить логирование.
 
-* `config.action_mailer.smtp_settings` позволяет детально сконфигурировать метод доставки `:smtp`. Она принимает хэш опций, который может включать любые из следующих:
+* `config.action_mailer.smtp_settings` позволяет детально сконфигурировать метод доставки `:smtp`. Она принимает хэш опций, который может включать любые из следующих опций:
     * `:address` - Позволяет использовать удаленный почтовый сервер. Просто измените его значение по умолчанию "localhost".
-    * `:port` -  В случае, если ваш почтовый сервер не работает с портом 25, можете изменить это.
+    * `:port` - В случае, если почтовый сервер не работает с портом 25, можно изменить это.
     * `:domain` - Если нужно определить домен HELO, это делается здесь.
     * `:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.
     * `:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой.
@@ -579,7 +579,7 @@ config.middleware.delete Rack::MethodOverride
     * `:ssl/:tls` - Позволяет соединению SMTP использовать SMTP/TLS (SMTPS: SMTP поверх прямого соединения TLS).
 
 * `config.action_mailer.sendmail_settings` Позволяет детально сконфигурировать метод доставки `sendmail`. Она принимает хэш опций, который может включать любые из этих опций:
-    * `:location` - Размещение исполняемого файла sendmail. По умолчанию `/usr/sbin/sendmail`.
+    * `:location` - Место расположения исполняемого файла sendmail. По умолчанию `/usr/sbin/sendmail`.
     * `:arguments` - Аргументы командной строки. По умолчанию `-i`.
 
 * `config.action_mailer.raise_delivery_errors` определяет, должна ли вызываться ошибка, если доставка письма не может быть завершена. По умолчанию `true`.
@@ -617,7 +617,7 @@ config.middleware.delete Rack::MethodOverride
     config.action_mailer.interceptors = ["MailInterceptor"]
     ```
 
-* `config.action_mailer.preview_path` определяет расположение превью рассыльщика.
+* `config.action_mailer.preview_path` определяет место расположения превью рассыльщика.
 
     ```ruby
     config.action_mailer.preview_path = "#{Rails.root}/lib/mailer_previews"
@@ -895,7 +895,7 @@ NOTE: В этом руководстве мы используем базу да
 
 #### Конфигурирование базы данных MySQL или MariaDB
 
-Если вы выбрали MySQL или MariaDB вместо SQLite3, ваш `config/database.yml` будет выглядеть немного по другому. Вот раздел development:
+Если вы выбрали MySQL или MariaDB вместо SQLite3, ваш `config/database.yml` будет выглядеть немного по-другому. Вот раздел development:
 
 ```yaml
 development:
@@ -1125,7 +1125,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 Ниже приведен полный список всех инициализаторов, присутствующих в Rails в порядке, в котором они определены (и, следовательно, запущены, если не указано иное).
 
-* `load_environment_hook`: Служит плейсхолдером, так что `:load_environment_config` может быть определено для запуска до него.
+* `load_environment_hook`: Служит в качестве местозаполнителя, так что `:load_environment_config` может быть определено для запуска до него.
 
 * `load_active_support`: Требует `active_support/dependencies`, настраивающий основу для Active Support. Опционально требует `active_support/all`, если `config.active_support.bare` не истинно, что является значением по умолчанию.
 
@@ -1133,7 +1133,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `initialize_cache`: Если `Rails.cache` еще не установлен, инициализирует кэш, обращаясь к значению `config.cache_store` и сохраняя результат как `Rails.cache`. Если этот объект отвечает на метод `middleware`, его промежуточная программа вставляется до `Rack::Runtime` в стеке промежуточных программ.
 
-* `set_clear_dependencies_hook`: Этот инициализатор - запускающийся только если `cache_classes` установлена `false` - использует `ActionDispatch::Callbacks.after` для удаления констант, на которые ссылались на протяжении запроса от пространства объекта, так что они могут быть перезагружены в течение следующего запроса.
+* `set_clear_dependencies_hook`: Этот инициализатор - запускающийся, только если `cache_classes` установлена `false` - использует `ActionDispatch::Callbacks.after` для удаления констант, на которые ссылались на протяжении запроса от пространства объекта, так что они могут быть перезагружены в течение следующего запроса.
 
 * `initialize_dependency_mechanism`: Если `config.cache_classes` true, конфигурирует `ActiveSupport::Dependencies.mechanism` требовать (`require`) зависимости, а не загружать (`load`) их.
 
@@ -1317,10 +1317,10 @@ Disallow: /
 
 Чтобы запретить только определенные страницы, необходимо использовать более сложный синтаксис. Изучите его в [официальной документации](http://www.robotstxt.org/robotstxt.html).
 
-Монитор событийной файловой системы
------------------------------------
+Наблюдение событийной файловой системы
+--------------------------------------
 
-Если загружен [гем listen](https://github.com/guard/listen), Rails использует монитор событийной файловой системы для обнаружения изменений, когда `config.cache_classes` равен `false`:
+Если загружен [гем listen](https://github.com/guard/listen), Rails использует наблюдение событийной файловой системы для обнаружения изменений, когда `config.cache_classes` равен `false`:
 
 ```ruby
 group :development do

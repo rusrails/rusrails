@@ -236,7 +236,7 @@ Action Pack
 
 * `url_for` и именованные хелперы _url теперь принимают как опции `:subdomain` и `:domain`.
 
-* Добавлен `Base.http_basic_authenticate_with` для простой базовой аутентификации http с помощью единственного вызова метода класса.
+* Добавлен `Base.http_basic_authenticate_with` для базовой аутентификации HTTP с помощью единственного вызова метода класса.
 
     ```ruby
     class PostsController < ApplicationController
@@ -537,7 +537,7 @@ Active Support
 
 * Был отрефакторен `ActiveSupport::Dependencies::Reference`, чтобы пользоваться преимуществами нового `ClassCache`.
 
-* Портирован `Range#cover?` как псевдоним `Range#include?` в Ruby 1.8.
+* Бэкпортирован `Range#cover?` как псевдоним `Range#include?` в Ruby 1.8.
 
 * Добавлены `weeks_ago` и `prev_week` в Date/DateTime/Time.
 

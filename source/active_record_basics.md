@@ -68,7 +68,7 @@ Active Record использует соглашения о именовании 
 
 * `created_at` - Автоматически будут установлены текущие дата и время при изначальном создании записи.
 * `updated_at` - Автоматически будут установлены текущие дата и время всякий раз, когда обновляется запись.
-* `lock_version` - Добавляет [оптимистичную блокировку](http://api.rubyonrails.org/classes/ActiveRecord/Locking.html) к модели.
+* `lock_version` - Добавляет [оптимистическую блокировку](http://api.rubyonrails.org/classes/ActiveRecord/Locking.html) к модели.
 * `type` - Указывает, что модель использует [Single Table Inheritance](http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance).
 * `(association_name)_type` - Хранит тип для [полиморфных связей](/active-record-associations#polymorphic-associations).
 * `(table_name)_count` - Используется для кэширования количества принадлежащих по связи объектов. Например, столбец `comments_count` в классе `Article`, у которого может быть несколько связанных экземпляров `Comment`, закэширует количество существующих комментариев для каждой статьи.

@@ -47,7 +47,7 @@ $ rails new my_api --api
 - Унаследует `ApplicationController` от `ActionController::API` вместо `ActionController::Base`. Как и в случае с промежуточными программами, это отбросит все модули Action Controller, предоставляющие функциональность, в основном используемую браузерными приложениями.
 - Настроит генераторы пропускать генерацию вьюх, хелперов и ассетов при генерации нового ресурса.
 
-Приложение представляет основу для API, которая затем может быть [настроена](/api-app) под нужды приложения.  
+Приложение представляет основу для API, которая затем может быть [настроена](/api-app) под нужды приложения.
 
 Подробности смотрите в руководстве [Использование Rails для API-приложений](/api-app).
 
@@ -189,7 +189,7 @@ Railties
     ([Pull Request](https://github.com/rails/rails/pull/22457),
      [Pull Request](https://github.com/rails/rails/pull/22288))
 
-*   Новые приложения генерируются с включенным монитором событийной файловой системы на Linux и macOS. Эту особенность можно отключить, передав `--skip-listen` в генератор.
+*   Новые приложения генерируются с включенным наблюдением событийной файловой системы на Linux и macOS. Эту особенность можно отключить, передав `--skip-listen` в генератор.
     ([коммит](https://github.com/rails/rails/commit/de6ad5665d2679944a9ee9407826ba88395a1003),
     [коммит](https://github.com/rails/rails/commit/94dbc48887bf39c241ee2ce1741ee680d773f202))
 
@@ -464,7 +464,7 @@ Active Record
 *   Удалены устаревшие `ActiveRecord::Base.disable_implicit_join_references=`.
     ([коммит](https://github.com/rails/rails/commit/0fbd1fc888ffb8cbe1191193bf86933110693dfc))
 
-*   Удален устаревший доступ к спецификации соединения с помощью строкового метода доступа.
+*   Удален устаревший доступ к спецификации соединения с помощью строкового акцессора.
     ([коммит](https://github.com/rails/rails/commit/efdc20f36ccc37afbb2705eb9acca76dd8aabd4f))
 
 *   Удалена устаревшая поддержка предварительной загрузки связей, зависимых от экземпляра.
@@ -500,7 +500,7 @@ Active Record
 *   Устарела передача класса в качестве значения запроса. Вместо этого нужно передавать строки.
     ([Pull Request](https://github.com/rails/rails/pull/17916))
 
-*   Устарел возврат `false` в качестве способа прервать цепочку колбэков Active Record. Рекомендуемый способ    `throw(:abort)`.
+*   Устарел возврат `false` в качестве способа прервать цепочку колбэков Active Record. Рекомендуемый способ `throw(:abort)`.
     ([Pull Request](https://github.com/rails/rails/pull/17227))
 
 *   Устарел `ActiveRecord::Base.errors_in_transactional_callbacks=`.
@@ -638,7 +638,7 @@ Active Record
 *   Добавлена опция `:touch` в метод `save`, таким образом, записи могут быть сохранены без обновления временных меток.
     ([Pull Request](https://github.com/rails/rails/pull/18225))
 
-*   Добавлена поддержка индексов по выражениям (expression indexes) и классов оператора (operator classes) для  PostgreSQL.
+*   Добавлена поддержка индексов по выражениям (expression indexes) и классов оператора (operator classes) для PostgreSQL.
     ([коммит](https://github.com/rails/rails/commit/edc2b7718725016e988089b5fb6d6fb9d6e16882))
 
 *   Добавлена опция `:index_errors` для добавления индексов к ошибкам вложенных атрибутов.

@@ -73,7 +73,7 @@ $ rackup config.ru
 $ rackup --help
 ```
 
-### Разработка и авто-перегрузка
+### Разработка и автоматическая перезагрузка
 
 Промежуточные программы загружаются один раз и не отслеживаются на предмет изменений. Необходимо перезагрузить сервер, чтобы отразить изменения в запущенном приложении.
 
@@ -274,7 +274,7 @@ config.middleware.delete Rack::MethodOverride
 
 **`ActionDispatch::Flash`**
 
-* Настраивает ключи flash. Доступна только если `config.action_controller.session_store` присвоено значение.
+* Настраивает ключи flash. Доступно, только если `config.action_controller.session_store` присвоено значение.
 
 **`ActionDispatch::ContentSecurityPolicy::Middleware`**
 
