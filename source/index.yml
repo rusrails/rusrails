@@ -306,6 +306,12 @@ pages:
     revision: ee7fb923d484f1dfe19e10210e7bde0a753ff2f5
     date:     23/12/2017
 
+  - title:    Заметки о релизе Ruby on Rails 5.2
+    path:     5_2_release_notes
+    file:     5_2_release_notes.md
+    revision: a489cc81b6aa1187b169ddccc92f4c077fe0408f
+    date:     14/03/2018
+
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
     file:     maintenance_policy.md
