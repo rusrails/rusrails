@@ -326,7 +326,7 @@ Active Record
 
 * Реализовано логирование автоматического EXPLAIN для медленных запросов. Новый конфигурационный параметр `config.active_record.auto_explain_threshold_in_seconds` определяет, что рассматривается как медленный запрос. Установите ему nil, чтобы отключить эту возможность. По умолчанию 0.5 в режиме development, и nil в режимах test и production. Rails 3.2 поддерживает эту возможность для SQLite, MySQL (адаптер mysql2) и PostgreSQL.
 
-* Добавлен `ActiveRecord::Base.store` для определения простых key/value хранилищ с одной колонкой.
+* Добавлен `ActiveRecord::Base.store` для определения простых key/value хранилищ с одним столбцом.
 
     ```ruby
     class User < ActiveRecord::Base
