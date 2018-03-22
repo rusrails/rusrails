@@ -107,7 +107,7 @@ GEM
       sprockets (> 2, < 4)
       tilt
     libv8 (3.16.14.3)
-    loofah (2.1.1)
+    loofah (2.2.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
@@ -126,7 +126,7 @@ GEM
     net-ssh (3.2.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pg (0.18.4)
     pry (0.10.1)
