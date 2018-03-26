@@ -1980,4 +1980,4 @@ EXPLAIN for: SELECT `articles`.* FROM `articles`  WHERE `articles`.`user_id` IN 
 
 * MariaDB: [EXPLAIN](https://mariadb.com/kb/en/mariadb/explain/)
 
-* PostgreSQL: [Using EXPLAIN](https://postgrespro.ru/docs/postgrespro/9.6/using-explain)
+* PostgreSQL: [Using EXPLAIN](https://postgrespro.ru/docs/postgrespro/current/using-explain)

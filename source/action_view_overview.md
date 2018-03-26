@@ -1087,7 +1087,7 @@ option_groups_from_collection_for_select(@continents, :countries, :name, :id, :n
 </optgroup>
 ```
 
-Note: Возвращаются только теги `optgroup` и `option`, вам все еще нужно обернуть результат в подходящий тег `select`.
+NOTE: Возвращаются только теги `optgroup` и `option`, вам все еще нужно обернуть результат в подходящий тег `select`.
 
 #### options_for_select
 
@@ -1098,7 +1098,7 @@ options_for_select([ "VISA", "MasterCard" ])
 # => <option>VISA</option> <option>MasterCard</option>
 ```
 
-Note: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
+NOTE: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
 
 #### options_from_collection_for_select
 
@@ -1115,7 +1115,7 @@ options_from_collection_for_select(@project.people, "id", "name")
 # => <option value="#{person.id}">#{person.name}</option>
 ```
 
-Note: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
+NOTE: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
 
 #### select
 

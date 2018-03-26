@@ -489,6 +489,8 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_dispatch.cookies_rotations` позволяет чередовать секреты, шифры и дайджесты для зашифрованных и подписанных куки.
 
+* `config.action_dispatch.use_authenticated_cookie_encryption` определяет, используют подписанные и зашифрованные куки шифр AES-256-GCM или более старый шифр AES-256-CBC. По умолчанию `true`.
+
 * `config.action_dispatch.perform_deep_munge` конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
 
 * `config.action_dispatch.rescue_responses` конфигурирует, какие исключения назначаются статусу HTTP. Он принимает хэш и можно указать пары исключение/статус. По умолчанию он определен как:
@@ -560,6 +562,8 @@ config.middleware.delete Rack::MethodOverride
 * `config.action_view.form_with_generates_remote_forms` определяет, должны ли `form_with` генерировать remote формы или нет. Это по умолчанию `true`.
 
 * `config.action_view.form_with_generates_ids` определяет, должны ли `form_with` генерировать ids на inputs. Это по умолчанию `true`.
+ 
+* `config.action_view.default_enforce_utf8` определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8. Это по умолчанию `false`.
 
 ### (configuring-action-mailer) Конфигурирование Action Mailer
 

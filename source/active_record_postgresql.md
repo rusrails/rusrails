@@ -25,8 +25,8 @@ PostgreSQL предлагает достаточное количество сп
 
 ### Двоичные типы данных
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-binary.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-binarystring.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-binary.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-binarystring.html)
 
 ```ruby
 # db/migrate/20140207133952_create_documents.rb
@@ -45,8 +45,8 @@ Document.create payload: data
 
 ### Массивы
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/arrays.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-array.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/arrays.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-array.html)
 
 ```ruby
 # db/migrate/20140207133952_create_books.rb
@@ -79,8 +79,8 @@ Book.where("array_length(ratings, 1) >= 3")
 
 ### Hstore
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/hstore.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/hstore.html#idm45576084647360)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/hstore.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/hstore.html#idm45576084647360)
 
 NOTE: Чтобы использовать hstore, необходимо включить расширение `hstore`.
 
@@ -112,8 +112,8 @@ Profile.where("settings->'color' = ?", "yellow")
 
 ### JSON и JSONB
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-json.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-json.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-json.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-json.html)
 
 ```ruby
 # db/migrate/20131220144913_create_events.rb
@@ -143,8 +143,8 @@ Event.where("payload->>'kind' = ?", "user_renamed")
 
 ### Диапазонные типы
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/rangetypes.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-range.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/rangetypes.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-range.html)
 
 Этот тип преобразуется в Ruby [`Range`](http://www.ruby-doc.org/core-2.2.2/Range.html) объекты.
 
@@ -178,7 +178,7 @@ event.ends_at # => Thu, 13 Feb 2014
 
 ### Составные типы
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/rowtypes.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/rowtypes.html)
 
 На данный момент нет специальной поддержки для составных типов. Они преобразуются к обычным текстовым столбцам:
 
@@ -217,7 +217,7 @@ contact.save!
 
 ### Типы перечислений
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-enum.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-enum.html)
 
 На данный момент нет специальной поддержки для типов перечислений. Они преобразуются к обычным текстовым столбцам:
 
@@ -254,7 +254,7 @@ article.status = "published"
 article.save!
 ```
 
-Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](https://postgrespro.ru/docs/postgrespro/9.6/sql-altertype.html):
+Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](https://postgrespro.ru/docs/postgrespro/current/sql-altertype.html):
 
 ```ruby
 # db/migrate/20150720144913_add_new_state_to_articles.rb
@@ -283,9 +283,9 @@ SELECT n.nspname AS enum_schema,
 
 ### Тип UUID
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-uuid.html)
-* [pgcrypto generator function](https://postgrespro.ru/docs/postgrespro/9.6/pgcrypto.html#idm45576081674672)
-* [uuid-ossp generator functions](https://postgrespro.ru/docs/postgrespro/9.6/uuid-ossp.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-uuid.html)
+* [pgcrypto generator function](https://postgrespro.ru/docs/postgrespro/current/pgcrypto.html#idm45576081674672)
+* [uuid-ossp generator functions](https://postgrespro.ru/docs/postgrespro/current/uuid-ossp.html)
 
 NOTE: Для использования uuid необходимо включить расширение `pgcrypto` (только PostgreSQL >= 9.4).
 
@@ -333,8 +333,8 @@ end
 
 ### Битовые строки
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-bit.html)
-* [функции и операторы](https://postgrespro.ru/docs/postgrespro/9.6/functions-bitstring.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-bit.html)
+* [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-bitstring.html)
 
 ```ruby
 # db/migrate/20131220144913_create_users.rb
@@ -357,7 +357,7 @@ user.save!
 
 ### Типы, описывающие сетевые адреса
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-net-types.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-net-types.html)
 
 Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](http://www.ruby-doc.org/stdlib-2.2.2/libdoc/ipaddr/rdoc/IPAddr.html) объекты.
 Тип `macaddr` преобразуется в обычный текст.
@@ -391,7 +391,7 @@ macbook.address
 
 ### Геометрические типы
 
-* [определение типа](https://postgrespro.ru/docs/postgrespro/9.6/datatype-geometric.html)
+* [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-geometric.html)
 
 Все геометрические типы, за исключением `points` преобразуются в обычный текст.
 А тип `point` соответствует массиву, содержащему координаты `x` и `y`.
@@ -446,7 +446,7 @@ Document.where("to_tsvector('english', title || ' ' || body) @@ to_tsquery(?)",
 Представление базы данных
 -------------------------
 
-* [view creation](https://postgrespro.ru/docs/postgrespro/9.6/sql-createview.html)
+* [view creation](https://postgrespro.ru/docs/postgrespro/current/sql-createview.html)
 
 Представим, что нам нужно работать со старой базой данных, содержащей следующую таблицу:
 

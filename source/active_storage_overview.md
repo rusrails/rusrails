@@ -71,15 +71,6 @@ local:
   root: <%= Rails.root.join("storage") %>
 ```
 
-Можно опционально указать хост для генерации URL (по умолчанию используется `http://localhost:3000`):
-
-```yaml
-local:
-  service: Disk
-  root: <%= Rails.root.join("storage") %>
-  host: http://myapp.test
- ```
-
 ### Сервис Amazon S3
 
 Объявление сервиса S3 в `config/storage.yml`:
@@ -99,6 +90,10 @@ amazon:
 gem "aws-sdk-s3", require: false
 ```
 
+NOTE: Основные особенности Active Storage требуют следующих прав: `s3:ListBucket`, `s3:PutObject`, `s3:GetObject` и `s3:DeleteObject`. Если есть дополнительные опции загрузки, сконфигурированные также как и настройка ACL, тогда могут потребоваться дополнительные права.
+
+NOTE: Если необходимо использовать переменные среды, стандартные файлы конфигурации SDK, профили, профили экземпляров IAM или роли задач, можно опустить ключи `access_key_id`, `secret_access_key` и `region` в приведенном выше примере. Сервис Amazon S3 поддерживает все опции аутентификации, описанные в [документации AWS SDK](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/setup-config.html).
+
 ### Сервис Microsoft Azure Storage
 
 Объявление сервиса Azure Storage в `config/storage.yml`:
@@ -106,7 +101,6 @@ gem "aws-sdk-s3", require: false
 ```yaml
 azure:
   service: AzureStorage
-  path: ""
   storage_account_name: ""
   storage_access_key: ""
   container: ""
