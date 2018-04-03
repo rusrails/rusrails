@@ -371,7 +371,7 @@ change_column_default :products, :approved, from: true, to: false
 
 Это настроит поле `:name` в products быть `NOT NULL` столбцом и изменит значение по умолчанию для поля `:approved` с true на false.
 
-Note: Также можно написать предыдущую миграцию `change_column_default` как `change_column_default :products, :approved, false`, но, в отличие от предыдущего примера, это сделало бы вашу миграцию необратимой.
+NOTE: Также можно написать предыдущую миграцию `change_column_default` как `change_column_default :products, :approved, false`, но, в отличие от предыдущего примера, это сделало бы вашу миграцию необратимой.
 
 ### (Column Modifiers) Модификаторы столбца
 

@@ -2788,16 +2788,6 @@ NOTE: Определено в `active_support/core_ext/hash/slice.rb`.
 
 NOTE: Определено в `active_support/core_ext/hash/indifferent_access.rb`.
 
-### Уплотнение
-
-Методы `compact` и `compact!` возвращают Hash без элементов со значением `nil`.
-
-```ruby
-{a: 1, b: 2, c: nil}.compact # => {a: 1, b: 2}
-```
-
-NOTE: Определено в `active_support/core_ext/hash/compact.rb`.
-
 Расширения для `Regexp`
 -----------------------
 

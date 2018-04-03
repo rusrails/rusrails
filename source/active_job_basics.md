@@ -247,7 +247,7 @@ end
 
 ```ruby
 class ApplicationJob
-  before_enqueue { |job| $statsd.increment "#{job.name.underscore}.enqueue" }
+  before_enqueue { |job| $statsd.increment "#{job.class.name.underscore}.enqueue" }
 end
 ```
 
@@ -293,12 +293,12 @@ ActiveJob по умолчанию поддерживает следующие т
 
 - Базовые типы (`NilClass`, `String`, `Integer`, `Float`, `BigDecimal`, `TrueClass`, `FalseClass`)
 - `Symbol`
-- `ActiveSupport::Duration`
 - `Date`
 - `Time`
 - `DateTime`
 - `ActiveSupport::TimeWithZone`
-- `Hash`. Ключи должны быть типа `String` или `Symbol`
+- `ActiveSupport::Duration`
+- `Hash` (Ключи должны быть типа `String` или `Symbol`)
 - `ActiveSupport::HashWithIndifferentAccess`
 - `Array`
 
@@ -333,7 +333,7 @@ end
 
 ```ruby
 class MoneySerializer < ActiveJob::Serializers::ObjectSerializer
-  # Проверяем, должен ли этот объект быть сериализован с использованием этого сериализатора.
+  # Проверяем, должен ли argument быть сериализован с использованием этого сериализатора.
   def serialize?(argument)
     argument.is_a? Money
   end
@@ -341,24 +341,24 @@ class MoneySerializer < ActiveJob::Serializers::ObjectSerializer
   # Преобразование объекта к более простому представителю, используя поддерживаемые типы объектов.
   # Рекомендуемым представителем является хэш с определенным ключом. Ключи могут быть только базового типа.
   # Необходимо вызвать `super`, чтобы добавить собственный тип сериализатора в хэш.
-  def serialize(object)
+  def serialize(money)
     super(
-      "cents" => object.cents,
-      "currency" => object.currency
+      "amount" => money.amount,
+      "currency" => money.currency
     )
   end
 
-  # Преобразование сериализованного значения в надлежащий объект
+  # Преобразование сериализованного значения в надлежащий объект.
   def deserialize(hash)
-    Money.new hash["cents"], hash["currency"]
+    Money.new(hash["amount"], hash["currency"])
   end
 end
 ```
 
-И теперь необходимо просто добавить этот сериализатор в список:
+и добавить этот сериализатор в список:
 
 ```ruby
-Rails.application.config.active_job.custom_serializers << MySpecialSerializer
+Rails.application.config.active_job.custom_serializers << MoneySerializer
 ```
 
 Исключения
