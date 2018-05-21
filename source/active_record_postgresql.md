@@ -342,7 +342,7 @@ create_table :users, force: true do |t|
   t.column :settings, "bit(8)"
 end
 
-# app/models/device.rb
+# app/models/user.rb
 class User < ApplicationRecord
 end
 

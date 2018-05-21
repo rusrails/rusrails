@@ -400,6 +400,8 @@ config.middleware.delete Rack::MethodOverride
 
 * `ActiveRecord::SchemaDumper.ignore_tables` принимает массив таблиц, которые _не_ должны быть включены в любой генерируемый файл схемы.
 
+* `ActiveRecord::SchemaDumper.fk_ignore_pattern` позволяет настроить другое регулярное выражение, которое будет использоваться для определения того, следует ли выгружать имя внешнего ключа из db/schema.rb или нет. По умолчанию имена внешних ключей, начинающиеся с `fk_rails_`, не экспортируются в выгрузку схемы базы данных. По умолчанию используется `/^fk_rails_[0-9a-f]{10}$/`.
+
 ### Конфигурирование Action Controller
 
 `config.action_controller` включает несколько конфигурационных настроек:
@@ -565,6 +567,8 @@ config.middleware.delete Rack::MethodOverride
  
 * `config.action_view.default_enforce_utf8` определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8. Это по умолчанию `false`.
 
+* `config.action_view.finalize_compiled_template_methods` определяет, должны ли методы в `ActionView::CompiledTemplates` сами удалять собранные шаблоны, когда экземпляры шаблонов уничтожаются сборщиком мусора. Это помогает предотвратить утечку памяти в режиме разработки, но для больших тестовых набов отказ этой опции в тестовой среде может повысить производительность. Это по умолчанию `true`.
+
 ### (configuring-action-mailer) Конфигурирование Action Mailer
 
 Имеется несколько доступных настроек `ActionMailer::Base`:
@@ -726,6 +730,8 @@ config.middleware.delete Rack::MethodOverride
 ### Конфигурирование Active Storage
 
 `config.active_storage` предоставляет следующие опции конфигурации:
+
+* `config.active_storage.variant_processor` принимает символ `:mini_magick` или `:vips`, указывая, будут ли варианты преобразования выполняться с помощью MiniMagick или ruby-vips. По умолчанию это `:mini_magick`.
 
 * `config.active_storage.analyzers` принимает массив классов, указывающий анализаторы, доступные для blobs в Active Storage. По умолчанию используется `[ActiveStorage::Analyzer::ImageAnalyzer, ActiveStorage::Analyzer::VideoAnalyzer]`. Первый может извлекать ширину и высоту blob изображения; последний может извлекать ширину, высоту, длительность, угол и соотношение сторон blob видео.
 

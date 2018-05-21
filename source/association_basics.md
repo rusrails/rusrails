@@ -92,7 +92,7 @@ class Book < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи belongs_to](/images/belongs_to.png)
+![Диаграмма для связи belongs_to](/images/association_basics/belongs_to.png)
 
 NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если использовать множественное число в вышеприведенном примере для связи `author` в модели `Book`, вам будет сообщено "uninitialized constant Book::Authors". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
 
@@ -125,7 +125,7 @@ class Supplier < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_one](/images/has_one.png)
+![Диаграмма для связи has_one](/images/association_basics/has_one.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -167,7 +167,7 @@ end
 
 NOTE: Имя другой модели указывается во множественном числе при объявлении связи `has_many`.
 
-![Диаграмма для связи has_many](/images/has_many.png)
+![Диаграмма для связи has_many](/images/association_basics/has_many.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -209,7 +209,7 @@ class Patient < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_many :through](/images/has_many_through.png)
+![Диаграмма для связи has_many :through](/images/association_basics/has_many_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -291,7 +291,7 @@ class AccountHistory < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_one :through](/images/has_one_through.png)
+![Диаграмма для связи has_one :through](/images/association_basics/has_one_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -332,7 +332,7 @@ class Part < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_and_belongs_to_many](/images/habtm.png)
+![Диаграмма для связи has_and_belongs_to_many](/images/association_basics/habtm.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -486,7 +486,7 @@ class CreatePictures < ActiveRecord::Migration[5.0]
 end
 ```
 
-![Диаграмма для полиморфной связи](/images/polymorphic.png)
+![Диаграмма для полиморфной связи](/images/association_basics/polymorphic.png)
 
 ### Присоединение к себе
 
@@ -497,7 +497,7 @@ class Employee < ApplicationRecord
   has_many :subordinates, class_name: "Employee",
                           foreign_key: "manager_id"
 
-  belongs_to :manager, class_name: "Employee"
+  belongs_to :manager, class_name: "Employee", optional: true
 end
 ```
 

@@ -59,6 +59,13 @@ Overwrite /myapp/config/application.rb? (enter "h" for help) [Ynaqdh]
 
 Не забывайте просматривать разницу, чтобы увидеть какие-либо неожидаемые изменения.
 
+(Upgrading from Rails 5.2 to Rails 6.0) Апгрейд с Rails 5.2 на Rails 6.0
+------------------------------------------------------------------------
+
+### Навязывание SSL
+
+Метод `force_ssl` для контроллеров устарел и будет убран в Rails 6.1. Рекомендуется включить `config.force_ssl` для обеспечения подключения HTTPS во всем приложении. Если необходимо освободить определенные конечные точки от перенаправления, можно использовать `config.ssl_options` для конфигурирования этого поведения.
+
 (Upgrading from Rails 5.1 to Rails 5.2) Апгрейд с Rails 5.1 на Rails 5.2
 ------------------------------------------------------------------------
 
@@ -927,7 +934,7 @@ end
 <%= form_for [ :update_name, @user ], method: :put do |f| %>
 ```
 
-Подробнее о PATCH, и почему это изменение было сделано, смотрите [эту публикацию](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/) в блоге Rails.
+Подробнее о PATCH, и почему это изменение было сделано, смотрите [эту публикацию](https://weblog.rubyonrails.org/2012/2/26/edge-rails-patch-is-the-new-primary-http-method-for-updates/) в блоге Rails.
 
 #### Заметка о типах медиа
 

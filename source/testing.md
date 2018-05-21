@@ -30,8 +30,8 @@ Rails создает директорию `test` как только вы соз
 ```bash
 $ ls -F test
 
-controllers/           helpers/               mailers/               system/                test_helper.rb
-fixtures/              integration/           models/                application_system_test_case.rb
+application_system_test_case.rb  fixtures/                        integration/                     models/                          test_helper.rb
+controllers/                     helpers/                         mailers/                         system/
 ```
 
 Директории `helpers`, `mailers` и `models` предназначены содержать тесты для хелперов вьюх, рассыльщиков и моделей соответственно. Директория `controllers` предназначена содержать тесты для ваших контроллеров, маршрутов и вьюх. Директория `integration` предназначена содержать тесты для взаимодействия между контроллерами.
@@ -398,16 +398,9 @@ $ bin/rails test test/controllers # запускает все тесты из о
 
 ```bash
 $ bin/rails test -h
-minitest options:
-    -h, --help                       Display this help.
-    -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
-    -v, --verbose                    Verbose. Show progress processing files.
-    -n, --name PATTERN               Filter run on /regexp/ or string.
-        --exclude PATTERN            Exclude /regexp/ or string from run.
-
-Known extensions: rails, pride
 
 Usage: bin/rails test [options] [files or directories]
+
 You can run a single test by appending a line number to a filename:
 
     bin/rails test test/models/user_test.rb:27
@@ -418,13 +411,22 @@ You can run multiple files and directories at the same time:
 
 By default test failures and errors are reported inline during a run.
 
-Rails options:
+minitest options:
+    -h, --help                       Display this help.
+        --no-plugins                 Bypass minitest plugin auto-loading (or set $MT_NO_PLUGINS).
+    -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
+    -v, --verbose                    Verbose. Show progress processing files.
+    -n, --name PATTERN               Filter run on /regexp/ or string.
+        --exclude PATTERN            Exclude /regexp/ or string from run.
+
+Known extensions: rails, pride
     -w, --warnings                   Run with Ruby warnings enabled
-    -e, --environment                Run tests in the ENV environment
+    -e, --environment ENV            Run tests in the ENV environment
     -b, --backtrace                  Show the complete backtrace
     -d, --defer-output               Output test failures and errors after the test run
     -f, --fail-fast                  Abort test run on first failure or error
     -c, --[no-]color                 Enable color in the output
+    -p, --pride                      Pride. Show your testing pride!
 ```
 
 Параллельное тестирование
@@ -971,16 +973,16 @@ end
 
 Все эти аргументы с ключевым словом опциональны.
 
-Пример: Вызов экшна `:show`, передача `id`, равного 12, как `params`, и установка заголовка `HTTP_REFERER`:
+Пример: Вызов экшна `:show` для первого `Article`, передавая заголовок `HTTP_REFERER`:
 
 ```ruby
-get article_url, params: { id: 12 }, headers: { "HTTP_REFERER" => "http://example.com/home" }
+get article_url(Article.first), headers: { "HTTP_REFERER" => "http://example.com/home" }
 ```
 
-Другой пример: Вызов экшна `:update`, передача `id`, равного 12, как `params`, как запрос Ajax.
+Другой пример: Вызов экшна `:update` для последнего `Article`, передавая новый текст для `title` в `params`, как запрос Ajax:
 
 ```ruby
-patch article_url, params: { id: 12 }, xhr: true
+patch article_url(Article.last), params: { article: { title: "updated" } }, xhr: true
 ```
 
 NOTE: Если попытаетесь запустить тест `test_should_create_article` из `articles_controller_test.rb`, он провалится из-за недавно добавленной валидации на уровне модели, и это правильно.
@@ -1360,7 +1362,7 @@ end
 Допустим, у нас имеется следующий хелпер:
 
 ```ruby
-module UserHelper
+module UsersHelper
   def link_to_user(user)
     link_to "#{user.first_name} #{user.last_name}", user
   end
@@ -1370,7 +1372,7 @@ end
 Мы можем протестировать результат этого метода хелпера следующим образом:
 
 ```ruby
-class UserHelperTest < ActionView::TestCase
+class UsersHelperTest < ActionView::TestCase
   test "should return the user's full name" do
     user = users(:david)
 
@@ -1462,7 +1464,7 @@ NOTE: Массив `ActionMailer::Base.deliveries` перезагружаетс�
 ```ruby
 require 'test_helper'
 
-class UserControllerTest < ActionDispatch::IntegrationTest
+class UsersControllerTest < ActionDispatch::IntegrationTest
   test "invite friend" do
     assert_difference 'ActionMailer::Base.deliveries.size', +1 do
       post invite_friend_url, params: { email: 'friend@example.com' }

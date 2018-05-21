@@ -262,6 +262,33 @@ end
 @message.images.attached?
 ```
 
+### Прикрепление объектов File/IO
+
+Иногда необходимо прикрепить файл, который не поступает через HTTP-запрос. Например, может понадобиться прикрепить файл, сгенерированный на диске, или загрузить файл из введенного пользователем URL. Также можно захотеть прикрепить файл фикстур в тесте модели. Чтобы сделать это, предоставьте хэш, содержащий хотя бы открытый объект IO и имя файла:
+
+```ruby
+@message.image.attach(io: File.open('/path/to/file'), filename: 'file.pdf')
+```
+
+Когда это возможно, предоставьте тип содержимого. Active Storage пытается определить тип содержимого файла по его данным. Если он не может этого сделать, он возвращает тип содержимого, которое предоставляется.
+
+```ruby
+@message.image.attach(io: File.open('/path/to/file'), filename: 'file.pdf', content_type: 'application/pdf')
+```
+
+Можно пропустить определение типа содержимого из данных, передав `identify: false` вместе с `content_type`.
+
+```ruby
+@message.image.attach(
+  io: File.open('/path/to/file'),
+  filename: 'file.pdf',
+  content_type: 'application/pdf'
+  identify: false
+)
+```
+
+Если не предоставляется тип содержимого и Active Storage не может автоматически определить тип содержимого файла, по умолчанию используется application/octet-stream.
+
 Удаление прикрепленных файлов
 -----------------------------
 
@@ -290,22 +317,52 @@ url_for(user.avatar)
 rails_blob_path(user.avatar, disposition: "attachment")
 ```
 
+Если необходимо создать ссылку из-за пределов содержимого контроллера/вьюхи (фоновые задания, задания Cron и т.д.), можно получить доступ к rails_blob_path следующим образом:
+
+```
+Rails.application.routes.url_helpers.rails_blob_path(user.avatar, only_path: true)
+```
+
+Скачивание файлов
+-----------------
+
+Иногда необходимо обработать blob после его загрузки - например, чтобы преобразовать его в другой формат. Используйте `ActiveStorage::Blob#download` для чтения двоичных данных blob в памяти:
+
+```ruby
+binary = user.avatar.download
+```
+
+Возможно, может понадобиться загрузить blob в файл на диске, чтобы внешняя программа могла работать с ним (например, антивирусный сканер или медиатранскодер). Используйте `ActiveStorage::Blob#open`, чтобы загрузить blob в tempfile на диске:
+
+```ruby
+message.video.open do |file|
+  system '/path/to/virus/scanner', file.path
+  # ...
+end
+```
+
 Преобразование изображений
 --------------------------
 
-Чтобы создать вариацию изображения, следует вызвать `variant` на Blob.
-Также возможно передать любое преобразование, поддерживаемое [MiniMagick](https://github.com/minimagick/minimagick), методу.
+Чтобы создать вариацию изображения, следует вызвать `variant` на Blob. Также возможно передать любое преобразование методу, поддерживаемому процессором. Процессором по умолчанию является [MiniMagick](https://github.com/minimagick/minimagick), но также можно использовать [Vips](http://www.rubydoc.info/gems/ruby-vips/Vips/Image).
 
-Чтобы включить варианты, добавьте `mini_magick` в `Gemfile`:
+Чтобы включить варианты, добавьте гем `image_processing` в `Gemfile`:
 
 ```ruby
-gem 'mini_magick'
+gem 'image_processing', '~> 1.2'
 ```
 
 Когда браузер обращается к URL варианта, Active Storage будет лениво преобразовывать исходный blob в указанный формат и перенаправлять его к новому месту расположения сервиса.
 
 ```erb
-<%= image_tag user.avatar.variant(resize: "100x100") %>
+<%= image_tag user.avatar.variant(resize_to_fit: [100, 100]) %>
+```
+
+Чтобы переключиться на процессор Vips, необходимо добавить следующее в `config/application.rb`:
+
+```ruby
+# Используйте Vips для обработки вариантов.
+config.active_storage.variant_processor = :vips
 ```
 
 Предварительный просмотр файлов
@@ -317,7 +374,7 @@ gem 'mini_magick'
 <ul>
   <% @message.files.each do |file| %>
     <li>
-      <%= image_tag file.preview(resize: "100x100>") %>
+      <%= image_tag file.preview(resize_to_limit: [100, 100]) %>
     </li>
   <% end %>
 </ul>
@@ -459,6 +516,80 @@ addEventListener("direct-upload:end", event => {
 
 input[type=file][data-direct-upload-url][disabled] {
   display: none;
+}
+```
+
+### Интеграция с библиотеками или фреймворками
+
+Если необходимо использовать особенность прямой загрузки из фреймворка JavaScript или необходима интеграция собственных решений перетаскивания (drag-and-drop), для этой цели можно использовать класс `DirectUpload`. Получив файл из выбранной библиотеки, создайте экземпляр DirectUpload и вызовите его метод create. Этот метод принимает колбэк для вызова, когда загрузка завершена.
+
+```js
+import { DirectUpload } from "activestorage"
+
+const input = document.querySelector('input[type=file]')
+
+// Привязка к отбрасыванию (drop) файла - используйте ondrop на родительском элементе или используйте библиотеку, такую как Dropzone
+const onDrop = (event) => {
+  event.preventDefault()
+  const files = event.dataTransfer.files;
+  Array.from(files).forEach(file => uploadFile(file))
+}
+
+// Привязка к обычному выбору файла
+input.addEventListener('change', (event) => {
+  Array.from(input.files).forEach(file => uploadFile(file))
+  // можно очистить выбранные файлы из поля ввода
+  input.value = null
+})
+
+const uploadFile = (file) {
+  // форма требует file_field direct_upload: true, который предоставляет data-direct-upload-url
+  const url = input.dataset.directUploadUrl
+  const upload = new DirectUpload(file, url)
+
+  upload.create((error, blob) => {
+    if (error) {
+      // Обрабатываем ошибку
+    } else {
+      // Добавьте соответствующим образом названное скрытое поле в форму со значением blob.signed_id, чтобы идентификаторы blob были переданы в обычном потоке загрузки
+      const hiddenField = document.createElement('input')
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("value", blob.signed_id);
+      hiddenField.name = input.name
+      document.querySelector('form').appendChild(hiddenField)
+    }
+  })
+}
+```
+
+Если необходимо отслеживать ход загрузки файла, можно передать третий параметр в конструктор `DirectUpload`. Во время загрузки DirectUpload вызовет метод `directUploadWillStoreFileWithXHR` объекта. Затем можно привязать свой собственный обработчик прогресса на XHR.
+
+```js
+import { DirectUpload } from "activestorage"
+
+class Uploader {
+  constructor(file, url) {
+    this.upload = new DirectUpload(this.file, this.url, this)
+  }
+
+  upload(file) {
+    this.upload.create((error, blob) => {
+      if (error) {
+        // Обрабатываем ошибку
+      } else {
+        // Добавьте соответствующим образом названное скрытое поле в форму со значением of blob.signed_id
+      }
+    })
+  }
+
+  directUploadWillStoreFileWithXHR(request) {
+    request.upload.addEventListener("progress",
+      event => this.directUploadDidProgress(event))
+  }
+
+  directUploadDidProgress(event) {
+    // Используйте event.loaded и event.total, чтобы обновить индикатор процесса
+  }
 }
 ```
 

@@ -1252,8 +1252,8 @@ password_field_tag 'pass'
 Создает радиокнопку; используйте группу радиокнопок с одинаковым именем, чтобы пользователи могли выбирать из группы опций.
 
 ```ruby
-radio_button_tag 'gender', 'male'
-# => <input id="gender_male" name="gender" type="radio" value="male" />
+radio_button_tag 'favorite_color', 'maroon'
+# => <input id="favorite_color_maroon" name="favorite_color" type="radio" value="maroon" />
 ```
 
 #### select_tag
