@@ -645,7 +645,7 @@ class ArticlesController < ApplicationController
 
 Теперь вы можете создавать и просматривать отдельную и все статьи. Давайте добавим несколько ссылок для навигации между страницами.
 
-Откройте `app/views/welcome/index.html.erb` и измените его следующим образом:
+Откройте `app/views/welcome/index.html.erb` и модифицируйте его следующим образом:
 
 ```html+erb
 <h1>Hello, Rails!</h1>
@@ -1506,7 +1506,7 @@ end
 
 ### Удаление связанных объектов
 
-Если удаляете статью, связанные с ней комментарии также должны быть удалены, в противном случае они будут просто занимать место в базе данных. Rails позволяет использовать опцию `dependent` на связи для достижения этого. Измените модель Article, `app/models/article.rb`, следующим образом:
+Если удаляете статью, связанные с ней комментарии также должны быть удалены, в противном случае они будут просто занимать место в базе данных. Rails позволяет использовать опцию `dependent` на связи для достижения этого. Модифицируйте модель Article, `app/models/article.rb`, следующим образом:
 
 ```ruby
 class Article < ApplicationRecord
@@ -1561,7 +1561,7 @@ class CommentsController < ApplicationController
 
 ![Вызов базовой аутентификации HTTP](/images/getting_started/challenge.png)
 
-Также для приложений на Rails доступны иные методы аутентификации. Двумя популярными аддонами для Rails, среди прочих, являются [Devise](https://github.com/plataformatec/devise)
+Также для приложений на Rails доступны иные методы аутентификации. Двумя популярными дополнениями для Rails, среди прочих, являются [Devise](https://github.com/plataformatec/devise)
 и [Authlogic](https://github.com/binarylogic/authlogic).
 
 ### Прочие мысли о безопасности
