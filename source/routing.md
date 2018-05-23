@@ -32,7 +32,7 @@ get '/patients/:id', to: 'patients#show'
 
 то запрос будет направлен в контроллер `patients` в экшн `show` с `{ id: '17' }` в `params`.
 
-NOTE: Rails здесь использует именование в snake_case для имен контроллера, если имя контроллера состоит из несколько слов, то например `MonsterTrucksController`, необходимо использовать как `monster_trucks#show`.
+NOTE: Rails здесь использует именование в змеином_регистре (snake_case) для имен контроллера, если имя контроллера состоит из несколько слов, то, например, `MonsterTrucksController` необходимо использовать как `monster_trucks#show`.
 
 ### Создание URL из кода
 

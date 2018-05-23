@@ -407,7 +407,7 @@ class LoginsController < ApplicationController
   def destroy
     # Убираем id пользователя из сессии
     session.delete(:current_user_id)
-    # Очистить мемоизацию текущего пользователя
+    # Очистить мемоизированного текущего пользователя
     @_current_user = nil
     redirect_to root_url
   end

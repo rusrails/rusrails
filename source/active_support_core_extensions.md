@@ -2030,7 +2030,7 @@ WEEKDAYS.index_with([ Interval.all_day ])
 # => { monday: [ 0, 1440 ], … }
 ```
 
-NOTE: Defined in `active_support/core_ext/enumerable.rb`.
+NOTE: Определено в `active_support/core_ext/enumerable.rb`.
 
 ### `many?`
 
