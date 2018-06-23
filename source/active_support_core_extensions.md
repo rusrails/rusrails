@@ -769,6 +769,14 @@ delegate :size, to: :attachment, prefix: :avatar
 
 В предыдущем примере макрос генерирует `avatar_size`, а не `size`.
 
+Опция `:private` изменяет область видимости методов:
+
+```ruby
+delegate :date_of_birth, to: :profile, private: true
+```
+
+Делегированные методы являются публичными по умолчанию. Передайте `private: true`, чтобы изменить это.
+
 NOTE: Определено в `active_support/core_ext/module/delegation.rb`
 
 #### `delegate_missing_to`
@@ -2007,6 +2015,20 @@ invoices.index_by(&:number)
 ```
 
 WARNING. Ключи, как правило, должны быть уникальными. Если блок возвратит одно и то же значение для нескольких элементов, для этого ключа не будет построена коллекция. А значение получит последний элемент.
+
+NOTE: Определено в `active_support/core_ext/enumerable.rb`.
+
+### `index_with`
+
+Метод `index_with` генерирует хэш с элементами перечисления в качестве ключей. Значение является либо переданным по умолчанию, либо возвращенным в блоке.
+
+```ruby
+%i( title body created_at ).index_with { |attr_name| public_send(attr_name) }
+# => { title: "hey", body: "what's up?", … }
+
+WEEKDAYS.index_with([ Interval.all_day ])
+# => { monday: [ 0, 1440 ], … }
+```
 
 NOTE: Определено в `active_support/core_ext/enumerable.rb`.
 

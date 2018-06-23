@@ -17,7 +17,7 @@
 
 С приходом клиентских фреймворков многие разработчики используют Rails для создания бэкенда, общего для их веб-приложений и других нативных приложений.
 
-Например, Twitter использует свой [публичный API](https://dev.twitter.com) в своем веб-приложении, который создан как статичный сайт, потребляющий ресурсы JSON.
+Например, Twitter использует свой [публичный API](https://developer.twitter.com/) в своем веб-приложении, который создан как статичный сайт, потребляющий ресурсы JSON.
 
 Вместо использования Rails для генерации HTML, взаимодействующего с сервером с помощью форм и ссылок, многие разработчики трактуют их веб-приложения как всего лишь клиент API, созданный из HTML с помощью JavaScript, обращающегося к JSON API.
 
@@ -274,7 +274,6 @@ API-приложение (использующее `ActionController::API`) по
 - `ActionController::ConditionalGet`: Поддержка для `stale?`.
 - `ActionController::BasicImplicitRender`: Убеждается, что возвращен пустой отклик, если нет явного.
 - `ActionController::StrongParameters`: Поддержка для белых списков параметров в сочетании с массовым назначением Active Model.
-- `ActionController::ForceSSL`: Поддержка для `force_ssl`.
 - `ActionController::DataStreaming`: Поддержка для `send_file` и `send_data`.
 - `AbstractController::Callbacks`: Поддержка для `before_action` и подобных хелперов.
 - `ActionController::Rescue`: Поддержка для `rescue_from`.

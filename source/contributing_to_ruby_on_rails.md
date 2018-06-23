@@ -348,7 +348,7 @@ CHANGELOG — это важная часть каждого релиза. Он �
           end
         end
 
-    You can continue after the code example and you can attach issue number. GH#1234
+    You can continue after the code example and you can attach issue number. Fixes #1234.
 
     *Your Name*
 ```

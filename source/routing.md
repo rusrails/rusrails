@@ -32,6 +32,8 @@ get '/patients/:id', to: 'patients#show'
 
 то запрос будет направлен в контроллер `patients` в экшн `show` с `{ id: '17' }` в `params`.
 
+NOTE: Rails здесь использует именование в змеином_регистре (snake_case) для имен контроллера, если имя контроллера состоит из несколько слов, то, например, `MonsterTrucksController` необходимо использовать как `monster_trucks#show`.
+
 ### Создание URL из кода
 
 Также можно генерировать пути и URL. Если вышеуказанный маршрут модифицировать на:
@@ -1121,10 +1123,10 @@ resources :videos, param: :identifier
 ```
 
 ```
-     videos GET  /videos(.:format)                  videos#index
-            POST /videos(.:format)                  videos#create
- new_videos GET  /videos/new(.:format)              videos#new
-edit_videos GET  /videos/:identifier/edit(.:format) videos#edit
+    videos GET  /videos(.:format)                  videos#index
+           POST /videos(.:format)                  videos#create
+ new_video GET  /videos/new(.:format)              videos#new
+edit_video GET  /videos/:identifier/edit(.:format) videos#edit
 ```
 
 ```ruby
@@ -1141,7 +1143,7 @@ class Video < ApplicationRecord
 end
 
 video = Video.find_by(identifier: "Roman-Holiday")
-edit_videos_path(video) # => "/videos/Roman-Holiday"
+edit_video_path(video) # => "/videos/Roman-Holiday/edit"
 ```
 
 Осмотр и тестирование маршрутов

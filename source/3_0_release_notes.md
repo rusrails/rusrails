@@ -230,7 +230,7 @@ Action Pack
 
 Подробнее:
 * [Render Options in Rails 3](https://www.engineyard.com/blog/render-options-in-rails-3)
-* [Three reasons to love ActionController::Responder](http://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder)
+* [Three reasons to love ActionController::Responder](https://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder)
 
 ### Action Dispatch
 
