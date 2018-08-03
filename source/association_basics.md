@@ -747,7 +747,7 @@ a.first_name = 'David'
 a.first_name == b.writer.first_name # => false
 ```
 
-Active Record представляет опцию `:inverse_of`, таким образом можно явно объявит двунаправленные связи:
+Active Record представляет опцию `:inverse_of`, таким образом можно явно объявить двунаправленные связи:
 
 ```ruby
 class Author < ApplicationRecord
