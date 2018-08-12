@@ -1,9 +1,16 @@
 namespace :monit do
+  desc "Install monit"
+  task :install, roles: :web do
+    run "#{sudo} rm -f /etc/monit/monitrc"
+    run "#{sudo} apt-get -y install monit"
+  end
+  after "deploy:install", "monit:install"
+
   desc "Setup all Monit configuration"
   task :setup do
     monit_config "monitrc", "/etc/monit/monitrc"
     nginx
-    application == 'rusrails_v32' ? mysql : postgresql
+    postgresql
     unicorn
     syntax
     force_reload
@@ -11,7 +18,6 @@ namespace :monit do
   after "deploy:setup", "monit:setup"
 
   task(:nginx, roles: :web) { monit_config "nginx" }
-  task(:mysql, roles: :db) { monit_config "mysql" }
   task(:postgresql, roles: :db) { monit_config "postgresql" }
   task(:unicorn, roles: :app) { monit_config "unicorn", "/etc/monit/conf.d/unicorn_#{application}.conf" }
 

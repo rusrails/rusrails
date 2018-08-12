@@ -2,27 +2,32 @@ require "bundler/capistrano"
 require 'static_docs/capistrano'
 
 require 'capistrano/ext/multistage'
-set :stages, %w(v32 v40)
-set :default_stage, "v40"
+set :stages, %w(production)
+set :default_stage, "production"
 
 load "config/recipes/base"
+load "config/recipes/ruby"
 load "config/recipes/nginx"
 load "config/recipes/unicorn"
 load "config/recipes/monit"
 
-server "78.47.229.178", :web, :app, :db, primary: true
+server "95.216.150.195", :web, :app, :db, primary: true
 
+# adduser admin
+# usermod -aG sudo admin
+# ssh admin@95.216.150.195 mkdir -p .ssh
+# cat ~/.ssh/id_rsa.pub | ssh admin@95.216.150.195 'cat >> .ssh/authorized_keys'
 set :user, 'admin'
-set(:deploy_to){ "/home/#{user}/apps/#{application}" }
+set(:deploy_to) { "/home/#{user}/apps/#{application}" }
 set :deploy_via, :remote_cache
 set :use_sudo, false
 
 set :scm, :git
 set :repository, "git@github.com:morsbox/rusrails.git"
 
-set :bundle_cmd, '/home/admin/.rbenv/shims/bundle'
 
 default_run_options[:pty] = true
+default_run_options[:shell] = '/bin/bash --login'
 ssh_options[:forward_agent] = true
 
 namespace :deploy do
