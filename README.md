@@ -68,3 +68,15 @@
 Есть много всяких идей, до которых руки не доходят, например, правки дизайна, социализация, расширение на другие руководства, связанные с Rails, версии в PDF/kindle и т.д.
 
 Предлагайте свои идеи, которые в состоянии реализовать. [@RusRails](http://twitter.com/rusrails)
+
+Развертывание
+-------------
+
+```
+# first, create admin user (follow deploy.rb instructions)
+cap deploy:install
+cap deploy:setup
+cap deploy:cold static_docs:import
+```
+
+After that, to release `cap deploy static_docs:import`

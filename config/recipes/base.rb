@@ -10,10 +10,8 @@ end
 namespace :deploy do
   desc "Install everything onto the server"
   task :install do
-    run "echo 'deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main' | #{sudo} tee /etc/apt/sources.list.d/pgdg.list"
-    run "wget --quiet -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | #{sudo} apt-key add -"
     run "#{sudo} apt-get -y update"
-    run "#{sudo} apt-get -y install python-software-properties"
+    run "#{sudo} apt-get -y install software-properties-common"
   end
 
   desc 'Symlink all configs into current release'

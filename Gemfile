@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.2'
+ruby '2.4.1'
 
 gem 'rails', " ~> 4.2.7"
 gem 'russian'
