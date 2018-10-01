@@ -38,6 +38,7 @@ group :development, :test do
   gem "rspec-rails"
   gem 'webrat'
   gem 'pry-rails'
+  gem 'rspec_junit_formatter'
 end
 
 group :test do
