@@ -1,4 +1,0 @@
-stage:
-  database:
-    - bundle exec rake db:setup static_docs:import
-    
