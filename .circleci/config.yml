@@ -75,4 +75,4 @@ jobs:
       - run:
           name: install dependencies
           command: npm install yaspeller
-      - run: node ./node_modules/.bin/yaspeller .
+      - run: npm run yaspeller
