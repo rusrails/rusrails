@@ -74,9 +74,10 @@
 
 ```
 # first, create admin user (follow deploy.rb instructions)
-cap deploy:install
-cap deploy:setup
-cap deploy:cold static_docs:import
+ssh-add
+bundle exec cap deploy:install
+bundle exec cap deploy:setup
+bundle exec cap deploy:cold static_docs:import
 ```
 
-After that, to release `cap deploy static_docs:import`
+After that, to release `bundle exec cap deploy static_docs:import`
