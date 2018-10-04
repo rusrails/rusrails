@@ -1,0 +1,78 @@
+workflows:
+  version: 2
+  backend_build:
+    jobs:
+      - rspec
+      - spellcheck
+
+version: 2
+jobs:
+  rspec:
+    docker:
+      - image: circleci/ruby:2.4.1
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: ubuntu
+          RAILS_ENV: test
+      - image: camptocamp/postgres:9.6
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: circle_ruby_test
+          POSTGRES_PASSWORD: ""
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - type: shell
+        command: |
+          cp .circleci/database.yml config/database.yml
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+      # Database setup
+      - run: bundle exec rake db:create db:schema:load static_docs:import
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            mkdir /tmp/test-results
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+  spellcheck:
+    docker:
+      - image: circleci/node:10
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: install dependencies
+          command: npm install yaspeller
+      - run: npm run yaspeller

@@ -1,0 +1,28 @@
+{
+  "name": "rusrails",
+  "version": "1.0.0",
+  "description": "Официальный репозиторий проекта [RusRails.ru](http://rusrails.ru)",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "lib": "lib"
+  },
+  "dependencies": {
+    "yaspeller": "^5.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "yaspeller": "yaspeller ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morsbox/rusrails.git"
+  },
+  "author": "Mikhail Dieterle",
+  "license": "CC BY-SA 4.0",
+  "bugs": {
+    "url": "https://github.com/morsbox/rusrails/issues"
+  },
+  "homepage": "https://github.com/morsbox/rusrails#readme"
+}
