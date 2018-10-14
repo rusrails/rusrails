@@ -336,28 +336,74 @@ $ sudo systemctl start redis
 На macOS просто запустите:
 
 ```bash
-brew install yarn
+$ brew install yarn
 ```
 
 На Ubuntu просто запустите:
 
 ```bash
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+$ curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+$ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
-sudo apt-get update && sudo apt-get install yarn
+$ sudo apt-get update && sudo apt-get install yarn
 ```
 
 На Fedora или CentOS просто запустите:
 
 ```bash
-sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
+$ sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
 
-sudo yum install yarn
+$ sudo yum install yarn
 ```
 
 Наконец, после установки Yarn нужно будет запустить следующую команду внутри директории `activestorage` для установки зависимостей:
 
 ```bash
-yarn install
+$ yarn install
+```
+
+Извлечение для превью, тестируемое в тестовом наборе Active Storage, требует приложения третих сторон, ImageMagick для изображений, FFmpeg для видео и muPDF для PDF, а на macOS также XQuartz и Poppler. Без установки этих приложений тесты Active Storage будут вызывать ошибки.
+
+На macOS можно запустить:
+
+```bash
+$ brew install ffmpeg
+$ brew install imagemagick
+$ brew cask install xquartz
+$ brew install mupdf-tools
+$ brew install poppler
+```
+
+На Ubuntu можно запустить:
+
+```bash
+$ sudo apt-get update
+$ sudo apt-get install ffmpeg
+$ sudo apt-get install imagemagick
+$ sudo apt-get install mupdf mupdf-tools
+```
+
+На Fedora или CentOS просто запустите:
+
+```bash
+$ sudo yum install ffmpeg
+$ sudo yum install imagemagick
+$ sudo yum install mupdf
+```
+
+Пользователи FreeBSD могут просто запустить:
+
+```bash
+# pkg install imagemagick
+# pkg install ffmpeg
+# pkg install mupdf
+```
+
+На Arch Linux можно запустить:
+
+```bash
+$ sudo pacman -S ffmpeg
+$ sudo pacman -S imagemagick
+$ sudo pacman -S mupdf mupdf-tools
+$ sudo pacman -S poppler
 ```
