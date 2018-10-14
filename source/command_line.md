@@ -17,12 +17,51 @@ NOTE: Этот самоучитель предполагает, что вы об
 
 * `rails console`
 * `rails server`
-* `bin/rails`
+* `rails test`
 * `rails generate`
+* `rails db:migrate`
+* `rails db:create`
+* `rails routes`
 * `rails dbconsole`
 * `rails new app_name`
 
-Каждую команду можно запустить с `-h или --help` для отображения подробной информации.
+Список доступных команд rails, который часто будет зависеть от вашей текущей директории, можно получить, написав `rails --help`. У каждой команды есть описание, это должно помочь найти то, что вам необходимо.
+
+```bash
+$ rails --help
+Usage: rails COMMAND [ARGS]
+
+The most common rails commands are:
+generate    Generate new code (short-cut alias: "g")
+console     Start the Rails console (short-cut alias: "c")
+server      Start the Rails server (short-cut alias: "s")
+...
+
+All commands can be run with -h (or --help) for more information.
+
+In addition to those commands, there are:
+about                               List versions of all Rails ...
+assets:clean[keep]                  Remove old compiled assets
+assets:clobber                      Remove compiled assets
+assets:environment                  Load asset compile environment
+assets:precompile                   Compile all the assets ...
+...
+db:fixtures:load                    Loads fixtures into the ...
+db:migrate                          Migrate the database ...
+db:migrate:status                   Display status of migrations
+db:rollback                         Rolls the schema back to ...
+db:schema:cache:clear               Clears a db/schema_cache.yml file
+db:schema:cache:dump                Creates a db/schema_cache.yml file
+db:schema:dump                      Creates a db/schema.rb file ...
+db:schema:load                      Loads a schema.rb file ...
+db:seed                             Loads the seed data ...
+db:structure:dump                   Dumps the database structure ...
+db:structure:load                   Recreates the databases ...
+db:version                          Retrieves the current schema ...
+...
+restart                             Restart app by touching ...
+tmp:create                          Creates tmp directories ...
+```
 
 Давайте создадим простое приложение на Rails, чтобы рассмотреть все эти команды в контексте.
 
@@ -57,7 +96,7 @@ Rails создаст кучу всего с помощью такой мален
 
 ```bash
 $ cd commandsapp
-$ bin/rails server
+$ rails server
 => Booting Puma
 => Rails 5.1.0 application starting in development on http://0.0.0.0:3000
 => Run `rails server -h` for more startup options
@@ -76,7 +115,7 @@ INFO: Для запуска сервера также можно использ�
 Сервер может быть запущен на другом порту, при использовании опции `-p`. Среда по умолчанию может быть изменена с использованием `-e`.
 
 ```bash
-$ bin/rails server -e production -p 4000
+$ rails server -e production -p 4000
 ```
 
 Опция `-b` привязывает Rails к определенному IP, по умолчанию это localhost. Можете запустить сервер, как демона, передав опцию `-d`.
@@ -88,7 +127,7 @@ $ bin/rails server -e production -p 4000
 INFO: Также можно использовать псевдоним "g" для вызова команды `generate`: `rails g`.
 
 ```bash
-$ bin/rails generate
+$ rails generate
 Usage: rails generate GENERATOR [args] [options]
 
 ...
@@ -111,10 +150,10 @@ NOTE: Можно установить больше генераторов с п�
 
 Давайте создадим свой собственный контроллер с помощью генератора контроллера. Какую же команду использовать? Давайте спросим у генератора:
 
-INFO: Все консольные утилиты Rails имеют текст помощи. Как и с большинством утилит *nix, можно попробовать `--help` или `-h` в конце, например `rails server --help`.
+INFO: Все консольные утилиты Rails имеют текст помощи. Как и с большинством утилит \*nix, можно попробовать `--help` или `-h` в конце, например `rails server --help`.
 
 ```bash
-$ bin/rails generate controller
+$ rails generate controller
 Usage: rails generate controller NAME [action action] [options]
 
 ...
@@ -141,9 +180,9 @@ Example:
 Генератор контроллера ожидает параметры в форме `generate controller ControllerName action1 action2`. Давайте создадим контроллер `Greetings` с экшном **hello**, который скажет нам что-нибудь приятное.
 
 ```bash
-$ bin/rails generate controller Greetings hello
+$ rails generate controller Greetings hello
      create  app/controllers/greetings_controller.rb
-      route  get "greetings/hello"
+      route  get 'greetings/hello'
      invoke  erb
      create    app/views/greetings
      create    app/views/greetings/hello.html.erb
@@ -151,9 +190,8 @@ $ bin/rails generate controller Greetings hello
      create    test/controllers/greetings_controller_test.rb
      invoke  helper
      create    app/helpers/greetings_helper.rb
+     invoke    test_unit
      invoke  assets
-     invoke    coffee
-     create      app/assets/javascripts/greetings.coffee
      invoke    scss
      create      app/assets/stylesheets/greetings.scss
 ```
@@ -180,7 +218,7 @@ end
 Запустим сервер с помощью `rails server`.
 
 ```bash
-$ bin/rails server
+$ rails server
 => Booting Puma...
 ```
 
@@ -190,8 +228,8 @@ INFO: В нормальном старом добром приложении Rai
 
 В Rails также есть генератор для моделей данных.
 
-```bash
-$ bin/rails generate model
+```
+$ rails generate model
 Usage:
   rails generate model NAME [field[:type][:index] field[:type][:index]] [options]
 
@@ -214,7 +252,7 @@ NOTE: Список доступных типов полей для параме�
 Давайте настроим простой ресурс, названный "HighScore", который будет отслеживать наши лучшие результаты в видеоиграх, в которые мы играли.
 
 ```bash
-$ bin/rails generate scaffold HighScore game:string score:integer
+$ rails generate scaffold HighScore game:string score:integer
     invoke  active_record
     create    db/migrate/20130717151933_create_high_scores.rb
     create    app/models/high_score.rb
@@ -252,10 +290,10 @@ $ bin/rails generate scaffold HighScore game:string score:integer
 
 Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит-тестов, таблиц стилей, создал вьюхи, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу `high_scores` и поля), позаботился о маршруте для *ресурса*, и создал новые тесты для всего этого.
 
-Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (находящийся в `20130717151933_create_high_scores.rb`), чтобы модифицировать схему базы данных. Какой базы данных? Базы данных SQLite3, которую создаст Rails, когда мы запустим команду `bin/rails db:migrate`. Поговорим о bin/rails чуть позже.
+Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (находящийся в `20130717151933_create_high_scores.rb`), чтобы модифицировать схему базы данных. Какой базы данных? Базы данных SQLite3, которую создаст Rails, когда мы запустим команду `rails db:migrate`. Поговорим о bin/rails чуть позже.
 
 ```bash
-$ bin/rails db:migrate
+$ rails db:migrate
 ==  CreateHighScores: migrating ===============================================
 -- create_table(:high_scores)
    -> 0.0017s
@@ -267,7 +305,7 @@ INFO: Давайте поговорим о юнит-тестах. Юнит-те�
 Давайте взглянем на интерфейс, который Rails создал для нас.
 
 ```bash
-$ bin/rails server
+$ rails server
 ```
 
 Перейдите в браузер и откройте [http://localhost:3000/high_scores](http://localhost:3000/high_scores), теперь мы можем создать новый рекорд (55,160 в Space Invaders!)
@@ -281,13 +319,13 @@ INFO: Для вызова консоли также можно использо�
 Можно указать среду, в которой должна работать команда `console`.
 
 ```bash
-$ bin/rails console -e staging
+$ rails console -e staging
 ```
 
 Если нужно протестировать некоторый код без изменения каких-либо данных, можно это сделать, вызвав `rails console --sandbox`.
 
 ```bash
-$ bin/rails console --sandbox
+$ rails console --sandbox
 Loading development environment in sandbox (Rails 5.1.0)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
@@ -329,7 +367,7 @@ INFO: Для вызова консоли базы данных также мож
 `rails runner` запускает код Ruby в контексте неинтерактивности Rails. Для примера:
 
 ```bash
-$ bin/rails runner "Model.long_running_method"
+$ rails runner "Model.long_running_method"
 ```
 
 INFO: Можно также использовать псевдоним "r" для вызова runner: `rails r`.
@@ -337,13 +375,13 @@ INFO: Можно также использовать псевдоним "r" дл
 Можно определить среду, в которой будет работать команда `runner`, используя переключатель `-e`:
 
 ```bash
-$ bin/rails runner -e staging "Model.long_running_method"
+$ rails runner -e staging "Model.long_running_method"
 ```
 
 С помощью runner даже можно выполнять код ruby, написанный в файле.
 
 ```bash
-$ bin/rails runner lib/code_to_be_run.rb
+$ rails runner lib/code_to_be_run.rb
 ```
 
 ### `rails destroy`
@@ -353,7 +391,7 @@ $ bin/rails runner lib/code_to_be_run.rb
 INFO: Также можно использовать псевдоним "d" для вызова команды destroy: `rails d`.
 
 ```bash
-$ bin/rails generate model Oops
+$ rails generate model Oops
       invoke  active_record
       create    db/migrate/20120528062523_create_oops.rb
       create    app/models/oops.rb
@@ -363,7 +401,7 @@ $ bin/rails generate model Oops
 ```
 
 ```bash
-$ bin/rails destroy model Oops
+$ rails destroy model Oops
       invoke  active_record
       remove    db/migrate/20120528062523_create_oops.rb
       remove    app/models/oops.rb
@@ -372,57 +410,12 @@ $ bin/rails destroy model Oops
       remove      test/fixtures/oops.yml
 ```
 
-bin/rails
-----
+### `rails about`
 
-Начиная с Rails 5.0+ команды rake встроены в исполняемый файл rails, `bin/rails` теперь выполняет команды по умолчанию.
+`rails about` предоставляет информацию о номерах версий Ruby, RubyGems, Rails, подкомпонентов Rails, папке вашего приложения, имени текущей среды Rails, адаптере базы данных вашего приложения и версии схемы. Это полезно, когда нужно попросить помощь, проверить патч безопасности, который может повлиять на вас, или просто хотите узнать статистику о текущей инсталляции Rails.
 
-Можно получить список доступных задач bin/rails, который часто зависит от вашей текущей директории, написав `bin/rails --help`. У каждой задачи есть описание, помогающее найти то, что вам необходимо.
-
-```bash
-$ bin/rails --help
-Usage: rails COMMAND [ARGS]
-
-The most common rails commands are:
-generate    Generate new code (short-cut alias: "g")
-console     Start the Rails console (short-cut alias: "c")
-server      Start the Rails server (short-cut alias: "s")
-...
-
-All commands can be run with -h (or --help) for more information.
-
-In addition to those commands, there are:
-about                               List versions of all Rails ...
-assets:clean[keep]                  Remove old compiled assets
-assets:clobber                      Remove compiled assets
-assets:environment                  Load asset compile environment
-assets:precompile                   Compile all the assets ...
-...
-db:fixtures:load                    Loads fixtures into the ...
-db:migrate                          Migrate the database ...
-db:migrate:status                   Display status of migrations
-db:rollback                         Rolls the schema back to ...
-db:schema:cache:clear               Clears a db/schema_cache.yml file
-db:schema:cache:dump                Creates a db/schema_cache.yml file
-db:schema:dump                      Creates a db/schema.rb file ...
-db:schema:load                      Loads a schema.rb file ...
-db:seed                             Loads the seed data ...
-db:structure:dump                   Dumps the database structure ...
-db:structure:load                   Recreates the databases ...
-db:version                          Retrieves the current schema ...
-...
-restart                             Restart app by touching ...
-tmp:create                          Creates tmp directories ...
 ```
-
-INFO: Для получения списка задач также можно использовать `bin/rails -T`.
-
-### `about`
-
-`bin/rails about` предоставляет информацию о номерах версий Ruby, RubyGems, Rails, подкомпонентов Rails, папке вашего приложения, имени текущей среды Rails, адаптере базы данных вашего приложения и версии схемы. Это полезно, когда нужно попросить помощь, проверить патч безопасности, который может повлиять на вас, или просто хотите узнать статистику о текущей инсталляции Rails.
-
-```bash
-$ bin/rails about
+$ rails about
 About your application's environment
 Rails version             6.0.0
 Ruby version              2.5.0 (x86_64-linux)
@@ -436,96 +429,120 @@ Database adapter          sqlite3
 Database schema version   20180205173523
 ```
 
-### `assets`
+### `rails assets:`
 
-Можно предварительно компилировать ассеты в `app/assets`, используя `bin/rails assets:precompile`, и удалять эти скомпилированные ассеты, используя `bin/rails assets:clean`. Задача `assets:clean` позволяет откатывать деплои, которые все еще могут быть связаны со старыми ассетами, в то время как создаются новые ассеты.
+Можно предварительно компилировать ассеты в `app/assets`, используя `rails assets:precompile`, и удалять эти скомпилированные ассеты, используя `rails assets:clean`. Команда `assets:clean` позволяет откатывать деплои, которые все еще могут быть связаны со старыми ассетами, в то время как создаются новые ассеты.
 
-Если хотите полностью очистить `public/assets`, можно использовать `bin/rails assets:clobber`.
+Если хотите полностью очистить `public/assets`, можно использовать `rails assets:clobber`.
 
-### `db`
+### `rails db:`
 
-Самыми распространенными задачами пространства имен bin/rails `db:` являются `migrate` и `create`, но следует попробовать и остальные миграционные задачи bin/rails (`up`, `down`, `redo`, `reset`). `bin/rails db:version` полезна для решения проблем, показывая текущую версию базы данных.
+Самыми распространенными командами пространства имен rails `db:` являются `migrate` и `create`, но следует попробовать и остальные миграционные команды rails (`up`, `down`, `redo`, `reset`). Команда `rails db:version` полезна для решения проблем, показывая текущую версию базы данных.
 
 Более подробно о миграциях написано в руководстве [Миграции Active Record](/rails-database-migrations).
 
-### `notes`
+### `rails notes`
 
-`bin/rails notes` ищет в вашем коде комментарии, начинающиеся с FIXME, OPTIMIZE или TODO. Поиск выполняется в файлах с разрешениями `.builder`, `.rb`, `.rake`, `.yml`, `.yaml`, `.ruby`, `.css`, `.js` и `.erb` для аннотаций как по умолчанию, так и произвольных.
+`rails notes` ищет в вашем коде комментарии, начинающиеся с определенного ключевого слова. Обратитесь к `rails notes --help` за подробностями об использовании.
+
+По умолчанию она будет искать в директориях `app`, `config`, `db`, `lib` и `test` аннотации FIXME, OPTIMIZE и TODO в файлах с расширениями `.builder`, `.rb`, `.rake`, `.yml`, `.yaml`, `.ruby`, `.css`, `.js` и `.erb`.
 
 ```bash
-$ bin/rails notes
-(in /home/foobar/commandsapp)
+$ rails notes
 app/controllers/admin/users_controller.rb:
   * [ 20] [TODO] any other way to do this?
   * [132] [FIXME] high priority for next deploy
 
-app/models/school.rb:
+lib/school.rb:
   * [ 13] [OPTIMIZE] refactor this code to make it faster
   * [ 17] [FIXME]
 ```
 
-Можно добавить поддержку для нового расширения файла с помощью опции `config.annotations.register_extensions`, которая получает список расширений с соответствующим регулярным выражением.
+#### Аннотации
 
-```ruby
-config.annotations.register_extensions("scss", "sass", "less") { |annotation| /\/\/\s*(#{annotation}):?\s*(.*)$/ }
-```
-
-Если ищете определенную аннотацию, скажем FIXME, используйте `bin/rails notes:fixme`. Отметьте, что имя аннотации использовано в нижнем регистре.
+Можно указать определенные аннотации с помощью аргумента `--annotations`. По умолчанию, она будет искать FIXME, OPTIMIZE и TODO. Отметьте, что аннотации являются чувствительными к регистру.
 
 ```bash
-$ bin/rails notes:fixme
-(in /home/foobar/commandsapp)
+$ rails notes --annotations FIXME RELEASE
 app/controllers/admin/users_controller.rb:
-  * [132] high priority for next deploy
+  * [101] [RELEASE] We need to look at this before next release
+  * [132] [FIXME] high priority for next deploy
 
-app/models/school.rb:
-  * [ 17]
+lib/school.rb:
+  * [ 17] [FIXME]
 ```
 
-Также можно использовать произвольные аннотации в своем коде и выводить их, используя `bin/rails notes:custom`, определив аннотацию, используя переменную среды `ANNOTATION`.
+#### Директории
 
-```bash
-$ bin/rails notes:custom ANNOTATION=BUG
-(in /home/foobar/commandsapp)
-app/models/article.rb:
-  * [ 23] Have to fix this one before pushing!
-```
-
-NOTE. При использовании определенных и произвольных аннотаций, имя аннотации (FIXME, BUG и т.д.) не отображается в строчках результата.
-
-По умолчанию `rails notes` будет искать в директориях `app`, `config`, `db`, `lib` и `test`. Если желаете искать в иных директориях, их можно настроить с помощью опции `config.annotations.register_directories`.
+Можно добавить больше директорий по умолчанию для поиска с помощью `config.annotations.register_directories`. Она получает список имен директорий.
 
 ```ruby
 config.annotations.register_directories("spec", "vendor")
 ```
 
-Также можно их предоставить как разделенный запятыми список в переменной среды `SOURCE_ANNOTATION_DIRECTORIES`.
-
 ```bash
-$ export SOURCE_ANNOTATION_DIRECTORIES='spec,vendor'
-$ bin/rails notes
-(in /home/foobar/commandsapp)
-app/models/user.rb:
-  * [ 35] [FIXME] User should have a subscription at this point
+$ rails notes
+app/controllers/admin/users_controller.rb:
+  * [ 20] [TODO] any other way to do this?
+  * [132] [FIXME] high priority for next deploy
+
+lib/school.rb:
+  * [ 13] [OPTIMIZE] Refactor this code to make it faster
+  * [ 17] [FIXME]
+
 spec/models/user_spec.rb:
   * [122] [TODO] Verify the user that has a subscription works
+
+vendor/tools.rb:
+  * [ 56] [TODO] Get rid of this dependency
 ```
 
-### `routes`
+#### Расширения
+
+Можно добавить больше расширений файлов по умолчанию с помощью `config.annotations.register_extensions`. Она получает список расширений с соответствующими регулярными выражениями для сопоставления.
+
+```ruby
+config.annotations.register_extensions("scss", "sass") { |annotation| /\/\/\s*(#{annotation}):?\s*(.*)$/ }
+```
+
+```bash
++$ rails notes
+app/controllers/admin/users_controller.rb:
+  * [ 20] [TODO] any other way to do this?
+  * [132] [FIXME] high priority for next deploy
+
+app/assets/stylesheets/application.css.sass:
+  * [ 34] [TODO] Use pseudo element for this class
+
+app/assets/stylesheets/application.css.scss:
+  * [  1] [TODO] Split into multiple components
+
+lib/school.rb:
+  * [ 13] [OPTIMIZE] Refactor this code to make it faster
+  * [ 17] [FIXME]
+
+spec/models/user_spec.rb:
+  * [122] [TODO] Verify the user that has a subscription works
+
+vendor/tools.rb:
+  * [ 56] [TODO] Get rid of this dependency
+```
+
+### `rails routes`
 
 `rails routes` отобразит список всех определенных маршрутов, что полезно для отслеживания проблем с роутингом в вашем приложении, или предоставления хорошего обзора URL приложения, с которым вы пытаетесь ознакомиться.
 
-### `test`
+### `rails test`
 
 INFO: Хорошее описание юнит-тестирования в Rails дано в руководстве [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications).
 
-Rails поставляется с тестовым набором под названием `Minitest`. Rails сохраняет стабильность в связи с использованием тестов. Задачи, доступные в пространстве имен `test:`, помогают с запуском различных тестов, которые вы, несомненно, напишите.
+Rails поставляется с тестовым фреймворком под названием minitest. Rails сохраняет стабильность в связи с использованием тестов. Команды, доступные в пространстве имен `test:`, помогают с запуском различных тестов, которые вы, несомненно, напишите.
 
-### `tmp`
+### `rails tmp:`
 
-Директория `Rails.root/tmp` является, как любая *nix директория /tmp, местом для временных файлов, таких как файлы id процессов и кэшированные экшны.
+Директория `Rails.root/tmp` является, как любая \*nix директория /tmp, местом для временных файлов, таких как файлы id процессов и кэшированные экшны.
 
-Задачи пространства имен `tmp:` помогут очистить и создать директорию `Rails.root/tmp`:
+Команды пространства имен `tmp:` помогут очистить и создать директорию `Rails.root/tmp`:
 
 * `rails tmp:cache:clear` очистит `tmp/cache`.
 * `rails tmp:sockets:clear` очистит `tmp/sockets`.
@@ -541,7 +558,7 @@ Rails поставляется с тестовым набором под наз�
 
 ### Пользовательские задачи Rake
 
-Пользовательские задачи rake имеют расширение `.rake` и располагаются в `Rails.root/lib/tasks`. Эти пользовательские задачи rake можно создать с помощью команды `bin/rails generate task`.
+Пользовательские задачи rake имеют расширение `.rake` и располагаются в `Rails.root/lib/tasks`. Эти пользовательские задачи rake можно создать с помощью команды `rails generate task`.
 
 ```ruby
 desc "I am short, but comprehensive description for my cool task"
@@ -573,9 +590,9 @@ end
 Вызов задач выглядит так:
 
 ```bash
-$ bin/rails task_name
-$ bin/rails "task_name[value 1]" # весь аргумент в виде строки должен быть в кавычках
-$ bin/rails db:nothing
+$ rails task_name
+$ rails "task_name[value 1]" # весь аргумент в виде строки должен быть в кавычках
+$ rails db:nothing
 ```
 
 NOTE: Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваша задача должен зависеть от задачи `environment`, который загрузит код вашего приложения.
@@ -624,9 +641,9 @@ $ cat config/database.yml
 #
 # Install the pg driver:
 #   gem install pg
-# On OS X with Homebrew:
+# On macOS with Homebrew:
 #   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
-# On OS X with MacPorts:
+# On macOS with MacPorts:
 #   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
 # On Windows:
 #   gem install pg
@@ -640,7 +657,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
-  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:

@@ -362,7 +362,7 @@ $ sudo yum install yarn
 $ yarn install
 ```
 
-Извлечение для превью, тестируемое в тестовом наборе Active Storage, требует приложения третих сторон, ImageMagick для изображений, FFmpeg для видео и muPDF для PDF, а на macOS также XQuartz и Poppler. Без установки этих приложений тесты Active Storage будут вызывать ошибки.
+Извлечение для превью, тестируемое в тестовом наборе Active Storage, требует приложения третьих сторон, ImageMagick для изображений, FFmpeg для видео и muPDF для PDF, а на macOS также XQuartz и Poppler. Без установки этих приложений тесты Active Storage будут вызывать ошибки.
 
 На macOS можно запустить:
 
