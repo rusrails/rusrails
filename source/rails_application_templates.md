@@ -20,11 +20,11 @@ $ rails new blog -m ~/template.rb
 $ rails new blog -m http://example.com/template.rb
 ```
 
-Вы можете использовать Rake задачу `app:template` чтобы применить шаблоны к существующему Rails приложению. Место расположения шаблона должно быть передано с помощью переменной среды LOCATION. Опять же, это может быть путь к файлу или URL.
+Вы можете использовать команду rails `app:template` чтобы применить шаблоны к существующему Rails приложению. Место расположения шаблона должно быть передано с помощью переменной среды LOCATION. Опять же, это может быть путь к файлу или URL.
 
 ```bash
-$ bin/rails app:template LOCATION=~/template.rb
-$ bin/rails app:template LOCATION=http://example.com/template.rb
+$ rails app:template LOCATION=~/template.rb
+$ rails app:template LOCATION=http://example.com/template.rb
 ```
 
 API для шаблонов
@@ -175,19 +175,19 @@ run "rm README.rdoc"
 
 ### `rails_command(command, options = {})`
 
-Запускает предоставленную задачу в Rails приложении. Допустим, вы хотите запустить миграции базы данных:
+Запускает предоставленную команду в Rails приложении. Допустим, вы хотите запустить миграции базы данных:
 
 ```ruby
 rails_command "db:migrate"
 ```
 
-Вы также можете запустить задачи с разными Rails окружениями:
+Вы также можете запустить команды с разными Rails окружениями:
 
 ```ruby
 rails_command "db:migrate", env: 'production'
 ```
 
-Вы также можете запустить задачи как супер-пользователь:
+Вы также можете запустить команды как супер-пользователь:
 
 ```ruby
 rails_command "log:clear", sudo: true

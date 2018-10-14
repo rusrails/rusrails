@@ -249,8 +249,8 @@ pages:
   - title:    Шаблоны приложения Rails
     path:     rails-application-templates
     file:     rails_application_templates.md
-    revision: 40bdbce191ad90dfea43dad51fac5c4726b89392
-    date:     15/05/2017
+    revision: ec387c6dd975fecea69db2ed9ff0c090ac59cf83
+    date:     24/07/2018
 
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     ruby_on_rails_guides_guidelines
