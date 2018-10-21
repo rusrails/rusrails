@@ -8,8 +8,8 @@ special:
     file:     menu.md
 
 images:
-    revision: 258670244dae39616a50ec1116f52e91b6f0bc62
-    date:     09/05/2018
+    revision: 8990921ba95e82b2d9e77730cf37ebdc6772aa63
+    date:     20/10/2018
 
 pages:
   - title:    Rails для начинающих
@@ -243,8 +243,8 @@ pages:
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
     file:     api_documentation_guidelines.md
-    revision: 7fbaed1947705413ed25190224cbb1769ae5a061
-    date:     10/11/2017
+    revision: f589e20b0a865a7efd93e65b2887f0e4ab9a556f
+    date:     12/09/2018
 
   - title:    Шаблоны приложения Rails
     path:     rails-application-templates
@@ -303,14 +303,14 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes
     file:     4_1_release_notes.md
-    revision: b6baf0c88411824ce99f1ad4b9de64fa37ad96ea
-    date:     30/11/2017
+    revision: f1d647aeff1438beea2b5027dadb8d48e033be43
+    date:     23/08/2018
 
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
     file:     4_2_release_notes.md
-    revision: b6baf0c88411824ce99f1ad4b9de64fa37ad96ea
-    date:     30/11/2017
+    revision: 3c4b729f48c0320499f16a2e6f50a3d27bde1114
+    date:     02/10/2018
 
   - title:    Заметки о релизе Ruby on Rails 5.0
     path:     5_0_release_notes

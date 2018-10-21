@@ -614,7 +614,7 @@ Active Support
 
 * Представлен Module#concerning: естественный и простой способ разделить ответственность внутри класса. ([Commit](https://github.com/rails/rails/commit/1eee0ca6de975b42524105a59e0521d18b38ab81))
 
-* Добавлен `Object#present_in` для упрощения ведения белых списков значений. ([Commit](https://github.com/rails/rails/commit/4edca106daacc5a159289eae255207d160f22396))
+* Добавлен `Object#present_in` для упрощения добавления значений в разрешенный список. ([Commit](https://github.com/rails/rails/commit/4edca106daacc5a159289eae255207d160f22396))
 
 
 Благодарности
