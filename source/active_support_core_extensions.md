@@ -580,9 +580,9 @@ NOTE: Определено в `active_support/core_ext/module/attribute_accessor
 
 ### Родители
 
-#### `parent`
+#### `module_parent`
 
-Метод `parent` на вложенном именованном модуле возвращает модуль, содержащий его соответствующую константу:
+Метод `module_parent` на вложенном именованном модуле возвращает модуль, содержащий его соответствующую константу:
 
 ```ruby
 module X
@@ -593,19 +593,19 @@ module X
 end
 M = X::Y::Z
 
-X::Y::Z.parent # => X::Y
-M.parent       # => X::Y
+X::Y::Z.module_parent # => X::Y
+M.module_parent       # => X::Y
 ```
 
-Если модуль анонимный или относится к верхнему уровню, `parent` возвращает `Object`.
+Если модуль анонимный или относится к верхнему уровню, `module_parent` возвращает `Object`.
 
-WARNING: Отметьте, что в этом случае `parent_name` возвращает `nil`.
+WARNING: Отметьте, что в этом случае `module_parent_name` возвращает `nil`.
 
 NOTE: Определено в `active_support/core_ext/module/introspection.rb`.
 
-#### `parent_name`
+#### `module_parent_name`
 
-Метод `parent_name` на вложенном именованном модуле возвращает полностью определенное имя модуля, содержащего его соответствующую константу:
+Метод `module_parent_name` на вложенном именованном модуле возвращает полностью определенное имя модуля, содержащего его соответствующую константу:
 
 ```ruby
 module X
@@ -616,19 +616,19 @@ module X
 end
 M = X::Y::Z
 
-X::Y::Z.parent_name # => "X::Y"
-M.parent_name       # => "X::Y"
+X::Y::Z.module_parent_name # => "X::Y"
+M.module_parent_name       # => "X::Y"
 ```
 
-Для верхнеуровневых и анонимных модулей `parent_name` возвращает `nil`.
+Для верхнеуровневых и анонимных модулей `module_parent_name` возвращает `nil`.
 
-WARNING: Отметьте, что в этом случае `parent` возвращает `Object`.
+WARNING: Отметьте, что в этом случае `module_parent` возвращает `Object`.
 
 NOTE: Определено в `active_support/core_ext/module/introspection.rb`.
 
 #### `parents`
 
-Метод `parents` вызывает `parent` на получателе и вверх по иерархии, пока не будет достигнут `Object`. Цепочка возвращается в массиве, от низшего к высшему:
+Метод `module_parents` вызывает `module_parent` на получателе и вверх по иерархии, пока не будет достигнут `Object`. Цепочка возвращается в массиве, от низшего к высшему:
 
 ```ruby
 module X
@@ -639,8 +639,8 @@ module X
 end
 M = X::Y::Z
 
-X::Y::Z.parents # => [X::Y, X, Object]
-M.parents       # => [X::Y, X, Object]
+X::Y::Z.module_parents # => [X::Y, X, Object]
+M.module_parents       # => [X::Y, X, Object]
 ```
 
 NOTE: Определено в `active_support/core_ext/module/introspection.rb`.
@@ -2023,10 +2023,10 @@ NOTE: Определено в `active_support/core_ext/enumerable.rb`.
 Метод `index_with` генерирует хэш с элементами перечисления в качестве ключей. Значение является либо переданным по умолчанию, либо возвращенным в блоке.
 
 ```ruby
-%i( title body created_at ).index_with { |attr_name| public_send(attr_name) }
+%i( title body created_at ).index_with { |attr_name| post.public_send(attr_name) }
 # => { title: "hey", body: "what's up?", … }
 
-WEEKDAYS.index_with([ Interval.all_day ])
+WEEKDAYS.index_with([Interval.all_day])
 # => { monday: [ 0, 1440 ], … }
 ```
 
@@ -2132,6 +2132,18 @@ NOTE: Определено в `active_support/core_ext/array/prepend_and_append.
 ```
 
 NOTE: Определено в `active_support/core_ext/array/prepend_and_append.rb`.
+
+### Извлечение
+
+Метод `extract!` убирает и возвращает элементы, для которых блок возвращает истинное значение. Если блок не задан, вместо этого возвратиться Enumerator.
+
+```ruby
+numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+odd_numbers = numbers.extract! { |number| number.odd? } # => [1, 3, 5, 7, 9]
+numbers # => [0, 2, 4, 6, 8]
+```
+
+NOTE: Определено в `active_support/core_ext/array/extract.rb`.
 
 ### Извлечение опций
 
@@ -2858,9 +2870,9 @@ Active Support расширяет метод `Range#to_s` так, что он п
 
 NOTE: Определено в `active_support/core_ext/range/conversions.rb`.
 
-### `include?`
+### `===`, `include?` и `cover?`
 
-Методы `Range#include?` и `Range#===` сообщают, лежит ли некоторое значение между концами заданного экземпляра:
+Методы `Range#===`, `Range#include?` и `Range#cover?` сообщают, лежит ли некоторое значение между концами заданного экземпляра:
 
 ```ruby
 (2..3).include?(Math::E) # => true
@@ -2869,17 +2881,23 @@ NOTE: Определено в `active_support/core_ext/range/conversions.rb`.
 Active Support расширяет эти методы так, что аргумент, в свою очередь, может быть другим интервалом. В этом случае проверяется, принадлежат ли концы интервала аргументов самому получателю:
 
 ```ruby
-(1..10).include?(3..7)  # => true
-(1..10).include?(0..7)  # => false
-(1..10).include?(3..11) # => false
-(1...9).include?(3..9)  # => false
 (1..10) === (3..7)  # => true
 (1..10) === (0..7)  # => false
 (1..10) === (3..11) # => false
 (1...9) === (3..9)  # => false
+
+(1..10).include?(3..7)  # => true
+(1..10).include?(0..7)  # => false
+(1..10).include?(3..11) # => false
+(1...9).include?(3..9)  # => false
+
+(1..10).cover?(3..7)  # => true
+(1..10).cover?(0..7)  # => false
+(1..10).cover?(3..11) # => false
+(1...9).cover?(3..9)  # => false
 ```
 
-NOTE: Определено в `active_support/core_ext/range/include_range.rb`.
+NOTE: Определено в `active_support/core_ext/range/compare_range.rb`.
 
 ### `overlaps?`
 
@@ -2898,39 +2916,13 @@ NOTE: Определено в `active_support/core_ext/range/overlaps.rb`.
 
 ### Вычисления
 
-NOTE: Все следующие методы определены в `active_support/core_ext/date/calculations.rb`.
-
-```ruby
-yesterday
-tomorrow
-beginning_of_week (at_beginning_of_week)
-end_of_week (at_end_of_week)
-monday
-sunday
-weeks_ago
-prev_week (last_week)
-next_week
-months_ago
-months_since
-beginning_of_month (at_beginning_of_month)
-end_of_month (at_end_of_month)
-last_month
-beginning_of_quarter (at_beginning_of_quarter)
-end_of_quarter (at_end_of_quarter)
-beginning_of_year (at_beginning_of_year)
-end_of_year (at_end_of_year)
-years_ago
-years_since
-last_year
-on_weekday?
-on_weekend?
-```
-
 INFO: Следующие методы вычисления имеют [временную пропасть](https://ru.wikipedia.org/wiki/Григорианский_календарь) в октябре 1582 года, когда дней с 5 по 14 (включительно) просто не существовало. Это руководство не документирует свое поведение в те дни для краткости, но достаточно сказать, будет происходит то, что от них ожидается. То есть, `Date.new(1582, 10, 4).tomorrow` возвратит `Date.new(1582, 10, 15)`, и так далее. Пожалуйста, проверьте `test/core_ext/date_ext_test.rb` в тестовом наборе Active Support, чтобы понять ожидаемое поведение.
 
 #### `Date.current`
 
 Active Support определяет `Date.current` как сегодняшний день в текущей временной зоне. Он похож на `Date.today`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет `Date.yesterday` и `Date.tomorrow`, и предикаты экземпляра `past?`, `today?`, `future?`, `on_weekday?` и `on_weekend?`, все они зависят от `Date.current`.
+
+NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
 
 #### Именованные даты
 
@@ -2948,6 +2940,8 @@ d.end_of_week(:sunday)       # => Sat, 08 May 2010
 
 У `beginning_of_week` есть псевдоним `at_beginning_of_week`, а у `end_of_week` есть псевдоним `at_end_of_week`.
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 ##### `monday`, `sunday`
 
 Методы `monday` и `sunday` возвращают даты предыдущего понедельника или следующего воскресенья соответственно.
@@ -2963,6 +2957,8 @@ d.monday                     # => Mon, 10 Sep 2012
 d = Date.new(2012, 9, 16)    # => Sun, 16 Sep 2012
 d.sunday                     # => Sun, 16 Sep 2012
 ```
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 ##### `prev_week`, `next_week`
 
@@ -2986,6 +2982,8 @@ d.prev_week(:friday)     # => Fri, 30 Apr 2010
 
 И `next_week`, и `prev_week` работают так, как нужно, когда установлен `Date.beginning_of_week` или `config.beginning_of_week`.
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 ##### `beginning_of_month`, `end_of_month`
 
 Методы `beginning_of_month` и `end_of_month` возвращают даты начала и конца месяца:
@@ -2997,6 +2995,8 @@ d.end_of_month           # => Mon, 31 May 2010
 ```
 
 У `beginning_of_month` есть псевдоним `at_beginning_of_month`, а у `end_of_month` есть псевдоним `at_end_of_month`.
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 ##### `beginning_of_quarter`, `end_of_quarter`
 
@@ -3010,6 +3010,8 @@ d.end_of_quarter         # => Wed, 30 Jun 2010
 
 У `beginning_of_quarter` есть псевдоним `at_beginning_of_quarter`, а у `end_of_quarter` есть псевдоним `at_end_of_quarter`.
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 ##### `beginning_of_year`, `end_of_year`
 
 Методы `beginning_of_year` и `end_of_year` возвращают даты начала и конца года:
@@ -3021,6 +3023,8 @@ d.end_of_year            # => Fri, 31 Dec 2010
 ```
 
 У `beginning_of_year` есть псевдоним `at_beginning_of_year`, а у `end_of_year` есть псевдоним `at_end_of_year`.
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 #### Другие вычисления дат
 
@@ -3049,6 +3053,8 @@ Date.new(2012, 2, 29).years_since(3)   # => Sat, 28 Feb 2015
 
 `last_year` это сокращение для `#years_ago(1)`.
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 ##### `months_ago`, `months_since`
 
 Методы `months_ago` и `months_since` работают аналогично, но для месяцев:
@@ -3067,6 +3073,8 @@ Date.new(2009, 12, 31).months_since(2) # => Sun, 28 Feb 2010
 
 `last_month` это сокращение для `#months_ago(1)`.
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 ##### `weeks_ago`
 
 Метод `weeks_ago` работает аналогично для недель:
@@ -3075,6 +3083,8 @@ Date.new(2009, 12, 31).months_since(2) # => Sun, 28 Feb 2010
 Date.new(2010, 5, 24).weeks_ago(1)    # => Mon, 17 May 2010
 Date.new(2010, 5, 24).weeks_ago(2)    # => Mon, 10 May 2010
 ```
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 ##### `advance`
 
@@ -3104,7 +3114,9 @@ Date.new(2010, 2, 28).advance(days: 1).advance(months: 1)
 # => Thu, 01 Apr 2010
 ```
 
-#### Изменяющиеся компоненты
+NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
+
+#### Изменение компонентов
 
 Метод `change` позволяет получить новую дату, которая идентична получателю, за исключением заданного года, месяца или дня:
 
@@ -3119,6 +3131,8 @@ Date.new(2010, 12, 23).change(year: 2011, month: 11)
 Date.new(2010, 1, 31).change(month: 2)
 # => ArgumentError: invalid date
 ```
+
+NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
 
 #### Длительности
 
@@ -3162,6 +3176,8 @@ date.end_of_day # => Mon Jun 07 23:59:59 +0200 2010
 
 У `beginning_of_day` есть псевдонимы `at_beginning_of_day`, `midnight`, `at_midnight`.
 
+NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
+
 ##### `beginning_of_hour`, `end_of_hour`
 
 Метод `beginning_of_hour` возвращает временную метку в начале часа (hh:00:00):
@@ -3179,6 +3195,8 @@ date.end_of_hour # => Mon Jun 07 19:59:59 +0200 2010
 ```
 
 У `beginning_of_hour` есть псевдоним `at_beginning_of_hour`.
+
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
 
 ##### `beginning_of_minute`, `end_of_minute`
 
@@ -3200,6 +3218,8 @@ date.end_of_minute # => Mon Jun 07 19:55:59 +0200 2010
 
 INFO: `beginning_of_hour`, `end_of_hour`, `beginning_of_minute` и `end_of_minute` реализованы для `Time` и `DateTime`, но **не** для `Date`, так как у экземпляра `Date` не имеет смысла спрашивать о начале или окончании часа или минуты.
 
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
+
 ##### `ago`, `since`
 
 Метод `ago` получает количество секунд как аргумент и возвращает временную метку, имеющую столько секунд до полуночи:
@@ -3216,14 +3236,14 @@ date = Date.current # => Fri, 11 Jun 2010
 date.since(1)       # => Fri, 11 Jun 2010 00:00:01 EDT -04:00
 ```
 
+NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
+
 Расширения для `DateTime`
 -------------------------
 
 WARNING: `DateTime` не знает о правилах DST (переходов на летнее время), и поэтому некоторые из этих методов сталкиваются с временной пропастью, когда переход на и с летнего времени имеет место. К примеру, `seconds_since_midnight` может не возвратить настоящее значение для таких дней.
 
 ### Вычисления
-
-NOTE: Все нижеследующие методы определены в `active_support/core_ext/date_time/calculations.rb`.
 
 Класс `DateTime` является подклассом `Date`, поэтому загрузив `active_support/core_ext/date/calculations.rb` будут унаследованы эти методы и их псевдонимы, за исключением того, что они будут всегда возвращать дату и время.
 
@@ -3251,6 +3271,8 @@ end_of_hour
 
 Active Support определяет `DateTime.current` похожим на `Time.now.to_datetime`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет `DateTime.yesterday` и `DateTime.tomorrow`, и предикаты экземпляра `past?` и `future?` относительно `DateTime.current`.
 
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
+
 #### Другие расширения
 
 ##### `seconds_since_midnight`
@@ -3261,6 +3283,8 @@ Active Support определяет `DateTime.current` похожим на `Time
 now = DateTime.current     # => Mon, 07 Jun 2010 20:26:36 +0000
 now.seconds_since_midnight # => 73596
 ```
+
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
 
 ##### `utc`
 
@@ -3273,6 +3297,8 @@ now.utc                # => Mon, 07 Jun 2010 23:27:52 +0000
 
 У этого метода также есть псевдоним `getutc`.
 
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
+
 ##### `utc?`
 
 Предикат `utc?` говорит, имеет ли получатель UTC в качестве своей временной зоны:
@@ -3282,6 +3308,8 @@ now = DateTime.now # => Mon, 07 Jun 2010 19:30:47 -0400
 now.utc?           # => false
 now.utc.utc?       # => true
 ```
+
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
 
 ##### (date-time-advance) `advance`
 
@@ -3313,6 +3341,8 @@ d.advance(seconds: 1).advance(months: 1)
 ```
 
 WARNING: Поскольку `DateTime` не поддерживает DST (переход на летнее время), можно получить несуществующий момент времени без каких-либо предупреждений или сообщений об ошибке.
+
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
 
 #### Изменение компонентов
 
@@ -3346,6 +3376,8 @@ DateTime.current.change(month: 2, day: 30)
 # => ArgumentError: invalid date
 ```
 
+NOTE: Определено в `active_support/core_ext/date_time/calculations.rb`.
+
 #### Длительности
 
 Длительности могут добавляться и вычитаться из даты и времени:
@@ -3371,52 +3403,6 @@ DateTime.new(1582, 10, 4, 23) + 1.hour
 
 ### Вычисления
 
-NOTE: Все следующие методы определены в `active_support/core_ext/time/calculations.rb`.
-
-```ruby
-past?
-today?
-future?
-yesterday
-tomorrow
-seconds_since_midnight
-change
-advance
-ago
-since (in)
-prev_day
-next_day
-beginning_of_day (midnight, at_midnight, at_beginning_of_day)
-end_of_day
-beginning_of_hour (at_beginning_of_hour)
-end_of_hour
-beginning_of_week (at_beginning_of_week)
-end_of_week (at_end_of_week)
-monday
-sunday
-weeks_ago
-prev_week (last_week)
-next_week
-months_ago
-months_since
-beginning_of_month (at_beginning_of_month)
-end_of_month (at_end_of_month)
-prev_month
-next_month
-last_month
-beginning_of_quarter (at_beginning_of_quarter)
-end_of_quarter (at_end_of_quarter)
-beginning_of_year (at_beginning_of_year)
-end_of_year (at_end_of_year)
-years_ago
-years_since
-prev_year
-last_year
-next_year
-on_weekday?
-on_weekend?
-```
-
 Это аналоги. Обратитесь к их документации выше, но примите во внимание следующие различия:
 
 * `change` принимает дополнительную опцию `:usec`.
@@ -3440,6 +3426,8 @@ t.advance(seconds: 1)
 Active Support определяет `Time.current` как сегодняшний день в текущей временной зоне. Он похож на `Time.now`, за исключением того, что он учитывает временную зону пользователя, если она определена. Он также определяет предикаты экземпляра `past?`, `today?` и `future?`, все они относительны к `Time.current`.
 
 При осуществлении сравнения Time с использованием методов, учитывающих временную зону пользователя, убедитесь, что используете `Time.current` вместо `Time.now`. Есть случаи, когда временная зона пользователя может быть в будущем по сравнению с временной зоной системы, в которой по умолчанию используется `Time.now`. Это означает, что `Time.now.to_date` может быть равным `Date.yesterday`.
+
+NOTE: Определено в `active_support/core_ext/time/calculations.rb`.
 
 #### `all_day`, `all_week`, `all_month`, `all_quarter` и `all_year`
 
@@ -3469,6 +3457,8 @@ now.all_year
 # => Fri, 01 Jan 2010 00:00:00 UTC +00:00..Fri, 31 Dec 2010 23:59:59 UTC +00:00
 ```
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 #### `prev_day`, `next_day`
 
 В Ruby 1.9 `prev_day` и `next_day` возвращают дату для последнего или следующего дня:
@@ -3478,6 +3468,8 @@ d = Date.new(2010, 5, 8) # => Sat, 08 May 2010
 d.prev_day               # => Fri, 07 May 2010
 d.next_day               # => Sun, 09 May 2010
 ```
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 #### `prev_month`, `next_month`
 
@@ -3498,6 +3490,8 @@ Date.new(2000, 5, 31).next_month # => Fri, 30 Jun 2000
 Date.new(2000, 1, 31).next_month # => Tue, 29 Feb 2000
 ```
 
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
+
 #### `prev_year`, `next_year`
 
 В Ruby 1.9 `prev_year` и `next_year` возвращают дату с тем же днем/месяцем в предыдущем или следующем году:
@@ -3515,6 +3509,8 @@ d = Date.new(2000, 2, 29) # => Tue, 29 Feb 2000
 d.prev_year               # => Sun, 28 Feb 1999
 d.next_year               # => Wed, 28 Feb 2001
 ```
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 #### `prev_quarter`, `next_quarter`
 
@@ -3536,6 +3532,8 @@ Time.local(2000, 11, 31).next_quarter # => 2001-03-01 00:00:00 0200
 ```
 
 `prev_quarter` имеет псевдоним `last_quarter`.
+
+NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 ### Конструкторы Time
 
