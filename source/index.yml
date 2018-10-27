@@ -153,8 +153,8 @@ pages:
   - title:    Конфигурирование приложений на Rails
     path:     configuring-rails-applications
     file:     configuring.md
-    revision: 258670244dae39616a50ec1116f52e91b6f0bc62
-    date:     09/05/2018
+    revision: 24367edbe6dae8fa1878423254d445177540e739
+    date:     22/10/2018
 
   - title:    Командная строка Rails
     path:     a-guide-to-the-rails-command-line
