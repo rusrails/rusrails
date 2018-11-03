@@ -1,7 +1,7 @@
 # coding: utf-8
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  around_filter :catch_exceptions
+  around_action :catch_exceptions
 
 protected
   def render_404
