@@ -122,7 +122,7 @@ Rails.application.secrets[:smtp_settings][:address]
 
 Начиная с Ruby on Rails 5.0, Ruby 2.2.2+ являются единственными поддерживаемыми версиями Ruby. Перед тем, как продолжить, убедитесь, что вы на Ruby версии 2.2.2 или выше.
 
-### Active Record models now inherit from ApplicationRecord by default
+### Модели Active Record теперь по умолчанию наследуются от ApplicationRecord
 
 В Rails 4.2 модель Active Record наследуется от `ActiveRecord::Base`. В Rails 5.0 все модели наследуются от `ApplicationRecord`.
 
