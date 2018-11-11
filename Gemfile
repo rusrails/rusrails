@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.4.1'
 
-gem 'rails', " ~> 5.0.7"
+gem 'rails', " ~> 5.1.6"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 
@@ -26,6 +26,10 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 
 gem 'git', require: false
+
+group :development do
+  gem 'listen'
+end
 
 group :development, :test do
   gem "rspec-rails"
