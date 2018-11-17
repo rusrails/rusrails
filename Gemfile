@@ -11,6 +11,7 @@ gem 'textacular'
 gem 'nokogiri'
 gem 'sass-rails'
 gem "less-rails", '>= 3.0.0'
+gem 'therubyracer'  # less is dependent on this
 gem 'haml-rails'
 gem 'RedCloth'
 gem 'redcarpet'
@@ -19,7 +20,6 @@ gem 'twitter-bootstrap-rails', '~> 2.2.8'
 gem 'jquery-rails'
 
 gem 'capistrano', '~> 2.15'
-gem 'therubyracer'
 gem 'unicorn'
 
 gem 'uglifier', '>= 1.3.0'
