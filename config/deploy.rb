@@ -10,7 +10,6 @@ load "config/recipes/ruby"
 load "config/recipes/nginx"
 load "config/recipes/unicorn"
 load "config/recipes/monit"
-load "config/recipes/yarn"
 
 server "95.216.150.195", :web, :app, :db, primary: true
 
