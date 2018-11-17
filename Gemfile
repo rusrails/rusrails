@@ -19,6 +19,7 @@ gem 'twitter-bootstrap-rails', '~> 2.2.8'
 gem 'jquery-rails'
 
 gem 'capistrano', '~> 2.15'
+gem 'therubyracer'
 gem 'unicorn'
 
 gem 'uglifier', '>= 1.3.0'
