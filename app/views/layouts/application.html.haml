@@ -50,8 +50,8 @@
             .well.banner300.banner
               = render "shared/adsense", position: 'sidebar'
           .span9.content.pull-left
-            -# .banner= render "shared/adsense", position: 'top'
-            .banner= render "shared/banner", mkdev_random_banner
+            .banner= render "shared/adsense", position: 'top'
+            -# .banner= render "shared/banner", mkdev_random_banner
             = yield
             .banner= render "shared/adsense", position: 'bottom'
 
