@@ -333,6 +333,7 @@ pages:
 plan:
   - file:     6_0_release_notes.md
   - file:     action_mailbox_basics.md
+  - file:     action_text_overview.md
 
 old:
   - file:     2_2_release_notes.md

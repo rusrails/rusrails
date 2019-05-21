@@ -45,8 +45,17 @@ namespace :docrails do
     stats.sort_by! { |stat| stat[:lines] + stat[:outdated] }
 
     stats.map do |stat|
-      puts '%s %40.40s: +/- %4s/%4s, outdated %4s days (%s %s)' %
-            [stat[:new] ? '*' : ' ', stat['file'], stat[:insertions], stat[:deletions],
+      score = stat[:lines] + stat[:outdated]
+      color = case
+      when stat[:new] then 34
+      when 0 === score then 30
+      when (1..200) === score then 32
+      when (201..400) === score then 33
+      else 31
+      end
+
+      puts "\e[%sm%s %40.40s: +/- %4s/%4s, outdated %4s days (%s %s)\e[0m" %
+            [color, stat[:new] ? '*' : ' ', stat['file'], stat[:insertions], stat[:deletions],
              stat[:outdated], stat[:objectish], stat[:new_date].strftime('%d/%m/%Y')]
     end
   end
