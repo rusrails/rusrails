@@ -21,16 +21,8 @@ module ApplicationHelper
   def mkdev_random_banner
     [
       {
-        url: 'http://mkdev.me/?utm_source=rusrails&utm_medium=banner&utm_campaign=expertise2',
-        image: 'partners/mkdev/expertise-2.png'
-      },
-      {
-        url: 'http://mkdev.me/?utm_source=rusrails&utm_medium=banner&utm_campaign=rubyonrails',
-        image: 'partners/mkdev/ror.png'
-      },
-      {
-        url: 'https://mkdev.me/mentors/zverok?utm_source=rusrails&utm_medium=banner&utm_campaign=rusrails&utm_content=shepelev',
-        image: 'partners/mkdev/shepelev.png'
+        url: 'https://lp.mkdev.me/obuchenie-web-razrabotke-ne-ruby-on-rails?utm_source=rusrails',
+        image: 'partners/mkdev/banner0519.png'
       },
     ].sample
   end
