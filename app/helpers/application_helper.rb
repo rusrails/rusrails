@@ -21,7 +21,7 @@ module ApplicationHelper
   def mkdev_random_banner
     [
       {
-        url: 'https://lp.mkdev.me/obuchenie-web-razrabotke-ne-ruby-on-rails?utm_source=rusrails',
+        url: 'https://lp.mkdev.me/obuchenie-web-razrabotke-na-ruby-on-rails?utm_source=rusrails',
         image: 'partners/mkdev/banner0519.png'
       },
     ].sample
