@@ -30,7 +30,7 @@
 
 [Pull Request](https://github.com/rails/rails/pull/34873)
 
-[Action Text](https://github.com/rails/rails/tree/6-0-stable/actiontext) добавляет возможность хранения и редактирования обогащенного текста в Rails. Это включает [редактор Trix](https://trix-editor.org), обрабатывающий все от форматирования до ссылок, цитирования, списков, вложенных изображений и галлерей. Содержимое обогащенного текста, сгенерированного редактором Trix, сохраняется в собственной модели RichText, которая связывается с существующими моделями Active Record в приложении. Любые встроенные изображения (или другие вложения) автоматически сохраняются с помощью Active Storage и связываются с включающей моделью RichText.
+[Action Text](https://github.com/rails/rails/tree/6-0-stable/actiontext) добавляет возможность хранения и редактирования обогащенного текста в Rails. Это включает [редактор Trix](https://trix-editor.org), обрабатывающий все от форматирования до ссылок, цитирования, списков, вложенных изображений и галерей. Содержимое обогащенного текста, сгенерированного редактором Trix, сохраняется в собственной модели RichText, которая связывается с существующими моделями Active Record в приложении. Любые встроенные изображения (или другие вложения) автоматически сохраняются с помощью Active Storage и связываются с включающей моделью RichText.
 
 Подробнее об Action Text можно прочитать в руководстве [Обзор Action Text](/action_text_overview) (TODO).
 
@@ -76,7 +76,7 @@ Railties
 *   Устарела поддержка использования переменной среды `HOST` для определения IP сервера.
     ([Pull Request](https://github.com/rails/rails/pull/32540))
 
-*   Устарел доступ к кэшам, возвращаемым `config_for`, по несимвольным ключам.
+*   Устарел доступ к кэшам, возвращаемым `config_for`, по не символьным ключам.
     ([Pull Request](https://github.com/rails/rails/pull/35198))
 
 ### Значимые изменения
@@ -105,7 +105,7 @@ Railties
 *   Webpacker сделан компилятором JavaScript по умолчанию в Rails 6.
     ([Pull Request](https://github.com/rails/rails/pull/33079))
 
-*   Добавленя поддержка несольких баз данных для команды `rails db:migrate:status`.
+*   Добавлена поддержка нескольких баз данных для команды `rails db:migrate:status`.
     ([Pull Request](https://github.com/rails/rails/pull/34137))
 
 *   Добавлена возможность использования различных путей миграции из нескольких баз данных в генераторах.
@@ -186,7 +186,7 @@ Action Pack
 *   Разрешено вызывать `ActionDispatch::SystemTestCase.driven_by` с блоком для определения специфичных возможностей браузера.
     ([Pull Request](https://github.com/rails/rails/pull/35081))
 
-*   Добавлена промежуточная программа `ActionDispatch::HostAuthorization`, защищиющая от атак перепривязывания DNS.
+*   Добавлена промежуточная программа `ActionDispatch::HostAuthorization`, защищающая от атак перепривязывания DNS.
     ([Pull Request](https://github.com/rails/rails/pull/33145))
 
 *   Разрешено использование `parsed_body` в `ActionController::TestCase`.
@@ -222,756 +222,682 @@ Action Pack
 *   Выводится только один заголовок Content-Security-Policy на запрос.
     ([Pull Request](https://github.com/rails/rails/pull/32602))
 
-*   Add a module specifically for the Rails default headers configuration
-    that can be explicitly included in controllers.
+*   Добавлен модуль, специальный для конфигурации Rails для заголовков по умолчанию, который может быть явно включен в контроллерах.
     ([Pull Request](https://github.com/rails/rails/pull/32484))
 
-*   Add `#dig` to `ActionDispatch::Request::Session`.
+*   Добавлен `#dig` в `ActionDispatch::Request::Session`.
     ([Pull Request](https://github.com/rails/rails/pull/32446))
 
 Action View
 -----------
 
-Please refer to the [Changelog][action-view] for detailed changes.
+За подробностями обратитесь к [Changelog][action-view].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `image_alt` helper.
+*   Удален устаревший хелпер `image_alt`.
     ([Commit](https://github.com/rails/rails/commit/60c8a03c8d1e45e48fcb1055ba4c49ed3d5ff78f))
 
-*   Remove an empty `RecordTagHelper` module from which the functionality
-    was already moved to the `record_tag_helper` gem.
+*   Убран пустой модуль `RecordTagHelper`, функционал которого уже был перенесен в гем `record_tag_helper`.
     ([Commit](https://github.com/rails/rails/commit/5c5ddd69b1e06fb6b2bcbb021e9b8dae17e7cb31))
 
-### Deprecations
+### Устарело
 
-*   Deprecate `ActionView::Template.finalize_compiled_template_methods` with
-    no replacement.
+*   Устарел `ActionView::Template.finalize_compiled_template_methods` без замены.
     ([Pull Request](https://github.com/rails/rails/pull/35036))
 
-*   Deprecate `config.action_view.finalize_compiled_template_methods` with
-    no replacement.
+*   Устарел `config.action_view.finalize_compiled_template_methods` без замены.
     ([Pull Request](https://github.com/rails/rails/pull/35036))
 
-*   Deprecate calling private model methods from the `options_from_collection_for_select` view helper.
+*   Устарел вызов приватных методов модели из хелпера вьюхи `options_from_collection_for_select`.
     ([Pull Request](https://github.com/rails/rails/pull/33547))
 
-### Notable changes
+### Значимые изменения
 
-*   Clear Action View cache in development only on file changes, speeding up
-    development mode.
+*   Кэш Action View очищается в разработке только при изменении файла, что ускоряет режим разработки.
     ([Pull Request](https://github.com/rails/rails/pull/35629))
 
-*   Move all of the Rails npm packages into a `@rails` scope.
+*   Все npm-пакеты Rails перемещены в пространстве имен `@rails`.
     ([Pull Request](https://github.com/rails/rails/pull/34905))
 
-*   Only accept formats from registered MIME types.
+*   Принимаются только форматы из зарегистрированных типов MIME.
     ([Pull Request](https://github.com/rails/rails/pull/35604), [Pull Request](https://github.com/rails/rails/pull/35753))
 
-*   Add allocations to the template and partial rendering server output.
+*   В вывод сервера о рендере шаблона и партиала добавлены allocations.
     ([Pull Request](https://github.com/rails/rails/pull/34136))
 
-*   Add a `year_format` option to `date_select` tag, making it possible to
-    customize year names.
+*   В тег `date_select` добавлена опция `year_format`, позволяющая настроить имена годов.
     ([Pull Request](https://github.com/rails/rails/pull/32190))
 
-*   Add a `nonce: true` option for `javascript_include_tag` helper to
-    support automatic nonce generation for a Content Security Policy.
+*   Для хелпера `javascript_include_tag` добавлена опция `nonce: true` для поддержки автоматической генерации nonce для Политики безопасности контента.
     ([Pull Request](https://github.com/rails/rails/pull/32607))
 
-*   Add a `action_view.finalize_compiled_template_methods` configuration to disable or
-    enable `ActionView::Template` finalizers.
+*   Добавлена конфигурация `action_view.finalize_compiled_template_methods`, чтобы включить или отключить финализаторы `ActionView::Template`.
     ([Pull Request](https://github.com/rails/rails/pull/32418))
 
-*   Extract the JavaScript `confirm` call to its own, overridable method in `rails_ujs`.
+*   Вызов JavaScript `confirm` извлечен в собственный переопределяемый метод в `rails_ujs`.
     ([Pull Request](https://github.com/rails/rails/pull/32404))
 
-*   Add a `action_controller.default_enforce_utf8` configuration option to handle
-    enforcing UTF-8 encoding. This defaults to `false`.
+*   Добавлена конфигурационная опция `action_controller.default_enforce_utf8` для управления принуждением кодировки UTF-8. По умолчанию `false`.
     ([Pull Request](https://github.com/rails/rails/pull/32125))
 
-*   Add I18n key style support for locale keys to submit tags.
+*   Добавлена поддержка ключей локалей I18n для тегов submit.
     ([Pull Request](https://github.com/rails/rails/pull/26799))
 
 Action Mailer
 -------------
 
-Please refer to the [Changelog][action-mailer] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailer].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-*   Deprecate `ActionMailer::Base.receive` in favor of Action Mailbox.
+*   Устарел `ActionMailer::Base.receive` в пользу Action Mailbox.
     ([Commit](https://github.com/rails/rails/commit/e3f832a7433a291a51c5df397dc3dd654c1858cb))
 
-*   Deprecate `DeliveryJob` and `Parameterized::DeliveryJob` in favor of
-    `MailDeliveryJob`.
+*   Устарели `DeliveryJob` и `Parameterized::DeliveryJob` в пользу `MailDeliveryJob`.
     ([Pull Request](https://github.com/rails/rails/pull/34591))
 
-### Notable changes
+### Значимые изменения
 
-*   Add `MailDeliveryJob` for delivering both regular and parameterized mail.
+*   Добавлен `MailDeliveryJob` для отправки и обычных, и параметризованных писем.
     ([Pull Request](https://github.com/rails/rails/pull/34591))
 
-*   Allow custom email delivery jobs to work with the Action Mailer test assertions.
+*   Позволена работа произвольных заданий доставки с тестовыми утверждениями Action Mailer.
     ([Pull Request](https://github.com/rails/rails/pull/34339))
 
-*   Allow specifying a template name for multipart emails with blocks instead of
-    using just the action name.
+*   Позволено указание имени шаблона для multipart писем с блоками вместо просто имени экшна.
     ([Pull Request](https://github.com/rails/rails/pull/22534))
 
-*   Add `perform_deliveries` to payload of `deliver.action_mailer` notification.
+*   В полезную нагрузку уведомления `deliver.action_mailer` добавлены `perform_deliveries`.
     ([Pull Request](https://github.com/rails/rails/pull/33824))
 
-*   Improve the logging message when `perform_deliveries` is false to indicate
-    that sending of emails was skipped.
+*   Улучшено сообщение лога, когда `perform_deliveries` является false, чтобы указать, что отправка письма была пропущена.
     ([Pull Request](https://github.com/rails/rails/pull/33824))
 
-*   Allow calling `assert_enqueued_email_with` without block.
+*   Позволен вызов `assert_enqueued_email_with` без блока.
     ([Pull Request](https://github.com/rails/rails/pull/33258))
 
-*   Perform the enqueued mail delivery jobs in the `assert_emails` block.
+*   Выполняются задания доставки писем из очереди в блоке `assert_emails`.
     ([Pull Request](https://github.com/rails/rails/pull/32231))
 
-*   Allow `ActionMailer::Base` to unregister observers and interceptors.
+*   `ActionMailer::Base` позволено отменять регистрацию обсерверов и перехватчиков.
     ([Pull Request](https://github.com/rails/rails/pull/32207))
 
 Active Record
 -------------
 
-Please refer to the [Changelog][active-record] for detailed changes.
+За подробностями обратитесь к [Changelog][active-record].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `#set_state` from the transaction object.
+*   Убран устаревший `#set_state` из объекта транзакции.
     ([Commit](https://github.com/rails/rails/commit/6c745b0c5152a4437163a67707e02f4464493983))
 
-*   Remove deprecated `#supports_statement_cache?` from the database adapters.
+*   Убран устаревший `#supports_statement_cache?` из адаптеров базы данных.
     ([Commit](https://github.com/rails/rails/commit/5f3ed8784383fb4eb0f9959f31a9c28a991b7553))
 
-*   Remove deprecated `#insert_fixtures` from the database adapters.
+*   Убран устаревший `#insert_fixtures` из адаптеров базы данных.
     ([Commit](https://github.com/rails/rails/commit/400ba786e1d154448235f5f90183e48a1043eece))
 
-*   Remove deprecated `ActiveRecord::ConnectionAdapters::SQLite3Adapter#valid_alter_table_type?`.
+*   Убран устаревший `ActiveRecord::ConnectionAdapters::SQLite3Adapter#valid_alter_table_type?`.
     ([Commit](https://github.com/rails/rails/commit/45b4d5f81f0c0ca72c18d0dea4a3a7b2ecc589bf))
 
-*   Remove support for passing the column name to `sum` when a block is passed.
+*   Убрана поддержка передачи имени столбца в `sum`, когда передан блок.
     ([Commit](https://github.com/rails/rails/commit/91ddb30083430622188d76eb9f29b78131df67f9))
 
-*   Remove support for passing the column name to `count` when a block is passed.
+*   Убрана поддержка передачи имени столбца в `count`, когда передан блок.
     ([Commit](https://github.com/rails/rails/commit/67356f2034ab41305af7218f7c8b2fee2d614129))
 
-*   Remove support for delegation of missing methods in a relation to Arel.
+*   Убрана поддержка делегации отсутствующих методов в relation к Arel.
     ([Commit](https://github.com/rails/rails/commit/d97980a16d76ad190042b4d8578109714e9c53d0))
 
-*   Remove support for delegating missing methods in a relation to private methods of the class.
+*   Убрана поддержка делегации отсутствующих методов в relation к приватным методам класса.
     ([Commit](https://github.com/rails/rails/commit/a7becf147afc85c354e5cfa519911a948d25fc4d))
 
-*   Remove support for specifying a timestamp name for `#cache_key`.
+*   Убрана поддержка указания имени временной метки для `#cache_key`.
     ([Commit](https://github.com/rails/rails/commit/0bef23e630f62e38f20b5ae1d1d5dbfb087050ea))
 
-*   Remove deprecated `ActiveRecord::Migrator.migrations_path=`.
+*   Убран устаревший `ActiveRecord::Migrator.migrations_path=`.
     ([Commit](https://github.com/rails/rails/commit/90d7842186591cae364fab3320b524e4d31a7d7d))
 
-*   Remove deprecated `expand_hash_conditions_for_aggregates`.
+*   Убран устаревший `expand_hash_conditions_for_aggregates`.
     ([Commit](https://github.com/rails/rails/commit/27b252d6a85e300c7236d034d55ec8e44f57a83e))
 
 
-### Deprecations
+### Устарело
 
-*   Deprecate mismatched case-sensitivity collation comparisons for uniqueness validator.
+*   Устарели сопоставительные сравнения с несоответствующей чувствительностью к регистру для валидатора уникальности.
     ([Commit](https://github.com/rails/rails/commit/9def05385f1cfa41924bb93daa187615e88c95b9))
 
-*   Deprecate using class level querying methods if the receiver scope has leaked.
+*   Устарело использование запрашивающих методов, если получающий скоуп утек.
     ([Pull Request](https://github.com/rails/rails/pull/35280))
 
-*   Deprecate `config.activerecord.sqlite3.represent_boolean_as_integer`.
+*   Устарел `config.activerecord.sqlite3.represent_boolean_as_integer`.
     ([Commit](https://github.com/rails/rails/commit/f59b08119bc0c01a00561d38279b124abc82561b))
 
-*   Deprecate passing `migrations_paths` to `connection.assume_migrated_upto_version`.
+*   Устарела передача `migrations_paths` в `connection.assume_migrated_upto_version`.
     ([Commit](https://github.com/rails/rails/commit/c1b14aded27e063ead32fa911aa53163d7cfc21a))
 
-*   Deprecate `ActiveRecord::Result#to_hash` in favor of `ActiveRecord::Result#to_a`.
+*   Устарел `ActiveRecord::Result#to_hash` в пользу `ActiveRecord::Result#to_a`.
     ([Commit](https://github.com/rails/rails/commit/16510d609c601aa7d466809f3073ec3313e08937))
 
-*   Deprecate methods in `DatabaseLimits`: `column_name_length`, `table_name_length`,
+*   Устарели методы в `DatabaseLimits`: `column_name_length`, `table_name_length`,
     `columns_per_table`, `indexes_per_table`, `columns_per_multicolumn_index`,
-    `sql_query_length`, and `joins_per_query`.
+    `sql_query_length` и `joins_per_query`.
     ([Commit](https://github.com/rails/rails/commit/e0a1235f7df0fa193c7e299a5adee88db246b44f))
 
-*   Deprecate `update_attributes`/`!` in favor of `update`/`!`.
+*   Устарел `update_attributes`/`!` в пользу `update`/`!`.
     ([Commit](https://github.com/rails/rails/commit/5645149d3a27054450bd1130ff5715504638a5f5))
 
-### Notable changes
+### Значимые изменения
 
-*   Bump the minimum version of the `sqlite3` gem to 1.4.
+*   Установлена минимальная версия гема `sqlite3` 1.4.
     ([Pull Request](https://github.com/rails/rails/pull/35844))
 
-*   Add `rails db:prepare` to create a database if it doesn't exist, and run its migrations.
+*   Добавлена `rails db:prepare`, чтобы создать базу данных, если она не существует, и запустить ее миграции.
     ([Pull Request](https://github.com/rails/rails/pull/35768))
 
-*   Add `after_save_commit` callback as shortcut for `after_commit :hook, on: [ :create, :update ]`.
+*   Добавлен колбэк `after_save_commit` в качестве сокращения для `after_commit :hook, on: [ :create, :update ]`.
     ([Pull Request](https://github.com/rails/rails/pull/35804))
 
-*   Add `ActiveRecord::Relation#extract_associated` for extracting associated records from a relation.
+*   Добавлен `ActiveRecord::Relation#extract_associated` для извлечения связанных записей из relation.
     ([Pull Request](https://github.com/rails/rails/pull/35784))
 
-*   Add `ActiveRecord::Relation#annotate` for adding SQL comments to ActiveRecord::Relation queries.
+*   Добавлен `ActiveRecord::Relation#annotate` для добавления комментариев SQL в запросы ActiveRecord::Relation.
     ([Pull Request](https://github.com/rails/rails/pull/35617))
 
-*   Add support for setting Optimizer Hints on databases.
+*   Добавлена поддержка для настройки Optimizer Hints на базах данных.
     ([Pull Request](https://github.com/rails/rails/pull/35615))
 
-*   Add `insert_all`/`insert_all!`/`upsert_all` methods for doing bulk inserts.
+*   Добавлены методы `insert_all`/`insert_all!`/`upsert_all` для выполнения массовых вставок.
     ([Pull Request](https://github.com/rails/rails/pull/35631))
 
-*   Add `rails db:seed:replant` that truncates tables of each database
-    for the current environment and loads the seeds.
+*   Добавлена `rails db:seed:replant`, которая очищает таблицы каждой базы данных для текущего окружения и загружает сиды.
     ([Pull Request](https://github.com/rails/rails/pull/34779))
 
-*   Add `reselect` method, which is a short-hand for `unscope(:select).select(fields)`.
+*   Добавлен метод `reselect`, являющийся сокращением для `unscope(:select).select(fields)`.
     ([Pull Request](https://github.com/rails/rails/pull/33611))
 
-*   Add negative scopes for all enum values.
+*   Добавлены отрицающие скоупы для всех значений enum.
     ([Pull Request](https://github.com/rails/rails/pull/35381))
 
-*   Add `#destroy_by` and `#delete_by` for conditional removals.
+*   Добавлены `#destroy_by` и `#delete_by` для условных удалений.
     ([Pull Request](https://github.com/rails/rails/pull/35316))
 
-*   Add the ability to automatically switch database connections.
+*   Добавлена возможность автоматически переключать соединения с базой данной.
     ([Pull Request](https://github.com/rails/rails/pull/35073))
 
-*   Add the ability to prevent writes to a database for the duration of a block.
+*   Добавлена возможность предотвращать записи в базу данных на протяжении блока.
     ([Pull Request](https://github.com/rails/rails/pull/34505))
 
-*   Add an API for switching connections to support multiple databases.
+*   Добавлен API для переключения соединений для поддержки нескольких баз данных.
     ([Pull Request](https://github.com/rails/rails/pull/34052))
 
-*   Make timestamps with precision the default for migrations.
+*   Временные метки с точностью сделаны по умолчанию в миграциях.
     ([Pull Request](https://github.com/rails/rails/pull/34970))
 
-*   Support `:size` option to change text and blob size in MySQL.
+*   Поддерживается опция `:size` для изменения размера текста и бинарного объекта в MySQL.
     ([Pull Request](https://github.com/rails/rails/pull/35071))
 
-*   Set both the foreign key and the foreign type columns to NULL for
-    polymorphic associations on `dependent: :nullify` strategy.
+*   Столбцы внешнего ключа и внешнего типа устанавливаются NULL для полиморфных связей при стратегии `dependent: :nullify`.
     ([Pull Request](https://github.com/rails/rails/pull/28078))
 
-*   Allow a permitted instance of `ActionController::Parameters` to be passed as an
-    argument to `ActiveRecord::Relation#exists?`.
+*   Разрешенному экземпляру `ActionController::Parameters` разрешается быть переданным в качестве аргумента в `ActiveRecord::Relation#exists?`.
     ([Pull Request](https://github.com/rails/rails/pull/34891))
 
-*   Add support in `#where` for endless ranges introduced in Ruby 2.6.
+*   В `#where` добавлена поддержка бесконечных диапазонов, представленных в Ruby 2.6.
     ([Pull Request](https://github.com/rails/rails/pull/34906))
 
-*   Make `ROW_FORMAT=DYNAMIC` a default create table option for MySQL.
+*   `ROW_FORMAT=DYNAMIC` сделан опцией создания таблиц по умолчанию для MySQL.
     ([Pull Request](https://github.com/rails/rails/pull/34742))
 
-*   Add the ability to disable scopes generated by `ActiveRecord.enum`.
+*   Добавлена возможность отключить скоупы, генерируемые `ActiveRecord.enum`.
     ([Pull Request](https://github.com/rails/rails/pull/34605/files))
 
-*   Make implicit ordering configurable for a column.
+*   Неявное упорядочивание для столбца сделано настраиваемым.
     ([Pull Request](https://github.com/rails/rails/pull/34480))
 
-*   Bump the minimum PostgreSQL version to 9.3, dropping support for 9.1 and 9.2.
+*   Установлена минимальная версия PostgreSQL как 9.3, отброшена поддержка для 9.1 и 9.2.
     ([Pull Request](https://github.com/rails/rails/pull/34520))
 
-*   Make the values of an enum frozen, raising an error when attempting to modify them.
+*   Значения перечисления сделаны замороженными, вызывая ошибку при попытке их изменить.
     ([Pull Request](https://github.com/rails/rails/pull/34517))
 
-*   Make the SQL of `ActiveRecord::StatementInvalid` errors its own error property
-    and include SQL binds as a separate error property.
+*   SQL ошибок `ActiveRecord::StatementInvalid` сделан свойством ошибки, и подстановки в SQL отдельным свойством ошибки.
     ([Pull Request](https://github.com/rails/rails/pull/34468))
 
-*   Add an `:if_not_exists` option to `create_table`.
+*   В `create_table` добавлена опция `:if_not_exists`.
     ([Pull Request](https://github.com/rails/rails/pull/31382))
 
-*   Add support for multiple databases to `rails db:schema:cache:dump`
-    and `rails db:schema:cache:clear`.
+*   Добавлена поддержка нескольких баз данных в `rails db:schema:cache:dump` и `rails db:schema:cache:clear`.
     ([Pull Request](https://github.com/rails/rails/pull/34181))
 
-*   Add support for hash and url configs in database hash of `ActiveRecord::Base.connected_to`.
+*   Добавлена поддержка хэшей и конфигов url в хэше базы данных `ActiveRecord::Base.connected_to`.
     ([Pull Request](https://github.com/rails/rails/pull/34196))
 
-*   Add support for default expressions and expression indexes for MySQL.
+*   Добавлена поддержка для выражений по умолчанию и индексов выражений для MySQL.
     ([Pull Request](https://github.com/rails/rails/pull/34307))
 
-*   Add an `index` option for `change_table` migration helpers.
+*   Добавлена опция `index` для хелперов миграции `change_table`.
     ([Pull Request](https://github.com/rails/rails/pull/23593))
 
-*   Fix `transaction` reverting for migrations. Previously, commands inside of a `transaction`
-    in a reverted migration ran uninverted. This change fixes that.
+*   Починен откат `transaction` для миграций. Ранее команды внутри `transaction` в откатываемой миграции запускались не в обратном порядке. Изменение чинит это.
     ([Pull Request](https://github.com/rails/rails/pull/31604))
 
-*   Allow `ActiveRecord::Base.configurations=` to be set with a symbolized hash.
+*   Разрешено настраивать `ActiveRecord::Base.configurations=` с помощью символьного хэша.
     ([Pull Request](https://github.com/rails/rails/pull/33968))
 
-*   Fix the counter cache to only update if the record is actually saved.
+*   Починен кэш счетчика, чтобы он обновлялся, только когда запись фактически сохраняется.
     ([Pull Request](https://github.com/rails/rails/pull/33913))
 
-*   Add expression indexes support for the SQLite adapter.
+*   Добавлена поддержка индексов выражений для адаптера SQLite.
     ([Pull Request](https://github.com/rails/rails/pull/33874))
 
-*   Allow subclasses to redefine autosave callbacks for associated records.
+*   Подклассам разрешено переопределять колбэки автоматического сохранения для связанных записей.
     ([Pull Request](https://github.com/rails/rails/pull/33378))
 
-*   Bump the minimum MySQL version to 5.5.8.
+*   Установлена минимальная версия MySQL как 5.5.8.
     ([Pull Request](https://github.com/rails/rails/pull/33853))
 
-*   Use the utf8mb4 character set by default in MySQL.
+*   В MySQL используется кодировка по умолчанию utf8mb4.
     ([Pull Request](https://github.com/rails/rails/pull/33608))
 
-*   Add the ability to filter out sensitive data in `#inspect`
+*   Добавлена возможность фильтровать чувствительные данные в `#inspect`
     ([Pull Request](https://github.com/rails/rails/pull/33756), [Pull Request](https://github.com/rails/rails/pull/34208))
 
-*   Change `ActiveRecord::Base.configurations` to return an object instead of a hash.
+*   Изменен `ActiveRecord::Base.configurations`, чтобы возвращать объект вместо хэша.
     ([Pull Request](https://github.com/rails/rails/pull/33637))
 
-*   Add database configuration to disable advisory locks.
+*   Добавлена настройка базы данных, чтобы отключать рекомендательные блокировки.
     ([Pull Request](https://github.com/rails/rails/pull/33691))
 
-*   Update SQLite3 adapter `alter_table` method to restore foreign keys.
+*   Обновлен метод адаптера SQLite3 `alter_table`, чтобы восстанавливались внешние ключи.
     ([Pull Request](https://github.com/rails/rails/pull/33585))
 
-*   Allow the `:to_table` option of `remove_foreign_key` to be invertible.
+*   Опции `:to_table` метода `remove_foreign_key` разрешено быть откатанной.
     ([Pull Request](https://github.com/rails/rails/pull/33530))
 
-*   Fix default value for MySQL time types with specified precision.
+*   Починено значение по умолчанию для типов времени MySQL с указанной точностью.
     ([Pull Request](https://github.com/rails/rails/pull/33280))
 
-*   Fix the `touch` option to behave consistently with `Persistence#touch` method.
+*   Починена опция `touch`, чтобы вести себя в соответствии с методом `Persistence#touch`.
     ([Pull Request](https://github.com/rails/rails/pull/33107))
 
-*   Raise an exception for duplicate column definitions in Migrations.
+*   Вызывается исключение для определений дубликата столбца в миграциях.
     ([Pull Request](https://github.com/rails/rails/pull/33029))
 
-*   Bump the minimum SQLite version to 3.8.
+*   Установлена минимальная версия SQLite как 3.8.
     ([Pull Request](https://github.com/rails/rails/pull/32923))
 
-*   Fix parent records to not get saved with duplicate children records.
+*   Починено, что родительские записи не сохранялись с дубликатами дочерних записей.
     ([Pull Request](https://github.com/rails/rails/pull/32952))
 
-*   Ensure `Associations::CollectionAssociation#size` and `Associations::CollectionAssociation#empty?`
-    use loaded association ids if present.
+*   Гарантируется, что `Associations::CollectionAssociation#size` и `Associations::CollectionAssociation#empty?` используют загруженные связи, если они присутствуют.
     ([Pull Request](https://github.com/rails/rails/pull/32617))
 
-*   Add support to preload associations of polymorphic associations when not all the records have the requested associations.
+*   Добавлена поддержка предварительной загрузки полиморфных связей, когда не у всех записей имеются требуемые связи.
     ([Commit](https://github.com/rails/rails/commit/75ef18c67c29b1b51314b6c8a963cee53394080b))
 
-*   Add `touch_all` method to `ActiveRecord::Relation`.
+*   В `ActiveRecord::Relation` добавлен метод `touch_all`.
     ([Pull Request](https://github.com/rails/rails/pull/31513))
 
-*   Add `ActiveRecord::Base.base_class?` predicate.
+*   Добавлен предикат `ActiveRecord::Base.base_class?`.
     ([Pull Request](https://github.com/rails/rails/pull/32417))
 
-*   Add custom prefix/suffix options to `ActiveRecord::Store.store_accessor`.
+*   Добавлены опции пользовательского префикса/суффикса в `ActiveRecord::Store.store_accessor`.
     ([Pull Request](https://github.com/rails/rails/pull/32306))
 
-*   Add `ActiveRecord::Base.create_or_find_by`/`!` to deal with the SELECT/INSERT race condition in
-    `ActiveRecord::Base.find_or_create_by`/`!` by leaning on unique constraints in the database.
+*   Добавлены `ActiveRecord::Base.create_or_find_by`/`!`, чтобы разобраться с SELECT/INSERT состоянием гонки в    `ActiveRecord::Base.find_or_create_by`/`!` на основе ограничений уникальности в базе данных.
     ([Pull Request](https://github.com/rails/rails/pull/31989))
 
-*   Add `Relation#pick` as short-hand for single-value plucks.
+*   Добавлен `Relation#pick` в качестве сокращения для pluck одиночного значения.
     ([Pull Request](https://github.com/rails/rails/pull/31941))
 
 Active Storage
 --------------
 
-Please refer to the [Changelog][active-storage] for detailed changes.
+За подробностями обратитесь к [Changelog][active-storage].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-*   Deprecate  `config.active_storage.queue` in favor of `config.active_storage.queues.analysis`
-    and `config.active_storage.queues.purge`.
+*   Устарел  `config.active_storage.queue` в пользу `config.active_storage.queues.analysis` и `config.active_storage.queues.purge`.
     ([Pull Request](https://github.com/rails/rails/pull/34838))
 
-*   Deprecate `ActiveStorage::Downloading` in favor of `ActiveStorage::Blob#open`.
+*   Устарел `ActiveStorage::Downloading` в пользу `ActiveStorage::Blob#open`.
     ([Commit](https://github.com/rails/rails/commit/ee21b7c2eb64def8f00887a9fafbd77b85f464f1))
 
-*   Deprecate using `mini_magick` directly for generating image variants in favor of
-    `image_processing`.
+*   Устарело непосредственное использование `mini_magick` для генерации вариантов изображения в пользу `image_processing`.
     ([Commit](https://github.com/rails/rails/commit/697f4a93ad386f9fb7795f0ba68f815f16ebad0f))
 
-*   Deprecate `:combine_options` in Active Storage's ImageProcessing transformer
-    without replacement.
+*   Устарела `:combine_options` в преобразователе ImageProcessing в Active Storage без замены.
     ([Commit](https://github.com/rails/rails/commit/697f4a93ad386f9fb7795f0ba68f815f16ebad0f))
 
-### Notable changes
+### Значимые изменения
 
-*   Add support for generating BMP image variants.
+*   Добавлена поддержка для генерации вариантов изображения BMP.
     ([Pull Request](https://github.com/rails/rails/pull/36051))
 
-*   Add support for generating TIFF image variants.
+*   Добавлена поддержка для генерации вариантов изображения TIFF.
     ([Pull Request](https://github.com/rails/rails/pull/34824))
 
-*   Add support for generating progressive JPEG image variants.
+*   Добавлена поддержка для генерации вариантов изображения прогрессивного JPEG.
     ([Pull Request](https://github.com/rails/rails/pull/34455))
 
-*   Add `ActiveStorage.routes_prefix` for configuring the Active Storage generated routes.
+*   Добавлен `ActiveStorage.routes_prefix` для настройки генерируемых маршрутов Active Storage.
     ([Pull Request](https://github.com/rails/rails/pull/33883))
 
-*   Generate a 404 Not Found response on `ActiveStorage::DiskController#show` when
-    the requested file is missing from the disk service.
+*   В `ActiveStorage::DiskController#show` генерируется отклик 404 Not Found, когда запрашиваемый файл отсутствует на дисковом сервисе.
     ([Pull Request](https://github.com/rails/rails/pull/33666))
 
-*   Raise `ActiveStorage::FileNotFoundError` when the requested file is missing for
-    `ActiveStorage::Blob#download` and `ActiveStorage::Blob#open`.
+*   Для `ActiveStorage::Blob#download` и `ActiveStorage::Blob#open` вызывается `ActiveStorage::FileNotFoundError`, когда запрашиваемый файл отсутствует.
     ([Pull Request](https://github.com/rails/rails/pull/33666))
 
-*   Add a generic `ActiveStorage::Error` class that Active Storage exceptions inherit from.
+*   Добавлен общий класс `ActiveStorage::Error`, от которого наследуются исключения Active Storage.
     ([Commit](https://github.com/rails/rails/commit/18425b837149bc0d50f8d5349e1091a623762d6b))
 
-*   Persist uploaded files assigned to a record to storage when the record
-    is saved instead of immediately.
+*   Файлы модели, предназначенные для хранения, сохраняются, когда сохраняется модель, а не немедленно.
     ([Pull Request](https://github.com/rails/rails/pull/33303))
 
-*   Add the ability to reflect on defined attachments using the existing
-    Active Record reflection mechanism.
+*   Добавлена способность отражать на определенных вложениях с помощью существующего механизма отражения Active Record.
     ([Pull Request](https://github.com/rails/rails/pull/33018))
 
-*   Add `ActiveStorage::Blob#open`, which downloads a blob to a tempfile on disk
-    and yields the tempfile.
+*   Добавлен `ActiveStorage::Blob#open`, который загружает бинарный объект во временный файл на диске, и передает этот временный файл.
     ([Commit](https://github.com/rails/rails/commit/ee21b7c2eb64def8f00887a9fafbd77b85f464f1))
 
-*   Support streaming downloads from Google Cloud Storage. Require version 1.11+
-    of the `google-cloud-storage` gem.
+*   Поддержка потоковых загрузок из Google Cloud Storage. Требуется версия 1.11+ гема `google-cloud-storage`.
     ([Pull Request](https://github.com/rails/rails/pull/32788))
 
-*   Use the `image_processing` gem for Active Storage variants. This replaces using
-    `mini_magick` directly.
+*   Использован гем `image_processing` для вариантов Active Storage. Это заменяет непосредственное использование `mini_magick`.
     ([Pull Request](https://github.com/rails/rails/pull/32471)
 
-*   Replace existing images instead of adding to them when updating an
-    attached model via `update` or `update!` with, say, `@user.update!(images: [ … ])`.
+*   Существующие изображения заменяются вместо добавления к ним при обновлении прикрепляющей модели с помощью `update` или `update!`, например, `@user.update!(images: [ … ])`.
     ([Pull Request](https://github.com/rails/rails/pull/33303))
 
 Active Model
 ------------
 
-Please refer to the [Changelog][active-model] for detailed changes.
+За подробностями обратитесь к [Changelog][active-model].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
-*   Add a configuration option to customize format of the `ActiveModel::Errors#full_message`.
+*   Добавлена конфигурационная опция для настройки формата `ActiveModel::Errors#full_message`.
     ([Pull Request](https://github.com/rails/rails/pull/32956))
 
-*   Add support for configuring attribute name for `has_secure_password`.
+*   Добавлена поддержка настройки имени атрибута для `has_secure_password`.
     ([Pull Request](https://github.com/rails/rails/pull/26764))
 
-*   Add `#slice!` method to `ActiveModel::Errors`.
+*   В `ActiveModel::Errors` добавлен метод `#slice!`.
     ([Pull Request](https://github.com/rails/rails/pull/34489))
 
-*   Add `ActiveModel::Errors#of_kind?` to check presence of a specific error.
+*   Добавлен `ActiveModel::Errors#of_kind?` для проверки существования конкретной ошибки.
     ([Pull Request](https://github.com/rails/rails/pull/34866))
 
-*   Fix `ActiveModel::Serializers::JSON#as_json` method for timestamps.
+*   Починен метод `ActiveModel::Serializers::JSON#as_json` для временных меток.
     ([Pull Request](https://github.com/rails/rails/pull/31503))
 
-*   Fix numericality validator to still use value before type cast except Active Record.
+*   Починен валидатор численности, чтобы использовать значение до приведения типов, кроме Active Record.
     ([Pull Request](https://github.com/rails/rails/pull/33654))
 
-*   Fix numericality equality validation of `BigDecimal` and `Float`
-    by casting to `BigDecimal` on both ends of the validation.
+*   Починена валидация равенства численности для `BigDecimal` и `Float`, приводя к `BigDecimal` обе стороны валидации.
     ([Pull Request](https://github.com/rails/rails/pull/32852))
 
-*   Fix year value when casting a multiparameter time hash.
+*   Починено значение года при приведении многопараметрового хэша времени.
     ([Pull Request](https://github.com/rails/rails/pull/34990))
 
-*   Type cast falsy boolean symbols on boolean attribute as false.
+*   Ложные булевы символы на булевых атрибутах приводятся как false.
     ([Pull Request](https://github.com/rails/rails/pull/35794))
 
-*   Return correct date while converting parameters in `value_from_multiparameter_assignment`
-    for `ActiveModel::Type::Date`.
+*   Возвращается правильная дата при конвертировании параметров в `value_from_multiparameter_assignment` для `ActiveModel::Type::Date`.
     ([Pull Request](https://github.com/rails/rails/pull/29651))
 
-*   Fall back to parent locale before falling back to the `:errors` namespace while fetching
-    error translations.
+*   Берется родительская локаль, перед тем как взять пространство имен `:errors` при извлечении переводов ошибки.
     ([Pull Request](https://github.com/rails/rails/pull/35424))
 
 Active Support
 --------------
 
-Please refer to the [Changelog][active-support] for detailed changes.
+За подробностями обратитесь к [Changelog][active-support].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `#acronym_regex` method from `Inflections`.
+*   Удален устаревший метод `#acronym_regex` из `Inflections`.
     ([Commit](https://github.com/rails/rails/commit/0ce67d3cd6d1b7b9576b07fecae3dd5b422a5689))
 
-*   Remove deprecated `Module#reachable?` method.
+*   Удален устаревший метод `Module#reachable?`.
     ([Commit](https://github.com/rails/rails/commit/6eb1d56a333fd2015610d31793ed6281acd66551))
 
-*   Remove `` Kernel#` `` without any replacement.
+*   Удален `` Kernel#` `` без каких-либо замен.
     ([Pull Request](https://github.com/rails/rails/pull/31253))
 
-### Deprecations
+### Устарело
 
-*   Deprecate using negative integer arguments for `String#first` and
-    `String#last`.
+*   Устарело использование отрицательных числовых аргументов для `String#first` и `String#last`.
     ([Pull Request](https://github.com/rails/rails/pull/33058))
 
-*   Deprecate `ActiveSupport::Multibyte::Unicode#downcase/upcase/swapcase`
-    in favor of `String#downcase/upcase/swapcase`.
+*   Устарел `ActiveSupport::Multibyte::Unicode#downcase/upcase/swapcase` в пользу `String#downcase/upcase/swapcase`.
     ([Pull Request](https://github.com/rails/rails/pull/34123))
 
-*   Deprecate `ActiveSupport::Multibyte::Unicode#normalize`
-    and `ActiveSupport::Multibyte::Chars#normalize` in favor of
-    `String#unicode_normalize`.
+*   Устарели `ActiveSupport::Multibyte::Unicode#normalize` и `ActiveSupport::Multibyte::Chars#normalize` в пользу `String#unicode_normalize`.
     ([Pull Request](https://github.com/rails/rails/pull/34202))
 
-*   Deprecate `ActiveSupport::Multibyte::Chars.consumes?` in favor of
-    `String#is_utf8?`.
+*   Устарел `ActiveSupport::Multibyte::Chars.consumes?` в пользу `String#is_utf8?`.
     ([Pull Request](https://github.com/rails/rails/pull/34215))
 
-*   Deprecate `ActiveSupport::Multibyte::Unicode#pack_graphemes(array)`
-    and `ActiveSupport::Multibyte::Unicode#unpack_graphemes(string)`
-    in favor of `array.flatten.pack("U*")` and `string.scan(/\X/).map(&:codepoints)`,
-    respectively.
+*   Устарели `ActiveSupport::Multibyte::Unicode#pack_graphemes(array)` и `ActiveSupport::Multibyte::Unicode#unpack_graphemes(string)` в пользу `array.flatten.pack("U*")` и `string.scan(/\X/).map(&:codepoints)` соответственно.
     ([Pull Request](https://github.com/rails/rails/pull/34254))
 
-### Notable changes
+### Значимые изменения
 
-*   Add support for parallel testing.
+*   Добавлена поддержка параллельного тестирования.
     ([Pull Request](https://github.com/rails/rails/pull/31900))
 
-*   Make sure that `String#strip_heredoc` preserves frozen-ness of strings.
+*   Обеспечивается, что `String#strip_heredoc` сохраняет замороженность строк.
     ([Pull Request](https://github.com/rails/rails/pull/32037))
 
-*   Add `String#truncate_bytes` to truncate a string to a maximum bytesize
-    without breaking multibyte characters or grapheme clusters.
+*   Добавлен `String#truncate_bytes` для обрезания строки до максимального байтового размера без разбивания многобайтовых символов или кластеров графемы.
     ([Pull Request](https://github.com/rails/rails/pull/27319))
 
-*   Add `private` option to `delegate` method in order to delegate to
-    private methods. This option accepts `true/false` as the value.
+*   В метод `delegate` добавлена опция `private`, чтобы делегировать к приватным методам. Эта опция принимает значения `true/false`.
     ([Pull Request](https://github.com/rails/rails/pull/31944))
 
-*   Add support for translations through I18n for `ActiveSupport::Inflector#ordinal`
-    and `ActiveSupport::Inflector#ordinalize`.
+*   Добавлена поддержка переводов с помощью I18n для `ActiveSupport::Inflector#ordinal` и `ActiveSupport::Inflector#ordinalize`.
     ([Pull Request](https://github.com/rails/rails/pull/32168))
 
-*   Add `before?` and `after?` methods to `Date`, `DateTime`,
-    `Time`, and `TimeWithZone`.
+*   В `Date`, `DateTime`, `Time` и `TimeWithZone` добавлены методы `before?` и `after?`.
     ([Pull Request](https://github.com/rails/rails/pull/32185))
 
-*   Fix bug where `URI.unescape` would fail with mixed Unicode/escaped character
-    input.
+*   Починена ошибка, когда `URI.unescape` мог упасть при смешанном Unicode/escaped символьном вводе.
     ([Pull Request](https://github.com/rails/rails/pull/32183))
 
-*   Fix bug where `ActiveSupport::Cache` would massively inflate the storage
-    size when compression was enabled.
+*   Починена ошибка, когда `ActiveSupport::Cache` мог сильно раздуть размер хранилища, когда включено сжатие.
     ([Pull Request](https://github.com/rails/rails/pull/32539))
 
-*   Redis cache store: `delete_matched` no longer blocks the Redis server.
+*   Хранилище кэша Redis: `delete_matched` больше не блокирует сервер Redis.
     ([Pull Request](https://github.com/rails/rails/pull/32614))
 
-*   Fix bug where `ActiveSupport::TimeZone.all` would fail when tzinfo data for
-    any timezone defined in `ActiveSupport::TimeZone::MAPPING` was missing.
+*   Починена ошибка, когда `ActiveSupport::TimeZone.all` мог упасть, когда отсутствовали данные tzinfo для любой временной зоны, определенной в `ActiveSupport::TimeZone::MAPPING`.
     ([Pull Request](https://github.com/rails/rails/pull/32613))
 
-*   Add `Enumerable#index_with` which allows creating a hash from an enumerable
-    with the value from a passed block or a default argument.
+*   Добавлен `Enumerable#index_with`, позволяющий создать хэш из перечисления с помощью значения из переданного блока или аргумента по умолчанию.
     ([Pull Request](https://github.com/rails/rails/pull/32523))
 
-*   Allow `Range#===` and `Range#cover?` methods to work with `Range` argument.
+*   Методам `Range#===` и `Range#cover?` разрешено работать с аргументом `Range`.
     ([Pull Request](https://github.com/rails/rails/pull/32938))
 
-*   Support key expiry in `increment/decrement` operations of RedisCacheStore.
+*   Поддерживается устаревание ключа в операциях `increment/decrement` в RedisCacheStore.
     ([Pull Request](https://github.com/rails/rails/pull/33254))
 
-*   Add cpu time, idle time, and allocations features to log subscriber events.
+*   В события подписчика лога добавлены время cpu, время простоя и особенности аллокаций.
     ([Pull Request](https://github.com/rails/rails/pull/33449))
 
-*   Add support for event object to the Active Support notification system.
+*   В систему нотификаций Active Support добавлена поддержка объекта события.
     ([Pull Request](https://github.com/rails/rails/pull/33451))
 
-*   Add support for not caching `nil` entries by introducing new option `skip_nil`
-    for `ActiveSupport::Cache#fetch`.
+*   Добавлена поддержка для отсутствия кэширования вхождений `nil`, с помощью новой опции `skip_nil` для `ActiveSupport::Cache#fetch`.
     ([Pull Request](https://github.com/rails/rails/pull/25437))
 
-*   Add `Array#extract!` method which removes and returns the elements for which
-    block returns a true value.
+*   Добавлен метод `Array#extract!`, убирающий и возвращающий элементы, для которых блок возвращает истинное значение.
     ([Pull Request](https://github.com/rails/rails/pull/33137))
 
-*   Keep an HTML-safe string HTML-safe after slicing.
+*   HTML-безопасная строка остается HTML-безопасной после нарезки (slice).
     ([Pull Request](https://github.com/rails/rails/pull/33808))
 
-*   Add support for tracing constant autoloads via logging.
+*   Добавлена поддержка отслеживания автозагрузки констант с помощью логирования.
     ([Commit](https://github.com/rails/rails/commit/c03bba4f1f03bad7dc034af555b7f2b329cf76f5))
 
-*   Define `unfreeze_time` as an alias of `travel_back`.
+*   Определен `unfreeze_time` в качестве псевдонима для `travel_back`.
     ([Pull Request](https://github.com/rails/rails/pull/33813))
 
-*   Change `ActiveSupport::TaggedLogging.new` to return a new logger instance
-    instead of mutating the one received as argument.
+*   Изменен `ActiveSupport::TaggedLogging.new`, чтобы возвращался экземпляр нового логгера вместо мутации полученного в качестве аргумента.
     ([Pull Request](https://github.com/rails/rails/pull/27792))
 
-*   Treat `#delete_prefix`, `#delete_suffix` and `#unicode_normalize` methods
-    as non HTML-safe methods.
+*   Методы `#delete_prefix`, `#delete_suffix` и `#unicode_normalize` трактуются не как HTML-безопасные.
     ([Pull Request](https://github.com/rails/rails/pull/33990))
 
-*   Fix bug where `#without` for `ActiveSupport::HashWithIndifferentAccess`
-    would fail with symbol arguments.
+*   Починена ошибка, когда `#without` для `ActiveSupport::HashWithIndifferentAccess` падал с символьными аргументам.
     ([Pull Request](https://github.com/rails/rails/pull/34012))
 
-*   Rename `Module#parent`, `Module#parents`, and `Module#parent_name` to
-    `module_parent`, `module_parents`, and `module_parent_name`.
+*   Переименованы `Module#parent`, `Module#parents` и `Module#parent_name` в `module_parent`, `module_parents` и `module_parent_name`.
     ([Pull Request](https://github.com/rails/rails/pull/34051))
 
-*   Add `ActiveSupport::ParameterFilter`.
+*   Добавлен `ActiveSupport::ParameterFilter`.
     ([Pull Request](https://github.com/rails/rails/pull/34039))
 
-*   Fix issue where duration was being rounded to a full second when a float
-    was added to the duration.
+*   Починена проблема, когда продолжительность округлялась до полной секунды, когда float добавлялось к продолжительности.
     ([Pull Request](https://github.com/rails/rails/pull/34135))
 
-*   Make `#to_options` an alias for `#symbolize_keys` in
-    `ActiveSupport::HashWithIndifferentAccess`.
+*   `#to_options` сделан псевдонимом `#symbolize_keys` в `ActiveSupport::HashWithIndifferentAccess`.
     ([Pull Request](https://github.com/rails/rails/pull/34360))
 
-*   Don't raise an exception anymore if the same block is included multiple times
-    for a Concern.
+*   БОльше не вызывается ошибка, если тот же самый блок включается несколько раз для Concern.
     ([Pull Request](https://github.com/rails/rails/pull/34553))
 
-*   Preserve key order passed to `ActiveSupport::CacheStore#fetch_multi`.
+*   Сохраняется порядок ключей, переданных в `ActiveSupport::CacheStore#fetch_multi`.
     ([Pull Request](https://github.com/rails/rails/pull/34700))
 
-*   Fix `String#safe_constantize` to not throw a `LoadError` for incorrectly
-    cased constant references.
+*   Починен `String#safe_constantize`, чтобы не вызывалась `LoadError` для ссылок на константу в некорректном регистре.
     ([Pull Request](https://github.com/rails/rails/pull/34892))
 
-*   Add `Hash#deep_transform_values` and `Hash#deep_transform_values!`.
+*   Добавлены `Hash#deep_transform_values` и `Hash#deep_transform_values!`.
     ([Commit](https://github.com/rails/rails/commit/b8dc06b8fdc16874160f61dcf58743fcc10e57db))
 
-*   Add `ActiveSupport::HashWithIndifferentAccess#assoc`.
+*   Добавлен `ActiveSupport::HashWithIndifferentAccess#assoc`.
     ([Pull Request](https://github.com/rails/rails/pull/35080))
 
-*   Add `before_reset` callback to `CurrentAttributes` and define
-    `after_reset` as an alias of `resets` for symmetry.
+*   Добавлен колбэк `before_reset` в `CurrentAttributes` и симметрично определен `after_reset` как псевдоним `resets`.
     ([Pull Request](https://github.com/rails/rails/pull/35063))
 
-*   Revise `ActiveSupport::Notifications.unsubscribe` to correctly
-    handle Regex or other multiple-pattern subscribers.
+*   Пересмотрен `ActiveSupport::Notifications.unsubscribe`, чтобы корректно обрабатывать Regex или другие multiple-pattern подписчики.
     ([Pull Request](https://github.com/rails/rails/pull/32861))
 
-*   Add new autoloading mechanism using Zeitwerk.
+*   Добавлен новый механизм автозагрузки с помощью Zeitwerk.
     ([Commit](https://github.com/rails/rails/commit/e53430fa9af239e21e11548499d814f540d421e5))
 
-*   Add `Array#including` and `Enumerable#including` to conveniently enlarge
-    a collection.
+*   Добавлены `Array#including` и `Enumerable#including` для удобства увеличения коллекции.
     ([Commit](https://github.com/rails/rails/commit/bfaa3091c3c32b5980a614ef0f7b39cbf83f6db3))
 
-*   Rename `Array#without` and `Enumerable#without` to `Array#excluding`
-    and `Enumerable#excluding`. Old method names are retained as aliases.
+*   Переименованы `Array#without` и `Enumerable#without` в `Array#excluding` и `Enumerable#excluding`. Старые имена методов оставлены в качестве псевдонимов.
     ([Commit](https://github.com/rails/rails/commit/bfaa3091c3c32b5980a614ef0f7b39cbf83f6db3))
 
-*   Add support for supplying `locale` to `transliterate` and `parameterize`.
+*   Добавлена поддержка доставления `locale` в `transliterate` и `parameterize`.
     ([Pull Request](https://github.com/rails/rails/pull/35571))
 
-*   Fix `Time#advance` to work with dates before 1001-03-07.
+*   Починен `Time#advance` для работы с датами до 1001-03-07.
     ([Pull Request](https://github.com/rails/rails/pull/35659))
 
-*   Update `ActiveSupport::Notifications::Instrumenter#instrument` to allow
-    not passing block.
+*   Обновлен `ActiveSupport::Notifications::Instrumenter#instrument`. чтобы позволить не передавать блок.
     ([Pull Request](https://github.com/rails/rails/pull/35705))
 
-*   Use weak references in descendants tracker to allow anonymous subclasses to
-    be garbage collected.
+*   В трекере потомков используются слабые ссылки, чтобы позволить анонимным подклассам быть собранным сборщиком мусора.
     ([Pull Request](https://github.com/rails/rails/pull/31442))
 
-*   Calling test methods with `with_info_handler` method to allow minitest-hooks
-    plugin to work.
+*   Вызов тестовых методов с помощью метода `with_info_handler`, чтобы позволить работать плагинам minitest-hooks.
     ([Commit](https://github.com/rails/rails/commit/758ba117a008b6ea2d3b92c53b6a7a8d7ccbca69))
 
-*   Preserve `html_safe?` status on `ActiveSupport::SafeBuffer#*`.
+*   Сохраняется статус `html_safe?` на `ActiveSupport::SafeBuffer#*`.
     ([Pull Request](https://github.com/rails/rails/pull/36012))
 
 Active Job
 ----------
 
-Please refer to the [Changelog][active-job] for detailed changes.
+За подробностями обратитесь к [Changelog][active-job].
 
-### Removals
+### Удалено
 
-*   Remove support for Qu gem.
+*   удалена поддержка гема Qu.
     ([Pull Request](https://github.com/rails/rails/pull/32300))
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
-*   Add support for custom serializers for Active Job arguments.
+*   Добавлена поддержка пользовательских сериализаторов для аргументов Active Job.
     ([Pull Request](https://github.com/rails/rails/pull/30941))
 
-*   Add support for executing Active Jobs in the timezone in which
-    they were enqueued.
+*   Добавлена поддержка для запуска Active Jobs во временной зоне, в которой они были поставлены в очередь.
     ([Pull Request](https://github.com/rails/rails/pull/32085))
 
-*   Allow passing multiple exceptions to `retry_on`/`discard_on`.
+*   Разрешена передача нескольких исключений в `retry_on`/`discard_on`.
     ([Commit](https://github.com/rails/rails/commit/3110caecbebdad7300daaf26bfdff39efda99e25))
 
-*   Allow calling `assert_enqueued_with` and `assert_enqueued_email_with` without a block.
+*   Разрешен вызов `assert_enqueued_with` и `assert_enqueued_email_with` без блока.
     ([Pull Request](https://github.com/rails/rails/pull/33258))
 
-*   Wrap the notifications for `enqueue` and `enqueue_at` in the `around_enqueue`
-    callback instead of `after_enqueue` callback.
+*   Уведомления для `enqueue` и `enqueue_at` обернуты в колбэк `around_enqueue` вместо колбэка `after_enqueue`.
     ([Pull Request](https://github.com/rails/rails/pull/33171))
 
-*   Allow calling `perform_enqueued_jobs` without a block.
+*   Разрешен вызов `perform_enqueued_jobs` без блока.
     ([Pull Request](https://github.com/rails/rails/pull/33626))
 
-*   Allow calling `assert_performed_with` without a block.
+*   Разрешен вызов `assert_performed_with` без блока.
     ([Pull Request](https://github.com/rails/rails/pull/33635))
 
-*   Add `:queue` option to job assertions and helpers.
+*   Добавлена опция `:queue` к хелперам и утверждениям задач.
     ([Pull Request](https://github.com/rails/rails/pull/33635))
 
-*   Add hooks to Active Job around retries and discards.
+*   Добавлены хуки вокруг попыток и отмен Active Job.
     ([Pull Request](https://github.com/rails/rails/pull/33751))
 
-*   Add a way to test for subset of arguments when performing jobs.
+*   Добавлен способ тестирования для набора аргументов при выполнении задач.
     ([Pull Request](https://github.com/rails/rails/pull/33995))
 
-*   Include deserialized arguments in jobs returned by Active Job
-    test helpers.
+*   В задания, возвращаемых тестовыми хелперами Active Job, включаются десериализованные аргументы.
     ([Pull Request](https://github.com/rails/rails/pull/34204))
 
-*   Allow Active Job assertion helpers to accept Proc for `only`
-    keyword.
+*   Хелперам утверждений Active Job разрешается принимать Proc для ключевого слова `only`.
     ([Pull Request](https://github.com/rails/rails/pull/34339))
 
-*   Drop microseconds and nanoseconds from the job arguments in assertion helpers.
+*   В хелперах утверждений отбрасываются микросекунды и наносекунды из аргументов задачи.
     ([Pull Request](https://github.com/rails/rails/pull/35713))
 
-Ruby on Rails Guides
---------------------
+Руководства Ruby on Rails
+-------------------------
 
-Please refer to the [Changelog][guides] for detailed changes.
+За подробностями обратитесь к [Changelog][guides].
 
-### Notable changes
+### Значимые изменения
 
-*   Add a section about troubleshooting of autoloading constants.
+*   Добавлен раздел о разрешении проблем автозагрузки констант.
     ([Commit](https://github.com/rails/rails/commit/c03bba4f1f03bad7dc034af555b7f2b329cf76f5))
 
-*   Add Action Mailbox Basics guide.
+*   Добавлено руководство по основам Action Mailbox.
     ([Pull Request](https://github.com/rails/rails/pull/34812))
 
-*   Add Action Text Overview guide.
+*   Добавлено обзорное руководство по Action Text.
     ([Pull Request](https://github.com/rails/rails/pull/34878))
 
-Credits
--------
+Благодарности
+-------------
 
-See the
-[full list of contributors to Rails](https://contributors.rubyonrails.org/)
-for the many people who spent many hours making Rails, the stable and robust
-framework it is. Kudos to all of them.
+Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/6-0-stable/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/6-0-stable/actionpack/CHANGELOG.md

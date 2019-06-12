@@ -686,8 +686,8 @@ Active Job
 *   Разрешить передачу блока в `ActiveJob::Base.discard_on`, чтобы разрешить собственную обработку заданий сброса.
     ([Pull Request](https://github.com/rails/rails/pull/30622))
 
-Ruby on Rails Guides
---------------------
+Руководства Ruby on Rails
+-------------------------
 
 За подробностями обратитесь к [Changelog][guides].
 
