@@ -22,7 +22,7 @@ module ApplicationHelper
     [
       {
         url: 'https://lp.mkdev.me/obuchenie-web-razrabotke-ne-ruby-on-rails?utm_source=rusrails',
-        image: 'partners/mkdev/banner0519.png'
+        image: 'partners/mkdev/banner120619.png'
       },
     ].sample
   end
