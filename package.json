@@ -8,7 +8,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "yaspeller": "^5.0.1"
+    "yaspeller": "^5.1.0"
   },
   "devDependencies": {},
   "scripts": {
