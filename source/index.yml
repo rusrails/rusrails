@@ -273,8 +273,8 @@ pages:
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
-    revision: f3c71ff1e18369bf15ab9b51e448644ea2c2c349
-    date:     02/05/2018
+    revision: 913b2da2d833cfefcd6e4a111ab93446f94baab0
+    date:     02/06/2019
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
