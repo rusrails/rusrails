@@ -340,6 +340,7 @@ plan:
   - file:     action_mailbox_basics.md
   - file:     action_text_overview.md
   - file:     active_record_multiple_databases.md
+  - file:     autoloading_and_reloading_constants_classic_mode.md
 
 old:
   - file:     2_2_release_notes.md
