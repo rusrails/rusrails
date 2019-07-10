@@ -17,6 +17,21 @@
 
 Action Cable с легкостью интегрирует [WebSockets](https://ru.wikipedia.org/wiki/WebSocket) с остальными частями приложения Rails. Он позволяет писать функциональность реального времени на Ruby в стиле и формате остальной части приложения Rails, в то же время являясь производительным и масштабируемым. Он представляет полный стек, включая клиентский фреймворк на JavaScript и серверный фреймворк на Ruby. Вы получаете доступ к моделям предметной области, написанным с помощью Active Record или другой ORM на выбор.
 
+
+Терминология
+------------
+
+Отдельный сервер Action Cable может обслужить несколько экземпляров соединения. В нем есть один экземпляр соединения на соединение WebSocket. Отдельный пользователь может иметь несколько WebSocket, открытых в вашем приложении, если он использует несколько вкладок браузера или устройств. Клиент соединения WebSocket называется потребителем.
+
+Каждый потребитель, в свою очередь, может подписаться на несколько каналов cable. Каждый канал инкапсулирует логическую единицу работы, подобно тому, что делает контроллер в обычной настройке MVC. Например, могут быть `ChatChannel` и `AppearancesChannel`, а потребитель может подписаться на один или оба этих канала. Потребитель должен минимум быть подписан на один канал.
+
+Когда потребитель подписан на канал, он действует как подписчик. Соединение между подписчиком и каналом называется (сюрприз!) подпиской. Потребитель может действовать как подписчик на данный канал любое количество раз. Например, потребитель может подписаться на несколько комнат чата одновременно. (И помните, что физический пользователь может иметь несколько потребителей,
+один на вкладку/устройство, открытых к соединению).
+
+Каждый канал может вещать ноль или более трансляций. Трансляция — это ссылка pubsub, по которой все, передаваемое транслятором, посылается непосредственно подписчикам на канал, которые слушают эту названную трансляцию.
+
+Как видите, это довольно глубокий архитектурный стек. Тут есть множество новой терминологии для обозначения новых частей, и на основе этого вам придется иметь дело как с клиентским, так и с серверным отражением каждого узла.
+
 Что такое Pub/Sub
 -----------------
 
@@ -111,39 +126,58 @@ end
 #### (connect-consumer) Присоединение потребителя
 
 ```js
-// app/assets/javascripts/cable.js
-//= require action_cable
-//= require_self
-//= require_tree ./channels
+// app/javascript/channels/consumer.js
+// Action Cable provides the framework to deal with WebSockets in Rails.
+// You can generate new channels where WebSocket features live using the `rails generate channel` command.
 
-(function() {
-  this.App || (this.App = {});
+import { createConsumer } from "@rails/actioncable"
 
-  App.cable = ActionCable.createConsumer();
-}).call(this);
+export default createConsumer()
 ```
 
 Это подготовит потребителя, который по умолчанию присоединится к `/cable` на вашем сервере. Соединение не будет установлено, пока вы не определите хотя бы одну подписку, в которой вы заинтересованы.
+
+Опционально, потребитель может принять аргумент, указывающий URL для соединения. Он может быть строкой или функцией, возвращающей строку, которая будет вызвана, когда откроется WebSocket.
+
+```js
+// Указан другой URL для соединения
+createConsumer('https://ws.example.com/cable')
+
+// Использована функция для динамической генерации URL
+createConsumer(getWebSocketURL)
+
+function getWebSocketURL {
+  const token = localStorage.get('auth-token')
+  return `https://ws.example.com/cable?token=${token}`
+}
+```
 
 #### (Subscriber) Подписчик
 
 Потребитель становится подписчиком создав подписку на заданный канал:
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/chat.coffee
-App.cable.subscriptions.create { channel: "ChatChannel", room: "Best Room" }
+```js
+// app/javascript/channels/chat_channel.js
+import consumer from "./consumer"
 
-# app/assets/javascripts/cable/subscriptions/appearance.coffee
-App.cable.subscriptions.create { channel: "AppearanceChannel" }
+consumer.subscriptions.create({ channel: "ChatChannel", room: "Best Room" })
+
+// app/javascript/channels/appearance_channel.js
+import consumer from "./consumer"
+
+consumer.subscriptions.create({ channel: "AppearanceChannel" })
 ```
 
 Хотя это создает подписку, функциональность требует отклика на полученные данные, что будет описано позже.
 
 Потребитель может действовать как подписчик на заданный канал любое количество раз. Например, потребитель может подписаться на несколько комнат чата одновременно:
 
-```coffeescript
-App.cable.subscriptions.create { channel: "ChatChannel", room: "1st Room" }
-App.cable.subscriptions.create { channel: "ChatChannel", room: "2nd Room" }
+```js
+// app/javascript/channels/chat_channel.js
+import consumer from "./consumer"
+
+consumer.subscriptions.create({ channel: "ChatChannel", room: "1st Room" })
+consumer.subscriptions.create({ channel: "ChatChannel", room: "2nd Room" })
 ```
 
 ## Клиент-серверное взаимодействие
@@ -192,7 +226,7 @@ WebNotificationsChannel.broadcast_to(
 )
 ```
 
-Вызов `WebNotificationsChannel.broadcast_to` помещает сообщение в очередь pubsub текущего адаптера подписки (по умолчанию `redis` для production и `async` для development и test сред) под отдельным именем трансляции для каждого пользователя. Для пользователя с ID 1, имя трансляции будет `web_notifications:1`.
+Вызов `WebNotificationsChannel.broadcast_to` помещает сообщение в очередь pubsub текущего адаптера подписки под отдельным именем трансляции для каждого пользователя. Очередь pubsub по умолчанию для Action Cable — это `redis` для production и `async` для development и test сред. Для пользователя с ID 1, имя трансляции будет `web_notifications:1`.
 
 Канал проинструктирован писать в поток все, что приходит в `web_notifications:1`, непосредственно на клиент, вызывая колбэк `received`.
 
@@ -200,24 +234,31 @@ WebNotificationsChannel.broadcast_to(
 
 Когда потребитель подписывается на канал, он действует как подписчик. Это соединение называется подпиской. Затем, входящие сообщения направляются на эти подписки на канал, основываясь на идентификаторе, посланным потребителем cable.
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/chat.coffee
-# Предполагаем, что вы уже запросили право посылать веб-уведомления
-App.cable.subscriptions.create { channel: "ChatChannel", room: "Best Room" },
-  received: (data) ->
-    @appendLine(data)
+```js
+// app/javascript/channels/chat_channel.js
+// Предполагаем, что вы уже запросили право посылать веб-уведомления
+import consumer from "./consumer"
 
-  appendLine: (data) ->
-    html = @createLine(data)
-    $("[data-chat-room='Best Room']").append(html)
+consumer.subscriptions.create({ channel: "ChatChannel", room: "Best Room" }, {
+  received(data) {
+    this.appendLine(data)
+  },
 
-  createLine: (data) ->
-    """
-    <article class="chat-line">
-      <span class="speaker">#{data["sent_by"]}</span>
-      <span class="body">#{data["body"]}</span>
-    </article>
-    """
+  appendLine(data) {
+    const html = this.createLine(data)
+    const element = document.querySelector("[data-chat-room='Best Room']")
+    element.insertAdjacentHTML("beforeend", html)
+  },
+
+  createLine(data) {
+    return `
+      <article class="chat-line">
+        <span class="speaker">${data["sent_by"]}</span>
+        <span class="body">${data["body"]}</span>
+      </article>
+    `
+  }
+})
 ```
 
 ### Передача параметров в каналы
@@ -235,23 +276,30 @@ end
 
 Объект, переданный в качестве первого аргумента в `subscriptions.create`, станет хэшем params в канале cable. Ключевое слово `channel` обязательное:
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/chat.coffee
-App.cable.subscriptions.create { channel: "ChatChannel", room: "Best Room" },
-  received: (data) ->
-    @appendLine(data)
+```js
+// app/javascript/channels/chat_channel.js
+import consumer from "./consumer"
 
-  appendLine: (data) ->
-    html = @createLine(data)
-    $("[data-chat-room='Best Room']").append(html)
+consumer.subscriptions.create({ channel: "ChatChannel", room: "Best Room" }, {
+  received(data) {
+    this.appendLine(data)
+  },
 
-  createLine: (data) ->
-    """
-    <article class="chat-line">
-      <span class="speaker">#{data["sent_by"]}</span>
-      <span class="body">#{data["body"]}</span>
-    </article>
-    """
+  appendLine(data) {
+    const html = this.createLine(data)
+    const element = document.querySelector("[data-chat-room='Best Room']")
+    element.insertAdjacentHTML("beforeend", html)
+  },
+
+  createLine(data) {
+    return `
+      <article class="chat-line">
+        <span class="speaker">${data["sent_by"]}</span>
+        <span class="body">${data["body"]}</span>
+      </article>
+    `
+  }
+})
 ```
 
 ```ruby
@@ -281,13 +329,17 @@ class ChatChannel < ApplicationCable::Channel
 end
 ```
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/chat.coffee
-App.chatChannel = App.cable.subscriptions.create { channel: "ChatChannel", room: "Best Room" },
-  received: (data) ->
-    # data => { sent_by: "Paul", body: "This is a cool chat app." }
+```js
+// app/javascript/channels/chat_channel.js
+import consumer from "./consumer"
 
-App.chatChannel.send({ sent_by: "Paul", body: "This is a cool chat app." })
+const chatChannel = consumer.subscriptions.create({ channel: "ChatChannel", room: "Best Room" }, {
+  received(data) {
+    // data => { sent_by: "Paul", body: "This is a cool chat app." }
+  }
+}
+
+chatChannel.send({ sent_by: "Paul", body: "This is a cool chat app." })
 ```
 
 Перетрансляция будет получена всеми подсоединенными клиентами, _включая_ клиента, отправившего сообщение. Отметьте, что params те же самые, что были при подписке на канал.
@@ -331,57 +383,80 @@ end
 
 Создание подписки на канал появлений на клиенте:
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/appearance.coffee
-App.cable.subscriptions.create "AppearanceChannel",
-  # Вызывается, когда подписка готова на сервере для использования.
-  connected: ->
-    @install()
-    @appear()
+```js
+// app/javascript/channels/appearance_channel.js
+import consumer from "./consumer"
 
-  # Вызывается, когда закрывается соединения WebSocket.
-  disconnected: ->
-    @uninstall()
+consumer.subscriptions.create("AppearanceChannel", {
+  // Вызывается единожды при создании подписки.
+  initialized() {
+    this.update = this.update.bind(this)
+  },
 
-  # Вызывается, когда подписка отвергается сервером.
-  rejected: ->
-    @uninstall()
+  // Вызывается, когда подписка готова на сервере для использования.
+  connected() {
+    this.install()
+    this.update()
+  },
 
-  appear: ->
-    # Вызывает `AppearanceChannel#appear(data)` на сервере.
-    @perform("appear", appearing_on: $("main").data("appearing-on"))
+  // Вызывается, когда закрывается соединения WebSocket.
+  disconnected() {
+    this.uninstall()
+  },
 
-  away: ->
-    # Вызывает `AppearanceChannel#away` на сервере.
-    @perform("away")
+  // Вызывается, когда подписка отвергается сервером.
+  rejected() {
+    this.uninstall()
+  },
 
+  update() {
+    this.documentIsActive ? this.appear() : this.away()
+  },
 
-  buttonSelector = "[data-behavior~=appear_away]"
+  appear() {
+    // Вызывает `AppearanceChannel#appear(data)` на сервере.
+    this.perform("appear", { appearing_on: this.appearingOn })
+  },
 
-  install: ->
-    $(document).on "turbolinks:load.appearance", =>
-      @appear()
+  away() {
+    // Вызывает `AppearanceChannel#away` на сервере.
+    this.perform("away")
+  },
 
-    $(document).on "click.appearance", buttonSelector, =>
-      @away()
-      false
+  install() {
+    window.addEventListener("focus", this.update)
+    window.addEventListener("blur", this.update)
+    document.addEventListener("turbolinks:load", this.update)
+    document.addEventListener("visibilitychange", this.update)
+  },
 
-    $(buttonSelector).show()
+  uninstall() {
+    window.removeEventListener("focus", this.update)
+    window.removeEventListener("blur", this.update)
+    document.removeEventListener("turbolinks:load", this.update)
+    document.removeEventListener("visibilitychange", this.update)
+  },
 
-  uninstall: ->
-    $(document).off(".appearance")
-    $(buttonSelector).hide()
+  get documentIsActive() {
+    return document.visibilityState == "visible" && document.hasFocus()
+  },
+
+  get appearingOn() {
+    const element = document.querySelector("[data-appearing-on]")
+    return element ? element.getAttribute("data-appearing-on") : null
+  }
+})
 ```
 
 ##### Клиент-серверное взаимодействие
 
 1. **Клиент** соединяется с **Сервером** с помощью `App.cable = ActionCable.createConsumer("ws://cable.example.com")`. (`cable.js`). **Сервер** идентифицирует экземпляр этого соединения по `current_user`.
 
-2. **Клиент** подписывается на канал появлений с помощью `App.cable.subscriptions.create(channel: "AppearanceChannel")`. (`appearance.coffee`)
+2. **Клиент** подписывается на канал появлений с помощью `consumer.subscriptions.create({ channel: "AppearanceChannel" })`. (`appearance_channel.js`)
 
 3. **Сервер** распознает, что была инициализирована новая подписка для канала появлений, и запускает колбэк `subscribed`, вызывающий метод `appear` на `current_user`. (`appearance_channel.rb`)
 
-4. **Клиент** распознав, что подписка была установлена, вызывает `connected` (`appearance.coffee`), который, в свою очередь, вызывает `@install` и `@appear`. `@appear` вызывает `AppearanceChannel#appear(data)` на сервере и предоставляет хэш данных `appearing_on: $("main").data("appearing-on")`. Это возможно, так как экземпляр канала на сервере автоматически открывает публичные методы, объявленные в классе (кроме колбэков), таким образом, они достижимы для вызова в качестве удаленных процедур с помощью метода подписки `perform`.
+4. **Клиент** распознав, что подписка была установлена, вызывает `connected` (`appearance_channel.js`), который, в свою очередь, вызывает `install` и `appear`. `appear` вызывает `AppearanceChannel#appear(data)` на сервере и предоставляет хэш данных `{ appearing_on: this.appearingOn }`. Это возможно, так как экземпляр канала на сервере автоматически открывает публичные методы, объявленные в классе (кроме колбэков), таким образом, они достижимы для вызова в качестве удаленных процедур с помощью метода подписки `perform`.
 
 5. **Сервер** получает запрос для экшна `appear` на канале появлений для соединения, идентифицированного `current_user`. (`appearance_channel.rb`). **Сервер** получает данные с ключом `:appearing_on` из хэша данных и устанавливает его в качестве значения для ключа `:on`, передаваемого в `current_user.appear`.
 
@@ -404,13 +479,17 @@ end
 
 Создание подписки на канал веб-уведомлений на клиенте:
 
-```coffeescript
-# app/assets/javascripts/cable/subscriptions/web_notifications.coffee
-# На клиенте полагаем, что уже запросили право
-# посылать веб-уведомления
-App.cable.subscriptions.create "WebNotificationsChannel",
-  received: (data) ->
-    new Notification data["title"], body: data["body"]
+```js
+// app/javascript/channels/web_notifications_channel.js
+// На клиенте полагаем, что уже запросили право
+// посылать веб-уведомления
+import consumer from "./consumer"
+
+consumer.subscriptions.create("WebNotificationsChannel", {
+  received(data) {
+    new Notification(data["title"], body: data["body"])
+  }
+})
 ```
 
 Транслируем содержимое в экземпляр канала веб-уведомлений откуда-нибудь из приложения:
@@ -474,7 +553,7 @@ production:
 Action Cable принимает только запросы с определенных доменов, которые передаются в конфигурацию сервера массивом. Домены могут быть экземплярами строк или регулярных выражений, с которыми выполняется сверка.
 
 ```ruby
-config.action_cable.allowed_request_origins = ['http://rubyonrails.com', %r{http://ruby.*}]
+config.action_cable.allowed_request_origins = ['https://rubyonrails.com', %r{http://ruby.*}]
 ```
 
 Чтобы отключить и, тем самым, разрешить запросы с любого домена:
@@ -488,6 +567,16 @@ config.action_cable.disable_request_forgery_protection = true
 ### Настройка потребителя
 
 Чтобы сконфигурировать URL, добавьте вызов `action_cable_meta_tag` в макете HTML HEAD. Он использует URL или путь, обычно устанавливаемые с помощью `config.action_cable.url` в файлах настройки среды.
+
+### Настройка пула воркеров
+
+Пул воркеров используется для запуска колбэков соединения и экшнов канала в изоляции от основного треда сервера. Action Cable позволяет приложению настроить количество одновременно обрабатываемых тредов в пуле воркеров.
+
+```ruby
+config.action_cable.worker_pool_size = 4
+```
+
+Также отметим, что ваш сервер должен предоставить как минимум то же самое количество соединений с базой данных, сколько у вас есть воркеров. Пул воркеров по умолчанию установлен 4, это означает, что нужно сделать как минимум 4 доступных соединения к базе данных. Это можно изменить в `config/database.yml` с помощью атрибута `pool`.
 
 ### Другие настройки
 
@@ -503,8 +592,6 @@ config.action_cable.log_tags = [
 
 Полный список всех конфигурационных опций смотрите в классе `ActionCable::Server::Configuration`.
 
-Также отметим, что ваш сервер должен предоставить как минимум то же самое количество соединений с базой данных, сколько у вас есть воркеров. Пул воркеров по умолчанию установлен 4, это означает, что нужно сделать доступными соединения как минимум для них. Это можно изменить в `config/database.yml` с помощью атрибута `pool`.
-
 ## Запуск отдельного сервера cable
 
 ### В приложении
@@ -518,7 +605,7 @@ class Application < Rails::Application
 end
 ```
 
-Можно использовать `App.cable = ActionCable.createConsumer()`, чтобы соединить с сервером cable, если `action_cable_meta_tag` вызван в макете. Произвольный путь указывается в качестве первого аргумента `createConsumer` (например, `App.cable = ActionCable.createConsumer("/websocket")`).
+Можно использовать `ActionCable.createConsumer()`, чтобы соединить с сервером cable, если `action_cable_meta_tag` вызван в макете. В противном случае, путь указывается в качестве первого аргумента `createConsumer` (например, `ActionCable.createConsumer("/websocket")`).
 
 Для каждого экземпляра создаваемого сервера и для каждого воркера, порождаемого сервером, у вас также будет новый экземпляр Action Cable, но использование Redis позволяет синхронизировать сообщения между соединениями.
 
@@ -545,7 +632,7 @@ bundle exec puma -p 28080 cable/config.ru
 
 ### Заметки
 
-У сервера WebSocket нет доступа к сессии, но есть доступ к куки. Это можно использовать, если нужно обрабатывать аутентификацию. Один из способов с помощью Devise можно посмотреть в этой [статье](http://www.rubytutorial.io/actioncable-devise-authentication).
+У сервера WebSocket нет доступа к сессии, но есть доступ к куки. Это можно использовать, если нужно обрабатывать аутентификацию. Один из способов с помощью Devise можно посмотреть в этой [статье](https://greg.molnar.io/blog/actioncable-devise-authentication/).
 
 ## (dependencies) Зависимости
 
@@ -561,3 +648,7 @@ Action Cable работает на комбинации WebSockets и тредо
 Сервер Action Cable реализует Rack API угона сокетов (socket hijacking), тем самым позволяет внутренне использовать многотредовый паттерн для управления соединениями, независимо от того, является ли сервер приложения многотредовым.
 
 В соответствии с этим, Action Cable работает со популярными серверами, такими как Unicorn, Puma и Passenger.
+
+## Тестирование
+
+Детальные инструкции по тестированию функционала Action Cable можно найти в [руководстве по тестированию](/a-guide-to-testing-rails-applications#testing-action-cable).

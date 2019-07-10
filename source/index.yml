@@ -201,8 +201,8 @@ pages:
   - title:    Обзор Action Cable
     path:     action-cable-overview
     file:     action_cable_overview.md
-    revision: 7b9c19d94b18f340552f95225bf01d6f91804184
-    date:     24/07/2018
+    revision: 4f5949cf9f96938086338fe8f7af5af34cc21daa
+    date:     01/04/2019
 
   - title:    Основы создания плагинов Rails
     path:     plugins
