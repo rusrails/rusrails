@@ -54,7 +54,7 @@ namespace :docrails do
       else 31
       end
 
-      puts "\e[%sm%s %40.40s: +/- %4s/%4s, outdated %4s days (%s %s)\e[0m" %
+      puts "\e[%sm%s %55.55s: +/- %4s/%4s, outdated %4s days (%s %s)\e[0m" %
             [color, stat[:new] ? '*' : ' ', stat['file'], stat[:insertions], stat[:deletions],
              stat[:outdated], stat[:objectish], stat[:new_date].strftime('%d/%m/%Y')]
     end
