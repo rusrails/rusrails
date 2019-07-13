@@ -192,11 +192,17 @@ pages:
     revision: 534f5509897d4862edba83760f45cb112b0ea106
     date:     27/02/2018
 
-  - title:    Автозагрузка и перезагрузка констант
+  - title:    Автозагрузка и перезагрузка констант (режим Zeitwerk)
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
-    revision: 5c7656d9a568fda855e6e558b7e44b1ba51425be
-    date:     06/05/2018
+    revision: 72af2c42a76a1f3cf2268fdef15e270d581482fb
+    date:     11/07/2019
+
+  - title:    Автозагрузка и перезагрузка констант (режим Classic)
+    path:     autoloading_and_reloading_constants_classic_mode
+    file:     autoloading_and_reloading_constants_classic_mode.md
+    revision: 2fe20cb55c76e6e50ec3a4ec5b03bbb65adba290
+    date:     10/07/2019
 
   - title:    Обзор Action Cable
     path:     action-cable-overview
@@ -340,7 +346,6 @@ plan:
   - file:     action_mailbox_basics.md
   - file:     action_text_overview.md
   - file:     active_record_multiple_databases.md
-  - file:     autoloading_and_reloading_constants_classic_mode.md
 
 old:
   - file:     2_2_release_notes.md

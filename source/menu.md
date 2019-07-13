@@ -37,17 +37,18 @@
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Командная строка Rails](/a-guide-to-the-rails-command-line)
+    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Engine для начинающих](/engines)
     * [Процесс инициализации в Rails](/initialization)
-    * [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading)
+    * [Автозагрузка и перезагрузка констант (режим Zeitwerk)](/constant_autoloading_and_reloading)
+    * [Автозагрузка и перезагрузка констант (режим Classic)](/autoloading_and_reloading_constants_classic_mode)
     * [Обзор Action Cable](/action-cable-overview)
 
 * **Расширяем Rails**
