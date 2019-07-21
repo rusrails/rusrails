@@ -94,7 +94,7 @@ end
 
 ![Диаграмма для связи belongs_to](/images/association_basics/belongs_to.png)
 
-NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если использовать множественное число в вышеприведенном примере для связи `author` в модели `Book`, вам будет сообщено "uninitialized constant Book::Authors". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
+NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если использовать множественное число в вышеприведенном примере для связи `author` в модели `Book` и создать экземпляр с помощью `Book.create(authors: @author)`, будет сообщено "uninitialized constant Book::Authors". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
 
 Соответствующая миграция может выглядеть так:
 
@@ -107,7 +107,7 @@ class CreateOrders < ActiveRecord::Migration[5.0]
     end
 
     create_table :books do |t|
-      t.belongs_to :author, index: true
+      t.belongs_to :author
       t.datetime :published_at
       t.timestamps
     end
@@ -138,7 +138,7 @@ class CreateSuppliers < ActiveRecord::Migration[5.0]
     end
 
     create_table :accounts do |t|
-      t.belongs_to :supplier, index: true
+      t.belongs_to :supplier
       t.string :account_number
       t.timestamps
     end
@@ -180,7 +180,7 @@ class CreateAuthors < ActiveRecord::Migration[5.0]
     end
 
     create_table :books do |t|
-      t.belongs_to :author, index: true
+      t.belongs_to :author
       t.datetime :published_at
       t.timestamps
     end
@@ -227,8 +227,8 @@ class CreateAppointments < ActiveRecord::Migration[5.0]
     end
 
     create_table :appointments do |t|
-      t.belongs_to :physician, index: true
-      t.belongs_to :patient, index: true
+      t.belongs_to :physician
+      t.belongs_to :patient
       t.datetime :appointment_date
       t.timestamps
     end
@@ -304,13 +304,13 @@ class CreateAccountHistories < ActiveRecord::Migration[5.0]
     end
 
     create_table :accounts do |t|
-      t.belongs_to :supplier, index: true
+      t.belongs_to :supplier
       t.string :account_number
       t.timestamps
     end
 
     create_table :account_histories do |t|
-      t.belongs_to :account, index: true
+      t.belongs_to :account
       t.integer :credit_rating
       t.timestamps
     end
@@ -350,8 +350,8 @@ class CreateAssembliesAndParts < ActiveRecord::Migration[5.0]
     end
 
     create_table :assemblies_parts, id: false do |t|
-      t.belongs_to :assembly, index: true
-      t.belongs_to :part, index: true
+      t.belongs_to :assembly
+      t.belongs_to :part
     end
   end
 end
@@ -376,7 +376,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateSuppliers < ActiveRecord::Migration[5.0]
+class CreateSuppliers < ActiveRecord::Migration[5.2]
   def change
     create_table :suppliers do |t|
       t.string :name
@@ -384,7 +384,7 @@ class CreateSuppliers < ActiveRecord::Migration[5.0]
     end
 
     create_table :accounts do |t|
-      t.integer :supplier_id
+      t.bigint  :supplier_id
       t.string  :account_number
       t.timestamps
     end
@@ -394,7 +394,7 @@ class CreateSuppliers < ActiveRecord::Migration[5.0]
 end
 ```
 
-NOTE: Использование `t.integer :supplier_id` указывает имя внешнего ключа очевидно и явно. В современных версиях Rails можно абстрагироваться от деталей реализации используя `t.references :supplier`.
+NOTE: Использование `t.bigint :supplier_id` указывает имя внешнего ключа очевидно и явно. В современных версиях Rails можно абстрагироваться от деталей реализации используя `t.references :supplier`.
 
 ### Выбор между `has_many :through` и `has_and_belongs_to_many`
 
@@ -458,11 +458,11 @@ end
 Если имеется экземпляр модели `Picture`, можно получить его родителя посредством `@picture.imageable`. Чтобы это работало, необходимо объявить столбец внешнего ключа и столбец типа в модели, объявляющей полиморфный интерфейс:
 
 ```ruby
-class CreatePictures < ActiveRecord::Migration[5.0]
+class CreatePictures < ActiveRecord::Migration[5.2]
   def change
     create_table :pictures do |t|
       t.string  :name
-      t.integer :imageable_id
+      t.bigint  :imageable_id
       t.string  :imageable_type
       t.timestamps
     end
@@ -479,7 +479,7 @@ class CreatePictures < ActiveRecord::Migration[5.0]
   def change
     create_table :pictures do |t|
       t.string :name
-      t.references :imageable, polymorphic: true, index: true
+      t.references :imageable, polymorphic: true
       t.timestamps
     end
   end
@@ -509,7 +509,7 @@ end
 class CreateEmployees < ActiveRecord::Migration[5.0]
   def change
     create_table :employees do |t|
-      t.references :manager, index: true
+      t.references :manager
       t.timestamps
     end
   end
@@ -611,11 +611,11 @@ end
 Теперь нужно написать миграцию для создания таблицы `assemblies_parts`. Эта таблица должна быть создана без первичного ключа:
 
 ```ruby
-class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[5.0]
+class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[5.2]
   def change
     create_table :assemblies_parts, id: false do |t|
-      t.integer :assembly_id
-      t.integer :part_id
+      t.bigint :assembly_id
+      t.bigint :part_id
     end
 
     add_index :assemblies_parts, :assembly_id
@@ -856,7 +856,7 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 
 ```ruby
 class Book < ApplicationRecord
-  belongs_to :author, dependent: :destroy,
+  belongs_to :author, touch: :books_updated_at,
     counter_cache: true
 end
 ```
@@ -1026,8 +1026,7 @@ end
 
 ```ruby
 class Book < ApplicationRecord
-  belongs_to :author, -> { where active: true },
-                        dependent: :destroy
+  belongs_to :author, -> { where active: true }
 end
 ```
 
@@ -1053,13 +1052,13 @@ end
 Метод `includes` можно использовать для определения связей второго порядка, которые должны быть лениво загружены при использовании этой связи. Например, рассмотрим эти модели:
 
 ```ruby
-class LineItem < ApplicationRecord
+class Chapter < ApplicationRecord
   belongs_to :book
 end
 
 class Book < ApplicationRecord
   belongs_to :author
-  has_many :line_items
+  has_many :chapters
 end
 
 class Author < ApplicationRecord
@@ -1067,16 +1066,16 @@ class Author < ApplicationRecord
 end
 ```
 
-Если вы часто получаете авторов непосредственно из элементов (`@line_item.book.author`), то можно улучшить эффективность кода, включив авторов в связь между книгой и ее элементами:
+Если вы часто получаете авторов непосредственно из глав (`@chapter.book.author`), то можно улучшить эффективность кода, включив авторов в связь между книгой и ее главами:
 
 ```ruby
-class LineItem < ApplicationRecord
+class Chapter < ApplicationRecord
   belongs_to :book, -> { includes :author }
 end
 
 class Book < ApplicationRecord
   belongs_to :author
-  has_many :line_items
+  has_many :chapters
 end
 
 class Author < ApplicationRecord
@@ -1211,6 +1210,7 @@ end
 * `:source`
 * `:source_type`
 * `:through`
+* `:touch`
 * `:validate`
 
 #### `:as`
@@ -1237,8 +1237,8 @@ end
 
 * `:destroy` приведет к тому, что связанный объект также будет уничтожен
 * `:delete` приведет к тому, что связанный объект будет удален из базы данных напрямую (таким образом не будут выполнены колбэки)
-* `:nullify` приведет к тому, что внешний ключ будет установлен `NULL`. Колбэки не выполняются.
-* `:restrict_with_exception` приведет к вызову исключения, если есть связанный объект
+* `:nullify` приведет к тому, что внешний ключ будет установлен `NULL`. Столбцы полиморфного типа на полиморфных связях также обнуляются. Колбэки не выполняются.
+* `:restrict_with_exception` приведет к вызову исключения `ActiveRecord::DeleteRestrictionError`, если есть связанный объект
 * `:restrict_with_error` приведет к ошибке, добавляемой к владельцу, если есть связанный объект
 
 Нельзя устанавливать или оставлять опцию `:nullify` для связей, имеющих ограничение `NOT NULL`. Если не установить `dependent` для уничтожения таких связей, вы не сможете изменить связанный объект, так как внешнему ключу изначально связанного объекта будет назначено недопустимое значение `NULL`.
@@ -1281,9 +1281,46 @@ end
 
 Опция `:source_type` определяет тип источника связи для связи `has_one :through`, который действует при полиморфной связи.
 
+```ruby
+class Book < ApplicationRecord
+  has_one :format, polymorphic: true
+  has_one :dust_jacket, through: :format, source: :dust_jacket, source_type: "Hardback"
+end
+
+class Paperback < ApplicationRecord; end
+
+class Hardback < ApplicationRecord
+  has_one :dust_jacket
+end
+
+class DustJacket < ApplicationRecord; end
+```
+
 #### `:through`
 
 Опция `:through` определяет соединительную модель, через которую выполняется запрос. Связи `has_one :through` подробно рассматривались [ранее](#the-has-one-through-association).
+
+##### `:touch`
+
+Если опция `:touch` установлена `true`, тогда временные метки `updated_at` или `updated_on` у связанного объекта будут установлены в текущее время всякий раз, когда этот объект будет сохранен или уничтожен:
+
+```ruby
+class Supplier < ApplicationRecord
+  has_one :account, touch: true
+end
+
+class Account < ApplicationRecord
+  belongs_to :supplier
+end
+```
+
+В этом случае, сохранение или удаление поставщика обновит временную метку у связанного счета. Также можно указать конкретный атрибут временной метки для обновления:
+
+```ruby
+class Supplier < ApplicationRecord
+  has_one :account, touch: :suppliers_updated_at
+end
+```
 
 #### `:validate`
 
@@ -1519,7 +1556,7 @@ WARNING: Объекты будут удалены, если они связан�
 
 #### `collection.find(...)`
 
-Метод `collection.find` ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.find`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-find).
+Метод `collection.find` ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.find`](https://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-find).
 
 ```ruby
 @available_book = @author.books.find(1)
@@ -1536,7 +1573,7 @@ WARNING: Объекты будут удалены, если они связан�
 
 #### `collection.exists?(...)`
 
-Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
+Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](https://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
 
 #### `collection.build(attributes = {}, ...)`
 
@@ -1629,9 +1666,11 @@ end
 
 * `:destroy` приведет к тому, что связанные объекты также будут уничтожены
 * `:delete_all` приведет к тому, что связанные объекты будут удалены из базы данных напрямую (таким образом не будут выполнены колбэки)
-* `:nullify` приведет к тому, что внешние ключи будет установлен `NULL`. Колбэки не выполняются.
-* `:restrict_with_exception` приведет к вызову исключения, если есть какой-нибудь связанный объект
+* `:nullify` приведет к тому, что внешние ключи будет установлен `NULL`. Столбцы полиморфного типа на полиморфных связях также обнуляются. Колбэки не выполняются.
+* `:restrict_with_exception` приведет к вызову исключения `ActiveRecord::DeleteRestrictionError`, если есть какой-нибудь связанный объект
 * `:restrict_with_error` приведет к ошибке, добавляемой к владельцу, если есть какой-нибудь связанный объект
+
+Опции `:destroy` и `:delete_all` также влияют на семантику методов `collection.delete` и `collection=`, вынуждая их удалять связанные объекты при удалении из коллекции.
 
 #### `:foreign_key`
 
@@ -1676,6 +1715,20 @@ end
 #### `:source`
 
 Опция `:source` определяет имя источника связи для связи `has_many :through`. Эту опцию нужно использовать, только если имя источника связи не может быть автоматически выведено из имени связи.
+
+```ruby
+class Author < ApplicationRecord
+  has_many :books
+  has_many :paperbacks, through: :books, source: :format, source_type: "Paperback"
+end
+
+class Book < ApplicationRecord
+  has_one :format, polymorphic: true
+end
+
+class Hardback < ApplicationRecord; end
+class Paperback < ApplicationRecord; end
+```
 
 #### `:source_type`
 
@@ -1744,8 +1797,8 @@ end
 
 ```ruby
 class Author < ApplicationRecord
-  has_many :line_items, -> { group 'books.id' },
-                        through: :books
+  has_many :chapters, -> { group 'books.id' },
+                      through: :books
 end
 ```
 
@@ -1760,27 +1813,27 @@ end
 
 class Book < ApplicationRecord
   belongs_to :author
-  has_many :line_items
+  has_many :chapters
 end
 
-class LineItem < ApplicationRecord
+class Chapter < ApplicationRecord
   belongs_to :book
 end
 ```
 
-Если вы часто получаете элементы прямо из авторов (`@author.books.line_items`), тогда можете сделать свой код более эффективным, включив элементы в связь от авторов к книгам:
+Если вы часто получаете главы прямо из авторов (`@author.books.chapters`), тогда можете сделать свой код более эффективным, включив главы в связь от авторов к книгам:
 
 ```ruby
 class Author < ApplicationRecord
-  has_many :books, -> { includes :line_items }
+  has_many :books, -> { includes :chapters }
 end
 
 class Book < ApplicationRecord
   belongs_to :author
-  has_many :line_items
+  has_many :chapters
 end
 
-class LineItem < ApplicationRecord
+class Chapter < ApplicationRecord
   belongs_to :book
 end
 ```
@@ -2026,7 +2079,7 @@ NOTE: Этот метод - просто псевдоним к `collection.conca
 
 #### `collection.find(...)`
 
-Метод `collection.find` ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.find`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-find). А также добавляет дополнительное условие, что объект должен быть в коллекции.
+Метод `collection.find` ищет объекты в коллекции. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.find`](https://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-find). А также добавляет дополнительное условие, что объект должен быть в коллекции.
 
 ```ruby
 @assembly = @part.assemblies.find(1)
@@ -2042,7 +2095,7 @@ NOTE: Этот метод - просто псевдоним к `collection.conca
 
 #### `collection.exists?(...)`
 
-Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
+Метод `collection.exists?` проверяет, существует ли в коллекции объект, отвечающий представленным условиям. Он использует тот же синтаксис и опции, что и [`ActiveRecord::Base.exists?`](https://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-exists-3F).
 
 #### `collection.build(attributes = {})`
 
@@ -2299,6 +2352,17 @@ end
 ```
 
 Если колбэк `before_add` вызывает исключение, объект не будет добавлен в коллекцию. Подобным образом, если колбэк `before_remove` вызывает исключение, объект не убирается из коллекции.
+
+NOTE: Эти колбэки вызываются только когда связанные объекты добавляются или убираются через коллекцию связи:
+
+```ruby
+# Вызывает колбэк `before_add`
+author.books << book
+author.books = [book, book2]
+
+# Не вызывает колбэк `before_add`
+book.update(author_id: 1)
+```
 
 ### Расширения связи
 
