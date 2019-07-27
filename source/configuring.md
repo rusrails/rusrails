@@ -736,7 +736,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_cable.mount_path` принимает строку, куда монтировать Action Cable, как часть процесса основного сервера. По умолчанию `/cable`. Ей можно указать nil, чтобы не монтировать Action Cable как часть вашего обычного сервера Rails.
 
-### Конфигурирование Active Storage
+### (configuring-active-storage) Конфигурирование Active Storage
 
 `config.active_storage` предоставляет следующие опции конфигурации:
 
