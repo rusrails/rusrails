@@ -30,7 +30,7 @@ version = ">= 0"
 load Gem.bin_path('railties', 'rails', version)
 ```
 
-Если попытаетесь запустить эту команду в консоли Rails, то увидите, что она загружает `railties/exe/rails`. Часть файла `railties/exe/rails.rb` содержит следующий код:
+Если попытаетесь запустить эту команду в консоли Rails, то увидите, что она загружает `railties/exe/rails`. Часть файла `railties/exe/rails` содержит следующий код:
 
 ```ruby
 require "rails/cli"
@@ -84,6 +84,8 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 * activerecord
 * activestorage
 * activesupport
+* actionmailbox
+* actiontext
 * arel
 * builder
 * bundler
@@ -129,7 +131,7 @@ Rails::Command.invoke command, ARGV
 
 Когда кто-то вводит команду Rails, `invoke` пытается найти команду для данного пространства имен и выполняет команду, если она найдена.
 
-Как показано, `Rails::Command` выводит справку автоматически, если `args` пустой.
+Как показано, `Rails::Command` выводит справку автоматически, если `namespace` пустой.
 
 ```ruby
 module Rails::Command
@@ -249,7 +251,7 @@ def default_options
     environment:        (ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "development").dup,
     daemonize:          false,
     caching:            nil,
-    pid:                Options::DEFAULT_PID_PATH,
+    pid:                ENV.fetch("PIDFILE", Options::DEFAULT_PIDFILE).dup,
     restart_cmd:        restart_command)
 end
 ```
@@ -310,7 +312,7 @@ private
       FileUtils.mkdir_p(File.join(Rails.root, 'tmp', dir_to_make))
     end
   end
- 
+
   def setup_dev_caching
     if options[:environment] == "development"
       Rails::DevCaching.enable_by_argument(options[:caching])
@@ -481,6 +483,8 @@ require "rails"
   action_mailer/railtie
   active_job/railtie
   action_cable/engine
+  action_mailbox/engine
+  action_text/engine
   rails/test_unit/railtie
   sprockets/railtie
 ).each do |railtie|
