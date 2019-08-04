@@ -27,7 +27,7 @@ NOTE: Некоторые особенности Action View связаны с Ac
 Давайте взглянем на то, что делает Rails по умолчанию, когда создает новый ресурс с помощью генератора скаффолда:
 
 ```bash
-$ bin/rails generate scaffold article
+$ rails generate scaffold article
       [...]
       invoke  scaffold_controller
       create    app/controllers/articles_controller.rb
@@ -85,7 +85,7 @@ Hi, Mr. <% puts "Frodo" %>
 ```ruby
 xml.em("emphasized")
 xml.em { xml.b("emph & bold") }
-xml.a("A Link", "href" => "http://rubyonrails.org")
+xml.a("A Link", "href" => "https://rubyonrails.org")
 xml.target("name" => "compile", "option" => "fast")
 ```
 
@@ -94,7 +94,7 @@ xml.target("name" => "compile", "option" => "fast")
 ```html
 <em>emphasized</em>
 <em><b>emph &amp; bold</b></em>
-<a href="http://rubyonrails.org">A link</a>
+<a href="https://rubyonrails.org">A link</a>
 <target option="fast" name="compile" />
 ```
 
@@ -386,9 +386,9 @@ append_view_path "app/views/direct"
 Обзор хелперов, предоставленных Action View
 -------------------------------------------
 
-WIP: Тут перечислены не все хелперы. За полным списком можно обратиться к [документации API](http://api.rubyonrails.org/classes/ActionView/Helpers.html)
+WIP: Тут перечислены не все хелперы. За полным списком можно обратиться к [документации API](https://api.rubyonrails.org/classes/ActionView/Helpers.html)
 
-Нижеследующее является лишь кратким обзором хелперов, доступных в Action View. Рекомендуется обратиться к [документации API](http://api.rubyonrails.org/classes/ActionView/Helpers.html), покрывающей все хелперы более подробно, но это должно послужить хорошей отправной точкой.
+Нижеследующее является лишь кратким обзором хелперов, доступных в Action View. Рекомендуется обратиться к [документации API](https://api.rubyonrails.org/classes/ActionView/Helpers.html), покрывающей все хелперы более подробно, но это должно послужить хорошей отправной точкой.
 
 ### AssetTagHelper
 
@@ -1009,6 +1009,33 @@ collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initi
 <label for="article_author_id_3">M. Clark</label>
 ```
 
+Раскрыть, что некоторый вариант выбран (т.е. программно отметить объект из коллекции):
+
+```ruby
+collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial, {checked: Author.last})
+```
+
+В этом случае, последний объект из коллекции будет отмечен:
+
+```html
+<input id="article_author_id_1" name="article[author_id]" type="radio" value="1" />
+<label for="article_author_id_1">D. Heinemeier Hansson</label>
+<input id="article_author_id_2" name="article[author_id]" type="radio" value="2" />
+<label for="article_author_id_2">D. Thomas</label>
+<input id="article_author_id_3" name="article[author_id]" type="radio" value="3" checked="checked" />
+<label for="article_author_id_3">M. Clark</label>
+```
+
+Чтобы программно получить доступ к переданным опциям (например, добавить пользовательский класс, если отмечен):
+
+**Образец html.erb**
+
+```html+erb
+<%= collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial, {checked: Author.last, required: rue} do |rb| %>
+      <%= rb.label(class: "#{'my-custom-class' if rb.value == Author.last.id}") { rb.radio_button + rb.text } %>
+<% end %>
+```
+
 #### collection_check_boxes
 
 Возвращает теги `check_box` для коллекции значений, возвращаемых `method` для класса `object`.
@@ -1432,7 +1459,7 @@ end
 Обрезает все теги ссылок в тексте, оставляя только текст ссылки.
 
 ```ruby
-strip_links('<a href="http://rubyonrails.org">Ruby on Rails</a>')
+strip_links('<a href="https://rubyonrails.org">Ruby on Rails</a>')
 # => Ruby on Rails
 ```
 
