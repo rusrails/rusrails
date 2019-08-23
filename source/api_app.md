@@ -42,7 +42,7 @@
 - Логирование: приложения Rails логируют каждый запрос с уровнем детализации, приемлемым для текущего режима. Логи Rails в development включают информацию о среде запроса, запросах в базу данных и основную информацию о производительности.
 - Безопасность: Rails обнаруживает и мешает исполнению [IP-спуфинга](https://ru.wikipedia.org/wiki/IP-спуфинг), и безопасным способом обрабатывает криптографические сигнатуры в [атаках по времени](https://ru.wikipedia.org/wiki/Атака_по_времени). Не знаете, что такое IP-спуфинг или атака по времени? Вот-вот!
 - Парсинг параметров: Хотите устанавливать ваши параметры как JSON вместо URL-кодированной строки? Без проблем. Rails декодирует JSON и сделает его доступным в `params`. Хотите использовать вложенные URL-кодированные параметры? Это тоже работает.
-- Условный GETs: Rails поддерживает условный `GET` (`ETag` и `Last-Modified`), обрабатывая заголовки запроса и возвращая правильный отклик и код статуса. Все, что нужно, это использовать проверку [`stale?`](http://api.rubyonrails.org/classes/ActionController/ConditionalGet.html#method-i-stale-3F) в вашем контроллере, и Rails позаботится обо всех деталях HTTP.
+- Условный GETs: Rails поддерживает условный `GET` (`ETag` и `Last-Modified`), обрабатывая заголовки запроса и возвращая правильный отклик и код статуса. Все, что нужно, это использовать проверку [`stale?`](https://api.rubyonrails.org/classes/ActionController/ConditionalGet.html#method-i-stale-3F) в вашем контроллере, и Rails позаботится обо всех деталях HTTP.
 - Запросы HEAD: Rails прозрачно конвертирует запросы `HEAD` в `GET`, и возвращает только заголовки тем же образом. Это позволяет `HEAD` надежно работать во всех API Rails.
 
 Очевидно, что хотя вы и можете это создать сами в терминах существующих промежуточных программ Rack, этот список демонстрирует стек промежуточных программ Rails по умолчанию, представляющий большую ценность, даже если вы "просто генерируете JSON".
@@ -195,7 +195,7 @@ end
 
 Можно настроить имя заголовка, которое использует ваш фронтенд сервер для этой цели, с помощью `config.action_dispatch.x_sendfile_header` в соответствующем среде конфигурационном файле.
 
-Подробнее узнать о том, как использовать `Rack::Sendfile` с популярными фронтендами можно в [документации Rack::Sendfile](http://rubydoc.info/github/rack/rack/master/Rack/Sendfile).
+Подробнее узнать о том, как использовать `Rack::Sendfile` с популярными фронтендами можно в [документации Rack::Sendfile](https://rubydoc.info/github/rack/rack/master/Rack/Sendfile).
 
 Вот несколько значений этого заголовка для некоторых популярных серверов, которые, как только эти серверы будут настроены, добавят поддержку для ускоренной отсылки файла:
 
@@ -273,7 +273,7 @@ API-приложение (использующее `ActionController::API`) по
 - `ActionController::Renderers::All`: Поддержка для `render :json` и сотоварищей.
 - `ActionController::ConditionalGet`: Поддержка для `stale?`.
 - `ActionController::BasicImplicitRender`: Убеждается, что возвращен пустой отклик, если нет явного.
-- `ActionController::StrongParameters`: Поддержка для белых списков параметров в сочетании с массовым назначением Active Model.
+- `ActionController::StrongParameters`: Поддержка для фильтрации параметров в сочетании с массовым назначением Active Model.
 - `ActionController::DataStreaming`: Поддержка для `send_file` и `send_data`.
 - `AbstractController::Callbacks`: Поддержка для `before_action` и подобных хелперов.
 - `ActionController::Rescue`: Поддержка для `rescue_from`.
@@ -284,7 +284,7 @@ API-приложение (использующее `ActionController::API`) по
 Другие плагины могут добавлять дополнительные модули. Список всех модулей, включенных в `ActionController::API` можно получить в консоли rails:
 
 ```bash
-$ bin/rails c
+$ rails c
 >> ActionController::API.ancestors - ActionController::Metal.ancestors
 => [ActionController::API,
     ActiveRecord::Railties::ControllerRuntime,
@@ -309,5 +309,13 @@ $ bin/rails c
 - `ActionView::Layouts`: Поддержка для макетов при рендеринге.
 - `ActionController::MimeResponds`: Поддержка для `respond_to`.
 - `ActionController::Cookies`: Поддержка для `cookies`, что включает поддержку для подписанных и зашифрованных куки. Он требует промежуточную программу для куки.
+- `ActionController::Caching`: Поддержка кэширования вьюх для контроллера API. Отметьте, что нужно вручную указать хранилище кэша внутри контроллера подобно следующему:
+  ```ruby
+  class ApplicationController < ActionController::API
+    include ::ActionController::Caching
+    self.cache_store = :mem_cache_store
+  end
+  ```
+  Rails *не* передает эту конфигурацию автоматически.
 
 Лучшим местом для добавления модулей является `ApplicationController`, но вы также можете добавить модули в отдельные контроллеры.
