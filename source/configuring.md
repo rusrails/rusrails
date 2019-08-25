@@ -60,9 +60,11 @@ Rails будет использовать эту конкретную настр
 
 * `config.autoload_paths` принимает массив путей, по которым Rails будет автоматически загружать константы.По умолчанию все директории в `app`. Больше не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading#autoload-paths-and-eager-load-paths)
 
+* `config.add_autoload_paths_to_load_path` сообщает, должны ли пути автозагрузки быть добавлены в `$LOAD_PATH`. Этот флажок по умолчанию `true`, но рекомендуется установить его `false` в режиме `:zeitwerk` как можно раньше, в `config/application.rb`. Внутри Zeitwerk используются абсолютные пути, и приложения, запущенные в режиме `:zeitwerk`, не требуют `require_dependency`, поэтому модели, контроллеры, задания и т.д. не должны быть в `$LOAD_PATH`. Настройка `false` предотвращает Ruby от проверок этих директорий при разрешении вызовов `require` с относительными путями, и экономит работу Bootsnap и RAM, так как ему не нужно их индексировать.
+
 * `config.cache_classes` контролирует, будут ли классы и модули приложения перезагружены при каждом запросе. По умолчанию `false` в режиме development и true в режимах test и production.
 
-* `config.beginning_of_week` устанавливает начало недели по умолчанию для приложения. Принимает символ валидного дня недели (например, `:monday`).
+* `config.beginning_of_week` устанавливает начало недели по умолчанию для приложения. Принимает валидный день недели как символ (например, `:monday`).
 
 * `config.cache_store` конфигурирует, какое хранилище кэша использовать для кэширования Rails. Опции включают один из символов `:memory_store`, `:file_store`, `:mem_cache_store`, `:null_store`, `:redis_cache_store` или объект, реализующий API кэша. По умолчанию `:file_store`.
 
@@ -80,6 +82,8 @@ Rails будет использовать эту конкретную настр
       config.console = Pry
     end
     ```
+
+* `config.disable_sandbox` контролирует, сможет ли кто-нибудь запустить консоль в режиме песочницы. Это полезно длинных сессий в песочнице, что может привести к дефициту памяти сервера базы данных. По умолчанию false.
 
 * `config.eager_load` когда `true`, лениво загружает все зарегистрированные `config.eager_load_namespaces`. Они включают ваше приложение, engine-ы, фреймворки Rails и любые другие зарегистрированные пространства имен.
 
@@ -99,7 +103,7 @@ Rails будет использовать эту конкретную настр
 
 * `config.filter_parameters` используется для фильтрации параметров, которые не должны быть показаны в логах, такие как пароли или номера кредитных карт. Он также фильтрует чувствительные параметры в столбцах базы данных при вызове `#inspect` на объектах Active Record. По умолчанию Rails фильтрует пароли, добавляя `Rails.application.config.filter_parameters += [:password]` в `config/initializers/filter_parameter_logging.rb`. Фильтр параметров работает как частично соответствующее регулярное выражение.
 
-* `config.force_ssl` принуждает все запросы обслуживаться протоколом HTTPS, используя промежуточную программу `ActionDispatch::SSL`, и устанавливает `config.action_mailer.default_url_options` равным `{ protocol: 'https' }`. Это может быть настроено, установив `config.ssl_options` - подробнее смотрите в [документации ActionDispatch::SSL](http://api.rubyonrails.org/classes/ActionDispatch/SSL.html).
+* `config.force_ssl` принуждает все запросы обслуживаться протоколом HTTPS, используя промежуточную программу `ActionDispatch::SSL`, и устанавливает `config.action_mailer.default_url_options` равным `{ protocol: 'https' }`. Это может быть настроено, установив `config.ssl_options` - подробнее смотрите в [документации ActionDispatch::SSL](https://api.rubyonrails.org/classes/ActionDispatch/SSL.html).
 
 * `config.log_formatter` определяет форматер для логгера Rails. Эта опция по умолчанию равна экземпляру `ActiveSupport::Logger::SimpleFormatter` для всех режимов. Если установите значение для `config.logger`, вы должны вручную передать значение вашего форматера для вашего логгера до того, как он будет обернут в экземпляр `ActiveSupport::TaggedLogging`, Rails не сделает это за вас.
 
@@ -127,6 +131,10 @@ Rails будет использовать эту конкретную настр
 
 * `config.reload_classes_only_on_change` включает или отключает перезагрузку классов только при изменении отслеживаемых файлов. По умолчанию отслеживает все по путям автозагрузки и установлена `true`. Если `config.cache_classes` установлена `true`, эта опция игнорируется.
 
+* `config.credentials.content_path` настраивает путь поиска зашифрованных учетных данных.
+
+* `config.credentials.key_path` настраивает путь поиска ключа шифрования.
+
 * `secret_key_base` используется для определения ключа, позволяющего сессиям приложения быть верифицированными по известному ключу безопасности, чтобы избежать подделки. Приложения получают случайно сгенерированный ключ в test и development средах, другие среды должны устанавливать это в `config/credentials.yml.enc`.
 
 * `config.public_file_server.enabled` конфигурирует Rails на обслуживание статичных файлов из директории public. Эта опция по умолчанию `true`, но в среде production устанавливается `false`, так как серверные программы (например, NGINX или Apache), используемые для запуска приложения, должны обслуживать статичные ресурсы вместо Rails. Если запускаете или тестируете приложение в среде production с помощью WEBrick (не рекомендуется использовать WEBrick в production), установите эту опцию в `true`. В противном случае нельзя воспользоваться кэшированием страниц и запросами файлов, существующих в директории public.
@@ -140,6 +148,13 @@ Rails будет использовать эту конкретную настр
     Это произвольное хранилище должно быть определено как `ActionDispatch::Session::MyCustomStore`.
 
 * `config.time_zone` устанавливает временную зону по умолчанию для приложения и включает понимание временных зон для Active Record.
+
+* `config.autoloader` устанавливает режим автоматической загрузки. Эта опция по умолчанию `:zeitwerk`, если в `config.load_defaults` указано `6.0`. Приложения все еще могут использовать классический автоматический загрузчик, установив значение `:classic` после загрузки умолчаний фреймворка:
+
+    ```ruby
+    config.load_defaults "6.0"
+    config.autoloader = :classic
+    ```
 
 ### Настройка ассетов
 
@@ -322,7 +337,7 @@ config.middleware.delete Rack::MethodOverride
 
 ### Конфигурирование Active Model
 
-* `config.active_model.i18n_full_message` это булево значение, управляющее, может ли формат ошибки `full_message` быть переопределен на уровне атрибута или модели в файлах локали. По умолчанию `false`.
+* `config.active_model.i18n_customize_full_message` это булево значение, управляющее, может ли формат ошибки `full_message` быть переопределен на уровне атрибута или модели в файлах локали. По умолчанию `false`.
 
 ### Конфигурирование Active Record
 
@@ -356,7 +371,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_record.lock_optimistically` регулирует, должен ли Active Record использовать оптимистическую блокировку. По умолчанию `true`.
 
-* `config.active_record.cache_timestamp_format` управляет форматом значения временной метки в ключе кэширования. По умолчанию `:nsec`.
+* `config.active_record.cache_timestamp_format` управляет форматом значения временной метки в ключе кэширования. По умолчанию `:usec`.
 
 * `config.active_record.record_timestamps` это булево значение, управляющее, должна ли происходить временная метка операций модели `create` и `update`. Значение по умолчанию `true`.
 
@@ -376,24 +391,15 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_record.use_schema_cache_dump` позволяет пользователям получить информацию о кэше схемы из `db/schema_cache.yml` (сгенерированного с помощью `rails db:schema:cache:dump`), вместо отправления запроса в базу данных для получения этой информации. По умолчанию `true`.
 
+* `config.active_record.collection_cache_versioning` позволяет повторное использование того же ключа кэширования, когда объект, кэшированный с типом `ActiveRecord::Relation`, изменяется из-за перемещения волатильной информации (максимальной даты обновления и количества) из ключа кэширования relation в версию кэша для поддержки повторного использования ключа кэширования. По умолчанию `false`.
+
 Адаптер MySQL добавляет дополнительную конфигурационную опцию:
 
 * `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans` регулирует, должен ли Active Record рассматривать все столбцы `tinyint(1)` как boolean. По умолчанию `true`.
 
-Адаптер SQLite3Adapter добавляет еще одну опцию конфигурации:
+Адаптер PostgreSQL добавляет одну опцию конфигурации:
 
-* `ActiveRecord::ConnectionAdapters::SQLite3Adapter.represent_boolean_as_integer` указывает, хранятся ли булевые значения в базах данных sqlite3 как 1 и 0 или 't' и 'f'. Выходное значение `ActiveRecord::ConnectionAdapters::SQLite3Adapter.represent_boolean_as_integer`, установленное в false устарело. Базы данных SQLite использовали 't' и 'f' для сериализации булевых значений, и следует преобразовать старые данные в 1 и 0 (их нативную булевую сериализацию), прежде чем устанавливать этот флаг в true. Преобразование может быть выполнено с помощью настройки Rake задачи, которая запускает
-
-    ```ruby
-    ExampleModel.where("boolean_column = 't'").update_all(boolean_column: 1)
-    ExampleModel.where("boolean_column = 'f'").update_all(boolean_column: 0)
-    ```
-
-  для всех моделей и всех булевых столбцов, после чего флаг должен быть установлен в true с помощью добавления следующего в файл application.rb:
-
-    ```ruby
-    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
-    ```
+* `ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables` регулирует, должны ли таблицы базы данных создаваться "нелогируемыми", что может ускорить быстродействие, но добавляет риск потери данных, если база данных ломается. Очень рекомендуется на включать это в среде production. По умолчанию `false` во всех средах.
 
 Выгрузчик схемы добавляет дополнительную конфигурационную опцию:
 
@@ -407,7 +413,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_controller.asset_host` устанавливает хост для ассетов. Полезна, когда для хостинга ассетов используются CDN, или когда вы хотите обойти встроенную в браузеры политику ограничения домена при использовании различных псевдонимов доменов.
 
-* `config.action_controller.perform_caching` конфигурирует, должно ли приложение выполнять возможность кэширования, предоставленную компонентом Action Controller. Установлено `false` в режиме development, `true` в production.
+* `config.action_controller.perform_caching` конфигурирует, должно ли приложение выполнять возможность кэширования, предоставленную компонентом Action Controller. Установлено `false` в режиме development, `true` в production. Если не указано, значение по умолчанию всегда будет `true`.
 
 * `config.action_controller.default_static_extension` конфигурирует расширение, используемое для кэшированных страниц. По умолчанию `.html`.
 
@@ -423,7 +429,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_controller.per_form_csrf_tokens` настраивает, должны ли токены CSRF быть валидными только для метода/экшна, для которого они сгенерированы.
 
-* `config.action_controller.default_protect_from_forgery` определяет, будет ли добавлена защита от подделки в `ActionController:Base`. Значением по умолчанию является false. Стоит отметить, что это включено по умолчанию при загрузке значений для Rails 5.2.
+* `config.action_controller.default_protect_from_forgery` определяет, будет ли добавлена защита от подделки в `ActionController:Base`. Значением по умолчанию является false.
 
 * `config.action_controller.relative_url_root` может использоваться, что бы сообщить Rails, [деплой происходит в поддиректорию](#deploy-to-a-subdirectory-relative-url-root). По умолчанию `ENV['RAILS_RELATIVE_URL_ROOT']`.
 
@@ -522,6 +528,8 @@ config.middleware.delete Rack::MethodOverride
 
   Любое ненастроенное исключение приведет к 500 Internal Server Error.
 
+* `config.action_dispatch.return_only_media_type_on_content_type` изменяет возвращаемое значение `ActionDispatch::Response#content_type` на заголовок Content-Type без модификаций. По умолчанию `false`.
+
 * `ActionDispatch::Callbacks.before` принимает блок кода для запуска до запроса.
 
 * `ActionDispatch::Callbacks.after` принимает блок кода для запуска после запроса.
@@ -556,7 +564,7 @@ config.middleware.delete Rack::MethodOverride
 
 Настройка по умолчанию `true`, что использует партиал в `/admin/articles/_article.erb`. Установка значение в `false` будет рендерить `/articles/_article.erb`, что является тем же поведением, что и рендеринг из контроллера не в пространстве имен, такого как `ArticlesController`.
 
-* `config.action_view.raise_on_missing_translations` определяет, должно ли быть вызвано исключение для отсутствующих переводов.
+* `config.action_view.raise_on_missing_translations` определяет, должно ли быть вызвано исключение для отсутствующих переводов. Это по умолчанию `false`.
 
 * `config.action_view.automatically_disable_submit_tag` определяет, должен ли `submit_tag` автоматически отключаться при клике, это по умолчанию `true`.
 
@@ -564,11 +572,30 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_view.form_with_generates_remote_forms` определяет, должны ли `form_with` генерировать remote формы или нет. Это по умолчанию `true`.
 
-* `config.action_view.form_with_generates_ids` определяет, должны ли `form_with` генерировать ids на inputs. Это по умолчанию `true`.
+* `config.action_view.form_with_generates_ids` определяет, должны ли `form_with` генерировать ids на inputs. Это по умолчанию `false`.
 
 * `config.action_view.default_enforce_utf8` определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8. Это по умолчанию `false`.
 
-* `config.action_view.finalize_compiled_template_methods` определяет, должны ли методы в `ActionView::CompiledTemplates` сами удалять собранные шаблоны, когда экземпляры шаблонов уничтожаются сборщиком мусора. Это помогает предотвратить утечку памяти в режиме разработки, но для больших тестовых наборов отключение этой опции в тестовой среде может повысить производительность. Это по умолчанию `true`.
+### Конфигурирование Action Mailbox
+
+`config.action_mailbox` предоставляет следующие конфигурационные опции:
+
+* `config.action_mailbox.logger` содержит логгер, используемый Action Mailbox. Он принимает логгер, соответствующий интерфейсу Log4r или стандартного класса Ruby Logger. По умолчанию `Rails.logger`.
+
+  ```ruby
+  config.action_mailbox.logger = ActiveSupport::Logger.new(STDOUT)
+  ```
+
+* `config.action_mailbox.incinerate_after` принимает `ActiveSupport::Duration`, указывающий, через какое время после обработки `ActionMailbox::InboundEmail` записи должны быть уничтожены. По умолчанию `30.days`.
+
+   ```ruby
+   # Incinerate inbound emails 14 days after processing.
+   config.action_mailbox.incinerate_after = 14.days
+   ```
+
+* `config.action_mailbox.queues.incineration` принимает символ, указывающий очередь Active Job для использования для заданий уничтожения. По умолчанию `:action_mailbox_incineration`.
+
+* `config.action_mailbox.queues.routing` принимает символ, указывающий очередь Active Job для использования для заданий маршрутизации. По умолчанию `:action_mailbox_routing`.
 
 ### (configuring-action-mailer) Конфигурирование Action Mailer
 
@@ -646,7 +673,9 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_mailer.deliver_later_queue_name` указывает название очереди для рассыльщиков. По умолчанию `mailers`.
 
-* `config.action_mailer.perform_caching` указывает, должно ли выполняться кэширование фрагментов для шаблонов рассыльщиков. Это по умолчанию `false` во всех средах.
+* `config.action_mailer.perform_caching` указывает, должно ли выполняться кэширование фрагментов для шаблонов рассыльщиков. Если не указано, значение по умолчанию всегда будет `true`.
+
+* `config.action_mailer.delivery_job` указывает задание для доставки писем. По умолчанию `ActionMailer::DeliveryJob`.
 
 ### (configuring-active-support) Конфигурирование Active Support
 
@@ -664,7 +693,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_support.use_sha1_digests` указывает, следует ли использовать SHA-1 вместо MD5 для генерации дайджестов для не конфиденциальных (non-sensitive) данных, таких как заголовок ETag. По умолчанию false.
 
-* `config.active_support.use_authenticated_message_encryption` указывает, следует ли использовать аутентификационное шифрование AES-256-GCM в качестве шифра по умолчанию для шифрования сообщений вместо AES-256-CBC. По умолчанию false, но включено при загрузке умолчаний для Rails 5.2.
+* `config.active_support.use_authenticated_message_encryption` указывает, следует ли использовать аутентификационное шифрование AES-256-GCM в качестве шифра по умолчанию для шифрования сообщений вместо AES-256-CBC. По умолчанию `false`.
 
 * `ActiveSupport::Logger.silencer` устанавливают `false`, чтобы отключить возможность silence logging в блоке. По умолчанию `true`.
 
@@ -674,13 +703,13 @@ config.middleware.delete Rack::MethodOverride
 
 * `ActiveSupport::Deprecation.silence` принимает блок, в котором все предупреждения об устаревании умалчиваются.
 
-* `ActiveSupport::Deprecation.silenced` устанавливает, отображать ли предупреждения об устаревании.
+* `ActiveSupport::Deprecation.silenced` устанавливает, отображать ли предупреждения об устаревании. По умолчанию `false`.
 
 ### Конфигурирование Active Job
 
 `config.active_job` предоставляет следующие конфигурационные опции:
 
-* `config.active_job.queue_adapter` устанавливает адаптер для бэкенда очередей. По умолчанию адаптер `:async`. Актуальный список встроенных адаптеров смотрите в [документации ActiveJob::QueueAdapters API](http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html).
+* `config.active_job.queue_adapter` устанавливает адаптер для бэкенда очередей. По умолчанию адаптер `:async`. Актуальный список встроенных адаптеров смотрите в [документации ActiveJob::QueueAdapters API](https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html).
 
     ```ruby
     # Убедитесь, что гем адаптера есть в вашем Gemfile
@@ -730,11 +759,15 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.active_job.custom_serializers` позволяет устанавливать собственные сериализаторы аргументов. По умолчанию используется `[]`.
 
+* `config.active_job.return_false_on_aborted_enqueue` изменяет возвращаемое значение `#enqueue` на false, вместо экземпляра задания, когда добавление в очередь прервано. По умолчанию `false`.
+
 ### Конфигурация Action Cable
 
 * `config.action_cable.url` принимает строку с URL, на котором размещается ваш сервер Action Cable. Следует использовать эту опцию, если вы запускаете серверы Action Cable отдельно от основного приложения.
 
 * `config.action_cable.mount_path` принимает строку, куда монтировать Action Cable, как часть процесса основного сервера. По умолчанию `/cable`. Ей можно указать nil, чтобы не монтировать Action Cable как часть вашего обычного сервера Rails.
+
+Конфигурационные опции описаны подробнее в [Обзор Action Cable](/action-cable-overview#configuration).
 
 ### (configuring-active-storage) Конфигурирование Active Storage
 
@@ -755,14 +788,28 @@ config.middleware.delete Rack::MethodOverride
    config.active_storage.paths[:ffprobe] = '/usr/local/bin/ffprobe'
    ```
 
-* `config.active_storage.variable_content_types` принимает массив строк, указывающий типы содержимого, которые Active Storage может преобразовывать через ImageMagick. По умолчанию используется `%w(image/png image/gif image/jpg image/jpeg image/vnd.adobe.photoshop image/vnd.microsoft.icon)`.
+* `config.active_storage.variable_content_types` принимает массив строк, указывающий типы содержимого, которые Active Storage может преобразовывать через ImageMagick. По умолчанию используется `%w(image/png image/gif image/jpg image/jpeg image/pjpeg image/tiff image/bmp image/vnd.adobe.photoshop image/vnd.microsoft.icon)`.
 
-* `config.active_storage.content_types_to_serve_as_binary` принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве прикрепленного файла, а не встроенного. По умолчанию используется `%w(text/html text/javascript image/svg+xml application/postscript application/x-shockwave-flash text/xml application/xml application/xhtml+xml)`.
+* `config.active_storage.content_types_to_serve_as_binary` принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве прикрепленного файла, а не встроенного. По умолчанию используется `%w(text/html text/javascript image/svg+xml application/postscript application/x-shockwave-flash text/xml application/xml application/xhtml+xml application/mathml+xml text/cache-manifest)`.
 
-* `config.active_storage.queue` может быть использован для установки имени очереди Active Job, используемой для выполнения заданий, таких как анализ содержимого blob или очистки (purging) блога.
+* `config.active_storage.content_types_allowed_inline` принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве встроенного файла. По умолчанию используется `%w(image/png image/gif image/jpg image/jpeg image/vnd.adobe.photoshop image/vnd.microsoft.icon application/pdf)`.
+
+* `config.active_storage.queues.analysis` принимает символ, указывающий очередь Active Job для использования заданиями анализа. Когда эта опция `nil`, задания анализа направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
+
+   ```ruby
+   config.active_storage.queues.analysis = :low_priority
+   ```
+
+* `config.active_storage.queues.purge` принимает символ, указывающий очередь Active Job для использования заданиями очистки. Когда эта опция `nil`, задания очистки направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
 
   ```ruby
-  config.active_storage.queue = :low_priority
+  config.active_storage.queues.purge = :low_priority
+  ```
+
+* `config.active_storage.queues.mirror` принимает символ, указывающий очередь Active Job для использования заданиями отзеркаливания. По умолчанию `:active_storage_mirror`.
+
+  ```ruby
+  config.active_storage.queues.mirror = :low_priority
   ```
 
 * `config.active_storage.logger` может быть использован для установки логгера, используемого Active Storage. Принимает логгер, соответствующий интерфейсу Log4r или дефолтному классу Logger в Ruby.
@@ -784,7 +831,48 @@ config.middleware.delete Rack::MethodOverride
   config.active_storage.routes_prefix = '/files'
   ```
 
-  По умолчанию `/rails/active_storage`
+  По умолчанию `/rails/active_storage`.
+
+* `config.active_storage.replace_on_assign_to_many` определяет, должно ли присвоение к коллекции с вложениями, объявленной с помощью `has_many_attached`, заменять любые существующие вложения, или добавлять к ним. По умолчанию `true`.
+
+* `config.active_storage.draw_routes` может быть использована, чтобы включить генерацию маршрутов Active Storage. По умолчанию `true`.
+
+### Результаты `load_defaults`
+
+#### С '5.0':
+
+- `config.action_controller.per_form_csrf_tokens`: `true`
+- `config.action_controller.forgery_protection_origin_check`: `true`
+- `ActiveSupport.to_time_preserves_timezone`: `true`
+- `config.active_record.belongs_to_required_by_default`: `true`
+- `config.ssl_options`: `{ hsts: { subdomains: true } }`
+
+#### С '5.1':
+
+- `config.assets.unknown_asset_fallback`: `false`
+- `config.action_view.form_with_generates_remote_forms`: `true`
+
+#### С '5.2':
+
+- `config.active_record.cache_versioning`: `true`
+- `config.action_dispatch.use_authenticated_cookie_encryption`: `true`
+- `config.active_support.use_authenticated_message_encryption`: `true`
+- `config.active_support.use_sha1_digests`: `true`
+- `config.action_controller.default_protect_from_forgery`: `true`
+- `config.action_view.form_with_generates_ids`: `true`
+
+#### С '6.0':
+
+- `config.autoloader`: `:zeitwerk`
+- `config.action_view.default_enforce_utf8`: `false`
+- `config.action_dispatch.use_cookies_with_metadata`: `true`
+- `config.action_dispatch.return_only_media_type_on_content_type`: `false`
+- `config.action_mailer.delivery_job`: `"ActionMailer::MailDeliveryJob"`
+- `config.active_job.return_false_on_aborted_enqueue`: `true`
+- `config.active_storage.queues.analysis`: `:active_storage_analysis`
+- `config.active_storage.queues.purge`: `:active_storage_purge`
+- `config.active_storage.replace_on_assign_to_many`: `true`
+- `config.active_record.collection_cache_versioning`: `true`
 
 ### Конфигурирование базы данных
 
@@ -958,6 +1046,7 @@ NOTE: В этом руководстве мы используем базу да
 ```yaml
 development:
   adapter: mysql2
+  encoding: utf8mb4
   database: blog_development
   pool: 5
   username: root
@@ -1054,7 +1143,7 @@ development:
 Эта среда ничем не отличается от одной из стандартных, сервер запускается с помощью `rails server -e staging`, консоль с помощью `rails console -e staging`, работает `Rails.env.staging?`, и т.д.
 
 
-### (Deploy to a subdirectory relative url root) Деплой в поддиректорию (относительно корневого url)
+### (Deploy to a subdirectory relative url root) Деплой в поддиректорию (относительно корневого URL)
 
 По умолчанию Rails ожидает, что ваше приложение запускается в корне (т.е. `/`). Этот раздел объяснит, как запустить ваше приложение внутри директории.
 
@@ -1127,6 +1216,8 @@ server {
 -----------------------------------------------------
 
 После загрузки фреймворка и любых гемов в вашем приложении, Rails приступает к загрузке инициализаторов. Инициализатор это любой файл с кодом ruby, хранящийся в `/config/initializers` вашего приложения. Инициализаторы могут использоваться для хранения конфигурационных настроек, которые должны быть выполнены после загрузки фреймворков и гемов, таких как опции для конфигурирования настроек для этих частей.
+
+NOTE: Не гарантируется, что ваши инициализаторы будут запущены после всех инициализаторов гемов, поэтому любой код инициализатора, зависящий от инициализации какого-либо гема, должен быть помещен в блок `config.after_initialize`.
 
 NOTE: Можно использовать подпапки для организации ваших инициализаторов, если нужно, так как Rails смотрит файловую иерархию в целом в папке `initializers` и ниже.
 
@@ -1327,7 +1418,7 @@ NOTE: Если вы запускаете многотредовую среду, 
 Произвольные настройки
 ----------------------
 
-Можно настроить свой собственный код с помощью конфигурационного объекта Rails с произвольными настройками или в пространстве имен `config.x`, либо непосредственно в `config`. Ключевой разницей между этими двумя вариантами является то, что необходимо использовать `config.x`, если вы определяете _вложенную_ конфигурацию (например, `config.x.nested.nested.hi`), и просто `config` для _одноуровневой_ конфигурации (например, `config.hello`).
+Можно настроить свой собственный код с помощью конфигурационного объекта Rails с произвольными настройками или в пространстве имен `config.x`, либо непосредственно в `config`. Ключевой разницей между этими двумя вариантами является то, что необходимо использовать `config.x`, если вы определяете _вложенную_ конфигурацию (например, `config.x.nested.hi`), и просто `config` для _одноуровневой_ конфигурации (например, `config.hello`).
 
   ```ruby
   config.x.payment_processing.schedule = :daily
@@ -1383,7 +1474,7 @@ User-agent: *
 Disallow: /
 ```
 
-Чтобы запретить только определенные страницы, необходимо использовать более сложный синтаксис. Изучите его в [официальной документации](http://www.robotstxt.org/robotstxt.html).
+Чтобы запретить только определенные страницы, необходимо использовать более сложный синтаксис. Изучите его в [официальной документации](https://www.robotstxt.org/robotstxt.html).
 
 Наблюдение событийной файловой системы
 --------------------------------------

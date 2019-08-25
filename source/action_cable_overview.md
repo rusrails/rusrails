@@ -511,7 +511,7 @@ WebNotificationsChannel.broadcast_to(
 
 Смотрите репозиторий [rails/actioncable-examples](https://github.com/rails/actioncable-examples), чтобы получить полный пример, как настроить Action Cable в приложении Rails и добавить каналы.
 
-## Настройка
+## (configuration) Настройка
 
 У Action Cable есть две требуемые настройки: адаптер подписки и допустимые домены запроса.
 
