@@ -38,8 +38,9 @@ namespace :docrails do
       file = "guides/source/#{page['file']}"
       stat = docrails.diff('4b825dc642cb6eb9a060e54bf8d69288fbee4904').path(file).stats
       log = docrails.log(1).path(file).first
-      stats << page.merge(stat[:total]).merge(new: true)
-                   .merge(objectish: log.objectish, new_date: log.author_date, outdated: 0)
+      stats << page.merge(stat[:total])
+                   .merge(new: true, outdated: (Date.current - log.author_date.to_date).to_i)
+                   .merge(objectish: log.objectish, new_date: log.author_date)
     end
 
     stats.sort_by! { |stat| stat[:lines] + stat[:outdated] }
