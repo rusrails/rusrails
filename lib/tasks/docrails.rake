@@ -37,9 +37,11 @@ namespace :docrails do
     config['plan'].each do |page|
       file = "guides/source/#{page['file']}"
       stat = docrails.diff('4b825dc642cb6eb9a060e54bf8d69288fbee4904').path(file).stats
-      log = docrails.log(1).path(file).first
+      full_log = docrails.log.path(file)
+      log = full_log.first
+      init = full_log.last
       stats << page.merge(stat[:total])
-                   .merge(new: true, outdated: (Date.current - log.author_date.to_date).to_i)
+                   .merge(new: true, outdated: (Date.current - init.author_date.to_date).to_i)
                    .merge(objectish: log.objectish, new_date: log.author_date)
     end
 
