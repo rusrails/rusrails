@@ -30,6 +30,7 @@
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
+    * [Основы Action Mailbox](/action-mailbox-basics)
     * [Основы Active Job](/active_job_basics)
     * [Обзор Active Storage](/active_storage_overview)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
