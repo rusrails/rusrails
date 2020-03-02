@@ -224,8 +224,7 @@ module StiPreload
             select(inheritance_column).
             distinct.
             pluck(inheritance_column).
-            compact.
-            each(&:constantize)
+            compact
 
         types_in_db.each do |type|
           logger.debug("Preloading STI type #{type}")
