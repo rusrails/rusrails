@@ -12,8 +12,8 @@
 
 --------------------------------------------------------------------------------
 
-Введение
---------
+Что такое Active Job?
+---------------------
 
 Active Job - это фреймворк для объявления заданий и их запуска на разных бэкендах для очередей. Эти задания могут быть чем угодно, от регулярно запланированных чисток до списаний с карт или рассылок. В общем, всем, что может быть выделено в небольшие работающие части и запускаться параллельно.
 
@@ -96,7 +96,7 @@ GuestsCleanupJob.perform_later(guest1, guest2, filter: 'some_filter')
 
 ### Бэкенды
 
-У Active Job есть встроенные адаптеры для различных бэкендов очередей (Sidekiq, Resque, Delayed Job и другие). Чтобы получить актуальный список адаптеров, обратитесь к документации API по [ActiveJob::QueueAdapters](http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html).
+У Active Job есть встроенные адаптеры для различных бэкендов очередей (Sidekiq, Resque, Delayed Job и другие). Чтобы получить актуальный список адаптеров, обратитесь к документации API по [ActiveJob::QueueAdapters](https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html).
 
 ### Настройка бэкенда
 
@@ -136,6 +136,8 @@ end
 - [Sneakers](https://github.com/jondot/sneakers/wiki/How-To:-Rails-Background-Jobs-with-ActiveJob)
 - [Sucker Punch](https://github.com/brandonhilkert/sucker_punch#active-job)
 - [Queue Classic](https://github.com/QueueClassic/queue_classic#active-job)
+- [Delayed Job](https://github.com/collectiveidea/delayed_job#active-job)
+- [Que](https://github.com/que-rb/que#additional-rails-specific-setup)
 
 Очереди
 -------
@@ -167,6 +169,19 @@ end
 
 # Теперь ваше задание запустится в очереди production_low_priority в среде
 # production и в staging_low_priority в среде staging
+```
+
+Также можно настроить префикс на уровне задания.
+
+```ruby
+class GuestsCleanupJob < ApplicationJob
+  queue_as :low_priority
+  self.queue_name_prefix = nil
+  #....
+end
+
+# Теперь очередь задания не будет иметь префикс, переопределяя то,
+# что было настроено в `config.active_job.queue_name_prefix`.
 ```
 
 Разделитель префикса имени очереди по умолчанию '\_'. Его можно изменить, установив `config.active_job.queue_name_delimiter` в `application.rb`:
@@ -246,7 +261,7 @@ end
 Макрос-методы класса также могут принимать блок. Рассмотрите возможность использования этого макроса, если код внутри блока настолько короток, что он помещается в одну строчку. Например, можно отправлять показатели для каждого помещенного в очередь задания.
 
 ```ruby
-class ApplicationJob
+class ApplicationJob < ActiveJob::Base
   before_enqueue { |job| $statsd.increment "#{job.class.name.underscore}.enqueue" }
 end
 ```
@@ -381,7 +396,11 @@ class GuestsCleanupJob < ApplicationJob
 end
 ```
 
+Если исключение не будет поймано внутри задания, например, как показано выше, тогда задание будет помечено как "неудачное".
+
 ### Повторная отправка или отмена неудачных заданий
+
+Неудачное задание не будет повторено, если не настроено обратное.
 
 Также возможно повторить отправку или отменить задание, если во время выполнения было вызвано исключение.
 
@@ -399,7 +418,7 @@ class RemoteServiceJob < ApplicationJob
 end
 ```
 
-Более подробную информацию смотрите в документации по API для [ActiveJob::Exceptions](http://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html).
+Более подробную информацию смотрите в документации по API для [ActiveJob::Exceptions](https://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html).
 
 ### Десериализация
 
