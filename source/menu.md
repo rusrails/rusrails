@@ -10,7 +10,6 @@
     * [Колбэки Active Record](/active-record-callbacks)
     * [Связи (ассоциации) Active Record](/active-record-associations)
     * [Интерфейс запросов Active Record](/active-record-query-interface)
-    * [Active Record для PostgreSQL](/active-record-postgresql)
     * [Основы Active Model](/active-model-basics)
 
 * **Вьюхи**
@@ -35,33 +34,34 @@
 
 * **Копаем глубже**
 
-    * [Инструментарий Active Support](/active-support-instrumentation)
     * [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
+    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
+    * [Asset Pipeline](/asset-pipeline)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
-    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
-    * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
-    * [Engine для начинающих](/engines)
     * [Процесс инициализации в Rails](/initialization)
     * [Автозагрузка и перезагрузка констант (режим Zeitwerk)](/constant_autoloading_and_reloading)
     * [Автозагрузка и перезагрузка констант (режим Classic)](/autoloading_and_reloading_constants_classic_mode)
+    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
+    * [Инструментарий Active Support](/active-support-instrumentation)
+    * [Использование Rails для API-приложений](/api-app)
+    * [Active Record для PostgreSQL](/active-record-postgresql)
 
 * **Расширяем Rails**
 
     * [Основы создания плагинов Rails](/plugins)
     * [Rails on Rack](/rails-on-rack)
     * [Создание и настройка генераторов и шаблонов Rails](/generators)
+    * [Engine для начинающих](/engines)
     * [Треды и выполнение кода в Rails](/threading_and_code_execution)
-    * [Использование Rails для API-приложений](/api-app)
     * [Шаблоны приложения Rails](/rails-application-templates)
 
 * **Вносим вклад в Ruby on Rails**
