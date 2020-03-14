@@ -24,33 +24,36 @@
     * [Обзор Action Controller](/action-controller-overview)
     * [Роутинг в Rails](/rails-routing)
 
-* **Копаем глубже**
+* **Другие компоненты**
 
     * [Расширения ядра Active Support](/active-support-core-extensions)
-    * [Инструментарий Active Support](/active-support-instrumentation)
-    * [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api)
     * [Основы Action Mailer](/action-mailer-basics)
     * [Основы Action Mailbox](/action-mailbox-basics)
     * [Основы Active Job](/active_job_basics)
     * [Обзор Active Storage](/active_storage_overview)
+    * [Обзор Action Cable](/action-cable-overview)
+
+* **Копаем глубже**
+
+    * [Инструментарий Active Support](/active-support-instrumentation)
+    * [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api)
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
-    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
 
 next_column
 
 * **Копаем глубже**
 
+    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
+    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Engine для начинающих](/engines)
     * [Процесс инициализации в Rails](/initialization)
     * [Автозагрузка и перезагрузка констант (режим Zeitwerk)](/constant_autoloading_and_reloading)
     * [Автозагрузка и перезагрузка констант (режим Classic)](/autoloading_and_reloading_constants_classic_mode)
-    * [Обзор Action Cable](/action-cable-overview)
 
 * **Расширяем Rails**
 
