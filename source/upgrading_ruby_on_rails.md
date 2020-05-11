@@ -202,7 +202,7 @@ Rails.autoloaders.main.preload(sti_leaves)
 Теперь можно без проблем использовать пути констант в определениях класса и модуля:
 
 ```ruby
-# Автозагрузка в телеэтого класса теперь соответствует семантике Ruby.
+# Автозагрузка в теле этого класса теперь соответствует семантике Ruby.
 class Admin::UsersController < ApplicationController
   # ...
 end
