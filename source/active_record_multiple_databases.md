@@ -1,48 +1,39 @@
 Несколько баз данных с Active Record
 ====================================
 
-This guide covers using multiple databases with your Rails application.
+Это руководство раскрывает использование нескольких баз данных в вашем приложении на Rails.
 
-After reading this guide you will know:
+После прочтения этого руководства, вы узнаете:
 
-* How to set up your application for multiple databases.
-* How automatic connection switching works.
-* How to use horizontal sharding for multiple databases.
-* What features are supported and what's still a work in progress.
+* Как настроить приложение для нескольких баз данных.
+* Как работает автоматическое переключение соединений.
+* Как использовать горизонтальный шардинг для нескольких баз данных.
+* Какие особенности уже поддерживаются, а какие пока еще разрабатываются.
 
 --------------------------------------------------------------------------------
 
-As an application grows in popularity and usage you'll need to scale the application
-to support your new users and their data. One way in which your application may need
-to scale is on the database level. Rails now has support for multiple databases
-so you don't have to store your data all in one place.
+По мере роста популярности и использования приложения, вам будет нужно масштабировать приложения для поддержки новых пользователей и их данных. Одно из направлений, в котором приложение может быть масштабировано, находится на уровне базы данных. Теперь в Rails есть поддержка нескольких баз данных, поэтому вам не нужно хранить все данные в одном месте.
 
-At this time the following features are supported:
+В настоящее время поддерживаются следующие особенности:
 
-* Multiple primary databases and a replica for each
-* Automatic connection switching for the model you're working with
-* Automatic swapping between the primary and replica depending on the HTTP verb
-and recent writes
-* Rails tasks for creating, dropping, migrating, and interacting with the multiple
-databases
+* Несколько основных баз данных и реплики для каждой
+* Автоматическое переключение соединения для модели, с которой вы работаете
+* Автоматическое переключение между основной базой и репликой, в зависимости от метода HTTP и последних записей
+* Задания Rails для создания, удаления, миграции и взаимодействия с несколькими базами данных
 
-The following features are not (yet) supported:
+Следующие особенности (пока) не поддерживаются:
 
-* Automatic swapping for horizontal sharding
-* Joining across clusters
-* Load balancing replicas
-* Dumping schema caches for multiple databases
+* Автоматическое переключение для горизонтального шардинга
+* Соединение между кластерами
+* Нагрузочная балансировка реплик
+* Выгрузка кэшей схемы для нескольких баз данных
 
-## Setting up your application
+## Настройка приложения
+Хотя Rails старается сделать максимум работы за вас, все же требуется несколько шагов, чтобы подготовить приложение к нескольким базам данных.
 
-While Rails tries to do most of the work for you there are still some steps you'll
-need to do to get your application ready for multiple databases.
+Предположим, у нас есть приложение с одной основной базой данных, и мы хотим добавить новую базу данных для нескольких новых таблиц. Имя новой базы данных будет "animals".
 
-Let's say we have an application with a single primary database and we need to add a
-new database for some new tables we're adding. The name of the new database will be
-"animals".
-
-The `database.yml` looks like this:
+`database.yml` выглядит так:
 
 ```yaml
 production:
@@ -51,8 +42,7 @@ production:
   adapter: mysql
 ```
 
-Let's add a replica for the primary, a new writer called animals and a replica for that
-as well. To do this we need to change our `database.yml` from a 2-tier to a 3-tier config.
+Давайте добавим реплику для основной, новую базу для записи животных, а также реплику для нее. Для этого нам нужно изменить конфигурацию `database.yml` из 2-уровневой в 3-уровневую.
 
 ```yaml
 production:
@@ -77,22 +67,15 @@ production:
     replica: true
 ```
 
-When using multiple databases there are a few important settings.
+При использовании нескольких баз данных есть ряд важных настроек.
 
-First, the database name for the primary and replica should be the same because they contain
-the same data. Second, the username for the primary and replica should be different, and the
-replica user's permissions should be to read and not write.
+Во-первых, имя основной базы данных и реплики должно быть тем же самым, так как они содержат те же самые данные. Во-вторых, имя пользователя для основной базы и реплики должно быть различным, и права пользователя реплики должны быть для чтения, но не для записи.
 
-When using a replica database you need to add a `replica: true` entry to the replica in the
-`database.yml`. This is because Rails otherwise has no way of knowing which one is a replica
-and which one is the primary.
+При использовании реплики базы данных нужно добавить запись `replica: true` для реплики в `database.yml`. Это нужно, потому что в противном случае Rails не сможет узнать, какая из них реплика, а какая основная.
 
-Lastly, for new primary databases you need to set the `migrations_paths` to the directory
-where you will store migrations for that database. We'll look more at `migrations_paths`
-later on in this guide.
+Наконец, для новой основной базы данных необходимо установить в `migrations_paths` директорию, в которой вы будете хранить миграции для этой базы данных. Мы рассмотрим `migrations_paths` позже в этом руководстве.
 
-Now that we have a new database, let's set up the model. In order to use the new database we
-need to create a new abstract class and connect to the animals databases.
+Теперь, когда у нас есть новая база данных, давайте настроим модель. Чтобы использовать новую базу данных, нам нужно создать новый абстрактный класс и соединить с базами данных животных.
 
 ```ruby
 class AnimalsBase < ApplicationRecord
@@ -102,8 +85,7 @@ class AnimalsBase < ApplicationRecord
 end
 ```
 
- Then we need to
-update `ApplicationRecord` to be aware of our new replica.
+Затем нужно обновить `ApplicationRecord`, чтобы он знал о нашей реплике.
 
 ```ruby
 class ApplicationRecord < ActiveRecord::Base
@@ -113,25 +95,18 @@ class ApplicationRecord < ActiveRecord::Base
 end
 ```
 
-By default Rails expects the database roles to be `writing` and `reading` for the primary
-and replica respectively. If you have a legacy system you may already have roles set up that
-you don't want to change. In that case you can set a new role name in your application config.
+По умолчанию Rails ожидает, что роли базы данных будут `writing` и `reading` для основной и реплики соответственно. Если у вас существующая система, у вас уже могут быть настроенные роли, которые вы не хотите менять. В этом случае можно настроить новое имя роли в конфигурации приложения.
 
 ```ruby
 config.active_record.writing_role = :default
 config.active_record.reading_role = :readonly
 ```
 
-It's important to connect to your database in a single model and then inherit from that model
-for the tables rather than connect multiple individual models to the same database. Database
-clients have a limit to the number of open connections there can be and if you do this it will
-multiply the number of connections you have since Rails uses the model class name for the
-connection specification name.
+Важно, что нужно соединяться с базой данных в единственной модели, а затем наследоваться от этой модели, а не соединять несколько отдельных моделей с той же самой базой данных. У клиентов базы данных есть ограничение на количество доступных открытых соединений, и, если вы сделаете так, это умножит количество соединений, так как Rails использует имя класса модели в качестве имени спецификации соединения.
 
-Now that we have the `database.yml` and the new model set up it's time to create the databases.
-Rails 6.0 ships with all the rails tasks you need to use multiple databases in Rails.
+Теперь, когда у нас есть `database.yml`, и настроена новая модель, пришло время создать базы данных. Rails 6.0 поставляется со всеми задачами rails, нужными для использования нескольких баз данных в Rails.
 
-You can run `rails -T` to see all the commands you're able to run. You should see the following:
+Можно запустить `rails -T` для просмотра всех заданий, которые можно выполнить. Вы должны увидеть следующее:
 
 ```bash
 $ rails -T
@@ -161,42 +136,29 @@ rails db:structure:load:animals          # Recreates the animals database from t
 rails db:structure:load:primary          # Recreates the primary database from the structure.sql file
 ```
 
-Running a command like `rails db:create` will create both the primary and animals databases.
-Note that there is no command for creating the users and you'll need to do that manually
-to support the readonly users for your replicas. If you want to create just the animals
-database you can run `rails db:create:animals`.
+Запуск команды `rails db:create` создаст и основную базу, и базу животных. Отметьте, что нет команды для создания пользователей, и вам нужно это сделать вручную для поддержки пользователей только для чтения в репликах. Если нужно создать базу животных, можно выполнить `rails db:create:animals`.
 
-## Migrations
+## Миграции
 
-Migrations for multiple databases should live in their own folders prefixed with the
-name of the database key in the configuration.
+Миграции для разных баз данных должны находиться в своих папках с приставленным именем ключа базы данных в конфигурации.
 
-You also need to set the `migrations_paths` in the database configurations to tell Rails
-where to find the migrations.
+Также нужно установить `migrations_paths` в конфигурациях базы данных, чтобы сообщить Rails, где искать миграции.
 
-For example the `animals` database would look for migrations in the `db/animals_migrate` directory and
-`primary` would look in `db/migrate`. Rails generators now take a `--database` option
-so that the file is generated in the correct directory. The command can be run like so:
+Например, для базы данных `animals` миграции будут искаться в директории `db/animals_migrate`, а `primary` в `db/migrate`. Генераторы Rails теперь принимают опцию `--database`, чтобы файл был сгенерирован в правильной директории. Команда может быть запущена следующим образом:
 
 ```bash
 $ bin/rails generate migration CreateDogs name:string --database animals
 ```
 
-## Activating automatic connection switching
+## Активация автоматического переключения соединения
 
-Finally, in order to use the read-only replica in your application you'll need to activate
-the middleware for automatic switching.
+Наконец, чтобы использовать реплику только для чтения, нужно активировать промежуточную программу для автоматического переключения.
 
-Automatic switching allows the application to switch from the primary to replica or replica
-to primary based on the HTTP verb and whether there was a recent write.
+Автоматическое переключение позволяет приложению переключаться с основной базы на реплику или с реплики на основную, основываясь на методе HTTP, и того, была ли недавно запись.
 
-If the application is receiving a POST, PUT, DELETE, or PATCH request the application will
-automatically write to the primary. For the specified time after the write, the application
-will read from the primary. For a GET or HEAD request the application will read from the
-replica unless there was a recent write.
+Если приложение получает запрос POST, PUT, DELETE или PATCH, приложение автоматически будет писать в базу данных. За указанное время после записи, приложение будет читать из основной базы. Для запроса GET или HEAD приложение будет читать из реплики, если нет недавней записи.
 
-To activate the automatic connection switching middleware, add or uncomment the following
-lines in your application config.
+Чтобы активировать промежуточную программу автоматического переключения соединений, добавьте или откомментируйте следующие строчки в конфигурации приложения.
 
 ```ruby
 config.active_record.database_selector = { delay: 2.seconds }
@@ -204,27 +166,19 @@ config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelec
 config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 ```
 
-Rails guarantees "read your own write" and will send your GET or HEAD request to the
-primary if it's within the `delay` window. By default the delay is set to 2 seconds. You
-should change this based on your database infrastructure. Rails doesn't guarantee "read
-a recent write" for other users within the delay window and will send GET and HEAD requests
-to the replicas unless they wrote recently.
+Rails гарантирует "чтение ваших собственных записей" и пошлет ваши запросы GET или HEAD в основную базу, если они в пределах диапазона `delay`. По умолчанию задержка установлена 2 секунды. Ее следует изменить на основе инфраструктуры вашей базы данных. Rails не гарантирует "чтение недавних записей" для других пользователей в пределах диапазона задержки и пошлет запросы GET и HEAD в реплику, если эти пользователи не писали недавно.
 
-The automatic connection switching in Rails is relatively primitive and deliberately doesn't
-do a whole lot. The goal is a system that demonstrates how to do automatic connection
-switching that was flexible enough to be customizable by app developers.
+Автоматическое переключение соединения в Rails относительно примитивное и специально не делает слишком многого. Целью этой системы является демонстрация, как осуществить автоматическое переключение соединения, достаточно гибкое, чтобы быть настроенным разработчиками приложения.
 
-The setup in Rails allows you to easily change how the switching is done and what
-parameters it's based on. Let's say you want to use a cookie instead of a session to
-decide when to swap connections. You can write your own class:
+Настройка в Rails позволяет легко изменить, как выполняется переключение и на каких параметрах оно базируется. Скажем, вы хотите использовать куки вместо сессии, чтобы решить, когда поменять соединение. Можно написать свой класс:
 
 ```ruby
 class MyCookieResolver
-  # code for your cookie class
+  # код вашего класса для куки
 end
 ```
 
-And then pass it to the middleware:
+И затем передать его в промежуточные программы:
 
 ```ruby
 config.active_record.database_selector = { delay: 2.seconds }
@@ -232,42 +186,30 @@ config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelec
 config.active_record.database_resolver_context = MyCookieResolver
 ```
 
-## Using manual connection switching
+## Использование ручного переключения соединения
 
-There are some cases where you may want your application to connect to a primary or a replica
-and the automatic connection switching isn't adequate. For example, you may know that for a
-particular request you always want to send the request to a replica, even when you are in a
-POST request path.
+Имеется ряд случаев, когда хочется, чтобы приложение соединялось в основной базой или репликой, и автоматического переключения не достаточно. Например, вы знаете, что для определенного запроса нужно всегда отправлять запрос к реплике, даже если это в запросе POST.
 
-To do this Rails provides a `connected_to` method that will switch to the connection you
-need.
+Для этого Rails предоставляет метод `connected_to`, который переключит на нужное вам соединение.
 
 ```ruby
 ActiveRecord::Base.connected_to(role: :reading) do
-  # all code in this block will be connected to the reading role
+  # весь код в этом блоке будет соединен с ролью reading
 end
 ```
 
-The "role" in the `connected_to` call looks up the connections that are connected on that
-connection handler (or role). The `reading` connection handler will hold all the connections
-that were connected via `connects_to` with the role name of `reading`.
+"role" в вызове `connected_to` ищет соединения, связанные с обработчиком этого соединения (или роли). Обработчик соединения `reading` содержит все соединения, связанные с помощью `connects_to` с именем роли `reading`.
 
-Note that `connected_to` with a role will look up an existing connection and switch
-using the connection specification name. This means that if you pass an unknown role
-like `connected_to(role: :nonexistent)` you will get an error that says
-`ActiveRecord::ConnectionNotEstablished (No connection pool with 'AnimalsBase' found
+Отметьте, что `connected_to` с ролью будет искать существующее соединение и переключать с помощью указанного имени соединения. Это означает, что, если вы передали неизвестную роль, наподобие `connected_to(role: :nonexistent)`, то получите ошибку, сообщающую `ActiveRecord::ConnectionNotEstablished (No connection pool with 'AnimalsBase' found
 for the 'nonexistent' role.)`
 
-## Horizontal sharding
+## Горизонтальный шардинг
 
-Horizontal sharding is when you split up your database to reduce the number of rows on each
-database server, but maintain the same schema across "shards". This is commonly called "multi-tenant"
-sharding.
+Горизонтальный шардинг — это когда вы разделяете вашу базу данных для уменьшения количества записей на каждом сервере баз данных, но поддерживаете ту же самую схему для всех "shard". Это обычно называется "multi-tenant sharding".
 
-The API for supporting horizontal sharding in Rails is similar to the multiple database / vertical
-sharding API that's existed since Rails 6.0.
+API для поддержки горизонтального шардинга в Rails похож на API для нескольких баз данных / вертикального шардинга, существующего с Rails 6.0.
 
-Shards are declared in the three-tier config like this:
+Шарды объявляются в трех-уровневой конфигурации наподобие:
 
 ```yaml
 production:
@@ -287,7 +229,7 @@ production:
     replica: true
 ```
 
-Models are then connected with the `connects_to` API via the `shards` key:
+Затем модели соединяются с помощью ключа `shards` в API `connects_to`:
 
 ```ruby
 class ApplicationRecord < ActiveRecord::Base
@@ -298,51 +240,42 @@ class ApplicationRecord < ActiveRecord::Base
     shard_one: { writing: :primary_shard_one, reading: :primary_shard_one_replica }
   }
 end
+```
 
-Then models can swap connections manually via the `connected_to` API:
+Затем в моделях можно вручную переключать соединения с помощью API `connected_to`:
 
 ```ruby
 ActiveRecord::Base.connected_to(shard: :default) do
-  @id = Record.create! # creates a record in shard one
+  @id = Record.create! # создаст запись в shard one
 end
 
 ActiveRecord::Base.connected_to(shard: :shard_one) do
-  Record.find(@id) # can't find record, doesn't exist
+  Record.find(@id) # не найдет запись, не существует
 end
 ```
 
-The horizontal sharding API also supports read replicas. You can swap the
-role and the shard with the `connected_to` API.
+API горизонтального шардинга также поддерживает чтение из реплик. Можно переключить роли и шард с помощью API `connected_to`.
 
 ```ruby
 ActiveRecord::Base.connected_to(role: :reading, shard: :shard_one) do
-  Record.first # lookup record from read replica of shard one
+  Record.first # ищет запись в реплике shard one
 end
 ```
 
-## Caveats
+## Предостережения
 
-### Automatic swapping for horizontal sharding
+### Автоматическое переключение для горизонтального шардинга
 
-While Rails now supports an API for connecting to and swapping connections of shards, it does
-not yet support an automatic swapping strategy. Any shard swapping will need to be done manually
-in your app via a middleware or `around_action`.
+Хотя Rails теперь поддерживает API для соединения и переключения соединений шардов, он пока еще не поддерживает стратегию автоматического переключения. Любое переключение шарда должно быть выполнено вручную с помощью промежуточной программы или `around_action`.
 
-### Load Balancing Replicas
+### Нагрузочная балансировка реплик
 
-Rails also doesn't support automatic load balancing of replicas. This is very
-dependent on your infrastructure. We may implement basic, primitive load balancing
-in the future, but for an application at scale this should be something your application
-handles outside of Rails.
+Rails также не поддерживает автоматическую нагрузочную балансировку реплик. Это очень зависит от вашей инфраструктуры. В будущем может быть будет реализована базовая, примитивная нагрузочная балансировка, но для масштабирования приложения должно быть что-то, что управляет вашим приложением вне Rails.
 
-### Joining Across Databases
+### Соединения между базами данных
 
-Applications cannot join across databases. Rails 6.1 will support using `has_many`
-relationships and creating 2 queries instead of joining, but Rails 6.0 will require
-you to split the joins into 2 selects manually.
+Приложения не могут соединять несколько таблиц из разных баз данных. Rails 6.1 будет поддерживать отношения `has_many` и создавать 2 запроса вместо соединения, но Rails 6.0 требует разделять соединения на 2 запроса вручную.
 
-### Schema Cache
+### Кэш схемы
 
-If you use a schema cache and multiple databases you'll need to write an initializer
-that loads the schema cache from your app. This wasn't an issue we could resolve in
-time for Rails 6.0 but hope to have it in a future version soon.
+Если вы используете кэш схемы и несколько баз данных, вам необходимо написать инициализатор, загружающий кэш схемы из вашего приложения. Эта проблема не была решена в Rails 6.0, но есть надежда, что она будет решена в следующей версии.
