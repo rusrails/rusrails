@@ -295,6 +295,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth
   bootsnap (>= 1.1.0)
+  bundler (~> 2.1)
   capistrano (~> 2.15)
   coffee-rails
   config

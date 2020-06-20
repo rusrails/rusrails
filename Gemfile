@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 ruby '2.4.1'
+gem 'bundler', '~> 2.1'
 
 gem 'rails', " ~> 5.2.4.2"
 gem 'russian'
