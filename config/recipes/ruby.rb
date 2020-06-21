@@ -12,7 +12,7 @@ namespace :ruby do
     run "rvm install #{ruby_version}" # if it fails, just run install again
     run "rvm use #{ruby_version} --default"
     run "gem update --system"
-    run "gem install bundler --quiet --no-rdoc --no-ri"
+    run "gem install bundler --quiet"
   end
   after "deploy:install", "ruby:install"
 end
