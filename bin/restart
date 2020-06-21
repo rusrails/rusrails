@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ssh-add
+bundle exec cap unicorn:stop
+bundle exec cap unicorn:start
