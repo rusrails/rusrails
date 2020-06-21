@@ -54,6 +54,7 @@ next_column
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [Использование Rails для API-приложений](/api-app)
     * [Active Record для PostgreSQL](/active-record-postgresql)
+    * [Несколько баз данных с Active Record](/active-record-multiple-databases)
 
 * **Расширяем Rails**
 
