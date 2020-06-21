@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.4.1'
 gem 'bundler', '~> 2.1'
 
-gem 'rails', " ~> 5.2.4.2"
+gem 'rails', " ~> 5.2.4.3"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 gem "bootsnap", ">= 1.1.0", require: false
