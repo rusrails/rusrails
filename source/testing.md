@@ -137,7 +137,7 @@ assert true
 ```ruby
 test "should not save article without title" do
   article = Article.new
-  assert_not article.save
+  assert article.save
 end
 ```
 
@@ -170,7 +170,7 @@ Finished in 0.023918s, 41.8090 runs/s, 41.8090 assertions/s.
 ```ruby
 test "should not save article without title" do
   article = Article.new
-  assert_not article.save, "Saved the article without a title"
+  assert article.save, "Saved the article without a title"
 end
 ```
 
