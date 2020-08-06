@@ -1032,7 +1032,7 @@ collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initi
 
 ```html+erb
 <%= collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial, {checked: Author.last, required: rue} do |rb| %>
-      <%= rb.label(class: "#{'my-custom-class' if rb.value == Author.last.id}") { rb.radio_button + rb.text } %>
+  <%= rb.label(class: "#{'my-custom-class' if rb.value == Author.last.id}") { rb.radio_button + rb.text } %>
 <% end %>
 ```
 
