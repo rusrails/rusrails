@@ -516,7 +516,7 @@ NOTE: Ошибки, добавляемые в `record.errors[:base]` относ�
 ```ruby
 class GoodnessValidator < ActiveModel::Validator
   def validate(record)
-    if options[:fields].any?{|field| record.send(field) == "Evil" }
+    if options[:fields].any? { |field| record.send(field) == "Evil" }
       record.errors[:base] << "This person is evil"
     end
   end
