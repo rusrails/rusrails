@@ -355,7 +355,9 @@ pages:
     date:     12/05/2019
 
 plan:
+  - file:     6_1_release_notes.md
   - file:     action_text_overview.md
+  - file:     action_view_helpers.md
 
 old:
   - file:     2_2_release_notes.md
