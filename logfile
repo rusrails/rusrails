@@ -1,0 +1,11 @@
+LOG:  database system was shut down at 2020-08-09 17:23:06 +03
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+FATAL:  database "mikdiet" does not exist
+FATAL:  database "help" does not exist
+LOG:  received fast shutdown request
+LOG:  aborting any active transactions
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+LOG:  database system is shut down
