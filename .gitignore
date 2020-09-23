@@ -21,3 +21,4 @@ config/environments/*.local.yml
 config/settings/production.yml
 node_modules
 source/diff.diffrake
+.tool-versions
