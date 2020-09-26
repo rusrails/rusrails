@@ -78,6 +78,12 @@ pages:
     revision: 9fe5aa32a7c962e084117af94351061009cd350b
     date:     14/07/2019
 
+  - title:    Хелперы Action View
+    path:     action-view-helpers
+    file:     action_view_helpers.md
+    revision: e6950a332afd0553a0f11cf5fcb87ad84ec73a2b
+    date:     08/07/2020
+
   - title:    Хелперы форм в Action View
     path:     rails-form-helpers
     file:     form_helpers.md
@@ -357,7 +363,6 @@ pages:
 plan:
   - file:     6_1_release_notes.md
   - file:     action_text_overview.md
-  - file:     action_view_helpers.md
 
 old:
   - file:     2_2_release_notes.md
