@@ -16,6 +16,7 @@
 
     * [Обзор Action View](/action-view-overview)
     * [Макеты и рендеринг в Rails](/layouts-and-rendering-in-rails)
+    * [Хелперы Action View](/action-view-helpers)
     * [Хелперы форм в Action View](/rails-form-helpers)
 
 * **Контроллеры**
