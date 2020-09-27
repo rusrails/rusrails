@@ -1,60 +1,56 @@
-**DO NOT READ THIS FILE ON GITHUB, GUIDES ARE PUBLISHED ON https://guides.rubyonrails.org.**
+Хелперы Action View
+===================
 
-Action View Helpers
-====================
+После прочтения этого руководства вы узнаете:
 
-After reading this guide, you will know:
-
-* What helpers are provided by Action View.
+* Какие хелперы предоставлены Action View.
 
 --------------------------------------------------------------------------------
 
-Overview of helpers provided by Action View
+Обзор хелперов, предоставленных Action View
 -------------------------------------------
 
-WIP: Not all the helpers are listed here. For a full list see the [API documentation](https://api.rubyonrails.org/classes/ActionView/Helpers.html)
+WIP: Тут перечислены не все хелперы. За полным списком можно обратиться к [документации API](https://api.rubyonrails.org/classes/ActionView/Helpers.html)
 
-The following is only a brief overview summary of the helpers available in Action View. It's recommended that you review the [API Documentation](https://api.rubyonrails.org/classes/ActionView/Helpers.html), which covers all of the helpers in more detail, but this should serve as a good starting point.
+Нижеследующее является лишь кратким обзором хелперов, доступных в Action View. Рекомендуется обратиться к [документации API](https://api.rubyonrails.org/classes/ActionView/Helpers.html), покрывающей все хелперы более подробно, но это должно послужить хорошей отправной точкой.
 
 ### AssetTagHelper
 
-This module provides methods for generating HTML that links views to assets such as images, JavaScript files, stylesheets, and feeds.
+Этот модуль предоставляет методы для генерации HTML, связывающего вьюхи с файлами, такими как картинки, файлы JavaScript, таблицы стилей и новостные ленты.
 
-By default, Rails links to these assets on the current host in the public folder, but you can direct Rails to link to assets from a dedicated assets server by setting `config.action_controller.asset_host` in the application configuration, typically in `config/environments/production.rb`. For example, let's say your asset host is `assets.example.com`:
+По умолчанию Rails ссылается на эти файлы на текущем хосте в папке public, но можно направить Rails ссылаться на файлы на выделенном сервере файлов, установив `config.action_controller.asset_host` в конфигурации приложения, обычно в `config/environments/production.rb`. Например, допустим хост ваших файлов `assets.example.com`:
 
 ```ruby
 config.action_controller.asset_host = "assets.example.com"
-image_tag("rails.png") 
-# => <img src="http://assets.example.com/images/rails.png" />
+image_tag("rails.png") # => <img src="http://assets.example.com/images/rails.png" />
 ```
 
 #### auto_discovery_link_tag
 
-Returns a link tag that browsers and feed readers can use to auto-detect an RSS, Atom, or JSON feed.
+Возвращает тег ссылки, которую могут использовать браузеры и агрегаторы новостей для автоматического определения RSS, Atom или ленты JSON.
 
 ```ruby
-auto_discovery_link_tag(:rss, "http://www.example.com/feed.rss", { title: "RSS Feed" }) 
-# => <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="http://www.example.com/feed.rss" />
+auto_discovery_link_tag(:rss, "http://www.example.com/feed.rss", { title: "RSS Feed" }) # =>
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="http://www.example.com/feed" />
 ```
 
 #### image_path
 
-Computes the path to an image asset in the `app/assets/images` directory. Full paths from the document root will be passed through. Used internally by `image_tag` to build the image path.
+Вычисляет путь до ресурса картинки в директории `app/assets/images`. Будут переданы полные пути от корня документа. Используется внутри `image_tag` для создания пути к картинке.
 
 ```ruby
 image_path("edit.png") # => /assets/edit.png
 ```
 
-Fingerprint will be added to the filename if config.assets.digest is set to true.
+К имени файла будет добавлена метка, если config.assets.digest установлен в true.
 
 ```ruby
-image_path("edit.png") 
-# => /assets/edit-2d1a2db63fc738690021fedb5a65b68e.png
+image_path("edit.png") # => /assets/edit-2d1a2db63fc738690021fedb5a65b68e.png
 ```
 
 #### image_url
 
-Computes the URL to an image asset in the `app/assets/images` directory. This will call `image_path` internally and merge with your current host or your asset host.
+Вычисляет URL ресурса картинки в директории `app/assets/images`. Он вызовет `image_path` и соединит с вашим текущим хостом или вашим хостом ресурсов.
 
 ```ruby
 image_url("edit.png") # => http://www.example.com/assets/edit.png
@@ -62,7 +58,7 @@ image_url("edit.png") # => http://www.example.com/assets/edit.png
 
 #### image_tag
 
-Returns an HTML image tag for the source. The source can be a full path or a file that exists in your `app/assets/images` directory.
+Возвращает тег картинки HTML для источника. Источником может быть полный путь или файл, существующий в директории `app/assets/images`.
 
 ```ruby
 image_tag("icon.png") # => <img src="/assets/icon.png" />
@@ -70,16 +66,16 @@ image_tag("icon.png") # => <img src="/assets/icon.png" />
 
 #### javascript_include_tag
 
-Returns an HTML script tag for each of the sources provided. You can pass in the filename (`.js` extension is optional) of JavaScript files that exist in your `app/assets/javascripts` directory for inclusion into the current page or you can pass the full path relative to your document root.
+Возвращает HTML-тег script для каждого предоставленного источника. Можно передать имя файла (расширение `.js` опционально) или файлы JavaScript, существующие в директории `app/assets/javascripts` для включения в текущую страницу, или передать полный путь относительно корня документа.
 
 ```ruby
-javascript_include_tag "common" 
+javascript_include_tag "common"
 # => <script src="/assets/common.js"></script>
 ```
 
 #### javascript_path
 
-Computes the path to a JavaScript asset in the `app/assets/javascripts` directory. If the source filename has no extension, `.js` will be appended. Full paths from the document root will be passed through. Used internally by `javascript_include_tag` to build the script path.
+Вычисляет путь до ресурса JavaScript в директории `app/assets/javascripts`. Если у имени файла источника нет расширения, будет добавлено `.js`. Будут переданы полные пути от корня документа. Используется внутри `javascript_include_tag` для создания пути к скрипту.
 
 ```ruby
 javascript_path "common" # => /assets/common.js
@@ -87,25 +83,25 @@ javascript_path "common" # => /assets/common.js
 
 #### javascript_url
 
-Computes the URL to a JavaScript asset in the `app/assets/javascripts` directory. This will call `javascript_path` internally and merge with your current host or your asset host.
+Вычисляет URL ресурса JavaScript в директории `app/assets/javascripts`. Он вызовет `javascript_path` и соединит с вашим текущим хостом или вашим хостом ресурсов.
 
 ```ruby
-javascript_url "common" 
+javascript_url "common"
 # => http://www.example.com/assets/common.js
 ```
 
 #### stylesheet_link_tag
 
-Returns a stylesheet link tag for the sources specified as arguments. If you don't specify an extension, `.css` will be appended automatically.
+Возвращает тег ссылки на таблицу стилей для источников, указанных в качестве аргументов. Если не указать расширение, автоматически будет добавлено `.css`.
 
 ```ruby
-stylesheet_link_tag "application" 
+stylesheet_link_tag "application"
 # => <link href="/assets/application.css" media="screen" rel="stylesheet" />
 ```
 
 #### stylesheet_path
 
-Computes the path to a stylesheet asset in the `app/assets/stylesheets` directory. If the source filename has no extension, `.css` will be appended. Full paths from the document root will be passed through. Used internally by `stylesheet_link_tag` to build the stylesheet path.
+Вычисляет путь до ресурса таблицы стилей в директории `app/assets/stylesheets`. Если у имени файла источника нет расширения, будет добавлено `.css`. Будут переданы полные пути от корня документа. Используется внутри `stylesheet_link_tag` для создания пути к таблице стилей.
 
 ```ruby
 stylesheet_path "application" # => /assets/application.css
@@ -113,10 +109,10 @@ stylesheet_path "application" # => /assets/application.css
 
 #### stylesheet_url
 
-Computes the URL to a stylesheet asset in the `app/assets/stylesheets` directory. This will call `stylesheet_path` internally and merge with your current host or your asset host.
+Вычисляет URL ресурса таблицы стилей в директории `app/assets/stylesheets`. Он вызовет `stylesheet_path` и соединит с вашим текущим хостом или вашим хостом ресурсов.
 
 ```ruby
-stylesheet_url "application" 
+stylesheet_url "application"
 # => http://www.example.com/assets/application.css
 ```
 
@@ -124,7 +120,7 @@ stylesheet_url "application"
 
 #### atom_feed
 
-This helper makes building an Atom feed easy. Here's a full usage example:
+Этот хелпер позволяет с легкостью создать новостную ленту Atom. Вот пример полного использования:
 
 **config/routes.rb**
 
@@ -169,7 +165,7 @@ end
 
 #### benchmark
 
-Allows you to measure the execution time of a block in a template and records the result to the log. Wrap this block around expensive operations or possible bottlenecks to get a time reading for the operation.
+Позволяет измерить время выполнения блока в шаблоне и записать результат в лог. Оберните этот блок вокруг затратных операций или потенциальных узких мест, чтобы получить время чтения для операций.
 
 ```html+erb
 <% benchmark "Process data files" do %>
@@ -177,13 +173,13 @@ Allows you to measure the execution time of a block in a template and records th
 <% end %>
 ```
 
-This would add something like "Process data files (0.34523)" to the log, which you can then use to compare timings when optimizing your code.
+Это добавит в лог что-то вроде "Process data files (0.34523)", затем это можно использовать для сравнения времени при оптимизации кода.
 
 ### CacheHelper
 
 #### cache
 
-A method for caching fragments of a view rather than an entire action or page. This technique is useful for caching pieces like menus, lists of news topics, static HTML fragments, and so on. This method takes a block that contains the content you wish to cache. See `AbstractController::Caching::Fragments` for more information.
+Метод для кэширования фрагмента вьюхи, а не всего экшна или страницы. Эта техника полезна для кэширования таких кусочков, как меню, списки заголовков новостей, статичные фрагменты HTML и так далее. Этот метод принимает блок, содержащий код, который вы хотите закэшировать. Подробности смотрите в `AbstractController::Caching::Fragments`.
 
 ```erb
 <% cache do %>
@@ -195,7 +191,7 @@ A method for caching fragments of a view rather than an entire action or page. T
 
 #### capture
 
-The `capture` method allows you to extract part of a template into a variable. You can then use this variable anywhere in your templates or layout.
+Метод `capture` позволяет извлечь часть шаблона в переменную. Эту переменную потом можно использовать в любом месте шаблона или макета.
 
 ```html+erb
 <% @greeting = capture do %>
@@ -203,7 +199,7 @@ The `capture` method allows you to extract part of a template into a variable. Y
 <% end %>
 ```
 
-The captured variable can then be used anywhere else.
+Захваченная переменная может быть потом где-то использована.
 
 ```html+erb
 <html>
@@ -218,9 +214,9 @@ The captured variable can then be used anywhere else.
 
 #### content_for
 
-Calling `content_for` stores a block of markup in an identifier for later use. You can make subsequent calls to the stored content in other templates or the layout by passing the identifier as an argument to `yield`.
+Вызов `content_for` хранит блок разметки как идентификатор для дальнейшего использования. Можно совершать последующие вызовы сохраненного содержимого в других шаблонах или макете, передав идентификатор в качестве аргумента в `yield`.
 
-For example, let's say we have a standard application layout, but also a special page that requires certain JavaScript that the rest of the site doesn't need. We can use `content_for` to include this JavaScript on our special page without fattening up the rest of the site.
+Например, допустим у нас есть стандартный макет приложения, но также есть специальная страница, требующая определенный JavaScript, который не требуется в остальных частях сайта. Можно использовать `content_for`, чтобы включить этот JavaScript на нашу специальную страницу без влияния на оставшуюся часть сайта.
 
 **app/views/layouts/application.html.erb**
 
@@ -250,7 +246,7 @@ For example, let's say we have a standard application layout, but also a special
 
 #### date_select
 
-Returns a set of select tags (one for year, month, and day) pre-selected for accessing a specified date-based attribute.
+Возвращает набор тегов select (по одному для года, месяца и дня), предзаполненных для доступа к определенному атрибуту даты.
 
 ```ruby
 date_select("article", "published_on")
@@ -258,7 +254,7 @@ date_select("article", "published_on")
 
 #### datetime_select
 
-Returns a set of select tags (one for year, month, day, hour, and minute) pre-selected for accessing a specified datetime-based attribute.
+Возвращает набор тегов select (по одному для года, месяца, дня, часа и минуты), предзаполненных для доступа к определенному атрибуту даты-времени.
 
 ```ruby
 datetime_select("article", "published_on")
@@ -266,128 +262,128 @@ datetime_select("article", "published_on")
 
 #### distance_of_time_in_words
 
-Reports the approximate distance in time between two Time or Date objects or integers as seconds. Set `include_seconds` to true if you want more detailed approximations.
+Возвращает приблизительный промежуток времени между двумя объектами Time или Date, или целыми числами в секундах. Установите `include_seconds` в true, если хотите более детальное приближение.
 
 ```ruby
-distance_of_time_in_words(Time.now, Time.now + 15.seconds) 
+distance_of_time_in_words(Time.now, Time.now + 15.seconds)        
 # => less than a minute
-distance_of_time_in_words(Time.now, Time.now + 15.seconds, include_seconds: true) 
+distance_of_time_in_words(Time.now, Time.now + 15.seconds, include_seconds: true)  
 # => less than 20 seconds
 ```
 
 #### select_date
 
-Returns a set of HTML select-tags (one for year, month, and day) pre-selected with the `date` provided.
+Возвращает набор HTML-тегов select (по одному для года, месяца и дня), предзаполненных предоставленной `date`.
 
 ```ruby
-# Generates a date select that defaults to the date provided (six days after today)
+# Создает select для date, который по умолчанию соответствует предоставленной дате (шесть дней, начиная с сегодняшнего)
 select_date(Time.today + 6.days)
 
-# Generates a date select that defaults to today (no specified date)
+# Создает select для date, который по умолчанию соответствует сегодняшней дате (без аргумента)
 select_date()
 ```
 
 #### select_datetime
 
-Returns a set of HTML select-tags (one for year, month, day, hour, and minute) pre-selected with the `datetime` provided.
+Возвращает набор HTML-тегов select (по одному для года, месяца, дня, часа и минуты), предзаполненных предоставленным `datetime`.
 
 ```ruby
-# Generates a datetime select that defaults to the datetime provided (four days after today)
+# Создает select для datetime, который по умолчанию соответствует предоставленной дате (четыре дня, начиная с сегодняшнего)
 select_datetime(Time.now + 4.days)
 
-# Generates a datetime select that defaults to today (no specified datetime)
+# Создает select для datetime, который по умолчанию соответствует сегодняшней дате (без аргумента)
 select_datetime()
 ```
 
 #### select_day
 
-Returns a select tag with options for each of the days 1 through 31 with the current day selected.
+Возвращает тег select с опциями для каждого дня с 1 по 31 и выбранным текущим днем.
 
 ```ruby
-# Generates a select field for days that defaults to the day for the date provided
+# Создает поле select для дней с предоставленной датой как значение по умолчанию
 select_day(Time.today + 2.days)
 
-# Generates a select field for days that defaults to the number given
+# Создает поле select для дней с данным числом как значение по умолчанию
 select_day(5)
 ```
 
 #### select_hour
 
-Returns a select tag with options for each of the hours 0 through 23 with the current hour selected.
+Возвращает тег select с опциями для каждого часа с 0 по 23 и выбранным текущим часом.
 
 ```ruby
-# Generates a select field for hours that defaults to the hours for the time provided
+# Создает поле select для часов с предоставленным временем как значение по умолчанию
 select_hour(Time.now + 6.hours)
 ```
 
 #### select_minute
 
-Returns a select tag with options for each of the minutes 0 through 59 with the current minute selected.
+Возвращает тег select с опциями для каждой минуты с 0 по 59 и выбранной текущей минутой.
 
 ```ruby
-# Generates a select field for minutes that defaults to the minutes for the time provided.
+# Создает поле select для минут с предоставленным временем как значение по умолчанию
 select_minute(Time.now + 10.minutes)
 ```
 
 #### select_month
 
-Returns a select tag with options for each of the months January through December with the current month selected.
+Возвращает тег select с опциями для каждого месяца с January по December и выбранным текущим месяцем.
 
 ```ruby
-# Generates a select field for months that defaults to the current month
+# Создает поле select для месяцев с текущим месяцем как значение по умолчанию
 select_month(Date.today)
 ```
 
 #### select_second
 
-Returns a select tag with options for each of the seconds 0 through 59 with the current second selected.
+Возвращает тег select с опциями для каждой секунды с 0 по 59 и выбранной текущей секундой.
 
 ```ruby
-# Generates a select field for seconds that defaults to the seconds for the time provided
+# Создает поле select для секунд с предоставленным временем как значение по умолчанию
 select_second(Time.now + 16.seconds)
 ```
 
 #### select_time
 
-Returns a set of HTML select-tags (one for hour and minute).
+Возвращает набор тегов HTML select (по одному для часа и минуты).
 
 ```ruby
-# Generates a time select that defaults to the time provided
+# Создает поля select с предоставленным временем как значение по умолчанию
 select_time(Time.now)
 ```
 
 #### select_year
 
-Returns a select tag with options for each of the five years on each side of the current, which is selected. The five year radius can be changed using the `:start_year` and `:end_year` keys in the `options`.
+Возвращает тег select с опциями для каждого года из пяти от и до выбранного текущего. Пятилетний радиус может быть изменен с помощью опциональных ключей `:start_year` и `:end_year` в `options`.
 
 ```ruby
-# Generates a select field for five years on either side of Date.today that defaults to the current year
+# Создает поле select для пяти лет в обе стороны от Date.today, являющаяся значением по умолчанию для текущего года
 select_year(Date.today)
 
-# Generates a select field from 1900 to 2009 that defaults to the current year
+# Создает поле select от 1900 до 2009 с текущим годом как значение по умолчанию
 select_year(Date.today, start_year: 1900, end_year: 2009)
 ```
 
 #### time_ago_in_words
 
-Like `distance_of_time_in_words`, but where `to_time` is fixed to `Time.now`.
+Подобен `distance_of_time_in_words`, где `to_time` устанавливается `Time.now`.
 
 ```ruby
-time_ago_in_words(3.minutes.from_now) # => 3 minutes
+time_ago_in_words(3.minutes.from_now)  # => 3 minutes
 ```
 
 #### time_select
 
-Returns a set of select tags (one for hour, minute, and optionally second) pre-selected for accessing a specified time-based attribute. The selects are prepared for multi-parameter assignment to an Active Record object.
+Возвращает набор тегов select (по одному для часа, минуты и, опционально, секунды), предзаполненных для доступа к определенному атрибуту времени. Этот набор подготовлен для назначения нескольких параметров в объекте Active Record.
 
 ```ruby
-# Creates a time select tag that, when POSTed, will be stored in the order variable in the submitted attribute
+# Создает тег select для времени, который при POST будет сохранен в переменную order атрибута submitted
 time_select("order", "submitted")
 ```
 
 ### DebugHelper
 
-Returns a `pre` tag that has object dumped by YAML. This creates a very readable way to inspect an object.
+Возвращает тег `pre` с объектом, выгруженным в YAML. Это создает удобочитаемый способ проверки объекта.
 
 ```ruby
 my_hash = { 'first' => 1, 'second' => 'two', 'third' => [1,2,3] }
@@ -407,14 +403,14 @@ third:
 
 ### FormHelper
 
-Form helpers are designed to make working with models much easier compared to using just standard HTML elements by providing a set of methods for creating forms based on your models. This helper generates the HTML for forms, providing a method for each sort of input (e.g., text, password, select, and so on). When the form is submitted (i.e., when the user hits the submit button or form.submit is called via JavaScript), the form inputs will be bundled into the params object and passed back to the controller.
+Хелперы форм предназначены для упрощения работы с моделями по сравнению с использованием только стандартных элементов HTML, предоставляя набор методов для создания форм на основе ваших моделей. Этот хелпер создает HTML для форм, предоставляя метод для каждого типа полей ввода (например text, password, select и так далее). Когда форма подтверждается (т.е. когда пользователь нажимает кнопку подтверждения или form.submit вызывается с помощью JavaScript), поля ввода формы будут объединены в объект params и переданы в контроллер.
 
-There are two types of form helpers: those that specifically work with model attributes and those that don't. This helper deals with those that work with model attributes; to see an example of form helpers that don't work with model attributes, check the `ActionView::Helpers::FormTagHelper` documentation.
+Существует два типа хелперов форм: те, которые работают с атрибутами модели, и те, которые нет. Этот хелпер относится к тем, которые работают с атрибутами модели; чтобы посмотреть примеры хелперов форм, которые не работают с атрибутами модели, обратитесь к документации `ActionView::Helpers::FormTagHelper`.
 
-The core method of this helper, `form_with`, gives you the ability to create a form for a model instance; for example, let's say that you have a model Person and want to create a new instance of it:
+Основной метод этого хелпера, `form_with`, дает возможность создавать форму для экземпляра модели; например, допустим, что имеется модель Person, и мы хотим создать ее новый экземпляр:
 
 ```html+erb
-<!-- Note: a @person variable will have been created in the controller (e.g. @person = Person.new) -->
+<!-- Note: переменная @person была создана в контроллере (т.е. @person = Person.new) -->
 <%= form_with model: @person do |form| %>
   <%= form.text_field :first_name %>
   <%= form.text_field :last_name %>
@@ -422,7 +418,7 @@ The core method of this helper, `form_with`, gives you the ability to create a f
 <% end %>
 ```
 
-The HTML generated for this would be:
+Созданным HTML будет:
 
 ```html
 <form class="new_person" id="new_person" action="/people" accept-charset="UTF-8" method="post">
@@ -434,20 +430,20 @@ The HTML generated for this would be:
 </form>
 ```
 
-The params object created when this form is submitted would look like:
+Объект params, созданный при отправке этой формы, будет выглядеть так:
 
 ```ruby
 {"utf8" => "✓", "authenticity_token" => "lTuvBzs7ANygT0NFinXj98tfw3Emfm65wwYLbUvoWsK2pngccIQSUorM2C035M9dZswXgWTvKwFS8W5TVblpYw==", "person" => {"first_name" => "William", "last_name" => "Smith"}, "commit" => "Create", "controller" => "people", "action" => "create"}
 ```
 
-The params hash has a nested person value, which can therefore be accessed with `params[:person]` in the controller.
+В хэше params будет вложенное значение person, к которому можно получить доступ в контроллере с помощью `params[:person]`.
 
 #### check_box
 
-Returns a checkbox tag tailored for accessing a specified attribute.
+Возвращает тег чекбокса с учетом доступа к определенному атрибуту.
 
 ```ruby
-# Let's say that @article.validated? is 1:
+# Допустим, что @article.validated? равен 1:
 check_box("article", "validated")
 # => <input type="checkbox" id="article_validated" name="article[validated]" value="1" />
 #    <input name="article[validated]" type="hidden" value="0" />
@@ -455,7 +451,7 @@ check_box("article", "validated")
 
 #### fields_for
 
-Creates a scope around a specific model object. This makes `fields_for` suitable for specifying additional model objects in the same form:
+Создает пространство имен вокруг определенного объекта модели. Это делает `fields_for` подходящим для указания дополнительных объектов модели в той же форме:
 
 ```html+erb
 <%= form_with model: @person do |person_form| %>
@@ -470,7 +466,7 @@ Creates a scope around a specific model object. This makes `fields_for` suitable
 
 #### file_field
 
-Returns a file upload input tag tailored for accessing a specified attribute.
+Возвращает поле для загрузки файла с учетом доступа к определенному атрибуту.
 
 ```ruby
 file_field(:user, :avatar)
@@ -479,7 +475,9 @@ file_field(:user, :avatar)
 
 #### form_with
 
-Creates a form builder to work with. If a `model` argument is specified, form fields will be scoped to that model, and form field values will be prepopulated with corresponding model attributes.
+Создает форму и пространство имен вокруг определенного объекта модели, используемого как основа для опроса значений полей.
+
+Создает построитель формы, с которым будет работать блок. Если указан аргумент `model`, поля формы будут ограничены этой моделью, и значения полей формы будут предзаполнены соответствующими атрибутами модели.
 
 ```html+erb
 <%= form_with model: @article do |form| %>
@@ -492,7 +490,7 @@ Creates a form builder to work with. If a `model` argument is specified, form fi
 
 #### hidden_field
 
-Returns a hidden input tag tailored for accessing a specified attribute.
+Возвращает тег скрытого поля с учетом доступа к определенному атрибуту.
 
 ```ruby
 hidden_field(:user, :token)
@@ -501,7 +499,7 @@ hidden_field(:user, :token)
 
 #### label
 
-Returns a label tag tailored for labelling an input field for a specified attribute.
+Возвращает тег label с учетом поля ввода для определенного атрибута.
 
 ```ruby
 label(:article, :title)
@@ -510,7 +508,7 @@ label(:article, :title)
 
 #### password_field
 
-Returns an input tag of the "password" type tailored for accessing a specified attribute.
+Возвращает тег input типа "password" с учетом доступа к определенному атрибуту.
 
 ```ruby
 password_field(:login, :pass)
@@ -519,10 +517,10 @@ password_field(:login, :pass)
 
 #### radio_button
 
-Returns a radio button tag for accessing a specified attribute.
+Возвращает тег радио кнопки с учетом доступа к определенному атрибуту.
 
 ```ruby
-# Let's say that @article.category returns "rails":
+# Допустим, что @article.category возвращает "rails":
 radio_button("article", "category", "rails")
 radio_button("article", "category", "java")
 # => <input type="radio" id="article_category_rails" name="article[category]" value="rails" checked="checked" />
@@ -531,7 +529,7 @@ radio_button("article", "category", "java")
 
 #### text_area
 
-Returns a textarea opening and closing tag set tailored for accessing a specified attribute.
+Возвращает набор открывающего и закрывающего тега textarea с учетом доступа к определенному атрибуту.
 
 ```ruby
 text_area(:comment, :text, size: "20x30")
@@ -542,7 +540,7 @@ text_area(:comment, :text, size: "20x30")
 
 #### text_field
 
-Returns an input tag of the "text" type tailored for accessing a specified attribute.
+Возвращает тег input типа "text" с учетом доступа к определенному атрибуту.
 
 ```ruby
 text_field(:article, :title)
@@ -551,7 +549,7 @@ text_field(:article, :title)
 
 #### email_field
 
-Returns an input tag of the "email" type tailored for accessing a specified attribute.
+Возвращает тег input типа "email" с учетом доступа к определенному атрибуту.
 
 ```ruby
 email_field(:user, :email)
@@ -560,7 +558,7 @@ email_field(:user, :email)
 
 #### url_field
 
-Returns an input tag of the "url" type tailored for accessing a specified attribute.
+Возвращает тег input типа "url" с учетом доступа к определенному атрибуту.
 
 ```ruby
 url_field(:user, :url)
@@ -569,13 +567,13 @@ url_field(:user, :url)
 
 ### FormOptionsHelper
 
-Provides a number of methods for turning different kinds of containers into a set of option tags.
+Предоставляет ряд методов для превращения различного рода контейнеров в набор тегов option.
 
 #### collection_select
 
-Returns `select` and `option` tags for the collection of existing return values of `method` for `object`'s class.
+Возвращает теги `select` и `option` для коллекции значений, возвращаемых `method` для класса `object`.
 
-Example object structure for use with this method:
+Пример структуры объекта для использования с этим методом:
 
 ```ruby
 class Article < ApplicationRecord
@@ -590,13 +588,13 @@ class Author < ApplicationRecord
 end
 ```
 
-Sample usage (selecting the associated Author for an instance of Article, `@article`):
+Пример использования (выбор связанного Author для экземпляра Article, `@article`):
 
 ```ruby
 collection_select(:article, :author_id, Author.all, :id, :name_with_initial, { prompt: true })
 ```
 
-If `@article.author_id` is 1, this would return:
+Если `@article.author_id` — 1, это вернет:
 
 ```html
 <select name="article[author_id]">
@@ -609,9 +607,9 @@ If `@article.author_id` is 1, this would return:
 
 #### collection_radio_buttons
 
-Returns `radio_button` tags for the collection of existing return values of `method` for `object`'s class.
+Возвращает теги `radio_button` для коллекции значений, возвращаемых `method` для класса `object`.
 
-Example object structure for use with this method:
+Пример структуры объекта для использования с этим методом:
 
 ```ruby
 class Article < ApplicationRecord
@@ -626,13 +624,13 @@ class Author < ApplicationRecord
 end
 ```
 
-Sample usage (selecting the associated Author for an instance of Article, `@article`):
+Пример использования (выбор связанного Author для экземпляра Article, `@article`):
 
 ```ruby
 collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial)
 ```
 
-If `@article.author_id` is 1, this would return:
+Если `@article.author_id` — 1, это вернет:
 
 ```html
 <input id="article_author_id_1" name="article[author_id]" type="radio" value="1" checked="checked" />
@@ -643,13 +641,13 @@ If `@article.author_id` is 1, this would return:
 <label for="article_author_id_3">M. Clark</label>
 ```
 
-Recovering some option passed (e.g. programmatically checking an object from collection):
+Раскрыть, что некоторый вариант выбран (т.е. программно отметить объект из коллекции):
 
 ```ruby
 collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial, {checked: Author.last})
 ```
 
-In this case, the last object from the collection will be checked:
+В этом случае, последний объект из коллекции будет отмечен:
 
 ```html
 <input id="article_author_id_1" name="article[author_id]" type="radio" value="1" />
@@ -660,9 +658,9 @@ In this case, the last object from the collection will be checked:
 <label for="article_author_id_3">M. Clark</label>
 ```
 
-To access the passed options programmatically (e.g. adding a custom class if checked):
+Чтобы программно получить доступ к переданным опциям (например, добавить пользовательский класс, если отмечен):
 
-**Sample html.erb**
+**Образец html.erb**
 
 ```html+erb
 <%= collection_radio_buttons(:article, :author_id, Author.all, :id, :name_with_initial, {checked: Author.last, required: true} do |rb| %>
@@ -670,12 +668,11 @@ To access the passed options programmatically (e.g. adding a custom class if che
 <% end %>
 ```
 
-
 #### collection_check_boxes
 
-Returns `check_box` tags for the collection of existing return values of `method` for `object`'s class.
+Возвращает теги `check_box` для коллекции значений, возвращаемых `method` для класса `object`.
 
-Example object structure for use with this method:
+Пример структуры объекта для использования с этим методом:
 
 ```ruby
 class Article < ApplicationRecord
@@ -690,13 +687,13 @@ class Author < ApplicationRecord
 end
 ```
 
-Sample usage (selecting the associated Authors for an instance of Article, `@article`):
+Пример использования (выбор связанного Author для экземпляра Article, `@article`):
 
 ```ruby
 collection_check_boxes(:article, :author_ids, Author.all, :id, :name_with_initial)
 ```
 
-If `@article.author_ids` is [1], this would return:
+Если `@article.author_id` — [1], это вернет:
 
 ```html
 <input id="article_author_ids_1" name="article[author_ids][]" type="checkbox" value="1" checked="checked" />
@@ -710,9 +707,9 @@ If `@article.author_ids` is [1], this would return:
 
 #### option_groups_from_collection_for_select
 
-Returns a string of `option` tags, like `options_from_collection_for_select`, but groups them by `optgroup` tags based on the object relationships of the arguments.
+Возвращает строку с тегами `option`, подобно `options_from_collection_for_select`, но группирует их тегами `optgroup` на основе объектных отношений аргументов.
 
-Example object structure for use with this method:
+Пример структуры объекта для использования с этим методом:
 
 ```ruby
 class Continent < ApplicationRecord
@@ -726,13 +723,13 @@ class Country < ApplicationRecord
 end
 ```
 
-Sample usage:
+Пример использования:
 
 ```ruby
 option_groups_from_collection_for_select(@continents, :countries, :name, :id, :name, 3)
 ```
 
-Possible output:
+Возможный результат:
 
 ```html
 <optgroup label="Africa">
@@ -748,47 +745,47 @@ Possible output:
 </optgroup>
 ```
 
-NOTE: Only the `optgroup` and `option` tags are returned, so you still have to wrap the output in an appropriate `select` tag.
+NOTE: Возвращаются только теги `optgroup` и `option`, вам все еще нужно обернуть результат в подходящий тег `select`.
 
 #### options_for_select
 
-Accepts a container (hash, array, enumerable, your type) and returns a string of option tags.
+Принимает контейнер (хэш, массив, перечисление, ваш тип) и возвращает строку тегов option.
 
 ```ruby
 options_for_select([ "VISA", "MasterCard" ])
 # => <option>VISA</option> <option>MasterCard</option>
 ```
 
-NOTE: Only the `option` tags are returned, you have to wrap this call in a regular HTML `select` tag.
+NOTE: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
 
 #### options_from_collection_for_select
 
-Returns a string of option tags that have been compiled by iterating over the `collection` and assigning the result of a call to the `value_method` as the option value and the `text_method` as the option text.
+Возвращает строку тегов option, собранную с помощью итерации по `collection` и назначая результат вызова `value_method` как значение option и `text_method` как текст option.
 
 ```ruby
 options_from_collection_for_select(collection, value_method, text_method, selected = nil)
 ```
 
-For example, imagine a loop iterating over each person in `@project.people` to generate an input tag:
+Например, представьте цикл, проходящий по каждому человеку в `@project.people` для создания тега ввода:
 
 ```ruby
 options_from_collection_for_select(@project.people, "id", "name")
 # => <option value="#{person.id}">#{person.name}</option>
 ```
 
-NOTE: Only the `option` tags are returned, you have to wrap this call in a regular HTML `select` tag.
+NOTE: Возвращаются только теги `option`, вам все еще нужно обернуть результат в обычный HTML-тег `select`.
 
 #### select
 
-Create a select tag and a series of contained option tags for the provided object and method.
+Создает тег select и ряд связанных тегов option для предоставленного объекта и метода.
 
-Example:
+Пример:
 
 ```ruby
 select("article", "person_id", Person.all.collect { |p| [ p.name, p.id ] }, { include_blank: true })
 ```
 
-If `@article.person_id` is 1, this would become:
+Если `@article.person_id` — 1, это выдаст:
 
 ```html
 <select name="article[person_id]">
@@ -801,11 +798,11 @@ If `@article.person_id` is 1, this would become:
 
 #### time_zone_options_for_select
 
-Returns a string of option tags for pretty much any time zone in the world.
+Возвращает строку тегов option для практически любой временной зоны в мире.
 
 #### time_zone_select
 
-Returns select and option tags for the given object and method, using `time_zone_options_for_select` to generate the list of option tags.
+Возвращает теги select и option для заданного объекта и метода, используя `time_zone_options_for_select` для создания списка тегов option.
 
 ```ruby
 time_zone_select("user", "time_zone")
@@ -813,7 +810,7 @@ time_zone_select("user", "time_zone")
 
 #### date_field
 
-Returns an input tag of the "date" type tailored for accessing a specified attribute.
+Возвращает тег input типа "date" с учетом доступа к определенному атрибуту.
 
 ```ruby
 date_field("user", "dob")
@@ -821,11 +818,11 @@ date_field("user", "dob")
 
 ### FormTagHelper
 
-Provides a number of methods for creating form tags that are not scoped to model objects. Instead, you provide the names and values manually.
+Предоставляет ряд методов для создания тегов форм, которые не зависят от объекта Active Record. Вместо этого вы предоставляете вручную имена и значения.
 
 #### check_box_tag
 
-Creates a check box form input tag.
+Создает тег поля ввода формы в виде чекбокса.
 
 ```ruby
 check_box_tag 'accept'
@@ -834,7 +831,7 @@ check_box_tag 'accept'
 
 #### field_set_tag
 
-Creates a field set for grouping HTML form elements.
+Создает fieldset для группировки элементов формы HTML.
 
 ```html+erb
 <%= field_set_tag do %>
@@ -845,7 +842,7 @@ Creates a field set for grouping HTML form elements.
 
 #### file_field_tag
 
-Creates a file upload field.
+Создает поле для загрузки файла.
 
 ```html+erb
 <%= form_with url: new_account_avatar_path(@account), multipart: true do %>
@@ -854,7 +851,7 @@ Creates a file upload field.
 <% end %>
 ```
 
-Example output:
+Примерный результат:
 
 ```ruby
 file_field_tag 'attachment'
@@ -863,7 +860,7 @@ file_field_tag 'attachment'
 
 #### hidden_field_tag
 
-Creates a hidden form input field used to transmit data that would be lost due to HTTP's statelessness or data that should be hidden from the user.
+Создает скрытое поле input, используемое для передачи данных, которые были бы потеряны из-за протокола без сохранения состояния HTTP, или данные, которые должны быть скрыты от пользователя.
 
 ```ruby
 hidden_field_tag 'token', 'VUBJKB23UIVI1UU1VOBVI@'
@@ -872,7 +869,7 @@ hidden_field_tag 'token', 'VUBJKB23UIVI1UU1VOBVI@'
 
 #### image_submit_tag
 
-Displays an image which when clicked will submit the form.
+Отображает изображение, при нажатии на которое будет отправлена форма.
 
 ```ruby
 image_submit_tag("login.png")
@@ -881,7 +878,7 @@ image_submit_tag("login.png")
 
 #### label_tag
 
-Creates a label field.
+Создает тег label.
 
 ```ruby
 label_tag 'name'
@@ -890,7 +887,7 @@ label_tag 'name'
 
 #### password_field_tag
 
-Creates a password field, a masked text field that will hide the users input behind a mask character.
+Создает поле для ввода пароля, скрытое текстовое поле, которое спрячет то, что вводит пользователь символами маски.
 
 ```ruby
 password_field_tag 'pass'
@@ -899,7 +896,7 @@ password_field_tag 'pass'
 
 #### radio_button_tag
 
-Creates a radio button; use groups of radio buttons named the same to allow users to select from a group of options.
+Создает радиокнопку; используйте группу радиокнопок с одинаковым именем, чтобы пользователи могли выбирать из группы опций.
 
 ```ruby
 radio_button_tag 'favorite_color', 'maroon'
@@ -908,7 +905,7 @@ radio_button_tag 'favorite_color', 'maroon'
 
 #### select_tag
 
-Creates a dropdown selection box.
+Создает выпадающий список.
 
 ```ruby
 select_tag "people", "<option>David</option>"
@@ -917,7 +914,7 @@ select_tag "people", "<option>David</option>"
 
 #### submit_tag
 
-Creates a submit button with the text provided as the caption.
+Создает кнопку для отправки формы с текстом-заголовком.
 
 ```ruby
 submit_tag "Publish this article"
@@ -926,7 +923,7 @@ submit_tag "Publish this article"
 
 #### text_area_tag
 
-Creates a text input area; use a textarea for longer text inputs such as blog posts or descriptions.
+Создает область ввода текста; используйте textarea для длинного ввода текста, такого как статьи в блоге или описания.
 
 ```ruby
 text_area_tag 'article'
@@ -935,7 +932,7 @@ text_area_tag 'article'
 
 #### text_field_tag
 
-Creates a standard text field; use these text fields to input smaller chunks of text like a username or a search query.
+Создает стандартное поле ввода текста; используйте их для ввода небольших кусочков текста, таких как имя пользователя или поисковый запрос.
 
 ```ruby
 text_field_tag 'name'
@@ -944,7 +941,7 @@ text_field_tag 'name'
 
 #### email_field_tag
 
-Creates a standard input field of email type.
+Создает стандартное поле ввода с типом email.
 
 ```ruby
 email_field_tag 'email'
@@ -953,7 +950,7 @@ email_field_tag 'email'
 
 #### url_field_tag
 
-Creates a standard input field of url type.
+Создает стандартное поле ввода с типом url.
 
 ```ruby
 url_field_tag 'url'
@@ -962,7 +959,7 @@ url_field_tag 'url'
 
 #### date_field_tag
 
-Creates a standard input field of date type.
+Создает стандартное поле ввода с типом date.
 
 ```ruby
 date_field_tag "dob"
@@ -971,15 +968,15 @@ date_field_tag "dob"
 
 ### JavaScriptHelper
 
-Provides functionality for working with JavaScript in your views.
+Предоставляет функциональность для работы с JavaScript в ваших вьюхах.
 
 #### escape_javascript
 
-Escape carrier returns and single and double quotes for JavaScript segments.
+Экранирует переводы строк и одиночные и двойные кавычки во фрагментах JavaScript.
 
 #### javascript_tag
 
-Returns a JavaScript tag wrapping the provided code.
+Возвращает тег JavaScript, оборачивающий предоставленный код.
 
 ```ruby
 javascript_tag "alert('All is good')"
@@ -995,11 +992,11 @@ alert('All is good')
 
 ### NumberHelper
 
-Provides methods for converting numbers into formatted strings. Methods are provided for phone numbers, currency, percentage, precision, positional notation, and file size.
+Предоставляет методы для конвертации чисел в форматированные строки. Методы предоставлены для телефонных номеров, валют, процентов, позиционных систем счисления и размеров файла.
 
 #### number_to_currency
 
-Formats a number into a currency string (e.g., $13.65).
+Форматирует число в строку с символом валюты (например, $13.65).
 
 ```ruby
 number_to_currency(1234567890.50) # => $1,234,567,890.50
@@ -1007,7 +1004,7 @@ number_to_currency(1234567890.50) # => $1,234,567,890.50
 
 #### number_to_human_size
 
-Formats the bytes in size into a more understandable representation; useful for reporting file sizes to users.
+Форматирует размер в байтах в более понятное представление; полезно для показа размеров файла пользователям.
 
 ```ruby
 number_to_human_size(1234)    # => 1.2 KB
@@ -1016,7 +1013,7 @@ number_to_human_size(1234567) # => 1.2 MB
 
 #### number_to_percentage
 
-Formats a number as a percentage string.
+Форматирует число в строку с символом процента.
 
 ```ruby
 number_to_percentage(100, precision: 0) # => 100%
@@ -1024,7 +1021,7 @@ number_to_percentage(100, precision: 0) # => 100%
 
 #### number_to_phone
 
-Formats a number into a phone number (US by default).
+Форматирует число в телефонный номер (по умолчанию США).
 
 ```ruby
 number_to_phone(1235551234) # => 123-555-1234
@@ -1032,7 +1029,7 @@ number_to_phone(1235551234) # => 123-555-1234
 
 #### number_with_delimiter
 
-Formats a number with grouped thousands using a delimiter.
+Форматирует число со сгруппированными тысячами, используя разделитель.
 
 ```ruby
 number_with_delimiter(12345678) # => 12,345,678
@@ -1040,7 +1037,7 @@ number_with_delimiter(12345678) # => 12,345,678
 
 #### number_with_precision
 
-Formats a number with the specified level of `precision`, which defaults to 3.
+Форматирует число с помощью определенного уровня точности, по умолчанию 3.
 
 ```ruby
 number_with_precision(111.2345)               # => 111.235
@@ -1049,23 +1046,23 @@ number_with_precision(111.2345, precision: 2) # => 111.23
 
 ### SanitizeHelper
 
-The SanitizeHelper module provides a set of methods for scrubbing text of undesired HTML elements.
+Модуль SanitizeHelper предоставляет набор методов для очистки текста от нежелательных элементов HTML.
 
 #### sanitize
 
-This sanitize helper will HTML encode all tags and strip all attributes that aren't specifically allowed.
+Хелпер sanitize экранирует все теги HTML и удаляет все атрибуты, которые не разрешены явно.
 
 ```ruby
 sanitize @article.body
 ```
 
-If either the `:attributes` or `:tags` options are passed, only the mentioned attributes and tags are allowed and nothing else.
+Если переданы опции или `:attributes`, или `:tags`, разрешены только упомянутые теги и атрибуты, и ничего более.
 
 ```ruby
 sanitize @article.body, tags: %w(table tr td), attributes: %w(id class style)
 ```
 
-To change defaults for multiple uses, for example adding table tags to the default:
+Чтобы изменить значения по умолчанию для многократного использования, например, добавить теги таблиц к значениям по умолчанию:
 
 ```ruby
 class Application < Rails::Application
@@ -1075,10 +1072,11 @@ end
 
 #### sanitize_css(style)
 
-Sanitizes a block of CSS code.
+Экранирует блок кода CSS.
 
 #### strip_links(html)
-Strips all link tags from text leaving just the link text.
+
+Обрезает все теги ссылок в тексте, оставляя только текст ссылки.
 
 ```ruby
 strip_links('<a href="https://rubyonrails.org">Ruby on Rails</a>')
@@ -1097,8 +1095,7 @@ strip_links('Blog: <a href="http://myblog.com/">Visit</a>.')
 
 #### strip_tags(html)
 
-Strips all HTML tags from the html, including comments.
-This functionality is powered by the rails-html-sanitizer gem.
+Обрезает все теги HTML из html, включая комментарии. Эта функция доступна, если подключен гем rails-html-sanitizer.
 
 ```ruby
 strip_tags("Strip <i>these</i> tags!")
@@ -1110,17 +1107,17 @@ strip_tags("<b>Bold</b> no more!  <a href='more.html'>See more</a>")
 # => Bold no more!  See more
 ```
 
-NB: The output may still contain unescaped '<', '>', '&' characters and confuse browsers.
+NB: Результат все еще может содержать неэкранированные символы '<', '>', '&' и путать браузеры.
 
 ### UrlHelper
 
-Provides methods to make links and get URLs that depend on the routing subsystem.
+Предоставляет методы для создания ссылок и получения URL, зависящих от подсистемы роутинга.
 
 #### url_for
 
-Returns the URL for the set of `options` provided.
+Возвращает URL для набора предоставленных `options`.
 
-##### Examples
+##### Примеры
 
 ```ruby
 url_for @profile
@@ -1132,18 +1129,16 @@ url_for [ @hotel, @booking, page: 2, line: 3 ]
 
 #### link_to
 
-Links to a URL derived from `url_for` under the hood. Primarily used to
-create RESTful resource links, which for this example, boils down to
-when passing models to `link_to`.
+Связывает с URL на основе `url_for`. В основном используется для создания ресурсных RESTful ссылок, которые, в этом примере, сводятся к передаче моделей в `link_to`.
 
-**Examples**
+**Примеры**
 
 ```ruby
 link_to "Profile", @profile
 # => <a href="/profiles/1">Profile</a>
 ```
 
-You can use a block as well if your link target can't fit in the name parameter. ERB example:
+Также можно использовать блок, если target ссылки не подходит для параметра имени. Пример ERB:
 
 ```html+erb
 <%= link_to @profile do %>
@@ -1151,7 +1146,7 @@ You can use a block as well if your link target can't fit in the name parameter.
 <% end %>
 ```
 
-would output:
+выведет:
 
 ```html
 <a href="/profiles/1">
@@ -1159,20 +1154,19 @@ would output:
 </a>
 ```
 
-See [the API Documentation for more information](https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-link_to)
+Смотрите [подробности в документации API](https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-link_to)
 
 #### button_to
 
-Generates a form that submits to the passed URL. The form has a submit button
-with the value of the `name`.
+Создает форму, отправляющуюся на переданный URL. У формы будет кнопка отправки со значением `name`.
 
-##### Examples
+##### Примеры
 
 ```html+erb
 <%= button_to "Sign in", sign_in_path %>
 ```
 
-would roughly output something like:
+выведет примерно такое:
 
 ```html
 <form method="post" action="/sessions" class="button_to">
@@ -1180,16 +1174,14 @@ would roughly output something like:
 </form>
 ```
 
-See [the API Documentation for more information](https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-button_to)
+Смотрите [подробности в документации API](https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-button_to)
 
 ### CsrfHelper
 
-Returns meta tags "csrf-param" and "csrf-token" with the name of the cross-site
-request forgery protection parameter and token, respectively.
+Возвращает метатеги "csrf-param" и "csrf-token" с, соответственно, именами параметра и токена против межсайтовой подделки запроса.
 
 ```html
 <%= csrf_meta_tags %>
 ```
 
-NOTE: Regular forms generate hidden fields so they do not use these tags. More
-details can be found in the [Rails Security Guide](security.html#cross-site-request-forgery-csrf).
+NOTE: Обычные формы создают скрытые поля, поэтому они не используют эти теги. Подробнее в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#cross-site-request-forgery-csrf).
