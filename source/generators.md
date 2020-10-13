@@ -17,13 +17,15 @@
 Первый контакт
 --------------
 
-При создании приложения с помощью команды `rails` фактически вы используете генератор Rails. После этого можно получить список всех доступных генераторов, просто вызвав `rails generate`:
+При создании приложения с помощью команды `rails` фактически вы используете генератор Rails. После этого можно получить список всех доступных генераторов, просто вызвав `bin/rails generate`:
 
 ```bash
 $ rails new myapp
 $ cd myapp
 $ bin/rails generate
 ```
+
+NOTE: Чтобы создать новое приложение rails, мы используем глобальную команду `rails`, которую установил гем rails с помощью `gem install rails`. Когда внутри директории вашего приложения, мы используем команду `bin/rails`, которая использует комплект rails этого приложения.
 
 Вы получите список всех генераторов, поставляющихся с Rails. Если необходимо подробное описание, к примеру, генератора helper, можно просто сделать так:
 
@@ -46,7 +48,7 @@ class InitializerGenerator < Rails::Generators::Base
 end
 ```
 
-NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](http://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
+NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
 
 Наш новый генератор очень прост: он наследуется от `Rails::Generators::Base` и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе выполняется в порядке, в котором он определен. Наконец, мы вызываем метод `create_file`, который создаст файл в указанном месте с заданным содержимым. Если вы знакомы с Rails Application Templates API, API генераторов покажется вам очень знакомым.
 
@@ -105,7 +107,7 @@ end
 ```bash
 $ bin/rails generate initializer --help
 Usage:
-  rails generate initializer NAME [options]
+  bin/rails generate initializer NAME [options]
 ```
 
 Также можно увидеть, что в нашем новом генераторе есть метод класса `source_root`. Этот метод указывает на место расположения шаблонов нашего генератора, если таковые имеются, и по умолчанию он указывает на созданную директорию `lib/generators/initializer/templates`.
@@ -141,9 +143,9 @@ $ bin/rails generate initializer core_extensions
 Поиск генераторов
 -----------------
 
-При запуске `rails generate initializer core_extensions` Rails затребует эти файлы в следующем порядке, пока один из них не будет найден:
+При запуске `bin/rails generate initializer core_extensions` Rails затребует эти файлы в следующем порядке, пока один из них не будет найден:
 
-```bash
+```
 rails/generators/initializer/initializer_generator.rb
 generators/initializer/initializer_generator.rb
 rails/generators/initializer_generator.rb
@@ -199,8 +201,6 @@ $ bin/rails generate scaffold User name:string
       create    test/application_system_test_case.rb
       create    test/system/users_test.rb
       invoke  assets
-      invoke    coffee
-      create      app/assets/javascripts/users.coffee
       invoke    scss
       create      app/assets/stylesheets/users.scss
       invoke  scss
@@ -217,7 +217,7 @@ $ bin/rails generate scaffold User name:string
   end
 ```
 
-Следующей настройкой рабочего процесса будет полное прекращение генерации таблиц стилей, JavaScript и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
+Следующей настройкой рабочего процесса будет полное прекращение генерации таблиц стилей и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
 
 ```ruby
 config.generators do |g|
@@ -225,7 +225,6 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
-  g.javascripts     false
 end
 ```
 
@@ -266,7 +265,6 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
-  g.javascripts     false
   g.helper          :my_helper
 end
 ```
@@ -331,7 +329,6 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
   g.stylesheets     false
-  g.javascripts     false
 end
 ```
 
@@ -351,7 +348,6 @@ end
 <%= stylesheet_include_tag :application %>
 ```
 
-
 Добавление фолбэков генераторов
 -------------------------------
 
@@ -365,7 +361,6 @@ config.generators do |g|
   g.template_engine :erb
   g.test_framework  :shoulda, fixture: false
   g.stylesheets     false
-  g.javascripts     false
 
   # Добавим фолбэк!
   g.fallbacks[:shoulda] = :test_unit
@@ -404,9 +399,8 @@ $ bin/rails generate scaffold Comment body:text
       create    test/application_system_test_case.rb
       create    test/system/comments_test.rb
       invoke  assets
-      invoke    coffee
-      create      app/assets/javascripts/comments.coffee
       invoke    scss
+      create    app/assets/stylesheets/scaffolds.scss
 ```
 
 Фолбэки позволяют вашим генераторам иметь единственную ответственность, увеличить повторное использование кода и уменьшить дублирование.
@@ -450,16 +444,16 @@ $ rails new thud -m https://gist.github.com/radar/722911/raw/
 Добавление аргументов командной строки
 --------------------------------------
 
-Генераторы Rails легко модифицировать, чтобы они принимали произвольные аргументы командной строки. Эта функциональность исходит из [Thor](http://www.rubydoc.info/github/erikhuda/thor/master/Thor/Base/ClassMethods#class_option-instance_method):
+Генераторы Rails легко модифицировать, чтобы они принимали произвольные аргументы командной строки. Эта функциональность исходит из [Thor](https://www.rubydoc.info/github/erikhuda/thor/master/Thor/Base/ClassMethods#class_option-instance_method):
 
-```
+```ruby
 class_option :scope, type: :string, default: 'read_products'
 ```
 
 Теперь наш генератор может быть вызван следующим образом:
 
 ```bash
-rails generate initializer --scope write_products
+$ bin/rails generate initializer --scope write_products
 ```
 
 К аргументам командной строки можно обратиться с помощью метода `options` в классе генератора. То есть:
@@ -473,7 +467,7 @@ rails generate initializer --scope write_products
 
 Следующие методы доступны как для генераторов, так и для шаблонов Rails.
 
-NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](http://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
+NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](https://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
 
 ### `gem`
 
