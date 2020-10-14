@@ -46,7 +46,7 @@ $ rails plugin new --help
 
 Вы должны увидеть:
 
-```bash
+```
   1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
 ```
 
@@ -73,7 +73,7 @@ end
 
 Запустите `bin/test` для запуска теста. Этот тест должен провалиться, так как мы еще не реализовали метод `to_squawk`:
 
-```bash
+```
 E
 
 Error:
@@ -119,14 +119,13 @@ end
 
 Чтобы проверить, что этот метод делает то, что нужно, запустите юнит-тесты с помощью `bin/test` из директории плагина.
 
-```bash
+```
   2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-Чтобы увидеть его в действии, измените директорию на `test/dummy`, запустите консоль и начните squawking:
+Чтобы увидеть его в действии, измените директорию на `test/dummy`, запустите `bin/rails console` и начните squawking:
 
-```bash
-$ bin/rails console
+```ruby
 >> "Hello World".to_squawk
 => "squawk! Hello World"
 ```
@@ -333,7 +332,7 @@ end
 
 Когда запустите `bin/test`, все тесты должны пройти:
 
-```bash
+```
   4 runs, 4 assertions, 0 failures, 0 errors, 0 skips
 ```
 
@@ -370,7 +369,7 @@ class ActsAsYaffleTest < ActiveSupport::TestCase
 end
 ```
 
-Запустите тест, чтобы убедиться, что последние два теста упадут с ошибкой, содержащей "NoMethodError: undefined method `squawk'", затем обновите `acts_as_yaffle.rb`, чтобы он выглядел так:
+Запустите тест, чтобы убедиться, что последние два теста упадут с ошибкой, содержащей "NoMethodError: undefined method \`squawk'", затем обновите `acts_as_yaffle.rb`, чтобы он выглядел так:
 
 ```ruby
 # yaffle/lib/yaffle/acts_as_yaffle.rb
@@ -431,7 +430,24 @@ gem "yaffle", git: "https://github.com/rails/yaffle.git"
 
 После запуска `bundle install` функциональность гема будет доступна в приложении.
 
-Когда гем готов к официальному релизу, он может быть опубликован на [RubyGems](https://rubygems.org). Подробнее о публикации гемов на RubyGems смотрите: [Publishing your gem](http://guides.rubygems.org/publishing)
+Когда гем готов к официальному релизу, он может быть опубликован на [RubyGems](https://rubygems.org).
+
+Альтернативно можно воспользоваться задачами Rake от Bundler. Полный список можно увидеть ниже:
+
+```bash
+$ bundle exec rake -T
+
+$ bundle exec rake build
+# Build yaffle-0.1.0.gem into the pkg directory
+
+$ bundle exec rake install
+# Build and install yaffle-0.1.0.gem into system gems
+
+$ bundle exec rake release
+# Create tag v0.1.0 and build and push yaffle-0.1.0.gem to Rubygems
+```
+
+Подробнее о публикации гемов на RubyGems смотрите: [Publishing your gem](https://guides.rubygems.org/publishing)
 
 Документация RDoc
 -----------------
@@ -456,5 +472,5 @@ $ bundle exec rake rdoc
 ### Ссылки
 
 * [Developing a RubyGem using Bundler](https://github.com/radar/guides/blob/master/gem-development.md)
-* [Using .gemspecs as Intended](http://yehudakatz.com/2010/04/02/using-gemspecs-as-intended/)
-* [Gemspec Reference](http://guides.rubygems.org/specification-reference/)
+* [Using .gemspecs as Intended](https://yehudakatz.com/2010/04/02/using-gemspecs-as-intended/)
+* [Gemspec Reference](https://guides.rubygems.org/specification-reference/)
