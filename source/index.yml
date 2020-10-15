@@ -111,8 +111,8 @@ pages:
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
     file:     active_support_instrumentation.md
-    revision: cc3cc6b50ff8b0ac2c566b74243ea9d82924b283
-    date:     03/01/2019
+    revision: e278b21ff567a5e576aed8ad4ec4d7b98ce0333f
+    date:     30/09/2020
 
   - title:    API интернационализации Rails (I18n)
     path:     rails-internationalization-i18n-api
