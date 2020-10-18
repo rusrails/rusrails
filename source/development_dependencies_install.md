@@ -88,10 +88,7 @@ $ brew services start mysql
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install sqlite3 libsqlite3-dev
-    mysql-server libmysqlclient-dev
-    postgresql postgresql-client postgresql-contrib libpq-dev
-    redis-server memcached imagemagick ffmpeg mupdf mupdf-tools
+$ sudo apt-get install sqlite3 libsqlite3-dev mysql-server libmysqlclient-dev postgresql postgresql-client postgresql-contrib libpq-dev redis-server memcached imagemagick ffmpeg mupdf mupdf-tools libxml2-dev
 
 # Install Yarn
 $ curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -104,10 +101,7 @@ $ sudo apt-get install yarn
 Чтобы все установить, запустите:
 
 ```bash
-$ sudo dnf install sqlite-devel sqlite-libs
-    mysql-server mysql-devel
-    postgresql-server postgresql-devel
-    redis memcached imagemagick ffmpeg mupdf
+$ $ sudo dnf install sqlite-devel sqlite-libs mysql-server mysql-devel postgresql-server postgresql-devel redis memcached imagemagick ffmpeg mupdf libxml2-devel
 
 # Install Yarn
 # Используйте эту команду, если у вас нет установленной Node.js
@@ -124,12 +118,9 @@ $ sudo dnf install yarn
 Чтобы все установить, запустите:
 
 ```bash
-$ sudo pacman -S sqlite
-    mariadb libmariadbclient mariadb-clients
-    postgresql postgresql-libs
-    redis memcached imagemagick ffmpeg mupdf mupdf-tools poppler
-    yarn
-$ sudo systemctl start redis
+$ sudo pacman -S sqlite mariadb libmariadbclient mariadb-clients postgresql postgresql-libs redis memcached imagemagick ffmpeg mupdf mupdf-tools poppler yarn libxml2
+$ sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+$ sudo systemctl start redis mariadb memcached
 ```
 
 NOTE: Если вы запускаете на Arch Linux, MySQL больше не поддерживается, поэтому вам нужно вместо него использовать MariaDB (смотрите [этот анонс](https://www.archlinux.org/news/mariadb-replaces-mysql-in-repositories/)).
@@ -139,18 +130,14 @@ NOTE: Если вы запускаете на Arch Linux, MySQL больше н�
 Чтобы все установить, запустите:
 
 ```bash
-# pkg install sqlite3
-    mysql80-client mysql80-server
-    postgresql11-client postgresql11-server
-    memcached imagemagick ffmpeg mupdf
-    yarn
+$ pkg install sqlite3 mysql80-client mysql80-server postgresql11-client postgresql11-server memcached imagemagick ffmpeg mupdf yarn libxml2
 # portmaster databases/redis
 ```
 
 Или установить все с помощью портов (эти пакеты расположены в папке `databases`).
 
 NOTE: Если у вас затруднения при установке MySQL, обратитесь к
-[документации MySQL](https://dev.mysql.com/doc/refman/8.0/en/freebsd-installation.html).
+[документации MySQL](https://dev.mysql.com/doc/refman/en/freebsd-installation.html).
 
 ### Конфигурация базы данных
 
@@ -158,7 +145,7 @@ NOTE: Если у вас затруднения при установке MySQL,
 
 Чтобы иметь возможность запускать тестовый набор на MySQL, необходимо создать пользователя с именем `rails` с привилегиями на тестовые базы данных:
 
-```bash
+```sql
 $ mysql -uroot -p
 
 mysql> CREATE USER 'rails'@'localhost';
@@ -185,7 +172,6 @@ $ createuser --superuser $USER
 Затем нужно создать тестовые базы данных для MySQL и PostgreSQL с помощью:
 
 ```bash
-$ cd activerecord
 $ bundle exec rake db:create
 ```
 
