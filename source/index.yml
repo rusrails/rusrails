@@ -63,8 +63,8 @@ pages:
   - title:    Основы Active Model
     path:     active-model-basics
     file:     active_model_basics.md
-    revision: 258670244dae39616a50ec1116f52e91b6f0bc62
-    date:     09/05/2018
+    revision: f6bcd1496e8a8737bf05013f3a0f8ad28d03dd1e
+    date:     04/07/2020
 
   - title:    Обзор Action View
     path:     action-view-overview

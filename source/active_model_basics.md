@@ -12,8 +12,8 @@
 
 --------------------------------------------------------------------------------
 
-Введение
---------
+Что такое Active Model?
+-----------------------
 
 Библиотека Active Model содержит различные модули, используемые для разработки классов, которым необходимы некоторые особенности, присутствующие в Active Record. Некоторые из этих модулей описаны ниже.
 
@@ -237,7 +237,7 @@ class EmailContact
 
   def deliver
     if valid?
-      # отправить электронную почту 
+      # отправить электронную почту
     end
   end
 end
@@ -262,7 +262,7 @@ email_contact.valid?     # => true
 email_contact.persisted? # => false
 ```
 
-Любой класс, включающий `ActiveModel::Model`, может быть использован с `form_for`, `render` и любыми другими методами хелпера Action View, точно так же, как и объекты Active Record.
+Любой класс, включающий `ActiveModel::Model`, может быть использован с `form_with`, `render` и любыми другими методами хелпера Action View, точно так же, как и объекты Active Record.
 
 ### Сериализация
 
@@ -361,13 +361,13 @@ end
 
 * config/locales/app.pt-BR.yml
 
-  ```yml
-  pt-BR:
-    activemodel:
-      attributes:
-        person:
-          name: 'Nome'
-  ```
+```yaml
+pt-BR:
+  activemodel:
+    attributes:
+      person:
+        name: 'Nome'
+```
 
 ```ruby
 Person.human_attribute_name('name') # => "Nome"
@@ -388,7 +388,7 @@ Person.human_attribute_name('name') # => "Nome"
 * `test/models/person_test.rb`
 
     ```ruby
-    require 'test_helper'
+    require "test_helper"
 
     class PersonTest < ActiveSupport::TestCase
       include ActiveModel::Lint::Tests
@@ -400,7 +400,7 @@ Person.human_attribute_name('name') # => "Nome"
     ```
 
 ```bash
-$ rails test
+$ bin/rails test
 
 Run options: --seed 14596
 
@@ -417,14 +417,14 @@ Finished in 0.024899s, 240.9735 runs/s, 1204.8677 assertions/s.
 
 ### Безопасный пароль
 
-`ActiveModel::SecurePassword` предоставляет способ безопасно хранить любой пароль в зашифрованном виде. При включении этого модуля предоставляется метод класса `has_secure_password`, определяющий акцессор `password` с определенными валидациями на нем.
+`ActiveModel::SecurePassword` предоставляет способ безопасно хранить любой пароль в зашифрованном виде. При включении этого модуля предоставляется метод класса `has_secure_password`, определяющий акцессор `password` с определенными валидациями на нем по умолчанию.
 
 #### Требования
 
-`ActiveModel::SecurePassword` зависит от [`bcrypt`](https://github.com/codahale/bcrypt-ruby 'BCrypt'), поэтому включите этот гем в свой `Gemfile` для правильного использования `ActiveModel::SecurePassword`. Чтобы он работал, в модели должен быть акцессор с именем `password_digest`. `has_secure_password` добавит следующие валидации на акцессор `password`:
+`ActiveModel::SecurePassword` зависит от [`bcrypt`](https://github.com/codahale/bcrypt-ruby 'BCrypt'), поэтому включите этот гем в свой `Gemfile` для правильного использования `ActiveModel::SecurePassword`. Чтобы он работал, в модели должен быть акцессор с именем `XXX_digest`. Где `XXX` это имя атрибута желаемого пароля. Следующие валидации добавляются автоматически:
 
 1. Пароль должен существовать.
-2. Пароль должен совпадать с подтверждением (проверяется, если передан `password_confirmation`).
+2. Пароль должен совпадать с подтверждением (проверяется, если передан `XXX_confirmation`).
 3. Максимальная длина пароля 72 (требуется `bcrypt`, от которого зависит ActiveModel::SecurePassword)
 
 #### Примеры
@@ -433,7 +433,9 @@ Finished in 0.024899s, 240.9735 runs/s, 1204.8677 assertions/s.
 class Person
   include ActiveModel::SecurePassword
   has_secure_password
-  attr_accessor :password_digest
+  has_secure_password :recovery_password, validations: false
+
+  attr_accessor :password_digest, :recovery_password_digest
 end
 
 person = Person.new
@@ -457,4 +459,17 @@ person.valid? # => true
 # Когда проходят все валидации.
 person.password = person.password_confirmation = 'aditya'
 person.valid? # => true
+
+person.recovery_password = "42password"
+
+person.authenticate('aditya') # => person
+person.authenticate('notright') # => false
+person.authenticate_password('aditya') # => person
+person.authenticate_password('notright') # => false
+
+person.authenticate_recovery_password('42password') # => person
+person.authenticate_recovery_password('notright') # => false
+
+person.password_digest # => "$2a$04$gF8RfZdoXHvyTjHhiU4ZsO.kQqV9oonYZu31PRE4hLQn3xM2qkpIy"
+person.recovery_password_digest # => "$2a$04$iOfhwahFymCs5weB3BNH/uXkTG65HR.qpW.bNhEjFP3ftli3o5DQC"
 ```
