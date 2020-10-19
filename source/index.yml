@@ -201,8 +201,8 @@ pages:
   - title:    Процесс инициализации в Rails
     path:     initialization
     file:     initialization.md
-    revision: c3a08f8844e5c11f80733e211da9fd0c13a5829a
-    date:     26/06/2019
+    revision: 6504e97561fb50997aaa3ecbd9c9782cd33333f4
+    date:     22/03/2020
 
   - title:    Автозагрузка и перезагрузка констант (режим Zeitwerk)
     path:     constant_autoloading_and_reloading
