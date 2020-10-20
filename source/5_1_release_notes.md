@@ -28,7 +28,7 @@
 
 [Pull Request](https://github.com/rails/rails/pull/26836)
 
-Rails 5.1 позволяет управлять зависимостями JavaScript из NPM с помощью Yarn. Это облегчает использование библиотек, таких как React, VueJS и любых других из мира NPM. Поддержка Yarn интегрирована с файлопроводом, поэтому все зависимости будут без проблем работать с приложением Rails 5.1.
+Rails 5.1 позволяет управлять зависимостями JavaScript из npm с помощью Yarn. Это облегчает использование библиотек, таких как React, VueJS и любых других из мира npm. Поддержка Yarn интегрирована с файлопроводом, поэтому все зависимости будут без проблем работать с приложением Rails 5.1.
 
 ### Опциональная поддержка Webpack
 
@@ -291,7 +291,7 @@ Action Pack
     ([Commit](https://github.com/rails/rails/commit/d7be30e8babf5e37a891522869e7b0191b79b757))
 
 *   Удалена устаревшая поддержка `:text` и `:nothing` в `render`.
-    ([Commit](https://github.com/rails/rails/commit/79a5ea9eadb4d43b62afacedc0706cbe88c54496), 
+    ([Commit](https://github.com/rails/rails/commit/79a5ea9eadb4d43b62afacedc0706cbe88c54496),
     [Commit](https://github.com/rails/rails/commit/57e1c99a280bdc1b324936a690350320a1cd8111))
 
 *   Удалена устаревшая поддержка для вызова метода `HashWithIndifferentAccess` на `ActionController::Parameters`.
@@ -321,7 +321,7 @@ Action View
     ([commit](https://github.com/rails/rails/commit/b9ba263e5aaa151808df058f5babfed016a1879f))
 
 *   Удалена неправильно названная опция `encode_special_chars` из `strip_tags`.
-    ([Pull Request](https://github.com/rails/rails/pull/28061))
+    ([Pull Request](https://github.com/rails/rails/pull/25469))
 
 ### Устарело
 
@@ -561,7 +561,7 @@ Active Support
 Благодарности
 -------------
 
-Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
+Взгляните [на полный список контрибьюторов Rails](https://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/5-1-stable/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/5-1-stable/actionpack/CHANGELOG.md

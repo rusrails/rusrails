@@ -31,19 +31,19 @@ Spring является прелоадером для Rails приложений
 
 **Запуск rake задач:**
 
-```
-bin/rake test:models
+```bash
+$ bin/rake test:models
 ```
 
 **Запуск Rails команд:**
 
-```
-bin/rails console
+```bash
+$ bin/rails console
 ```
 
 **Spring интроспекция:**
 
-```
+```bash
 $ bin/spring status
 Spring is running:
 
@@ -143,7 +143,7 @@ end
 По умолчанию, эти превью-классы располагаются в `test/mailers/previews`.
 Директорию можно легко изменить используя опцию `preview_path`.
 
-Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/ActionMailer/Base.html)
+Обратитесь к [документации](https://api.rubyonrails.org/v4.1.0/classes/ActionMailer/Base.html)
 за подробным описанием.
 
 ### Enum поля в Active Record
@@ -166,7 +166,7 @@ Conversation.statuses # => { "active" => 0, "archived" => 1 }
 
 ```
 
-Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html)
+Обратитесь к [документации](https://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html)
 за подробным описанием.
 
 ### Message Verifiers
@@ -211,7 +211,7 @@ end
 расширение его `ActiveSupport::Concern`, и дальнейшего смешивания его с классом
 `Todo`.
 
-Обратитесь к [документации](http://api.rubyonrails.org/v4.1.0/classes/Module/Concerning.html)
+Обратитесь к [документации](https://api.rubyonrails.org/v4.1.0/classes/Module/Concerning.html)
 за подробным описанием и способами использования.
 
 ### CSRF защита от `<script>` тегов
@@ -620,4 +620,4 @@ Active Support
 Благодарности
 -------------
 
-Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
+Взгляните [на полный список контрибьюторов Rails](https://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.

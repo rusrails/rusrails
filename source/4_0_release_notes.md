@@ -18,8 +18,8 @@
 Создание приложения Rails 4.0
 -----------------------------
 
-```
- Необходим установленный RubyGem 'rails'
+```bash
+# Необходим установленный RubyGem 'rails'
 $ rails new myapp
 $ cd myapp
 ```
@@ -34,13 +34,13 @@ $ cd myapp
 
 `Bundler` и `Gemfile` замораживает ваше приложение Rails с помощью новой отдельной команды `bundle`. Если хотите установить напрямую из репозитория Git, передайте флажок `--edge`:
 
-```
+```bash
 $ rails new myapp --edge
 ```
 
 Если имеется локальная копия репозитория Rails, и необходимо сгенерировать приложение используя ее, передайте флажок `--dev`:
 
-```
+```bash
 $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 ```
 
@@ -66,7 +66,7 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 * **Routing concerns** ([коммит](https://github.com/rails/rails/commit/0dd24728a088fcb4ae616bb5d62734aca5276b1b)) - В маршрутном DSL, выделяет общие подмаршруты (`comments` из `/posts/1/comments` and `/videos/1/comments`).
 * **ActionController::Live** ([коммит](https://github.com/rails/rails/commit/af0a9f9eefaee3a8120cfd8d05cbc431af376da3)) - Потоковый JSON с помощью `response.stream`.
 * **Декларативные ETags** ([коммит](https://github.com/rails/rails/commit/ed5c938fa36995f06d4917d9543ba78ed506bb8d)) - Добавляет на уровне контроллера дополнения к etag, которые будут частью вычисления etag.
-* **[Кэширование Russian doll](http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works)** ([коммит](https://github.com/rails/rails/commit/4154bf012d2bec2aae79e4a49aa94a70d3e91d49)) - Кэширует вложенные фрагменты вьюх. Каждый фрагмент прекращается на основе набора зависимостей (ключа кэширования). Ключ кэширования - это обычно версия шаблона и объект модели.
+* **[Кэширование Russian doll](https://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works)** ([коммит](https://github.com/rails/rails/commit/4154bf012d2bec2aae79e4a49aa94a70d3e91d49)) - Кэширует вложенные фрагменты вьюх. Каждый фрагмент прекращается на основе набора зависимостей (ключа кэширования). Ключ кэширования - это обычно версия шаблона и объект модели.
 * **Turbolinks** ([коммит](https://github.com/rails/rails/commit/e35d8b18d0649c0ecc58f6b73df6b3c8d0c6bb74)) - Обслуживает только первую страницу HTML. Когда пользователь переходит на следующую страницу, использует pushState для обновления URL и использует AJAX для обновления title и body.
 * **Извлечение ActionView из ActionController** ([коммит](https://github.com/rails/rails/commit/78b0934dd1bb84e8f093fb8ef95ca99b297b51cd)) - ActionView был отделен от ActionPack, и будет вынесен в отдельный гем в Rails 4.1.
 * **Независимость от ActiveModel** ([коммит](https://github.com/rails/rails/commit/166dbaa7526a96fdf046f093f25b0a134b277a68)) - ActionPack больше не зависит от ActiveModel.
@@ -186,7 +186,7 @@ Active Support
 
 ### Устаревания
 
-* Устарел метод `ActiveSupport::TestCase#pending`, используйте вместо него `skip` из MiniTest.
+* Устарел метод `ActiveSupport::TestCase#pending`, используйте вместо него `skip` из minitest.
 
 * `ActiveSupport::Benchmarkable#silence` устарел из-за недостатков в тредобезопасности. Он будет убран без замен в Rails 4.1.
 
@@ -265,3 +265,8 @@ Active Record
       * `find_or_initialize_by_...` может быть переписан с использованием `find_or_initialize_by(...)`.
       * `find_or_create_by_...` может быть переписан с использованием `find_or_create_by(...)`.
       * `find_or_create_by_...!` может быть переписан с использованием `find_or_create_by!(...)`.
+
+Благодарности
+-------------
+
+Взгляните [на полный список контрибьюторов Rails](https://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.

@@ -234,7 +234,7 @@ Action Pack
 
 * Добавлен `config.action_controller.include_all_helpers`. По умолчанию выполняет `helper :all` в `ActionController::Base`, что включает все хелперы по умолчанию. Установка `include_all_helpers` в `false` приведет к включению только application_helper и хелпера. соответствующего контроллеру (подобно foo_helper для foo_controller).
 
-* `url_for` и именованные хелперы _url теперь принимают как опции `:subdomain` и `:domain`.
+* `url_for` и именованные хелперы URL теперь принимают как опции `:subdomain` и `:domain`.
 
 * Добавлен `Base.http_basic_authenticate_with` для базовой аутентификации HTTP с помощью единственного вызова метода класса.
 
@@ -285,9 +285,9 @@ Action Pack
     end
     ```
 
-    Можно ограничить некоторые экшны от этого с использованием `:only` или `:except`. Подробности можно прочитать в документации по [`ActionController::Streaming`](http://api.rubyonrails.org/v3.1.0/classes/ActionController/Streaming.html).
+    Можно ограничить некоторые экшны от этого с использованием `:only` или `:except`. Подробности можно прочитать в документации по [`ActionController::Streaming`](https://api.rubyonrails.org/v3.1.0/classes/ActionController/Streaming.html).
 
-* Маршрутный метод redirect теперь принимает хэш опций, меняющих только рассматриваемые части url, или объект, отвечающий на вызов, позволяя повторно использовать редиректы.
+* Маршрутный метод redirect теперь принимает хэш опций, меняющих только рассматриваемые части URL, или объект, отвечающий на вызов, позволяя повторно использовать редиректы.
 
 ### Action Dispatch
 

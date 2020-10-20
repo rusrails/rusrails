@@ -59,8 +59,8 @@ TIP: Отметьте, что в Ruby 1.8.7 p248 и p249 имеются прог
 ENGINE_ROOT = File.expand_path('../..', __FILE__)
 ENGINE_PATH = File.expand_path('../../lib/your_engine_name/engine', __FILE__)
 
-require 'rails/all'
-require 'rails/engine/commands'
+require "rails/all"
+require "rails/engine/commands"
 ```
 
 Создание приложения Rails 3.2
@@ -145,8 +145,8 @@ Railties
 
 * Позволяет генераторам скаффолда/модели/миграции принимать модификаторы "index" и "uniq". Например,
 
-    ```ruby
-    rails g scaffold Post title:string:index author:uniq price:decimal{7,2}
+    ```bash
+    bin/rails g scaffold Post title:string:index author:uniq price:decimal{7,2}
     ```
 
     создаст индексы для `title` и `author`, причем последний будет уникальным индексом. Некоторые типы, такие как decimal, принимают произвольные опции. В примере `price` будет столбцом decimal с установленными точностью и масштабом 7 и 2 соответственно.

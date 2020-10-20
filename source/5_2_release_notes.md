@@ -507,6 +507,10 @@ Active Record
 *   Исправлена проблема `dependent: :destroy` для отношений has_one/belongs_to, где родительский класс удалялся, когда дочернего не было.
     ([Commit](https://github.com/rails/rails/commit/b0fc04aa3af338d5a90608bf37248668d59fc881))
 
+*   Простаивающие соединения с базой данных (ранее просто соединения без родительского процесса) теперь периодически закрываются с помощью connection pool reaper.
+    ([Commit](https://github.com/rails/rails/pull/31221/commits/9027fafff6da932e6e64ddb828665f4b01fc8902))
+
+
 Active Model
 ------------
 
@@ -702,7 +706,7 @@ Active Job
 Благодарности
 -------------
 
-Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
+Взгляните [на полный список контрибьюторов Rails](https://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/5-2-stable/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/5-2-stable/actionpack/CHANGELOG.md
