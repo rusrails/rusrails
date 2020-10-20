@@ -340,7 +340,7 @@ pages:
     path:     5_0_release_notes
     file:     5_0_release_notes.md
     revision: eca6c273fe2729b9634907562c2717cf86443b6b
-    date:     10/06/2020
+    date:     07/10/2019
 
   - title:    Заметки о релизе Ruby on Rails 5.1
     path:     5_1_release_notes
