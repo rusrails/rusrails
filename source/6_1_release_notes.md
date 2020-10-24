@@ -1,194 +1,179 @@
 Заметки о релизе Ruby on Rails 6.1
 ==================================
 
-Highlights in Rails 6.1:
+Ключевые новинки в Rails 6.1:
 
-These release notes cover only the major changes. To learn about various bug
-fixes and changes, please refer to the change logs or check out the [list of
-commits](https://github.com/rails/rails/commits/master) in the main Rails
-repository on GitHub.
+Эти заметки о релизе покрывают только основные изменения. Чтобы узнать о других обновлениях, различных исправлениях программных ошибок и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/master) в главном репозитории Rails на GitHub.
 
 --------------------------------------------------------------------------------
 
-Upgrading to Rails 6.1
-----------------------
+Апгрейд до Rails 6.1
+--------------------
 
-If you're upgrading an existing application, it's a great idea to have good test
-coverage before going in. You should also first upgrade to Rails 6.0 in case you
-haven't and make sure your application still runs as expected before attempting
-an update to Rails 6.1. A list of things to watch out for when upgrading is
-available in the
-[Upgrading Ruby on Rails](upgrading_ruby_on_rails.html#upgrading-from-rails-6-0-to-rails-6-1)
-guide.
+Прежде чем апгрейднуть существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 6.1, необходимо сначала произвести апгрейд до Rails 6.0 и убедиться, что приложение все еще выполняется так, как нужно. Список вещей, которые нужно выполнить для апгрейда доступен в руководстве [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#upgrading-from-rails-6-0-to-rails-6-1).
 
-Major Features
---------------
+Основные особенности
+--------------------
 
 Railties
 --------
 
-Please refer to the [Changelog][railties] for detailed changes.
+За подробностями обратитесь к [Changelog][railties].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Cable
 ------------
 
-Please refer to the [Changelog][action-cable] for detailed changes.
+За подробностями обратитесь к [Changelog][action-cable].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Pack
 -----------
 
-Please refer to the [Changelog][action-pack] for detailed changes.
+За подробностями обратитесь к [Changelog][action-pack].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `force_ssl` at the controller level.
+*   Убран устаревший `force_ssl` на уровне контроллера.
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action View
 -----------
 
-Please refer to the [Changelog][action-view] for detailed changes.
+За подробностями обратитесь к [Changelog][action-view].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Mailer
 -------------
 
-Please refer to the [Changelog][action-mailer] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailer].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `ActionMailer::Base.receive` in favor of [Action Mailbox](https://github.com/rails/rails/tree/master/actionmailbox).
+*   Убран устаревший `ActionMailer::Base.receive` в пользу [Action Mailbox](https://github.com/rails/rails/tree/master/actionmailbox).
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Record
 -------------
 
-Please refer to the [Changelog][active-record] for detailed changes.
+За подробностями обратитесь к [Changelog][active-record].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Storage
 --------------
 
-Please refer to the [Changelog][active-storage] for detailed changes.
+За подробностями обратитесь к [Changelog][active-storage].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-*   Deprecate `Blob.create_after_upload` in favor of `Blob.create_and_upload`.
+*   Устарел `Blob.create_after_upload` в пользу `Blob.create_and_upload`.
     ([Pull Request](https://github.com/rails/rails/pull/34827))
 
-### Notable changes
+### Значимые изменения
 
-*   Add `Blob.create_and_upload` to create a new blob and upload the given `io`
-    to the service.
+*   Добавлен `Blob.create_and_upload` для создания нового бинарного объекта и загрузки данного `io` в сервис.
     ([Pull Request](https://github.com/rails/rails/pull/34827))
 
 Active Model
 ------------
 
-Please refer to the [Changelog][active-model] for detailed changes.
+За подробностями обратитесь к [Changelog][active-model].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Support
 --------------
 
-Please refer to the [Changelog][active-support] for detailed changes.
+За подробностями обратитесь к [Changelog][active-support].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Job
 ----------
 
-Please refer to the [Changelog][active-job] for detailed changes.
+За подробностями обратитесь к [Changelog][active-job].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Text
 ----------
 
-Please refer to the [Changelog][action-text] for detailed changes.
+За подробностями обратитесь к [Changelog][action-text].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
-*   Add method to confirm rich text content existence by adding `?` after
-    name of the rich text attribute.
+*   Добавлен метод для подтверждения существования обогащенного текста, добавляя `?` после имени атрибута обогащенного текста.
     ([Pull Request](https://github.com/rails/rails/pull/37951))
 
-*   Add `fill_in_rich_text_area` system test case helper to find a trix
-    editor and fill it with given HTML content.
+*   Добавлен системный тестовый хелпер `fill_in_rich_text_area` для поиска редактора trix и его заполнения заданным содержимым HTML.
     ([Pull Request](https://github.com/rails/rails/pull/35885))
 
 Action Mailbox
 ----------
 
-Please refer to the [Changelog][action-mailbox] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailbox].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Ruby on Rails Guides
 --------------------
 
-Please refer to the [Changelog][guides] for detailed changes.
+За подробностями обратитесь к [Changelog][guides].
 
-### Notable changes
+### Значимые изменения
 
 Credits
 -------
 
-See the
-[full list of contributors to Rails](https://contributors.rubyonrails.org/)
-for the many people who spent many hours making Rails, the stable and robust
-framework it is. Kudos to all of them.
+Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/master/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md
