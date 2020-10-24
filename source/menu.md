@@ -77,6 +77,7 @@ next_column
 * **Заметки о релизах**
 
     * [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails)
+    * [Заметки о релизе Ruby on Rails 6.1](/6_1_release_notes)
     * [Заметки о релизе Ruby on Rails 6.0](/6_0_release_notes)
     * [Заметки о релизе Ruby on Rails 5.2](/5_2_release_notes)
     * [Заметки о релизе Ruby on Rails 5.1](/5_1_release_notes)

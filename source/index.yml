@@ -297,8 +297,8 @@ pages:
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
-    revision: 913b2da2d833cfefcd6e4a111ab93446f94baab0
-    date:     02/06/2019
+    revision: 0dc9b59d2edf1983fca04280cacce3232c6164cb
+    date:     01/10/2020
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
@@ -360,8 +360,13 @@ pages:
     revision: 1efe902f33b7704d487e8414aaf9af6178523e45
     date:     12/05/2019
 
+  - title:    Заметки о релизе Ruby on Rails 6.1
+    path:     6_1_release_notes
+    file:     6_1_release_notes.md
+    revision: 336a07b9a4cac47cecf7dcf089f0bcc4cc6cadd8
+    date:     12/05/2020
+
 plan:
-  - file:     6_1_release_notes.md
   - file:     action_text_overview.md
 
 old:
