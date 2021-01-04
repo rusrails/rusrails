@@ -368,6 +368,7 @@ pages:
 
 plan:
   - file:     action_text_overview.md
+  - file:     6_2_release_notes.md
 
 old:
   - file:     2_2_release_notes.md
