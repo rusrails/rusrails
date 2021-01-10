@@ -12,7 +12,7 @@ Active Record для PostgreSQL
 
 --------------------------------------------------------------------------------
 
-Для использования адаптера PostgreSQL необходимо установить как минимум версию 9.1.
+Для использования адаптера PostgreSQL необходимо установить как минимум версию 9.3.
 Предыдущие версии не поддерживаются.
 
 Для начала работы с PostgreSQL почитайте руководство [Конфигурирование приложений на Rails](/configuring-rails-applications#konfigurirovanie-bazy-dannyh-postgresql).
@@ -33,11 +33,15 @@ PostgreSQL предлагает достаточное количество сп
 create_table :documents do |t|
   t.binary 'payload'
 end
+```
 
+```ruby
 # app/models/document.rb
 class Document < ApplicationRecord
 end
+```
 
+```ruby
 # Использование
 data = File.read(Rails.root + "tmp/output.pdf")
 Document.create payload: data
@@ -57,11 +61,15 @@ create_table :books do |t|
 end
 add_index :books, :tags, using: 'gin'
 add_index :books, :ratings, using: 'gin'
+```
 
+```ruby
 # app/models/book.rb
 class Book < ApplicationRecord
 end
+```
 
+```ruby
 # Использование
 Book.create title: "Brave New World",
             tags: ["fantasy", "fiction"],
@@ -92,22 +100,26 @@ ActiveRecord::Schema.define do
     t.hstore 'settings'
   end
 end
+```
 
+```ruby
 # app/models/profile.rb
 class Profile < ApplicationRecord
 end
+```
 
-# Использование
-Profile.create(settings: { "color" => "blue", "resolution" => "800x600" })
+```irb
+irb> Profile.create(settings: { "color" => "blue", "resolution" => "800x600" })
 
-profile = Profile.first
-profile.settings # => {"color"=>"blue", "resolution"=>"800x600"}
+irb> profile = Profile.first
+irb> profile.settings
+=> {"color"=>"blue", "resolution"=>"800x600"}
 
-profile.settings = {"color" => "yellow", "resolution" => "1280x1024"}
-profile.save!
+irb> profile.settings = {"color" => "yellow", "resolution" => "1280x1024"}
+irb> profile.save!
 
-Profile.where("settings->'color' = ?", "yellow")
-# => #<ActiveRecord::Relation [#<Profile id: 1, settings: {"color"=>"yellow", "resolution"=>"1280x1024"}>]>
+irb> Profile.where("settings->'color' = ?", "yellow")
+=> #<ActiveRecord::Relation [#<Profile id: 1, settings: {"color"=>"yellow", "resolution"=>"1280x1024"}>]>
 ```
 
 ### JSON и JSONB
@@ -125,20 +137,24 @@ end
 create_table :events do |t|
   t.jsonb 'payload'
 end
+```
 
+```ruby
 # app/models/event.rb
 class Event < ApplicationRecord
 end
+```
 
-# Использование
-Event.create(payload: { kind: "user_renamed", change: ["jack", "john"]})
+```irb
+irb> Event.create(payload: { kind: "user_renamed", change: ["jack", "john"]})
 
-event = Event.first
-event.payload # => {"kind"=>"user_renamed", "change"=>["jack", "john"]}
+irb> event = Event.first
+irb> event.payload
+=> {"kind"=>"user_renamed", "change"=>["jack", "john"]}
 
 ## Запрос, основанный на JSON документе
 # Оператор -> возвращает исходный JSON тип (который может быть объектом), где ->> возвращает текст
-Event.where("payload->>'kind' = ?", "user_renamed")
+irb> Event.where("payload->>'kind' = ?", "user_renamed")
 ```
 
 ### Диапазонные типы
@@ -146,34 +162,38 @@ Event.where("payload->>'kind' = ?", "user_renamed")
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/rangetypes.html)
 * [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-range.html)
 
-Этот тип преобразуется в Ruby [`Range`](http://www.ruby-doc.org/core-2.2.2/Range.html) объекты.
+Этот тип преобразуется в Ruby [`Range`](https://ruby-doc.org/core-2.5.0/Range.html) объекты.
 
 ```ruby
 # db/migrate/20130923065404_create_events.rb
 create_table :events do |t|
   t.daterange 'duration'
 end
+```
 
+```ruby
 # app/models/event.rb
 class Event < ApplicationRecord
 end
+```
 
-# Использование
-Event.create(duration: Date.new(2014, 2, 11)..Date.new(2014, 2, 12))
+```irb
+irb> Event.create(duration: Date.new(2014, 2, 11)..Date.new(2014, 2, 12))
 
-event = Event.first
-event.duration # => Tue, 11 Feb 2014...Thu, 13 Feb 2014
+irb> event = Event.first
+irb> event.duration
+=> Tue, 11 Feb 2014...Thu, 13 Feb 2014
 
 ## Все события в заданную дату
-Event.where("duration @> ?::date", Date.new(2014, 2, 12))
+irb> Event.where("duration @> ?::date", Date.new(2014, 2, 12))
 
 ## Работает с границами диапазона
-event = Event.
-  select("lower(duration) AS starts_at").
-  select("upper(duration) AS ends_at").first
+irb> event = Event.select("lower(duration) AS starts_at").select("upper(duration) AS ends_at").first
 
-event.starts_at # => Tue, 11 Feb 2014
-event.ends_at # => Thu, 13 Feb 2014
+irb> event.starts_at
+=> Tue, 11 Feb 2014
+irb> event.ends_at
+=> Thu, 13 Feb 2014
 ```
 
 ### Составные типы
@@ -193,26 +213,30 @@ CREATE TYPE full_address AS
 ```ruby
 # db/migrate/20140207133952_create_contacts.rb
 execute <<-SQL
- CREATE TYPE full_address AS
- (
-   city VARCHAR(90),
-   street VARCHAR(90)
- );
+  CREATE TYPE full_address AS
+  (
+    city VARCHAR(90),
+    street VARCHAR(90)
+  );
 SQL
 create_table :contacts do |t|
   t.column :address, :full_address
 end
+```
 
+```ruby
 # app/models/contact.rb
 class Contact < ApplicationRecord
 end
+```
 
-# Использование
-Contact.create address: "(Paris,Champs-Élysées)"
-contact = Contact.first
-contact.address # => "(Paris,Champs-Élysées)"
-contact.address = "(Paris,Rue Basse)"
-contact.save!
+```irb
+irb> Contact.create address: "(Paris,Champs-Élysées)"
+irb> contact = Contact.first
+irb> contact.address
+=> "(Paris,Champs-Élysées)"
+irb> contact.address = "(Paris,Rue Basse)"
+irb> contact.save!
 ```
 
 ### Типы перечислений
@@ -240,18 +264,22 @@ def down
     DROP TYPE article_status;
   SQL
 end
+```
 
+```ruby
 # app/models/article.rb
 class Article < ApplicationRecord
 end
+```
 
-# Использование
-Article.create status: "draft"
-article = Article.first
-article.status # => "draft"
+```irb
+irb> Article.create status: "draft"
+irb> article = Article.first
+irb> article.status
+=> "draft"
 
-article.status = "published"
-article.save!
+irb> article.status = "published"
+irb> article.save!
 ```
 
 Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](https://postgrespro.ru/docs/postgrespro/current/sql-altertype.html):
@@ -284,8 +312,8 @@ SELECT n.nspname AS enum_schema,
 ### Тип UUID
 
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-uuid.html)
-* [pgcrypto generator function](https://postgrespro.ru/docs/postgrespro/current/pgcrypto.html#idm45576081674672)
-* [uuid-ossp generator functions](https://postgrespro.ru/docs/postgrespro/current/uuid-ossp.html)
+* [функция генератора pgcrypto](https://www.postgresql.org/docs/current/static/pgcrypto.html)
+* [функции генератора uuid-ossp](https://postgrespro.ru/docs/postgrespro/current/uuid-ossp.html)
 
 NOTE: Для использования uuid необходимо включить расширение `pgcrypto` (только PostgreSQL >= 9.4).
 
@@ -294,16 +322,20 @@ NOTE: Для использования uuid необходимо включит
 create_table :revisions do |t|
   t.uuid :identifier
 end
+```
 
+```ruby
 # app/models/revision.rb
 class Revision < ApplicationRecord
 end
+```
 
-# Использование
-Revision.create identifier: "A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11"
+```irb
+irb> Revision.create identifier: "A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11"
 
-revision = Revision.first
-revision.identifier # => "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+irb> revision = Revision.first
+irb> revision.identifier
+=> "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 ```
 
 Вы можете использовать тип `uuid` для определения ссылок в миграции:
@@ -311,18 +343,22 @@ revision.identifier # => "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 ```ruby
 # db/migrate/20150418012400_create_blog.rb
 enable_extension 'pgcrypto' unless extension_enabled?('pgcrypto')
-create_table :posts, id: :uuid, default: 'gen_random_uuid()'
+create_table :posts, id: :uuid
 
-create_table :comments, id: :uuid, default: 'gen_random_uuid()' do |t|
+create_table :comments, id: :uuid do |t|
   # t.belongs_to :post, type: :uuid
   t.references :post, type: :uuid
 end
+```
 
+```ruby
 # app/models/post.rb
 class Post < ApplicationRecord
   has_many :comments
 end
+```
 
+```ruby
 # app/models/comment.rb
 class Comment < ApplicationRecord
   belongs_to :post
@@ -341,26 +377,30 @@ end
 create_table :users, force: true do |t|
   t.column :settings, "bit(8)"
 end
+```
 
+```ruby
 # app/models/user.rb
 class User < ApplicationRecord
 end
+```
 
-# Использование
-User.create settings: "01010011"
-user = User.first
-user.settings # => "01010011"
-user.settings = "0xAF"
-user.settings # => 10101111
-user.save!
+```irb
+irb> User.create settings: "01010011"
+irb> user = User.first
+irb> user.settings
+=> "01010011"
+irb> user.settings = "0xAF"
+irb> user.settings
+=> 10101111
+irb> user.save!
 ```
 
 ### Типы, описывающие сетевые адреса
 
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-net-types.html)
 
-Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](http://www.ruby-doc.org/stdlib-2.2.2/libdoc/ipaddr/rdoc/IPAddr.html) объекты.
-Тип `macaddr` преобразуется в обычный текст.
+Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](https://ruby-doc.org/stdlib-2.5.0/libdoc/ipaddr/rdoc/IPAddr.html) объекты. Тип `macaddr` преобразуется в обычный текст.
 
 ```ruby
 # db/migrate/20140508144913_create_devices.rb
@@ -369,24 +409,25 @@ create_table(:devices, force: true) do |t|
   t.cidr 'network'
   t.macaddr 'address'
 end
+```
 
+```ruby
 # app/models/device.rb
 class Device < ApplicationRecord
 end
+```
 
-# Использование
-macbook = Device.create(ip: "192.168.1.12",
-                        network: "192.168.2.0/24",
-                        address: "32:01:16:6d:05:ef")
+```irb
+irb> macbook = Device.create(ip: "192.168.1.12", network: "192.168.2.0/24", address: "32:01:16:6d:05:ef")
 
-macbook.ip
-# => #<IPAddr: IPv4:192.168.1.12/255.255.255.255>
+irb> macbook.ip
+=> #<IPAddr: IPv4:192.168.1.12/255.255.255.255>
 
-macbook.network
-# => #<IPAddr: IPv4:192.168.2.0/255.255.255.0>
+irb> macbook.network
+=> #<IPAddr: IPv4:192.168.2.0/255.255.255.0>
 
-macbook.address
-# => "32:01:16:6d:05:ef"
+irb> macbook.address
+=> "32:01:16:6d:05:ef"
 ```
 
 ### Геометрические типы
@@ -396,6 +437,34 @@ macbook.address
 Все геометрические типы, за исключением `points` преобразуются в обычный текст.
 А тип `point` соответствует массиву, содержащему координаты `x` и `y`.
 
+### Интервал
+
+* [определение типа](http://www.postgresql.org/docs/current/static/datatype-datetime.html#DATATYPE-INTERVAL-INPUT)
+* [функции и операторы](http://www.postgresql.org/docs/current/static/functions-datetime.html)
+
+Этот тип преобразуется в объекты [`ActiveSupport::Duration`](http://api.rubyonrails.org/classes/ActiveSupport/Duration.html).
+
+```ruby
+# db/migrate/20200120000000_create_events.rb
+create_table :events do |t|
+  t.interval 'duration'
+end
+```
+
+```ruby
+# app/models/event.rb
+class Event < ApplicationRecord
+end
+```
+
+```irb
+irb> Event.create(duration: 2.days)
+
+irb> event = Event.first
+irb> event.duration
+=> 2 days
+```
+
 (uuid-primary-keys) Первичные ключи UUID
 ----------------------------------------
 
@@ -404,17 +473,21 @@ NOTE: Для генерации случайных UUIDs необходимо в
 ```ruby
 # db/migrate/20131220144913_create_devices.rb
 enable_extension 'pgcrypto' unless extension_enabled?('pgcrypto')
-create_table :devices, id: :uuid, default: 'gen_random_uuid()' do |t|
+create_table :devices, id: :uuid do |t|
   t.string :kind
 end
+```
 
+```ruby
 # app/models/device.rb
 class Device < ApplicationRecord
 end
+```
 
-# Использование
-device = Device.create
-device.id # => "814865cd-5a1d-4771-9306-4268f188fe9e"
+```ruby
+irb> device = Device.create
+irb> device.id
+=> "814865cd-5a1d-4771-9306-4268f188fe9e"
 ```
 
 NOTE: Предполагается, что используется `gen_random_uuid()` (из `uuid-pgcrypto`) при отсутствии опции `:default`, переданной в `create_table`.
@@ -430,11 +503,15 @@ create_table :documents do |t|
 end
 
 add_index :documents, "to_tsvector('english', title || ' ' || body)", using: :gin, name: 'documents_idx'
+```
 
+```ruby
 # app/models/document.rb
 class Document < ApplicationRecord
 end
+```
 
+```ruby
 # Использование
 Document.create(title: "Cats and Dogs", body: "are nice!")
 
@@ -479,7 +556,9 @@ CREATE VIEW articles AS
   FROM "TBL_ART"
   WHERE "BL_ARCH" = 'f'
   SQL
+```
 
+```ruby
 # app/models/article.rb
 class Article < ApplicationRecord
   self.primary_key = "id"
@@ -487,18 +566,17 @@ class Article < ApplicationRecord
     update_attribute :archived, true
   end
 end
+```
 
-# Использование
-first = Article.create! title: "Winter is coming",
-                        status: "published",
-                        published_at: 1.year.ago
-second = Article.create! title: "Brace yourself",
-                         status: "draft",
-                         published_at: 1.month.ago
+```irb
+irb> first = Article.create! title: "Winter is coming", status: "published", published_at: 1.year.ago
+irb> second = Article.create! title: "Brace yourself", status: "draft", published_at: 1.month.ago
 
-Article.count # => 2
-first.archive!
-Article.count # => 1
+irb> Article.count
+=> 2
+irb> first.archive!
+irb> Article.count
+=> 1
 ```
 
 NOTE: Это приложение обслуживает только не архивированные `Articles`. Представление также допускает условия, при которых можно напрямую исключать архивные `Articles`.

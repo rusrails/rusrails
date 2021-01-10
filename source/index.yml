@@ -57,8 +57,8 @@ pages:
   - title:    Active Record для PostgreSQL
     path:     active-record-postgresql
     file:     active_record_postgresql.md
-    revision: 378daaa6afcdd872bab855404658e27163b0926c
-    date:     06/05/2018
+    revision: 27786c8d1ee85c64236286b8c810787f669b4331
+    date:     25/12/2020
 
   - title:    Основы Active Model
     path:     active-model-basics
