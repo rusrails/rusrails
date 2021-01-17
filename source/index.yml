@@ -132,6 +132,12 @@ pages:
     revision: db1ae8cbb4a0f2aad9053af551dde08ec0a8db2b
     date:     22/01/2019
 
+  - title:    Обзор Action Text
+    path:     action-text-overview
+    file:     action_text_overview.md
+    revision: 3bab12664100c724d74b0a16ed0cf3342a583d25
+    date:     11/01/2021
+
   - title:    Основы Active Job
     path:     active_job_basics
     file:     active_job_basics.md
@@ -367,7 +373,6 @@ pages:
     date:     12/05/2020
 
 plan:
-  - file:     action_text_overview.md
   - file:     6_2_release_notes.md
 
 old:

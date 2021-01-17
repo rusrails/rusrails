@@ -29,6 +29,7 @@
     * [Расширения ядра Active Support](/active-support-core-extensions)
     * [Основы Action Mailer](/action-mailer-basics)
     * [Основы Action Mailbox](/action-mailbox-basics)
+    * [Обзор Action Text](/action-text-overview)
     * [Основы Active Job](/active_job_basics)
     * [Обзор Active Storage](/active_storage_overview)
     * [Обзор Action Cable](/action-cable-overview)
