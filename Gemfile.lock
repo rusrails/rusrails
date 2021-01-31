@@ -117,7 +117,7 @@ GEM
       factory_bot (~> 5.1.0)
       railties (>= 4.2.0)
     ffi (1.12.2)
-    git (1.6.0)
+    git (1.8.1)
       rchardet (~> 1.8)
     globalid (0.4.2)
       activesupport (>= 4.2.0)

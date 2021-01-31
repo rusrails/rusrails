@@ -51,7 +51,7 @@ namespace :docrails do
       score = stat[:lines] + stat[:outdated]
       color = case
       when stat[:new] then 34
-      when 0 === score then 30
+      when 0 === score then 90
       when (1..200) === score then 32
       when (201..400) === score then 33
       else 31
@@ -83,7 +83,7 @@ namespace :docrails do
 
   def docrails
     @docrails ||= if Dir.exists?(docrails_path)
-      Git.open(docrails_path).tap(&:pull)
+      Git.open(docrails_path).tap { |git| git.pull('origin', 'main') }
     else
       Git.clone 'git@github.com:rails/rails.git', 'rails', path: docrails_path(false)
     end
