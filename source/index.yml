@@ -374,6 +374,7 @@ pages:
 
 plan:
   - file:     6_2_release_notes.md
+  - file:     webpacker.md
 
 old:
   - file:     2_2_release_notes.md
