@@ -9,7 +9,7 @@ Rails on Rack
 * О стеке внутренних промежуточных программ Action Pack
 * Как определять собственный стек промежуточных программ
 
-WARNING: Это руководство предполагает практические знания протокола Rack и такие концепции Rack, как промежуточные программы (middlewares), карты (maps) url и `Rack::Builder`.
+WARNING: Это руководство предполагает практические знания протокола Rack и такие концепции Rack, как промежуточные программы (middlewares), карты (maps) URL и `Rack::Builder`.
 
 Введение в Rack
 ---------------
@@ -25,11 +25,11 @@ Rails on Rack
 
 `Rails.application` это основной объект приложения Rack в приложении Rails. Любой совместимый с Rack веб-сервер должен использовать объект `Rails.application` для обслуживания приложения Rails. `Rails.application` ссылается на тот же объект приложения.
 
-### `rails server`
+### `bin/rails server`
 
-`rails server` выполняет основную задачу по созданию объекта `Rack::Server` и запуску веб-сервера.
+`bin/rails server` выполняет основную задачу по созданию объекта `Rack::Server` и запуску веб-сервера.
 
-Вот как `rails server` создает экземпляр `Rack::Server`
+Вот как `bin/rails server` создает экземпляр `Rack::Server`
 
 ```ruby
 Rails::Server.new.tap do |server|
@@ -44,7 +44,7 @@ end
 ```ruby
 class Server < ::Rack::Server
   def start
-    ...
+    # ...
     super
   end
 end
@@ -52,11 +52,11 @@ end
 
 ### `rackup`
 
-Для использования `rackup` вместо рельсового `rails server`, следует поместить следующее в `config.ru` в корневой директории приложения Rails:
+Для использования `rackup` вместо рельсового `bin/rails server`, следует поместить следующее в `config.ru` в корневой директории приложения Rails:
 
 ```ruby
 # Rails.root/config.ru
-require_relative 'config/environment'
+require_relative "config/environment"
 
 run Rails.application
 ```
@@ -86,7 +86,7 @@ NOTE: `ActionDispatch::MiddlewareStack` это эквивалент `Rack::Build
 
 ### Просмотр стека промежуточных программ
 
-В Rails имеется удобная задача для просмотра используемого стека промежуточных программ:
+В Rails имеется удобная команда для просмотра используемого стека промежуточных программ:
 
 ```bash
 $ bin/rails middleware
@@ -108,6 +108,7 @@ use Rails::Rack::Logger
 use ActionDispatch::ShowExceptions
 use WebConsole::Middleware
 use ActionDispatch::DebugExceptions
+use ActionDispatch::ActionableExceptions
 use ActionDispatch::Reloader
 use ActionDispatch::Callbacks
 use ActiveRecord::Migration::CheckPending
@@ -251,6 +252,10 @@ config.middleware.delete Rack::MethodOverride
 **`ActionDispatch::DebugExceptions`**
 
 * Ответственна за логирование исключений и показа отладочной страницы, если запрос локальный.
+
+**`ActionDispatch::ActionableExceptions`**
+
+* Предоставляет способ направления экшнов от страниц об ошибке Rails.
 
 **`ActionDispatch::Reloader`**
 
