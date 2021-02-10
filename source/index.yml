@@ -147,8 +147,8 @@ pages:
   - title:    Обзор Active Storage
     path:     active_storage_overview
     file:     active_storage_overview.md
-    revision: 96289cfb9b6aeb8f1a917f892148fd47f2f2049a
-    date:     24/07/2019
+    revision: a1408e72f7c4fc25ba6356a5022c87cf45a49d39
+    date:     29/01/2021
 
   - title:    Тестирование приложений на Rails
     path:     a-guide-to-testing-rails-applications
