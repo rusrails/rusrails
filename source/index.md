@@ -11,13 +11,7 @@ Ruby on Rails — это веб-фреймворк с открытым кодо�
 
 * [Rails 6.0](https://github.com/morsbox/rusrails/tree/6.0/source)
 * [Rails 5.2](https://github.com/morsbox/rusrails/tree/5.2/source)
-* [Rails 5.1](https://github.com/morsbox/rusrails/tree/5.1/source)
-* [Rails 5.0](https://github.com/morsbox/rusrails/tree/5.0/source)
-* [Rails 4.2](https://github.com/morsbox/rusrails/tree/4.2/source)
-* [Rails 4.1](https://github.com/morsbox/rusrails/tree/4.1/source)
-* [Rails 4.0](https://github.com/morsbox/rusrails/tree/4.0/source)
-* [Rails 3.2](https://github.com/morsbox/rusrails/tree/3.2/source)
-* [Rails 3.1](https://github.com/morsbox/rusrails/tree/3.1.3/source)
+* [Прочие версии](https://github.com/morsbox/rusrails/releases)
 
 Приступим!
 
