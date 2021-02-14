@@ -255,8 +255,8 @@ pages:
   - title:    Треды и выполнение кода в Rails
     path:     threading_and_code_execution
     file:     threading_and_code_execution.md
-    revision: 7b9c19d94b18f340552f95225bf01d6f91804184
-    date:     24/07/2018
+    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
+    date:     22/12/2020
 
   - title:    Использование Rails для API-приложений
     path:     api-app
