@@ -1,7 +1,7 @@
 Шаблоны приложения Rails
 ========================
 
-Шаблоны приложений - это простые Ruby файлы, содержащие DSL для добавления гемов/инициализаторов и т.п. в ваш только что созданный или существующий Rails проект.
+Шаблоны приложений - это простые Ruby файлы, содержащие DSL для добавления гемов, инициализаторов и т.п. в ваш только что созданный или существующий Rails проект.
 
 После прочтения данного руководства, вы узнаете:
 
@@ -23,8 +23,8 @@ $ rails new blog -m http://example.com/template.rb
 Вы можете использовать команду rails `app:template` чтобы применить шаблоны к существующему Rails приложению. Место расположения шаблона должно быть передано с помощью переменной среды LOCATION. Опять же, это может быть путь к файлу или URL.
 
 ```bash
-$ rails app:template LOCATION=~/template.rb
-$ rails app:template LOCATION=http://example.com/template.rb
+$ bin/rails app:template LOCATION=~/template.rb
+$ bin/rails app:template LOCATION=http://example.com/template.rb
 ```
 
 API для шаблонов
@@ -61,7 +61,7 @@ gem "nokogiri"
 Пожалуйста, отметьте, что это не установит гемы и вы должны будете запустить `bundle install` для этого.
 
 ```bash
-bundle install
+$ bundle install
 ```
 
 ### `gem_group(*names, &block)`
@@ -80,10 +80,10 @@ end
 
 Добавляет переданный источник в генерируемый для приложения `Gemfile`.
 
-Например, если вам необходим источник гема `"http://code.whytheluckystiff.net"`:
+Например, если вам необходим источник гема `"http://gems.github.com"`:
 
 ```ruby
-add_source "http://code.whytheluckystiff.net"
+add_source "http://gems.github.com"
 ```
 
 Если передан блок, то записи гемов в блоке будут обернуты в группу с источником.
@@ -193,6 +193,12 @@ rails_command "db:migrate", env: 'production'
 rails_command "log:clear", sudo: true
 ```
 
+Также можно запустить команды, которые должны прервать генерацию приложения в случае неудачи:
+
+```ruby
+rails_command "db:migrate", abort_on_failure: true
+```
+
 ### `route(routing_code)`
 
 Добавляет запись маршрутизации в файл `config/routes.rb`. В шагах выше мы сгенерировали скаффолд для person и также удалили `README.rdoc`. Сейчас, сделаем для приложения `PeopleController#index` страницей по умолчанию:
@@ -227,11 +233,11 @@ CODE
 
 ### `yes?(question) or no?(question)`
 
-Эти методы позволяют вам задать вопросы из ваших шаблонов и принять решение в процессе в зависимости от ответа пользователя. Допустим, вы хотите заморозить Rails, только если пользователь хочет:
+Эти методы позволяют вам задать вопросы из ваших шаблонов и принять решение в процессе в зависимости от ответа пользователя. Допустим, вы хотите спросить пользователя, запускать ли миграции:
 
 ```ruby
-rails_command("rails:freeze:gems") if yes?("Freeze rails gems?")
-# no?(question) acts just the opposite.
+rails_command("db:migrate") if yes?("Run database migrations?")
+# no?(question) работает наоборот.
 ```
 
 ### `git(:command)`
