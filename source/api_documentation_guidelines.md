@@ -13,10 +13,10 @@
 RDoc
 ----
 
-[Документация Rails API](http://api.rubyonrails.org) генерируется с помощью [RDoc](https://ruby.github.io/rdoc/). Чтобы ее сгенерировать, убедитесь, что вы в корневой директории rails, запустите `bundle install` и выполните:
+[Документация Rails API](https://api.rubyonrails.org) генерируется с помощью [RDoc](https://ruby.github.io/rdoc/). Чтобы ее сгенерировать, убедитесь, что вы в корневой директории rails, запустите `bundle install` и выполните:
 
 ```bash
-  bundle exec rake rdoc
+$ bundle exec rake rdoc
 ```
 
 Итоговые файлы HTML будут в директории ./doc/rdoc.
@@ -36,7 +36,7 @@ RDoc
 # Declares an attribute reader backed by an internally-named
 # instance variable.
 def attr_internal_reader(*attrs)
-  ...
+  # ...
 end
 ```
 
@@ -164,7 +164,7 @@ If `return` is needed it is recommended to explicitly define a method.
 # If the collection has been loaded
 # it is equivalent to <tt>collection.size.zero?</tt>. If the
 # collection has not been loaded, it is equivalent to
-# <tt>collection.exists?</tt>. If the collection has not already been
+# <tt>!collection.exists?</tt>. If the collection has not already been
 # loaded and you are going to fetch the records anyway it is better to
 # check <tt>collection.length.zero?</tt>.
 def empty?
@@ -217,7 +217,7 @@ WARNING: Использование `+...+` для моноширинного ш
 
 Можно быстро протестировать результат RDoc с помощью следующей команды:
 
-```
+```bash
 $ echo "+:to_param+" | rdoc --pipe
 # => <p><code>:to_param</code></p>
 ```
@@ -238,7 +238,7 @@ $ echo "+:to_param+" | rdoc --pipe
 # matter the context. Validations with # some <tt>:on</tt>
 # option will only run in the specified context.
 def valid?(context = nil)
-  ...
+  # ...
 end
 ```
 
