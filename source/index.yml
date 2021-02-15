@@ -225,8 +225,8 @@ pages:
   - title:    Обзор Action Cable
     path:     action-cable-overview
     file:     action_cable_overview.md
-    revision: 4f5949cf9f96938086338fe8f7af5af34cc21daa
-    date:     01/04/2019
+    revision: bec743eaf6b6bbf45feb1f1c69ef39f449a3a1e3
+    date:     19/01/2021
 
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
