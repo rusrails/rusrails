@@ -200,7 +200,7 @@ Action Controller
 | `:request`      | `ActionDispatch::Request`                                 |
 | `:status`       | Код статуса HTTP                                          |
 | `:location`     | Заголовок запроса Location                                |
-| `:view_runtime` | Количество времени, потраченного во вьюхе                 |
+| `:view_runtime` | Количество времени, потраченного во вью                 |
 | `:db_runtime`   | Время, потраченное на выполнение запросов к БД в мс       |
 
 ```ruby

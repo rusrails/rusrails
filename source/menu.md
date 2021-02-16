@@ -12,7 +12,7 @@
     * [Интерфейс запросов Active Record](/active-record-query-interface)
     * [Основы Active Model](/active-model-basics)
 
-* **Вьюхи**
+* **Вью**
 
     * [Обзор Action View](/action-view-overview)
     * [Макеты и рендеринг в Rails](/layouts-and-rendering-in-rails)

@@ -361,7 +361,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.i18n.load_path` устанавливает путь, используемый Rails для поиска файлов локали. По умолчанию `config/locales/*.{yml,rb}`.
 
-* `config.i18n.raise_on_missing_translations` определяет, должна ли вызываться ошибка на отсутствующих переводах в контроллерах и вьюхах. По умолчанию `false`.
+* `config.i18n.raise_on_missing_translations` определяет, должна ли вызываться ошибка на отсутствующих переводах в контроллерах и вью. По умолчанию `false`.
 
 * `config.i18n.fallbacks` устанавливает поведение фолбэка для отсутствующих переводов. Вот 3 примера использования этой опции:
 
@@ -475,7 +475,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_controller.default_static_extension` конфигурирует расширение, используемое для кэшированных страниц. По умолчанию `.html`.
 
-* `config.action_controller.include_all_helpers` устанавливает, должны ли быть все хелперы вьюх доступны везде или только в соответствующем контроллере. Если установлен `false`, методы `UsersHelper` будут доступны только во вьюхах, рендерящихся как часть `UsersController`. Если `true`, методы `UsersHelper` будут доступны везде. Поведением настройки по умолчанию (когда этой опции явно не установлено `true` или `false`) является то, что все хелперы вьюх доступны в каждом контроллере.
+* `config.action_controller.include_all_helpers` устанавливает, должны ли быть все хелперы вью доступны везде или только в соответствующем контроллере. Если установлен `false`, методы `UsersHelper` будут доступны только во вью, рендерящихся как часть `UsersController`. Если `true`, методы `UsersHelper` будут доступны везде. Поведением настройки по умолчанию (когда этой опции явно не установлено `true` или `false`) является то, что все хелперы вью доступны в каждом контроллере.
 
 * `config.action_controller.logger` принимает логгер, соответствующий интерфейсу Log4r или дефолтного класса Ruby Logger, который затем используется для логирования информации от Action Controller. Установите его в `nil`, чтобы отключить логирование.
 
@@ -642,7 +642,7 @@ config.middleware.delete Rack::MethodOverride
 
 * `config.action_view.default_enforce_utf8` определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8. Это по умолчанию `false`.
 
-* `config.action_view.annotate_rendered_view_with_filenames` определяет, должны ли отрендеренные вьюхи аннотироваться  именем файла шаблона. Это по умолчанию `false`.
+* `config.action_view.annotate_rendered_view_with_filenames` определяет, должны ли отрендеренные вью аннотироваться  именем файла шаблона. Это по умолчанию `false`.
 
 ### Конфигурирование Action Mailbox
 
@@ -1489,7 +1489,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `add_locales`: Добавляет файлы в `config/locales` (из приложения, railties и engine-ов) в `I18n.load_path`, делая доступными переводы в этих файлах.
 
-* `add_view_paths`: Добавляет директорию `app/views` из приложения, railties и engine-ов в путь поиска файлов вьюх приложения.
+* `add_view_paths`: Добавляет директорию `app/views` из приложения, railties и engine-ов в путь поиска файлов вью приложения.
 
 * `load_environment_config`: Загружает файл `config/environments` для текущей среды.
 

@@ -455,7 +455,7 @@ rails_blob_path(user.avatar, disposition: "attachment")
 
 WARNING: Для предотвращения атак XSS, ActiveStorage принудительно устанавливает заголовок Content-Disposition как "attachment" для некоторых типов файлов. Чтобы изменить это поведение, смотрите доступные конфигурационные опции в [Конфигурирование приложений на Rails](/configuring-rails-applications#configuring-active-storage).
 
-Если необходимо создать ссылку из-за пределов содержимого контроллера/вьюхи (фоновые задания, задания Cron и т.д.), можно получить доступ к `rails_blob_path` следующим образом:
+Если необходимо создать ссылку из-за пределов содержимого контроллера/вью (фоновые задания, задания Cron и т.д.), можно получить доступ к `rails_blob_path` следующим образом:
 
 ```ruby
 Rails.application.routes.url_helpers.rails_blob_path(user.avatar, only_path: true)

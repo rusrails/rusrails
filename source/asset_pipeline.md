@@ -217,7 +217,7 @@ Sprockets не добавляет какие-либо новые методы д
 <%= javascript_include_tag "application", "data-turbolinks-track" => "reload" %>
 ```
 
-В обычных вьюхах можно получить доступ к изображениям в директории `app/assets/images` следующим образом:
+В обычных вью можно получить доступ к изображениям в директории `app/assets/images` следующим образом:
 
 ```erb
 <%= image_tag "rails.png" %>

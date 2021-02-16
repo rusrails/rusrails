@@ -249,7 +249,7 @@ Action View
 *   Устарел `config.action_view.finalize_compiled_template_methods` без замены.
     ([Pull Request](https://github.com/rails/rails/pull/35036))
 
-*   Устарел вызов приватных методов модели из хелпера вьюхи `options_from_collection_for_select`.
+*   Устарел вызов приватных методов модели из хелпера вью `options_from_collection_for_select`.
     ([Pull Request](https://github.com/rails/rails/pull/33547))
 
 ### Значимые изменения

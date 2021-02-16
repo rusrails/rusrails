@@ -315,9 +315,9 @@ end
 
 [`email_address_with_name`]: https://api.rubyonrails.org/classes/ActionMailer/Base.html#method-i-email_address_with_name
 
-### Вьюхи рассыльщика
+### Вью рассыльщика
 
-Вьюхи рассыльщика расположены в директории `app/views/name_of_mailer_class`. Определенная вью рассыльщика известна классу, поскольку у нее имя такое же, как у метода рассыльщика. Так, в нашем примере, вью рассыльщика для метода `welcome_email` будет в `app/views/user_mailer/welcome_email.html.erb` для версии HTML и `welcome_email.text.erb` для обычной текстовой версии.
+Вью рассыльщика расположены в директории `app/views/name_of_mailer_class`. Определенная вью рассыльщика известна классу, поскольку у нее имя такое же, как у метода рассыльщика. Так, в нашем примере, вью рассыльщика для метода `welcome_email` будет в `app/views/user_mailer/welcome_email.html.erb` для версии HTML и `welcome_email.text.erb` для обычной текстовой версии.
 
 Чтобы изменить вью рассыльщика по умолчанию для вашего экшна, сделайте так:
 

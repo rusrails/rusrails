@@ -117,11 +117,11 @@ window.addEventListener("load", () => {
 
 ### (remote-elements) Remote элементы
 
-Rails предоставляет ряд вспомогательных методов для вьюх, написанных на Ruby, помогающих вам генерировать HTML. Иногда хочется добавить немного Ajax к этим элементам, и Rails подсобит в таких случаях.
+Rails предоставляет ряд вспомогательных методов для вью, написанных на Ruby, помогающих вам генерировать HTML. Иногда хочется добавить немного Ajax к этим элементам, и Rails подсобит в таких случаях.
 
 Так как JavaScript ненавязчив, "Ajax-хелперы" Rails фактически состоят из двух частей: часть JavaScript и часть Ruby.
 
-Если не отключить Asset Pipeline, [rails-ujs](https://github.com/rails/rails/tree/master/actionview/app/assets/javascripts) предоставляет часть для JavaScript, а хелперы вьюх на обычном Ruby добавляют подходящие теги в DOM.
+Если не отключить Asset Pipeline, [rails-ujs](https://github.com/rails/rails/tree/master/actionview/app/assets/javascripts) предоставляет часть для JavaScript, а хелперы вью на обычном Ruby добавляют подходящие теги в DOM.
 
 Ниже вы можете прочитать о различных событиях, которые вызываются при работе с remote элементами внутри вашего приложения.
 
@@ -331,7 +331,7 @@ class UsersController < ApplicationController
   # ...
 ```
 
-Вьюха для index (`app/views/users/index.html.erb`) содержит:
+Вью для index (`app/views/users/index.html.erb`) содержит:
 
 ```erb
 <b>Users</b>
@@ -378,14 +378,14 @@ class UsersController < ApplicationController
   end
 ```
 
-Обратите внимание на `format.js` в блоке `respond_to`, который позволяет контроллеру откликаться на ваши запросы Ajax. Далее необходим соответствующий файл вьюхи `app/views/users/create.js.erb`, генерирующий фактический код JavaScript, который будет отослан и выполнен на стороне клиента.
+Обратите внимание на `format.js` в блоке `respond_to`, который позволяет контроллеру откликаться на ваши запросы Ajax. Далее необходим соответствующий файл вью `app/views/users/create.js.erb`, генерирующий фактический код JavaScript, который будет отослан и выполнен на стороне клиента.
 
 ```js
 var users = document.querySelector("#users");
 users.insertAdjacentHTML("beforeend", "<%= j render(@user) %>");
 ```
 
-NOTE: Рендеринг вьюх JavaScript не выполняет какого-либо препроцессинга, поэтому тут не следует использовать синтаксис ES6.
+NOTE: Рендеринг вью JavaScript не выполняет какого-либо препроцессинга, поэтому тут не следует использовать синтаксис ES6.
 
 Turbolinks
 ----------
