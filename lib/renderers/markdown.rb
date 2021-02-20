@@ -15,6 +15,9 @@ class Rusrails::Markdown
     })
   end
 
+  # Add more common shell commands
+  Rouge::Lexers::Shell::BUILTINS << "|bin/rails|brew|bundle|gem|git|node|rails|rake|ruby|sqlite3|yarn"
+
   class Renderer < Redcarpet::Render::HTML
     attr_reader :headers
 
@@ -27,13 +30,14 @@ class Rusrails::Markdown
     end
 
     def block_code(code, language)
-      <<-HTML
-<div class="code_container">
-<pre class="brush: #{brush_for(language)}; gutter: false; toolbar: false">
-#{ERB::Util.h(code)}
-</pre>
-</div>
-HTML
+      formatter = Rouge::Formatters::HTML.new
+      lexer = ::Rouge::Lexer.find_fancy(lexer_language(language))
+      formatted_code = formatter.format(lexer.lex(code))
+      <<~HTML
+        <div class="code_container">
+          <pre><code class="highlight #{lexer_language(language)}">#{formatted_code}</code></pre>
+        </div>
+      HTML
     end
 
     def sanitizer
@@ -55,7 +59,7 @@ HTML
           prev_count_hid_container = @hid_container.count(hid) - 1
           @hid_hash[hid] = prev_count_hid_container if prev_count_hid_container != 0
         end
-        
+
         hid.concat (@hid_hash[hid].to_i + 1).to_s if @hid_hash[hid].present?
       else
         @hid_hash[hid] = @hid_container.count(hid)
@@ -123,16 +127,16 @@ HTML
       end
     end
 
-    def brush_for(code_type)
+    def lexer_language(code_type)
       case code_type
-        when 'ruby', 'sql', 'plain'
-          code_type
-        when 'erb', 'html+erb'
-          'ruby'
-        when 'html'
-          'xml' # html is understood, but there are .xml rules in the CSS
-        else
-          'plain'
+      when "html+erb"
+        "erb"
+      when "bash"
+        "console"
+      when nil
+        "plaintext"
+      else
+        ::Rouge::Lexer.find(code_type) ? code_type : "plaintext"
       end
     end
 
