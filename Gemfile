@@ -20,6 +20,7 @@ gem 'redcarpet'
 gem 'config'
 gem 'twitter-bootstrap-rails', '~> 2.2.8'
 gem 'jquery-rails'
+gem 'rouge'
 
 gem 'capistrano', '~> 2.15'
 gem 'unicorn'
