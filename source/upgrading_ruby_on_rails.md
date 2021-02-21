@@ -257,7 +257,7 @@ resp.content_type #=> "text/csv; header=present; charset=utf-16"
 resp.media_type   #=> "text/csv"
 ```
 
-### Автозагрузка
+### (autoloading) Автозагрузка
 
 Конфигурация по умолчанию для Rails 6
 

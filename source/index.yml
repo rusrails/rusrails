@@ -213,8 +213,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант (режим Zeitwerk)
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
-    revision: 72af2c42a76a1f3cf2268fdef15e270d581482fb
-    date:     11/07/2019
+    revision: e6fd87bda8148871ee28bb730ca9b63e23dd6fa4
+    date:     04/02/2021
 
   - title:    Автозагрузка и перезагрузка констант (режим Classic)
     path:     autoloading_and_reloading_constants_classic_mode
