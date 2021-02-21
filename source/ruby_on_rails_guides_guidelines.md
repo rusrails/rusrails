@@ -13,7 +13,7 @@
 Markdown
 --------
 
-Руководства написаны на [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown). Имеется полная [документация по Markdown](http://daringfireball.net/projects/markdown/syntax), а также [шпаргалка](http://daringfireball.net/projects/markdown/basics).
+Руководства написаны на [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown). Имеется полная [документация по Markdown](http://daringfireball.net/projects/markdown/syntax), а также [шпаргалка](https://daringfireball.net/projects/markdown/basics).
 
 Пролог
 ------
@@ -38,6 +38,7 @@ Section
 При написании заголовков начинайте с заглавной буквы все слова, кроме предлогов, союзов, внутренних артиклей и форм глагола "to be":
 
 ```
+#### Assertions and Testing Jobs inside Components
 #### Middleware Stack is an Array
 #### When are Objects Saved?
 ```
@@ -56,7 +57,7 @@ Section
 Ссылки, включающие тег релиза, оставляются неизменными. Например
 
 ```
-http://api.rubyonrails.org/v5.0.1/classes/ActiveRecord/Attributes/ClassMethods.html
+https://api.rubyonrails.org/v5.0.1/classes/ActiveRecord/Attributes/ClassMethods.html
 ```
 
 не модифицируется.
@@ -66,25 +67,25 @@ http://api.rubyonrails.org/v5.0.1/classes/ActiveRecord/Attributes/ClassMethods.h
 Если ссылка не включает тег версии и генерируются руководства edge, домен заменяется на `edgeapi.rubyonrails.org`. Например,
 
 ```
-http://api.rubyonrails.org/classes/ActionDispatch/Response.html
+https://api.rubyonrails.org/classes/ActionDispatch/Response.html
 ```
 
 становится
 
 ```
-http://edgeapi.rubyonrails.org/classes/ActionDispatch/Response.html
+https://edgeapi.rubyonrails.org/classes/ActionDispatch/Response.html
 ```
 
 Если ссылка не включает тег релиза, и генерируются руководства релиза, вставляется версия Rails. Например, если генерируются руководства для v5.1.0, ссылка
 
 ```
-http://api.rubyonrails.org/classes/ActionDispatch/Response.html
+https://api.rubyonrails.org/classes/ActionDispatch/Response.html
 ```
 
 становится
 
 ```
-http://api.rubyonrails.org/v5.1.0/classes/ActionDispatch/Response.html
+https://api.rubyonrails.org/v5.1.0/classes/ActionDispatch/Response.html
 ```
 
 Пожалуйста, не ссылайтесь на `edgeapi.rubyonrails.org` вручную.
@@ -103,7 +104,7 @@ http://api.rubyonrails.org/v5.1.0/classes/ActionDispatch/Response.html
 Руководства в HTML
 ------------------
 
-До генерации руководств, убедитесь, что используете последнюю версию Bundler в своей системе. На момент написания этих строк, вам нужно установить на свое устройство Bundler 1.3.5 или более поздний.
+До генерации руководств, убедитесь, что используете последнюю версию Bundler в своей системе. Последнюю версию Bundler можно найти [тут](https://rubygems.org/gems/bundler). На момент написания этих строк это v1.17.1.
 
 Чтобы установить последнюю версию Bundler, запустите `gem install bundler`.
 
@@ -111,23 +112,23 @@ http://api.rubyonrails.org/v5.1.0/classes/ActionDispatch/Response.html
 
 Чтобы сгенерировать все руководства, просто сделайте `cd` в директорию `guides`, запустите `bundle install` и выполните:
 
-```
-bundle exec rake guides:generate
+```bash
+$ bundle exec rake guides:generate
 ```
 
 или
 
-```
-bundle exec rake guides:generate:html
+```bash
+$ bundle exec rake guides:generate:html
 ```
 
 Результирующие файлы HTML будут в директории `./output`.
 
 Чтобы обработать `my_guide.md` и ничего, кроме него, используйте переменную среды `ONLY`:
 
-```
-touch my_guide.md
-bundle exec rake guides:generate ONLY=my_guide
+```bash
+$ touch my_guide.md
+$ bundle exec rake guides:generate ONLY=my_guide
 ```
 
 По умолчанию неизмененные руководства не обрабатываются, поэтому `ONLY` редко нужна на практике.
@@ -136,25 +137,25 @@ bundle exec rake guides:generate ONLY=my_guide
 
 Если хотите сгенерировать руководства на языке ином, чем английский, можете держать их в отдельной директории в `source` (то есть `source/es`) и использовать переменную среды `GUIDES_LANGUAGE`:
 
-```
-bundle exec rake guides:generate GUIDES_LANGUAGE=es
+```bash
+$ bundle exec rake guides:generate GUIDES_LANGUAGE=es
 ```
 
 Если хотите увидеть все переменные окружения, которые могут использоваться генерационным скриптом, просто запустите:
 
-```
-rake
+```bash
+$ rake
 ```
 
 ### Валидация
 
 Пожалуйста, проверяйте сгенерированный HTML с помощью:
 
-```
-bundle exec rake guides:validate
+```bash
+$ bundle exec rake guides:validate
 ```
 
-В частности, заголовки имеют ID, сгенерированный на основе их содержания, и это часто ведет к дубликатам. Установите `WARNINGS=1` при генерации руководств, чтобы обнаружить их. Сообщение с предупреждением предложит решение.
+В частности, заголовки имеют ID, сгенерированный на основе их содержания, и это часто ведет к дубликатам.
 
 Руководства для Kindle
 ----------------------
@@ -163,6 +164,6 @@ bundle exec rake guides:validate
 
 Чтобы сгенерировать руководства для Kindle, используйте следующую задачу rake:
 
-```
-bundle exec rake guides:generate:kindle
+```bash
+$ bundle exec rake guides:generate:kindle
 ```
