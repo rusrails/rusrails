@@ -219,8 +219,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант (режим Classic)
     path:     autoloading_and_reloading_constants_classic_mode
     file:     autoloading_and_reloading_constants_classic_mode.md
-    revision: 2fe20cb55c76e6e50ec3a4ec5b03bbb65adba290
-    date:     10/07/2019
+    revision: 1cd20bd384554ec7387ca47efebf24bb18cb2b32
+    date:     05/01/2021
 
   - title:    Обзор Action Cable
     path:     action-cable-overview
