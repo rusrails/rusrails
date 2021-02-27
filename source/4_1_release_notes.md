@@ -196,12 +196,12 @@ class Todo < ActiveRecord::Base
     end
 
     def latest_event
-      ...
+      # ...
     end
 
     private
       def some_internal_method
-        ...
+        # ...
       end
   end
 end

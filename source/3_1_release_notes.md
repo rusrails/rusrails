@@ -449,7 +449,7 @@ Active Record
     ```ruby
     class FooMigration < ActiveRecord::Migration
       def up # Не self.up
-        ...
+        # ...
       end
     end
     ```

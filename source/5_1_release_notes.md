@@ -68,7 +68,7 @@ Rails 5.1 имеет встроенную поддержку для написа
 
 Позволяют определить общие параметры, используемые всеми методами в классе рассыльщика, для переменных экземпляра, заголовков и других общих настроек.
 
-``` ruby
+```ruby
 class InvitationsMailer < ApplicationMailer
   before_action { @inviter, @invitee = params[:inviter], params[:invitee] }
   before_action { @account = params[:inviter].account }
@@ -77,7 +77,9 @@ class InvitationsMailer < ApplicationMailer
     mail subject: "#{@inviter.name} invited you to their Basecamp (#{@account.name})"
   end
 end
+```
 
+```ruby
 InvitationsMailer.with(inviter: person_a, invitee: person_b)
                  .account_invitation.deliver_later
 ```
@@ -88,13 +90,13 @@ InvitationsMailer.with(inviter: person_a, invitee: person_b)
 
 Rails 5.1 добавляет в DSL роутинга два новых метода, `resolve` и `direct`. Метод `resolve` позволяет настроить полиморфное сопоставление моделей.
 
-``` ruby
+```ruby
 resource :basket
 
 resolve("Basket") { [:basket] }
 ```
 
-``` erb
+```erb
 <%= form_for @basket do |form| %>
   <!-- basket form -->
 <% end %>
@@ -104,16 +106,15 @@ resolve("Basket") { [:basket] }
 
 Метод `direct` позволяет создавать хелперы для произвольного URL.
 
-``` ruby
+```ruby
 direct(:homepage) { "http://www.rubyonrails.org" }
 
->> homepage_url
-=> "http://www.rubyonrails.org"
+homepage_url # => "http://www.rubyonrails.org"
 ```
 
 Возвращаемое из блока значение должно быть валидным аргументом для метода `url_for`. Поэтому можно передать валидные строковый URL, Hash, Array, экземпляр Active Model или класс Active Model.
 
-``` ruby
+```ruby
 direct :commentable do |model|
   [ model, anchor: model.dom_id ]
 end
@@ -133,7 +134,7 @@ Rails 5.1 объединяет оба этих интерфейса с помо�
 
 Используя просто URL:
 
-``` erb
+```erb
 <%= form_with url: posts_path do |form| %>
   <%= form.text_field :title %>
 <% end %>
@@ -147,7 +148,7 @@ Rails 5.1 объединяет оба этих интерфейса с помо�
 
 Добавление скоупа добавляет префикс для имен полей ввода:
 
-``` erb
+```erb
 <%= form_with scope: :post, url: posts_path do |form| %>
   <%= form.text_field :title %>
 <% end %>
@@ -161,7 +162,7 @@ Rails 5.1 объединяет оба этих интерфейса с помо�
 
 URL и скоуп на основе используемой модели:
 
-``` erb
+```erb
 <%= form_with model: Post.new do |form| %>
   <%= form.text_field :title %>
 <% end %>
@@ -175,7 +176,7 @@ URL и скоуп на основе используемой модели:
 
 Существующая модель создает форму для обновления и заполняет значения для полей:
 
-``` erb
+```erb
 <%= form_with model: Post.first do |form| %>
   <%= form.text_field :title %>
 <% end %>

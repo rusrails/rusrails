@@ -174,15 +174,15 @@ Active Support
 
 * `String#to_date` теперь вызывает `ArgumentError: invalid date` вместо `NoMethodError: undefined method 'div' for nil:NilClass` при получения неверной даты. Это то же самое, что и `Date.parse`, и он принимает больше неправильных дат, чем 3.x, такие как:
 
-  ```ruby
-  # ActiveSupport 3.x
-  "asdf".to_date # => NoMethodError: undefined method `div' for nil:NilClass
-  "333".to_date # => NoMethodError: undefined method `div' for nil:NilClass
+    ```ruby
+    # ActiveSupport 3.x
+    "asdf".to_date # => NoMethodError: undefined method `div' for nil:NilClass
+    "333".to_date # => NoMethodError: undefined method `div' for nil:NilClass
 
-  # ActiveSupport 4
-  "asdf".to_date # => ArgumentError: invalid date
-  "333".to_date # => Fri, 29 Nov 2013
-  ```
+    # ActiveSupport 4
+    "asdf".to_date # => ArgumentError: invalid date
+    "333".to_date # => Fri, 29 Nov 2013
+    ```
 
 ### Устаревания
 

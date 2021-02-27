@@ -77,17 +77,17 @@ post.comments(true)
 - Модель использует наследование с единой таблицей (STI)
 - `find` со списком ids. Т.е.:
 
-  ```ruby
-  # не кэшируются
-  Post.find(1,2,3)
-  Post.find([1,2])
-  ```
+    ```ruby
+    # не кэшируются
+    Post.find(1,2,3)
+    Post.find([1,2])
+    ```
 
 - `find_by` с фрагментом SQL:
 
-  ```ruby
-  Post.find_by('published_at < ?', 2.weeks.ago)
-  ```
+    ```ruby
+    Post.find_by('published_at < ?', 2.weeks.ago)
+    ```
 
 ### Веб-консоль
 
@@ -320,15 +320,17 @@ Railties
 
 *   Представлен `Rails::Application.config_for` для загрузки конфигурации для текущего окружения.
 
-    ```ruby
-    # config/exception_notification.yml:
+    ```yaml
+    # config/exception_notification.yml
     production:
       url: http://127.0.0.1:8080
       namespace: my_app_production
     development:
       url: http://localhost:3001
       namespace: my_app_development
+    ```
 
+    ```ruby
     # config/environments/production.rb
     Rails.application.configure do
       config.middleware.use ExceptionNotifier, config_for(:exception_notification)
