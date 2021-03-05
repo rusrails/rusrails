@@ -54,22 +54,22 @@ action_mailbox:
 
 Настройте Exim передавать входящие письма в `bin/rails action_mailbox:ingress:exim`, предоставив `URL` ингресса релея и `INGRESS_PASSWORD`, созданный ранее. Если ваше приложение находится по адресу `https://example.com`, полная команда будет выглядеть так:
 
-```shell
-bin/rails action_mailbox:ingress:exim URL=https://example.com/rails/action_mailbox/relay/inbound_emails INGRESS_PASSWORD=...
+```bash
+$ bin/rails action_mailbox:ingress:exim URL=https://example.com/rails/action_mailbox/relay/inbound_emails INGRESS_PASSWORD=...
 ```
 
 ### Mailgun
 
-Передайте Action Mailbox ваш [ключ Mailgun API](https://help.mailgun.com/hc/en-us/articles/203380100-Where-can-I-find-my-API-key-and-SMTP-credentials), таким образом он сможет аутентифицировать запросы к ингрессу Mailgun.
+Передайте Action Mailbox ваш ключ Mailgun Signing (который можно найти в Settings -> Security & Users -> API security в Mailgun), таким образом он сможет аутентифицировать запросы к ингрессу Mailgun.
 
-Используйте `bin/rails credentials:edit`, чтобы добавить ключ API в зашифрованные учетные данные вашего приложения под именем `action_mailbox.mailgun_api_key`, по которому Action Mailbox автоматически найдет его:
+Используйте `bin/rails credentials:edit`, чтобы добавить ключ Signing в зашифрованные учетные данные вашего приложения под именем `action_mailbox.mailgun_signing_key`, по которому Action Mailbox автоматически найдет его:
 
 ```yaml
 action_mailbox:
-  mailgun_api_key: ...
+  mailgun_signing_key: ...
 ```
 
-Альтернативно можно предоставить ключ API в переменной среды `MAILGUN_INGRESS_API_KEY`.
+Альтернативно можно предоставить ключ Signing в переменной среды `MAILGUN_INGRESS_SIGNING_KEY`.
 
 Сообщите Action Mailbox принимать письма от Mailgun:
 
@@ -125,7 +125,7 @@ action_mailbox:
 
 [Настройте Postfix](https://serverfault.com/questions/258469/how-to-configure-postfix-to-pipe-all-incoming-email-to-a-script) передавать входящие письма в `bin/rails action_mailbox:ingress:postfix`, предоставив `URL` ингресса релея и `INGRESS_PASSWORD`, созданный ранее. Если ваше приложение находится по адресу `https://example.com`, полная команда будет выглядеть так:
 
-```shell
+```bash
 $ bin/rails action_mailbox:ingress:postfix URL=https://example.com/rails/action_mailbox/relay/inbound_emails INGRESS_PASSWORD=...
 ```
 
@@ -180,8 +180,8 @@ action_mailbox:
 
 Настройте Qmail передавать входящие письма в `bin/rails action_mailbox:ingress:qmail`, предоставив `URL` ингресса релея и `INGRESS_PASSWORD`, созданный ранее. Если ваше приложение находится по адресу `https://example.com`, полная команда будет выглядеть так:
 
-```shell
-bin/rails action_mailbox:ingress:qmail URL=https://example.com/rails/action_mailbox/relay/inbound_emails INGRESS_PASSWORD=...
+```bash
+$ bin/rails action_mailbox:ingress:qmail URL=https://example.com/rails/action_mailbox/relay/inbound_emails INGRESS_PASSWORD=...
 ```
 
 ### SendGrid
@@ -226,7 +226,7 @@ end
 
 Затем настройте почтовый ящик:
 
-```ruby
+```bash
 # Создайте новый почтовый ящик
 $ bin/rails generate mailbox forwards
 ```
