@@ -369,8 +369,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 6.1
     path:     6_1_release_notes
     file:     6_1_release_notes.md
-    revision: 336a07b9a4cac47cecf7dcf089f0bcc4cc6cadd8
-    date:     12/05/2020
+    revision: 077c66d5d6ef3a6f1cc54e4a431bfa5ea6831b97
+    date:     19/01/2021
 
 plan:
   - file:     7_0_release_notes.md
