@@ -231,8 +231,8 @@ pages:
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
     file:     active_record_multiple_databases.md
-    revision: 384e7d139eb3c2da1ff857033605284d6e70aba7
-    date:     24/01/2020
+    revision: 9d4a025be2bb335de7ae2e12a6132d284cb97e21
+    date:     24/02/2021
 
   - title:    Основы создания плагинов Rails
     path:     plugins
