@@ -180,6 +180,9 @@ Action Pack
 
 ### Значимые изменения
 
+*   Изменен `ActionDispatch::Response#content_type`. возвращающий заголовок Content-Type как есть.
+    ([Pull Request](https://github.com/rails/rails/pull/36034))
+
 *   Вызывается `ArgumentError`, если параметр ресурса содержит двоеточие.
     ([Pull Request](https://github.com/rails/rails/pull/35236))
 
@@ -374,7 +377,7 @@ Active Record
 *   Устарело использование запрашивающих методов, если получающий скоуп утек.
     ([Pull Request](https://github.com/rails/rails/pull/35280))
 
-*   Устарел `config.activerecord.sqlite3.represent_boolean_as_integer`.
+*   Устарел `config.active_record.sqlite3.represent_boolean_as_integer`.
     ([Commit](https://github.com/rails/rails/commit/f59b08119bc0c01a00561d38279b124abc82561b))
 
 *   Устарела передача `migrations_paths` в `connection.assume_migrated_upto_version`.
@@ -454,7 +457,7 @@ Active Record
     ([Pull Request](https://github.com/rails/rails/pull/34742))
 
 *   Добавлена возможность отключить скоупы, генерируемые `ActiveRecord.enum`.
-    ([Pull Request](https://github.com/rails/rails/pull/34605/files))
+    ([Pull Request](https://github.com/rails/rails/pull/34605))
 
 *   Неявное упорядочивание для столбца сделано настраиваемым.
     ([Pull Request](https://github.com/rails/rails/pull/34480))
@@ -602,6 +605,10 @@ Active Storage
 *   Файлы модели, предназначенные для хранения, сохраняются, когда сохраняется модель, а не немедленно.
     ([Pull Request](https://github.com/rails/rails/pull/33303))
 
+*   Существующие изображения опционально заменяются вместо добавления к ним при присвоении к коллекции вложений (как в `@user.update!(images: [ … ])`). Используйте `config.active_storage.replace_on_assign_to_many` для контроля этого поведения.
+    ([Pull Request](https://github.com/rails/rails/pull/33303),
+     [Pull Request](https://github.com/rails/rails/pull/36716))
+
 *   Добавлена способность отражать на определенных вложениях с помощью существующего механизма отражения Active Record.
     ([Pull Request](https://github.com/rails/rails/pull/33018))
 
@@ -612,10 +619,7 @@ Active Storage
     ([Pull Request](https://github.com/rails/rails/pull/32788))
 
 *   Использован гем `image_processing` для вариантов Active Storage. Это заменяет непосредственное использование `mini_magick`.
-    ([Pull Request](https://github.com/rails/rails/pull/32471)
-
-*   Существующие изображения заменяются вместо добавления к ним при обновлении прикрепляющей модели с помощью `update` или `update!`, например, `@user.update!(images: [ … ])`.
-    ([Pull Request](https://github.com/rails/rails/pull/33303))
+    ([Pull Request](https://github.com/rails/rails/pull/32471))
 
 Active Model
 ------------
@@ -884,6 +888,9 @@ Active Job
 За подробностями обратитесь к [Changelog][guides].
 
 ### Значимые изменения
+
+*   Добавлено руководство по нескольким базам данных с Active Record.
+    ([Pull Request](https://github.com/rails/rails/pull/36389))
 
 *   Добавлен раздел о разрешении проблем автозагрузки констант.
     ([Commit](https://github.com/rails/rails/commit/c03bba4f1f03bad7dc034af555b7f2b329cf76f5))
