@@ -50,7 +50,7 @@
 На уровне Action Pack:
 
 - Ресурсный роутинг: Если вы создаете RESTful JSON API, вам захочется использовать роутер Rails. Чистое и общепринятое сопоставление от HTTP к контроллерам означает, что не нужно тратить время, думая, как смоделировать ваш API в терминах HTTP.
-- Генерация URL: Обратной стороной роутинга является генерация URL. Хороший API, основанный на HTTP, включает URL (в качестве примера смотрите [GitHub Gist API](https://developer.github.com/v3/gists/)).
+- Генерация URL: Обратной стороной роутинга является генерация URL. Хороший API, основанный на HTTP, включает URL (в качестве примера смотрите [GitHub Gist API](https://docs.github.com/en/rest/reference/gists)).
 - Отклики с заголовками и редиректами: `head :no_content` и `redirect_to user_url(current_user)` очень удобны. Конечно, заголовки отклика можно добавить руками, но зачем?
 - Кэширование: Rails предоставляет кэширование страниц, экшнов и фрагментов. Кэширование фрагментов особенно полезно при создании вложенных объектов JSON.
 - Базовая, дайджестная и токенная аутентификация: Rails поставляется с поддержкой из коробки трех типов аутентификации HTTP.
@@ -126,6 +126,7 @@ end
 
 API-приложение поставляется со следующими промежуточными программами по умолчанию:
 
+- `ActionDispatch::HostAuthorization`
 - `Rack::Sendfile`
 - `ActionDispatch::Static`
 - `ActionDispatch::Executor`
@@ -136,6 +137,7 @@ API-приложение поставляется со следующими пр
 - `Rails::Rack::Logger`
 - `ActionDispatch::ShowExceptions`
 - `ActionDispatch::DebugExceptions`
+- `ActionDispatch::ActionableExceptions`
 - `ActionDispatch::Reloader`
 - `ActionDispatch::Callbacks`
 - `ActiveRecord::Migration::CheckPending`
@@ -150,7 +152,7 @@ API-приложение поставляется со следующими пр
 Можно получить список всех промежуточных программ вашего приложения с помощью:
 
 ```bash
-$ rails middleware
+$ bin/rails middleware
 ```
 
 ### Использование кэширующей промежуточной программы
@@ -217,7 +219,7 @@ config.action_dispatch.x_sendfile_header = "X-Accel-Redirect"
 
 Вот пример на jQuery:
 
-```javascript
+```js
 jQuery.ajax({
   type: 'POST',
   url: '/people',
@@ -234,6 +236,28 @@ jQuery.ajax({
 { :person => { :firstName => "Yehuda", :lastName => "Katz" } }
 ```
 
+### Использование промежуточных программ для сессий
+
+Следующие промежуточные программы, используемые для управления сессией, исключены из приложений API, так как им обычно не нужны сессии. Если один из ваших клиентов API это браузер, возможно, вы захотите вернуть одну из:
+
+- `ActionDispatch::Session::CacheStore`
+- `ActionDispatch::Session::CookieStore`
+- `ActionDispatch::Session::MemCacheStore`
+
+Трудность в их возврате в том, что по умолчанию при добавлении они передают `session_options` (включая ключ сессии), поэтому нельзя просто добавить инициализатор `session_store.rb`, добавить `use ActionDispatch::Session::CookieStore` и получить функционирующие сессии. (Проясним: сессии может и будут работать, но опции сессии будут игнорироваться - т.е. будет ключ сессии по умолчанию `_session_id`)
+
+Вместо этого инициализатора нужно установить нужные опции где-то до создания стека промежуточных программ (наподобие `config/application.rb`) и передать их в предпочитаемую промежуточную программу, наподобие:
+
+```ruby
+# Это также сконфигурирует session_options для использования ниже
+config.session_store :cookie_store, key: '_interslice_session'
+
+# Требуется для всех управлений сеесиями (независимо от session_store)
+config.middleware.use ActionDispatch::Cookies
+
+config.middleware.use config.session_store, config.session_options
+```
+
 ### Другие промежуточные программы
 
 Rails поставляется с рядом других промежуточных программ, которые вы, возможно, захотите использовать в API-приложении, особенно если одним из клиентов вашего API является браузер:
@@ -241,10 +265,6 @@ Rails поставляется с рядом других промежуточн
 - `Rack::MethodOverride`
 - `ActionDispatch::Cookies`
 - `ActionDispatch::Flash`
-- Для управления сессией
-    * `ActionDispatch::Session::CacheStore`
-    * `ActionDispatch::Session::CookieStore`
-    * `ActionDispatch::Session::MemCacheStore`
 
 Любые из этих промежуточных программ могут быть добавлены с помощью:
 
@@ -279,13 +299,12 @@ API-приложение (использующее `ActionController::API`) по
 - `ActionController::Rescue`: Поддержка для `rescue_from`.
 - `ActionController::Instrumentation`: Поддержка для инструментальных хуков, определенных Action Controller (подробности относительно этого смотрите в руководстве [Инструментарий Active Support](/active-support-instrumentation#action-controller)).
 - `ActionController::ParamsWrapper`: Оборачивает хэш параметров во вложенный хэш, таким образом, к примеру, не нужно указывать корневые элементы при посылка запросов POST.
-- `ActionController::Head`: Поддержка возврата отклика без тела сообщения, только заголовки
+- `ActionController::Head`: Поддержка возврата отклика без тела сообщения, только заголовки.
 
 Другие плагины могут добавлять дополнительные модули. Список всех модулей, включенных в `ActionController::API` можно получить в консоли rails:
 
-```bash
-$ rails c
->> ActionController::API.ancestors - ActionController::Metal.ancestors
+```irb
+irb> ActionController::API.ancestors - ActionController::Metal.ancestors
 => [ActionController::API,
     ActiveRecord::Railties::ControllerRuntime,
     ActionDispatch::Routing::RouteSet::MountedHelpers,
@@ -303,19 +322,21 @@ $ rails c
 
 - `AbstractController::Translation`: Поддержка для методов локализации `l` и перевода `t`.
 - Поддержка для базовой, дайджестной или токенной аутентификации HTTP:
-  * `ActionController::HttpAuthentication::Basic::ControllerMethods`,
-  * `ActionController::HttpAuthentication::Digest::ControllerMethods`,
+  * `ActionController::HttpAuthentication::Basic::ControllerMethods`
+  * `ActionController::HttpAuthentication::Digest::ControllerMethods`
   * `ActionController::HttpAuthentication::Token::ControllerMethods`
 - `ActionView::Layouts`: Поддержка для макетов при рендеринге.
 - `ActionController::MimeResponds`: Поддержка для `respond_to`.
 - `ActionController::Cookies`: Поддержка для `cookies`, что включает поддержку для подписанных и зашифрованных куки. Он требует промежуточную программу для куки.
 - `ActionController::Caching`: Поддержка кэширования вью для контроллера API. Отметьте, что нужно вручную указать хранилище кэша внутри контроллера подобно следующему:
-  ```ruby
-  class ApplicationController < ActionController::API
-    include ::ActionController::Caching
-    self.cache_store = :mem_cache_store
-  end
-  ```
+
+    ```ruby
+    class ApplicationController < ActionController::API
+      include ::ActionController::Caching
+      self.cache_store = :mem_cache_store
+    end
+    ```
+
   Rails *не* передает эту конфигурацию автоматически.
 
 Лучшим местом для добавления модулей является `ApplicationController`, но вы также можете добавить модули в отдельные контроллеры.
