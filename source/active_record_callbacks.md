@@ -81,46 +81,65 @@ end
 
 ### Создание объекта
 
-* `before_validation`
-* `after_validation`
-* `before_save`
-* `around_save`
-* `before_create`
-* `around_create`
-* `after_create`
-* `after_save`
-* `after_commit/after_rollback`
+* [`before_validation`][]
+* [`after_validation`][]
+* [`before_save`][]
+* [`around_save`][]
+* [`before_create`][]
+* [`around_create`][]
+* [`after_create`][]
+* [`after_save`][]
+* [`after_commit`][] / [`after_rollback`][]
+
+[`after_create`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_create
+[`after_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_commit
+[`after_rollback`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_rollback
+[`after_save`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_save
+[`after_validation`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/Callbacks/ClassMethods.html#method-i-after_validation
+[`around_create`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_create
+[`around_save`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_save
+[`before_create`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_create
+[`before_save`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_save
+[`before_validation`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/Callbacks/ClassMethods.html#method-i-before_validation
 
 ### Обновление объекта
 
-* `before_validation`
-* `after_validation`
-* `before_save`
-* `around_save`
-* `before_update`
-* `around_update`
-* `after_update`
-* `after_save`
-* `after_commit/after_rollback`
+* [`before_validation`][]
+* [`after_validation`][]
+* [`before_save`][]
+* [`around_save`][]
+* [`before_update`][]
+* [`around_update`][]
+* [`after_update`][]
+* [`after_save`][]
+* [`after_commit`][] / [`after_rollback`][]
+
+[`after_update`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_update
+[`around_update`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_update
+[`before_update`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_update
 
 ### Уничтожение объекта
 
-* `before_destroy`
-* `around_destroy`
-* `after_destroy`
-* `after_commit/after_rollback`
+* [`before_destroy`][]
+* [`around_destroy`][]
+* [`after_destroy`][]
+* [`after_commit`][] / [`after_rollback`][]
+
+[`after_destroy`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_destroy
+[`around_destroy`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_destroy
+[`before_destroy`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_destroy
 
 WARNING. `after_save` запускается и при создании, и при обновлении, но всегда _после_ более специфичных колбэков `after_create` и `after_update`, независимо от порядка, в котором выполняются макро-вызовы.
 
-WARNING. Следует соблюдать осторожность в колбэках, избегая обновления атрибутов. Например, избегайте запуска `update(attribute: "value")` и подобного кода в колбэках. Это может изменить состояние модели и может привести к неожиданным побочным эффектам в при завершении транзакции. Вместо этого следует присваивать значения в `before_create` и более ранних колбэках.
+WARNING. Избегайте обновления или сохранения атрибутов в колбэках. Например, не вызывайте `update(attribute: "value")` внутри колбэка. Это может изменить состояние модели и может привести к неожиданным побочным эффектам в при завершении транзакции. Вместо этого можно безопасно присваивать значения напрямую (например, `self.attribute = "value"`) в `before_create` / `before_update` или более ранних колбэках.
 
 NOTE: Колбэк `before_destroy` должен быть размещен перед связями `dependent: :destroy` (или использовать опцию `prepend: true`), чтобы убедиться, что они выполняются до того, как записи будут удалены с помощью `dependent: :destroy`.
 
 ### `after_initialize` и `after_find`
 
-Колбэк `after_initialize` вызывается всякий раз, когда возникает экземпляр объекта Active Record, или непосредственно при использовании `new`, или когда запись загружается из базы данных. Он может быть полезен, чтобы избежать необходимости напрямую переопределять метод Active Record `initialize`.
+Колбэк [`after_initialize`][] вызывается всякий раз, когда возникает экземпляр объекта Active Record, или непосредственно при использовании `new`, или когда запись загружается из базы данных. Он может быть полезен, чтобы избежать необходимости напрямую переопределять метод Active Record `initialize`.
 
-Колбэк `after_find` будет вызван всякий раз, когда Active Record загружает запись из базы данных. `after_find` вызывается перед `after_initialize`, если они оба определены.
+Колбэк [`after_find`][] будет вызван всякий раз, когда Active Record загружает запись из базы данных. `after_find` вызывается перед `after_initialize`, если они оба определены.
 
 У колбэков `after_initialize` и `after_find` нет пары `before_*`, но они могут быть зарегистрированы подобно другим колбэкам Active Record.
 
@@ -134,20 +153,25 @@ class User < ApplicationRecord
     puts "You have found an object!"
   end
 end
+```
 
->> User.new
+```irb
+irb> User.new
 You have initialized an object!
 => #<User id: nil>
 
->> User.first
+irb> User.first
 You have found an object!
 You have initialized an object!
 => #<User id: 1>
 ```
 
+[`after_find`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_find
+[`after_initialize`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_initialize
+
 ### `after_touch`
 
-Колбэк `after_touch` будет вызван, когда на объекте Active Record вызван `touch`.
+Колбэк [`after_touch`][] будет вызван, когда на объекте Active Record вызван `touch`.
 
 ```ruby
 class User < ApplicationRecord
@@ -155,11 +179,13 @@ class User < ApplicationRecord
     puts "You have touched an object"
   end
 end
+```
 
->> u = User.create(name: 'Kuldeep')
+```irb
+irb> u = User.create(name: 'Kuldeep')
 => #<User id: 1, name: "Kuldeep", created_at: "2013-11-25 12:17:49", updated_at: "2013-11-25 12:17:49">
 
->> u.touch
+irb> u.touch
 You have touched an object
 => true
 ```
@@ -183,16 +209,19 @@ class Company < ApplicationRecord
       puts 'Employee/Company was touched'
     end
 end
+```
 
->> @employee = Employee.last
+```irb
+irb> @employee = Employee.last
 => #<Employee id: 1, company_id: 1, created_at: "2013-11-25 17:04:22", updated_at: "2013-11-25 17:05:05">
 
-# вызывает @employee.company.touch
->> @employee.touch
+irb> @employee.touch # вызывает @employee.company.touch
 An Employee was touched
 Employee/Company was touched
 => true
 ```
+
+[`after_touch`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_touch
 
 Запуск колбэков
 ---------------
@@ -204,6 +233,7 @@ Employee/Company was touched
 * `destroy`
 * `destroy!`
 * `destroy_all`
+* `destroy_by`
 * `save`
 * `save!`
 * `save(validate: false)`
@@ -239,13 +269,21 @@ NOTE: Методы `find_by_*` и `find_by_*!` это динамические �
 * `decrement_counter`
 * `delete`
 * `delete_all`
+* `delete_by`
 * `increment`
 * `increment!`
 * `increment_counter`
+* `insert`
+* `insert!`
+* `insert_all`
+* `insert_all!`
+* `touch_all`
 * `update_column`
 * `update_columns`
 * `update_all`
 * `update_counters`
+* `upsert`
+* `upsert_all`
 
 Однако, эти методы нужно использовать осторожно, поскольку важные бизнес-правила и логика приложения могут содержаться в колбэках. Пропуск их без понимания возможных последствий может привести к невалидным данным.
 
@@ -281,12 +319,14 @@ class Article < ActiveRecord::Base
     puts 'Article destroyed'
   end
 end
+```
 
->> user = User.first
+```irb
+irb> user = User.first
 => #<User id: 1>
->> user.articles.create!
+irb> user.articles.create!
 => #<Article id: 1, user_id: 1>
->> user.destroy
+irb> user.destroy
 Article destroyed
 => #<User id: 1>
 ```
@@ -400,7 +440,7 @@ end
 Транзакционные колбэки
 ----------------------
 
-Имеются два дополнительных колбэка, которые включаются по завершению транзакции базы данных: `after_commit` и `after_rollback`. Эти колбэки очень похожи на колбэк `after_save`, за исключением того, что они не выполняются пока изменения в базе данных не будут подтверждены или обращены. Они наиболее полезны, когда вашим моделям Active Record необходимо взаимодействовать с внешними системами, не являющимися частью транзакции базы данных.
+Имеются два дополнительных колбэка, которые включаются по завершению транзакции базы данных: [`after_commit`][] и [`after_rollback`][]. Эти колбэки очень похожи на колбэк `after_save`, за исключением того, что они не выполняются пока изменения в базе данных не будут подтверждены или обращены. Они наиболее полезны, когда вашим моделям Active Record необходимо взаимодействовать с внешними системами, не являющимися частью транзакции базы данных.
 
 Рассмотрим, допустим, предыдущий пример, где модели `PictureFile` необходимо удалить файл после того, как запись уничтожена. Если что-либо вызовет исключение после того, как был вызван колбэк `after_destroy`, и транзакция откатывается, файл будет удален и модель останется в противоречивом состоянии. Например, предположим, что `picture_file_2` в следующем коде не валидна, и метод `save!` вызовет ошибку.
 
@@ -429,9 +469,9 @@ NOTE: Опция `:on` определяет, когда будет запуще�
 
 Так как принято использовать колбэк `after_commit` только при создании, обновлении или удалении, есть псевдонимы для этих операций:
 
-* `after_create_commit`
-* `after_update_commit`
-* `after_destroy_commit`
+* [`after_create_commit`][]
+* [`after_update_commit`][]
+* [`after_destroy_commit`][]
 
 ```ruby
 class PictureFile < ApplicationRecord
@@ -461,18 +501,18 @@ class User < ApplicationRecord
     puts 'User was saved to database'
   end
 end
+```
 
-# ничего не выводит
->> @user = User.create
+```irb
+irb> @user = User.create # ничего не выводит
 
-# обновление @user
->> @user.save
-=> User was saved to database
+irb> @user.save # обновление @user
+User was saved to database
 ```
 
 Также есть псевдоним для использования колбэка `after_commit` совместно для создания и обновления:
 
-* `after_save_commit`
+* [`after_save_commit`][]
 
 ```ruby
 class User < ApplicationRecord
@@ -483,12 +523,17 @@ class User < ApplicationRecord
     puts 'User was saved to database'
   end
 end
-
-# создание User
->> @user = User.create
-=> User was saved to database
-
-# обновление @user
->> @user.save
-=> User was saved to database
 ```
+
+```irb
+irb> @user = User.create # создание a User
+User was saved to database
+
+irb> @user.save # обновление @user
+User was saved to database
+```
+
+[`after_create_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_create_commit
+[`after_destroy_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_destroy_commit
+[`after_save_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_save_commit
+[`after_update_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_update_commit
