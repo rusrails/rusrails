@@ -141,8 +141,8 @@ pages:
   - title:    Основы Active Job
     path:     active_job_basics
     file:     active_job_basics.md
-    revision: f61dbbcba9ea50dfd62978a6d8de2f6b167b01d1
-    date:     22/01/2020
+    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
+    date:     22/12/2020
 
   - title:    Обзор Active Storage
     path:     active_storage_overview

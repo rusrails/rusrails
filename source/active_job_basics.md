@@ -64,7 +64,7 @@ end
 
 ### Помещение задания в очередь
 
-Поместить задание в очередь можно так:
+Поместите задание в очередь с помощью [`perform_later`][] и, опционально, [`set`][]. Например, так:
 
 ```ruby
 # Помещенное в очередь задание выполнится, как только освободится система очередей.
@@ -89,6 +89,9 @@ GuestsCleanupJob.perform_later(guest1, guest2, filter: 'some_filter')
 
 Вот и все!
 
+[`perform_later`]: https://api.rubyonrails.org/classes/ActiveJob/Enqueuing/ClassMethods.html#method-i-perform_later
+[`set`]: https://api.rubyonrails.org/classes/ActiveJob/Core/ClassMethods.html#method-i-set
+
 Выполнение заданий
 ------------------
 
@@ -96,7 +99,9 @@ GuestsCleanupJob.perform_later(guest1, guest2, filter: 'some_filter')
 
 ### Бэкенды
 
-У Active Job есть встроенные адаптеры для различных бэкендов очередей (Sidekiq, Resque, Delayed Job и другие). Чтобы получить актуальный список адаптеров, обратитесь к документации API по [ActiveJob::QueueAdapters](https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html).
+У Active Job есть встроенные адаптеры для различных бэкендов очередей (Sidekiq, Resque, Delayed Job и другие). Чтобы получить актуальный список адаптеров, обратитесь к документации API по [`ActiveJob::QueueAdapters`][].
+
+[`ActiveJob::QueueAdapters`]: https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html
 
 ### Настройка бэкенда
 
@@ -113,12 +118,12 @@ module YourApp
 end
 ```
 
-Также можно настроить бэкенд для отдельного задания.
+Также можно настроить бэкенд для отдельного задания:
 
 ```ruby
 class GuestsCleanupJob < ApplicationJob
   self.queue_adapter = :resque
-  #....
+  # ...
 end
 
 # Теперь ваше задание будет использовать `resque` в качестве адаптера бэкенда очереди,
@@ -142,12 +147,12 @@ end
 Очереди
 -------
 
-Большая часть адаптеров поддерживает несколько очередей. С помощью Active Job можно запланировать, что задание будет выполнено в определенной очереди:
+Большая часть адаптеров поддерживает несколько очередей. С помощью Active Job можно запланировать, что задание будет выполнено в определенной очереди, с помощью [`queue_as`][]:
 
 ```ruby
 class GuestsCleanupJob < ApplicationJob
   queue_as :low_priority
-  #....
+  # ...
 end
 ```
 
@@ -160,11 +165,13 @@ module YourApp
     config.active_job.queue_name_prefix = Rails.env
   end
 end
+```
 
+```ruby
 # app/jobs/guests_cleanup_job.rb
 class GuestsCleanupJob < ApplicationJob
   queue_as :low_priority
-  #....
+  # ...
 end
 
 # Теперь ваше задание запустится в очереди production_low_priority в среде
@@ -177,7 +184,7 @@ end
 class GuestsCleanupJob < ApplicationJob
   queue_as :low_priority
   self.queue_name_prefix = nil
-  #....
+  # ...
 end
 
 # Теперь очередь задания не будет иметь префикс, переопределяя то,
@@ -194,24 +201,26 @@ module YourApp
     config.active_job.queue_name_delimiter = '.'
   end
 end
+```
 
+```ruby
 # app/jobs/guests_cleanup_job.rb
 class GuestsCleanupJob < ApplicationJob
   queue_as :low_priority
-  #....
+  # ...
 end
 
 # Теперь ваше задание запустится в очереди production.low_priority в среде
 # production и в staging.low_priority в среде staging
 ```
 
-Если хотите больше контроля, в какой очереди задание будет запущено, можно передать опцию `:queue` в `#set`:
+Если хотите больше контроля, в какой очереди задание будет запущено, можно передать опцию `:queue` в `set`:
 
 ```ruby
 MyJob.set(queue: :another_queue).perform_later(record)
 ```
 
-Чтобы контролировать очередь на уровне задания, можно передать блок в `#queue_as`. Блок будет выполнен в контексте задания (таким образом, у вас будет доступ к `self.arguments`), и он должен вернуть имя очереди:
+Чтобы контролировать очередь на уровне задания, можно передать блок в `queue_as`. Блок будет выполнен в контексте задания (таким образом, у него будет доступ к `self.arguments`), и он должен вернуть имя очереди:
 
 ```ruby
 class ProcessVideoJob < ApplicationJob
@@ -228,11 +237,15 @@ class ProcessVideoJob < ApplicationJob
     # Делаем обработку видео
   end
 end
+```
 
+```ruby
 ProcessVideoJob.perform_later(Video.last)
 ```
 
 NOTE: Убедитесь, что ваш бэкенд для очередей "слушает" имя вашей очереди. Для некоторых бэкендов необходимо указать очереди, которые нужно слушать.
+
+[`queue_as`]: https://api.rubyonrails.org/classes/ActiveJob/QueueName/ClassMethods.html#method-i-queue_as
 
 Колбэки
 -------
@@ -268,12 +281,19 @@ end
 
 ### Доступные колбэки
 
-* `before_enqueue`
-* `around_enqueue`
-* `after_enqueue`
-* `before_perform`
-* `around_perform`
-* `after_perform`
+* [`before_enqueue`][]
+* [`around_enqueue`][]
+* [`after_enqueue`][]
+* [`before_perform`][]
+* [`around_perform`][]
+* [`after_perform`][]
+
+[`before_enqueue`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-before_enqueue
+[`around_enqueue`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-around_enqueue
+[`after_enqueue`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-after_enqueue
+[`before_perform`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-before_perform
+[`around_perform`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-around_perform
+[`after_perform`]: https://api.rubyonrails.org/classes/ActiveJob/Callbacks/ClassMethods.html#method-i-after_perform
 
 Action Mailer
 -------------
@@ -319,7 +339,7 @@ ActiveJob по умолчанию поддерживает следующие т
 
 ### GlobalID
 
-Active Job поддерживает GlobalID для параметров. Это позволяет передавать объекты Active Record в ваши задания, вместо пар класс/id, которые нужно затем десериализовать вручную. Раньше задания выглядели так:
+Active Job поддерживает [GlobalID](https://github.com/rails/globalid/blob/master/README.md) для параметров. Это позволяет передавать объекты Active Record в ваши задания, вместо пар класс/id, которые нужно затем десериализовать вручную. Раньше задания выглядели так:
 
 ```ruby
 class TrashableCleanupJob < ApplicationJob
@@ -379,7 +399,7 @@ Rails.application.config.active_job.custom_serializers << MoneySerializer
 Исключения
 ----------
 
-Active Job предоставляет способ отлова исключений, возникших во время выполнения задания:
+Исключения, вызванные в течение исполнения задания, могут быть обработаны с помощью [`rescue_from`][]:
 
 ```ruby
 
@@ -396,15 +416,15 @@ class GuestsCleanupJob < ApplicationJob
 end
 ```
 
-Если исключение не будет поймано внутри задания, например, как показано выше, тогда задание будет помечено как "неудачное".
+Если исключение от задания не будет поймано, тогда задание будет помечено как "неудачное".
+
+[`rescue_from`]: https://api.rubyonrails.org/classes/ActiveSupport/Rescuable/ClassMethods.html#method-i-rescue_from
 
 ### Повторная отправка или отмена неудачных заданий
 
 Неудачное задание не будет повторено, если не настроено обратное.
 
-Также возможно повторить отправку или отменить задание, если во время выполнения было вызвано исключение.
-
-Например:
+Возможно повторить отправку или отменить неудачное задание, с помощью [`retry_on`] или [`discard_on`], соответственно. Например:
 
 ```ruby
 class RemoteServiceJob < ApplicationJob
@@ -418,15 +438,18 @@ class RemoteServiceJob < ApplicationJob
 end
 ```
 
-Более подробную информацию смотрите в документации по API для [ActiveJob::Exceptions](https://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html).
+[`discard_on`]: https://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html#method-i-discard_on
+[`retry_on`]: https://api.rubyonrails.org/classes/ActiveJob/Exceptions/ClassMethods.html#method-i-retry_on
 
 ### Десериализация
 
 GlobalID позволяет сериализовать полностью объекты Active Record, переданные в `#perform`.
 
-Если переданная запись была удалена после того, как задание было помещено в очередь, но до того, как метод `#perform` был вызван, Active Job вызовет исключение `ActiveJob::DeserializationError`.
+Если переданная запись была удалена после того, как задание было помещено в очередь, но до того, как метод `#perform` был вызван, Active Job вызовет исключение [`ActiveJob::DeserializationError`][].
+
+[`ActiveJob::DeserializationError`]: https://api.rubyonrails.org/classes/ActiveJob/DeserializationError.html
 
 Тестирование заданий
 --------------------
 
-Вы можете найти подробные инструкции о том, как тестировать ваши задания в руководстве [Тестирование приложений на Rails](a-guide-to-testing-rails-applications#jobs-testing).
+Подробные инструкции о том, как тестировать ваши задания, можно найти в руководстве [Тестирование приложений на Rails](a-guide-to-testing-rails-applications#jobs-testing).
