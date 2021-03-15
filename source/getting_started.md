@@ -1365,7 +1365,7 @@ class Article < ApplicationRecord
 
   VALID_STATUSES = ['public', 'private', 'archived']
 
-  validates :status, in: VALID_STATUSES
+  validates :status, inclusion: VALID_STATUSES
 
   def archived?
     status == 'archived'
@@ -1381,7 +1381,7 @@ class Comment < ApplicationRecord
 
   VALID_STATUSES = ['public', 'private', 'archived']
 
-  validates :status, in: VALID_STATUSES
+  validates :status, inclusion: VALID_STATUSES
 
   def archived?
     status == 'archived'
@@ -1430,7 +1430,7 @@ module Visible
   included do
     VALID_STATUSES = ['public', 'private', 'archived']
 
-    validates :status, in: VALID_STATUSES
+    validates :status, inclusion: VALID_STATUSES
   end
 
   def archived?
@@ -1472,7 +1472,7 @@ module Visible
   VALID_STATUSES = ['public', 'private', 'archived']
 
   included do
-    validates :status, in: VALID_STATUSES
+    validates :status, inclusion: VALID_STATUSES
   end
 
   class_methods do
