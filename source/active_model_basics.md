@@ -40,12 +40,17 @@ class Person
       send(attribute) > 100
     end
 end
+```
 
-person = Person.new
-person.age = 110
-person.age_highest?  # => true
-person.reset_age     # => 0
-person.age_highest?  # => false
+```irb
+irb> person = Person.new
+irb> person.age = 110
+irb> person.age_highest?
+=> true
+irb> person.reset_age
+=> 0
+irb> person.age_highest?
+=> false
 ```
 
 ### Колбэки
@@ -88,11 +93,16 @@ class Person
     nil
   end
 end
+```
 
-person = Person.new
-person.to_model == person  # => true
-person.to_key              # => nil
-person.to_param            # => nil
+```irb
+irb> person = Person.new
+irb> person.to_model == person
+=> true
+irb> person.to_key
+=> nil
+irb> person.to_param
+=> nil
 ```
 
 ### Грязный объект
@@ -131,49 +141,61 @@ end
 
 #### Запрашиваем у объекта список всех измененных атрибутов.
 
-```ruby
-person = Person.new
-person.changed? # => false
+```irb
+irb> person = Person.new
+irb> person.changed?
+=> false
 
-person.first_name = "First Name"
-person.first_name # => "First Name"
+irb> person.first_name = "First Name"
+irb> person.first_name
+=> "First Name"
 
-# возвращает true, если хотя бы у одного из атрибутов есть несохраненное значение.
-person.changed? # => true
+# Возвращает true, если хотя бы у одного из атрибутов есть несохраненное значение.
+irb> person.changed?
+=> true
 
-# возвращает список атрибутов, которые были изменены до сохранения.
-person.changed # => ["first_name"]
+# Возвращает список атрибутов, которые были изменены до сохранения.
+irb> person.changed
+=> ["first_name"]
 
-# возвращает хэш с измененными атрибутами вместе с их первоначальными значениями.
-person.changed_attributes # => {"first_name"=>nil}
+# Возвращает хэш с измененными атрибутами вместе с их первоначальными значениями.
+irb> person.changed_attributes
+=> {"first_name"=>nil}
 
-# возвращает хэш изменений с именами атрибутов в качестве ключей, и их значений как массива, который содержит старое и новое значение поля.
-person.changes # => {"first_name"=>[nil, "First Name"]}
+# Возвращает хэш изменений с именами атрибутов в качестве ключей, и их значений как массива, который содержит старое и новое значение поля.
+irb> person.changes
+=> {"first_name"=>[nil, "First Name"]}
 ```
 
 #### Атрибуты, основанные на акцессор-методах
 
 Отслеживает, был ли атрибут изменен или нет.
 
-```ruby
+```irb
+irb> person.first_name
+=> "First Name"
+
 # attr_name_changed?
-person.first_name # => "First Name"
-person.first_name_changed? # => true
+irb> person.first_name_changed?
+=> true
 ```
 
 Отслеживает предыдущее значение атрибута.
 
-```ruby
+```irb
 # акцессор attr_name_was
-person.first_name_was # => nil
+irb> person.first_name_was
+=> nil
 ```
 
 Отслеживает старое и новое значение измененного атрибута. Возвращает массив, если изменяли, в противном случае nil.
 
-```ruby
+```irb
 # attr_name_change
-person.first_name_change # => [nil, "First Name"]
-person.last_name_change # => nil
+irb> person.first_name_change
+=> [nil, "First Name"]
+irb> person.last_name_change
+=> nil
 ```
 
 ### Валидации
@@ -190,17 +212,23 @@ class Person
   validates_format_of :email, with: /\A([^\s]+)((?:[-a-z0-9]\.)[a-z]{2,})\z/i
   validates! :token, presence: true
 end
+```
 
-person = Person.new
-person.token = "2b1f325"
-person.valid?                        # => false
-person.name = 'vishnu'
-person.email = 'me'
-person.valid?                        # => false
-person.email = 'me@vishnuatrai.com'
-person.valid?                        # => true
-person.token = nil
-person.valid?                        # => вызывается ActiveModel::StrictValidationFailed
+```irb
+irb> person = Person.new
+irb> person.token = "2b1f325"
+irb> person.valid?
+=> false
+irb> person.name = 'vishnu'
+irb> person.email = 'me'
+irb> person.valid?
+=> false
+irb> person.email = 'me@vishnuatrai.com'
+irb> person.valid?
+=> true
+irb> person.token = nil
+irb> person.valid?
+ActiveModel::StrictValidationFailed
 ```
 
 ### Именование
@@ -252,14 +280,16 @@ end
 
 Он также дает возможность инициализировать объект с помощью хэша атрибутов, подобно любому объекту Active Record.
 
-```ruby
-email_contact = EmailContact.new(name: 'David',
-                                 email: 'david@example.com',
-                                 message: 'Hello World')
-email_contact.name       # => 'David'
-email_contact.email      # => 'david@example.com'
-email_contact.valid?     # => true
-email_contact.persisted? # => false
+```irb
+irb> email_contact = EmailContact.new(name: 'David', email: 'david@example.com', message: 'Hello World')
+irb> email_contact.name
+=> "David"
+irb> email_contact.email
+=> "david@example.com"
+irb> email_contact.valid?
+=> true
+irb> email_contact.persisted?
+=> false
 ```
 
 Любой класс, включающий `ActiveModel::Model`, может быть использован с `form_with`, `render` и любыми другими методами хелпера Action View, точно так же, как и объекты Active Record.
@@ -282,11 +312,13 @@ end
 
 Теперь можно получить доступ к сериализованному хэшу вашего объекта с помощью метода `serializable_hash`.
 
-```ruby
-person = Person.new
-person.serializable_hash   # => {"name"=>nil}
-person.name = "Bob"
-person.serializable_hash   # => {"name"=>"Bob"}
+```irb
+irb> person = Person.new
+irb> person.serializable_hash
+=> {"name"=>nil}
+irb> person.name = "Bob"
+irb> person.serializable_hash
+=> {"name"=>"Bob"}
 ```
 
 #### ActiveModel::Serializers
@@ -311,11 +343,13 @@ end
 
 Метод `as_json`, подобно `serializable_hash`, предоставляет хэш, описывающий модель.
 
-```ruby
-person = Person.new
-person.as_json # => {"name"=>nil}
-person.name = "Bob"
-person.as_json # => {"name"=>"Bob"}
+```irb
+irb> person = Person.new
+irb> person.as_json
+=> {"name"=>nil}
+irb> person.name = "Bob"
+irb> person.as_json
+=> {"name"=>"Bob"}
 ```
 
 Также можно определить атрибуты для модели из строки JSON. Однако, в классе нужно определить метод `attributes=`:
@@ -340,11 +374,13 @@ end
 
 Теперь есть возможность создавать экземпляры `Person` и устанавливать атрибуты с помощью `from_json`.
 
-```ruby
-json = { name: 'Bob' }.to_json
-person = Person.new
-person.from_json(json) # => #<Person:0x00000100c773f0 @name="Bob">
-person.name            # => "Bob"
+```irb
+irb> json = { name: 'Bob' }.to_json
+irb> person = Person.new
+irb> person.from_json(json)
+=> #<Person:0x00000100c773f0 @name="Bob">
+irb> person.name
+=> "Bob"
 ```
 
 ### Перевод
@@ -437,39 +473,54 @@ class Person
 
   attr_accessor :password_digest, :recovery_password_digest
 end
+```
 
-person = Person.new
+```irb
+irb> person = Person.new
 
 # Когда пароль пустой.
-person.valid? # => false
+irb> person.valid?
+=> false
 
 # Когда подтверждение не совпадает с паролем.
-person.password = 'aditya'
-person.password_confirmation = 'nomatch'
-person.valid? # => false
+irb> person.password = 'aditya'
+irb> person.password_confirmation = 'nomatch'
+irb> person.valid?
+=> false
 
 # Когда длина пароля превышает 72.
-person.password = person.password_confirmation = 'a' * 100
-person.valid? # => false
+irb> person.password = person.password_confirmation = 'a' * 100
+irb> person.valid?
+=> false
 
 # Когда предоставлен только пароль без password_confirmation.
-person.password = 'aditya'
-person.valid? # => true
+irb> person.password = 'aditya'
+irb> person.valid?
+=> true
 
 # Когда проходят все валидации.
-person.password = person.password_confirmation = 'aditya'
-person.valid? # => true
+irb> person.password = person.password_confirmation = 'aditya'
+irb> person.valid?
+=> true
 
-person.recovery_password = "42password"
+irb> person.recovery_password = "42password"
 
-person.authenticate('aditya') # => person
-person.authenticate('notright') # => false
-person.authenticate_password('aditya') # => person
-person.authenticate_password('notright') # => false
+irb> person.authenticate('aditya')
+=> #<Person> # == person
+irb> person.authenticate('notright')
+=> false
+irb> person.authenticate_password('aditya')
+=> #<Person> # == person
+irb> person.authenticate_password('notright')
+=> false
 
-person.authenticate_recovery_password('42password') # => person
-person.authenticate_recovery_password('notright') # => false
+irb> person.authenticate_recovery_password('42password')
+=> #<Person> # == person
+irb> person.authenticate_recovery_password('notright')
+=> false
 
-person.password_digest # => "$2a$04$gF8RfZdoXHvyTjHhiU4ZsO.kQqV9oonYZu31PRE4hLQn3xM2qkpIy"
-person.recovery_password_digest # => "$2a$04$iOfhwahFymCs5weB3BNH/uXkTG65HR.qpW.bNhEjFP3ftli3o5DQC"
+irb> person.password_digest
+=> "$2a$04$gF8RfZdoXHvyTjHhiU4ZsO.kQqV9oonYZu31PRE4hLQn3xM2qkpIy"
+irb> person.recovery_password_digest
+=> "$2a$04$iOfhwahFymCs5weB3BNH/uXkTG65HR.qpW.bNhEjFP3ftli3o5DQC"
 ```
