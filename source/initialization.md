@@ -281,7 +281,7 @@ module Rails
       log_to_stdout if options[:log_stdout]
 
       super()
-      ...
+      # ...
     end
 
     private
@@ -386,7 +386,8 @@ module Rack
     def app
       @app ||= options[:builder] ? build_app_from_string : build_app_and_options_from_config
     end
-    ...
+
+    # ...
 
     private
       def build_app_and_options_from_config
@@ -422,12 +423,12 @@ run Rails.application
 module Rack
   class Builder
     def self.load_file(path, opts = Server::Options.new)
-      ...
+      # ...
       app = new_from_string cfgfile, config
-      ...
+      # ...
     end
 
-    ...
+    # ...
 
     def self.new_from_string(builder_script, file="(rackup)")
       eval "Rack::Builder.new {\n" + builder_script + "\n}.to_app",
@@ -522,7 +523,7 @@ def initialize!(group = :default) #:nodoc:
 end
 ```
 
-Как видите, инициализировать приложение можно лишь единожды. Инициализаторы запускаются с помощью метода `run_initializers`, который определен в `railties/lib/rails/initializable.rb`:
+Инициализировать приложение можно лишь единожды. [Инициализаторы Railtie](/configuring-rails-applications#initializers) запускаются с помощью метода `run_initializers`, который определен в `railties/lib/rails/initializable.rb`:
 
 ```ruby
 def run_initializers(group = :default, *args)
@@ -538,6 +539,9 @@ end
 
 Класс `Rails::Application`, как определено в `railties/lib/rails/application.rb`, определяет инициализаторы `bootstrap`, `railtie` и `finisher`. Инициализаторы `bootstrap` подготавливает приложение (такие как инициализатор логгера), в то время как инициализаторы `finisher` (такие как создание стека промежуточных программ) запускаются последними. Инициализаторы `railtie` – это инициализаторы, которые определены самим `Rails::Application` и запускаются между `bootstrap` и `finisher`.
 
+*Note:* Не путайте общие инициализаторы Railtie с экземпляром инициализатора [load_config_initializers](/configuring-rails-applications#initialization)
+initializer instance or its associated config initializers in `config/initializers`.
+
 После того, как это закончится, мы вернемся в `Rack::Server`.
 
 ### Rack: lib/rack/server.rb
@@ -550,7 +554,8 @@ module Rack
     def app
       @app ||= options[:builder] ? build_app_from_string : build_app_and_options_from_config
     end
-    ...
+
+    # ...
 
     private
       def build_app_and_options_from_config
@@ -602,7 +607,7 @@ server.run wrapped_app, options, &blk
 module Rack
   module Handler
     module Puma
-      ...
+      # ...
       def self.run(app, options = {})
         conf   = self.config(app, options)
 
@@ -619,7 +624,7 @@ module Rack
           puts "* Goodbye!"
         end
       end
-      ...
+      # ...
     end
   end
 end
