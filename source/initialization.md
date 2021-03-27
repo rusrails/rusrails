@@ -539,8 +539,7 @@ end
 
 Класс `Rails::Application`, как определено в `railties/lib/rails/application.rb`, определяет инициализаторы `bootstrap`, `railtie` и `finisher`. Инициализаторы `bootstrap` подготавливает приложение (такие как инициализатор логгера), в то время как инициализаторы `finisher` (такие как создание стека промежуточных программ) запускаются последними. Инициализаторы `railtie` – это инициализаторы, которые определены самим `Rails::Application` и запускаются между `bootstrap` и `finisher`.
 
-*Note:* Не путайте общие инициализаторы Railtie с экземпляром инициализатора [load_config_initializers](/configuring-rails-applications#initialization)
-initializer instance or its associated config initializers in `config/initializers`.
+*Note:* Не путайте общие инициализаторы Railtie с экземпляром инициализатора [load_config_initializers](/configuring-rails-applications#initialization) или связанные с ним инициализаторами конфигурации в `config/initializers`.
 
 После того, как это закончится, мы вернемся в `Rack::Server`.
 
