@@ -33,6 +33,7 @@
     * [Основы Active Job](/active_job_basics)
     * [Обзор Active Storage](/active_storage_overview)
     * [Обзор Action Cable](/action-cable-overview)
+    * [Webpacker](/webpacker)
 
 * **Копаем глубже**
 
@@ -42,12 +43,12 @@
     * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Командная строка Rails](/a-guide-to-the-rails-command-line)
-    * [Asset Pipeline](/asset-pipeline)
 
 next_column
 
 * **Копаем глубже**
 
+    * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Процесс инициализации в Rails](/initialization)
     * [Автозагрузка и перезагрузка констант (режим Zeitwerk)](/constant_autoloading_and_reloading)
