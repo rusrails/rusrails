@@ -306,3 +306,5 @@ class ForwardsMailboxTest < ActionMailbox::TestCase
   end
 end
 ```
+
+За остальными тестовыми вспомогательными методами обратитесь к [ActionMailbox::TestHelper API](https://api.rubyonrails.org/classes/ActionMailbox/TestHelper.html).
