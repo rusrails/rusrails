@@ -150,6 +150,18 @@ pages:
     revision: a1408e72f7c4fc25ba6356a5022c87cf45a49d39
     date:     29/01/2021
 
+  - title:    Обзор Action Cable
+    path:     action-cable-overview
+    file:     action_cable_overview.md
+    revision: bec743eaf6b6bbf45feb1f1c69ef39f449a3a1e3
+    date:     19/01/2021
+
+  - title:    Webpacker
+    path:     webpacker
+    file:     webpacker.md
+    revision: 6d0773a468a1f45e7f35ddfe44af48adeaf0ca76
+    date:     20/02/2021
+
   - title:    Тестирование приложений на Rails
     path:     a-guide-to-testing-rails-applications
     file:     testing.md
@@ -221,12 +233,6 @@ pages:
     file:     autoloading_and_reloading_constants_classic_mode.md
     revision: 1cd20bd384554ec7387ca47efebf24bb18cb2b32
     date:     05/01/2021
-
-  - title:    Обзор Action Cable
-    path:     action-cable-overview
-    file:     action_cable_overview.md
-    revision: bec743eaf6b6bbf45feb1f1c69ef39f449a3a1e3
-    date:     19/01/2021
 
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
@@ -374,7 +380,6 @@ pages:
 
 plan:
   - file:     7_0_release_notes.md
-  - file:     webpacker.md
 
 old:
   - file:     2_2_release_notes.md
