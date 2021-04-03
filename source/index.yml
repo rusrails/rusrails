@@ -240,6 +240,12 @@ pages:
     revision: 9d4a025be2bb335de7ae2e12a6132d284cb97e21
     date:     24/02/2021
 
+  - title:    Шифрование Active Record
+    path:     active-record-encryption
+    file:     active_record_encryption.md
+    revision: e63f8205d195649d01700886dd678a674fb89552
+    date:     02/04/2021
+
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
@@ -380,7 +386,6 @@ pages:
 
 plan:
   - file:     7_0_release_notes.md
-  - file:     active_record_encryption.md
 
 old:
   - file:     2_2_release_notes.md
