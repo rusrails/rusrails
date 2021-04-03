@@ -79,14 +79,8 @@ next_column
 * **Заметки о релизах**
 
     * [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails)
-    * [Версия 6.1 - Декабрь 202](/6_1_release_notes)
+    * [Версия 6.1 - Декабрь 2020](/6_1_release_notes)
     * [Версия 6.0 - Август 2019](/6_0_release_notes)
     * [Версия 5.2 - Апрель 2018](/5_2_release_notes)
     * [Версия 5.1 - Апрель 2017](/5_1_release_notes)
     * [Версия 5.0 - Июнь 2016](/5_0_release_notes)
-    * [Версия 4.2 - Декабрь 2014](/4_2_release_notes)
-    * [Версия 4.1 - Апрель 2014](/4_1_release_notes)
-    * [Версия 4.0 - Июнь 2013](/4_0_release_notes)
-    * [Версия 3.2 - Январь 2012](/3_2_release_notes)
-    * [Версия 3.1 - Август 2011](/3_1_release_notes)
-    * [Версия 3.0 - Август 2010](/3_0_release_notes)
