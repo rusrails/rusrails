@@ -380,6 +380,7 @@ pages:
 
 plan:
   - file:     7_0_release_notes.md
+  - file:     active_record_encryption.md
 
 old:
   - file:     2_2_release_notes.md
