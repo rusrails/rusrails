@@ -63,7 +63,7 @@ ruby 2.5.0
 
 Rails требует, чтобы был установлен Ruby версии 2.5.0 или новее. Если номер версии меньше этой (такие как 2.3.7 или 1.8.7), нужно будет установить новую копию Ruby.
 
-Чтобы установить Ruby на Windows, сначала нужно установить [Rails Installer](https://railsinstaller.org).
+Чтобы установить Ruby на Windows, сначала нужно установить [Ruby Installer](https://rubyinstaller.org).
 
 Дополнительные методы установки для большинства операционных систем можно увидеть на [ruby-lang.org](https://www.ruby-lang.org/en/documentation/installation/).
 
