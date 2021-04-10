@@ -210,7 +210,7 @@ end
 Для создания `ArticlesController` и его экшна `index`, мы запустим генератор контроллера (с опцией `--skip-routes`, так как у нас уже есть подходящий маршрут):
 
 ```bash
-$ bin/rails generate controller articles index
+$ bin/rails generate controller Articles index --skip-routes
 ```
 
 Rails создаст несколько файлов.
