@@ -18,7 +18,7 @@ Rails для начинающих
 Rails – фреймворк для веб-разработки, написанный на языке программирования Ruby. Если у вас нет опыта в Ruby, возможно вам будет тяжело сразу приступить к изучению Rails. Есть несколько хороших англоязычных ресурсов, посвященных изучению Ruby, например:
 
 * [Официальный сайт языка программирования Ruby](https://www.ruby-lang.org/en/documentation/)
-* [Список бесплатных книг по программированию](https://github.com/EbookFoundation/free-programming-books/blob/master/free-programming-books.md#ruby)
+* [Список бесплатных книг по программированию](https://github.com/EbookFoundation/free-programming-books/blob/master/books/free-programming-books-ru.md#ruby)
 
 Обращайте внимание, что некоторые источники, хотя все еще великолепные, но все же покрывают старые версии Ruby, и могут не включать некоторые элементы синтаксиса, которые вы увидите в повседневной разработке на Rails.
 
