@@ -18,7 +18,7 @@ Rails для начинающих
 Rails – фреймворк для веб-разработки, написанный на языке программирования Ruby. Если у вас нет опыта в Ruby, возможно вам будет тяжело сразу приступить к изучению Rails. Есть несколько хороших англоязычных ресурсов, посвященных изучению Ruby, например:
 
 * [Официальный сайт языка программирования Ruby](https://www.ruby-lang.org/en/documentation/)
-* [Список бесплатных книг по программированию](https://github.com/EbookFoundation/free-programming-books/blob/master/free-programming-books.md#ruby)
+* [Список бесплатных книг по программированию](https://github.com/EbookFoundation/free-programming-books/blob/master/books/free-programming-books-ru.md#ruby)
 
 Обращайте внимание, что некоторые источники, хотя все еще великолепные, но все же покрывают старые версии Ruby, и могут не включать некоторые элементы синтаксиса, которые вы увидите в повседневной разработке на Rails.
 
@@ -63,7 +63,7 @@ ruby 2.5.0
 
 Rails требует, чтобы был установлен Ruby версии 2.5.0 или новее. Если номер версии меньше этой (такие как 2.3.7 или 1.8.7), нужно будет установить новую копию Ruby.
 
-Чтобы установить Ruby на Windows, сначала нужно установить [Rails Installer](https://railsinstaller.org).
+Чтобы установить Ruby на Windows, сначала нужно установить [Ruby Installer](https://rubyinstaller.org).
 
 Дополнительные методы установки для большинства операционных систем можно увидеть на [ruby-lang.org](https://www.ruby-lang.org/en/documentation/installation/).
 
@@ -133,7 +133,7 @@ $ rails new blog
 
 NOTE: При использовании Windows Subsystem for Linux, имеются некоторые ограничения на сообщения файловой системы, означающие, что следует отключить гемы `spring` и `listen`, что можно сделать, вместо этого запустив `rails new blog --skip-spring --skip-listen`.
 
-TIP: Можно посмотреть все возможные опции командной строки, которые принимает генератор приложения на Rails, запустив `rails new -help`.
+TIP: Можно посмотреть все возможные опции командной строки, которые принимает генератор приложения на Rails, запустив `rails new --help`.
 
 После того, как вы создали приложение blog, перейдите в его папку:
 
@@ -210,7 +210,7 @@ end
 Для создания `ArticlesController` и его экшна `index`, мы запустим генератор контроллера (с опцией `--skip-routes`, так как у нас уже есть подходящий маршрут):
 
 ```bash
-$ bin/rails generate controller articles index
+$ bin/rails generate controller Articles index --skip-routes
 ```
 
 Rails создаст несколько файлов.
