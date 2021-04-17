@@ -41,13 +41,13 @@
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
-    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
 
 next_column
 
 * **Копаем глубже**
 
+    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
+    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Процесс инициализации в Rails](/initialization)
@@ -58,6 +58,7 @@ next_column
     * [Использование Rails для API-приложений](/api-app)
     * [Active Record для PostgreSQL](/active-record-postgresql)
     * [Несколько баз данных с Active Record](/active-record-multiple-databases)
+    * [Шифрование Active Record](/active-record-encryption)
 
 * **Расширяем Rails**
 
@@ -82,5 +83,3 @@ next_column
     * [Версия 6.1 - Декабрь 2020](/6_1_release_notes)
     * [Версия 6.0 - Август 2019](/6_0_release_notes)
     * [Версия 5.2 - Апрель 2018](/5_2_release_notes)
-    * [Версия 5.1 - Апрель 2017](/5_1_release_notes)
-    * [Версия 5.0 - Июнь 2016](/5_0_release_notes)
