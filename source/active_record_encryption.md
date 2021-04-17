@@ -1,25 +1,25 @@
 Шифрование Active Record
 ========================
 
-This guide covers encrypting your database information using Active Record.
+Это руководство раскрывает шифрование информации вашей базы данных с помощью Active Record.
 
-After reading this guide you will know:
+После его прочтения, вы узнаете:
 
-* How to set up database encryption with Active Record.
-* How to migrate unencrypted data
-* How to make different encryption schemes coexist
-* How to use the API
-* How to configure the library and how to extend it
+* Как настроить шифрование базы данных с помощью Active Record.
+* Как мигрировать незашифрованные данные
+* Как обеспечить сосуществование различных схем шифрования
+* Как использовать API
+* Как настроить библиотеку, и как расширить ее
 
 --------------------------------------------------------------------------------
 
-Active Record supports application-level encryption. It works by declaring which attributes should be encrypted and seamlessly encrypting and decrypting them when necessary. The encryption layer is placed between the database and the application. The application will access unencrypted data but the database will store it encrypted.
+Active Record предоставляет шифрование на уровне приложения. Он работает, объявляя какие атрибуты должны быть зашифрованы, и бесшовно шифрует и дешифрует их по необходимости. Уровень шифрования помещен между базой данных и приложением. У приложения будет доступ к незашифрованным данным, но база данных будет хранить их зашифрованными.
 
-## Basic usage
+## Базовое использование
 
-### Setup
+### Настройка
 
-First, you need to add some keys to your [rails credentials](/security.html#custom-credentials). Run `bin/rails db:encryption:init` to generate a random key set:
+Сначала необходимо добавить несколько ключей в ваши [учетные данные rails](/ruby-on-rails-security-guide#custom-credentials). Запустите `bin/rails db:encryption:init` для генерации набора случайных ключей:
 
 ```bash
 $ bin/rails db:encryption:init
@@ -31,11 +31,11 @@ active_record_encryption:
   key_derivation_salt: xEY0dt6TZcAMg52K7O84wYzkjvbA62Hz
 ```
 
-NOTE: These generated keys and salt are 32 bytes length. If you generate these yourself, the minimum lengths you should use are 12 bytes for the master key (this will be used to derive the AES 32 bytes key) and 20 bytes for the salt.
+NOTE: Эти сгенерированные ключи и соль длиной 32 байта. Если вы генерируете их самостоятельно, минимальная длина, которую следует использовать, это 12 байт для главного ключа (он будет использоваться для получения 32-байтного ключа AES) и 20 байт для соли.
 
-### Declaration of encrypted attributes
+### Объявление шифруемых атрибутов
 
-Encryptable attributes are defined at the model level. These are regular Active Record attributes backed by a column with the same name.
+Шифруемые атрибуты определяются на уровне модели. Это обычные атрибуты Active Record на основе столбца с тем же именем.
 
 ```ruby
 class Article < ApplicationRecord
@@ -43,48 +43,48 @@ class Article < ApplicationRecord
 end
 ````
 
-The library will transparently encrypt these attributes before saving them into the database, and will decrypt them when retrieving their values:
+Библиотека прозрачно зашифрует эти атрибуты перед сохранением в базу данных и дешифрует при извлечении их значений:
 
 ```ruby
 article = Article.create title: "Encrypt it all!"
 article.title # => "Encrypt it all!"
 ```
 
-But, under the hood, the executed SQL would look like this:
+Но под капотом выполняемый SQL будет выглядеть так:
 
 ```sql
 INSERT INTO `articles` (`title`) VALUES ('{\"p\":\"n7J0/ol+a7DRMeaE\",\"h\":{\"iv\":\"DXZMDWUKfp3bg/Yu\",\"at\":\"X1/YjMHbHD4talgF9dt61A==\"}}')
 ```
 
-Encryption takes additional space in the column. You can estimate the worst-case overload in around 250 bytes when the built-in envelope encryption key provider is used. For medium and large text columns this overload is negligible, but for `string` columns of 255 bytes, you should increase their limit accordingly (510 is recommended).
+Шифрование занимает дополнительное место в этом столбце. Можно оценить верхний предел перегрузки примерно в 250 байтов, когда используется встроенный провайдер ключа конвертного шифрования (envelope encryption). Для средних и больших текстовых столбцов эта перегрузка незначительна, но для столбцов `string` из 255 байтов следует увеличить их лимит (рекомендуется 510).
 
-NOTE: The reason for the additional space are Base 64 encoding and additional metadata stored with the encrypted values.
+NOTE: Причиной для дополнительного пространства являются шифрование Base 64 и дополнительные метаданные, хранимые вместе с зашифрованными значениями.
 
-### Deterministic and non-deterministic encryption
+### Детерминированное и недетерминированное шифрование
 
-By default, Active Record Encryption uses a non-deterministic approach to encryption. This means that encrypting the same content with the same password twice will result in different ciphertexts. This is good for security, since it makes crypto-analysis of encrypted content much harder, but it makes querying the database impossible.
+По умолчанию Active Record Encryption использует недетерминированный подход к шифрованию. Это означает, что шифрование одного и того же содержимого с тем же самым паролем дважды приведет к различным зашифрованным текстам. Это хорошо для безопасности, поскольку делает криптоанализ зашифрованного содержимого гораздо сложнее, но это делает невозможным запросы к базе данных.
 
-You can use the `deterministic:`  option to generate initialization vectors in a deterministic way, effectively enabling querying encrypted data.
+Можно использовать опцию `deterministic:` для генерации векторов инициализации детерминированным образом, эффективно включая запросы по зашифрованным данным.
 
 ```ruby
 class Author < ApplicationRecord
   encrypts :email, deterministic: true
 end
 
-Author.find_by_email("some@email.com") # You can query the model normally
+Author.find_by_email("some@email.com") # Можно делать запросы, как обычно
 ```
 
-The recommendation is using the default (non deterministic) unless you need to query the data.
+Рекомендовано использовать значение по умолчанию (недетерминированное), если вам не нужно делать запросы по данным.
 
-NOTE: In non-deterministic mode, it uses AES-GCM with a 256-bits key and a random initialization vector. In deterministic mode, it uses AES-GCM too but the initialization vector is generated as a HMAC-SHA-256 digest of the key and contents to encrypt.
+NOTE: В недетерминированном режиме используется AES-GCM с 256-битным ключом и случайным вектором инициализации. В детерминированном режиме тоже используется AES-GCM, но вектор инициализации генерируется как дайджест HMAC-SHA-256 ключа и шифруемого содержимого.
 
-NOTE: You can disable deterministic encryption just by not configuring a `deterministic_key`.
+NOTE: Можно отключить детерминированное шифрования, просто не настраивая `deterministic_key`.
 
-## Features
+## Особенности
 
 ### Action Text
 
-You can encrypt action text attributes by passing `encrypted: true` in their declaration.
+Можно шифровать атрибуты action text, передав `encrypted: true` в их объявлении.
 
 ```ruby
 class Message < ApplicationRecord
@@ -92,47 +92,47 @@ class Message < ApplicationRecord
 end
 ```
 
-NOTE: Passing individual encryption options to action text attributes is not supported yet. It will use non-deterministic encryption with the global encryption options configured.
+NOTE: Передача отдельных опций шифрования в атрибуты action text пока еще не поддерживается. Он будет использовать недетерминированное шифрование с помощью глобально настроенных опций шифрования.
 
-### Fixtures
+### Фикстуры
 
-You can get Rails fixtures encrypted automatically by adding this option to your `test.rb`:
+Можно сделать фикстуры Rails шифруемыми автоматически, добавив эту опцию в ваш `test.rb`:
 
 ```ruby
 config.active_record.encryption.encrypt_fixtures = true
 ```
 
-When enabled, all the encryptable attributes will be encrypted according to the encryption settings defined in the model.
+Когда включена, все шифруемые атрибуты будут зашифрованы в соответствии с настройками шифрования, определенными в модели.
 
-#### Action text fixtures
+#### Фикстуры Action text
 
-To encrypt action text fixtures you should place them in `fixtures/action_text/encrypted_rich_texts.yml`.
+Чтобы зашифровать фикстуры action text, следует поместить их в `fixtures/action_text/encrypted_rich_texts.yml`.
 
-### Supported types
+### Поддерживаемые типы
 
-`active_record.encryption` will serialize values using the underlying type before encrypting them, but *they must be serializable as strings*. Structured types like `serialized` are supported out of the box.
+`active_record.encryption` будет сериализовывать значения с помощью лежащего в основе типа до их шифрования, но *они должны быть сериализуемыми как строки*. Структурируемые типы, наподобие `serialized`, поддерживаются из коробки.
 
-If you need to support a custom type, the recommended way is using a [serialized attribute](https://api.rubyonrails.org/classes/ActiveRecord/AttributeMethods/Serialization/ClassMethods.html). The declaration of the serialized attribute should go **before** the encryption declaration:
+Если нужна поддержка пользовательского типа, рекомендованным способом является использование [сериализуемого атрибута](https://api.rubyonrails.org/classes/ActiveRecord/AttributeMethods/Serialization/ClassMethods.html). Объявление сериализуемого атрибута должно идти **перед** объявлением шифрования:
 
 ```ruby
-# GOOD
+# ХОРОШО
 class Article < ApplicationRecord
   serialize :title, Title
   encrypts :title
 end
 
-# WRONG
+# ПЛОХО
 class Article < ApplicationRecord
   encrypts :title
   serialize :title, Title
 end
 ```
 
-### Ignoring case
+### Игнорирование регистра
 
-You might need to ignore case when querying deterministically encrypted data. There are two options that can help you here.
+Возможно, необходимо игнорировать регистр при запросе детерминировано зашифрованных данных. Есть два варианта, которые могут помочь.
 
-You can use the option `:downcase`  when declaring the encrypted attribute. This will make that content is downcased before being encrypted.
+Можно использовать опцию `:downcase` при объявлении шифруемого атрибута. Это сделает его содержимое в нижнем регистре до шифрования.
 
 ```ruby
 class Person
@@ -140,70 +140,70 @@ class Person
 end
 ```
 
-When using `:downcase` the original case is lost. There might be cases where you need to preserve the original case when reading the value, but you need to ignore the case when querying. For those cases you can use the option `:ignore_case` which requires you to add a new column named `original_<column_name>` to store the content with the case unchanged:
+При использовании `:downcase` оригинальный регистр теряется. Иногда необходимо сохранить оригинальный регистр при чтении значения, но нужно игнорировать режим при поиске. Для таких случаев можно использовать опцию `:ignore_case`, требующую добавления нового столбца с именем `original_<column_name>`, для хранения содержимого с неизмененным регистром:
 
 ```ruby
 class Label
-  encrypts :name, deterministic: true, ignore_case: true # the content with the original case will be stored in the column `original_name`
+  encrypts :name, deterministic: true, ignore_case: true # содержимое с оригинальным регистром будет храниться в столбце `original_name`
 end
 ```
 
-### Support for unencrypted data
+### Поддержка нешифрованных данных
 
-To ease migrations of unencrypted data, the library includes the option `config.active_record.encryption.support_unencrypted_data`. When set to `true`:
+Чтобы облегчить миграции нешифрованных данных, библиотека включает опцию `config.active_record.encryption.support_unencrypted_data`. Когда установлена `true`:
 
-* Trying to read encrypted attributes that are not encrypted will work normally, without raising any error
-* Queries with deterministically-encrypted attributes will include the "clear text" version of them, to support finding both encrypted and unencrypted content. You need to set `config.active_record.encryption.extend_queries = true` to enable this.
+* Пытается прочитать шифруемые атрибуты, которые не были зашифрованы, будет работать нормально, без вызова какой-либо ошибки
+* Запросы с детерминировано шифруемыми атрибутами будут включать версию с исходным тестом, чтобы поддержать и зашифрованное, и незашифрованное содержимое. Необходимо установить `config.active_record.encryption.extend_queries = true` чтобы включить это.
 
-**This options is meant to be used in transition periods** while clear data and encrypted data need to coexist. Their value is `false` by default, which is the recommended goal for any application: errors will be raised when working with unencrypted data.
+**Эти опции предназначены для переходного периода**, пока исходные и шифрованные данные вынуждены сосуществовать. Их значение `false` по умолчанию, что является рекомендованной целью для любого приложения: будут вызваны ошибки при работе с незашифрованными данными.
 
-### Support for previous encryption schemes
+### Поддержка предыдущих схем шифрования
 
-Changing encryption properties of attributes can break existing data. For example, imagine you want to make a "deterministic" attribute "not deterministic". If you just change the declaration in the model, reading existing ciphertexts will fail because they are different now.
+Изменение свойств шифрования может поломать существующие данные. Например, представьте, что вы хотите сделать "детерминированный" атрибут "недетерминированным". Если вы просто измените объявление в модели, чтение существующего шифра провалится, так как он теперь другой.
 
-To support these situations, you can declare previous encryption schemes that will be used in two scenarios:
+Чтобы поддержать такие ситуации, можно объявить предыдущие схемы шифрования, которые будут использованы в двух сценариях:
 
-* When reading encrypted data, Active Record Encryption will try previous encryption schemes if the current scheme doesn't work.
-* When querying deterministic data, it will add ciphertexts using previous schemes to the queries so that queries work seamlessly with data encrypted with different scheme. You need to set `config.active_record.encryption.extend_queries = true` to enable this.
+* При чтении шифрованных данных Active Record Encryption попробует предыдущие схемы шифрования, если текущая схема не сработает.
+* При запросе детерминированных данных, он добавит в запросы шифры с использованием предыдущих схем, таким образом, запросы будут работать бесшовно с разными схемами. Чтобы включить это, необходимо установить `config.active_record.encryption.extend_queries = true`.
 
-You can configure previous encryption schemes:
+Можно настроить предыдущие схемы шифрования:
 
-* Globally
-* On a per-attribute basis
+* Глобально
+* На основе атрибута
 
-#### Global previous encryption schemes
+#### Глобальные предыдущие схемы шифрования
 
-You can add previous encryption schemes by adding them as list of properties using the `previous` config property in your `application.rb`:
+Можно добавить предыдущие схемы шифрования, добавив их как список свойств с помощью конфигурационной настройки `previous` в `application.rb`:
 
 ```ruby
 config.active_record.encryption.previous = [ { key_provider: MyOldKeyProvider.new } ]
 ```
 
-#### Per-attribute encryption schemes
+#### Схемы шифрования для атрибута
 
-Use `:previous` when declaring the attribute:
+Используйте `:previous` при объявлении атрибута:
 
 ```ruby
 class Article
   encrypts :title, deterministic: true, previous: { deterministic: false }
 end
 ```
-#### Encryption schemes and deterministic attributes
+#### Схемы шифрования и детерминированные атрибуты
 
-When adding previous encryption schemes:
+При добавлении предыдущих схем шифрования:
 
-* With **non-deterministic encryption**, new information will always be encrypted with the *newest* (current) encryption scheme.
-* With **deterministic encryption**, new information will always be encrypted with the *oldest* encryption scheme by default.
+* При **недетерминированном шифровании**, новая информация всегда будет шифроваться с помощью *новейшей* (текущей) схемы шифрования.
+* При **детерминированном шифровании**, новая информация по умолчанию всегда будет шифроваться с помощью *старейшей* схемы шифрования.
 
-The reason is that, with deterministic encryption, you normally want ciphertexts to remain constant. You can change this behavior by setting `deterministic: { fixed: false }`. In that case, it will use the *newest* encryption scheme for encrypting new data.
+Причиной для этого, при недетерминированном шифровании, является то, что мы обычно хотим, чтобы шифры оставались постоянными. Это поведение можно изменить, установив `deterministic: { fixed: false }`. В этом случае она будет использовать *новейшую* схему шифрования для шифрования новых данных.
 
-### Unique constraints
+### Ограничения уникальности
 
-NOTE: Unique constraints can only be used with data encrypted deterministically.
+NOTE: Ограничения уникальности могут быть использованы только с данными, зашифрованными детерминировано.
 
-#### Unique validations
+#### Валидации уникальности
 
-Unique validations are supported normally as long as extended queries are enabled (`config.active_record.encryption.extend_queries = true`).
+Валидации уникальности работают нормально, когда включены расширенные запросы (`config.active_record.encryption.extend_queries = true`).
 
 ```ruby
 class Person
@@ -212,15 +212,15 @@ class Person
 end
 ```
 
-They will also work when combining encrypted and unencrypted data, and when configuring previous encryption schemes.
+Они также будут работать при комбинации шифрованных и нешифрованных данных и когда настроены предыдущие схемы шифрования.
 
-NOTE: If you want to ignore case make sure to use `downcase:` or `ignore_case:` in the `encrypts` declaration. Using the `case_sensitive:` option in the validation won't work.
+NOTE: Если хотите игнорировать регистр, убедитесь что используются `downcase:` или `ignore_case:` в объявлении `encrypts`. Использование опции `case_sensitive:` в валидации не будет работать.
 
-#### Unique indexes
+#### Индексы уникальности
 
-To support unique indexes on deterministically-encrypted columns, you need to make sure their ciphertext doesn't ever change.
+Чтобы поддерживать индексы уникальности на детерминировано шифруемом столбце, нужно обеспечить, чтобы их шифр никогда не менялся.
 
-To encourage this, by default, deterministic attributes will always use the oldest encryption scheme, when multiple encryption schemes are configured. Other than this, it's up to you making sure that encryption properties don't change for these attributes, or the unique indexes won't work.
+Для этого по умолчанию детерминированные атрибуты будут всегда использовать старейшую схему шифрования, когда настроено несколько схем шифрования. Кроме этого вам следует обеспечить, чтобы эти свойства шифрования для этих атрибутов не менялись, иначе индексы уникальности не будут работать.
 
 ```ruby
 class Person
@@ -228,55 +228,56 @@ class Person
 end
 ```
 
-### Filtering params named as encrypted columns
+### Фильтрация параметров, названных как шифруемые столбцы
 
-By default, encrypted columns are configured to be [automatically filtered in Rails logs](https://guides.rubyonrails.org/action_controller_overview.html#parameters-filtering). You can disable this behavior by adding this to your `application.rb`:
+По умолчанию шифруемые столбцы настраиваются как [автоматически фильтруемые в логах Rails](/action-controller-overview#parameters-filtering). Это поведение можно отключить, добавив следующее в `application.rb`:
 
 ```ruby
 config.active_record.encryption.add_to_filter_parameters = false
 ```
-In case you want exclude specific columns from this automatic filtering, add them to `config.active_record.encryption.excluded_from_filter_parameters`.
 
-## Key management
+В случае, если хотите исключить отдельные столбцы из этой автоматической фильтрации, добавьте их в `config.active_record.encryption.excluded_from_filter_parameters`.
 
-Key management strategies are implemented by key providers. You can configure key providers globally or on a per-attribute basis.
+## Управление ключами managemen
 
-### Built-in key providers
+Стратегии управления ключами реализованы провайдерами ключа. Можно настроить провайдеры ключа глобально или на основе атрибута.
+
+### Встроенные провайдеры ключа
 
 #### DerivedSecretKeyProvider
 
-A key provider that will serve keys derived from the provided passwords using PBKDF2.
+Провайдер ключа, который отдает ключи, производные от предоставленных паролей, с помощью PBKDF2.
 
 ```ruby
 config.active_record.encryption.key_provider = ActiveRecord::Encryption::DerivedSecretKeyProvider.new(["some passwords", "to derive keys from. ", "These should be in", "credentials"])
 ```
 
-NOTE: By default, `active_record.encryption` configures a `DerivedSecretKeyProvider` with the keys defined in `active_record.encryption.master_key`.
+NOTE: По умолчанию `active_record.encryption` настраивает `DerivedSecretKeyProvider` с помощью ключей, определенных в `active_record.encryption.master_key`.
 
 #### EnvelopeEncryptionKeyProvider
 
-Implements a simple [envelope encryption](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#enveloping) strategy:
+Реализует простую стратегию [конвертного шифрования](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#enveloping):
 
-- It generates a random key for each data-encryption operation
-- It stores the data-key with the data itself, encrypted with a master key defined in the credential `active_record.encryption.master_key`.
+- Он генерирует случайный ключ для каждой операции шифрования данных
+- Он хранит ключ вместе с самими данными, зашифрованными с помощью главного ключа в учетных данных `active_record.encryption.master_key`.
 
-You can configure by adding this to your `application.rb`:
+Можно настроить, добавив следующее в ваш `application.rb`:
 
 ```ruby
 config.active_record.encryption.key_provider = ActiveRecord::Encryption::EnvelopeEncryptionKeyProvider.new
 ```
 
-As with other built-in key providers, you can provide a list of master keys in `active_record.encryption.master_key`, to implement key-rotation schemes.
+Как и для других встроенных провайдеров ключей, можно предоставить список главных ключей в `active_record.encryption.master_key` для реализации схем ротации ключа.
 
-### Custom key providers
+### Пользовательские провайдеры ключа key providers
 
-For more advanced key-management schemes, you can configure a custom key provider in a initializer:
+Для расширенных схем управления ключами можно настроить пользовательский провайдер ключа в инициализаторе:
 
 ```ruby
 ActiveRecord::Encryption.key_provider = MyKeyProvider.new
 ```
 
-A key provider must implement this interface:
+Провайдер ключа должен реализовывать этот интерфейс:
 
 ```ruby
 class MyKeyProvider
@@ -288,16 +289,16 @@ class MyKeyProvider
 end
 ```
 
-Both methods return `ActiveRecord::Encryption::Key` objects:
+Оба метода должны возвращать объекты `ActiveRecord::Encryption::Key`:
 
-- `encryption_key` returns the key used for encrypting some content
-- `decryption keys` returns a list of potential keys for decrypting a given message
+- `encryption_key` возвращает ключ для шифрования некоторого содержимого
+- `decryption keys` возвращает список потенциальных ключей для дешифрования заданного сообщения
 
-A key can include arbitrary tags that will be stored unencrypted with the message. You can use `ActiveRecord::Encryption::Message#headers` to examine those values when decrypting.
+Ключ может включать произвольные теги, которые будет храниться нешифрованными с сообщением. Для просмотра этих значений можно использовать `ActiveRecord::Encryption::Message#headers` при дешифровке.
 
-### Model-specific key providers
+### Провайдеры ключа, специфичные для модели
 
-You can configure a key provider on a per-class basis with the `:key_provider` option:
+Можно настроить провайдер ключа на основе класса с помощью опции `:key_provider`:
 
 ```ruby
 class Article < ApplicationRecord
@@ -305,9 +306,9 @@ class Article < ApplicationRecord
 end
 ```
 
-### Model-specific keys
+### Ключи, специфичные для модели
 
-You can configure a given key on a per-class basis with the `:key` option:
+Можно настроить заданный ключ на основе класса с помощью опции `:key`:
 
 ```ruby
 class Article < ApplicationRecord
@@ -315,122 +316,123 @@ class Article < ApplicationRecord
 end
 ```
 
-The key will be used internally to derive the key used to encrypt and decrypt the data.
+Этот ключ будет использован для создания ключа, используемого для шифрования и дешифрования данных.
 
-### Rotating keys
+### Ротация ключей
 
-`active_record.encryption` can work with lists of keys, to support implementing key-rotation schemes:
+`active_record.encryption` может работать со списками ключей для реализации схем ротации ключей:
 
-- The **first key** will be used for encrypting new content.
-- All the keys will be tried when decrypting content, until one works.
+- **Первый ключ** будет использоваться для шифрования нового содержимого.
+- При дешифровании будут пробоваться все ключи, пока один не сработает.
 
 ```yml
 active_record
   encryption:
     master_key:
-        - bc17e7b413fd4720716a7633027f8cc4 # Active, encrypts new content
-        - a1cc4d7b9f420e40a337b9e68c5ecec6 # Previous keys can still decrypt existing content
+        - bc17e7b413fd4720716a7633027f8cc4 # Активный, шифрует новое содержимое
+        - a1cc4d7b9f420e40a337b9e68c5ecec6 # Предыдущие ключи все еще могут дешифровывать содержимое
     key_derivation_salt: a3226b97b3b2f8372d1fc6d497a0c0d3
 ```
 
-This enables workflows where you keep a short list of keys, by adding new keys, re-encrypting content and deleting old keys.
+Это позволяет такой цикл, когда хранится короткий список ключей, и при добавлении нового ключа содержимое перешифровывается, и старые ключи удаляются.
 
-NOTE: Rotating keys is not currently supported for deterministic encryption.
+NOTE: Сейчас ротация ключей не поддерживается для детерминированного шифрования.
 
-NOTE: Active Record Encryption doesn't provide automatic management of key rotation processes yet. All the pieces are there, but this hasn't been implemented yet.
+NOTE: Active Record Encryption пока что не предоставляет автоматического управления над ротацией ключей. Все для этого уже есть, но пока не реализовано.
 
-### Storing key references
+### Хранение ссылок на ключ
 
-There is a setting `active_record.encryption.store_key_references` you can use to make `active_record.encryption` store a reference to the encryption key in the encrypted message itself.
+Есть настройка `active_record.encryption.store_key_references`, которую можно использовать, чтобы `active_record.encryption` хранила ссылку на ключ шифрования в самом зашифрованном сообщении.
 
 ```ruby
 config.active_record.encryption.store_key_references = true
 ```
 
-This makes for a more performant decryption since, instead of trying lists of keys, the system can now locate keys directly. The price to pay is storage: encrypted data will be a bit bigger in size.
+Это обеспечивает более производительное дешифрование, так как, вместо перебора списка ключей, система может найти нужные ключи. Цена, которую нужно заплатить, это место: шифрованные данные будут немного больше в размере.
 
 ## API
 
-### Basic API
+### Базовый API
 
-ActiveRecord encryption is meant to be used declaratively, but it presents an API for advanced usage scenarios.
+Шифрование ActiveRecord подразумевает декларативное использование, но оно также предоставляет API для сценариев продвинутого использования.
 
-#### Encrypt and decrypt
+#### Шифрование и дешифрование
 
 ```ruby
-article.encrypt # encrypt or re-encrypt all the encryptable attributes
-article.decrypt # decrypt all the encryptable attributes
+article.encrypt # шифрует или перешифрует все шифруемые атрибуты
+article.decrypt # дешифрует все шифруемые атрибуты
 ```
 
-#### Read ciphertext
+#### Чтение шифровки
 
 ```ruby
 article.ciphertext_for(:title)
 ```
 
-#### Check if attribute is encrypted or not
+#### Проверка, шифруется ли атрибут
 
 ```ruby
 article.encrypted_attribute?(:title)
 ```
 
-## Configuration
+## Настройка
 
-### Configuration options
+### Опции настройки
 
-You can configure Active Record Encryption options by setting them in your `application.rb` (most common scenario) or in a specific environment config file `config/environments/<env name>.rb` if you want to set them on a per-environment basis.
+Можно настроить опции Active Record Encryption, установив их в вашем `application.rb` (самый распространенный сценарий) или в файле определенной среды `config/environments/<env name>.rb`, если хотите установить их на основе среды.
 
-All the config options are namespaced in `active_record.encryption.config`. For example:
+Все опции настройки находятся в пространстве имен `active_record.encryption.config`. Например:
 
 ```ruby
 config.active_record.encryption.key_provider = ActiveRecord::Encryption::EnvelopeEncryptionKeyProvider.new
 config.active_record.encryption.store_key_references = true
 config.active_record.encryption.extend_queries = true
 ```
-The available config options are:
 
-| Key                                                          | Value                                                        |
+Доступны следующие опции:
+
+| Ключ                                                         | Значение                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `support_unencrypted_data`                                   | When true, unencrypted data can be read normally. When false, it will raise. Default: false. |
-| `extend_queries` | When true, queries referencing deterministically encrypted attributes will be modified to include additional values if needed. Those additional values will be the clean version of the value, when `support_unencrypted_data` is true) and values encrypted with previous encryption schemes if any (as provided with the `previous:` option). Default: false (experimental). |
-| `encrypt_fixtures`                                           | When true, encryptable attributes in fixtures will be automatically encrypted when those are loaded. Default: false. |
-| `store_key_references`                                       | When true, a reference to the encryption key is stored in the headers of the encrypted message. This makes for a faster decryption when multiple keys are in use. Default: false. |
-| `add_to_filter_parameters`                                   | When true, encrypted attribute names are added automatically to the [list of filtered params](https://guides.rubyonrails.org/configuring.html#rails-general-configuration) that won't be shown in logs. Default: true. |
-| `excluded_from_filter_parameters`                            | You can configure a list of params that won't be filtered out when `add_to_filter_parameters` is true. Default: []. |
-| `validate_column_size`                                        | Adds a validation based on the column size. This is recommended to prevent storing huge values using highly compressible payloads. Default: true. |
-| `master_key`                                                 | The key or lists of keys that is used to derive root data-encryption keys. They way they are used depends on the key provider configured. It's preferred to configure it via a credential `active_record_encryption.master_key`. |
-| `deterministic_key`                                          | The key or list of keys used for deterministic encryption. It's preferred to configure it via a credential `active_record_encryption.deterministic_key`. |
-| `key_derivation_salt`                                        | The salt used when deriving keys. It's preferred to configure it via a credential `active_record_encryption.key_derivation_salt`. |
+| `support_unencrypted_data`                                   | Когда true, нешифрованные данные читаются, как обычно. Когда false, будет вызываться ошибка. По умолчанию: false. |
+| `extend_queries` | Когда true, запросы, ссылающиеся на детерминировано шифруемые атрибуты, будут модифицированы, чтобы по необходимости включать дополнительные значения. Эти дополнительные значения будут включать чистую версию значения (когда `support_unencrypted_data` true) и значения, зашифрованные с помощью предыдущих схем шифрования, если они имеются (предоставлены с помощью опции `previous:`). По умолчанию: false (экспериментально). |
+| `encrypt_fixtures`                                           | Когда true, шифруемые атрибуты в фикстурах будут автоматически зашифрованы при загрузке. По умолчанию: false. |
+| `store_key_references`                                       | Когда true, ссылка на ключ шифрования сохраняется в заголовках зашифрованного сообщения. Это сделано для более быстрого дешифрования при использовании нескольких ключей. По умолчанию: false. |
+| `add_to_filter_parameters`                                   | Когда true, имена шифруемых атрибутов автоматически добавляются в [список фильтруемых параметров](/configuring-rails-applications#rails-general-configuration), которые не показываются в логах. По умолчанию: true. |
+| `excluded_from_filter_parameters`                            | Можно настроить список параметров, которые не будут отфильтрованы, когда `add_to_filter_parameters` true. По умолчанию: []. |
+| `validate_column_size`                                       | Добавляет валидацию, основанную на размере столбца. Это рекомендовано, чтобы избежать хранения огромных значений с использованием очень сжатой полезной нагрузки. По умолчанию: true. |
+| `master_key`                                                 | Ключ или список ключей, используемых для воспроизведения корневых ключей шифрования данных. Способ, которым они используются, зависит от настроенного провайдера ключа. Предпочтительнее настроить их с помощью учетных данных `active_record_encryption.master_key`. |
+| `deterministic_key`                                          | Ключ или список ключей, используемых для детерминированного шифрования. Предпочтительнее настроить их с помощью учетных данных `active_record_encryption.deterministic_key`. |
+| `key_derivation_salt`                                        | Соль, используемая при воспроизведении ключей. Предпочтительнее настроить ее с помощью учетных данных `active_record_encryption.key_derivation_salt`. |
 
-NOTE: It's recommended to use Rails built-in credentials support to store keys. If you prefer to set them manually via config properties, make sure you don't commit them with your code (e.g: use environment variables).
+NOTE: Для хранения ключей рекомендовано использовать встроенную в Rails поддержку учетных данных. Если предпочитаете настроить их вручную с помощью опций настройки, убедитесь, что не добавили их в коммит вместе с вашим кодом (например, используйте переменные среды).
 
-### Encryption contexts
+### Контексты шифрования
 
-An encryption context defines the encryption components that are used in a given moment. There is a default encryption context based on your global configuration, but you can configure a custom context for a given attribute or when running a specific block of code.
+Контекст шифрования определяет компоненты шифрования, используемые в данный момент. Есть контекст шифрования по умолчанию, основанный на глобальной конфигурации, но можно настроить произвольный контекст для заданного атрибута или при запуске определенного блока кода.
 
-NOTE: Encryption contexts are a flexible but advanced configuration mechanism. Most users should not have to care about them.
+NOTE: Контексты шифрования это гибкий, но сложный конфигурационных механизм. Большинству пользователей можно не беспокоиться о них.
 
-The main components of encryption contexts are:
+Основные компоненты контекстов шифрования следующие:
 
-* `encryptor`: exposes the internal API for encrypting and decrypting data.  It interacts with a `key_provider` to build encrypted messages and deal with their serialization. The encryption/decryption itself is done by the `cipher` and the serialization by `message_serializer`.
-* `cipher` the encryption algorithm itself (Aes 256 GCM)
-* `key_provider` serves encryption and decryption keys.
-* `message_serializer`: serializes and deserializes encrypted payloads (`Message`).
+* `encryptor`: представляет внутренний API для шифрования и дешифрования данных. Он взаимодействует с `key_provider` для создания зашифрованных сообщений и имеет дело с их сериализацией. Само шифрование/дешифрование выполняется `cipher`, а сериализация `message_serializer`.
+* `cipher` сам алгоритм шифрования (Aes 256 GCM)
+* `key_provider` отдает ключи шифрования и дешифрования.
+* `message_serializer`: сериализует и десериализует зашифрованную нагрузку (`Message`).
 
-NOTE: If you decide to build your own `message_serializer`, It's important to use safe mechanisms that can't deserialize arbitrary objects. A common supported scenario is encrypting existing unencrypted data. An attacker can leverage this to enter a tampered payload before encryption takes place and perform RCE attacks. This means custom serializers should avoid `Marshal`, `YAML.load` (use `YAML.safe_load`  instead) or `JSON.load` (use `JSON.parse` instead).
+NOTE: Если решили создать свой `message_serializer`, важно использовать безопасные механизмы, которые не могут десериализовывать произвольные объекты. Обычный поддерживаемый сценарий, когда шифруются существующие незашифрованные данные. Злоумышленник может использовать это, вводя подделанную нагрузку до шифрования, и выполняя атаки RCE. Это означает, что пользовательские сериализаторы должны избегать `Marshal`, `YAML.load` (вместо него используйте `YAML.safe_load`) или `JSON.load` (вместо него используйте `JSON.parse`).
 
-#### Global encryption context
+#### Глобальный контекст шифрования
 
-The global encryption context is the one used by default and is configured as other configuration properties in your `application.rb` or environment config files.
+Глобальный контекст шифрования это тот, который используется по умолчанию, и настраивается с помощью конфигурационных настроек в `application.rb` или конфигурационных файлах среды.
 
 ```ruby
 config.active_record.encryption.key_provider = ActiveRecord::Encryption::EnvelopeEncryptionKeyProvider.new
 config.active_record_encryption.encryptor = MyEncryptor.new
 ```
 
-#### Per-attribute encryption contexts
+#### Контексты шифрования для атрибута
 
-You can override encryption context params by passing them in the attribute declaration:
+Можно переопределить параметр контекста шифрования, передав их в объявлении атрибута:
 
 ```ruby
 class Attribute
@@ -438,9 +440,9 @@ class Attribute
 end
 ```
 
-#### Encryption context when running a block of code
+#### Контекст шифрования при запуске блока кода
 
-You can use `ActiveRecord::Encryption.with_encryption_context` to set an encryption context for a given block of code:
+Можно использовать `ActiveRecord::Encryption.with_encryption_context` для настройки контекста шифрования для заданного блока кода:
 
 ```ruby
 ActiveRecord::Encryption.with_encryption_context(encryptor: ActiveRecord::Encryption::NullEncryptor.new) do
@@ -448,26 +450,28 @@ ActiveRecord::Encryption.with_encryption_context(encryptor: ActiveRecord::Encryp
 end
 ```
 
-#### Built-in encryption contexts
+#### Встроенные контексты шифрования
 
-#####  Disable encryption
+##### Отключение шифрования
 
-You can run code without encryption:
+Можно запустить код без шифрования:
 
 ```ruby
 ActiveRecord::Encryption.without_encryption do
    ...
 end
 ```
-This means that reading encrypted text will return the ciphertext and saved content will be stored unencrypted.
 
-#####  Protect encrypted data
+Это означает, что чтение зашифрованного текста вернет шифровку, а сохраняемое содержимое будет храниться незашифрованным.
 
-You can run code without encryption but preventing overwriting encrypted content:
+##### Защита зашифрованных данных
+
+Можно запустить код без шифрования, но предотвращая перезапись зашифрованного содержимого:
 
 ```ruby
 ActiveRecord::Encryption.protecting_encrypted_data do
    ...
 end
 ```
-This can be handy if you want to protect encrypted data while still letting someone run arbitrary code against it (e.g: in a Rails console).
+
+Это удобно, если вы хотите защитить зашифрованные данные, в то же время позволяя кому-то запускать произвольный код для них (например, в консоли Rails).
