@@ -13,7 +13,7 @@ Rails для начинающих
 Допущения в этом руководстве
 ----------------------------
 
-Это руководство рассчитано на новичков, которые хотят запустить приложение на Rails с нуля. Оно не предполагает, что вы раньше работали с Rails.
+Это руководство рассчитано на новичков, которые хотят создать приложение на Rails с нуля. Оно не предполагает, что вы раньше работали с Rails.
 
 Rails – фреймворк для веб-разработки, написанный на языке программирования Ruby. Если у вас нет опыта в Ruby, возможно вам будет тяжело сразу приступить к изучению Rails. Есть несколько хороших англоязычных ресурсов, посвященных изучению Ruby, например:
 
@@ -58,10 +58,10 @@ NOTE: Нижеследующие примеры используют `$` для 
 
 ```bash
 $ ruby --version
-ruby 2.5.0
+ruby 2.7.0
 ```
 
-Rails требует, чтобы был установлен Ruby версии 2.5.0 или новее. Если номер версии меньше этой (такие как 2.3.7 или 1.8.7), нужно будет установить новую копию Ruby.
+Rails требует, чтобы был установлен Ruby версии 2.7.0 или новее. Предпочтительно использовать последнюю версию Ruby. Если номер версии меньше этой (такие как 2.3.7 или 1.8.7), нужно будет установить новую копию Ruby.
 
 Чтобы установить Ruby на Windows, сначала нужно установить [Ruby Installer](https://rubyinstaller.org).
 
@@ -111,13 +111,13 @@ $ yarn --version
 $ gem install rails
 ```
 
-Чтобы проверить, что все установлено верно, нужно выполнить следующее:
+Чтобы проверить, что все установлено верно, нужно выполнить следующее в новом терминале:
 
 ```bash
 $ rails --version
 ```
 
-Если выводится что-то вроде "Rails 6.0.0", можно продолжать.
+Если выводится что-то вроде "Rails 7.0.0", можно продолжать.
 
 ### Создание приложения Blog
 
@@ -306,7 +306,7 @@ create      test/fixtures/articles.yml
 Давайте посмотрим на содержимое нового файла миграции:
 
 ```ruby
-class CreateArticles < ActiveRecord::Migration[6.0]
+class CreateArticles < ActiveRecord::Migration[7.0]
   def change
     create_table :articles do |t|
       t.string :title
@@ -356,7 +356,7 @@ $ bin/rails console
 Вы должны увидеть интерфейс `irb` наподобие:
 
 ```irb
-Loading development environment (Rails 6.0.2.1)
+Loading development environment (Rails 7.0.0)
 irb(main):001:0>
 ```
 
@@ -602,7 +602,7 @@ class ArticlesController < ApplicationController
     if @article.save
       redirect_to @article
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 end
@@ -610,7 +610,7 @@ end
 
 Экшн `new` инициализирует новую статью, но не сохраняет ее. Эта статья будет использована во вью при построении формы. По умолчанию экшн `new` будет рендерить `app/views/articles/new.html.erb`, которую мы создадим далее.
 
-Экшн `create` инициализирует новую статью со значениями для заголовка и содержимого и пытается сохранить ее. Если статью успешно сохранена, экшн перенаправляет браузер на страницу статьи `"http://localhost:3000/articles/#{@article.id}"`. Иначе экшн отображает форму заново, отрендерив `app/views/articles/new.html.erb`. Тут title и body фиктивные значения. После того, как мы создадим форму, мы вернемся и изменим их.
+Экшн `create` инициализирует новую статью со значениями для заголовка и содержимого и пытается сохранить ее. Если статью успешно сохранена, экшн перенаправляет браузер на страницу статьи `"http://localhost:3000/articles/#{@article.id}"`. Иначе экшн отображает форму заново, отрендерив `app/views/articles/new.html.erb` с кодом статуса 4XX для приложения, работающего с [Turbo](https://github.com/hotwired/turbo-rails). Тут title и body фиктивные значения. После того, как мы создадим форму, мы вернемся и изменим их.
 
 NOTE: [`redirect_to`](https://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to) приведет к тому, что браузер сделает новый запрос, в то время как [`render`](https://api.rubyonrails.org/classes/AbstractController/Rendering.html#method-i-render) отрендерит указанную вью для текущего запроса. Важно использовать `redirect_to` после изменения базы данных или состояния приложения. В противном случае, если пользователь обновит страницу, браузер осуществит тот же самый запрос, и изменение будет повторено.
 
@@ -623,7 +623,7 @@ NOTE: [`redirect_to`](https://api.rubyonrails.org/classes/ActionController/Redir
 ```html+erb
 <h1>New Article</h1>
 
-<%= form_with model: @article, local: true do |form| %>
+<%= form_with model: @article do |form| %>
   <div>
     <%= form.label :title %><br>
     <%= form.text_field :title %>
@@ -641,8 +641,6 @@ NOTE: [`redirect_to`](https://api.rubyonrails.org/classes/ActionController/Redir
 ```
 
 Вспомогательный метод [`form_with`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-form_with) инициализирует построитель форм. В блоке `form_with` мы вызываем на построителе форм методы, такие как [`label`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-label) и [`text_field`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-text_field) для вывода подходящих элементов формы.
-
-NOTE: По умолчанию `form_with` создает форму, отправляемую с помощью Ajax для избежания полной перезагрузки страницы. Для упрощения этого руководства, мы отключили эту особенность, используя `local: true` в вышеприведенном коде.
 
 Результирующий вывод от вызова `form_with` будет выглядеть так:
 
@@ -696,7 +694,7 @@ class ArticlesController < ApplicationController
     if @article.save
       redirect_to @article
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -733,11 +731,11 @@ NOTE: Возможно, вам интересно, где определены �
 ```html+erb
 <h1>New Article</h1>
 
-<%= form_with model: @article, local: true do |form| %>
+<%= form_with model: @article do |form| %>
   <div>
     <%= form.label :title %><br>
     <%= form.text_field :title %>
-    <%= @article.errors.full_messages_for(:title).each do |message| %>
+    <% @article.errors.full_messages_for(:title).each do |message| %>
       <div><%= message %></div>
     <% end %>
   </div>
@@ -745,7 +743,7 @@ NOTE: Возможно, вам интересно, где определены �
   <div>
     <%= form.label :body %><br>
     <%= form.text_area :body %><br>
-    <%= @article.errors.full_messages_for(:body).each do |message| %>
+    <% @article.errors.full_messages_for(:body).each do |message| %>
       <div><%= message %></div>
     <% end %>
   </div>
@@ -771,14 +769,14 @@ NOTE: Возможно, вам интересно, где определены �
     if @article.save
       redirect_to @article
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 ```
 
 При посещении <http://localhost:3000/articles/new>, запрос `GET /articles/new` направляется на экшн `new`. Экшн `new` не пытается сохранить `@article`. Следовательно, валидации не проверяются, и сообщений об ошибке не будет.
 
-При отправке формы, запрос `POST /articles` направляется на экшн `create`. Экшн `create` *пытается* сохранить `@article`. Следовательно, валидации *проверяются*. Если любая из валидаций падает, `@article` не будет сохранена, и `app/views/articles/new.html.erb` будет отрендерена с сообщением об ошибке.
+При отправке формы, запрос `POST /articles` направляется на экшн `create`. Экшн `create` *пытается* сохранить `@article`. Следовательно, валидации *проверяются*. Если любая из валидаций падает, `@article` не будет сохранена, и `app/views/articles/new.html.erb` будет отрендерена с сообщением об ошибке с кодом статуса 4XX для приложения, работающего с [Turbo](https://github.com/hotwired/turbo-rails).
 
 TIP: Чтобы больше узнать о валидациях, обратитесь к [Валидации Active Record](/active-record-validations). Чтобы больше узнать о сообщениях об ошибке валидации, обратитесь к [Валидации Active Record § Working with Validation Errors](/active-record-validations#working-with-validation-errors).
 
@@ -826,7 +824,7 @@ class ArticlesController < ApplicationController
     if @article.save
       redirect_to @article
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -840,7 +838,7 @@ class ArticlesController < ApplicationController
     if @article.update(article_params)
       redirect_to @article
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -855,7 +853,7 @@ end
 
 Экшн `edit` извлекает статью из базы данных и сохраняет ее в `@article`, таким образом ее можно использовать при построении формы. По умолчанию экшн `edit` отрендерит `app/views/articles/edit.html.erb`.
 
-Экшн `update` (пере)извлекает статью из базы данных и пытается обновить ее с помощью отправленных данных формы, фильтрованных в `article_params`. Если ни одна валидация не упадет, и обновление будет успешным, этот экшн перенаправит браузер на страницу статьи. В противном случае, экшн повторно отобразит форму с сообщениями об ошибке, отрендерив `app/views/articles/edit.html.erb`.
+Экшн `update` (пере)извлекает статью из базы данных и пытается обновить ее с помощью отправленных данных формы, фильтрованных в `article_params`. Если ни одна валидация не упадет, и обновление будет успешным, этот экшн перенаправит браузер на страницу статьи. В противном случае, экшн повторно отобразит форму с сообщениями об ошибке, отрендерив `app/views/articles/edit.html.erb` с кодом статуса 4XX для приложения, работающего с [Turbo](https://github.com/hotwired/turbo-rails).
 
 ### Использование партиалов для совместного использования кода вью
 
@@ -864,11 +862,11 @@ end
 Так как код будет тем же самым, мы собираемся рефакторить его в совместную вью, называемую *партиал*. Давайте создадим `app/views/articles/_form.html.erb` со следующим содержимым:
 
 ```html+erb
-<%= form_with model: article, local: true do |form| %>
+<%= form_with model: article do |form| %>
   <div>
     <%= form.label :title %><br>
     <%= form.text_field :title %>
-    <%= article.errors.full_messages_for(:title).each do |message| %>
+    <% article.errors.full_messages_for(:title).each do |message| %>
       <div><%= message %></div>
     <% end %>
   </div>
@@ -876,7 +874,7 @@ end
   <div>
     <%= form.label :body %><br>
     <%= form.text_area :body %><br>
-    <%= article.errors.full_messages_for(:body).each do |message| %>
+    <% article.errors.full_messages_for(:body).each do |message| %>
       <div><%= message %></div>
     <% end %>
   </div>
@@ -949,7 +947,7 @@ class ArticlesController < ApplicationController
     if @article.save
       redirect_to @article
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -963,7 +961,7 @@ class ArticlesController < ApplicationController
     if @article.update(article_params)
       redirect_to @article
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -1043,7 +1041,7 @@ end
 В дополнение к модели, Rails также сделал миграцию для создания соответствующей таблицы базы данных:
 
 ```ruby
-class CreateComments < ActiveRecord::Migration[6.0]
+class CreateComments < ActiveRecord::Migration[7.0]
   def change
     create_table :comments do |t|
       t.string :commenter
@@ -1104,7 +1102,7 @@ TIP: Более подробно о связях Active Record смотрите 
 
 ### Добавляем маршрут для комментариев
 
-Как в случае с контроллером `welcome`, нам нужно добавить маршрут, чтобы Rails знал, по какому адресу мы хотим пройти, чтобы увидеть `комментарии`. Снова откройте файл `config/routes.rb` и отредактируйте его следующим образом:
+Как в случае с контроллером `articles`, нам нужно добавить маршрут, чтобы Rails знал, по какому адресу мы хотим пройти, чтобы увидеть `комментарии`. Снова откройте файл `config/routes.rb` и отредактируйте его следующим образом:
 
 ```ruby
 Rails.application.routes.draw do
@@ -1155,7 +1153,7 @@ $ bin/rails generate controller Comments
 </ul>
 
 <h2>Add a comment:</h2>
-<%= form_with model: [ @article, @article.comments.build ], local: true do |form| %>
+<%= form_with model: [ @article, @article.comments.build ] do |form| %>
   <p>
     <%= form.label :commenter %><br>
     <%= form.text_field :commenter %>
@@ -1221,7 +1219,7 @@ end
 <% end %>
 
 <h2>Add a comment:</h2>
-<%= form_with model: [ @article, @article.comments.build ], local: true do |form| %>
+<%= form_with model: [ @article, @article.comments.build ] do |form| %>
   <p>
     <%= form.label :commenter %><br>
     <%= form.text_field :commenter %>
@@ -1279,7 +1277,7 @@ end
 <%= render @article.comments %>
 
 <h2>Add a comment:</h2>
-<%= form_with model: [ @article, @article.comments.build ], local: true do |form| %>
+<%= form_with model: [ @article, @article.comments.build ] do |form| %>
   <p>
     <%= form.label :commenter %><br>
     <%= form.text_field :commenter %>
@@ -1301,7 +1299,7 @@ end
 Давайте также переместим раздел нового комментария в свой партиал. Опять же, создайте файл `app/views/comments/_form.html.erb`, содержащий:
 
 ```html+erb
-<%= form_with model: [ @article, @article.comments.build ], local: true do |form| %>
+<%= form_with model: [ @article, @article.comments.build ] do |form| %>
   <p>
     <%= form.label :commenter %><br>
     <%= form.text_field :commenter %>
@@ -1365,7 +1363,7 @@ class Article < ApplicationRecord
 
   VALID_STATUSES = ['public', 'private', 'archived']
 
-  validates :status, in: VALID_STATUSES
+  validates :status, inclusion: { in: VALID_STATUSES }
 
   def archived?
     status == 'archived'
@@ -1381,7 +1379,7 @@ class Comment < ApplicationRecord
 
   VALID_STATUSES = ['public', 'private', 'archived']
 
-  validates :status, in: VALID_STATUSES
+  validates :status, inclusion: { in: VALID_STATUSES }
 
   def archived?
     status == 'archived'
@@ -1407,6 +1405,22 @@ end
 <%= link_to "New Article", new_article_path %>
 ```
 
+Схожим образом в нашем партиале (`app/views/comments/_comment.html.erb`) мы могли бы использовать метод `archived?`, чтоб избежать отображения любого архивированного комментария:
+
+```html+erb
+<% unless comment.archived? %>
+  <p>
+    <strong>Commenter:</strong>
+    <%= comment.commenter %>
+  </p>
+
+  <p>
+    <strong>Comment:</strong>
+    <%= comment.body %>
+  </p>
+<% end %>
+```
+
 Однако, если посмотреть на наши модели, можно заметить, что логика дублируется. Если в будущем мы улучшим функционал нашего блога - включим приватные сообщения, к примеру - мы можем снова начать дублировать логику. Вот тут-то и пригодятся concerns.
 
 Concern ответственен только за конкретную часть ответственности модели; все методы нашего concern будут относиться к видимости модели. Давайте назовем новый concern (модуль) `Visible`. Можно создать новый файл в `app/models/concerns` с именем `visible.rb`, и хранить все методы статуса, которые продублированы в моделях.
@@ -1427,10 +1441,10 @@ end
 module Visible
   extend ActiveSupport::Concern
 
-  included do
-    VALID_STATUSES = ['public', 'private', 'archived']
+  VALID_STATUSES = ['public', 'private', 'archived']
 
-    validates :status, in: VALID_STATUSES
+  included do
+    validates :status, inclusion: { in: VALID_STATUSES }
   end
 
   def archived?
@@ -1447,6 +1461,7 @@ end
 ```ruby
 class Article < ApplicationRecord
   include Visible
+
   has_many :comments
 
   validates :title, presence: true
@@ -1459,6 +1474,7 @@ end
 ```ruby
 class Comment < ApplicationRecord
   include Visible
+
   belongs_to :article
 end
 ```
@@ -1472,7 +1488,7 @@ module Visible
   VALID_STATUSES = ['public', 'private', 'archived']
 
   included do
-    validates :status, in: VALID_STATUSES
+    validates :status, inclusion: { in: VALID_STATUSES }
   end
 
   class_methods do
@@ -1496,13 +1512,60 @@ Our blog has <%= Article.public_count %> articles and counting!
 
 <ul>
   <% @articles.each do |article| %>
-    <li>
-      <%= link_to article.title, article %>
-    </li>
+    <% unless article.archived? %>
+      <li>
+        <%= link_to article.title, article %>
+      </li>
+    <% end %>
   <% end %>
 </ul>
 
 <%= link_to "New Article", new_article_path %>
+```
+
+Есть еще несколько шагов, необходимых, чтобы наше приложение заработало с добавленным столбцом `status`. Сначала давайте запустим следующие миграции для добавления `status` в `Articles` и `Comments`:
+
+```bash
+$ bin/rails generate migration AddStatusToArticles status:string
+$ bin/rails generate migration AddStatusToComments status:string
+```
+
+TIP: Чтобы узнать больше о миграциях, смотрите [Миграции Active Record](/rails-database-migrations).
+
+Также нужно разрешить ключ `:status`, как часть strong parameter, в `app/controllers/articles_controller.rb`:
+
+```ruby
+  private
+    def article_params
+      params.require(:article).permit(:title, :body, :status)
+    end
+```
+
+и в `app/controllers/comments_controller.rb`:
+
+```ruby
+  private
+    def comment_params
+      params.require(:comment).permit(:commenter, :body, :status)
+    end
+```
+
+Наконец, добавим список выбора в формы и разрешим пользователю выбирать статус при создании новой статьи или публикации нового комментария. Также можно указать статус по умолчанию как `public`. В `app/views/articles/_form.html.erb` можно добавить:
+
+```html+erb
+<div>
+  <%= form.label :status %><br>
+  <%= form.select :status, ['public', 'private', 'archived'], selected: 'public' %>
+</div>
+```
+
+и в `app/views/comments/_form.html.erb`:
+
+```html+erb
+<p>
+  <%= form.label :status %><br>
+  <%= form.select :status, ['public', 'private', 'archived'], selected: 'public' %>
+</p>
 ```
 
 Удаление комментариев
@@ -1525,8 +1588,8 @@ Our blog has <%= Article.public_count %> articles and counting!
 
 <p>
   <%= link_to 'Destroy Comment', [comment.article, comment],
-               method: :delete,
-               data: { confirm: "Are you sure?" } %>
+              method: :delete,
+              data: { confirm: "Are you sure?" } %>
 </p>
 ```
 
@@ -1550,7 +1613,7 @@ class CommentsController < ApplicationController
 
   private
     def comment_params
-      params.require(:comment).permit(:commenter, :body)
+      params.require(:comment).permit(:commenter, :body, :status)
     end
 end
 ```
