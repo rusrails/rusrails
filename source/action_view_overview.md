@@ -141,6 +141,7 @@ end
 ```
 
 #### Jbuilder
+
 [Jbuilder](https://github.com/rails/jbuilder) — это гем, поддерживаемый командой Rails и включенный в Rails `Gemfile` по умолчанию. Он похож на Builder, но используется для генерации JSON вместо XML.
 
 Если у вас его нет, можно добавить следующее в `Gemfile`:

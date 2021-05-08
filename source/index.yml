@@ -69,8 +69,8 @@ pages:
   - title:    Обзор Action View
     path:     action-view-overview
     file:     action_view_overview.md
-    revision: 9a4e328d3ebcceca0ff1f632aa29156f9ad2d001
-    date:     07/06/2020
+    revision: debab67a8558fe19289c398532fb67458be97527
+    date:     13/04/2021
 
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering-in-rails
