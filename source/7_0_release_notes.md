@@ -1,174 +1,165 @@
 Заметки о релизе Ruby on Rails 7.0
 ==================================
 
-Highlights in Rails 7.0:
+Ключевые новинки в Rails 7.0:
 
-* Ruby 2.7.0+ required, Ruby 3.0+ preferred
+* Требуется Ruby 2.7.0+, предпочтителен Ruby 3.0+
 
 --------------------------------------------------------------------------------
 
-Upgrading to Rails 7.0
+Апгрейд до Rails 7.0
 ----------------------
 
-If you're upgrading an existing application, it's a great idea to have good test
-coverage before going in. You should also first upgrade to Rails 6.1 in case you
-haven't and make sure your application still runs as expected before attempting
-an update to Rails 7.0. A list of things to watch out for when upgrading is
-available in the
-[Upgrading Ruby on Rails](upgrading_ruby_on_rails.html#upgrading-from-rails-6-1-to-rails-7-0)
-guide.
+Прежде чем апгрейднуть существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 7.0, необходимо сначала произвести апгрейд до Rails 6.1 и убедиться, что приложение все еще выполняется так, как нужно. Список вещей, которые нужно выполнить для апгрейда доступен в руководстве [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#upgrading-from-rails-6-1-to-rails-7-0).
 
-Major Features
---------------
+Основные особенности
+--------------------
 
 Railties
 --------
 
-Please refer to the [Changelog][railties] for detailed changes.
+За подробностями обратитесь к [Changelog][railties].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Cable
 ------------
 
-Please refer to the [Changelog][action-cable] for detailed changes.
+За подробностями обратитесь к [Changelog][action-cable].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Pack
 -----------
 
-Please refer to the [Changelog][action-pack] for detailed changes.
+За подробностями обратитесь к [Changelog][action-pack].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action View
 -----------
 
-Please refer to the [Changelog][action-view] for detailed changes.
+За подробностями обратитесь к [Changelog][action-view].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Mailer
 -------------
 
-Please refer to the [Changelog][action-mailer] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailer].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Record
 -------------
 
-Please refer to the [Changelog][active-record] for detailed changes.
+За подробностями обратитесь к [Changelog][active-record].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `database` kwarg from `connected_to`.
+*   Удален устаревший аргумент - ключевое слово `database` из `connected_to`.
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Storage
 --------------
 
-Please refer to the [Changelog][active-storage] for detailed changes.
+За подробностями обратитесь к [Changelog][active-storage].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Model
 ------------
 
-Please refer to the [Changelog][active-model] for detailed changes.
+За подробностями обратитесь к [Changelog][active-model].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Support
 --------------
 
-Please refer to the [Changelog][active-support] for detailed changes.
+За подробностями обратитесь к [Changelog][active-support].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Job
 ----------
 
-Please refer to the [Changelog][active-job] for detailed changes.
+За подробностями обратитесь к [Changelog][active-job].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Text
 ----------
 
-Please refer to the [Changelog][action-text] for detailed changes.
+За подробностями обратитесь к [Changelog][action-text].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Mailbox
 ----------
 
-Please refer to the [Changelog][action-mailbox] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailbox].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Ruby on Rails Guides
 --------------------
 
-Please refer to the [Changelog][guides] for detailed changes.
+За подробностями обратитесь к [Changelog][guides].
 
-### Notable changes
+### Значимые изменения
 
-Credits
--------
+Благодарности
+-------------
 
-See the
-[full list of contributors to Rails](https://contributors.rubyonrails.org/)
-for the many people who spent many hours making Rails, the stable and robust
-framework it is. Kudos to all of them.
+Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/main/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/main/actionpack/CHANGELOG.md
