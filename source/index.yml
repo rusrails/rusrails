@@ -318,6 +318,12 @@ pages:
     revision: c9955d3d0337f12a31beadf81eec46bff6eefb61
     date:     19/02/2021
 
+  - title:    Заметки о релизе Ruby on Rails 7.0
+    path:     7_0_release_notes
+    file:     7_0_release_notes.md
+    revision: 2917e8bcaa63d38e295462edffdbec863b7b4f11
+    date:     26/02/2021
+
   - title:    Заметки о релизе Ruby on Rails 6.1
     path:     6_1_release_notes
     file:     6_1_release_notes.md
@@ -384,8 +390,7 @@ pages:
     revision: cb0da4f817eee35089c1f12a4fa46a765611181f
     date:     22/12/2020
 
-plan:
-  - file:     7_0_release_notes.md
+plan: []
 
 old:
   - file:     2_2_release_notes.md

@@ -41,12 +41,12 @@
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
+    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Командная строка Rails](/a-guide-to-the-rails-command-line)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
@@ -80,6 +80,7 @@ next_column
 * **Заметки о релизах**
 
     * [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails)
+    * [Версия 7.0 - ?](/7_0_release_notes)
     * [Версия 6.1 - Декабрь 2020](/6_1_release_notes)
     * [Версия 6.0 - Август 2019](/6_0_release_notes)
     * [Версия 5.2 - Апрель 2018](/5_2_release_notes)
