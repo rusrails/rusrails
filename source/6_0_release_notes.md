@@ -24,7 +24,7 @@
 
 [Pull Request](https://github.com/rails/rails/pull/34786)
 
-[Action Mailbox](https://github.com/rails/rails/tree/6-0-stable/actionmailbox) позволяет направлять входящие письма в подобные контроллерам почтовые ящики. Подробнее об Action Mailbox можно прочитать в руководстве [Основы Action Mailbox](/action_mailbox_basics) (TODO).
+[Action Mailbox](https://github.com/rails/rails/tree/6-0-stable/actionmailbox) позволяет направлять входящие письма в подобные контроллерам почтовые ящики. Подробнее об Action Mailbox можно прочитать в руководстве [Основы Action Mailbox](/action-mailbox-basics).
 
 ### Action Text
 
@@ -32,7 +32,7 @@
 
 [Action Text](https://github.com/rails/rails/tree/6-0-stable/actiontext) добавляет возможность хранения и редактирования обогащенного текста в Rails. Это включает [редактор Trix](https://trix-editor.org), обрабатывающий все от форматирования до ссылок, цитирования, списков, вложенных изображений и галерей. Содержимое обогащенного текста, сгенерированного редактором Trix, сохраняется в собственной модели RichText, которая связывается с существующими моделями Active Record в приложении. Любые встроенные изображения (или другие вложения) автоматически сохраняются с помощью Active Storage и связываются с включающей моделью RichText.
 
-Подробнее об Action Text можно прочитать в руководстве [Обзор Action Text](/action_text_overview) (TODO).
+Подробнее об Action Text можно прочитать в руководстве [Обзор Action Text](/action-text-overview).
 
 ### Параллельное тестирование
 
