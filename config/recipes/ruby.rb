@@ -1,4 +1,4 @@
-set(:ruby_version, "2.4.1")
+set(:ruby_version, "2.6.6")
 set(:bundle_cmd) { "bundle" }
 
 namespace :ruby do
