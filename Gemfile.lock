@@ -294,7 +294,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86_64-darwin-19
 
 DEPENDENCIES
   RedCloth
@@ -329,7 +328,7 @@ DEPENDENCIES
   webrat
 
 RUBY VERSION
-   ruby 2.6.6p146
+   ruby 2.4.1p111
 
 BUNDLED WITH
-   2.2.17
+   2.1.4

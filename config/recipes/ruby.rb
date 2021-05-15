@@ -1,4 +1,4 @@
-set(:ruby_version, "2.6.6")
+set(:ruby_version, "2.4.1")
 set(:bundle_cmd) { "bundle" }
 set(:bundle_flags) { '--deployment' }
 
