@@ -12,13 +12,11 @@ gem 'textacular'
 
 gem 'nokogiri'
 gem 'sass-rails'
-gem "less-rails", '>= 3.0.0'
-gem 'therubyracer'  # less is dependent on this
 gem 'haml-rails'
 gem 'RedCloth'
 gem 'redcarpet'
 gem 'config'
-gem 'twitter-bootstrap-rails', '~> 2.2.8'
+gem 'bootstrap-sass', '~> 2.3.2.2'
 gem 'jquery-rails'
 gem 'rouge'
 

@@ -46,6 +46,8 @@ GEM
     arel (9.0.0)
     bootsnap (1.4.6)
       msgpack (~> 1.0)
+    bootstrap-sass (2.3.2.2)
+      sass (~> 3.2)
     builder (3.2.4)
     capistrano (2.15.9)
       highline
@@ -61,7 +63,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commonjs (0.2.7)
     concurrent-ruby (1.1.8)
     config (2.2.1)
       deep_merge (~> 1.2, >= 1.2.1)
@@ -143,13 +144,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     kgio (2.11.3)
-    less (2.6.0)
-      commonjs (~> 0.2.7)
-    less-rails (4.0.0)
-      actionpack (>= 4)
-      less (~> 2.6.0)
-      sprockets (>= 2)
-    libv8 (3.16.14.19)
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -218,7 +212,6 @@ GEM
       ffi (~> 1.0)
     rchardet (1.8.0)
     redcarpet (3.5.1)
-    ref (2.0.0)
     rouge (3.26.0)
     rspec-core (3.9.1)
       rspec-support (~> 3.9.1)
@@ -243,6 +236,11 @@ GEM
       sexp_processor (~> 4.9)
     russian (0.6.0)
       i18n (>= 0.5.0)
+    sass (3.7.4)
+      sass-listen (~> 4.0.0)
+    sass-listen (4.0.0)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.2.1)
@@ -266,17 +264,9 @@ GEM
     temple (0.8.2)
     textacular (5.2.0)
       activerecord (>= 5.0, < 6.1)
-    therubyracer (0.12.3)
-      libv8 (~> 3.16.14.15)
-      ref
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    twitter-bootstrap-rails (2.2.8)
-      actionpack (>= 3.1)
-      execjs
-      rails (>= 3.1)
-      railties (>= 3.1)
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
@@ -298,6 +288,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth
   bootsnap (>= 1.1.0)
+  bootstrap-sass (~> 2.3.2.2)
   bundler (~> 2.1)
   capistrano (~> 2.15)
   coffee-rails
@@ -307,7 +298,6 @@ DEPENDENCIES
   git
   haml-rails
   jquery-rails
-  less-rails (>= 3.0.0)
   listen
   nokogiri
   pg
@@ -321,8 +311,6 @@ DEPENDENCIES
   sass-rails
   static_docs
   textacular
-  therubyracer
-  twitter-bootstrap-rails (~> 2.2.8)
   uglifier (>= 1.3.0)
   unicorn
   webrat
