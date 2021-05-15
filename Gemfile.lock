@@ -289,7 +289,6 @@ DEPENDENCIES
   RedCloth
   bootsnap (>= 1.1.0)
   bootstrap-sass (~> 2.3.2.2)
-  bundler (~> 2.1)
   capistrano (~> 2.15)
   coffee-rails
   config
@@ -316,7 +315,7 @@ DEPENDENCIES
   webrat
 
 RUBY VERSION
-   ruby 2.4.1p111
+   ruby 2.6.6p146
 
 BUNDLED WITH
-   2.1.4
+   2.2.17
