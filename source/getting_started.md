@@ -183,7 +183,7 @@ TIP: Сжатие ассетов JavaScript требует среды выпол
 
 Это запустит Puma, веб-сервер, распространяющийся с Rails по умолчанию. Чтобы увидеть приложение в действии, откройте окно браузера и пройдите по адресу <http://localhost:3000>. Вы должны увидеть дефолтную информационную страницу Rails:
 
-![скриншот Yay! You're on Rails!](/images/getting_started/rails_welcome.png)
+![скриншот Yay! You're on Rails!](getting_started/rails_welcome.png)
 
 Когда захотите остановить веб-сервер, нажмите Ctrl+C в терминале, где он запущен. В среде development, Rails в основном не требует остановки сервера; все изменения, которые Вы делаете в файлах, автоматически подхватываются сервером.
 
@@ -1236,7 +1236,7 @@ end
 
 Теперь в вашем блоге можно добавлять статьи и комментарии и отображать их в нужных местах.
 
-![Статья с комментариями](/images/getting_started/article_with_comments.png)
+![Статья с комментариями](getting_started/article_with_comments.png)
 
 Рефакторинг
 -----------
@@ -1677,7 +1677,7 @@ class CommentsController < ApplicationController
 
 Теперь, если попытаетесь создать новую статью, то встретитесь с вызовом базовой аутентификации HTTP:
 
-![Вызов базовой аутентификации HTTP](/images/getting_started/challenge.png)
+![Вызов базовой аутентификации HTTP](getting_started/challenge.png)
 
 Также для приложений на Rails доступны иные методы аутентификации. Двумя популярными дополнениями для Rails, среди прочих, являются [Devise](https://github.com/plataformatec/devise)
 и [Authlogic](https://github.com/binarylogic/authlogic).

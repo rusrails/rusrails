@@ -115,10 +115,14 @@ class Rusrails::Markdown
     end
 
     def image(link, title, alt_text)
-      %Q(<img src='#{link}' title='#{title}' alt='#{alt_text}' class='img-polaroid' />)
+      %Q(<img src='#{helpers.image_url(link)}' title='#{title}' alt='#{alt_text}' class='img-polaroid' />)
     end
 
     private
+
+    def helpers
+      ActionController::Base.helpers
+    end
 
     def convert_footnotes(text)
       text.gsub(/\[<sup>(\d+)\]<\/sup>/i) do

@@ -97,7 +97,7 @@ class Book < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи belongs_to](/images/association_basics/belongs_to.png)
+![Диаграмма для связи belongs_to](association_basics/belongs_to.png)
 
 NOTE: связи `belongs_to` _обязаны_ использовать единственное число. Если использовать множественное число в вышеприведенном примере для связи `author` в модели `Book` и создать экземпляр с помощью `Book.create(authors: @author)`, будет сообщено "uninitialized constant Book::Authors". Это так, потому что Rails автоматически получает имя класса из имени связи. Если в имени связи неправильно использовано число, то получаемый класс также будет неправильного числа.
 
@@ -145,7 +145,7 @@ end
 
 Главным отличием от `belongs_to` является то, что связующий столбец `supplier_id` расположен в другой таблице:
 
-![Диаграмма для связи has_one](/images/association_basics/has_one.png)
+![Диаграмма для связи has_one](association_basics/has_one.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -189,7 +189,7 @@ end
 
 NOTE: Имя другой модели указывается во множественном числе при объявлении связи `has_many`.
 
-![Диаграмма для связи has_many](/images/association_basics/has_many.png)
+![Диаграмма для связи has_many](association_basics/has_many.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -240,7 +240,7 @@ class Patient < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_many :through](/images/association_basics/has_many_through.png)
+![Диаграмма для связи has_many :through](association_basics/has_many_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -321,7 +321,7 @@ class AccountHistory < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_one :through](/images/association_basics/has_one_through.png)
+![Диаграмма для связи has_one :through](association_basics/has_one_through.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -362,7 +362,7 @@ class Part < ApplicationRecord
 end
 ```
 
-![Диаграмма для связи has_and_belongs_to_many](/images/association_basics/habtm.png)
+![Диаграмма для связи has_and_belongs_to_many](association_basics/habtm.png)
 
 Соответствующая миграция может выглядеть так:
 
@@ -516,7 +516,7 @@ class CreatePictures < ActiveRecord::Migration[6.0]
 end
 ```
 
-![Диаграмма для полиморфной связи](/images/association_basics/polymorphic.png)
+![Диаграмма для полиморфной связи](association_basics/polymorphic.png)
 
 ### Присоединение к себе
 
