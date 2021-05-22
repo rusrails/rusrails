@@ -125,8 +125,8 @@ end
 
 Чтобы увидеть его в действии, измените директорию на `test/dummy`, запустите `bin/rails console` и начните squawking:
 
-```ruby
->> "Hello World".to_squawk
+```irb
+irb> "Hello World".to_squawk
 => "squawk! Hello World"
 ```
 
@@ -241,7 +241,9 @@ $ bin/rails db:migrate
 class Hickwall < ApplicationRecord
   acts_as_yaffle
 end
+```
 
+```ruby
 # test/dummy/app/models/wickwall.rb
 
 class Wickwall < ApplicationRecord
@@ -264,7 +266,9 @@ module Yaffle
     end
   end
 end
+```
 
+```ruby
 # test/dummy/app/models/application_record.rb
 
 class ApplicationRecord < ActiveRecord::Base
@@ -320,7 +324,9 @@ module Yaffle
     end
   end
 end
+```
 
+```ruby
 # test/dummy/app/models/application_record.rb
 
 class ApplicationRecord < ActiveRecord::Base
@@ -392,7 +398,9 @@ module Yaffle
     end
   end
 end
+```
 
+```ruby
 # test/dummy/app/models/application_record.rb
 
 class ApplicationRecord < ActiveRecord::Base
