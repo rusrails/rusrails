@@ -80,7 +80,7 @@ class Supplier < ApplicationRecord
 end
 ```
 
-![Диаграмма всех моделей книжного магазина](images/active_record_querying/bookstore_models.png)
+![Диаграмма всех моделей книжного магазина](active_record_querying/bookstore_models.png)
 
 Получение объектов из базы данных
 ---------------------------------
