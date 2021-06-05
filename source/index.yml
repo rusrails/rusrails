@@ -333,8 +333,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 6.0
     path:     6_0_release_notes
     file:     6_0_release_notes.md
-    revision: 170f5113d7d5540dea42c697b58cf87b8b5f39ec
-    date:     05/08/2019
+    revision: 226b171144039a8c02344a3cb22323e38eddbdf2
+    date:     31/05/2021
 
   - title:    Заметки о релизе Ruby on Rails 5.2
     path:     5_2_release_notes
