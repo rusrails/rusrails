@@ -99,8 +99,7 @@ verified_user = User.find_by(id: cookies.encrypted['_session']['user_id'])
 
 #### Обработка исключений
 
-По умолчанию необработанные исключения ловятся и логируются логгером Rails'. Если хотите глобально перехватывать эти исключения и report them to an external bug tracking service, for
-example, you can do so with [`rescue_from`][]:
+По умолчанию необработанные исключения ловятся и логируются логгером Rails'. Если вы хотите глобально перехватывать эти исключения чтобы, например, затем отправить их в какой-нибудь сторонний баг-трекер, то вы можете это сделать используя [`rescue_from`][]:
 
 ```ruby
 # app/channels/application_cable/connection.rb
