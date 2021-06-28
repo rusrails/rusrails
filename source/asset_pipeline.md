@@ -274,16 +274,10 @@ WARNING: Если вы прекомпилируете ассеты (смотри
 Если добавить расширение `erb` к ассету JavaScript, сделав его чем-то вроде `application.js.erb`, можно использовать хелпер `asset_path` в коде вашего JavaScript:
 
 ```erb
-$('#logo').attr({ src: "<%= asset_path('logo.png') %>" });
+document.getElementById('logo').src = "<%= asset_path('logo.png') %>"
 ```
 
 Этот фрагмент кода записывает путь к определенному указанному ассету.
-
-Подобным образом можно использовать хелпер `asset_path` в файлах CoffeeScript с расширением `erb` (т.е. `application.coffee.erb`):
-
-```js
-$('#logo').attr src: "<%= asset_path('logo.png') %>"
-```
 
 ### (manifest-files-and-directives) Файлы манифеста и директивы
 
@@ -308,9 +302,9 @@ Rails также создает дефолтный файл `app/assets/styleshe
 
 ```css
 /* ...
-*= require_self
-*= require_tree .
-*/
+ *= require_self
+ *= require_tree .
+ */
 ```
 
 Rails создает `app/assets/stylesheets/application.css` независимо от того, была ли выбрана опция `--skip-sprockets` при создании нового приложения Rails. Это для того, чтобы было легко добавить файлопровод в будущем, если захотите.
@@ -329,10 +323,10 @@ NOTE. Если хотите использовать несколько файл
 
 ```css
 /* ...
-*= require reset
-*= require layout
-*= require chrome
-*/
+ *= require reset
+ *= require layout
+ *= require chrome
+ */
 ```
 
 ### Предварительная обработка
@@ -435,8 +429,7 @@ config.assets.debug = false
 
 ```html
 <script src="/assets/application-908e25f4bf641868d8683022a5b62f54.js"></script>
-<link href="/assets/application-4dd5b109ee3439da54f5bdfd78a80473.css" media="screen"
-rel="stylesheet" />
+<link href="/assets/application-4dd5b109ee3439da54f5bdfd78a80473.css" rel="stylesheet" />
 ```
 
 NOTE: с Asset Pipeline опции `:cache` и `:concat` больше не используются, удалите эти опции из `javascript_include_tag` и `stylesheet_link_tag`.
@@ -544,15 +537,15 @@ $ RAILS_ENV=production rails assets:precompile
 
 Есть следующие оговорки:
 
-* Если доступны прекомпилированные ассеты, они будут отданы, даже если они больше не соответствуют оригинальным (не компилированным) ассетам, _даже на сервере development._
+*   Если доступны прекомпилированные ассеты, они будут отданы, даже если они больше не соответствуют оригинальным (не компилированным) ассетам, _даже на сервере development._
 
-  Чтобы убедиться, что сервер development всегда компилирует ассеты на лету (и, таким образом, всегда отражает последнее состояние кода), среда development _должна быть настроена содержать прекомпилированные ассеты в другом месте, чем содержит production._ В противном случае, любые ассеты, прекомпилированные для использования в  production, будут ломать запросы к ним в development (_например,_ последующие сделанные изменения в ассетах не будут отражены в браузере).
+    Чтобы убедиться, что сервер development всегда компилирует ассеты на лету (и, таким образом, всегда отражает последнее состояние кода), среда development _должна быть настроена содержать прекомпилированные ассеты в другом месте, чем содержит production._ В противном случае, любые ассеты, прекомпилированные для использования в  production, будут ломать запросы к ним в development (_например,_ последующие сделанные изменения в ассетах не будут отражены в браузере).
 
-  Это можно сделать, добавив следующую строчку в `config/environments/development.rb`:
+    Это можно сделать, добавив следующую строчку в `config/environments/development.rb`:
 
-  ```ruby
-  config.assets.prefix = "/dev-assets"
-  ```
+    ```ruby
+    config.assets.prefix = "/dev-assets"
+    ```
 * Задача прекомпиляции ассетов в вашей системе развертывания (_например,_ Capistrano) должна быть отключена.
 * Все необходимые компрессоры или минификаторы должны быть доступны что в вашей системе development.
 
@@ -590,10 +583,10 @@ CDN расшифровывается как [Content Delivery Network](https://r
 
 Для настройки CDN вам нужно, чтобы ваше приложение было запущено в production в интернете на публично доступном URL, например `example.com`. Далее необходимо зарегистрироваться на сервисе CDN облачного провайдера. После этого необходимо настроить "origin" для CDN, указав ваш сайт `example.com`, по документации провайдера по настройке origin-сервера.
 
-Подготовленный CDN даст определенный поддомен для вашего приложения, такой как `mycdnsubdomain.fictional-cdn.com` (отметьте, что fictional-cdn.com это не существующий провайдер CDN в настоящее время). Теперь, когда есть настроенный сервер CDN, необходимо сообщить браузерам использовать ваш CDN для того, чтобы брать ассеты оттуда, а не от сервера Rails. Это можно осуществить, настроив Rails, установив ваш CDN в качестве хоста ассетов, вместо использования относительного пути. Для настройки хоста ассетов в Rails, необходимо установить `config.action_controller.asset_host` в `config/environments/production.rb`:
+Подготовленный CDN даст определенный поддомен для вашего приложения, такой как `mycdnsubdomain.fictional-cdn.com` (отметьте, что fictional-cdn.com это не существующий провайдер CDN в настоящее время). Теперь, когда есть настроенный сервер CDN, необходимо сообщить браузерам использовать ваш CDN для того, чтобы брать ассеты оттуда, а не от сервера Rails. Это можно осуществить, настроив Rails, установив ваш CDN в качестве хоста ассетов, вместо использования относительного пути. Для настройки хоста ассетов в Rails, необходимо установить `config.asset_host` в `config/environments/production.rb`:
 
 ```ruby
-config.action_controller.asset_host = 'mycdnsubdomain.fictional-cdn.com'
+config.asset_host = 'mycdnsubdomain.fictional-cdn.com'
 ```
 
 NOTE: Необходимо предоставить только "host", это поддомен и корневой домен, не нужно указывать протокол или "scheme", такие как `http://` или `https://`. Когда запрашивается страница, протокол в сгенерированной ссылке на ассет будет соответствовать тому, какой доступ к странице.
@@ -601,7 +594,7 @@ NOTE: Необходимо предоставить только "host", это 
 Это значение также можно настроить с помощью [переменной среды](https://ru.wikipedia.org/wiki/Переменная_среды), чтобы упростить запуск staging-копий вашего сайта:
 
 ```ruby
-config.action_controller.asset_host = ENV['CDN_HOST']
+config.asset_host = ENV['CDN_HOST']
 ```
 
 NOTE: Чтобы это работало, вам необходимо установить на сервере `CDN_HOST` значение `mycdnsubdomain.fictional-cdn.com`.
@@ -727,17 +720,17 @@ config.assets.css_compressor = :sass
 
 ### Сжатие JavaScript
 
-Возможные варианты для сжатия JavaScript это `:closure`, `:uglifier` and `:yui`. Они требуют использование гемов `closure-compiler`, `uglifier` или `yui-compressor` соответственно.
+Возможные варианты для сжатия JavaScript это `:terser`, `:closure`, `:uglifier` and `:yui`. Они требуют использование гемов `terser`, `closure-compiler`, `uglifier` или `yui-compressor` соответственно.
 
-Возьмем, к примеру, гем `uglifier`. Этот гем оборачивает [UglifierJS](https://github.com/mishoo/UglifyJS) (написанный для NodeJS) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
+Возьмем, к примеру, гем `terser`. Этот гем оборачивает [Terser](https://github.com/terser/terser) (написанный для NodeJS) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
 
-Следующая строчка вызывает `uglifier` для сжатия JavaScript.
+Следующая строчка вызывает `terser` для сжатия JavaScript.
 
 ```ruby
-config.assets.js_compressor = :uglifier
+config.assets.js_compressor = :terser
 ```
 
-NOTE: Необходим runtime, поддерживаемый [ExecJS](https://github.com/rails/execjs#readme), чтобы использовать `uglifier`. Если используете macOS или Windows, у вас уже имеется JavaScript runtime, установленный в операционной системе.
+NOTE: Необходим runtime, поддерживаемый [ExecJS](https://github.com/rails/execjs#readme), чтобы использовать `terser`. Если используете macOS или Windows, у вас уже имеется JavaScript runtime, установленный в операционной системе.
 
 ### Сжатие ассетов
 
