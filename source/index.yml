@@ -27,8 +27,8 @@ pages:
   - title:    Миграции Active Record
     path:     rails-database-migrations
     file:     active_record_migrations.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: c5c4fc155b49bcf5c99cd7f453153d98c13810d1
+    date:     23/06/2021
 
   - title:    Валидации Active Record
     path:     active-record-validations

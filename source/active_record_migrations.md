@@ -20,7 +20,7 @@
 Вот пример миграции:
 
 ```ruby
-class CreateProducts < ActiveRecord::Migration[6.0]
+class CreateProducts < ActiveRecord::Migration[7.0]
   def change
     create_table :products do |t|
       t.string :name
@@ -43,7 +43,7 @@ NOTE: Некоторые запросы не могут быть запущен�
 Если хотите миграцию для чего-то, что Active Record не знает, как обратить, вы можете использовать `reversible`:
 
 ```ruby
-class ChangeProductsPrice < ActiveRecord::Migration[6.0]
+class ChangeProductsPrice < ActiveRecord::Migration[7.0]
   def change
     reversible do |dir|
       change_table :products do |t|
@@ -58,7 +58,7 @@ end
 С другой стороны, можно использовать `up` и `down` вместо `change`:
 
 ```ruby
-class ChangeProductsPrice < ActiveRecord::Migration[6.0]
+class ChangeProductsPrice < ActiveRecord::Migration[7.0]
   def up
     change_table :products do |t|
       t.change :price, :string
@@ -89,7 +89,7 @@ $ bin/rails generate migration AddPartNumberToProducts
 Это создаст правильно названную пустую миграцию:
 
 ```ruby
-class AddPartNumberToProducts < ActiveRecord::Migration[6.0]
+class AddPartNumberToProducts < ActiveRecord::Migration[7.0]
   def change
   end
 end
@@ -106,7 +106,7 @@ $ bin/rails generate migration AddPartNumberToProducts part_number:string
 сгенерирует
 
 ```ruby
-class AddPartNumberToProducts < ActiveRecord::Migration[6.0]
+class AddPartNumberToProducts < ActiveRecord::Migration[7.0]
   def change
     add_column :products, :part_number, :string
   end
@@ -122,7 +122,7 @@ $ bin/rails generate migration AddPartNumberToProducts part_number:string:index
 сгенерирует необходимые выражения `add_column` and [`add_index`][]:
 
 ```ruby
-class AddPartNumberToProducts < ActiveRecord::Migration[6.0]
+class AddPartNumberToProducts < ActiveRecord::Migration[7.0]
   def change
     add_column :products, :part_number, :string
     add_index :products, :part_number
@@ -139,7 +139,7 @@ $ bin/rails generate migration RemovePartNumberFromProducts part_number:string
 генерирует
 
 ```ruby
-class RemovePartNumberFromProducts < ActiveRecord::Migration[6.0]
+class RemovePartNumberFromProducts < ActiveRecord::Migration[7.0]
   def change
     remove_column :products, :part_number, :string
   end
@@ -155,7 +155,7 @@ $ bin/rails generate migration AddDetailsToProducts part_number:string price:dec
 генерирует
 
 ```ruby
-class AddDetailsToProducts < ActiveRecord::Migration[6.0]
+class AddDetailsToProducts < ActiveRecord::Migration[7.0]
   def change
     add_column :products, :part_number, :string
     add_column :products, :price, :decimal
@@ -172,7 +172,7 @@ $ bin/rails generate migration CreateProducts name:string part_number:string
 генерирует
 
 ```ruby
-class CreateProducts < ActiveRecord::Migration[6.0]
+class CreateProducts < ActiveRecord::Migration[7.0]
   def change
     create_table :products do |t|
       t.string :name
@@ -195,14 +195,14 @@ $ bin/rails generate migration AddUserRefToProducts user:references
 генерирует следующий вызов [`add_reference`][]:
 
 ```ruby
-class AddUserRefToProducts < ActiveRecord::Migration[6.0]
+class AddUserRefToProducts < ActiveRecord::Migration[7.0]
   def change
     add_reference :products, :user, foreign_key: true
   end
 end
 ```
 
-Эта миграция создаст столбец `user_id` и соответствующий индекс.
+Эта миграция создаст столбец `user_id`, [ссылки (references)](#references) это сокращение для создания столбцов, индексов, внешних ключей или даже полимерных столбцов связи.
 
 Существует также генератор, который будет производить объединение таблиц, если `JoinTable` является частью названия.
 
@@ -215,7 +215,7 @@ $ bin/rails generate migration CreateJoinTableCustomerProduct customer product
 Сгенерирует следующую миграцию:
 
 ```ruby
-class CreateJoinTableCustomerProduct < ActiveRecord::Migration[6.0]
+class CreateJoinTableCustomerProduct < ActiveRecord::Migration[7.0]
   def change
     create_join_table :customers, :products do |t|
       # t.index [:customer_id, :product_id]
@@ -241,7 +241,7 @@ $ bin/rails generate model Product name:string description:text
 создаст миграцию, которая выглядит так
 
 ```ruby
-class CreateProducts < ActiveRecord::Migration[6.0]
+class CreateProducts < ActiveRecord::Migration[7.0]
   def change
     create_table :products do |t|
       t.string :name
@@ -268,7 +268,7 @@ $ bin/rails generate migration AddDetailsToProducts 'price:decimal{5,2}' supplie
 создаст миграцию, которая выглядит как эта:
 
 ```ruby
-class AddDetailsToProducts < ActiveRecord::Migration[6.0]
+class AddDetailsToProducts < ActiveRecord::Migration[7.0]
   def change
     add_column :products, :price, :decimal, precision: 5, scale: 2
     add_reference :products, :supplier, polymorphic: true
@@ -293,7 +293,7 @@ create_table :products do |t|
 end
 ```
 
-Это создаст таблицу `products` со столбцом `name` (и, как обсуждалось выше, подразумеваемым столбцом `id`).
+Это создаст таблицу `products` со столбцом `name`.
 
 По умолчанию `create_table` создаст первичный ключ, названный `id`. Вы можете изменить имя первичного ключа с помощью опции `:primary_key` (не забудьте также обновить соответствующую модель), или, если вы вообще не хотите первичный ключ, можно указать опцию `id: false`. Если нужно передать базе данных специфичные опции, вы можете поместить фрагмент `SQL` в опцию `:options`. Например:
 
@@ -304,6 +304,15 @@ end
 ```
 
 добавит `ENGINE=BLACKHOLE` к SQL выражению, используемому для создания таблицы.
+
+Можно создать индекс на созданные столбцы внутри блока `create_table`, передав true или хэш опций в опцию `:index`:
+
+```ruby
+create_table :users do |t|
+  t.string :name, index: true
+  t.string :email, index: { unique: true, name: 'unique_emails' }
+end
+```
 
 Также можно передать опцию `:comment` с любым описанием для таблицы, которое будет сохранено в самой базе данных, и может быть просмотрено с помощью инструментов администрирования базы данных, таких как MySQL Workbench или PgAdmin III. Очень рекомендуется оставлять комментарии в миграциях для приложений с большими базами данных, так как это помогает понять модель данных и сгенерировать документацию. В настоящее время комментарии поддерживают только адаптеры MySQL и PostgreSQL.
 
@@ -396,17 +405,56 @@ NOTE: Также можно написать предыдущую миграци
 
 Модификаторы столбца могут быть применены при создании или изменении столбца:
 
-* `limit`        Устанавливает максимальный размер полей `string/text/binary/integer`.
-* `precision`    Определяет точность для полей `decimal`, определяющую общее количество цифр в числе.
-* `scale`        Определяет масштаб для полей `decimal`, определяющий количество цифр после запятой.
-* `polymorphic`  Добавляет столбец `type` для связей `belongs_to`.
-* `null`         Позволяет или запрещает значения `NULL` в столбце.
-* `default`      Позволяет установить значение по умолчанию для столбца. Отметьте, что если вы используете динамическое значение (такое как дату), значение по умолчанию будет вычислено лишь один раз (т.е. на дату, когда миграция будет применена).
 * `comment`      Добавляет комментарий для столбца.
+* `collation`    Указывает сопоставление для столбца `string` или `text`.
+* `default`      Позволяет установить значение по умолчанию для столбца. Отметьте, что если вы используете динамическое значение (такое как дату), значение по умолчанию будет вычислено лишь один раз (т.е. на дату, когда миграция будет применена). Используйте `nil` для `NULL`.
+* `limit`        Устанавливает максимальное количество символов для столбца `string` и максимальное количество байт для столбцов `text/binary/integer`.
+* `null`         Позволяет или запрещает значения `NULL` в столбце.
+* `precision`    Определяет точность для столбцов `decimal/numeric/datetime/time`.
+* `scale`        Определяет масштаб для столбцов `decimal` и `numeric`, определяющий количество цифр после запятой.
+
+NOTE: Для `add_column` или `change_column` нет опций для добавления индексов. Их нужно добавить отдельно с помощью `add_index`.
 
 Некоторые адаптеры могут поддерживать дополнительные опции; за подробностями обратитесь к документации API конкретных адаптеров.
 
 NOTE: С помощью командной строки нельзя указать `null` и `default`.
+
+### (References) Ссылки
+
+Метод `add_reference` позволяет создавать правильно названный столбец.
+
+```ruby
+add_reference :users, :role
+```
+
+Эта миграция создаст столбец `role_id` в таблице users. Он также создаст индекс для этого столбца, если не задана явно опция `index: false`:
+
+```ruby
+add_reference :users, :role, index: false
+```
+
+Метод `add_belongs_to` это псевдоним `add_reference`.
+
+```ruby
+add_belongs_to :taggings, :taggable, polymorphic: true
+```
+
+Опция polymorphic создаст два столбца в таблице taggings. которые можно использовать для полиморфных связей: `taggable_type` и `taggable_id`.
+
+Внешний ключ можно создать с помощью опции `foreign_key`.
+
+```ruby
+add_reference :users, :role, foreign_key: true
+```
+
+Польше опций `add_reference` в [документации API](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
+
+Ссылки также можно убрать:
+
+```ruby
+remove_reference :products, :user, foreign_key: true, index: false
+```
+
 
 ### (foreign-keys) Внешние ключи
 
@@ -500,7 +548,7 @@ remove_column :posts, :slug, :string, null: false, default: ''
 Комплексная миграция может включать процессы, которые Active Record не знает как обратить. Вы можете использовать [`reversible`][], чтобы указать что делать когда запускается миграция и когда она требует отката. Например:
 
 ```ruby
-class ExampleMigration < ActiveRecord::Migration[6.0]
+class ExampleMigration < ActiveRecord::Migration[7.0]
   def change
     create_table :distributors do |t|
       t.string :zipcode
@@ -541,7 +589,7 @@ end
 Метод `up` должен описывать изменения, которые необходимо внести в схему, а метод `down` миграции должен обращать изменения, внесенные методом `up`. Другими словами, схема базы данных должна остаться неизменной после выполнения `up`, а затем `down`. Например, если создать таблицу в методе `up`, ее следует удалить в методе `down`. Разумно производить отмену изменений в полностью противоположном порядке тому, в котором они сделаны в методе `up`. Тогда пример из раздела про `reversible` будет эквивалентен:
 
 ```ruby
-class ExampleMigration < ActiveRecord::Migration[6.0]
+class ExampleMigration < ActiveRecord::Migration[7.0]
   def up
     create_table :distributors do |t|
       t.string :zipcode
@@ -581,7 +629,7 @@ end
 ```ruby
 require_relative "20121212123456_example_migration"
 
-class FixupExampleMigration < ActiveRecord::Migration[6.0]
+class FixupExampleMigration < ActiveRecord::Migration[7.0]
   def change
     revert ExampleMigration
 
@@ -595,7 +643,7 @@ end
 Метод `revert` также может принимать блок. Это может быть полезно для отката выбранной части предыдущих миграций. Для примера, давайте представим, что `ExampleMigration` закоммичена, а позже мы решили, что было бы лучше использовать валидации Active Record, вместо ограничения `CHECK`, для проверки zipcode.
 
 ```ruby
-class DontUseConstraintForZipcodeValidationMigration < ActiveRecord::Migration[6.0]
+class DontUseConstraintForZipcodeValidationMigration < ActiveRecord::Migration[7.0]
   def change
     revert do
       reversible do |dir|
@@ -716,7 +764,7 @@ $ bin/rails db:migrate RAILS_ENV=test
 Например, эта миграция:
 
 ```ruby
-class CreateProducts < ActiveRecord::Migration[6.0]
+class CreateProducts < ActiveRecord::Migration[7.0]
   def change
     suppress_messages do
       create_table :products do |t|
@@ -830,7 +878,7 @@ end
 Основным назначением миграции Rails является запуск команд, последовательно модифицирующих схему. Миграции также могут быть использованы для добавления или модифицирования данных. Это полезно для существующей базы данных, которую нельзя удалить и пересоздать, такой как база данных на production.
 
 ```ruby
-class AddInitialProducts < ActiveRecord::Migration[6.0]
+class AddInitialProducts < ActiveRecord::Migration[7.0]
   def up
     5.times do |i|
       Product.create(name: "Product ##{i}", description: "A product.")
@@ -862,3 +910,11 @@ end
 
 Если вы запустите команду `bin/rails db:migrate:status`, которая отображает статус
 (up или down) каждой миграции, вы увидите `********** NO FILE **********`, отображенный рядом с каждым удаленным файлом миграции, который однажды был запущен в указанной среде, но больше не найден в директории `db/migrate/`.
+
+Хотя тут есть предостережение. Задачи Rake для установки миграций из engine являются идемпотентными. Миграции, присутствующие в родительском приложении благодаря предыдущим установками, пропускаются, а отсутствующие копируются с новой временной меткой. Если вы удалите старые миграции engine и запустите задачу установки заново, вы получите новые файлы с новыми временными метками, и `db:migrate` попытается запустить их снова.
+
+Поэтому, как правило, вам захочется сохранить миграции, пришедшие из engine. В них есть специальный комментарий, наподобие:
+
+```
+# This migration comes from blorgh (originally 20210621082949)
+```
