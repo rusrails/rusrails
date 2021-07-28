@@ -142,7 +142,7 @@ $ bin/rails server -e production -p 4000
 
 ### `bin/rails generate`
 
-Команда `bin/rails generate` использует шаблоны для создания целой кучи вещей. Запуск `rbin/ails generate` выдаст список доступных генераторов:
+Команда `bin/rails generate` использует шаблоны для создания целой кучи вещей. Запуск `bin/rails generate` выдаст список доступных генераторов:
 
 INFO: Также можно использовать псевдоним "g" для вызова команды `generate`: `bin/rails g`.
 
