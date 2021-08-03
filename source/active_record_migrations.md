@@ -447,7 +447,7 @@ add_belongs_to :taggings, :taggable, polymorphic: true
 add_reference :users, :role, foreign_key: true
 ```
 
-Польше опций `add_reference` в [документации API](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
+Больше опций `add_reference` в [документации API](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
 
 Ссылки также можно убрать:
 
