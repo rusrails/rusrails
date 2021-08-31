@@ -366,7 +366,7 @@ irb(main):001:0>
 irb> article = Article.new(title: "Hello Rails", body: "I am on Rails!")
 ```
 
-Важно отметить, что что мы только *инициализировали* этот объект. Этот объект вообще не сохранен в базе данных. В настоящий момент он доступен только в консоли. Чтобы сохранить его в базу данных, нужно вызвать [`save`](https://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-save):
+Важно отметить, что мы только *инициализировали* этот объект. Этот объект вообще не сохранен в базе данных. В настоящий момент он доступен только в консоли. Чтобы сохранить его в базу данных, нужно вызвать [`save`](https://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-save):
 
 ```irb
 irb> article.save
