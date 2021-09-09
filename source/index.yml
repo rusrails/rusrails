@@ -222,17 +222,11 @@ pages:
     revision: cb0da4f817eee35089c1f12a4fa46a765611181f
     date:     22/12/2020
 
-  - title:    Автозагрузка и перезагрузка констант (режим Zeitwerk)
+  - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
     revision: e6fd87bda8148871ee28bb730ca9b63e23dd6fa4
     date:     04/02/2021
-
-  - title:    Автозагрузка и перезагрузка констант (режим Classic)
-    path:     autoloading_and_reloading_constants_classic_mode
-    file:     autoloading_and_reloading_constants_classic_mode.md
-    revision: 1cd20bd384554ec7387ca47efebf24bb18cb2b32
-    date:     05/01/2021
 
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
