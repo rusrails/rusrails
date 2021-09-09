@@ -9,7 +9,7 @@ Ruby on Rails — это веб-фреймворк с открытым кодо�
 
 Это перевод [Ruby on Rails Guides](http://guides.rubyonrails.org) для версии Rails 7.0. Переводы для ранних версий доступны на гитхабе:
 
-* [Rails 6.0](https://github.com/morsbox/rusrails/tree/6.1/source)
+* [Rails 6.1](https://github.com/morsbox/rusrails/tree/6.1/source)
 * [Rails 6.0](https://github.com/morsbox/rusrails/tree/6.0/source)
 * [Rails 5.2](https://github.com/morsbox/rusrails/tree/5.2/source)
 * [Прочие версии](https://github.com/morsbox/rusrails/releases)
