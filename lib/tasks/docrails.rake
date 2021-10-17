@@ -78,7 +78,6 @@ namespace :docrails do
     else
       puts "Page #{args.file_name} not found!"
     end
-
   end
 
   def docrails
