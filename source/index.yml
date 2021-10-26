@@ -225,8 +225,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
     file:     autoloading_and_reloading_constants.md
-    revision: e6fd87bda8148871ee28bb730ca9b63e23dd6fa4
-    date:     04/02/2021
+    revision: 2ec2ee6899870bd8de358a4dba75b90cbbae3256
+    date:     09/10/2021
 
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
