@@ -384,7 +384,8 @@ pages:
     revision: cb0da4f817eee35089c1f12a4fa46a765611181f
     date:     22/12/2020
 
-plan: []
+plan:
+  - file:     classic_to_zeitwerk_howto.md
 
 old:
   - file:     2_2_release_notes.md
