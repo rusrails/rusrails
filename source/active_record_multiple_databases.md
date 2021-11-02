@@ -8,6 +8,7 @@
 * Как настроить приложение для нескольких баз данных.
 * Как работает автоматическое переключение соединений.
 * Как использовать горизонтальный шардинг для нескольких баз данных.
+* Как мигрировать с `legacy_connection_handling` на новую обработку соединений.
 * Какие особенности уже поддерживаются, а какие пока еще разрабатываются.
 
 --------------------------------------------------------------------------------
@@ -24,9 +25,7 @@
 Следующие особенности (пока) не поддерживаются:
 
 * Автоматическое переключение для горизонтального шардинга
-* Соединение между кластерами
 * Нагрузочная балансировка реплик
-* Выгрузка кэшей схемы для нескольких баз данных
 
 ## Настройка приложения
 Хотя Rails старается сделать максимум работы за вас, все же требуется несколько шагов, чтобы подготовить приложение к нескольким базам данных.
@@ -38,34 +37,39 @@
 ```yaml
 production:
   database: my_primary_database
-  user: root
-  adapter: mysql
+  adapter: mysql2
+  username: root
+  password: <%= ENV['ROOT_PASSWORD'] %>
 ```
 
 Давайте добавим реплику для первой конфигурации, и вторую базу данных с именем animals, а также реплику для нее. Для этого нам нужно изменить конфигурацию `database.yml` из 2-уровневой в 3-уровневую.
 
-Если предоставлена конфигурация primary, она будет использована как конфигурация "по умолчанию". Если нет конфигурации с именем "primary", Rails использует первую конфигурацию для среды. Конфигурации по умолчанию будут использовать имена файлов Rails по умолчанию. Например, основные конфигурации будут использовать `schema.rb` для файла схемы, в то время как все остальные записи будут использовать имена файлов `[CONFIGURATION_NAMESPACE]_schema.rb`.
+Если предоставлена конфигурация primary, она будет использована как конфигурация "по умолчанию". Если нет конфигурации с именем `"primary"`, Rails использует первую конфигурацию как "по умолчанию" для каждой среды. Конфигурации по умолчанию будут использовать имена файлов Rails по умолчанию. Например, основные конфигурации будут использовать `schema.rb` для файла схемы, в то время как все остальные записи будут использовать имена файлов `[CONFIGURATION_NAMESPACE]_schema.rb`.
 
 ```yaml
 production:
   primary:
     database: my_primary_database
-    user: root
-    adapter: mysql
+    username: root
+    password: <%= ENV['ROOT_PASSWORD'] %>
+    adapter: mysql2
   primary_replica:
     database: my_primary_database
-    user: root_readonly
-    adapter: mysql
+    username: root_readonly
+    password: <%= ENV['ROOT_READONLY_PASSWORD'] %>
+    adapter: mysql2
     replica: true
   animals:
     database: my_animals_database
-    user: animals_root
-    adapter: mysql
+    username: animals_root
+    password: <%= ENV['ANIMALS_ROOT_PASSWORD'] %>
+    adapter: mysql2
     migrations_paths: db/animals_migrate
   animals_replica:
     database: my_animals_database
-    user: animals_readonly
-    adapter: mysql
+    username: animals_readonly
+    password: <%= ENV['ANIMALS_READONLY_PASSWORD'] %>
+    adapter: mysql2
     replica: true
 ```
 
@@ -73,9 +77,9 @@ production:
 
 Во-первых, имя базы данных для `primary` и `primary_replica` должно быть тем же самым, так как они содержат те же самые данные. То же самое для `animals` и `animals_replica`.
 
-Во-вторых, имя пользователя для пишущей базы и реплики должно быть различным, и права пользователя реплики должны быть установлены только для чтения, но не для записи.
+Во-вторых, имя пользователя для пишущей базы и реплики должно быть различным, и права пользователя реплики базы данных должны быть установлены только для чтения, но не для записи.
 
-При использовании реплики базы данных нужно добавить запись `replica: true` для реплики в `database.yml`. Это нужно, потому что в противном случае Rails не сможет узнать, какая из них реплика, а какая пишущая.
+При использовании реплики базы данных нужно добавить запись `replica: true` для реплики в `database.yml`. Это нужно, потому что в противном случае Rails не сможет узнать, какая из них реплика, а какая пишущая. Rails не будет запускать определенные задачи, такие как миграции, на репликах.
 
 Наконец, для новой пишущей базы данных необходимо установить в `migrations_paths` директорию, в которой вы будете хранить миграции для этой базы данных. Мы рассмотрим `migrations_paths` позже в этом руководстве.
 
@@ -141,6 +145,9 @@ rails db:migrate:primary                 # Migrate primary database for current 
 rails db:migrate:status                  # Display status of migrations
 rails db:migrate:status:animals          # Display status of migrations for animals database
 rails db:migrate:status:primary          # Display status of migrations for primary database
+rails db:reset                           # Drops and recreates all databases from their schema for the current environment and loads the seeds
+rails db:reset:animals                   # Drops and recreates the animals database from its schema for the current environment and loads the seeds
+rails db:reset:primary                   # Drops and recreates the primary database from its schema for the current environment and loads the seeds
 rails db:rollback                        # Rolls the schema back to the previous version (specify steps w/ STEP=n)
 rails db:rollback:animals                # Rollback animals database for current environment (specify steps w/ STEP=n)
 rails db:rollback:primary                # Rollback primary database for current environment (specify steps w/ STEP=n)
@@ -150,9 +157,27 @@ rails db:schema:dump:primary             # Creates a db/schema.rb file that is p
 rails db:schema:load                     # Loads a database schema file (either db/schema.rb or db/structure.sql  ...
 rails db:schema:load:animals             # Loads a database schema file (either db/schema.rb or db/structure.sql  ...
 rails db:schema:load:primary             # Loads a database schema file (either db/schema.rb or db/structure.sql  ...
+rails db:setup                           # Creates all databases, loads all schemas, and initializes with the seed data (use db:reset to also drop all databases first)
+rails db:setup:animals                   # Creates the animals database, loads the schema, and initializes with the seed data (use db:reset:animals to also drop the database first)
+rails db:setup:primary                   # Creates the primary database, loads the schema, and initializes with the seed data (use db:reset:primary to also drop the database first)
 ```
 
-Запуск команды `bin/rails db:create` создаст и основную базу, и базу животных. Отметьте, что нет команды для создания пользователей, и вам нужно это сделать вручную для поддержки пользователей только для чтения в репликах. Если нужно создать базу животных, можно выполнить `bin/rails db:create:animals`.
+Запуск команды `bin/rails db:create` создаст и основную базу, и базу животных. Отметьте, что нет команды для создания пользователей базы данных, и вам нужно это сделать вручную для поддержки пользователей только для чтения в репликах. Если нужно создать базу животных, можно выполнить `bin/rails db:create:animals`.
+
+## Соединение с базами данных без управления схемой и миграциями
+
+Если вы хотите соединиться с внешней базой данных без каких-либо задач управления базой данных, таких как управление схемой, миграции, сиды, и т.д., можно установить для базы данных конфигурационную настройку `database_tasks: false`. По умолчанию она установлена как true.
+
+```yaml
+production:
+  primary:
+    database: my_database
+    adapter: mysql2
+  animals:
+    database: my_animals_database
+    adapter: mysql2
+    database_tasks: false
+```
 
 ## Генераторы и миграции
 
@@ -166,7 +191,7 @@ rails db:schema:load:primary             # Loads a database schema file (either 
 $ bin/rails generate migration CreateDogs name:string --database animals
 ```
 
-При использовании генераторов Rails, генераторы скаффолда или модели сгенерируют вам абстрактный класс. Просто передайте ключ базы данных в командной строке
+При использовании генераторов Rails, генераторы скаффолда или модели сгенерируют вам абстрактный класс. Просто передайте ключ базы данных в командной строке.
 
 ```bash
 $ bin/rails generate scaffold Dog name:string --database animals
@@ -205,7 +230,7 @@ $ bin/rails generate scaffold Dog name:string --database animals --parent Animal
 
 Наконец, чтобы использовать реплику только для чтения, нужно активировать промежуточную программу для автоматического переключения.
 
-Автоматическое переключение позволяет приложению переключаться с пишущей базы на реплику или с реплики на пишущую, основываясь на методе HTTP, и того, была ли недавно запись.
+Автоматическое переключение позволяет приложению переключаться с пишущей базы на реплику или с реплики на пишущую, основываясь на методе HTTP, и того, была ли недавно запись запрашивающим пользователем.
 
 Если приложение получает запрос POST, PUT, DELETE или PATCH, приложение автоматически будет писать в пишущую базу данных. За указанное время после записи, приложение будет читать из основной базы. Для запроса GET или HEAD приложение будет читать из реплики, если нет недавней записи.
 
@@ -253,6 +278,14 @@ end
 
 Отметьте, что `connected_to` с ролью будет искать существующее соединение и переключать с помощью указанного имени соединения. Это означает, что, если вы передали неизвестную роль, наподобие `connected_to(role: :nonexistent)`, то получите ошибку, сообщающую `ActiveRecord::ConnectionNotEstablished (No connection pool with 'AnimalsBase' found for the 'nonexistent' role.)`
 
+Если хотите, чтобы Rails убедился, что любые выполняемые запросы только читают, передайте `prevent_writes: true`. Это только предотвратит запросы, выглядящие как запись, от отправления в базу данных. Вы также должны настроить свою реплику базы данных запускаться в режиме только для чтения.
+
+```ruby
+ActiveRecord::Base.connected_to(role: :reading, prevent_writes: true) do
+  # Rails проверит каждый запрос, чтобы убедиться, что он читает
+end
+```
+
 ## Горизонтальный шардинг
 
 Горизонтальный шардинг — это когда вы разделяете вашу базу данных для уменьшения количества записей на каждом сервере баз данных, но поддерживаете ту же самую схему для всех "shard". Это обычно называется "multi-tenant sharding".
@@ -265,17 +298,17 @@ API для поддержки горизонтального шардинга в
 production:
   primary:
     database: my_primary_database
-    adapter: mysql
+    adapter: mysql2
   primary_replica:
     database: my_primary_database
-    adapter: mysql
+    adapter: mysql2
     replica: true
   primary_shard_one:
     database: my_primary_shard_one
-    adapter: mysql
+    adapter: mysql2
   primary_shard_one_replica:
     database: my_primary_shard_one
-    adapter: mysql
+    adapter: mysql2
     replica: true
 ```
 
@@ -313,11 +346,20 @@ ActiveRecord::Base.connected_to(role: :reading, shard: :shard_one) do
 end
 ```
 
+## Миграция на новую обработку соединений
+
+В Rails 6.1+ Active Record предоставляет новый внутренний API для управления соединениями. В большинстве случаев приложениям не нужны какие-либо изменения, кроме самого переключения на новое поведения (при обновлении с 6.0 и ниже) с помощью установки `config.active_record.legacy_connection_handling = false`. Если у вас приложение с одной базой данных, другие изменения не нужны. Если у вас приложение с несколькими базами данных, требуются следующие изменения, если оно использует эти методы:
+
+* `connection_handlers` и `connection_handlers=` больше не работают при обработке нового соединения. Если вы вызывали метод на одном из обработчике соединения, например, `connection_handlers[:reading].retrieve_connection_pool("ActiveRecord::Base")`, вам нужно обновить этот вызов на `connection_handlers.retrieve_connection_pool("ActiveRecord::Base", role: :reading)`.
+* Вызовы `ActiveRecord::Base.connection_handler.prevent_writes` нужно обновить на `ActiveRecord::Base.connection.preventing_writes?`.
+* Если вам нужны все пулы, включая чтение и запись, обработчиком предоставляется новый метод. Для этого вызовите `connection_handler.all_connection_pools`. Хотя, в большинстве случаев, вам будут нужны пулы чтения или записи с помощью `connection_handler.connection_pool_list(:writing)` или `connection_handler.connection_pool_list(:reading)`.
+* Если вы выключите `legacy_connection_handling` в вашем приложении, любой неподдерживаемый метод вызовет ошибку (например, `connection_handlers=`).
+
 ## Гранулированное переключение соединения с базой данных
 
-В Rails 6.1 возможно переключать соединения для одной базы данных вместо глобального для всех баз данных. Чтобы использовать эту особенность, нужно сперва установить `config.active_record.legacy_connection_handling` в `false` в конфигурации приложения. Большинству приложений не нужны другие изменения, так как у публичных API то же самое поведение.
+В Rails 6.1 возможно переключать соединения для одной базы данных вместо глобального для всех баз данных. Чтобы использовать эту особенность, нужно сперва установить `config.active_record.legacy_connection_handling` в `false` в конфигурации приложения. Большинству приложений не нужны другие изменения, так как у публичных API то же самое поведение. Смотрите предыдущий раздел о том, как включить и перейти от `legacy_connection_handling`.
 
-С `legacy_connection_handling` установленным в false, любой абстрактный класс будет способен переключать соединения, не затрагивая другие соединения. Это полезно для переключения запросов `AnimalsRecord` на чтение из реплики, в то время как запросы `ApplicationRecord` идут в основную базу.
+С `legacy_connection_handling` установленным в `false`, любой абстрактный класс будет способен переключать соединения, не затрагивая другие соединения. Это полезно для переключения запросов `AnimalsRecord` на чтение из реплики, в то время как запросы `ApplicationRecord` идут в основную базу.
 
 ```ruby
 AnimalsRecord.connected_to(role: :reading) do
@@ -347,6 +389,55 @@ end
 
 `ActiveRecord::Base.connected_to` поддерживает возможность переключать соединения глобально.
 
+### Управление связями с соединением между базами данных
+
+Начиная с Rails 7.0+, в Active Record есть опция управления связями, которое выполнит соединение между несколькими базами данных. Если у вас есть связи "has many through" или "has one through", в которых вы хотите отключить соединение, и выполнить 2 или более запросов, передайте опцию `disable_joins: true`.
+
+Например:
+
+```ruby
+class Dog < AnimalsRecord
+  has_many :treats, through: :humans, disable_joins: true
+  has_many :humans
+
+  has_one :home
+  has_one :yard, through: :home, disable_joins: true
+end
+
+class Home
+  belongs_to :dog
+  has_one :yard
+end
+
+class Yard
+  belongs_to :home
+end
+```
+
+Ранее вызовы `@dog.treats` без `disable_joins` или `@dog.yard` без `disable_joins` вызвали бы ошибку, так как базы данных не могли управлять соединениями между кластерами. С помощью опции `disable_joins`, Rails сгенерирует несколько запросов select, чтобы избежать попытки соединения между кластерами. Для вышеприведенной связи, `@dog.treats`. он сгенерирует следующий SQL:
+
+```sql
+SELECT "humans"."id" FROM "humans" WHERE "humans"."dog_id" = ?  [["dog_id", 1]]
+SELECT "treats".* FROM "treats" WHERE "treats"."human_id" IN (?, ?, ?)  [["human_id", 1], ["human_id", 2], ["human_id", 3]]
+```
+
+В то время как `@dog.yard` сгенерирует следующий SQL:
+
+```sql
+SELECT "home"."id" FROM "homes" WHERE "homes"."dog_id" = ? [["dog_id", 1]]
+SELECT "yards".* FROM "yards" WHERE "yards"."home_id" = ? [["home_id", 1]]
+```
+
+Есть ряд важных вещей, которые нужно знать об этой опции:
+
+1) Может быть влияние на производительность, сейчас будут выполняться два или более запросов (в зависимости от связи) вместо соединения. Если выборка для `humans` возвратит большое количество ID, в выборку для `treats` может быть послано слишком много ID.
+2) Поскольку мы больше не выполняем соединения, запросы с сортировкой или лимитом теперь сортируются в памяти, так как упорядочивание из одной таблицы не может быть применено к другой таблице.
+3) Эта настройка должна быть добавлена ко всем связям, где вы хотите отключить соединение. Rails не может угадать это, так как загрузка связей ленивая, и чтобы загрузить `treats` in `@dog.treats` Rails уже нужно знать, какой SQL должен быть сгенерирован.
+
+### Кэширование схемы
+
+Если вы хотите загрузить кэш схемы для каждой базы данных, вам нужно установить `schema_cache_path` в каждой конфигурации базы данных и установить `config.active_record.lazily_load_schema_cache = true` в конфигурации приложения. Отметьте, что это лениво загрузит кэш при установлении соединений с базами данных.
+
 ## Предостережения
 
 ### Автоматическое переключение для горизонтального шардинга
@@ -356,11 +447,3 @@ end
 ### Нагрузочная балансировка реплик
 
 Rails также не поддерживает автоматическую нагрузочную балансировку реплик. Это очень зависит от вашей инфраструктуры. В будущем может быть будет реализована базовая, примитивная нагрузочная балансировка, но для масштабирования приложения должно быть что-то, что управляет вашим приложением вне Rails.
-
-### Соединения между базами данных
-
-Приложения не могут соединять несколько таблиц из разных баз данных. В настоящее время в приложениях нужно вручную написать два select и разделить сами joins. В будущих версиях Rails будет разделять joins за вас.
-
-### Кэш схемы
-
-Если вы используете кэш схемы и несколько баз данных, вам необходимо написать инициализатор, загружающий кэш схемы из вашего приложения. Эта проблема не была решена в Rails 6.0, но есть надежда, что она будет решена в следующей версии.
