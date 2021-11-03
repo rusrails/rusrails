@@ -228,6 +228,12 @@ pages:
     revision: 2ec2ee6899870bd8de358a4dba75b90cbbae3256
     date:     09/10/2021
 
+  - title:    Как перейти с Classic на Zeitwerk
+    path:     classic_to_zeitwerk_howto
+    file:     classic_to_zeitwerk_howto.md
+    revision: 14940def0d908aae9a59f9ecf25b2f013026b925
+    date:     01/11/2021
+
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
     file:     active_record_multiple_databases.md
@@ -384,8 +390,7 @@ pages:
     revision: cb0da4f817eee35089c1f12a4fa46a765611181f
     date:     22/12/2020
 
-plan:
-  - file:     classic_to_zeitwerk_howto.md
+plan: []
 
 old:
   - file:     2_2_release_notes.md

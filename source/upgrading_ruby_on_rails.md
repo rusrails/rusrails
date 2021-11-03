@@ -83,7 +83,7 @@ undefined method `mechanism=' for ActiveSupport::Dependencies:Module
 
 ### Приложения должны запускаться в режиме `zeitwerk`
 
-Приложения, все еще запущенные в режиме `classic`, должны быть переключены в режим `zeitwerk`. Пожалуйста, обратитесь к руководству [Classic to Zeitwerk HOWTO](https://guides.rubyonrails.org/classic_to_zeitwerk_howto.html).
+Приложения, все еще запущенные в режиме `classic`, должны быть переключены в режим `zeitwerk`. Пожалуйста, обратитесь к руководству [Как перейти с Classic на Zeitwerk](/classic_to_zeitwerk_howto).
 
 ### Метод назначения `config.autoloader=` был удален
 

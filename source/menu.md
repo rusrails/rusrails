@@ -41,17 +41,18 @@
     * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
     * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
     * [Отладка приложений на Rails](/debugging-rails-applications)
-    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
 
 next_column
 
 * **Копаем глубже**
 
+    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
     * [Командная строка Rails](/a-guide-to-the-rails-command-line)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Процесс инициализации в Rails](/initialization)
     * [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading)
+    * [Как перейти с Classic на Zeitwerk](/classic_to_zeitwerk_howto)
     * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [Использование Rails для API-приложений](/api-app)
