@@ -1,72 +1,70 @@
 Как перейти с Classic на Zeitwerk
 =================================
 
-This guide documents how to migrate Rails applications from `classic` to `zeitwerk` mode.
+Это руководство документирует, как мигрировать приложение Rails с режима `classic` на `zeitwerk`.
 
-After reading this guide, you will know:
+После прочтения этого руководства вы узнаете:
 
-* What are `classic` and `zeitwerk` modes
-* Why switch from `classic` to `zeitwerk`
-* How to activate `zeitwerk` mode
-* How to verify your application runs in `zeitwerk` mode
-* How to verify your project loads OK in the command line
-* How to verify your project loads OK in the test suite
-* How to address possible edge cases
-* New features in Zeitwerk you can leverage
+* Что такое режимы `classic` и `zeitwerk`
+* Зачем переключаться из `classic` в `zeitwerk`
+* Как активировать режим `zeitwerk`
+* Как проверить, что ваше приложение запущено в режиме `zeitwerk`
+* Как проверить, что ваше проект правильно загружается в командной строке
+* Как проверить, что ваше проект правильно загружается в тестах
+* Как разрешить возможные крайние случаи
+* Новые особенности в Zeitwerk, которые можно использовать
 
 --------------------------------------------------------------------------------
 
-What are `classic` and `zeitwerk` Modes?
---------------------------------------------------------
+* Что такое режимы `classic` и `zeitwerk`?
+------------------------------------------
 
-From the very beginning, and up to Rails 5, Rails used an autoloader implemented in Active Support. This autoloader is known as `classic` and is still available in Rails 6.x. Rails 7 does not include this autoloader anymore.
+С самого начала и до Rails 5, Rails использовал автоматический загрузчик, реализованный в Active Support. Этот автозагрузчик, известный как `classic`, все еще доступен в Rails 6.x. Rails 7 больше не включает этот автозагрузчик.
 
-Starting with Rails 6, Rails ships with a new and better way to autoload, which delegates to the [Zeitwerk](https://github.com/fxn/zeitwerk) gem. This is `zeitwerk` mode. By default, applications loading the 6.0 and 6.1 framework defaults run in `zeitwerk` mode, and this is the only mode available in Rails 7.
+Начиная с Rails 6, Rails поставляется с новым и лучшим способом автозагрузки, делегирующим гему [Zeitwerk](https://github.com/fxn/zeitwerk). Это режим `zeitwerk`. По умолчанию, приложения, загружающие умолчания для фреймворка 6.0 and 6.1, запускаются в режиме `zeitwerk`, и в Rails 7 это единственный доступный режим.
 
+Зачем переключаться из `classic` в `zeitwerk`?
+----------------------------------------------
 
-Why Switch from `classic` to `zeitwerk`?
-----------------------------------------
+Автозагрузчик `classic` был чрезвычайно полезным, но имел ряд [проблем](https://github.com/morsbox/rusrails/blob/6.1/source/autoloading_and_reloading_constants_classic_mode.md#common-gotchas-распространенные-случаи), которые иногда делали автоматическую загрузку немного запутанной и непонятной. Zeitwerk был разработан, чтобы их решить, среди прочих [мотивов](https://github.com/fxn/zeitwerk#motivation).
 
-The `classic` autoloader has been extremely useful, but had a number of [issues](https://guides.rubyonrails.org/v6.1/autoloading_and_reloading_constants_classic_mode.html#common-gotchas) that made autoloading a bit tricky and confusing at times. Zeitwerk was developed to address them, among other [motivations](https://github.com/fxn/zeitwerk#motivation).
+При обновлении на Rails 6.x крайне рекомендуется переключиться на режим `zeitwerk`, так как режим `classic` устарел.
 
-When upgrading to Rails 6.x, it is highly encouraged to switch to `zeitwerk` mode because `classic` mode is deprecated.
+Rails 7 заканчивает переходный период и больше не включает режим `classic`.
 
-Rails 7 ends the transition period and does not include `classic` mode.
-
-I am Scared
+Мне страшно
 -----------
 
-Don't :).
+Не бойтесь :).
 
-Zeitwerk was designed to be as compatible with the classic autoloader as possible. If you have a working application autoloading correctly today, chances are the switch will be easy. Many projects, big and small, have reported really smooth switches.
+Zeitwerk был разработан, чтобы быть как можно более совместимым с классическим автозагрузчиком. Если у вас сейчас есть корректно работающая автозагрузка приложения, переключение, скорее всего, будет простым. Многие проекты, большие и малые, отчитались о реально гладком переходе.
 
-This guide will help you change the autoloader with confidence.
+Это руководство поможет вам уверенно изменить автоматический загрузчик.
 
-If for whatever reason you find a situation you don't know how to resolve, don't hesitate to [open an issue in `rails/rails`](https://github.com/rails/rails/issues/new) and tag [`@fxn`](https://github.com/fxn).
+Если, по какой-то причине, вы попали в ситуацию, которую не знаете как разрешить, не стесняйтесь [открыть проблему в `rails/rails`](https://github.com/rails/rails/issues/new) и поставить тег [`@fxn`](https://github.com/fxn).
 
+Как активировать режим `zeitwerk`
+---------------------------------
 
-How to Activate `zeitwerk` Mode
--------------------------------
+### Приложения на Rails 5.x и ниже
 
-### Applications running Rails 5.x or Less
+В приложениях на версиях Rails до 6.0, режим `zeitwerk` недоступен. Нужен как минимум Rails 6.0.
 
-In applications running a Rails version previous to 6.0, `zeitwerk` mode is not available. You need to be at least in Rails 6.0.
+### Приложения на Rails 6.x
 
-### Applications running Rails 6.x
+В приложениях на Rails 6.x есть два сценария.
 
-In applications running Rails 6.x there are two scenarios.
-
-If the application is loading the framework defaults of Rails 6.0 or 6.1 and it is running in `classic` mode, it must be opting out by hand. You have to have something similar to this:
+Если приложение загружает умолчания фреймворка Rails 6.0 или 6.1, и оно запускается в режиме `classic`, это должно быть установлено вручную. Вам нужно что-то наподобие этого:
 
 ```ruby
 # config/application.rb
 config.load_defaults 6.0
-config.autoloader = :classic # DELETE THIS LINE
+config.autoloader = :classic # УДАЛИТЕ ЭТУ СТРОЧКУ
 ```
 
-As noted, just delete the override, `zeitwerk` mode is the default.
+Как отмечено, просто удалите переопределение, режим `zeitwerk` установлен по умолчанию.
 
-On the other hand, if the application is loading old framework defaults you need to enable `zeitwerk` mode explicitly:
+С другой стороны, если приложение загружает умолчания старого фреймворка, вам нужно включить режим `zeitwerk` явно:
 
 ```ruby
 # config/application.rb
@@ -74,35 +72,34 @@ config.load_defaults 5.2
 config.autoloader = :zeitwerk
 ```
 
-### Applications Running Rails 7
+### Приложения на Rails 7
 
-In Rails 7 there is only `zeitwerk` mode, you do not need to do anything to enable it.
+В Rails 7 имеется только режим `zeitwerk`, вам не нужно ничего делать, чтобы его включить.
 
-Indeed, the setter `config.autoloader=` does not even exist. If `config/application.rb` has it, please just delete the line.
+На самом деле, метод `config.autoloader=` даже не существует. Если он есть в `config/application.rb`, просто удалите эту строчку.
 
+Как проверить, что ваше приложение запущено в режиме `zeitwerk`?
+----------------------------------------------------------------
 
-How to Verify The Application Runs in `zeitwerk` Mode?
-------------------------------------------------------
-
-To verify the application is running in `zeitwerk` mode, execute
+Чтобы проверить, что приложение запускается в режиме `zeitwerk`, выполните
 
 ```
 bin/rails runner 'p Rails.autoloaders.zeitwerk_enabled?'
 ```
 
-If that prints `true`, `zeitwerk` mode is enabled.
+Если это выведет `true`, режим `zeitwerk` включен.
 
 
-Does my Application Comply with Zeitwerk Conventions?
+Соответствует ли мое приложение соглашениям Zeitwerk?
 -----------------------------------------------------
 
-Once `zeitwerk` mode is enabled, please run:
+Как только режим `zeitwerk` включен, запустите:
 
 ```
 bin/rails zeitwerk:check
 ```
 
-A successful check looks like this:
+Успешная проверка выглядит так:
 
 ```
 % bin/rails zeitwerk:check
@@ -110,13 +107,13 @@ Hold on, I am eager loading the application.
 All is good!
 ```
 
-There can be additional output depending on the application configuration, but the last "All is good!" is what you are looking for.
+Может быть дополнительный вывод в зависимости от конфигурации приложения, но итоговый "All is good!" это то, что вы должны увидеть.
 
-If there's any file that does not define the expected constant, the task will tell you. It does so one file at a time, because if it moved on, the failure loading one file could cascade into other failures unrelated to the check we want to run and the error report would be confusing.
+Если есть какой-то файл, который не определяет ожидаемую константу, задача вам подскажет. Она выводит один файл за раз, так как, если бы она продолжила, ошибка загрузки одного файла могла бы вызвать другие ошибки, не относящиеся к проверке, которую мы запустили, и отчет об ошибки мог бы быть запутанным.
 
-If there's one constant reported, fix that particular one and run the task again. Repeat until you get "All is good!".
+Если выведена одна константа, почините ее и запустите задачу заново. Повторяйте, пока не получите "All is good!".
 
-Take for example:
+Возьмем, к примеру:
 
 ```
 % bin/rails zeitwerk:check
@@ -124,17 +121,17 @@ Hold on, I am eager loading the application.
 expected file app/models/vat.rb to define constant Vat
 ```
 
-VAT is an European tax. The file `app/models/vat.rb` defines `VAT` but the autoloader expects `Vat`, why?
+VAT это Европейский налог. Файл `app/models/vat.rb` определяет `VAT`, но автоматический загрузчик ожидает `Vat`, почему?
 
-### Acronyms
+### Аббревиатуры
 
-This is the most common kind of discrepancy you may find, it has to do with acronyms. Let's understand why do we get that error message.
+Это наиболее распространенный тип несоответствия, нужно разобраться с аббревиатурами. Давайте поймем, почему мы получаем это сообщение об ошибке.
 
-The classic autoloader is able to autoload `VAT` because its input is the name of the missing constant, `VAT`, invokes `underscore` on it, which yields `vat`, and looks for a file called `vat.rb`. It works.
+Классический автозагрузчик способен автоматически загрузить `VAT`, так как у него на входе имя отсутствующей константы, `VAT`, он вызывает `underscore` на нем, что приводит к `vat`, и ищет файл с именем `vat.rb`. Это работает.
 
-The input of the new autoloader is the file system. Give the file `vat.rb`, Zeitwerk invokes `camelize` on `vat`, which yields `Vat`, and expects the file to define the constant `Vat`. That is what the error message says.
+На входе у нового автозагрузчика файловая система. Взяв файл `vat.rb`, Zeitwerk вызывает `camelize` на `vat`, что приводит к `Vat`, и ожидает, что этот файл определяет константу `Vat`. Вот о чем говорит сообщение об ошибке.
 
-Fixing this is easy, you only need to tell the inflector about this acronym:
+Это просто починить, нужно всего лишь сообщить преобразователю слов об этой аббревиатуре:
 
 ```ruby
 # config/initializers/inflections.rb
@@ -143,7 +140,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
 end
 ```
 
-Doing so affects how Active Support inflects globally. That may be fine, but if you prefer you can also pass overrides to the inflector used by the autoloader:
+Это повлияет на то, как Active Support образует слова глобально. Это может быть нормальным, но если хотите, можно также переопределить преобразователь слов, используемый автозагрузчиком:
 
 ```ruby
 # config/initializers/zeitwerk.rb
@@ -152,7 +149,7 @@ Rails.autoloaders.each do |autoloader|
 end
 ```
 
-With that in place, the check passes!
+После добавления проверка проходит!
 
 ```
 % bin/rails zeitwerk:check
@@ -160,21 +157,21 @@ Hold on, I am eager loading the application.
 All is good!
 ```
 
-### Concerns
+### Концерны
 
-You can autoload and eager load from a standard structure with `concerns` subdirectories like
+Можно автоматически и нетерпеливо загружать из стандартной структуры с поддиректориями `concerns` наподобие
 
 ```
 app/models
 app/models/concerns
 ```
 
-By default, `app/models/concerns` belongs to the autoload paths and therefore it is assumed to be a root directory. So, by default, `app/models/concerns/foo.rb` should define `Foo`, not `Concerns::Foo`.
+По умолчанию, `app/models/concerns` принадлежит к путям автозагрузки, следовательно, подразумевается корневой директорией. Таким образом, по умолчанию `app/models/concerns/foo.rb` должен определять `Foo`, а не `Concerns::Foo`.
 
-If your application uses `Concerns` as namespace, you have two options:
+Если ваше приложение использует `Concerns` в качестве пространства имен, есть два варианта:
 
-1. Remove the `Concerns` namespace from those classes and modules and update client code.
-2. Leave things as they are by removing `app/models/concerns` from the autoload paths:
+1. Убрать пространство имен `Concerns` из этих классов и модулей, и обновить клиентский код.
+2. Оставить все как есть, убрав `app/models/concerns` из путей автозагрузки:
 
   ```ruby
   # config/initializers/zeitwerk.rb
@@ -183,13 +180,13 @@ If your application uses `Concerns` as namespace, you have two options:
     delete("#{Rails.root}/app/models/concerns")
   ```
 
-### Having `app` in the autoload paths
+### Добавление `app` в пути автозагрузки
 
-Some projects want something like `app/api/base.rb` to define `API::Base`, and add `app` to the autoload paths to accomplish that.
+Некоторым проектам нужно, что что-то наподобие `app/api/base.rb` определяло `API::Base`, и для этого добавляют `app` в пути автозагрузки.
 
-Since Rails adds all subdirectories of `app` to the autoload paths automatically (with a few exceptions like directories for assets), we have another situation in which there are nested root directories, similar to what happens with `app/models/concerns`. That setup no longer works as is.
+Так как Rails автоматически добавляет все поддиректории `app` в пути автозагрузки (с небольшим исключением вроде директорий для ассетов), тут у нас другая ситуация со вложенными корневыми директориями, подобная той, что случилась с `app/models/concerns`. Эта настройка больше не будет работать как есть.
 
-However, you can keep that structure, just delete `app/api` from the autoload paths in an initializer:
+Однако, можно сохранить эту структуру, просто удалите `app/api` из путей автозагрузки в инициализаторе:
 
 ```ruby
 # config/initializers/zeitwerk.rb
@@ -198,43 +195,43 @@ ActiveSupport::Dependencies.
   delete("#{Rails.root}/app/api")
 ```
 
-### Autoloaded Constants and Explicit Namespaces
+### Автоматически загруженные константы и явные пространства имен
 
-If a namespace is defined in a file, as `Hotel` is here:
+Если в файле определено пространство имен, как `Hotel` тут:
 
 ```
-app/models/hotel.rb         # Defines Hotel.
-app/models/hotel/pricing.rb # Defines Hotel::Pricing.
+app/models/hotel.rb         # Определяет Hotel.
+app/models/hotel/pricing.rb # Определяет Hotel::Pricing.
 ```
 
-the `Hotel` constant has to be set using the `class` or `module` keywords. For example:
+константа `Hotel` должна быть установлена с помощью ключевых слов `class` или `module`. Например:
 
 ```ruby
 class Hotel
 end
 ```
 
-is good.
+это правильно.
 
-Alternatives like
+Альтернативы, такие как
 
 ```ruby
 Hotel = Class.new
 ```
 
-or
+или
 
 ```ruby
 Hotel = Struct.new
 ```
 
-won't work, child objects like `Hotel::Pricing` won't be found.
+не будут работать, дочерние объекты, такие как `Hotel::Pricing` не будут найдены.
 
-This restriction only applies to explicit namespaces. Classes and modules not defining a namespace can be defined using those idioms.
+Это ограничение применяется только для явных пространств имен. Классы и модули, не определяющие пространство имен, могут быть определены с помощью этих идиом.
 
-### One file, one constant (at the same top-level)
+### Один файл - одна константа (на том же уровне)
 
-In `classic` mode you could technically define several constants at the same top-level and have them all reloaded. For example, given
+В режиме `classic` технически вы могли определить несколько констант на том же уровне, и получить их перезагружаемыми. Например, в
 
 ```ruby
 # app/models/foo.rb
@@ -246,11 +243,11 @@ class Bar
 end
 ```
 
-while `Bar` could not be autoloaded, autoloading `Foo` would mark `Bar` as autoloaded too.
+хотя `Bar` не мог быть автоматически загружаемым, автозагрузка `Foo` также пометила бы `Bar` как автоматически загруженным.
 
-This is not the case in `zeitwerk` mode, you need to move `Bar` to its own file `bar.rb`. One file, one top-level constant.
+Это не так в режиме `zeitwerk`, вам нужно переместить `Bar` в собственный файл `bar.rb`. Один файл, одна константа верхнего уровня.
 
-This affects only to constants at the same top-level as in the example above. Inner classes and modules are fine. For example, consider
+Это влияет только на константы того же уровня, как в вышеприведенном примере. Вложенные классы и модули это нормально. Например, рассмотрим
 
 ```ruby
 # app/models/foo.rb
@@ -261,67 +258,66 @@ class Foo
 end
 ```
 
-If the application reloads `Foo`, it will reload `Foo::InnerClass` too.
+Если приложение перезагружает `Foo`, оно также перезагрузит `Foo::InnerClass`.
 
-### Globs in `config.autoload_paths`
+### Шаблоны поиска в `config.autoload_paths`
 
-Beware of configurations that use wildcards like
+Остерегайтесь конфигураций, в которых используются подстановочные знаки, например
 
 ```ruby
 config.autoload_paths += Dir["#{config.root}/extras/**/"]
 ```
 
-Every element of `config.autoload_paths` should represent the top-level namespace (`Object`). That won't work.
+Каждый элемент в `config.autoload_paths` должен представлять пространство имен верхнего уровня (`Object`). Это не будет работать.
 
-To fix this, just remove the wildcards:
+Чтобы починить, просто уберите подстановочные знаки:
 
 ```ruby
 config.autoload_paths << "#{config.root}/extras"
 ```
 
-### Spring and the `test` Environment
+### Spring и окружение `test`
 
-Spring reloads the application code if something changes. In the `test` environment you need to enable reloading for that to work:
+Spring перезагружает код приложения, если что-то изменилось. В среде `test` нужно включить перезагрузку, чтобы это работало:
 
 ```ruby
 # config/environments/test.rb
 config.cache_classes = false
 ```
 
-Otherwise you'll get this error:
+В противном случае вы получите эту ошибку:
 
 ```
 reloading is disabled because config.cache_classes is true
 ```
 
-This has no performance penalty.
+В этом нет никакого ухудшения производительности.
 
 ### Bootsnap
 
-Please make sure to depend on at least Bootsnap 1.4.4.
+Убедитесь, что зависите от как минимум Bootsnap 1.4.4.
 
+Проверка правильности Zeitwerk в тестах
+---------------------------------------
 
-Check Zeitwerk Compliance in the Test Suite
--------------------------------------------
+Задача `zeitwerk:check` удобна при миграции. Как только проект соответствует, рекомендуется автоматизировать эту проверку. Для этого достаточно нетерпеливо загрузить приложение, и, на самом деле, это единственное, что эта задача делает.
 
-The task `zeitwerk:check` is handy while migrating. Once the project is compliant, it is recommended to automate this check. In order to do so, it is enough to eager load the application, which is all the task does, indeed.
+### Непрерывная интеграция
 
-### Continuous Integration
+Если ваш проект имеет непрерывную интеграцию, неплохо было бы нетерпеливо загрузить приложение при запуске тестов там. Если приложение не сможет быть нетерпеливо загружено по какой-то причине, лучше узнать это в CI, чем в production, не правда ли?
 
-If your project has continuous integration in place, it is a good idea to eager load the application when the suite runs there. If the application cannot be eager loaded for whatever reason, you want to know in CI, better than in production, right?
-
-CIs typically set some environment variable to indicate the test suite is running there. For example, it could be `CI`:
+В CI обычно имеется некая установленная переменная среды для обозначения, что тесты выполняются там. К примеру, это может быть `CI`:
 
 ```ruby
 # config/environments/test.rb
 config.eager_load = ENV["CI"].present?
 ```
 
-Starting with Rails 7, newly generated applications are configured that way by default.
+Начиная с Rails 7, новые приложения конфигурируются таким способом по умолчанию.
 
-### Bare Test Suites
+### Чистые тесты
 
-If your project does not have continuous integration, you can still eager load in the test suite by calling `Rails.application.eager_load!`:
+Если в вашем проекте нет непрерывной интеграции, вы все еще можете нетерпеливо загружать в тестах, вызывая `Rails.application.eager_load!`:
 
 #### minitest
 
@@ -347,28 +343,27 @@ RSpec.describe "Zeitwerk compliance" do
 end
 ```
 
-New Features You Can Leverage
------------------------------
+Новые особенности, которые можно использовать
+---------------------------------------------
 
-### Delete `require_dependency` calls
+### Удаление вызовов `require_dependency`
 
-All known use cases of `require_dependency` have been eliminated with Zeitwerk. You should grep the project and delete them.
+Все известные случаи использования `require_dependency` были устранены в Zeitwerk. Можно найти и удалить их в проекте.
 
-If your application uses Single Table Inheritance, please see the [Single Table Inheritance section](autoloading_and_reloading_constants.html#single-table-inheritance) of the Autoloading and Reloading Constants (Zeitwerk Mode) guide.
+Если ваше приложение использует наследование с единой таблицей, обратитесь к [разделу по Single Table Inheritance](/constant_autoloading_and_reloading/#single-table-inheritance) руководства по автозагрузке и перезагрузке констант (режим Zeitwerk).
 
+### Теперь возможны полные имена в определениях класса и модуля
 
-### Qualified Names in Class and Module Definitions Are Now Possible
-
-You can now robustly use constant paths in class and module definitions:
+Теперь можно с уверенностью использовать пути констант в определениях модуля и класса:
 
 ```ruby
-# Autoloading in this class' body matches Ruby semantics now.
+# Автозагрузка в теле этого класса теперь соответствует семантике Ruby.
 class Admin::UsersController < ApplicationController
   # ...
 end
 ```
 
-A gotcha to be aware of is that, depending on the order of execution, the classic autoloader could sometimes be able to autoload `Foo::Wadus` in
+Хитрость, о которой нужно было знать, в том, что, в зависимости от порядка выполнения, классический автозагрузчик иногда мог автоматически загрузить `Foo::Wadus` в
 
 ```ruby
 class Foo::Bar
@@ -376,7 +371,7 @@ class Foo::Bar
 end
 ```
 
-That does not match Ruby semantics because `Foo` is not in the nesting, and won't work at all in `zeitwerk` mode. If you find such corner case you can use the qualified name `Foo::Wadus`:
+Это не соответствует семантике Ruby, так как `Foo` не во вложенности, и не будет работать в режиме `zeitwerk`. Если вы обнаружите такой случай, можно использовать полное имя `Foo::Wadus`:
 
 ```ruby
 class Foo::Bar
@@ -384,7 +379,7 @@ class Foo::Bar
 end
 ```
 
-or add `Foo` to the nesting:
+или добавить `Foo` во вложенность:
 
 ```ruby
 module Foo
@@ -394,14 +389,14 @@ module Foo
 end
 ```
 
-### Thread-safety Everywhere
+### Повсеместная тредобезопасность
 
-In classic mode, constant autoloading is not thread-safe, though Rails has locks in place for example to make web requests thread-safe.
+В классическом режиме автозагрузка констант не является тредобезопасной, хотя в самом Rails есть блокировки, например, чтобы сделать веб-запросы тредобезопасными.
 
-Constant autoloading is thread-safe in `zeitwerk` mode. For example, you can now autoload in multi-threaded scripts executed by the `runner` command.
+Автозагрузка констант в режиме `zeitwerk` является тредобезопасной. Например, теперь можно автоматически загрузить в многотредовых скриптах, выполняемых с помощью команды `runner`.
 
-### Eager Loading and Autoloading are Consistent
+### Нетерпеливая загрузка и автозагрузка согласованные
 
-In `classic` mode, if `app/models/foo.rb` defines `Bar`, you won't be able to autoload that file, but eager loading will work because it loads files recursively blindly. This can be a source of errors if you test things first eager loading, execution may fail later autoloading.
+В режиме `classic` если `app/models/foo.rb` определяет `Bar`, вы не сможете автоматически загрузить этот файл, но нетерпеливая загрузка будет работать, так как она загружает файлы рекурсивно вслепую. Это может быть источником ошибок, если вы сначала тестируете что-то нетерпеливо загрузив, а потом выполнение выдаст ошибку при автозагрузке.
 
-In `zeitwerk` mode both loading modes are consistent, they fail and err in the same files.
+В режиме `zeitwerk` оба режима загрузки согласованы, они выдают ошибку в тех же самых файлах.
