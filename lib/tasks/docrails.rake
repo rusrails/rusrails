@@ -82,7 +82,11 @@ namespace :docrails do
 
   def docrails
     @docrails ||= if Dir.exists?(docrails_path)
-      Git.open(docrails_path).tap { |git| git.pull('origin', 'main') }
+      Git.open(docrails_path).tap do |git| 
+        git.pull('origin', 'main')
+      rescue
+        puts 'Cannot access remote rails repo, using local copy'
+      end
     else
       Git.clone 'git@github.com:rails/rails.git', 'rails', path: docrails_path(false)
     end
