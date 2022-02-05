@@ -273,6 +273,483 @@ INFO: Этот подраздел в оригинале был написан [J
 
 Rails 7 включает гем `debug` в `Gemfile` нового приложения, сгенерированного CRuby. По умолчанию он подготовлен к работе в средах `development` и `test`. Чтобы узнать, как его использовать, обратитесь к его [документации](https://github.com/ruby/debug).
 
+### Вход в сессию отладки
+
+По умолчанию сессия отладки начнется после подключения библиотеки `debug`, что происходит при запуске вашего приложения. Но не беспокойтесь, сессия не будет вмешиваться в вашу программу.
+
+Чтобы войти в сессию отладки, можно использовать `binding.break` и его псевдонимы: `binding.b` и `debugger`. Нижеследующие примеры будут использовать `debugger`:
+
+```rb
+class PostsController < ApplicationController
+  before_action :set_post, only: %i[ show edit update destroy ]
+
+  # GET /posts or /posts.json
+  def index
+    @posts = Post.all
+    debugger
+  end
+  # ...
+end
+```
+
+Как только ваше приложение вычислит выражение отладки, оно войдет в сессию отладки:
+
+```rb
+Processing by PostsController#index as HTML
+[2, 11] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+     2|   before_action :set_post, only: %i[ show edit update destroy ]
+     3|
+     4|   # GET /posts or /posts.json
+     5|   def index
+     6|     @posts = Post.all
+=>   7|     debugger
+     8|   end
+     9|
+    10|   # GET /posts/1 or /posts/1.json
+    11|   def show
+=>#0    PostsController#index at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:7
+  #1    ActionController::BasicImplicitRender#send_action(method="index", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.1.0.alpha/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg)
+```
+
+### Контекст
+
+После входа в сессию отладки, можно писать код на Ruby, как будто в консоли Rails или IRB.
+
+```rb
+(rdbg) @posts    # ruby
+[]
+(rdbg) self
+#<PostsController:0x0000000000aeb0>
+(rdbg)
+```
+
+Также можно использовать команду `p` или `pp`, чтобы вычислить выражение Ruby (например, когда имя переменной конфликтует с командой отладчика).
+
+```rb
+(rdbg) p headers    # command
+=> {"X-Frame-Options"=>"SAMEORIGIN", "X-XSS-Protection"=>"1; mode=block", "X-Content-Type-Options"=>"nosniff", "X-Download-Options"=>"noopen", "X-Permitted-Cross-Domain-Policies"=>"none", "Referrer-Policy"=>"strict-origin-when-cross-origin"}
+(rdbg) pp headers    # command
+{"X-Frame-Options"=>"SAMEORIGIN",
+ "X-XSS-Protection"=>"1; mode=block",
+ "X-Content-Type-Options"=>"nosniff",
+ "X-Download-Options"=>"noopen",
+ "X-Permitted-Cross-Domain-Policies"=>"none",
+ "Referrer-Policy"=>"strict-origin-when-cross-origin"}
+(rdbg)
+```
+
+Помимо непосредственного вычисления, отладчик также помогает собрать расширенное количество информации с помощью различных команд. Вот только некоторые из них:
+
+- `info` (или `i`) - Информация о текущем фрейме.
+- `backtrace` (или `bt`) - Трассировка (с дополнительной информацией).
+- `outline` (или `o`, `ls`) - Доступные в текущей области видимости методы, константы, локальные переменные и переменные экземпляра.
+
+#### Команда info
+
+Она выдает обзор значений локальных переменных и переменных экземпляра, которые видны в текущем фрейме.
+
+```rb
+(rdbg) info    # command
+%self = #<PostsController:0x0000000000af78>
+@_action_has_layout = true
+@_action_name = "index"
+@_config = {}
+@_lookup_context = #<ActionView::LookupContext:0x00007fd91a037e38 @details_key=nil, @digest_cache=...
+@_request = #<ActionDispatch::Request GET "http://localhost:3000/posts" for 127.0.0.1>
+@_response = #<ActionDispatch::Response:0x00007fd91a03ea08 @mon_data=#<Monitor:0x00007fd91a03e8c8>...
+@_response_body = nil
+@_routes = nil
+@marked_for_same_origin_verification = true
+@posts = []
+@rendered_format = nil
+```
+
+#### Команда backtrace
+
+При использовании без опций она перечисляет все фреймы стека:
+
+```rb
+=>#0    PostsController#index at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:7
+  #1    ActionController::BasicImplicitRender#send_action(method="index", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.1.0.alpha/lib/action_controller/metal/basic_implicit_render.rb:6
+  #2    AbstractController::Base#process_action(method_name="index", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.1.0.alpha/lib/abstract_controller/base.rb:214
+  #3    ActionController::Rendering#process_action(#arg_rest=nil) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.1.0.alpha/lib/action_controller/metal/rendering.rb:53
+  #4    block in process_action at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.1.0.alpha/lib/abstract_controller/callbacks.rb:221
+  #5    block in run_callbacks at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.1.0.alpha/lib/active_support/callbacks.rb:118
+  #6    ActionText::Rendering::ClassMethods#with_renderer(renderer=#<PostsController:0x0000000000af78>) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actiontext-7.1.0.alpha/lib/action_text/rendering.rb:20
+  #7    block {|controller=#<PostsController:0x0000000000af78>, action=#<Proc:0x00007fd91985f1c0 /Users/st0012/...|} in <class:Engine> (4 levels) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actiontext-7.1.0.alpha/lib/action_text/engine.rb:69
+  #8    [C] BasicObject#instance_exec at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.1.0.alpha/lib/active_support/callbacks.rb:127
+  ..... и так далее
+```
+
+Каждый фрейм содержит:
+
+- Идентификатор фрейма
+- Расположение вызова
+- Дополнительную информацию (например, аргументы блока или метода)
+
+Это даст вам хорошее ощущение того, что происходит в вашем приложении. Однако, вы, возможно, заметите, что:
+
+- Фреймов очень много (обычно 50+ в приложении Rails).
+- Большинство фреймов из Rails и других используемых библиотек.
+
+Не беспокойтесь, команда `backtrace` предоставляет две опции, чтобы помочь с фильтрацией фреймов:
+
+- `backtrace [num]` - показать только `num` штук фреймов, т.е. `backtrace 10`.
+- `backtrace /pattern/` - показывать только фреймы с идентификатором или расположением, соответствующим образцу, т.е. `backtrace /MyModel/`.
+
+Также возможно использовать эти опции вместе: `backtrace [num] /pattern/`.
+
+#### Команда outline
+
+Команда похожа на команду `ls` из `pry` и `irb`. Она покажет вам, что доступна в текущем пространстве, включая:
+
+- Локальные переменные
+- Переменные экземпляра
+- Переменные класса
+- Методы и их источники
+- ...и т.д.
+
+```rb
+ActiveSupport::Configurable#methods: config
+AbstractController::Base#methods:
+  action_methods  action_name  action_name=  available_action?  controller_path  inspect
+  response_body
+ActionController::Metal#methods:
+  content_type       content_type=  controller_name  dispatch          headers
+  location           location=      media_type       middleware_stack  middleware_stack=
+  middleware_stack?  performed?     request          request=          reset_session
+  response           response=      response_body=   response_code     session
+  set_request!       set_response!  status           status=           to_a
+ActionView::ViewPaths#methods:
+  _prefixes  any_templates?  append_view_path   details_for_lookup  formats     formats=  locale
+  locale=    lookup_context  prepend_view_path  template_exists?    view_paths
+AbstractController::Rendering#methods: view_assigns
+
+# .....
+
+PostsController#methods: create  destroy  edit  index  new  show  update
+instance variables:
+  @_action_has_layout  @_action_name    @_config  @_lookup_context                      @_request
+  @_response           @_response_body  @_routes  @marked_for_same_origin_verification  @posts
+  @rendered_format
+class variables: @@raise_on_missing_translations  @@raise_on_open_redirects
+```
+
+### Точки останова
+
+Есть множество способов вставить и вызвать точку останова в отладчике. В дополнение к добавлению отладочных выражений (т.е. `debugger`) непосредственно в вашем коде, также можно вставить точки останова с помощью команд:
+
+- `break` (или `b`)
+  - `break` - отобразит все точки останова
+  - `break <num>` - установит точку останова на строчке `num` текущего файла
+  - `break <file:num>` - установит точку останова на строчке `num` в `file`
+  - `break <Class#method>` или `break <Class.method>` - установит точку останова на `Class#method` или `Class.method`
+  - `break <expr>.<method>` - установит точку останова на методе `<method>` результата `<expr>`.
+- `catch <Exception>` - установит точку останова, которая остановится, когда вызовется исключение `Exception`
+- `watch <@ivar>` - установит точку останова изменится результат `@ivar` текущего объекта (это медленно)
+
+И чтобы их убрать, можно использовать:
+
+- `delete` (или `del`)
+  - `delete` - удалить все точки останова
+  - `delete <num>` - удалить точку останова с идентификатором `num`
+
+#### Команда break
+
+**Устанавливаем точку останова на указанном номере строчки - т.е. `b 28`**
+
+```rb
+[20, 29] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+    20|   end
+    21|
+    22|   # POST /posts or /posts.json
+    23|   def create
+    24|     @post = Post.new(post_params)
+=>  25|     debugger
+    26|
+    27|     respond_to do |format|
+    28|       if @post.save
+    29|         format.html { redirect_to @post, notice: "Post was successfully created." }
+=>#0    PostsController#create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:25
+  #1    ActionController::BasicImplicitRender#send_action(method="create", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg) b 28    # команда break
+#0  BP - Line  /Users/st0012/projects/rails-guide-example/app/controllers/posts_controller.rb:28 (line)
+```
+
+```rb
+(rdbg) c    # команда continue
+[23, 32] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+    23|   def create
+    24|     @post = Post.new(post_params)
+    25|     debugger
+    26|
+    27|     respond_to do |format|
+=>  28|       if @post.save
+    29|         format.html { redirect_to @post, notice: "Post was successfully created." }
+    30|         format.json { render :show, status: :created, location: @post }
+    31|       else
+    32|         format.html { render :new, status: :unprocessable_entity }
+=>#0    block {|format=#<ActionController::MimeResponds::Collec...|} in create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:28
+  #1    ActionController::MimeResponds#respond_to(mimes=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/mime_responds.rb:205
+  # and 74 frames (use `bt' command for all frames)
+
+Stop by #0  BP - Line  /Users/st0012/projects/rails-guide-example/app/controllers/posts_controller.rb:28 (line)
+```
+
+**Устанавливаем точку останова на заданном вызове метода - т.е. `b @post.save`**
+
+```rb
+[20, 29] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+    20|   end
+    21|
+    22|   # POST /posts or /posts.json
+    23|   def create
+    24|     @post = Post.new(post_params)
+=>  25|     debugger
+    26|
+    27|     respond_to do |format|
+    28|       if @post.save
+    29|         format.html { redirect_to @post, notice: "Post was successfully created." }
+=>#0    PostsController#create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:25
+  #1    ActionController::BasicImplicitRender#send_action(method="create", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg) b @post.save    # команда break
+#0  BP - Method  @post.save at /Users/st0012/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/suppressor.rb:43
+
+```
+
+```rb
+(rdbg) c    # команда continue
+[39, 48] in ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/suppressor.rb
+    39|         SuppressorRegistry.suppressed[name] = previous_state
+    40|       end
+    41|     end
+    42|
+    43|     def save(**) # :nodoc:
+=>  44|       SuppressorRegistry.suppressed[self.class.name] ? true : super
+    45|     end
+    46|
+    47|     def save!(**) # :nodoc:
+    48|       SuppressorRegistry.suppressed[self.class.name] ? true : super
+=>#0    ActiveRecord::Suppressor#save(#arg_rest=nil) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/suppressor.rb:44
+  #1    block {|format=#<ActionController::MimeResponds::Collec...|} in create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:28
+  # and 75 frames (use `bt' command for all frames)
+
+Stop by #0  BP - Method  @post.save at /Users/st0012/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/suppressor.rb:43
+```
+
+#### Команда catch
+
+**Останавливаем при вызове исключения - т.е. `catch ActiveRecord::RecordInvalid`**
+
+```rb
+[20, 29] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+    20|   end
+    21|
+    22|   # POST /posts or /posts.json
+    23|   def create
+    24|     @post = Post.new(post_params)
+=>  25|     debugger
+    26|
+    27|     respond_to do |format|
+    28|       if @post.save!
+    29|         format.html { redirect_to @post, notice: "Post was successfully created." }
+=>#0    PostsController#create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:25
+  #1    ActionController::BasicImplicitRender#send_action(method="create", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg) catch ActiveRecord::RecordInvalid    # команда
+#1  BP - Catch  "ActiveRecord::RecordInvalid"
+```
+
+```rb
+(rdbg) c    # команда continue
+[75, 84] in ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb
+    75|     def default_validation_context
+    76|       new_record? ? :create : :update
+    77|     end
+    78|
+    79|     def raise_validation_error
+=>  80|       raise(RecordInvalid.new(self))
+    81|     end
+    82|
+    83|     def perform_validations(options = {})
+    84|       options[:validate] == false || valid?(options[:context])
+=>#0    ActiveRecord::Validations#raise_validation_error at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:80
+  #1    ActiveRecord::Validations#save!(options={}) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:53
+  # and 88 frames (use `bt' command for all frames)
+
+Stop by #1  BP - Catch  "ActiveRecord::RecordInvalid"
+```
+
+#### Команда watch
+
+**Останавливаем, когда изменяется переменная экземпляра - т.е. `watch @_response_body`**
+
+```rb
+[20, 29] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+    20|   end
+    21|
+    22|   # POST /posts or /posts.json
+    23|   def create
+    24|     @post = Post.new(post_params)
+=>  25|     debugger
+    26|
+    27|     respond_to do |format|
+    28|       if @post.save!
+    29|         format.html { redirect_to @post, notice: "Post was successfully created." }
+=>#0    PostsController#create at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:25
+  #1    ActionController::BasicImplicitRender#send_action(method="create", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg) watch @_response_body    # команда
+#0  BP - Watch  #<PostsController:0x00007fce69ca5320> @_response_body =
+```
+
+```rb
+(rdbg) c    # команда continue
+[173, 182] in ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal.rb
+   173|       body = [body] unless body.nil? || body.respond_to?(:each)
+   174|       response.reset_body!
+   175|       return unless body
+   176|       response.body = body
+   177|       super
+=> 178|     end
+   179|
+   180|     # Tests if render or redirect has already happened.
+   181|     def performed?
+   182|       response_body || response.committed?
+=>#0    ActionController::Metal#response_body=(body=["<html><body>You are being <a href=\"ht...) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal.rb:178 #=> ["<html><body>You are being <a href=\"ht...
+  #1    ActionController::Redirecting#redirect_to(options=#<Post id: 13, title: "qweqwe", content:..., response_options={:allow_other_host=>false}) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/redirecting.rb:74
+  # and 82 frames (use `bt' command for all frames)
+
+Stop by #0  BP - Watch  #<PostsController:0x00007fce69ca5320> @_response_body =  -> ["<html><body>You are being <a href=\"http://localhost:3000/posts/13\">redirected</a>.</body></html>"]
+(rdbg)
+```
+
+#### Опции точки останова
+
+В дополнение к различным типам точек останова, также можно указать опции для достижения более продвинутого процесса отладки. В настоящий момент отладчик поддерживает 4 опции:
+
+- `do: <cmd or expr>` - когда срабатывает точка останова, выполнить заданную команду/выражение и продолжить программу:
+  - `break Foo#bar do: bt` - когда вызывается `Foo#bar`, вывести фреймы стека
+- `pre: <cmd or expr>` - когда срабатывает точка останова, выполнить заданную команду/выражение перед остановкой:
+  - `break Foo#bar pre: info` - когда вызывается `Foo#bar`, вывести окружающие ее переменные перед остановкой.
+- `if: <expr>` - точка останова останавливается, только если результат `<expr`> истинный:
+  - `break Post#save if: params[:debug]` - останавливается на `Post#save`, если `params[:debug]` истинный
+- `path: <path_regexp>` - точка останова останавливается, только если событие, ее вызывающее (например, вызов метода), происходит по заданному пути:
+  - `break Post#save if: app/services/a_service` - останавливается на `Post#save`, если вызов метода происходит в методе, соответствующему регулярному выражению Ruby `/app\/services\/a_service/`.
+
+Также отметьте, что первые 3 опции: `do:`, `pre:` и `if:` также доступны для выражений отладки, упомянутые ранее. Например:
+
+```rb
+[2, 11] in ~/projects/rails-guide-example/app/controllers/posts_controller.rb
+     2|   before_action :set_post, only: %i[ show edit update destroy ]
+     3|
+     4|   # GET /posts or /posts.json
+     5|   def index
+     6|     @posts = Post.all
+=>   7|     debugger(do: "info")
+     8|   end
+     9|
+    10|   # GET /posts/1 or /posts/1.json
+    11|   def show
+=>#0    PostsController#index at ~/projects/rails-guide-example/app/controllers/posts_controller.rb:7
+  #1    ActionController::BasicImplicitRender#send_action(method="index", args=[]) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.0.alpha2/lib/action_controller/metal/basic_implicit_render.rb:6
+  # and 72 frames (use `bt' command for all frames)
+(rdbg:binding.break) info
+%self = #<PostsController:0x00000000017480>
+@_action_has_layout = true
+@_action_name = "index"
+@_config = {}
+@_lookup_context = #<ActionView::LookupContext:0x00007fce3ad336b8 @details_key=nil, @digest_cache=...
+@_request = #<ActionDispatch::Request GET "http://localhost:3000/posts" for 127.0.0.1>
+@_response = #<ActionDispatch::Response:0x00007fce3ad397e8 @mon_data=#<Monitor:0x00007fce3ad396a8>...
+@_response_body = nil
+@_routes = nil
+@marked_for_same_origin_verification = true
+@posts = #<ActiveRecord::Relation [#<Post id: 2, title: "qweqwe", content: "qweqwe", created_at: "...
+@rendered_format = nil
+```
+
+#### Программируйте свой рабочий процесс отладки
+
+С помощью этих опций можно записать свой процесс отладки в одну строчку, наподобие:
+
+```rb
+def create
+  debugger(do: "catch ActiveRecord::RecordInvalid do: bt 10")
+  # ...
+end
+```
+
+И затем отладчик запустит записанную команду и вставит точку останова catch
+
+```rb
+(rdbg:binding.break) catch ActiveRecord::RecordInvalid do: bt 10
+#0  BP - Catch  "ActiveRecord::RecordInvalid"
+[75, 84] in ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb
+    75|     def default_validation_context
+    76|       new_record? ? :create : :update
+    77|     end
+    78|
+    79|     def raise_validation_error
+=>  80|       raise(RecordInvalid.new(self))
+    81|     end
+    82|
+    83|     def perform_validations(options = {})
+    84|       options[:validate] == false || valid?(options[:context])
+=>#0    ActiveRecord::Validations#raise_validation_error at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:80
+  #1    ActiveRecord::Validations#save!(options={}) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:53
+  # and 88 frames (use `bt' command for all frames)
+```
+
+Как только точка останова catch сработает, он выведет стек фреймов
+
+```rb
+Stop by #0  BP - Catch  "ActiveRecord::RecordInvalid"
+
+(rdbg:catch) bt 10
+=>#0    ActiveRecord::Validations#raise_validation_error at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:80
+  #1    ActiveRecord::Validations#save!(options={}) at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/validations.rb:53
+  #2    block in save! at ~/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/transactions.rb:302
+```
+
+Такая техника может спасти вас от повторяющихся вводов вручную, и сделает опыт отладки более сглаженным.
+
+Больше команд и конфигурационных опций можно найти в его [документации](https://github.com/ruby/debug).
+
+#### Предостережение об автозагрузке
+
+Отладка с помощью `debug` отлично работает в большинстве случаев, однако есть крайний случай: если вы вычисляете выражение в консоли, которое автоматически загружает пространство имен, определенное в файле, константы в этом пространстве имен не будут найдены.
+
+Например, если в приложении есть эти два файла:
+
+```ruby
+# hotel.rb
+class Hotel
+end
+
+# hotel/pricing.rb
+module Hotel::Pricing
+end
+```
+
+и `Hotel` еще не загружен, тогда
+
+```
+(rdbg) p Hotel::Pricing
+```
+
+вызовет `NameError`. В некоторых случаях, Ruby сможет разрешить неправильную константу в другом пространстве имен.
+
+Если вы с этим столкнулись, перезапустите сессию отладки с включенной нетерпеливой загрузкой (`config.eager_load = true`).
+
+Команды продолжения `next`, `continue` и т.д. не имеют этой проблемы. Пространства имен, неявно определенные поддиректориями, также не являются субъектом этой проблемы.
+
+See [ruby/debug#408](https://github.com/ruby/debug/issues/408) for details.
+
 Отладка с помощью гема `web-console`
 ------------------------------------
 
@@ -359,3 +836,4 @@ NOTE: Только одна консоль может быть отрисова�
 * [Скринкаст Ryan Bates' stack trace](http://railscasts.com/episodes/24-the-stack-trace)
 * [Скринкаст Ryan Bates' logger](http://railscasts.com/episodes/56-the-logger)
 * [Debugging with ruby-debug](http://bashdb.sourceforge.net/ruby-debug.html)
+* [домашняя страница debug](https://github.com/ruby/debug)
