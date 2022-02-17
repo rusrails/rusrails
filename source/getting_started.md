@@ -257,7 +257,7 @@ Rails.application.routes.draw do
 end
 ```
 
-Теперь можно видеть наш текст "Hello, Rails!" при посещении <http://localhost:3000>, что подтверждает то, что маршрут `root` также связан с экшном `index` в `ArticlesController`.
+Теперь можно видеть наш текст "Hello, Rails!" при посещении <http://localhost:3000>, что подтверждает то. что маршрут `root` также связан с экшном `index` в `ArticlesController`.
 
 TIP. Чтобы узнать больше о роутинге, обратитесь к руководству [Роутинг в Rails](/rails-routing).
 
