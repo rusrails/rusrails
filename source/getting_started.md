@@ -222,9 +222,6 @@ create    test/controllers/articles_controller_test.rb
 invoke  helper
 create    app/helpers/articles_helper.rb
 invoke    test_unit
-invoke  assets
-invoke    scss
-create      app/assets/stylesheets/articles.scss
 ```
 
 Наиболее важным из них является файл контроллера, `app/controllers/articles_controller.rb`. Давайте посмотрим на него:
