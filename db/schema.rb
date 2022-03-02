@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 2021_05_16_125901) do
   create_table "redirects", force: :cascade do |t|
     t.string "from"
     t.string "to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "static_docs_pages", force: :cascade do |t|
@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(version: 2021_05_16_125901) do
     t.string "namespace"
     t.text "body"
     t.string "extension"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["namespace"], name: "index_static_docs_pages_on_namespace"
     t.index ["path"], name: "index_static_docs_pages_on_path"
   end
