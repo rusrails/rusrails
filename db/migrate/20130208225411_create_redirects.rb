@@ -1,4 +1,4 @@
-class CreateRedirects < ActiveRecord::Migration[6.0]
+class CreateRedirects < ActiveRecord::Migration
   def change
     create_table :redirects do |t|
       t.string :from
