@@ -46,6 +46,93 @@ WARNING: Используйте публичные методы конфигур
 
 NOTE: Если необходимо применить конфигурацию непосредственно на классе, используйте [ленивый хук загрузки](https://api.rubyonrails.org/classes/ActiveSupport/LazyLoadHooks.html) в инициализаторе, чтобы избежать автоматической загрузки класса до завершения инициализации. Это ломает приложение, так как автозагрузка в течение инициализации не может быть безопасно повторена при перезагрузке приложения.
 
+### Версионированные значения по умолчанию
+
+[`config.load_defaults`] загружает конфигурационные значения для целевой и всех предыдущих версий. Например, `config.load_defaults 6.1` загрузит значения по умолчанию для всех ранних версий и версии 6.1.
+
+[`config.load_defaults`]: https://api.rubyonrails.org/classes/Rails/Application/Configuration.html#method-i-load_defaults
+
+Ниже пречислены значения по умолчанию, связанные с каждой целевой версией. В случае конфликтующих значений, новый версии имеют приоритет над старыми версиями.
+
+#### Значения по умолчанию для целевой версии 7.1
+
+- [`config.action_dispatch.default_headers`](#config-action-dispatch-default-headers): `{ "X-Frame-Options" => "SAMEORIGIN", "X-XSS-Protection" => "0", "X-Content-Type-Options" => "nosniff", "X-Permitted-Cross-Domain-Policies" => "none", "Referrer-Policy" => "strict-origin-when-cross-origin" }`
+- [`config.add_autoload_paths_to_load_path`](#config-add-autoload-paths-to-load-path): `false`
+
+#### Значения по умолчанию для целевой версии 7.0
+
+- [`config.action_controller.raise_on_open_redirects`](#config-action-controller-raise-on-open-redirects): `true`
+- [`config.action_view.button_to_generates_button_tag`](#config-action-view-button-to-generates-button-tag): `true`
+- [`config.action_view.apply_stylesheet_media_default`](#config-action-view-apply-stylesheet-media-default): `false`
+- [`config.active_support.key_generator_hash_digest_class`](#config-active-support-key-generator-hash-digest-class): `OpenSSL::Digest::SHA256`
+- [`config.active_support.hash_digest_class`](#config-active-support-hash-digest-class): `OpenSSL::Digest::SHA256`
+- [`config.active_support.cache_format_version`](#config-active-support-cache-format-version): `7.0`
+- [`config.active_support.remove_deprecated_time_with_zone_name`](#config-active-support-remove-deprecated-time-with-zone-name): `true`
+- [`config.active_support.executor_around_test_case`](#config-active-support-executor-around-test-case): `true`
+- [`config.active_support.use_rfc4122_namespaced_uuids`](#config-active-support-use-rfc4122-namespaced-uuids): `true`
+- [`config.active_support.disable_to_s_conversion`](#config-active-support-disable-to-s-conversion): `true`
+- [`config.action_dispatch.return_only_request_media_type_on_content_type`](#config-action-dispatch-return-only-request-media-type-on-content-type): `false`
+- [`config.action_dispatch.cookies_serializer`](#config-action-dispatch-cookies-serializer): `:json`
+- [`config.action_mailer.smtp_timeout`](#config-action-mailer-smtp-timeout): `5`
+- [`config.active_storage.video_preview_arguments`](#config-active-storage-video-preview-arguments): `"-vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2"`
+- [`config.active_storage.multiple_file_field_include_hidden`](#config-active-storage-multiple-file-field-include-hidden): `true`
+- [`config.active_record.automatic_scope_inversing`](#config-active-record-automatic-scope-inversing): `true`
+- [`config.active_record.verify_foreign_keys_for_fixtures`](#config-active-record-verify-foreign-keys-for-fixtures): `true`
+- [`config.active_record.partial_inserts`](#config-active-record-partial-inserts): `false`
+- [`config.active_storage.variant_processor`](#config-active-storage-variant-processor): `:vips`
+- [`config.action_controller.wrap_parameters_by_default`](#config-action-controller-wrap-parameters-by-default): `true`
+- [`config.action_dispatch.default_headers`](#config-action-dispatch-default-headers): `{ "X-Frame-Options" => "SAMEORIGIN", "X-XSS-Protection" => "0", "X-Content-Type-Options" => "nosniff", "X-Download-Options" => "noopen", "X-Permitted-Cross-Domain-Policies" => "none", "Referrer-Policy" => "strict-origin-when-cross-origin" }`
+
+#### Значения по умолчанию для целевой версии 6.1
+
+- [`config.active_record.has_many_inversing`](#config-active-record-has-many-inversing): `true`
+- [`config.active_record.legacy_connection_handling`](#config-active-record-legacy-connection-handling): `false`
+- [`config.active_storage.track_variants`](#config-active-storage-track-variants): `true`
+- [`config.active_storage.queues.analysis`](#config-active-storage-queues-analysis): `nil`
+- [`config.active_storage.queues.purge`](#config-active-storage-queues-purge): `nil`
+- [`config.action_mailbox.queues.incineration`](#config-action-mailbox-queues-incineration): `nil`
+- [`config.action_mailbox.queues.routing`](#config-action-mailbox-queues-routing): `nil`
+- [`config.action_mailer.deliver_later_queue_name`](#config-action-mailer-deliver-later-queue-name): `nil`
+- [`config.active_job.retry_jitter`](#config-active-job-retry-jitter): `0.15`
+- [`config.action_dispatch.cookies_same_site_protection`](#config-action-dispatch-cookies-same-site-protection): `:lax`
+- [`config.action_dispatch.ssl_default_redirect_status`](`config.action_dispatch.ssl_default_redirect_status`) = `308`
+- [`ActiveSupport.utc_to_local_returns_utc_offset_times`](#activesupport-utc-to-local-returns-utc-offset-times): `true`
+- [`config.action_controller.urlsafe_csrf_tokens`](#config-action-controller-urlsafe-csrf-tokens): `true`
+- [`config.action_view.form_with_generates_remote_forms`](#config-action-view-form-with-generates-remote-forms): `false`
+- [`config.action_view.preload_links_header`](#config-action-view-preload-links-header): `true`
+
+#### Значения по умолчанию для целевой версии 6.0
+
+- [`config.action_view.default_enforce_utf8`](#config-action-view-default-enforce-utf8): `false`
+- [`config.action_dispatch.use_cookies_with_metadata`](#config-action-dispatch-use-cookies-with-metadata): `true`
+- [`config.action_mailer.delivery_job`](#config-action-mailer-delivery-job): `"ActionMailer::MailDeliveryJob"`
+- [`config.active_storage.queues.analysis`](#config-active-storage-queues-analysis): `:active_storage_analysis`
+- [`config.active_storage.queues.purge`](#config-active-storage-queues-purge): `:active_storage_purge`
+- [`config.active_storage.replace_on_assign_to_many`](#config-active-storage-replace-on-assign-to-many): `true`
+- [`config.active_record.collection_cache_versioning`](#config-active-record-collection-cache-versioning): `true`
+
+#### Значения по умолчанию для целевой версии 5.2
+
+- [`config.active_record.cache_versioning`](#config-active-record-cache-versioning): `true`
+- [`config.action_dispatch.use_authenticated_cookie_encryption`](#config-action-dispatch-use-authenticated-cookie-encryption): `true`
+- [`config.active_support.use_authenticated_message_encryption`](#config-active-support-use-authenticated-message-encryption): `true`
+- [`config.active_support.hash_digest_class`](#config-active-support-hash-digest-class): `OpenSSL::Digest::SHA1`
+- [`config.action_controller.default_protect_from_forgery`](#config-action-controller-default-protect-from-forgery): `true`
+- [`config.action_view.form_with_generates_ids`](#config-action-view-form-with-generates-ids): `true`
+
+#### Значения по умолчанию для целевой версии 5.1
+
+- [`config.assets.unknown_asset_fallback`](#config-assets-unknown-asset-fallback): `false`
+- [`config.action_view.form_with_generates_remote_forms`](#config-action-view-form-with-generates-remote-forms): `true`
+
+#### Значения по умолчанию для целевой версии 5.0
+
+- [`config.action_controller.per_form_csrf_tokens`](#config-action-controller-per-form-csrf-tokens): `true`
+- [`config.action_controller.forgery_protection_origin_check`](#config-action-controller-forgery-protection-origin-check): `true`
+- [`ActiveSupport.to_time_preserves_timezone`](#activesupport-to-time-preserves-timezone): `true`
+- [`config.active_record.belongs_to_required_by_default`](#config-active-record-belongs-to-required-by-default): `true`
+- [`config.ssl_options`](#config-ssl-options): `{ hsts: { subdomains: true } }`
+
 ### (rails-general-configuration) Общие настройки Rails
 
 Следующие конфигурационные методы вызываются на объекте `Rails::Railtie`, таком как подкласс `Rails::Engine` или `Rails::Application`.
@@ -74,11 +161,18 @@ end
 
 #### `config.add_autoload_paths_to_load_path`
 
-Сообщает, должны ли пути автозагрузки быть добавлены в `$LOAD_PATH`. Этот флажок по умолчанию `true`, но рекомендуется установить его `false` в режиме `:zeitwerk` как можно раньше, в `config/application.rb`. Внутри Zeitwerk используются абсолютные пути, и приложения, запущенные в режиме `:zeitwerk`, не требуют `require_dependency`, поэтому модели, контроллеры, задания и т.д. не должны быть в `$LOAD_PATH`. Настройка `false` предотвращает Ruby от проверок этих директорий при разрешении вызовов `require` с относительными путями, и экономит работу Bootsnap и RAM, так как ему не нужно их индексировать.
+Сообщает, должны ли пути автозагрузки быть добавлены в `$LOAD_PATH`. Рекомендуется установить его `false` в режиме `:zeitwerk` как можно раньше, в `config/application.rb`. Внутри Zeitwerk используются абсолютные пути, и приложения, запущенные в режиме `:zeitwerk`, не требуют `require_dependency`, поэтому модели, контроллеры, задания и т.д. не должны быть в `$LOAD_PATH`. Настройка `false` предотвращает Ruby от проверок этих директорий при разрешении вызовов `require` с относительными путями, и экономит работу Bootsnap и RAM, так как ему не нужно их индексировать.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.1              | `false`               |
 
 #### `config.cache_classes`
 
-Контролирует, будут ли классы и модули приложения перезагружены при изменении. По умолчанию `false` в среде development и true в production. В среде test по умолчанию `false`, если установлен Spring, в противном случае `true`.
+Контролирует, будут ли классы и модули приложения перезагружены при изменении. Когда кэш включен (`true`), перезагрузка не случится. По умолчанию `false` в среде development и true в production. В среде test по умолчанию `false`, если установлен Spring, в противном случае `true`.
 
 #### `config.beginning_of_week`
 
@@ -151,7 +245,7 @@ end
 
 #### `config.force_ssl`
 
-Принуждает все запросы обслуживаться протоколом HTTPS и устанавливает "https://" как протокол по умолчанию при генерации URL. Принуждение к HTTPS обрабатывается промежуточной программой `ActionDispatch::SSL`, которая может быть настроена с помощью `config.ssl_options` - подробнее смотрите в [документации ActionDispatch::SSL](https://api.rubyonrails.org/classes/ActionDispatch/SSL.html).
+Принуждает все запросы обслуживаться протоколом HTTPS и устанавливает "https://" как протокол по умолчанию при генерации URL. Принуждение к HTTPS обрабатывается промежуточной программой `ActionDispatch::SSL`, которая может быть настроена с помощью `config.ssl_options`.
 
 #### `config.javascript_path`
 
@@ -229,6 +323,17 @@ config.session_store :my_custom_store
 
 Это произвольное хранилище должно быть определено как `ActionDispatch::Session::MyCustomStore`.
 
+#### `config.ssl_options`
+
+Конфигурационные опции для промежуточной программы [`ActionDispatch::SSL`](https://api.rubyonrails.org/classes/ActionDispatch/SSL.html).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `{}`                  |
+| 5.0              | `{ hsts: { subdomains: true } }` |
+
 #### `config.time_zone`
 
 Устанавливает временную зону по умолчанию для приложения и включает понимание временных зон для Active Record.
@@ -261,7 +366,14 @@ config.session_store :my_custom_store
 
 #### `config.assets.unknown_asset_fallback`
 
-Позволяет модифицировать поведение файлопровода, когда ассет не в нем, если вы используете sprockets-rails 3.2.0 или новее. По умолчанию `false`.
+Позволяет модифицировать поведение файлопровода, когда ассет не в нем, если вы используете sprockets-rails 3.2.0 или новее.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 5.1              | `false`               |
 
 #### `config.assets.prefix`
 
@@ -401,6 +513,10 @@ Rails.application.config.host_configuration = {
 #### `ActiveSupport::Cache::Strategy::LocalCache`
 
 Служит простым кэшем в памяти. Этот кэш не является тредобезопасным и предназначен только как временное хранилище кэша для отдельного треда.
+
+#### `Rack::Runtime`
+
+Устанавливает заголовок `X-Runtime`, содержащий время (в секундах), затраченное на выполнение запроса.
 
 #### `Rails::Rack::Logger`
 
@@ -619,7 +735,14 @@ config.middleware.delete Rack::MethodOverride
 
 #### `config.active_record.partial_inserts`
 
-Это булево значение, управляющее, должны ли использоваться частичные записи при создании новых записей (т.е. вставлять ли только те атрибуты, которые отличаются от дефолтных). Значение по умолчанию `true`.
+Это булево значение, управляющее, должны ли использоваться частичные записи при создании новых записей (т.е. вставлять ли только те атрибуты, которые отличаются от дефолтных).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.0              | `false`               |
 
 #### `config.active_record.partial_updates`
 
@@ -640,6 +763,13 @@ config.middleware.delete Rack::MethodOverride
 #### `config.active_record.belongs_to_required_by_default`
 
 Это булево значение и управляет, будет ли валидация записи падать, если отсутствует связь `belongs_to`.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `nil`                 |
+| 5.0              | `true`                |
 
 #### `config.active_record.action_on_strict_loading_violation`
 
@@ -665,17 +795,56 @@ config.middleware.delete Rack::MethodOverride
 
 Обозначает, нужно ли использовать стабильный метод `#cache_key`, сопровождаемый изменившейся версией в методе `#cache_version`.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.2              | `true`                |
+
 #### `config.active_record.collection_cache_versioning`
 
 Позволяет повторное использование того же ключа кэширования, когда объект, кэшированный с типом `ActiveRecord::Relation`, изменяется из-за перемещения волатильной информации (максимальной даты обновления и количества) из ключа кэширования relation в версию кэша для поддержки повторного использования ключа кэширования.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.0              | `true`                |
 
 #### `config.active_record.has_many_inversing`
 
 Включает настройку инверсии записи при переходе по связям `belongs_to` и `has_many`.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.1              | `true`                |
+
+#### `config.active_record.automatic_scope_inversing`
+
+Включает автоматическое определение `inverse_of` для связей со скоупом.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
 #### `config.active_record.legacy_connection_handling`
 
 Позволяет включить новый API обработки подключения. Для приложений, использующих несколько баз данных, этот новый API предоставляет поддержку гранулированного переключения соединения.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 6.1              | `false`               |
 
 #### `config.active_record.destroy_association_async_job`
 
@@ -689,13 +858,16 @@ config.middleware.delete Rack::MethodOverride
 
 Когда true, имена столбцов будут всегда включаться в выражения `SELECT`, и будут избегаться запросы с подстановкой `SELECT * FROM ...`. Это помогает избежать ошибок кэширования в prepared statement при добавлении столбцов в базу данных PostgreSQL, к примеру. По умолчанию `false`.
 
-#### `config.active_record.destroy_all_in_batches`
-
-Обеспечивает, что `ActiveRecord::Relation#destroy_all` выполняет удаление записей порциями. `ActiveRecord::Relation#destroy_all` больше не будет возвращать коллекцию удаленных записей после включения этой опции.
-
 #### `config.active_record.verify_foreign_keys_for_fixtures`
 
-Обеспечивает, что все ограничения внешних ключей валидны, после того, как в тестах загружены фикстуры. Поддерживается только для PostgreSQL и SQLite. По умолчанию `false`.
+Обеспечивает, что все ограничения внешних ключей валидны, после того, как в тестах загружены фикстуры. Поддерживается только для PostgreSQL и SQLite.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
 
 #### `config.active_record.query_log_tags_enabled`
 
@@ -712,6 +884,28 @@ config.middleware.delete Rack::MethodOverride
 #### `config.active_record.schema_cache_ignored_tables`
 
 Определяет список таблиц, которые должны игнорироваться при генерации кэша схемы. Она принимает массив строк, представляющих имена таблицы, или регулярных выражений.
+
+#### `config.active_record.verbose_query_logs`
+
+Определяет, должно ли логироваться место расположение методов, осуществляющих запросы к базе данных, под соответствующими запросами. По умолчанию флажок `true` в development и `false` во всех других средах.
+
+#### `config.active_record.async_query_executor`
+
+Определяет, как организуется пул асинхронных запросов.
+
+По умолчанию `nil`, что означает, что `load_async` отключен, и вместо этого запросы выполняются непосредственно в фоновом режиме. Для фактического выполнения запросов асинхронно, она должна быть установлена как либо `:global_thread_pool`, или `:multi_thread_pool`.
+
+`:global_thread_pool` будет использовать единый пул для всех баз данных, с которым соединено приложение. Это предпочтительная конфигурация для приложений с единственной базой данных, или приожений, которые всегда запрашивают только один шард базы данных за раз.
+
+`:multi_thread_pool` будет использовать один пул на каждую базу данных, и размер каждого пула может быть сконфигурирован одельно в `database.yml` с помощью свойств `max_threads` и `min_thread`. Это полезно для приложений, регулярно запрашивающих несколько баз данных за раз, и которым нужно более подробное определение максимального параллелизма.
+
+#### `config.active_record.global_executor_concurrency`
+
+Используется в связке с `config.active_record.async_query_executor = :global_thread_pool`, определяет, сколько асинхронных запросов может быть запущенно параллельно.
+
+По умолчанию `4`.
+
+Это количество должно рассматриваться с учетом размера пула базы данных, сконфигурированного в `database.yml`. Пул соединений должен быть достаточно большим, чтобы вместить и основные треды (т.е. треды веб сервера или обработчика заданий), и фоновые треды.
 
 #### `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans`
 
@@ -741,6 +935,13 @@ config.middleware.delete Rack::MethodOverride
 
 Устанавливает хост для ассетов. Полезна, когда для хостинга ассетов используются CDN, или когда вы хотите обойти встроенную в браузеры политику ограничения домена при использовании различных псевдонимов доменов.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `:mailers`            |
+| 6.1              | `nil`                 |
+
 #### `config.action_controller.perform_caching`
 
 Конфигурирует, должно ли приложение выполнять возможность кэширования, предоставленную компонентом Action Controller. Установлено `false` в среде development, `true` в production. Если не указано, значение по умолчанию всегда будет `true`.
@@ -769,17 +970,45 @@ config.middleware.delete Rack::MethodOverride
 
 Настраивает, должен ли сверяться заголовок HTTP `Origin` с доменом сайта в качестве дополнительной защиты от межсайтовой подделки запроса.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.0              | `true`                |
+
 #### `config.action_controller.per_form_csrf_tokens`
 
 Настраивает, должны ли токены CSRF быть валидными только для метода/экшна, для которого они сгенерированы.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.0              | `true`                |
 
 #### `config.action_controller.default_protect_from_forgery`
 
 Определяет, будет ли добавлена защита от подделки в `ActionController:Base`.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.2              | `true`                |
+
 #### `config.action_controller.urlsafe_csrf_tokens`
 
 Настраивает, должны ли быть генерируемые токены CSRF URL-безопасными.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.1              | `true`                |
 
 #### `config.action_controller.relative_url_root`
 
@@ -821,11 +1050,33 @@ Rendered recordings/threads/_thread.html.erb in 1.5 ms [cache miss]
 
 #### `config.action_controller.raise_on_open_redirects`
 
-Вызывает `ArgumentError`, когда происходит неразрешенный открытый редирект. Значение по умолчанию `false`.
+Вызывает `ArgumentError`, когда происходит неразрешенный открытый редирект.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
 
 #### `config.action_controller.log_query_tags_around_actions`
 
 Определяет, будет ли автоматически обновлен контекст контроллера для тегов запроса с помощью `around_filter`. Значение по умолчанию `true`.
+
+#### `config.action_controller.wrap_parameters_by_default`
+
+Конфигурирует [`ParamsWrapper`](https://api.rubyonrails.org/classes/ActionController/ParamsWrapper.html) для оборачивания запросов json по умолчанию.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
+#### `ActionController::Base.wrap_parameters`
+
+Конфигурирует [`ParamsWrapper`](https://api.rubyonrails.org/classes/ActionController/ParamsWrapper.html). Он может быть вызван на верхнем уровне или на отдельных контроллерах.
 
 ### Конфигурирование Action Dispatch
 
@@ -833,20 +1084,26 @@ Rendered recordings/threads/_thread.html.erb in 1.5 ms [cache miss]
 
 Устанавливает имя хранилища данных сессии. По умолчанию `:cookie_store`; другие валидные опции включают `:active_record_store`, `:mem_cache_store` или имя вашего собственного класса.
 
+#### `config.action_dispatch.cookies_serializer`
+
+Указывает, какой сериализатор использовать для куки. Подробности смотрите в [куки Action Controller](/action-controller-overview#cookies).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
 #### `config.action_dispatch.default_headers`
 
-Это хэш с заголовками HTTP, которые по умолчанию устанавливаются для каждого отклика. По умолчанию определены как:
+Это хэш с заголовками HTTP, которые по умолчанию устанавливаются для каждого отклика.
 
-```ruby
-config.action_dispatch.default_headers = {
-  'X-Frame-Options' => 'SAMEORIGIN',
-  'X-XSS-Protection' => '1; mode=block',
-  'X-Content-Type-Options' => 'nosniff',
-  'X-Download-Options' => 'noopen',
-  'X-Permitted-Cross-Domain-Policies' => 'none',
-  'Referrer-Policy' => 'strict-origin-when-cross-origin'
-}
-```
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | <pre><code>{<br>  "X-Frame-Options" => "SAMEORIGIN",<br>  "X-XSS-Protection" => "1; mode=block",<br>  "X-Content-Type-Options" => "nosniff",<br>  "X-Download-Options" => "noopen",<br>  "X-Permitted-Cross-Domain-Policies" => "none",<br>  "Referrer-Policy" => "strict-origin-when-cross-origin"<br>}</code></pre> |
+| 7.0              | <pre><code>{<br>  "X-Frame-Options" => "SAMEORIGIN",<br>  "X-XSS-Protection" => "0",<br>  "X-Content-Type-Options" => "nosniff",<br>  "X-Download-Options" => "noopen",<br>  "X-Permitted-Cross-Domain-Policies" => "none",<br>  "Referrer-Policy" => "strict-origin-when-cross-origin"<br>}</code></pre> |
+| 7.1              | <pre><code>{<br>  "X-Frame-Options" => "SAMEORIGIN",<br>  "X-XSS-Protection" => "0",<br>  "X-Content-Type-Options" => "nosniff",<br>  "X-Permitted-Cross-Domain-Policies" => "none",<br>  "Referrer-Policy" => "strict-origin-when-cross-origin"<br>}</code></pre> |
 
 #### `config.action_dispatch.default_charset`
 
@@ -898,11 +1155,25 @@ config.action_dispatch.default_headers = {
 
 #### `config.action_dispatch.use_authenticated_cookie_encryption`
 
-Определяет, используют подписанные и зашифрованные куки шифр AES-256-GCM или более старый шифр AES-256-CBC. По умолчанию `true`.
+Определяет, используют подписанные и зашифрованные куки шифр AES-256-GCM или более старый шифр AES-256-CBC.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.2              | `true`                |
 
 #### `config.action_dispatch.use_cookies_with_metadata`
 
-Включает запись куки с включенными метаданными о назначении. По умолчанию `true`.
+Включает запись куки с включенными метаданными о назначении.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.0              | `true`                |
 
 #### `config.action_dispatch.perform_deep_munge`
 
@@ -957,6 +1228,13 @@ config.action_dispatch.rescue_responses = {
 
 Изменяет возвращаемое значение `ActionDispatch::Request#content_type` на заголовок Content-Type без модификаций.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.0              | `false`               |
+
 #### `config.action_dispatch.cookies_same_site_protection`
 
 Настраивает значение по умолчанию атрибута `SameSite` при установке куки. Когда установлено `nil`, атрибут `SameSite` не будет добавляться. Чтобы разрешить значению атрибута `SameSite` быть динамически настраиваемым на основе запроса, может быть указан proc. Например:
@@ -967,9 +1245,23 @@ config.action_dispatch.cookies_same_site_protection = ->(request) do
 end
 ```
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `nil`                 |
+| 6.1              | `:lax`                |
+
 #### `config.action_dispatch.ssl_default_redirect_status`
 
-Настраивает код статуса HTTP по умолчанию, используемый при перенаправлении не-GET/HEAD запросов от HTTP к HTTPS в промежуточной программе `ActionDispatch::SSL`. По умолчанию `308`, как определено в https://tools.ietf.org/html/rfc7538.
+Настраивает код статуса HTTP по умолчанию, используемый при перенаправлении не-GET/HEAD запросов от HTTP к HTTPS в промежуточной программе `ActionDispatch::SSL`.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `307`                 |
+| 6.1              | `308`                |
 
 #### `config.action_dispatch.log_rescued_responses`
 
@@ -993,12 +1285,10 @@ end
 
 #### `config.action_view.field_error_proc`
 
-Предоставляет генератор HTML для отображения ошибок, приходящих от Active Model. По умолчанию:
+Предоставляет генератор HTML для отображения ошибок, приходящих от Active Model. Блок вычисляется в контексте шаблона Action View. По умолчанию:
 
 ```ruby
-Proc.new do |html_tag, instance|
-  %Q(<div class="field_with_errors">#{html_tag}</div>).html_safe
-end
+Proc.new { |html_tag, instance| content_tag :div, html_tag, class: "field_with_errors" }
 ```
 
 #### `config.action_view.default_form_builder`
@@ -1012,6 +1302,10 @@ end
 #### `config.action_view.erb_trim_mode`
 
 Задает режим обрезки, который будет использоваться ERB. По умолчанию `'-'`, которая включает обрезку висячих пробелов и новых строчек при использовании `<%= -%>` или `<%= =%>`. Подробнее смотрите в [документации по Erubis](http://www.kuwata-lab.com/erubis/users-guide.06.html#topics-trimspaces).
+
+#### `config.action_view.frozen_string_literal`
+
+Компилирует шаблон ERB с волшебным комментарием `# frozen_string_literal: true`, что делает все литералы строки замороженными, что предохраняет от выделения памяти. Установите `true`, чтобы включить ее для всех вью.
 
 #### `config.action_view.embed_authenticity_token_in_remote_forms`
 
@@ -1039,13 +1333,34 @@ end
 
 Определяет, должны ли `form_with` генерировать remote формы или нет.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| 5.1              | `true`                |
+| 6.1              | `false`               |
+
 #### `config.action_view.form_with_generates_ids`
 
 Определяет, должны ли `form_with` генерировать ids на inputs.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`                |
+| 5.2              | `true`               |
+
 #### `config.action_view.default_enforce_utf8`
 
-Определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8. Это по умолчанию `false`.
+Определяет, генерируются ли формы со скрытым тегом, который заставляет старые версии Internet Explorer отправлять формы, закодированные в UTF-8.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 6.0              | `false`               |
 
 #### `config.action_view.image_loading`
 
@@ -1063,13 +1378,34 @@ end
 
 Определяет, должны ли `javascript_include_tag` и `stylesheet_link_tag` генерировать заголовок `Link`, для предварительной загрузки ассетов.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     |  `nil`                |
+| 6.1              | `true`                |
+
 #### `config.action_view.button_to_generates_button_tag`
 
 Определяет, должен ли `button_to` отрисовывать элемент `<button>` независимо от того, было ли содержимое передано как первый аргумент или как блок.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
 #### `config.action_view.apply_stylesheet_media_default`
 
 Определяет, должен ли `stylesheet_link_tag` отрисовывать `screen` как значение по умолчанию для атрибута `media`, когда он не предоставлен.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.0              | `false`               |
 
 ### Конфигурирование Action Mailbox
 
@@ -1096,9 +1432,23 @@ config.action_mailbox.incinerate_after = 14.days
 
 Принимает символ, указывающий очередь Active Job для использования для заданий уничтожения. Когда эта опция `nil`, задания уничтожения посылаются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `:action_mailbox_incineration` |
+| 6.1              | `nil`                 |
+
 #### `config.action_mailbox.queues.routing`
 
 Принимает символ, указывающий очередь Active Job для использования для заданий маршрутизации. Когда эта опция `nil`, задания маршрутизации посылаются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `:action_mailbox_routing` |
+| 6.1              | `nil`                 |
 
 ### (configuring-action-mailer) Конфигурирование Action Mailer
 
@@ -1122,15 +1472,25 @@ config.action_mailbox.incinerate_after = 14.days
 * `:user_name` - Если почтовый сервер требует аутентификацию, установите имя пользователя этой настройкой.
 * `:password` - Если почтовый сервер требует аутентификацию, установите пароль этой настройкой.
 * `:authentication` - Если почтовый сервер требует аутентификацию, здесь необходимо установить тип аутентификации. Это должен быть один из символов `:plain`, `:login`, `:cram_md5`.
+* `:enable_starttls` - Использовать STARTTLS при соединении с вашим сервером SMTP и выдавать ошибку, если не поддерживается. По умолчанию `false`.
 * `:enable_starttls_auto` - Определяет, включен ли STARTTLS на вашем сервере SMTP и начинает его использовать. По умолчанию `true`.
 * `:openssl_verify_mode` - При использовании TLS, можно установить, как OpenSSL проверяет сертификат. Это полезно, если необходимо валидировать самоподписанный и/или wildcard сертификат. Это может быть одна из констант проверки OpenSSL, `:none` или `:peer` -- или сама константа `OpenSSL::SSL::VERIFY_NONE` или `OpenSSL::SSL::VERIFY_PEER`, соответственно.
 * `:ssl/:tls` - Позволяет соединению SMTP использовать SMTP/TLS (SMTPS: SMTP поверх прямого соединения TLS).
 * `:open_timeout` - Количество секунд ожидания перед попыткой открыть соединение.
 * `:read_timeout` - Количество секунд ожидания до тайм-аута вызова read(2).
 
+Кроме этого можно передавать любые [поддерживаемые опции настройки `Mail::SMTP`](https://github.com/mikel/mail/blob/master/lib/mail/network/delivery_methods/smtp.rb).
+
 #### `config.action_mailer.smtp_timeout`
 
 Позволяет настроить оба значения `:open_timeout` и `:read_timeout` для метода доставки `:smtp`.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `nil`                 |
+| 7.1              | `5`                   |
 
 #### `config.action_mailer.sendmail_settings`
 
@@ -1222,6 +1582,13 @@ config.action_mailer.show_previews = false
 
 Указывает задание для доставки писем.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `ActionMailer::MailDeliveryJob` |
+| 6.0              | `"ActionMailer::MailDeliveryJob"` |
+
 ### (configuring-active-support) Конфигурирование Active Support
 
 Имеется несколько конфигурационных настроек для Active Support:
@@ -1250,17 +1617,46 @@ config.action_mailer.show_previews = false
 
 Позволяет настроить класс дайджеста для генерации дайджестов для не конфиденциальных (non-sensitive) данных, таких как заголовок ETag.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `OpenSSL::Digest::MD5` |
+| 5.2              | `OpenSSL::Digest::SHA1` |
+| 7.0              | `OpenSSL::Digest::SHA256` |
+
 #### `config.active_support.key_generator_hash_digest_class`
 
 Позволяет настройку класса дайджеста для использования в создании производных секретных данных от настроенных базовых, таких как зашифрованные куки.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `OpenSSL::Digest::SHA1` |
+| 7.0              | `OpenSSL::Digest::SHA256` |
 
 #### `config.active_support.use_authenticated_message_encryption`
 
 Указывает, следует ли использовать аутентификационное шифрование AES-256-GCM в качестве шифра по умолчанию для шифрования сообщений вместо AES-256-CBC.
 
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.2              | `true`                |
+
 #### `config.active_support.cache_format_version`
 
 Указывает, какую версию сериализации кэша использовать. Возможные значения `6.1` и `7.0`.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `6.1`                 |
+| 7.0              | `7.0`                 |
 
 #### `config.active_support.deprecation`
 
@@ -1278,6 +1674,68 @@ config.action_mailer.show_previews = false
 
 Позволяет отключить все предупреждения об устаревании (включая неразрешенные устаревания); это отключит `ActiveSupport::Deprecation.warn`. Включено по умолчанию в production.
 
+#### `config.active_support.remove_deprecated_time_with_zone_name`
+
+Определяет, нужно ли убирать устаревшее переопределение метода [`ActiveSupport::TimeWithZone.name`](https://api.rubyonrails.org/classes/ActiveSupport/TimeWithZone.html#method-c-name), чтобы избежать предупреждения об его устаревании.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `nil`                 |
+| 7.0              | `true`                |
+
+#### `config.active_support.isolation_level`
+
+Конфигурирует расположение большей части внутреннего состояния Rails. Если используете сервер или обработчик заданий, основанные на файберах (например, `falcon`), следует установить `:fiber`. В противном случае, лучше использовать расположение `:thread`. По умолчанию `:thread`.
+
+#### `config.active_support.use_rfc4122_namespaced_uuids`
+
+Определяет, будут ли сгенерированные UUID пространств имен следовать стандарту RFC 4122 для идентификаторов пространства имен, переданных как строка в вызовы методов `Digest::UUID.uuid_v3` или `Digest::UUID.uuid_v5`.
+
+Если установлено `true`:
+
+* В качестве идентификаторов пространства имен допускаются только UUID. Если предоставленный идентификатор пространства имен недопустим, будет вызвана `ArgumentError`.
+* Никакое предупреждение об устаревании не будет сгенерировано, не важно, если используемый идентификатор пространства имен это константа, определенная в `Digest::UUID` или `String`.
+* Идентификаторы пространств имен не чувствительны к регистру.
+* Все сгенерированные UUID в пространстве имен должны соответствовать стандарту.
+
+Если установлено `false`:
+
+* Любое строковое значение может быть использовано в качестве идентификатора пространсва имен (хотя не рекомендуется). В этом случае никакая `ArgumentError` не будет вызвана, чтобы сохранить обратную совместимость.
+* Будет сгенерировано предупреждение об устаревании, если предоставленный идентификатор пространства имен не является одной из констант, определенной в `Digest::UUID`.
+* Идентификаторы пространств имен чувствительны к регистру.
+* Только те сгенерированные UUID в пространстве имен, которые используют одну из констант, определенных в `Digest::UUID`, должны соответствовать стандарту.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
+#### `config.active_support.executor_around_test_case`
+
+Конфигурирует тестовый набор, чтобы тестовые случаи оборачивались в `Rails.application.executor.wrap`. Это позволяет тестовым случаям вести себя приближенно к фактическому запросу или заданию. Некоторые особенности, которые обычно отключены в тесте, такие как кэш запросов Active Record и асинхронные запросы, будут тогда включены.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
+#### `config.active_support.disable_to_s_conversion`
+
+Отключает переопределение методов `#to_s` некоторых ключевых классов Ruby. Эта конфигурация для приложений, которые хотят как можно быстрее воспользоваться преимуществом [оптимизации Ruby 3.1](https://github.com/ruby/ruby/commit/b08dacfea39ad8da3f1fd7fdd0e4538cc892ec44). Эта конфигурация должна быть установлена в `config/application.rb` внутри класса приложения, в противном случае она не сработает.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
 #### `ActiveSupport::Logger.silencer`
 
 Устанавливают `false`, чтобы отключить возможность silence logging в блоке. По умолчанию `true`.
@@ -1286,9 +1744,27 @@ config.action_mailer.show_previews = false
 
 Определяет логгер, используемый в операциях хранения кэша.
 
+#### `ActiveSupport.to_time_preserves_timezone`
+
+Определяет, должен ли метод `to_time` сохранять сдвиг UTC его получателя. Если `false`, методы `to_time` конвертируют в сдвиг UTC локальной системы.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 5.0              | `true`                |
+
 #### `ActiveSupport.utc_to_local_returns_utc_offset_times`
 
 Настраивает `ActiveSupport::TimeZone.utc_to_local` возвращать время со сдвигом UTC, вместо времени UTC, включающего этот сдвиг.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.1              | `true`                |
 
 ### Конфигурирование Active Job
 
@@ -1365,9 +1841,12 @@ end
 
 Управляет количеством "jitter" (случайного распределения), применяемого к задержке, вычисляемой при повторе упавших заданий.
 
-#### `config.active_job.skip_after_callbacks_if_terminated`
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
 
-Управляет, должны ли запускаться колбэки `after_enqueue` / `after_perform` когда колбэки `before_enqueue`  `before_perform` прерываются с помощью `throw :abort`.
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `0.0`                 |
+| 6.1              | `0.15`                |
 
 #### `config.active_job.log_query_tags_around_perform`
 
@@ -1385,13 +1864,24 @@ end
 
 Конфигурационные опции описаны подробнее в [Обзор Action Cable](/action-cable-overview#configuration).
 
+#### `config.action_cable.precompile_assets`
+
+Определяет, должны ли ассеты Action Cable быть добавлены в прекомпиляцию файлопровода. Ничего не делает, если не используется Sprockets. Значение по умолчанию `true`.
+
 ### (configuring-active-storage) Конфигурирование Active Storage
 
 `config.active_storage` предоставляет следующие опции конфигурации:
 
 #### `config.active_storage.variant_processor`
 
-Принимает символ `:mini_magick` или `:vips`, указывая, будут ли варианты преобразования выполняться с помощью MiniMagick или ruby-vips. По умолчанию это `:mini_magick`.
+Принимает символ `:mini_magick` или `:vips`, указывая, будут ли варианты преобразования выполняться с помощью MiniMagick или ruby-vips.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `:mini_magick`        |
+| 7.0              | `:vips`               |
 
 #### `config.active_storage.analyzers`
 
@@ -1430,7 +1920,7 @@ config.active_storage.paths[:ffprobe] = '/usr/local/bin/ffprobe'
 Принимает массив строк, указывающий типы содержимого, которые Active Storage может преобразовывать через ImageMagick. По умолчанию определен как:
 
 ```ruby
-config.active_storage.variable_content_types = %w(image/png image/gif image/jpg image/jpeg image/pjpeg image/tiff image/bmp image/vnd.adobe.photoshop image/vnd.microsoft.icon image/webp image/avif image/heic image/heif)
+config.active_storage.variable_content_types = %w(image/png image/gif image/jpeg image/tiff image/vnd.adobe.photoshop image/vnd.microsoft.icon image/webp image/avif image/heic image/heif)
 ```
 
 #### `config.active_storage.web_image_content_types`
@@ -1438,7 +1928,7 @@ config.active_storage.variable_content_types = %w(image/png image/gif image/jpg 
 Принимает массив строк, рассматриваемый в качестве типов содержимого веб изображений, для которых варианты могут бать обработаны без конвертации в формат PNG. Если хотите использовать варианты `WebP` в своем приложении, можете добавить `image/webp` в этот массив. По умолчанию определен как:
 
 ```ruby
-config.active_storage.web_image_content_types = %w(image/png image/jpeg image/jpg image/gif)
+config.active_storage.web_image_content_types = %w(image/png image/jpeg image/gif)
 ```
 
 #### `config.active_storage.content_types_to_serve_as_binary`
@@ -1446,7 +1936,7 @@ config.active_storage.web_image_content_types = %w(image/png image/jpeg image/jp
 Принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве прикрепленного файла, а не встроенного. По умолчанию определен как:
 
 ```ruby
-config.active_storage.content_types_to_serve_as_binary = %w(text/html text/javascript image/svg+xml application/postscript application/x-shockwave-flash text/xml application/xml application/xhtml+xml application/mathml+xml text/cache-manifest)
+config.active_storage.content_types_to_serve_as_binary = %w(text/html image/svg+xml application/postscript application/x-shockwave-flash text/xml application/xml application/xhtml+xml application/mathml+xml text/cache-manifest)
 ```
 
 #### `config.active_storage.content_types_allowed_inline`
@@ -1454,32 +1944,42 @@ config.active_storage.content_types_to_serve_as_binary = %w(text/html text/javas
 Принимает массив строк, указывающий типы содержимого, которые Active Storage всегда будет отдавать в качестве встроенного файла. По умолчанию определен как:
 
 ```ruby
-config.active_storage.content_types_allowed_inline = %w(image/png image/gif image/jpg image/jpeg image/tiff image/bmp image/vnd.adobe.photoshop image/vnd.microsoft.icon application/pdf)
+config.active_storage.content_types_allowed_inline = %w(image/png image/gif image/jpeg image/tiff image/vnd.adobe.photoshop image/vnd.microsoft.icon application/pdf)
+```
+
+#### `config.active_storage.silence_invalid_content_types_warning`
+
+Начиная с Rails 7, Active Storage предупредит, если вы используете неправильный тип содержимого, который некорректно поддерживался в Rails 6. Можно использовать эту настройку, чтобы отключить предупреждение.
+
+```ruby
+config.active_storage.silence_invalid_content_types_warning = false
 ```
 
 #### `config.active_storage.queues.analysis`
 
 Принимает символ, указывающий очередь Active Job для использования заданиями анализа. Когда эта опция `nil`, задания анализа направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
 
-```ruby
-config.active_storage.queues.analysis = :low_priority
-```
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| 6.0              | `:active_storage_analysis` |
+| 6.1              | `nil`                 |
 
 #### `config.active_storage.queues.purge`
 
 Принимает символ, указывающий очередь Active Job для использования заданиями очистки. Когда эта опция `nil`, задания очистки направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
 
-```ruby
-config.active_storage.queues.purge = :low_priority
-```
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| 6.0              | `:active_storage_purge` |
+| 6.1              | `nil`                 |
 
 #### `config.active_storage.queues.mirror`
 
 Принимает символ, указывающий очередь Active Job для использования заданиями отзеркаливания. По умолчанию `:active_storage_mirror`.
-
-```ruby
-config.active_storage.queues.mirror = :low_priority
-```
 
 #### `config.active_storage.logger`
 
@@ -1516,11 +2016,25 @@ config.active_storage.routes_prefix = '/files'
 
 #### `config.active_storage.replace_on_assign_to_many`
 
-Определяет, должно ли присвоение к коллекции с вложениями, объявленной с помощью `has_many_attached`, заменять любые существующие вложения, или добавлять к ним. По умолчанию `true`.
+Определяет, должно ли присвоение к коллекции с вложениями, объявленной с помощью `has_many_attached`, заменять любые существующие вложения, или добавлять к ним.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.0              | `true`                |
 
 #### `config.active_storage.track_variants`
 
-Определяет, должны ли варианты записываться в базу данных. По умолчанию `true`.
+Определяет, должны ли варианты записываться в базу данных.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 6.1              | `true`                |
 
 #### `config.active_storage.draw_routes`
 
@@ -1541,121 +2055,33 @@ config.active_storage.routes_prefix = '/files'
 
 Может быть использована для изменения способа, которым ffmpeg генерирует изображения предпросмотра видео.
 
-По умолчанию определен как:
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
 
-```ruby
-config.active_storage.video_preview_arguments = "-vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2"
-```
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `"-y -vframes 1 -f image2"` |
+| 7.0              | `"-vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015)"`<sup><mark><strong><em>1</em></strong></mark></sup> <br> `+ ",loop=loop=-1:size=2,trim=start_frame=1'"`<sup><mark><strong><em>2</em></strong></mark></sup><br> `+ " -frames:v 1 -f image2"` <br><br> <ol><li>Выбирает первый кадр видео, плюс ключевые кадры, плюс кадры, соответствующие порогу смены сцены.</li> <li>Использует первый кадр, как фолбэк, если другие кадры не отвечают критериям, закольцовывает первые (один или) два выбранных кадра, затем отбрасывает первый закольцованный кадр.</li></ol> |
 
-1. `select=eq(n\,0)+eq(key\,1)+gt(scene\,0.015)`: Выбирает первый кадр видео, плюс ключевые кадры, плюс кадры, соответствующие порогу смены сцены.
-2. `loop=loop=-1:size=2,trim=start_frame=1`: Чтобы использовать первый кадр, как фолбэк, если другие кадры не отвечают критериям, закольцевать первые (один или) два выбранных кадра, затем отбросить первый закольцованный кадр.
+#### `config.active_storage.multiple_file_field_include_hidden`
 
-### Configuring Action Text
+В Rails 7.1 и выше, отношения Active Storage `has_many_attached` по умолчанию будут _заменять_ текущую коллекию, вместо _добавления_ к ней. Поэтому, для поддержки отправки _пустой_ коллекции, когда `multiple_file_field_include_hidden` `true`, хелпер [`file_field`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-file_field) отрендерит вспомогательное скрытое поле, похожее на вспомогательное поле, отрендеренное хелпером [`check_box`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-check_box).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.0              | `true`                |
+
+#### `config.active_storage.precompile_assets`
+
+Определяет, должны ли ассеты Active Storage быть добавлены в прекомпиляцию файлопровода. Ничего не делает, если не используется Sprockets. Значение по умолчанию `true`.
+
+### Конфигурация Action Text
 
 #### `config.action_text.attachment_tag_name`
 
 Принимает строку для тега HTML, используемого для оборачивания вложений. По умолчанию `"action-text-attachment"`.
-
-### Результаты `config.load_defaults`
-
-`config.load_defaults` устанавливает новые значения по умолчанию для указанной и предыдущих версия. То есть, '6.0' также получит новые значения по умолчанию из каждой версии до нее.
-
-#### Для '7.0', значения по умолчанию из предыдущих версии ниже и:
-- `config.action_controller.raise_on_open_redirects`: `true`
-- `config.action_view.button_to_generates_button_tag`: `true`
-- `config.action_view.apply_stylesheet_media_default`: `false`
-- `config.active_support.key_generator_hash_digest_class`: `OpenSSL::Digest::SHA256`
-- `config.active_support.hash_digest_class`: `OpenSSL::Digest::SHA256`
-- `config.active_support.cache_format_version`: `7.0`
-- `config.active_support.remove_deprecated_time_with_zone_name`: `true`
-- `config.action_dispatch.return_only_request_media_type_on_content_type`: `false`
-- `config.action_controller.silence_disabled_session_errors`: `false`
-- `config.action_mailer.smtp_timeout`: `5`
-- `config.active_storage.video_preview_arguments`: `"-vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2"`
-- `config.active_record.verify_foreign_keys_for_fixtures`: `true`
-- `config.active_storage.variant_processor`: `:vips`
-
-#### Для '6.1', значения по умолчанию из предыдущих версии ниже и:
-
-- `config.active_record.has_many_inversing`: `true`
-- `config.active_record.legacy_connection_handling`: `false`
-- `config.active_storage.track_variants`: `true`
-- `config.active_storage.queues.analysis`: `nil`
-- `config.active_storage.queues.purge`: `nil`
-- `config.action_mailbox.queues.incineration`: `nil`
-- `config.action_mailbox.queues.routing`: `nil`
-- `config.action_mailer.deliver_later_queue_name`: `nil`
-- `config.active_job.retry_jitter`: `0.15`
-- `config.active_job.skip_after_callbacks_if_terminated`: `true`
-- `config.action_dispatch.cookies_same_site_protection`: `:lax`
-- `config.action_dispatch.ssl_default_redirect_status` = `308`
-- `ActiveSupport.utc_to_local_returns_utc_offset_times`: `true`
-- `config.action_controller.urlsafe_csrf_tokens`: `true`
-- `config.action_view.form_with_generates_remote_forms`: `false`
-- `config.action_view.preload_links_header`: `true`
-
-#### Для '6.0', значения по умолчанию из предыдущих версии ниже и:
-
-- `config.autoloader`: `:zeitwerk`
-- `config.action_view.default_enforce_utf8`: `false`
-- `config.action_dispatch.use_cookies_with_metadata`: `true`
-- `config.action_mailer.delivery_job`: `"ActionMailer::MailDeliveryJob"`
-- `config.active_storage.queues.analysis`: `:active_storage_analysis`
-- `config.active_storage.queues.purge`: `:active_storage_purge`
-- `config.active_storage.replace_on_assign_to_many`: `true`
-- `config.active_record.collection_cache_versioning`: `true`
-
-#### Для '5.2', значения по умолчанию из предыдущих версии ниже и:
-
-- `config.active_record.cache_versioning`: `true`
-- `config.action_dispatch.use_authenticated_cookie_encryption`: `true`
-- `config.active_support.use_authenticated_message_encryption`: `true`
-- `config.active_support.hash_digest_class`: `OpenSSL::Digest::SHA1`
-- `config.action_controller.default_protect_from_forgery`: `true`
-- `config.action_view.form_with_generates_ids`: `true`
-
-#### Для '5.1', значения по умолчанию из предыдущих версии ниже и:
-
-- `config.assets.unknown_asset_fallback`: `false`
-- `config.action_view.form_with_generates_remote_forms`: `true`
-
-#### Для '5.0', исходные значения по умолчанию и:
-
-- `config.action_controller.per_form_csrf_tokens`: `true`
-- `config.action_controller.forgery_protection_origin_check`: `true`
-- `ActiveSupport.to_time_preserves_timezone`: `true`
-- `config.active_record.belongs_to_required_by_default`: `true`
-- `config.ssl_options`: `{ hsts: { subdomains: true } }`
-
-#### Исходные значения по умолчанию:
-
-- `config.action_controller.default_protect_from_forgery`: `false`
-- `config.action_controller.raise_on_open_redirects`: `false`
-- `config.action_controller.urlsafe_csrf_tokens`: `false`
-- `config.action_dispatch.cookies_same_site_protection`: `nil`
-- `config.action_mailer.delivery_job`: `ActionMailer::DeliveryJob`
-- `config.action_view.form_with_generates_ids`: `false`
-- `config.action_view.preload_links_header`: `nil`
-- `config.action_view.button_to_generates_button_tag`: `false`
-- `config.action_view.apply_stylesheet_media_default`: `true`
-- `config.active_job.retry_jitter`: `0.0`
-- `config.active_job.skip_after_callbacks_if_terminated`: `false`
-- `config.action_mailbox.queues.incineration`: `:action_mailbox_incineration`
-- `config.action_mailbox.queues.routing`: `:action_mailbox_routing`
-- `config.action_mailer.deliver_later_queue_name`: `:mailers`
-- `config.active_record.collection_cache_versioning`: `false`
-- `config.active_record.cache_versioning`: `false`
-- `config.active_record.has_many_inversing`: `false`
-- `config.active_record.legacy_connection_handling`: `true`
-- `config.active_support.use_authenticated_message_encryption`: `false`
-- `config.active_support.hash_digest_class`: `OpenSSL::Digest::MD5`
-- `config.active_support.key_generator_hash_digest_class`: `OpenSSL::Digest::SHA1`
-- `config.active_support.cache_format_version`: `6.1`
-- `config.action_dispatch.return_only_request_media_type_on_content_type`: `true`
-- `ActiveSupport.utc_to_local_returns_utc_offset_times`: `false`
-- `config.action_mailer.smtp_timeout`: `nil`
-- `config.active_storage.video_preview_arguments`: `"-y -vframes 1 -f image2"`
-- `config.active_storage.variant_processor`: `:mini_magick`
 
 ### Конфигурирование базы данных
 
@@ -2085,7 +2511,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `initialize_logger`: Инициализирует логгер (объект `ActiveSupport::Logger`) для приложения и делает его доступным как `Rails.logger`, если до него другой инициализатор не определит `Rails.logger`.
 
-* `initialize_cache`: Если `Rails.cache` еще не установлен, инициализирует кэш, обращаясь к значению `config.cache_store` и сохраняя результат как `Rails.cache`. Если этот объект отвечает на метод `middleware`, его промежуточная программа вставляется до `ActionDispatch::Executor` в стеке промежуточных программ.
+* `initialize_cache`: Если `Rails.cache` еще не установлен, инициализирует кэш, обращаясь к значению `config.cache_store` и сохраняя результат как `Rails.cache`. Если этот объект отвечает на метод `middleware`, его промежуточная программа вставляется до `Rack::Runtime` в стеке промежуточных программ.
 
 * `set_clear_dependencies_hook`: Этот инициализатор - запускающийся, только если `cache_classes` установлена `false` - использует `ActionDispatch::Callbacks.after` для удаления констант, на которые ссылались на протяжении запроса от пространства объекта, так что они могут быть перезагружены в течение следующего запроса.
 
