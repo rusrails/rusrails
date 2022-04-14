@@ -264,5 +264,6 @@
     "экшн(а|е|у|ы|ах|ов|ом|ам|ами|)",
     "экранизатор(а|е|у|ы|ах|ов|ом|ами|)"
   ],
-  "ignoreCapitalization": true
+  "ignoreCapitalization": true,
+  "byWords":true
 }
