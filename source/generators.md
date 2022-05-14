@@ -48,7 +48,7 @@ class InitializerGenerator < Rails::Generators::Base
 end
 ```
 
-NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
+NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://rdoc.info/gems/thor/Thor/Actions)
 
 Наш новый генератор очень прост: он наследуется от `Rails::Generators::Base` и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе выполняется в порядке, в котором он определен. Наконец, мы вызываем метод `create_file`, который создаст файл в указанном месте с заданным содержимым. Если вы знакомы с Rails Application Templates API, API генераторов покажется вам очень знакомым.
 
@@ -200,22 +200,9 @@ $ bin/rails generate scaffold User name:string
       invoke  test_unit
       create    test/application_system_test_case.rb
       create    test/system/users_test.rb
-      invoke  assets
-      invoke    scss
-      create      app/assets/stylesheets/users.scss
-      invoke  scss
-      create    app/assets/stylesheets/scaffolds.scss
 ```
 
-Глядя на этот вывод, легко понять, как работают генераторы в Rails 3.0 и выше. Генератор скаффолда фактически не генерирует ничего, он просто вызывает другие. Это позволяет нам добавить/заменить/убрать любые из этих вызовов. Например, генератор скаффолда вызывает генератор scaffold_controller, который вызывает генераторы erb, test_unit и helper. Поскольку у каждого генератора одна функция, их просто использовать повторно, избегая дублирования кода.
-
-Если хотите избежать генерации файла по умолчанию `app/assets/stylesheets/scaffolds.scss` при скаффолде нового ресурса, можно отключить `scaffold_stylesheet`:
-
-```ruby
-  config.generators do |g|
-    g.scaffold_stylesheet false
-  end
-```
+Глядя на этот вывод, легко понять, как работают генераторы в Rails 3.0 и выше. Генератор скаффолда фактически не генерирует ничего, он просто вызывает другие. Это позволяет нам добавить/заменить/убрать любые из этих вызовов. Например, генератор скаффолда вызывает генератор `scaffold_controller`, который вызывает генераторы `erb`, `test_unit` и `helper`. Поскольку у каждого генератора одна функция, их просто использовать повторно, избегая дублирования кода.
 
 Следующей настройкой рабочего процесса будет полное прекращение генерации таблиц стилей и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
 
@@ -224,7 +211,6 @@ config.generators do |g|
   g.orm             :active_record
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
-  g.stylesheets     false
 end
 ```
 
@@ -264,7 +250,6 @@ config.generators do |g|
   g.orm             :active_record
   g.template_engine :erb
   g.test_framework  :test_unit, fixture: false
-  g.stylesheets     false
   g.helper          :my_helper
 end
 ```
@@ -338,14 +323,14 @@ end
 
 Например, в шаблоне необходим следующий экранированный тег ERB (обратите внимание на дополнительный `%`)...
 
-```ruby
-<%%= stylesheet_include_tag :application %>
+```erb
+<%%= stylesheet_link_tag :application %>
 ```
 
 ...чтобы сгенерировать следующий результат:
 
-```ruby
-<%= stylesheet_include_tag :application %>
+```erb
+<%= stylesheet_link_tag :application %>
 ```
 
 Добавление фолбэков генераторов
@@ -360,7 +345,6 @@ config.generators do |g|
   g.orm             :active_record
   g.template_engine :erb
   g.test_framework  :shoulda, fixture: false
-  g.stylesheets     false
 
   # Добавим фолбэк!
   g.fallbacks[:shoulda] = :test_unit
@@ -398,9 +382,6 @@ $ bin/rails generate scaffold Comment body:text
       invoke  test_unit
       create    test/application_system_test_case.rb
       create    test/system/comments_test.rb
-      invoke  assets
-      invoke    scss
-      create    app/assets/stylesheets/scaffolds.scss
 ```
 
 Фолбэки позволяют вашим генераторам иметь единственную ответственность, увеличить повторное использование кода и уменьшить дублирование.

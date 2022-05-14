@@ -261,8 +261,8 @@ pages:
   - title:    Создание и настройка генераторов и шаблонов Rails
     path:     generators
     file:     generators.md
-    revision: 84d6a0e5686f5fd6143ab90332d894ec2b261edc
-    date:     21/08/2020
+    revision: 1d5bddc082c46f8a614140afa549d686f0592273
+    date:     24/04/2022
 
   - title:    Треды и выполнение кода в Rails
     path:     threading_and_code_execution
