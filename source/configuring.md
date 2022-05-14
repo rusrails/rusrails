@@ -239,7 +239,7 @@ end
 
 Это класс, используемый для обнаружения обновлений файлов в файловой системе, когда `config.reload_classes_only_on_change` равно `true`. Rails поставляется с `ActiveSupport::FileUpdateChecker` (по умолчанию) и `ActiveSupport::EventedFileUpdateChecker` (этот зависит от гема [listen](https://github.com/guard/listen)). Пользовательские классы должны соответствовать `ActiveSupport::FileUpdateChecker` API.
 
-#### `config.filter_parameters`
+#### (config-filter-parameters) `config.filter_parameters`
 
 Используется для фильтрации параметров, которые не должны быть показаны в логах, такие как пароли или номера кредитных карт. Он также фильтрует чувствительные параметры в столбцах базы данных при вызове `#inspect` на объектах Active Record. По умолчанию Rails фильтрует пароли, добавляя `Rails.application.config.filter_parameters += [:password]` в `config/initializers/filter_parameter_logging.rb`. Фильтр параметров работает как частично соответствующее регулярное выражение.
 
