@@ -58,7 +58,7 @@ class Order < ApplicationRecord
   belongs_to :customer
   has_and_belongs_to_many :books, join_table: 'books_orders'
 
-  enum status: [:shipped, :being_packed, :complete, :cancelled]
+  enum :status, [:shipped, :being_packed, :complete, :cancelled]
 
   scope :created_before, ->(time) { where('created_at < ?', time) }
 end
@@ -69,7 +69,7 @@ class Review < ApplicationRecord
   belongs_to :customer
   belongs_to :book
 
-  enum state: [:not_reviewed, :published, :hidden]
+  enum :state, [:not_reviewed, :published, :hidden]
 end
 ```
 
@@ -352,6 +352,8 @@ SQL эквивалент выражения выше, следующий:
 SELECT * FROM customers WHERE (customers.first_name = 'Lifo') LIMIT 1
 ```
 
+Отметьте, что в вышеприведенном SQL нет `ORDER BY`. Если вашим условиям `find_by` могут соответствовать несколько записей, следует [применить упорядочивание](#ordering), чтобы гарантировать детерминированный результат.
+
 Метод [`find_by!`][] ведет себя подобно `find_by`, за исключением того, что он вызовет `ActiveRecord::RecordNotFound`, если не найдено ни одной соответствующей записи. Например:
 
 ```irb
@@ -409,8 +411,9 @@ end
 
 только у них нет упорядочивания, так как методу необходимо собственное упорядочивание для работы.
 
-Если у получателя есть упорядочивание, то поведение зависит от флажка `config.active_record.error_on_ignored_order`. Если true, вызывается `ArgumentError`, в противном случае упорядочивание игнорируется, что является поведением по умолчанию. Это можно переопределить с помощью опции `:error_on_ignore`, описанной ниже.
+Если у получателя есть упорядочивание, то поведение зависит от флажка [`config.active_record.error_on_ignored_order`][]. Если true, вызывается `ArgumentError`, в противном случае упорядочивание игнорируется, что является поведением по умолчанию. Это можно переопределить с помощью опции `:error_on_ignore`, описанной ниже.
 
+[`config.active_record.error_on_ignored_order`]: /configuring-rails-applications#config-active-record-error-on-ignored-order
 [`find_each`]: https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each
 
 ##### Опции для `find_each`
@@ -569,10 +572,29 @@ TIP: Подробнее об опасности SQL-инъекций можно 
 
 ```ruby
 Book.where("created_at >= :start_date AND created_at <= :end_date",
-  {start_date: params[:start_date], end_date: params[:end_date]})
+  { start_date: params[:start_date], end_date: params[:end_date] })
 ```
 
 Читаемость улучшится, в случае если вы используете большое количество переменных в условиях.
+
+#### Условия с использованием `LIKE`
+
+Хотя аргументы условия автоматически экранируются, чтобы предотвратить инъекцию SQL, подстановки SQL `LIKE` (т.е. `%` и `_`) **не** экранируются. Это может вызвать неожидаемое поведение, если неочищенное значение используется в качестве аргумента. Например:
+
+```ruby
+Book.where("title LIKE ?", params[:title] + "%")
+```
+
+В вышеприведенном коде намерением является соответствие заголовков, начинающихся с указанной пользователем строки. Однако, любое включение `%` или `_` в `params[:title]` будет трактоваться как подстановки, что приведет к неожиданным результатам запроса. В некоторых обстоятельствах, это может также предотвратить использование базой данных предназначенного индекса, что приведет к гораздо медленному запросу.
+
+Чтобы избежать этих проблемы, используйте [`sanitize_sql_like`][] для экранирования символов подстановки в соответствующей части аргумента:
+
+```ruby
+Book.where("title LIKE ?",
+  Book.sanitize_sql_like(params[:title]) + "%")
+```
+
+[`sanitize_sql_like`]: https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html#method-i-sanitize_sql_like
 
 ### (hash-conditions) Условия с использованием хэша
 
@@ -648,6 +670,18 @@ Customer.where.not(orders_count: [1,3,5])
 SELECT * FROM customers WHERE (customers.orders_count NOT IN (1,3,5))
 ```
 
+Если в запросе есть условие с использованием хэша с не-nil значениями на null столбце, записи со значениями `nil` на null столбце не будут возвращены. Например:
+
+```ruby
+Customer.create!(nullable_contry: nil)
+Customer.where.not(nullable_country: "UK")
+=> []
+# Но
+Customer.create!(nullable_contry: "UK")
+Customer.where.not(nullable_country: nil)
+=> [#<Customer id: 2, nullable_contry: "UK">]
+```
+
 [`where.not`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods/WhereChain.html#method-i-not
 
 ### Условия OR
@@ -664,6 +698,30 @@ SELECT * FROM customers WHERE (customers.last_name = 'Smith' OR customers.orders
 
 [`or`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-or
 
+### Условия AND
+
+Условия `AND` могут быть построены с помощью присоединения условий `where`.
+
+```ruby
+Customer.where(last_name: 'Smith').where(orders_count: [1,3,5]))
+```
+
+```sql
+SELECT * FROM customers WHERE customers.last_name = 'Smith' AND customers.orders_count IN (1,3,5)
+```
+
+Условия `AND` для логического пересечения между relation могут быть построены путем вызова [`and`][] на первом relation и передачей второго в качестве аргумента.
+
+```ruby
+Customer.where(id: [1, 2]).and(Customer.where(id: [2, 3]))
+```
+
+```sql
+SELECT * FROM customers WHERE (customers.id IN (1, 2) AND customers.id IN (2, 3))
+```
+
+[`and`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-and
+
 (ordering) Упорядочивание
 -------------------------
 
@@ -672,40 +730,40 @@ SELECT * FROM customers WHERE (customers.last_name = 'Smith' OR customers.orders
 Например, если вы получаете ряд записей и хотите упорядочить их в порядке возрастания поля `created_at` в таблице:
 
 ```ruby
-Customer.order(:created_at)
+Book.order(:created_at)
 # ИЛИ
-Customer.order("created_at")
+Book.order("created_at")
 ```
 
 Также можете определить `ASC` или `DESC`:
 
 ```ruby
-Customer.order(created_at: :desc)
+Book.order(created_at: :desc)
 # ИЛИ
-Customer.order(created_at: :asc)
+Book.order(created_at: :asc)
 # ИЛИ
-Customer.order("created_at DESC")
+Book.order("created_at DESC")
 # ИЛИ
-Customer.order("created_at ASC")
+Book.order("created_at ASC")
 ```
 
 Или сортировку по нескольким полям:
 
 ```ruby
-Customer.order(orders_count: :asc, created_at: :desc)
+Book.order(title: :asc, created_at: :desc)
 # ИЛИ
-Customer.order(:orders_count, created_at: :desc)
+Book.order(:title, created_at: :desc)
 # ИЛИ
-Customer.order("orders_count ASC, created_at DESC")
+Book.order("title ASC, created_at DESC")
 # ИЛИ
-Customer.order("orders_count ASC", "created_at DESC")
+Book.order("title ASC", "created_at DESC")
 ```
 
 Если хотите вызвать `order` несколько раз, последующие сортировки будут добавлены к первой:
 
 ```irb
-irb> Customer.order("orders_count ASC").order("created_at DESC")
-SELECT * FROM customers ORDER BY orders_count ASC, created_at DESC
+irb> Book.order("title ASC").order("created_at DESC")
+SELECT * FROM books ORDER BY title ASC, created_at DESC
 ```
 
 WARNING: В большинстве СУБД при выборе полей с помощью `distinct` из результирующей выборки используя методы, такие как `select`, `pluck` и `ids`; метод `order` вызовет исключение `ActiveRecord::StatementInvalid`, если поля, используемые в выражении `order`, не включены в список выбора. Смотрите следующий раздел по выбору полей из результирующей выборки.
@@ -986,25 +1044,25 @@ SELECT * FROM books WHERE author_id = 10 ORDER BY year_published ASC
 Метод [`reverse_order`][] меняет направление условия сортировки, если оно определено:
 
 ```ruby
-Customer.where("orders_count > 10").order(:last_name).reverse_order
+Book.where("author_id > 10").order(:year_published).reverse_order
 ```
 
 SQL, который будет выполнен, будет выглядеть так:
 
 ```sql
-SELECT * FROM customers WHERE orders_count > 10 ORDER BY last_name DESC
+SELECT * FROM books WHERE author_id > 10 ORDER BY year_published DESC
 ```
 
 Если условие сортировки не было определено в запросе, `reverse_order` сортирует по первичному ключу в обратном порядке:
 
 ```ruby
-Customer.where("orders_count > 10").reverse_order
+Book.where("author_id > 10").reverse_order
 ```
 
 SQL, который будет выполнен, будет выглядеть так:
 
 ```sql
-SELECT * FROM customers WHERE orders_count > 10 ORDER BY customers.id DESC
+SELECT * FROM books WHERE author_id > 10 ORDER BY books.id DESC
 ```
 
 Метод `reverse_order` не принимает аргументы.
@@ -1043,7 +1101,7 @@ SELECT * FROM books WHERE `out_of_print` = 1 AND `out_of_print` = 0
 Метод [`none`][] возвращает сцепляемый relation без записей. Любые последующие условия, сцепленные с возвращенным relation, продолжат генерировать пустые relation. Это полезно в случаях, когда необходим сцепляемый отклик на метод или скоуп, который может вернуть пустые результаты.
 
 ```ruby
-Order.none # возвращает пустой Relation и не вызывает запросов.
+Book.none # возвращает пустой Relation и не вызывает запросов.
 ```
 
 ```ruby
@@ -1235,8 +1293,8 @@ Book.joins(reviews: :customer)
 
 ```sql
 SELECT books.* FROM books
-  INNER JOIN reviews ON reviews.book_id = book.id
-  INNER JOIN customer ON customers.id = reviews.id
+  INNER JOIN reviews ON reviews.book_id = books.id
+  INNER JOIN customers ON customers.id = reviews.customer_id
 ```
 
 Или, по-русски, "возвратить все книги, у которых есть рецензия покупателя".
@@ -1244,7 +1302,7 @@ SELECT books.* FROM books
 ##### Соединение вложенных связей (разных уровней)
 
 ```ruby
-Author.joins(books: [{reviews: { customer: :orders} }, :supplier] )
+Author.joins(books: [{ reviews: { customer: :orders } }, :supplier] )
 ```
 
 Это создаст:
@@ -1278,7 +1336,7 @@ time_range = (Time.now.midnight - 1.day)..Time.now.midnight
 Customer.joins(:orders).where(orders: { created_at: time_range }).distinct
 ```
 
-Для более сложных условий или повторного использования существующих именованных скоупов можно использовать `Relation#merge`. Сперва давайте добавим новый именованный скоуп в модель Order:
+Для более сложных условий или повторного использования существующих именованных скоупов можно использовать [`merge`][]. Сперва давайте добавим новый именованный скоуп в модель Order:
 
 ```ruby
 class Order < ApplicationRecord
@@ -1290,7 +1348,7 @@ class Order < ApplicationRecord
 end
 ```
 
-Теперь можно использовать `Relation#merge` для слияния со скоупом `created_in_time_range`:
+Теперь можно использовать `merge` для слияния со скоупом `created_in_time_range`:
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight
@@ -1362,7 +1420,7 @@ end
 Этот код выполнит всего **2** запроса, вместо **11** запросов из прошлого примера:
 
 ```sql
-SELECT `books`* FROM `books` LIMIT 10
+SELECT `books`.* FROM `books` LIMIT 10
 SELECT `authors`.* FROM `authors`
   WHERE `authors`.`book_id` IN (1,2,3,4,5,6,7,8,9,10)
 ```
@@ -1415,11 +1473,11 @@ Author.includes(:books).where("books.out_of_print = true").references(:books)
 
 NOTE: Если связь нетерпеливо загружена как часть join, любые поля из произвольного выражения select не будут присутствовать в загруженных моделях. Это так, потому что это избыточность, которая должна появиться или в родительской модели, или в дочерней.
 
-### preload
+### (preload) Предварительная загрузка
 
-С помощью `preload` Active record гарантирует, что загружает с помощью запроса для каждой указанной связи.
+С помощью `preload` Active Record загружает каждую указанную связь с помощью одного запроса на каждую связь.
 
-Пересмотрим случай, когда произошел N + 1, с помощью метода `preload` можно переписать связь `Book.limit(10)` с авторами:
+Пересмотрим проблему N + 1 запроса, можно переписать `Book.limit(10)`, предварительно загружая авторов:
 
 ```ruby
 books = Book.preload(:author).limit(10)
@@ -1432,16 +1490,16 @@ end
 Вышеуказанный код выполнит всего лишь **2** запроса, против **11** запросов в прошлом случае:
 
 ```sql
-SELECT `books`* FROM `books` LIMIT 10
+SELECT `books`.* FROM `books` LIMIT 10
 SELECT `authors`.* FROM `authors`
   WHERE `authors`.`book_id` IN (1,2,3,4,5,6,7,8,9,10)
 ```
 
-NOTE: Метод `preload` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для нетерпеливой загрузки связей.
+NOTE: Метод `preload` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для предварительной загрузки связей.
 
 ### eager_load
 
-С помощью `eager_load` Active record гарантирует, что нетерпеливо загрузит все указанные связи с помощью `LEFT OUTER JOIN`.
+С помощью `eager_load` Active Record загружает все указанные связи с помощью `LEFT OUTER JOIN`.
 
 Пересмотрим случай, когда произошел N + 1, с помощью метода `eager_load` можно переписать связь `Book.limit(10)` с авторами:
 
@@ -1662,7 +1720,7 @@ irb> Book.all
 SELECT books.* FROM books WHERE (year_published >= 1969)
 
 irb> Book.in_print
-SELECT books.* FROM books WHERE (year_published >= 1969) AND books.out_of_print = true
+SELECT books.* FROM books WHERE (year_published >= 1969) AND books.out_of_print = false
 
 irb> Book.where('price > 50')
 SELECT books.* FROM books WHERE (year_published >= 1969) AND (price > 50)
@@ -1706,7 +1764,7 @@ SELECT books.* FROM books WHERE books.out_of_print
 
 Можете определить восклицательный знак (`!`) в конце динамического поиска, чтобы он вызвал ошибку `ActiveRecord::RecordNotFound`, если не возвратит ни одной записи, например так `Customer.find_by_name!("Ryan")`
 
-Если хотите искать и по `name`, и по `orders_count`, можете сцепить эти поиски вместе, просто написав "`and`" между полями, например, `Customer.find_by_first_name_and_orders_count("Ryan", 5)`.
+Если хотите искать и по `first_name`, и по `orders_count`, можете сцепить эти поиски вместе, просто написав "`and`" между полями, например, `Customer.find_by_first_name_and_orders_count("Ryan", 5)`.
 
 Перечисление
 ------------
@@ -1725,7 +1783,7 @@ SELECT books.* FROM books WHERE books.out_of_print
 
 ```ruby
 class Order < ApplicationRecord
-  enum status: [:shipped, :being_packaged, :complete, :cancelled]
+  enum :status, [:shipped, :being_packaged, :complete, :cancelled]
 end
 ```
 
@@ -1926,7 +1984,7 @@ irb> Customer.find_by_sql("SELECT * FROM customers INNER JOIN orders ON customer
 У `find_by_sql` есть близкий родственник, называемый [`connection.select_all`][]. `select_all` получит объекты из базы данных, используя произвольный SQL, как и в `find_by_sql`, но не создаст их экземпляры. Этот метод вернет экземпляр класса `ActiveRecord::Result` и вызов `to_a` на этом объекте вернет массив хэшей, где каждый хэш указывает на запись.
 
 ```irb
-irb> Customer.connection.select_all("SELECT first_name, created_at FROM customers WHERE id = '1'").to_hash
+irb> Customer.connection.select_all("SELECT first_name, created_at FROM customers WHERE id = '1'").to_a
 => [{"first_name"=>"Rafael", "created_at"=>"2012-11-10 23:23:45.281189"}, {"first_name"=>"Eileen", "created_at"=>"2013-12-09 11:22:35.221282"}]
 ```
 
@@ -1946,7 +2004,7 @@ SELECT DISTINCT status FROM orders
 => ["shipped", "being_packed", "cancelled"]
 
 irb> Customer.pluck(:id, :first_name)
-SELECT customers.id, customers.name FROM customers
+SELECT customers.id, customers.first_name FROM customers
 => [[1, "David"], [2, "Fran"], [3, "Jose"]]
 ```
 
@@ -1957,7 +2015,7 @@ Customer.select(:id).map { |c| c.id }
 # или
 Customer.select(:id).map(&:id)
 # или
-Customer.select(:id, :name).map { |c| [c.id, c.first_name] }
+Customer.select(:id, :first_name).map { |c| [c.id, c.first_name] }
 ```
 
 на:
@@ -2054,7 +2112,7 @@ Customer.exists?(1)
 ```ruby
 Customer.exists?(id: [1,2,3])
 # или
-Customer.exists?(name: ['John', 'Sergei'])
+Customer.exists?(first_name: ['Jane', 'Sergei'])
 ```
 
 Даже возможно использовать `exists?` без аргументов на модели или relation:
@@ -2075,12 +2133,16 @@ Customer.exists?
 
 ```ruby
 # на модели
-Order.any?   # => SELECT 1 AS one FROM orders
-Order.many?  # => SELECT COUNT(*) FROM orders
+Order.any?
+# => SELECT 1 FROM orders LIMIT 1
+Order.many?
+# => SELECT COUNT(*) FROM (SELECT 1 FROM orders LIMIT 2)
 
 # на именованном скоупе
-Order.shipped.any?   # => SELECT 1 AS one FROM orders WHERE orders.status = 0
-Order.shipped.many?  # => SELECT COUNT(*) FROM orders WHERE orders.status = 0
+Order.shipped.any?
+# => SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 1
+Order.shipped.many?
+# => SELECT COUNT(*) FROM (SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 2)
 
 # на relation
 Book.where(out_of_print: true).any?
