@@ -136,6 +136,8 @@ NOTE: Маршруты Rails сравниваются в том порядке, 
 
 Каждый из этих хелперов имеет соответствующий хелпер `_url` (такой как `photos_url`), который возвращает тот же путь с добавленными текущими хостом, портом и префиксом пути.
 
+TIP: Чтобы найти имена маршрутных хелперов для ваших маршрутов, смотрите [Список существующих маршрутов](#listing-existing-routes) ниже.
+
 ### Определение нескольких ресурсов одновременно
 
 Если необходимо создать маршруты для более чем одного ресурса, можете сократить ввод, определив их в одном вызове `resources`:
@@ -191,6 +193,8 @@ NOTE: Поскольку вы можете захотеть использова
 * `new_geocoder_path` возвращает `/geocoder/new`
 * `edit_geocoder_path` возвращает `/geocoder/edit`
 * `geocoder_path` возвращает `/geocoder`
+
+NOTE: Вызов `resolve` необходим для преобразования экземпляров `Geocoder` в маршруты через [идентификацию записи](/rails-form-helpers#relying-on-record-identification).
 
 Как и в случае с множественными ресурсами, те же хелперы, оканчивающиеся на `_url` также включают хост, порт и префикс пути.
 
@@ -315,7 +319,7 @@ end
 /publishers/1/magazines/2/photos/3
 ```
 
-Соответствующий маршрутный хелпер будет `publisher_magazine_photo_url`, требующий определения объектов на всех трех уровнях. Действительно, эта ситуация достаточно запутана, так что в [статье](http://weblog.jamisbuck.org/2007/2/5/nesting-resources) Jamis Buck предлагает правило хорошей разработки на Rails:
+Соответствующий маршрутный хелпер будет `publisher_magazine_photo_url`, требующий определения объектов на всех трех уровнях. Действительно, эта ситуация достаточно запутана, так что в [статье Jamis Buck](http://weblog.jamisbuck.org/2007/2/5/nesting-resources) предлагает правило хорошей разработки на Rails:
 
 TIP: Ресурсы никогда не должны быть вложены глубже, чем на 1 уровень.
 
@@ -348,7 +352,40 @@ resources :articles, shallow: true do
 end
 ```
 
-Метод `shallow` в DSL создает область видимости, в котором каждое вложение мелкое. Это генерирует те же самые маршруты из предыдущего примера:
+Тут для ресурса articles будут сгенерированы следующие маршруты:
+
+| Метод HTTP | Путь                                         | Контроллер#Экшн   | Именованный маршрутный хелпер |
+| ---------- | -------------------------------------------- | ----------------- | ----------------------------- |
+| GET        | /articles/:article_id/comments(.:format)     | comments#index    | article_comments_path         |
+| POST       | /articles/:article_id/comments(.:format)     | comments#create   | article_comments_path         |
+| GET        | /articles/:article_id/comments/new(.:format) | comments#new      | new_article_comment_path      |
+| GET        | /comments/:id/edit(.:format)                 | comments#edit     | edit_comment_path             |
+| GET        | /comments/:id(.:format)                      | comments#show     | comment_path                  |
+| PATCH/PUT  | /comments/:id(.:format)                      | comments#update   | comment_path                  |
+| DELETE     | /comments/:id(.:format)                      | comments#destroy  | comment_path                  |
+| GET        | /articles/:article_id/quotes(.:format)       | quotes#index      | article_quotes_path           |
+| POST       | /articles/:article_id/quotes(.:format)       | quotes#create     | article_quotes_path           |
+| GET        | /articles/:article_id/quotes/new(.:format)   | quotes#new        | new_article_quote_path        |
+| GET        | /quotes/:id/edit(.:format)                   | quotes#edit       | edit_quote_path               |
+| GET        | /quotes/:id(.:format)                        | quotes#show       | quote_path                    |
+| PATCH/PUT  | /quotes/:id(.:format)                        | quotes#update     | quote_path                    |
+| DELETE     | /quotes/:id(.:format)                        | quotes#destroy    | quote_path                    |
+| GET        | /articles/:article_id/drafts(.:format)       | drafts#index      | article_drafts_path           |
+| POST       | /articles/:article_id/drafts(.:format)       | drafts#create     | article_drafts_path           |
+| GET        | /articles/:article_id/drafts/new(.:format)   | drafts#new        | new_article_draft_path        |
+| GET        | /drafts/:id/edit(.:format)                   | drafts#edit       | edit_draft_path               |
+| GET        | /drafts/:id(.:format)                        | drafts#show       | draft_path                    |
+| PATCH/PUT  | /drafts/:id(.:format)                        | drafts#update     | draft_path                    |
+| DELETE     | /drafts/:id(.:format)                        | drafts#destroy    | draft_path                    |
+| GET        | /articles(.:format)                          | articles#index    | articles_path                 |
+| POST       | /articles(.:format)                          | articles#create   | articles_path                 |
+| GET        | /articles/new(.:format)                      | articles#new      | new_article_path              |
+| GET        | /articles/:id/edit(.:format)                 | articles#edit     | edit_article_path             |
+| GET        | /articles/:id(.:format)                      | articles#show     | article_path                  |
+| PATCH/PUT  | /articles/:id(.:format)                      | articles#update   | article_path                  |
+| DELETE     | /articles/:id(.:format)                      | articles#destroy  | article_path                  |
+
+Метод [`shallow`][] в DSL создает область видимости, в котором каждое вложение мелкое. Это генерирует те же самые маршруты из предыдущего примера:
 
 ```ruby
 shallow do
@@ -403,6 +440,8 @@ end
 | GET        | /comments/:id(.:format)                      | comments#show     | sekret_comment_path         |
 | PATCH/PUT  | /comments/:id(.:format)                      | comments#update   | sekret_comment_path         |
 | DELETE     | /comments/:id(.:format)                      | comments#destroy  | sekret_comment_path         |
+
+[`shallow`]: https://api.rubyonrails.org/classes/ActionDispatch/Routing/Mapper/Resources.html#method-i-shallow
 
 ### Концерны маршрутов
 
@@ -876,6 +915,8 @@ match '/application.js', to: MyRackApp, via: :all
 
 NOTE: Для любопытства, `'articles#index'` фактически расширяется до `ArticlesController.action(:index)`, который возвращает валидное приложение Rack.
 
+NOTE: Так как proc/lambda это объекты, отвечающие на `call`, можно реализовывать очень простые маршруты (например, для проверки здоровья) в одну строку:<br>`get '/health', to: ->(env) { [204, {}, ['']] }`
+
 Если вы указываете приложение Rack как конечную точку совпадения, помните что маршрут будет неизменным в принимающем приложении. Со следующим маршрутом ваше приложение Rack будет ожидать маршрут `/admin`:
 
 ```ruby
@@ -929,11 +970,11 @@ get 'こんにちは', to: 'welcome#index'
 
 ```ruby
 direct :homepage do
-  "http://www.rubyonrails.org"
+  "https://rubyonrails.org"
 end
 
 # >> homepage_url
-# => "http://www.rubyonrails.org"
+# => "https://rubyonrails.org"
 ```
 
 Возвращаемое значение блока должно быть валидным аргументом для метода `url_for`. Таким образом, можно передать валидный строковый URL, хэш, массив, экземпляр Active Model или класс Active Model.
@@ -1087,7 +1128,7 @@ end
 resources :photos
 ```
 
-Это предоставит маршрутные хелперы, такие как `admin_photos_path`, `new_admin_photo_path` и т.д.
+Это предоставит маршрутные хелперы, такие как `admin_photos_path`, `new_admin_photo_path` и т.д. Это изменяет маршрутные хелперы для `/admin/photos` с `photos_path`, `new_photos_path` и т.д. на `admin_photos_path`, `new_admin_photo_path` и т.д. Без добавления `as: 'admin_photos` на `resources :photos` в области видимости, у `resources :photos` вне области видимости не будет каких-либо маршрутных хелперов.
 
 Для задания префикса группы маршрутов, используйте `:as` со `scope`:
 
@@ -1099,7 +1140,7 @@ end
 resources :photos, :accounts
 ```
 
-Это сгенерирует маршруты такие как `admin_photos_path` и `admin_accounts_path`, ведущие соответственно к `/admin/photos` и `/admin/accounts`.
+Как и прежде, это изменит ресурсные хелперы для области видимости `/admin` на `admin_photos_path` and `admin_accounts_path` и позволяет ресурсам вне области видимости использовать `photos_path` и `accounts_path`.
 
 NOTE: Область видимости `namespace` автоматически добавляет `:as`, так же как и префиксы `:module` и `:path`.
 
@@ -1220,6 +1261,8 @@ edit_video_path(video) # => "/videos/Roman-Holiday/edit"
 
 Rails предлагает способ разделения гигантского единого `routes.rb` на несколько небольших с помощью макроса [`draw`][].
 
+У вас может быть маршрут `admin.rb`, который содержит все маршруты для административной области, другой файл `api.rb` для ресурсов API, и т.д.
+
 ```ruby
 # config/routes.rb
 
@@ -1238,24 +1281,22 @@ namespace :admin do
 end
 ```
 
-Вызов `draw(:admin)` в блоке `Rails.application.routes.draw` попытается загрузить маршрутный файл, по имени. заданному аргументом (в нашем случае `admin.rb`). Файл должен быть расположен в директории `config/routes` или любой поддиректории (например, `config/routes/admin.rb` , `config/routes/external/admin.rb`).
+Вызов `draw(:admin)` в блоке `Rails.application.routes.draw` попытается загрузить маршрутный файл, по имени. заданному аргументом (в этом примере `admin.rb`). Файл должен быть расположен в директории `config/routes` или любой поддиректории (например, `config/routes/admin.rb` , `config/routes/external/admin.rb`).
 
-Внутри маршрутного файла `admin.rb` можно использовать любой маршрутный DSL, **но** не следует оборачивать его в блок `Rails.application.routes.draw`, как это сделано в основном файле `config/routes.rb`.
+Внутри маршрутного файла `admin.rb` можно использовать любой маршрутный DSL, но **не следует** оборачивать его в блок `Rails.application.routes.draw`, как это сделано в основном файле `config/routes.rb`.
 
 [`draw`]: https://api.rubyonrails.org/classes/ActionDispatch/Routing/Mapper/Resources.html#method-i-draw
 
-### Когда использовать или не использовать эту особенность
+### Не используйте эту особенность, если вы не нуждаетесь в ней реально
 
-Отрисовка маршрутов из внешних файлов может быть очень полезной для организации большого набора маршрутов на несколько организованных. Может быть маршрут `admin.rb`, содержащий все маршруты из области администрирования, другой файл `api.rb` для маршрутов к API ресурсов, и так далее...
-
-Однако, не следует злоупотреблять этой особенностью, так как множество маршрутных файлов может делает сложными понятность и понимание. В зависимости от приложения, разработчикам может быть проще иметь один маршрутный файл, если у вас всего лишь несколько сотен маршрутов. Не следует пытаться создать новый маршрутный файл для каждой категории (например, admin, api ...) любой ценой; DSL маршрутизации Rails уже предлагает способ разделения маршрутов организованным способом с помощью `namespaces` и `scopes`.
+Множество маршрутных файлов делает сложнее понятность и понимание. Для большинства приложений - даже с сотнями маршрутов - разработчикам проще иметь один маршрутный файл. DSL маршрутизации Rails уже предлагает способ разделения маршрутов организованным способом с помощью `namespaces` и `scopes`.
 
 Осмотр и тестирование маршрутов
 -------------------------------
 
 Rails предлагает инструменты для осмотра и тестирования маршрутов.
 
-### Список существующих маршрутов
+### (listing-existing-routes) Список существующих маршрутов
 
 Чтобы получить полный список всех доступных маршрутов вашего приложения, посетите <http://localhost:3000/rails/info/routes> в браузере, в то время как ваш сервер запущен в режиме **development**. Команда `bin/rails routes`, выполненная в терминале, выдаст тот же результат.
 

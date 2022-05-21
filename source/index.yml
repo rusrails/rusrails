@@ -99,8 +99,8 @@ pages:
   - title:    Роутинг в Rails
     path:     rails-routing
     file:     routing.md
-    revision: 8b3f3c8561b6d40b11da83fe44e9fcbe21420eef
-    date:     21/01/2021
+    revision: b9d31084206f7243d813e4555cea0598721b850b
+    date:     18/05/2022
 
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
