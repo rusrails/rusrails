@@ -7,6 +7,7 @@ Active Record для PostgreSQL
 
 * Как использовать типы данных PostgreSQL.
 * Как использовать первичные ключи UUID.
+* Как использовать отложенные внешние ключи.
 * Как реализовать полнотекстовый поиск с помощью PostgreSQL.
 * Как возвращать ваши модели Active Record, используя представление базы данных.
 
@@ -94,7 +95,7 @@ NOTE: Чтобы использовать hstore, необходимо вклю�
 
 ```ruby
 # db/migrate/20131009135255_create_profiles.rb
-ActiveRecord::Schema.define do
+class CreateProfiles < ActiveRecord::Migration[7.0]
   enable_extension 'hstore' unless extension_enabled?('hstore')
   create_table :profiles do |t|
     t.hstore 'settings'
@@ -162,7 +163,7 @@ irb> Event.where("payload->>'kind' = ?", "user_renamed")
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/rangetypes.html)
 * [функции и операторы](https://postgrespro.ru/docs/postgrespro/current/functions-range.html)
 
-Этот тип преобразуется в Ruby [`Range`](https://ruby-doc.org/core-2.5.0/Range.html) объекты.
+Этот тип преобразуется в Ruby [`Range`](https://ruby-doc.org/core-2.7.0/Range.html) объекты.
 
 ```ruby
 # db/migrate/20130923065404_create_events.rb
@@ -243,20 +244,22 @@ irb> contact.save!
 
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-enum.html)
 
+Тип может быть соотнесен как обычный текстовый столбец, или [`ActiveRecord::Enum`](https://api.rubyonrails.org/classes/ActiveRecord/Enum.html).
+
 На данный момент нет специальной поддержки для типов перечислений. Они преобразуются к обычным текстовым столбцам:
 
 ```ruby
 # db/migrate/20131220144913_create_articles.rb
 def up
-  execute <<-SQL
-    CREATE TYPE article_status AS ENUM ('draft', 'published');
-  SQL
+  create_enum :article_status, ["draft", "published"]
+
   create_table :articles do |t|
-    t.column :status, :article_status
+    t.enum :status, enum_type: :article_status, default: "draft", null: false
   end
 end
 
-# NOTE: Не забываем удалить таблицу перед удалением enum.
+# Нет встроенной поддержки удаления enum, но это можно сделать вручную.
+# Сначала следует удалить любую таблицу, которая зависит от него.
 def down
   drop_table :articles
 
@@ -269,17 +272,21 @@ end
 ```ruby
 # app/models/article.rb
 class Article < ApplicationRecord
+  enum status: {
+    draft: "draft", published: "published"
+  }, _prefix: true
 end
 ```
 
 ```irb
 irb> Article.create status: "draft"
 irb> article = Article.first
+irb> article.status_draft!
 irb> article.status
 => "draft"
 
-irb> article.status = "published"
-irb> article.save!
+irb> article.status_published?
+=> false
 ```
 
 Чтобы добавить новое значение до/после существующего, следует использовать [ALTER TYPE](https://postgrespro.ru/docs/postgrespro/current/sql-altertype.html):
@@ -296,7 +303,7 @@ def up
 end
 ```
 
-NOTE: Значения ENUM сейчас нельзя удалять. Можно прочесть почему [здесь](http://www.postgresql.org/message-id/29F36C7C98AB09499B1A209D48EAA615B7653DBC8A@mail2a.alliedtesting.com).
+NOTE: Значения enum нельзя удалять. Можно прочесть почему [здесь](http://www.postgresql.org/message-id/29F36C7C98AB09499B1A209D48EAA615B7653DBC8A@mail2a.alliedtesting.com).
 
 Hint: Чтобы показать все имеющиеся значения enum, можно выполнить этот запрос в консоле `bin/rails db` или `psql`:
 
@@ -392,7 +399,7 @@ irb> user.settings
 => "01010011"
 irb> user.settings = "0xAF"
 irb> user.settings
-=> 10101111
+=> "10101111"
 irb> user.save!
 ```
 
@@ -400,7 +407,7 @@ irb> user.save!
 
 * [определение типа](https://postgrespro.ru/docs/postgrespro/current/datatype-net-types.html)
 
-Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](https://ruby-doc.org/stdlib-2.5.0/libdoc/ipaddr/rdoc/IPAddr.html) объекты. Тип `macaddr` преобразуется в обычный текст.
+Типы `inet` и `cidr` преобразуются в Ruby [`IPAddr`](https://ruby-doc.org/stdlib-2.7.0/libdoc/ipaddr/rdoc/IPAddr.html) объекты. Тип `macaddr` преобразуется в обычный текст.
 
 ```ruby
 # db/migrate/20140508144913_create_devices.rb
@@ -439,10 +446,10 @@ irb> macbook.address
 
 ### Интервал
 
-* [определение типа](http://www.postgresql.org/docs/current/static/datatype-datetime.html#DATATYPE-INTERVAL-INPUT)
-* [функции и операторы](http://www.postgresql.org/docs/current/static/functions-datetime.html)
+* [определение типа](https://www.postgresql.org/docs/current/static/datatype-datetime.html#DATATYPE-INTERVAL-INPUT)
+* [функции и операторы](https://www.postgresql.org/docs/current/static/functions-datetime.html)
 
-Этот тип преобразуется в объекты [`ActiveSupport::Duration`](http://api.rubyonrails.org/classes/ActiveSupport/Duration.html).
+Этот тип преобразуется в объекты [`ActiveSupport::Duration`](https://api.rubyonrails.org/classes/ActiveSupport/Duration.html).
 
 ```ruby
 # db/migrate/20200120000000_create_events.rb
@@ -492,14 +499,70 @@ irb> device.id
 
 NOTE: Предполагается, что используется `gen_random_uuid()` (из `uuid-pgcrypto`) при отсутствии опции `:default`, переданной в `create_table`.
 
+Генерируемые столбцы
+--------------------
+
+NOTE: Генерируемые столбцы поддерживаются, начиная с 12.0 версии PostgreSQL.
+
+```ruby
+# db/migrate/20131220144913_create_users.rb
+create_table :users do |t|
+  t.string :name
+  t.virtual :name_upcased, type: :string, as: 'upper(name)', stored: true
+end
+
+# app/models/user.rb
+class User < ApplicationRecord
+end
+
+# Usage
+user = User.create(name: 'John')
+User.last.name_upcased # => "JOHN"
+```
+
+Отложенные внешние ключи
+------------------------
+
+* [ограничения внешнего ключа таблицы](https://www.postgresql.org/docs/current/sql-set-constraints.html)
+
+По умолчанию ограничения таблицы в PostgreSQL проверяются немедленно после каждого выражения. Она намеренно не разрешает создавать записи, когда связанная запись еще не находится в связанной таблице. Впрочем, эту проверку целостности возможно запустить позднее, когда подтверждаются транзакции, добавив `DEFERRABLE` к определению внешнего ключа. Чтобы отложить все проверки по умолчанию, можно установить `DEFERRABLE INITIALLY DEFERRED`. Rails представляет эту особенность PostgreSQL, добавляя ключ `:deferrable` к опциям `foreign_key` в методах `add_reference` и `add_foreign_key`.
+
+Примером этого является создание циклических зависимостей в транзакции, даже если у вас уже есть созданные внешние ключи:
+
+```ruby
+add_reference :person, :alias, foreign_key: { deferrable: :deferred }
+add_reference :alias, :person, foreign_key: { deferrable: :deferred }
+```
+
+Если ссылка была создана с помощью опции `foreign_key: true`, следующая транзакция упала бы при запуске первого выражения `INSERT`. Хотя она не упадет, когда установлена опция `deferrable: :deferred`.
+
+```ruby
+ActiveRecord::Base.connection.transaction do
+  person = Person.create(id: SecureRandom.uuid, alias_id: SecureRandom.uuid, name: "John Doe")
+  Alias.create(id: person.alias_id, person_id: person.id, name: "jaydee")
+end
+```
+
+Опции `:deferrable` также можно установить `true` или `:immediate`, которые приводят к одному и тому же результату. Обе опции сохраняют поведение внешних ключей по умолчанию, но позволяют вручную отложить проверки с помощью `SET CONSTRAINTS ALL DEFERRED` внутри транзакции. Это вызовет, что внешние ключи будут проверены при подтверждении транзакции:
+
+```ruby
+ActiveRecord::Base.transaction do
+  ActiveRecord::Base.connection.execute("SET CONSTRAINTS ALL DEFERRED")
+  person = Person.create(alias_id: SecureRandom.uuid, name: "John Doe")
+  Alias.create(id: person.alias_id, person_id: person.id, name: "jaydee")
+end
+```
+
+По умолчанию `:deferrable` равен `false`, и ограничение всегда проверяется немедленно.
+
 Полнотекстовый поиск
 --------------------
 
 ```ruby
 # db/migrate/20131220144913_create_documents.rb
 create_table :documents do |t|
-  t.string 'title'
-  t.string 'body'
+  t.string :title
+  t.string :body
 end
 
 add_index :documents, "to_tsvector('english', title || ' ' || body)", using: :gin, name: 'documents_idx'
@@ -518,6 +581,27 @@ Document.create(title: "Cats and Dogs", body: "are nice!")
 ## Все документы совпадающие с 'cat & dog'
 Document.where("to_tsvector('english', title || ' ' || body) @@ to_tsquery(?)",
                  "cat & dog")
+```
+
+Опционально можно хранить вектор как автоматически сгенерированный столбец (начиная с PostgreSQL 12.0):
+
+```ruby
+# db/migrate/20131220144913_create_documents.rb
+create_table :documents do |t|
+  t.string :title
+  t.string :body
+
+  t.virtual :textsearchable_index_col,
+            type: :tsvector, as: "to_tsvector('english', title || ' ' || body)", stored: true
+end
+
+add_index :documents, :textsearchable_index_col, using: :gin, name: 'documents_idx'
+
+# Использование
+Document.create(title: "Cats and Dogs", body: "are nice!")
+
+## все документы, соответствующие 'cat & dog'
+Document.where("textsearchable_index_col @@ to_tsquery(?)", "cat & dog")
 ```
 
 Представление базы данных
@@ -580,3 +664,14 @@ irb> Article.count
 ```
 
 NOTE: Это приложение обслуживает только не архивированные `Articles`. Представление также допускает условия, при которых можно напрямую исключать архивные `Articles`.
+
+Выгрузки структуры
+------------------
+
+Если ваш `config.active_record.schema_format` это `:sql`, Rails вызовет `pg_dump` для генерации выгрузки структуры.
+
+Можно использовать `ActiveRecord::Tasks::DatabaseTasks.structure_dump_flags` для конфигурации `pg_dump`. Например, чтобы исключить комментарии из выгрузки структуры, добавьте следующее в инициализатор:
+
+```ruby
+ActiveRecord::Tasks::DatabaseTasks.structure_dump_flags = ['--no-comments']
+```
