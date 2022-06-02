@@ -80,7 +80,7 @@ next_column
 * **Заметки о релизах**
 
     * [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails)
-    * [Версия 7.0 - ?](/7_0_release_notes)
+    * [Версия 7.1 - ?](/7_1_release_notes)
+    * [Версия 7.0 - Декабрь 2021](/7_0_release_notes)
     * [Версия 6.1 - Декабрь 2020](/6_1_release_notes)
     * [Версия 6.0 - Август 2019](/6_0_release_notes)
-    * [Версия 5.2 - Апрель 2018](/5_2_release_notes)
