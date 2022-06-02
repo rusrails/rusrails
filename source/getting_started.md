@@ -1004,13 +1004,14 @@ end
 
 <ul>
   <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
+  <li><%= link_to "Destroy", article_path(@article), data: {
+                    turbo_method: :delete,
+                    turbo_confirm: "Are you sure?"
+                  } %></li>
 </ul>
 ```
 
-В вышеприведенном коде мы передаем дополнительные опции в `link_to`. Опция `method: :delete` приведет к тому, что ссылка сделает запрос `DELETE` вместо запроса `GET`. Опция `data: { confirm: "Are you sure?" }` приведет к появлению диалога подтверждения при щелчке на ссылке. Если пользователь отменяет диалог, запрос прерывается. Обе эти опции основаны на особенности Rails, названной *Ненавязчивый JavaScript* (UJS). Файл JavaScript, реализующий это поведение, включен в новые приложения Rails по умолчанию.
+В вышеприведенном коде мы используем опцию `data` для установки HTML-атрибутов `data-turbo-method` и `data-turbo-confirm` ссылки «Destroy». Оба этих атрибута подключаются к [Turbo](https://turbo.hotwired.dev/), который по умолчанию включен в новые приложения Rails. `data-turbo-method="delete"` заставит ссылку сделать запрос `DELETE` вместо запроса `GET`. `data-turbo-confirm="Are you sure?"` приведет к появлению диалогового окна подтверждения при нажатии на ссылку. Если пользователь отменит диалог, запрос будет прерван.
 
 TIP: Чтобы узнать подробнее про ненавязчивый JavaScript, смотрите [Работа с JavaScript в Rails](/working-with-javascript-in-rails).
 
@@ -1158,9 +1159,10 @@ $ bin/rails generate controller Comments
 
 <ul>
   <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
+  <li><%= link_to "Destroy", article_path(@article), data: {
+                    turbo_method: :delete,
+                    turbo_confirm: "Are you sure?"
+                  } %></li>
 </ul>
 
 <h2>Add a comment:</h2>
@@ -1211,9 +1213,10 @@ end
 
 <ul>
   <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
+  <li><%= link_to "Destroy", article_path(@article), data: {
+                    turbo_method: :delete,
+                    turbo_confirm: "Are you sure?"
+                  } %></li>
 </ul>
 
 <h2>Comments</h2>
@@ -1279,9 +1282,10 @@ end
 
 <ul>
   <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
+  <li><%= link_to "Destroy", article_path(@article), data: {
+                    turbo_method: :delete,
+                    turbo_confirm: "Are you sure?"
+                  } %></li>
 </ul>
 
 <h2>Comments</h2>
@@ -1334,9 +1338,10 @@ end
 
 <ul>
   <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
+  <li><%= link_to "Destroy", article_path(@article), data: {
+                    turbo_method: :delete,
+                    turbo_confirm: "Are you sure?"
+                  } %></li>
 </ul>
 
 <h2>Comments</h2>
@@ -1604,13 +1609,14 @@ Our blog has <%= Article.public_count %> articles and counting!
 </p>
 
 <p>
-  <%= link_to 'Destroy Comment', [comment.article, comment],
-              method: :delete,
-              data: { confirm: "Are you sure?" } %>
+  <%= link_to "Destroy Comment", [comment.article, comment], data: {
+                turbo_method: :delete,
+                turbo_confirm: "Are you sure?"
+              } %>
 </p>
 ```
 
-Нажатие этой новой ссылки "Destroy Comment" запустит `DELETE /articles/:article_id/comments/:id` в нашем `CommentsController`, который затем будет использоваться для нахождения комментария, который мы хотим удалить, поэтому давайте добавим экшн destroy в наш контроллер (`app/controllers/comments_controller.rb`):
+Нажатие этой новой ссылки "Destroy Comment" запустит `DELETE /articles/:article_id/comments/:id` в нашем `CommentsController`, который затем будет использоваться для нахождения комментария, который мы хотим удалить, поэтому давайте добавим экшн `destroy` в наш контроллер (`app/controllers/comments_controller.rb`):
 
 ```ruby
 class CommentsController < ApplicationController
@@ -1625,7 +1631,7 @@ class CommentsController < ApplicationController
     @article = Article.find(params[:article_id])
     @comment = @article.comments.find(params[:id])
     @comment.destroy
-    redirect_to article_path(@article)
+    redirect_to article_path(@article), status: 303
   end
 
   private
