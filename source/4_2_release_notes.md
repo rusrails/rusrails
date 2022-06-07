@@ -189,7 +189,7 @@ end
 
 `rails-deprecated_sanitizer` будет поддерживаться только для Rails 4.2; он не будет поддерживаться для Rails 5.0.
 
-Подробнее об изменениях в новом санитайзере смотрите [эту публикацию в блоге](http://blog.plataformatec.com.br/2014/07/the-new-html-sanitizer-in-rails-4-2/).
+Подробнее об изменениях в новом санитайзере смотрите [эту публикацию в блоге](https://blog.plataformatec.com.br/2014/07/the-new-html-sanitizer-in-rails-4-2/).
 
 ### `assert_select`
 

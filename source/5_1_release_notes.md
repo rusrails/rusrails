@@ -107,9 +107,9 @@ resolve("Basket") { [:basket] }
 Метод `direct` позволяет создавать хелперы для произвольного URL.
 
 ```ruby
-direct(:homepage) { "http://www.rubyonrails.org" }
+direct(:homepage) { "http://rubyonrails.org" }
 
-homepage_url # => "http://www.rubyonrails.org"
+homepage_url # => "http://rubyonrails.org"
 ```
 
 Возвращаемое из блока значение должно быть валидным аргументом для метода `url_for`. Поэтому можно передать валидные строковый URL, Hash, Array, экземпляр Active Model или класс Active Model.

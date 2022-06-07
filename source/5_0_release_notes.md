@@ -108,7 +108,7 @@ model.attributes # => {field_without_db_column: [1, 2, 3]}
 
 **Отслеживание изменений (Dirty Tracking):**
 
-Тип атрибута дает возможность изменить способ, как выполняется отслеживание изменений.
+Тип атрибута разрешает изменить способ, как выполняется отслеживание изменений.
 
 Подробности смотрите в его [документации](https://api.rubyonrails.org/v5.0.1/classes/ActiveRecord/Attributes/ClassMethods.html).
 
@@ -199,7 +199,7 @@ Railties
 *   Генерация приложений с опцией вывода лога в STDOUT в production с помощью переменной среды `RAILS_LOG_TO_STDOUT`.
     ([Pull Request](https://github.com/rails/rails/pull/23734))
 
-*   Для новых приложений включен HSTS с заголовком IncludeSudomains.
+*   Для новых приложений включен HSTS с заголовком IncludeSubdomains.
     ([Pull Request](https://github.com/rails/rails/pull/23852))
 
 *   Генератор приложения создает новый файл `config/spring.rb`, который сообщает Spring наблюдать за дополнительными распространенными файлами.

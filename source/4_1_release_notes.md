@@ -166,8 +166,7 @@ Conversation.statuses # => { "active" => 0, "archived" => 1 }
 
 ```
 
-Обратитесь к [документации](https://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html)
-за подробным описанием.
+Обратитесь к [документации](https://api.rubyonrails.org/v4.1.0/classes/ActiveRecord/Enum.html) за подробным описанием.
 
 ### Message Verifiers
 
@@ -299,7 +298,7 @@ Action Pack
   ([Pull Request](https://github.com/rails/rails/pull/9599))
 
 * Добавлен метод `session#fetch` который ведёт себя аналогично
-  [Hash#fetch](http://www.ruby-doc.org/core-1.9.3/Hash.html#method-i-fetch),
+  [Hash#fetch](https://www.ruby-doc.org/core-1.9.3/Hash.html#method-i-fetch),
   за исключением того, что возвращаемое значение всегда сохраняется в сессию.
   ([Pull Request](https://github.com/rails/rails/pull/12692))
 

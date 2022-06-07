@@ -333,8 +333,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 6.1
     path:     6_1_release_notes
     file:     6_1_release_notes.md
-    revision: 077c66d5d6ef3a6f1cc54e4a431bfa5ea6831b97
-    date:     19/01/2021
+    revision: 83a4fa414bc9e5008825f47857fdd80e85c82033
+    date:     12/01/2022
 
   - title:    Заметки о релизе Ruby on Rails 6.0
     path:     6_0_release_notes
@@ -345,56 +345,56 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 5.2
     path:     5_2_release_notes
     file:     5_2_release_notes.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: 3dad2919d58f56d46d87cd2712060fca9af79950
+    date:     26/05/2022
 
   - title:    Заметки о релизе Ruby on Rails 5.1
     path:     5_1_release_notes
     file:     5_1_release_notes.md
-    revision: f3f36e7ef74d169caf7fa1d1f1e14422758901e1
-    date:     25/12/2020
+    revision: 8359653ef9cef6910c0a3a86d91b587a5b99cc21
+    date:     01/06/2021
 
   - title:    Заметки о релизе Ruby on Rails 5.0
     path:     5_0_release_notes
     file:     5_0_release_notes.md
-    revision: cb563a27dee009896e4bd177f9aeb0284cc9bb36
-    date:     24/12/2020
+    revision: f5d25cc37250ce8afe09d21eeb3ead1b5eb47054
+    date:     01/06/2021
 
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
     file:     4_2_release_notes.md
-    revision: 384c0d4b2fc7cfff44974d4c1f9ad7820c9feb1c
-    date:     24/12/2020
+    revision: b97b4fa207de7bda0eb752aab44950ac8bf02e57
+    date:     12/04/2021
 
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes
     file:     4_1_release_notes.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: 226b171144039a8c02344a3cb22323e38eddbdf2
+    date:     31/05/2021
 
   - title:    Заметки о релизе Ruby on Rails 4.0
     path:     4_0_release_notes
     file:     4_0_release_notes.md
-    revision: 077c66d5d6ef3a6f1cc54e4a431bfa5ea6831b97
-    date:     19/01/2021
+    revision: 226b171144039a8c02344a3cb22323e38eddbdf2
+    date:     31/05/2021
 
   - title:    Заметки о релизе Ruby on Rails 3.2
     path:     3_2_release_notes
     file:     3_2_release_notes.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: e469025ef5f6879fd7ec2f8733140789d872abd2
+    date:     16/07/2021
 
   - title:    Заметки о релизе Ruby on Rails 3.1
     path:     3_1_release_notes
     file:     3_1_release_notes.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: 226b171144039a8c02344a3cb22323e38eddbdf2
+    date:     31/05/2021
 
   - title:    Заметки о релизе Ruby on Rails 3.0
     path:     3_0_release_notes
     file:     3_0_release_notes.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: ea0685fee96d885543c9f353f8fcf1076fac441e
+    date:     21/02/2022
 
 plan: []
 

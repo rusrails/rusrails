@@ -187,7 +187,7 @@ Action Pack
 
     Rails будет использовать 'layouts/single_car' если запрос придет в экшн `:show`, и использовать `layouts/application` (или `layouts/cars`, если он существует), если запрос придет в любой другой экшн.
 
-* `form_for` изменился и использует `#{action}_#{as}` как класс css и id, если предоставлена опция `:as`. Ранние версии использовали `#{as}_#{action}`.
+* `form_for` изменился и использует `#{action}_#{as}` как класс CSS и id, если предоставлена опция `:as`. Ранние версии использовали `#{as}_#{action}`.
 
 * `ActionController::ParamsWrapper` на моделях Active Record теперь оборачивают атрибуты `attr_accessible`, только если они существуют. Если нет, будут обернуты только атрибуты, возвращенные методом класса `attribute_names`. Это устраняет оборачивание вложенных атрибутов при помещении их в `attr_accessible`.
 
@@ -307,7 +307,7 @@ Action Pack
 
 #### Устаревания
 
-* Передача форматов или обработчиков в render :template и тому подобные методы, например `render :template => "foo.html.erb"`, устарела. Вместо этого можно предоставить непосредственно :handlers и :formats как опции: ` render :template => "foo", :formats => [:html, :js], :handlers => :erb`.
+* Передача форматов или обработчиков в render :template и тому подобные методы, например `render :template => "foo.html.erb"`, устарела. Вместо этого можно предоставить непосредственно :handlers и :formats как опции: `render :template => "foo", :formats => [:html, :js], :handlers => :erb`.
 
 ### Sprockets
 
