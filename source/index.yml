@@ -303,8 +303,8 @@ pages:
   - title:    Установка зависимостей для разработки
     path:     development_dependencies_install
     file:     development_dependencies_install.md
-    revision: eef63e05fb6616693899a27cbad38dccef51d57d
-    date:     15/04/2021
+    revision: ce17492101b54dab8f3fa5934618679c9671f582
+    date:     03/06/2022
 
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
