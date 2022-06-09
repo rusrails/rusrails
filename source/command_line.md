@@ -10,6 +10,58 @@
 
 NOTE: Этот самоучитель предполагает, что вы обладаете знаниями основ Rails, которые можно почерпнуть в руководстве [Rails для начинающих](/getting-started-with-rails).
 
+Создание приложения Rails
+-------------------------
+
+Сначала давайте создадим простое приложение на Rails с помощью команды `rails new`.
+
+Мы используем это приложение, чтобы попробовать все команды, описанные в этом руководстве.
+
+INFO: Гем rails можно установив, написав `gem install rails`, если вы еще этого не сделали.
+
+### `rails new`
+
+Первым аргументом, который передается в команду `rails new`, является имя приложения.
+
+```bash
+$ rails new commandsapp
+     create
+     create  README.md
+     create  Rakefile
+     create  config.ru
+     create  .gitignore
+     create  Gemfile
+     create  app
+     ...
+     create  tmp/cache
+     ...
+        run  bundle install
+```
+
+Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
+
+Если хотите пропустить какие-то файлы или компоненты при генерации, можно добавить следующие аргументы к команде `rails new`:
+
+| Аргумент                | Описание                                            |
+| ----------------------- | --------------------------------------------------- |
+| `--skip-git`            | Пропустить файл .gitignore                          |
+| `--skip-keeps`          | Пропустить файлы для контроля версий .keep          |
+| `--skip-action-mailer`  | Пропустить файлы Action Mailer                      |
+| `--skip-action-mailbox` | Пропустить гем Action Mailbox                       |
+| `--skip-action-text`    | Пропустить гем Action Text                          |
+| `--skip-active-record`  | Пропустить файлы Active Record                      |
+| `--skip-active-job`     | Пропустить Active Job                               |
+| `--skip-active-storage` | Пропустить файлы Active Storage                     |
+| `--skip-action-cable`   | Пропустить файлы Action Cable                       |
+| `--skip-asset-pipeline` | Пропустить Asset Pipeline                           |
+| `--skip-javascript`     | Пропустить файлы JavaScript                         |
+| `--skip-hotwire`        | Пропустить интеграцию с Hotwire                     |
+| `--skip-jbuilder`       | Пропустить гем jbuilder                             |
+| `--skip-test`           | Пропустить файлы тестов                             |
+| `--skip-system-test`    | Пропустить файлы системных тестов                   |
+| `--skip-bootsnap`       | Пропустить гем bootsnap                             |
+
+
 Основы командной строки
 -----------------------
 
@@ -61,53 +113,6 @@ In addition to those commands, there are:
  tmp:create                          Creates tmp directories ...
 ```
 
-Давайте создадим простое приложение на Rails, чтобы рассмотреть все эти команды в контексте.
-
-### `rails new`
-
-Сперва мы хотим создать новое приложение на Rails, запустив команду `rails new` после установки Rails.
-
-INFO: Гем rails можно установить, написав `gem install rails`, если его еще нет.
-
-```bash
-$ rails new commandsapp
-     create
-     create  README.md
-     create  Rakefile
-     create  config.ru
-     create  .gitignore
-     create  Gemfile
-     create  app
-     ...
-     create  tmp/cache
-     ...
-        run  bundle install
-```
-
-Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
-
-Если хотите пропустить какие-то файлы или компоненты при генерации, можно добавить следующие аргументы к команде `rails new`:
-
-| Аргумент                | Описание                                            |
-| ----------------------- | --------------------------------------------------- |
-| `--skip-gemfile`        | Не создавать Gemfile                                |
-| `--skip-git`            | Пропустить файл .gitignore                          |
-| `--skip-keeps`          | Пропустить файлы для контроля версий .keep          |
-| `--skip-action-mailer`  | Пропустить файлы Action Mailer                      |
-| `--skip-action-text`    | Пропустить гем Action Text                          |
-| `--skip-active-record`  | Пропустить файлы Active Record                      |
-| `--skip-active-storage` | Пропустить файлы Active Storage                     |
-| `--skip-puma`           | Пропустить файлы, относящиеся к Puma                |
-| `--skip-action-cable`   | Пропустить файлы Action Cable                       |
-| `--skip-sprockets`      | Пропустить файлы Sprockets                          |
-| `--skip-spring`         | Не устанавливать предзагрузчик приложения Spring    |
-| `--skip-listen`         | Не создавать конфигурацию, зависящую от гема listen |
-| `--skip-javascript`     | Пропустить файлы JavaScript                         |
-| `--skip-turbolinks`     | Пропустить гем turbolinks                           |
-| `--skip-test`           | Пропустить файлы тестов                             |
-| `--skip-system-test`    | Пропустить файлы системных тестов                   |
-| `--skip-bootsnap`       | Пропустить гем bootsnap                             |
-
 ### `bin/rails server`
 
 Команда `bin/rails server` запускает веб-сервер Puma, поставляемый с Ruby. Его будем использовать всякий раз, когда захотим увидеть свою работу в веб-браузере.
@@ -118,7 +123,7 @@ Rails создаст кучу всего с помощью такой мален
 $ cd commandsapp
 $ bin/rails server
 => Booting Puma
-=> Rails 6.0.0 application starting in development
+=> Rails 7.0.0 application starting in development
 => Run `bin/rails server --help` for more startup options
 Puma starting in single mode...
 * Version 3.12.1 (ruby 2.5.7-p206), codename: Llamas in Pajamas
@@ -211,9 +216,6 @@ $ bin/rails generate controller Greetings hello
      invoke  helper
      create    app/helpers/greetings_helper.rb
      invoke    test_unit
-     invoke  assets
-     invoke    scss
-     create      app/assets/stylesheets/greetings.scss
 ```
 
 Что это сгенерировало? Создался ряд директорий в нашем приложении, и создались файл контроллера, файл вью, файл функционального теста, хелпер для вью, файл JavaScript и файл таблицы стилей.
@@ -303,16 +305,11 @@ $ bin/rails generate scaffold HighScore game:string score:integer
     create      app/views/high_scores/index.json.jbuilder
     create      app/views/high_scores/show.json.jbuilder
     create      app/views/high_scores/_high_score.json.jbuilder
-    invoke  assets
-    invoke    scss
-    create      app/assets/stylesheets/high_scores.scss
-    invoke  scss
-    create    app/assets/stylesheets/scaffolds.scss
 ```
 
-Генератор проверил, что существуют директории для моделей, контроллеров, хелперов, макетов, функциональных и юнит-тестов, таблиц стилей, создал вью, контроллер, модель и миграцию базы данных для HighScore (создающую таблицу `high_scores` и поля), позаботился о маршруте для *ресурса*, и создал новые тесты для всего этого.
+Генератор создал модель, вью, контроллер, **ресурсный** маршрут и миграцию базы данных (создающую таблицу `high_scores`) для HighScore. Он также добавил тесты для них.
 
-Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (находящийся в `20130717151933_create_high_scores.rb`), чтобы модифицировать схему базы данных. Какой базы данных? Базы данных SQLite3, которую создаст Rails, когда мы запустим команду `bin/rails db:migrate`. Поговорим об этой команде ниже.
+Миграция требует, чтобы мы **мигрировали ее**, то есть запустили некоторый код Ruby (файл `20190416145729_create_high_scores.rb` из вышеприведенного вывода), чтобы модифицировать схему базы данных. Какой базы данных? Базы данных SQLite3, которую создаст Rails, когда мы запустим команду `bin/rails db:migrate`. Поговорим об этой команде ниже.
 
 ```bash
 $ bin/rails db:migrate
@@ -348,7 +345,7 @@ $ bin/rails console -e staging
 
 ```bash
 $ bin/rails console --sandbox
-Loading development environment in sandbox (Rails 7.0.0)
+Loading development environment in sandbox (Rails 7.1.0)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
 ```
@@ -445,12 +442,12 @@ $ bin/rails destroy model Oops
 ```
 $ rails about
 About your application's environment
-Rails version             6.0.0
+Rails version             7.0.0
 Ruby version              2.7.0 (x86_64-linux)
 RubyGems version          2.7.3
 Rack version              2.0.4
 JavaScript Runtime        Node.js (V8)
-Middleware                Rack::Sendfile, ActionDispatch::Static, ActionDispatch::Executor, ActiveSupport::Cache::Strategy::LocalCache::Middleware, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Sprockets::Rails::QuietAssets, Rails::Rack::Logger, ActionDispatch::ShowExceptions, WebConsole::Middleware, ActionDispatch::DebugExceptions, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, Rack::Head, Rack::ConditionalGet, Rack::ETag
+Middleware:               Rack::Sendfile, ActionDispatch::Static, ActionDispatch::Executor, ActiveSupport::Cache::Strategy::LocalCache::Middleware, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Sprockets::Rails::QuietAssets, Rails::Rack::Logger, ActionDispatch::ShowExceptions, WebConsole::Middleware, ActionDispatch::DebugExceptions, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, Rack::Head, Rack::ConditionalGet, Rack::ETag
 Application root          /home/foobar/commandsapp
 Environment               development
 Database adapter          sqlite3
