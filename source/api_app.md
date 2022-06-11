@@ -91,7 +91,7 @@ $ rails new my_api --api
 config.api_only = true
 ```
 
-В `config/environments/development.rb` установите `config.debug_exception_response_format`, чтобы настроить формат, используемый в откликах, когда происходит ошибка в режиме development.
+В `config/environments/development.rb` установите [`config.debug_exception_response_format`][], чтобы настроить формат, используемый в откликах, когда происходит ошибка в режиме development.
 
 Чтобы отрендерить страницу HTML с отладочной информацией, используйте значение `:default`.
 
@@ -121,6 +121,8 @@ class ApplicationController < ActionController::API
 end
 ```
 
+[`config.debug_exception_response_format`]: /configuring-rails-applications#config-debug-exception-response-format
+
 Выбор промежуточных программ
 ----------------------------
 
@@ -130,6 +132,7 @@ API-приложение поставляется со следующими пр
 - `Rack::Sendfile`
 - `ActionDispatch::Static`
 - `ActionDispatch::Executor`
+- `ActionDispatch::ServerTiming`
 - `ActiveSupport::Cache::Strategy::LocalCache::Middleware`
 - `Rack::Runtime`
 - `ActionDispatch::RequestId`
@@ -195,7 +198,7 @@ end
 
 Если ваш фронтенд сервер поддерживает ускоренную отсылку файла, `Rack::Sendfile` переложит работу по фактической отсылке файла на фронтенд сервер.
 
-Можно настроить имя заголовка, которое использует ваш фронтенд сервер для этой цели, с помощью `config.action_dispatch.x_sendfile_header` в соответствующем среде конфигурационном файле.
+Можно настроить имя заголовка, которое использует ваш фронтенд сервер для этой цели, с помощью [`config.action_dispatch.x_sendfile_header`][] в соответствующем среде конфигурационном файле.
 
 Подробнее узнать о том, как использовать `Rack::Sendfile` с популярными фронтендами можно в [документации Rack::Sendfile](https://rubydoc.info/github/rack/rack/master/Rack/Sendfile).
 
@@ -210,6 +213,8 @@ config.action_dispatch.x_sendfile_header = "X-Accel-Redirect"
 ```
 
 Убедитесь, что сконфигурировали на своем сервере поддержку этих опций в соответствии с инструкциями в документации `Rack::Sendfile`.
+
+[`config.action_dispatch.x_sendfile_header`]: /configuring-rails-applications#config-action-dispatch-x-sendfile-header
 
 ### Использование ActionDispatch::Request
 

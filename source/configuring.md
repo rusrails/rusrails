@@ -231,7 +231,7 @@ end
 
 Устанавливает приложение по обработке исключений, вызываемое промежуточной программой ShowException, когда происходит исключение. По умолчанию `ActionDispatch::PublicExceptions.new(Rails.public_path)`.
 
-#### `config.debug_exception_response_format`
+#### (config-debug-exception-response-format) `config.debug_exception_response_format`
 
 Устанавливает формат, используемый в откликах, когда возникают ошибки в среде development. По умолчанию `:api` для только API приложений и `:default` для нормальных приложений.
 
@@ -1117,7 +1117,7 @@ Rendered recordings/threads/_thread.html.erb in 1.5 ms [cache miss]
 
 Используется для определения, нужно ли игнорировать заголовки accept запроса. По умолчанию `false`.
 
-#### `config.action_dispatch.x_sendfile_header`
+#### (config-action-dispatch-x-sendfile-header) `config.action_dispatch.x_sendfile_header`
 
 Определяет специфичный для сервера заголовок X-Sendfile. Это полезно для ускоренной отдачи файлов с сервера. Например, можно установить 'X-Sendfile' для Apache.
 
