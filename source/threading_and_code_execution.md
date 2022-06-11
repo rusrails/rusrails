@@ -51,7 +51,7 @@ Rails.application.executor.wrap do
 end
 ```
 
-TIP: Если повторно вызывается код приложения из долговременного процесса, может потребоваться обернуть его с помощью Reloader.
+TIP: Если повторно вызывается код приложения из долговременного процесса, может потребоваться обернуть его с помощью [Reloader](#reloader).
 
 Каждый тред должен быть обернут до запуска кода приложения, поэтому если приложение вручную делегирует работу другим тредам, например, с помощью `Thread.new` или функций конкурентного Ruby, которые используют пулы тредов, необходимо немедленно обернуть блок:
 
@@ -80,7 +80,7 @@ end
 
 ### Конкурентность (Concurrency)
 
-Executor поместит текущий тред в режим `running` при Load Interlock. Эта операция временно будет блокироваться, если другой тред в настоящее время либо автозагружает константу, либо выгружает/перезагружает приложение.
+Executor поместит текущий тред в режим `running` при [Load Interlock](#load-interlock). Эта операция временно будет блокироваться, если другой тред в настоящее время либо автозагружает константу, либо выгружает/перезагружает приложение.
 
 Reloader
 --------
@@ -128,11 +128,11 @@ Action Cable использует вместо этого Executor: поскол
 
 ### Конфигурация
 
-Reloader проверяет только изменения файлов, когда `cache_classes` это false, а `reload_classes_only_on_change` это true (это значения по умолчанию в среде `development`).
+Reloader проверяет только изменения файлов, когда `config.enable_reloading` это `true`, как и `config.reload_classes_only_on_change`. Это значения по умолчанию в среде `development`.
 
-Когда `cache_classes` это true (в `production`, по умолчанию), Reloader это всего лишь переходник к Executor.
+Когда `config.enable_reloading` это `false` (в `production`, по умолчанию), Reloader это всего лишь переходник к Executor.
 
-У Executor всегда есть важная работа, например управление подключением к базе данных. Когда `cache_classes` и `eager_load` это true (`production`), автозагрузка или перезагрузка класса не будут происходить, поэтому Load Interlock не требуется. Если любой из них это false (`development`), то Executor будет использовать Load Interlock, гарантируя что константы загружаются только тогда, когда они безопасны.
+У Executor всегда есть важная работа, например управление подключением к базе данных. Когда `config.enable_reloading` это `false` и `config.eager_load` это `true` (по умолчанию в `production`), перезагрузка класса не будут происходить, поэтому Load Interlock не требуется. С настройками по умолчанию в `development` Executor будет использовать Load Interlock, гарантируя что константы загружаются только тогда, когда это безопасно.
 
 Load Interlock
 --------------
@@ -190,7 +190,7 @@ end
 ```ruby
 Rails.application.executor.wrap do
   futures = 3.times.collect do |i|
-    Concurrent::Future.execute do
+    Concurrent::Promises.future do
       Rails.application.executor.wrap do
         # здесь делаем работу
       end
