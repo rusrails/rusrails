@@ -1462,7 +1462,7 @@ config.action_mailbox.incinerate_after = 14.days
 
 Принимает логгер, соответствующий интерфейсу Log4r или класса Ruby по умолчанию Logger, который затем используется для логирования информации от Action Mailer. Установите его в `nil`, чтобы отключить логирование.
 
-#### `config.action_mailer.smtp_settings`
+#### (config-action-mailer-smtp-settings) `config.action_mailer.smtp_settings`
 
 Позволяет детально сконфигурировать метод доставки `:smtp`. Она принимает хэш опций, который может включать любые из следующих опций:
 
@@ -1492,7 +1492,7 @@ config.action_mailbox.incinerate_after = 14.days
 | (изначально)     | `nil`                 |
 | 7.1              | `5`                   |
 
-#### `config.action_mailer.sendmail_settings`
+#### (config-action-mailer-sendmail-settings) `config.action_mailer.sendmail_settings`
 
 Позволяет детально сконфигурировать метод доставки `sendmail`. Она принимает хэш опций, который может включать любые из этих опций:
 
