@@ -46,35 +46,6 @@ require "bundler/setup" # Set up gems listed in the Gemfile.
 
 В стандартном приложении Rails имеется `Gemfile`, объявляющий все зависимости приложения. `config/boot.rb` устанавливает `ENV['BUNDLE_GEMFILE']` как место расположения этого файла. Затем, если `Gemfile` существует, будет затребован `bundler/setup`. Строка используется Bundler-ом для настройки путей загрузки для зависимостей вашего `Gemfile`.
 
-Стандартное Rails приложение зависит от нескольких гемов, а именно:
-
-* actioncable
-* actionmailer
-* actionpack
-* actionview
-* activejob
-* activemodel
-* activerecord
-* activestorage
-* activesupport
-* actionmailbox
-* actiontext
-* arel
-* builder
-* bundler
-* erubi
-* i18n
-* mail
-* mime-types
-* rack
-* rack-test
-* rails
-* railties
-* rake
-* sqlite3
-* thor
-* tzinfo
-
 ### `rails/commands.rb`
 
 Как только завершится `config/boot.rb`, следующим файлом, который будет затребован, является `rails/commands`, который помогает расширить псевдонимы. В нашем случае, массив `ARGV` просто содержит `server`, который будет передан дальше:
@@ -493,7 +464,6 @@ require "rails"
   action_mailbox/engine
   action_text/engine
   rails/test_unit/railtie
-  sprockets/railtie
 ).each do |railtie|
   begin
     require railtie
@@ -515,7 +485,7 @@ end
 Метод `initialize!` выглядит так:
 
 ```ruby
-def initialize!(group = :default) #:nodoc:
+def initialize!(group = :default) # :nodoc:
   raise "Application has been already initialized." if @initialized
   run_initializers(group, self)
   @initialized = true

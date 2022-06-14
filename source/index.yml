@@ -219,8 +219,8 @@ pages:
   - title:    Процесс инициализации в Rails
     path:     initialization
     file:     initialization.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: aa9a2c1b7febc62141511a2dd012da3d431f8b92
+    date:     21/02/2022
 
   - title:    Автозагрузка и перезагрузка констант
     path:     constant_autoloading_and_reloading
