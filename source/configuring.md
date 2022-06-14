@@ -281,7 +281,7 @@ mylogger.formatter = config.log_formatter
 config.logger      = ActiveSupport::TaggedLogging.new(mylogger)
 ```
 
-#### `config.middleware`
+#### (config-middleware) `config.middleware`
 
 Позволяет настроить промежуточные программы приложения. Это подробнее раскрывается в разделе [Конфигурирование промежуточных программ](#configuring-middleware) ниже.
 
@@ -309,11 +309,11 @@ config.logger      = ActiveSupport::TaggedLogging.new(mylogger)
 
 Приложение не будет загружено, если главный ключ не доступен в `ENV["RAILS_MASTER_KEY"]` или файле `config/master.key`.
 
-#### `config.public_file_server.enabled`
+#### (config-public-file-server-enabled) `config.public_file_server.enabled`
 
 Конфигурирует Rails на обслуживание статичных файлов из директории public. Эта опция по умолчанию `true`, но в среде production устанавливается `false`, так как серверные программы (например, NGINX или Apache), используемые для запуска приложения, должны обслуживать статичные ресурсы вместо Rails. Если запускаете или тестируете приложение в production с помощью WEBrick (не рекомендуется использовать WEBrick в production), установите эту опцию в `true`. В противном случае нельзя воспользоваться кэшированием страниц и запросами файлов, существующих в директории public.
 
-#### `config.session_store`
+#### (config-session-store) `config.session_store`
 
 Определяет, какой класс использовать для хранения сессии. Возможные значения `:cookie_store`, которое по умолчанию, `:mem_cache_store` и `:disabled`. Последнее говорит Rails не связываться с сессиями. По умолчанию равно хранилищу куки с именем приложения в качестве ключа сессии. Произвольные хранилища сессии также могут быть определены:
 

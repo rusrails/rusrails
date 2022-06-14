@@ -95,9 +95,11 @@ $ bin/rails middleware
 Для свежесгенерированного приложения Rails он может выдать что-то наподобие:
 
 ```ruby
+use ActionDispatch::HostAuthorization
 use Rack::Sendfile
 use ActionDispatch::Static
 use ActionDispatch::Executor
+use ActionDispatch::ServerTiming
 use ActiveSupport::Cache::Strategy::LocalCache::Middleware
 use Rack::Runtime
 use Rack::MethodOverride
@@ -127,7 +129,9 @@ run MyApp::Application.routes
 
 ### Настройка стека промежуточных программ
 
-Rails предоставляет простой конфигурационный интерфейс `config.middleware` для добавления, удаления и модифицирования промежуточных программ в стеке промежуточных программ, из `application.rb` или конфигурационного файла определенной среды `environments/<environment>.rb`.
+Rails предоставляет простой конфигурационный интерфейс [`config.middleware`][] для добавления, удаления и модифицирования промежуточных программ в стеке промежуточных программ, из `application.rb` или конфигурационного файла определенной среды `environments/<environment>.rb`.
+
+[`config.middleware`]: /configuring-rails-applications#config-middleware
 
 #### Добавление промежуточной программы
 
@@ -197,17 +201,32 @@ config.middleware.delete ActionDispatch::Flash
 config.middleware.delete Rack::MethodOverride
 ```
 
+Если хотите, чтобы была вызвана ошибка, когда пытаетесь удалить несуществующий элемент, используйте `delete!`.
+
+```ruby
+# config/application.rb
+config.middleware.delete! ActionDispatch::Executor
+```
+
 ### (internal-middleware-stack) Стек внутренних промежуточных программ
 
 Значительная часть функциональности Action Controller реализована как промежуточные программы. Следующий перечень объясняет назначение каждой из них:
 
+**`ActionDispatch::HostAuthorization`**
+
+* Защищает от атак переназначения DNS, явно разрешая хосты, с которых может быть послан запрос. Смотрите инструкции в [руководстве по конфигурированию](/configuring-rails-applications#actiondispatch-hostauthorization).
+
 **`Rack::Sendfile`**
 
-* Устанавливает заголовки X-Sendfile, специфичные для сервера. Настраивается с помощью опции `config.action_dispatch.x_sendfile_header`.
+* Устанавливает заголовки X-Sendfile, специфичные для сервера. Настраивается с помощью опции [`config.action_dispatch.x_sendfile_header`][].
+
+[`config.action_dispatch.x_sendfile_header`]: /configuring-rails-applications#config-action-dispatch-x-sendfile-header
 
 **`ActionDispatch::Static`**
 
-* Используется для раздачи статичных файлов из директории public. Отключена, если `config.public_file_server.enabled` является false.
+* Используется для раздачи статичных файлов из директории public. Отключена, если [`config.public_file_server.enabled`][] является false.
+
+[`config.public_file_server.enabled`]: /configuring-rails-applications#config-public-file-server-enabled
 
 **`Rack::Lock`**
 
@@ -216,6 +235,10 @@ config.middleware.delete Rack::MethodOverride
 **`ActionDispatch::Executor`**
 
 * Используется для перезагрузки тредобезопасного кода при разработке.
+
+**`ActionDispatch::ServerTiming`**
+
+* Устанавливает заголовок [`Server-Timing`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing), содержащий метрики быстродействия для запроса.
 
 **`ActiveSupport::Cache::Strategy::LocalCache::Middleware`**
 
@@ -279,7 +302,9 @@ config.middleware.delete Rack::MethodOverride
 
 **`ActionDispatch::Flash`**
 
-* Настраивает ключи flash. Доступно, только если `config.action_controller.session_store` присвоено значение.
+* Настраивает ключи flash. Доступно, только если [`config.session_store`][] присвоено значение.
+
+[`config.session_store`]: /configuring-rails-applications#config-session-store
 
 **`ActionDispatch::ContentSecurityPolicy::Middleware`**
 
