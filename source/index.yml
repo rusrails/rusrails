@@ -285,8 +285,8 @@ pages:
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
     file:     api_documentation_guidelines.md
-    revision: cb0da4f817eee35089c1f12a4fa46a765611181f
-    date:     22/12/2020
+    revision: 0809dd3fca2522d85793f1199e22181f5c854250
+    date:     14/06/2022
 
   - title:    Шаблоны приложения Rails
     path:     rails-application-templates
