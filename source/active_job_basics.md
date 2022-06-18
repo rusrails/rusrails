@@ -105,7 +105,7 @@ GuestsCleanupJob.perform_later(guest1, guest2, filter: 'some_filter')
 
 ### Настройка бэкенда
 
-Настроить бэкенд — это просто:
+Настроить бэкенд — это просто с помощью [`config.active_job.queue_adapter`]:
 
 ```ruby
 # config/application.rb
@@ -130,6 +130,8 @@ end
 # переопределяя тот, что был настроен в `config.active_job.queue_adapter`.
 ```
 
+[`config.active_job.queue_adapter`]: /configuring-rails-applications#config-active-job-queue-adapter
+
 ### Запуск бэкенда
 
 Поскольку задания запускаются параллельно с вашим Rails приложением, большинство библиотек для работы с очередями требуют запуска специфичного для библиотеки сервиса очередей (помимо старта Rails приложения) для обработки заданий. Обратитесь к документации по библиотеке за инструкциями по запуску бэкенда очереди.
@@ -143,6 +145,7 @@ end
 - [Queue Classic](https://github.com/QueueClassic/queue_classic#active-job)
 - [Delayed Job](https://github.com/collectiveidea/delayed_job#active-job)
 - [Que](https://github.com/que-rb/que#additional-rails-specific-setup)
+- [Good Job](https://github.com/bensheldon/good_job#readme)
 
 Очереди
 -------
@@ -156,7 +159,7 @@ class GuestsCleanupJob < ApplicationJob
 end
 ```
 
-Можно задать префикс для имени очереди для всех заданий с помощью `config.active_job.queue_name_prefix` в `application.rb`:
+Можно задать префикс для имени очереди для всех заданий с помощью [`config.active_job.queue_name_prefix`][] в `application.rb`:
 
 ```ruby
 # config/application.rb
@@ -191,7 +194,7 @@ end
 # что было настроено в `config.active_job.queue_name_prefix`.
 ```
 
-Разделитель префикса имени очереди по умолчанию '\_'. Его можно изменить, установив `config.active_job.queue_name_delimiter` в `application.rb`:
+Разделитель префикса имени очереди по умолчанию '\_'. Его можно изменить, установив [`config.active_job.queue_name_delimiter`][] в `application.rb`:
 
 ```ruby
 # config/application.rb
@@ -245,6 +248,8 @@ ProcessVideoJob.perform_later(Video.last)
 
 NOTE: Убедитесь, что ваш бэкенд для очередей "слушает" имя вашей очереди. Для некоторых бэкендов необходимо указать очереди, которые нужно слушать.
 
+[`config.active_job.queue_name_delimiter`]: /configuring-rails-applications#config-active-job-queue-name-delimiter
+[`config.active_job.queue_name_prefix`]: /configuring-rails-applications#config-active-job-queue-name-prefix
 [`queue_as`]: https://api.rubyonrails.org/classes/ActiveJob/QueueName/ClassMethods.html#method-i-queue_as
 
 Колбэки
@@ -336,6 +341,9 @@ ActiveJob по умолчанию поддерживает следующие т
 - `Hash` (Ключи должны быть типа `String` или `Symbol`)
 - `ActiveSupport::HashWithIndifferentAccess`
 - `Array`
+- `Range`
+- `Module`
+- `Class`
 
 ### GlobalID
 
@@ -367,6 +375,7 @@ end
 Можно расширить список поддерживаемых типов для аргументов. Для этого необходимо определить свой собственный сериализатор.
 
 ```ruby
+# app/serializers/money_serializer.rb
 class MoneySerializer < ActiveJob::Serializers::ObjectSerializer
   # Проверяем, должен ли argument быть сериализован с использованием этого сериализатора.
   def serialize?(argument)
@@ -393,7 +402,19 @@ end
 и добавить этот сериализатор в список:
 
 ```ruby
+# config/initializers/custom_serializers.rb
 Rails.application.config.active_job.custom_serializers << MoneySerializer
+```
+
+Отметьте, что автозагрузка перезагружаемого кода в течение инициализации не поддерживается. Поэтому рекомендуется настраивать сериализаторы, чтобы они загружались лишь однажды, то есть изменяя `config/application.rb` таким образом:
+
+```ruby
+# config/application.rb
+module YourApp
+  class Application < Rails::Application
+    config.autoload_once_paths << Rails.root.join('app', 'serializers')
+  end
+end
 ```
 
 Исключения
