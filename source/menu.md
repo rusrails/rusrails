@@ -1,28 +1,28 @@
 * **С чего начать?**
 
-    * [Rails для начинающих](/getting-started-with-rails)
+    * [Rails для начинающих](/getting-started)
 
 * **Модели**
 
     * [Основы Active Record](/active-record-basics)
-    * [Миграции Active Record](/rails-database-migrations)
+    * [Миграции Active Record](/active-record-migrations)
     * [Валидации Active Record](/active-record-validations)
     * [Колбэки Active Record](/active-record-callbacks)
     * [Связи (ассоциации) Active Record](/active-record-associations)
-    * [Интерфейс запросов Active Record](/active-record-query-interface)
+    * [Интерфейс запросов Active Record](/active-record-querying)
     * [Основы Active Model](/active-model-basics)
 
 * **Вью**
 
     * [Обзор Action View](/action-view-overview)
-    * [Макеты и рендеринг в Rails](/layouts-and-rendering-in-rails)
+    * [Макеты и рендеринг в Rails](/layouts-and-rendering)
     * [Хелперы Action View](/action-view-helpers)
-    * [Хелперы форм в Action View](/rails-form-helpers)
+    * [Хелперы форм в Action View](/form-helpers)
 
 * **Контроллеры**
 
     * [Обзор Action Controller](/action-controller-overview)
-    * [Роутинг в Rails](/rails-routing)
+    * [Роутинг в Rails](/routing)
 
 * **Другие компоненты**
 
@@ -37,23 +37,23 @@
 
 * **Копаем глубже**
 
-    * [API интернационализации Rails (I18n)](/rails-internationalization-i18n-api)
-    * [Тестирование приложений на Rails](/a-guide-to-testing-rails-applications)
-    * [Безопасность приложений на Rails](/ruby-on-rails-security-guide)
+    * [API интернационализации Rails (I18n)](/i18n)
+    * [Тестирование приложений на Rails](/testing)
+    * [Безопасность приложений на Rails](/security)
     * [Отладка приложений на Rails](/debugging-rails-applications)
 
 next_column
 
 * **Копаем глубже**
 
-    * [Конфигурирование приложений на Rails](/configuring-rails-applications)
-    * [Командная строка Rails](/a-guide-to-the-rails-command-line)
+    * [Конфигурирование приложений на Rails](/configuring)
+    * [Командная строка Rails](/command-line)
     * [Asset Pipeline](/asset-pipeline)
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Процесс инициализации в Rails](/initialization)
-    * [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading)
-    * [Как перейти с Classic на Zeitwerk](/classic_to_zeitwerk_howto)
-    * [Кэширование с Rails: Обзор](/caching-with-rails-an-overview)
+    * [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants)
+    * [Как перейти с Classic на Zeitwerk](/classic-to-zeitwerk-howto)
+    * [Кэширование с Rails: Обзор](/caching-with-rails)
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [Использование Rails для API-приложений](/api-app)
     * [Active Record для PostgreSQL](/active-record-postgresql)

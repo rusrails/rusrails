@@ -31,7 +31,7 @@
 
 [Pull Request](https://github.com/rails/rails/pull/31134)
 
-Rails 5.2 поставляется со встроенным хранилищем кэша Redis. Подробнее об этом можно прочитать в руководстве [Кэширование с Rails: Обзор](/caching-with-rails-an-overview#activesupport-cache-rediscachestore).
+Rails 5.2 поставляется со встроенным хранилищем кэша Redis. Подробнее об этом можно прочитать в руководстве [Кэширование с Rails: Обзор](/caching-with-rails#activesupport-cache-rediscachestore).
 
 ### HTTP/2 Early Hints
 
@@ -45,7 +45,7 @@ Rails 5.2 поддерживает [HTTP/2 Early Hints](https://tools.ietf.org/h
 
 Добавлен файл `config/credentials.yml.enc` для хранения секретов приложения в production. Это разрешает сохранять любые учетные данные аутентификации для сторонних сервисов напрямую в репозиторий, зашифрованный с помощью ключа в файле `config/master.key` или переменной среды `RAILS_MASTER_KEY`. Это в конечном итоге заменит `Rails.application.secrets` и зашифрованные секреты, представленные в Rails 5.1. Кроме того, Rails 5.2 [открывает API соответствующие учетным данным](https://github.com/rails/rails/pull/30940), поэтому можно легко справиться с другими зашифрованными конфигурациями, ключами и файлами.
 
-Подробнее об этом можно узнать в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#custom-credentials).
+Подробнее об этом можно узнать в руководстве [Безопасность приложений на Rails](/security#custom-credentials).
 
 ### Политика безопасности контента
 
@@ -53,7 +53,7 @@ Rails 5.2 поддерживает [HTTP/2 Early Hints](https://tools.ietf.org/h
 
 Rails 5.2 поставляется с новым DSL, который разрешает конфигурировать [политику безопасности контента](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) для приложения. Также можно сконфигурировать глобальную дефолтную политику, а затем переопределить ее отдельно для каждого ресурса и даже использовать лямбды для ввода значений для каждого запроса в заголовок, такой как поддомены аккаунта в многопользовательском (multi-tenant) приложении.
 
-Подробнее об этом можно узнать в руководстве руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#content-security-policy).
+Подробнее об этом можно узнать в руководстве руководстве [Безопасность приложений на Rails](/security#content-security-policy).
 
 Railties
 --------

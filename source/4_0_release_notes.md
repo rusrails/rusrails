@@ -223,11 +223,11 @@ Active Record
       Метод `change_table` также обратимый, если его блок не вызывает `remove`, `change` или `change_default`
 
     * Новый метод `reversible` делает возможным определить код для исполнения при выполнении или откате миграции.
-      Смотрите руководство [Миграции Active Record](/rails-database-migrations#using-reversible)
+      Смотрите руководство [Миграции Active Record](/active-record-migrations#using-reversible)
 
     * Новый метод `revert` обратит всю миграцию или предоставленный блок.
       Если миграция откатывается, данная миграция / блок выполняется обычно.
-      Смотрите руководство [Миграции Active Record](/rails-database-migrations#reverting-previous-migrations)
+      Смотрите руководство [Миграции Active Record](/active-record-migrations#reverting-previous-migrations)
 
 * Добавлена поддержка массивов PostgreSQL. Для создания столбца array может быть использован любой тип данных, с полной поддержкой миграций и выгрузкой схемы.
 

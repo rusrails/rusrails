@@ -56,7 +56,7 @@ NOTE: Ваши тесты запускаются с `RAILS_ENV=test`.
 
 ### Rails встретился с Minitest
 
-Если помните, мы использовали команду `bin/rails generate model` в руководстве [Rails для начинающих](/getting-started-with-rails). Мы создали нашу первую модель, где, среди прочего, создались незаконченные тесты в папке `test`:
+Если помните, мы использовали команду `bin/rails generate model` в руководстве [Rails для начинающих](/getting-started). Мы создали нашу первую модель, где, среди прочего, создались незаконченные тесты в папке `test`:
 
 ```bash
 $ bin/rails generate model article title:string body:text
@@ -265,7 +265,7 @@ end
 
 Теперь этот тест должен пройти.
 
-[`config.active_support.test_order`]: /configuring-rails-applications#configuring-active-support
+[`config.active_support.test_order`]: /configuring#configuring-active-support
 
 ### Доступные утверждения
 
@@ -1134,7 +1134,7 @@ end
 
 Теперь можете попробовать запустить все тесты, и они должны пройти.
 
-NOTE: Если выполнены шаги в разделе про [базовую аутентификацию](/getting-started-with-rails#basic-authentication), то необходимо добавить авторизацию в заголовок каждого запроса, чтобы все тесты проходили:
+NOTE: Если выполнены шаги в разделе про [базовую аутентификацию](/getting-started#basic-authentication), то необходимо добавить авторизацию в заголовок каждого запроса, чтобы все тесты проходили:
 
 ```ruby
 post articles_url, params: { article: { body: "Rails is awesome!", title: "Hello Rails" } }, headers: { Authorization: ActionController::HttpAuthentication::Basic.encode_credentials("dhh", "secret") }

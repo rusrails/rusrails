@@ -82,7 +82,7 @@ require "active_support/all"
 
 Приложение на Ruby on Rails загружает весь Active Support, кроме случая когда [`config.active_support.bare`][] равен true. В этом случае приложение загрузит только сам фреймворк и подберет файлы для собственных нужд, и позволит подобрать вам файлы самостоятельно на любом уровне, как описано в предыдущем разделе.
 
-[`config.active_support.bare`]: /configuring-rails-applications#config-active-support-bare
+[`config.active_support.bare`]: /configuring#config-active-support-bare
 
 Расширения ко всем объектам
 ---------------------------
@@ -1054,7 +1054,7 @@ NOTE: Определено в `active_support/core_ext/class/subclasses.rb`.
 
 #### Мотивация
 
-Вставка данных в шаблоны HTML требует дополнительной осторожности. Например, нельзя просто интерполировать `@review.title` на страницу HTML. С одной стороны, если заголовок рецензии "Flanagan & Matz rules!", то результат не будет правильно отображен, поскольку амперсанд должен быть экранирован как "&amp;amp;". К тому же, в зависимости от приложения, это может быть большой дырой в безопасности, так как пользователи могут внедрить вредоносный HTML, устанавливающий вручную изготовленный заголовок рецензии. Смотрите подробную информацию о рисках в разделе о межсайтовом скриптинге в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#cross-site-scripting-xss).
+Вставка данных в шаблоны HTML требует дополнительной осторожности. Например, нельзя просто интерполировать `@review.title` на страницу HTML. С одной стороны, если заголовок рецензии "Flanagan & Matz rules!", то результат не будет правильно отображен, поскольку амперсанд должен быть экранирован как "&amp;amp;". К тому же, в зависимости от приложения, это может быть большой дырой в безопасности, так как пользователи могут внедрить вредоносный HTML, устанавливающий вручную изготовленный заголовок рецензии. Смотрите подробную информацию о рисках в разделе о межсайтовом скриптинге в руководстве [Безопасность приложений на Rails](/security#cross-site-scripting-xss).
 
 #### Безопасные строки
 
@@ -3195,7 +3195,7 @@ d.end_of_week(:sunday)       # => Sat, 08 May 2010
 
 NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
-[`config.beginning_of_week`]: /configuring-rails-applications#config-beginning-of-week
+[`config.beginning_of_week`]: /configuring#config-beginning-of-week
 [DateAndTime::Calculations#at_beginning_of_week]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-at_beginning_of_week
 [DateAndTime::Calculations#at_end_of_week]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-at_end_of_week
 [DateAndTime::Calculations#beginning_of_week]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-beginning_of_week

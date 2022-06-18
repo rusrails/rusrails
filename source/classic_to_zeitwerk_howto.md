@@ -350,7 +350,7 @@ end
 
 Все известные случаи использования `require_dependency` были устранены в Zeitwerk. Можно найти и удалить их в проекте.
 
-Если ваше приложение использует наследование с единой таблицей, обратитесь к [разделу по Single Table Inheritance](/constant_autoloading_and_reloading/#single-table-inheritance) руководства по автозагрузке и перезагрузке констант (режим Zeitwerk).
+Если ваше приложение использует наследование с единой таблицей, обратитесь к [разделу по Single Table Inheritance](/autoloading-and-reloading-constants/#single-table-inheritance) руководства по автозагрузке и перезагрузке констант (режим Zeitwerk).
 
 ### Теперь возможны полные имена в определениях класса и модуля
 

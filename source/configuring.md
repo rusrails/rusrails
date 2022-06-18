@@ -162,7 +162,7 @@ end
 
 #### `config.autoload_paths`
 
-Принимает массив путей, по которым Rails будет автоматически загружать константы. По умолчанию пустой массив. Начиная с [Rails 6](/upgrading-ruby-on-rails#autoloading) не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/constant_autoloading_and_reloading#autoload-paths)
+Принимает массив путей, по которым Rails будет автоматически загружать константы. По умолчанию пустой массив. Начиная с [Rails 6](/upgrading-ruby-on-rails#autoloading) не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants#autoload-paths)
 
 #### `config.add_autoload_paths_to_load_path`
 
@@ -1245,7 +1245,7 @@ Rendered recordings/threads/_thread.html.erb in 1.5 ms [cache miss]
 
 #### `config.action_dispatch.perform_deep_munge`
 
-Конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#unsafe-query-generation). По умолчанию `true`.
+Конфигурирует, должен ли применяться метод `deep_munge` на параметрах. Подробнее смотрите в руководстве [Безопасность приложений на Rails](/security#unsafe-query-generation). По умолчанию `true`.
 
 #### `config.action_dispatch.rescue_responses`
 

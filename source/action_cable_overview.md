@@ -746,4 +746,4 @@ Action Cable работает на комбинации WebSockets и тредо
 
 ## Тестирование
 
-Детальные инструкции по тестированию функционала Action Cable можно найти в [руководстве по тестированию](/a-guide-to-testing-rails-applications#testing-action-cable).
+Детальные инструкции по тестированию функционала Action Cable можно найти в [руководстве по тестированию](/testing#testing-action-cable).

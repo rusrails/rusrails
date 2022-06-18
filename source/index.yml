@@ -13,7 +13,7 @@ images:
 
 pages:
   - title:    Rails для начинающих
-    path:     getting-started-with-rails
+    path:     getting-started
     file:     getting_started.md
     revision: 4f08d9d7533afc240b8ad4dcd15a390cf5fd2d1d
     date:     16/12/2021
@@ -25,7 +25,7 @@ pages:
     date:     21/02/2021
 
   - title:    Миграции Active Record
-    path:     rails-database-migrations
+    path:     active-record-migrations
     file:     active_record_migrations.md
     revision: c5c4fc155b49bcf5c99cd7f453153d98c13810d1
     date:     23/06/2021
@@ -49,7 +49,7 @@ pages:
     date:     11/11/2021
 
   - title:    Интерфейс запросов Active Record
-    path:     active-record-query-interface
+    path:     active-record-querying
     file:     active_record_querying.md
     revision: 57dcca2ab8cd3209fdddf72e24aca8aec11716b1
     date:     06/05/2022
@@ -73,7 +73,7 @@ pages:
     date:     13/04/2021
 
   - title:    Макеты и рендеринг в Rails
-    path:     layouts-and-rendering-in-rails
+    path:     layouts-and-rendering
     file:     layouts_and_rendering.md
     revision: 5a069ae26268c9362b57d928a52bf84dda280010
     date:     06/06/2022
@@ -85,7 +85,7 @@ pages:
     date:     12/02/2021
 
   - title:    Хелперы форм в Action View
-    path:     rails-form-helpers
+    path:     form-helpers
     file:     form_helpers.md
     revision: 4908a5a31fda92d5ff30efc8ca402e831ada2f84
     date:     26/05/2022
@@ -97,7 +97,7 @@ pages:
     date:     12/02/2022
 
   - title:    Роутинг в Rails
-    path:     rails-routing
+    path:     routing
     file:     routing.md
     revision: b9d31084206f7243d813e4555cea0598721b850b
     date:     18/05/2022
@@ -115,7 +115,7 @@ pages:
     date:     14/03/2022
 
   - title:    API интернационализации Rails (I18n)
-    path:     rails-internationalization-i18n-api
+    path:     i18n
     file:     i18n.md
     revision: 9af580d50eb927ac90bc662ab2181268adb6b152
     date:     08/04/2022
@@ -163,13 +163,13 @@ pages:
     date:     20/02/2021
 
   - title:    Тестирование приложений на Rails
-    path:     a-guide-to-testing-rails-applications
+    path:     testing
     file:     testing.md
     revision: 22ca875f9c80a3d648442b4fc30a0cf44bf6be00
     date:     05/04/2022
 
   - title:    Безопасность приложений на Rails
-    path:     ruby-on-rails-security-guide
+    path:     security
     file:     security.md
     revision: f22273a6bbdb466999d3c23c7b90325601116c45
     date:     17/11/2021
@@ -181,19 +181,19 @@ pages:
     date:     16/11/2021
 
   - title:    Конфигурирование приложений на Rails
-    path:     configuring-rails-applications
+    path:     configuring
     file:     configuring.md
     revision: 21a6dbd313efa9fb7feac4d95acaf6271112801f
     date:     14/06/2022
 
   - title:    Командная строка Rails
-    path:     a-guide-to-the-rails-command-line
+    path:     command-line
     file:     command_line.md
     revision: 0f2a97f6ca6d6718fae455ce6497d72aa7e184f6
     date:     01/06/2022
 
   - title:    'Кэширование с Rails: Обзор'
-    path:     caching-with-rails-an-overview
+    path:     caching-with-rails
     file:     caching_with_rails.md
     revision: 059d1d16ab4c7311a9f048fa6e14c35c4a292d22
     date:     16/05/2022
@@ -223,13 +223,13 @@ pages:
     date:     21/02/2022
 
   - title:    Автозагрузка и перезагрузка констант
-    path:     constant_autoloading_and_reloading
+    path:     autoloading-and-reloading-constants
     file:     autoloading_and_reloading_constants.md
     revision: 2ec2ee6899870bd8de358a4dba75b90cbbae3256
     date:     09/10/2021
 
   - title:    Как перейти с Classic на Zeitwerk
-    path:     classic_to_zeitwerk_howto
+    path:     classic-to-zeitwerk-howto
     file:     classic_to_zeitwerk_howto.md
     revision: 14940def0d908aae9a59f9ecf25b2f013026b925
     date:     01/11/2021

@@ -194,7 +194,7 @@ NOTE: Поскольку вы можете захотеть использова
 * `edit_geocoder_path` возвращает `/geocoder/edit`
 * `geocoder_path` возвращает `/geocoder`
 
-NOTE: Вызов `resolve` необходим для преобразования экземпляров `Geocoder` в маршруты через [идентификацию записи](/rails-form-helpers#relying-on-record-identification).
+NOTE: Вызов `resolve` необходим для преобразования экземпляров `Geocoder` в маршруты через [идентификацию записи](/form-helpers#relying-on-record-identification).
 
 Как и в случае с множественными ресурсами, те же хелперы, оканчивающиеся на `_url` также включают хост, порт и префикс пути.
 
@@ -715,7 +715,7 @@ match 'photos', to: 'photos#show', via: :all
 
 NOTE: Роутинг запросов `GET` и `POST` одновременно в один экшн небезопасен. В основном, следует избегать роутинг всех методов в экшн, если нет веской причины делать так.
 
-NOTE: `GET` в Rails не проверяет токен CSRF. Никогда не пишите в базу данных из `GET` запросов, подробнее о контрмерах CSRF смотрите в руководстве [Безопасность приложений на Rails](/ruby-on-rails-security-guide#csrf-countermeasures).
+NOTE: `GET` в Rails не проверяет токен CSRF. Никогда не пишите в базу данных из `GET` запросов, подробнее о контрмерах CSRF смотрите в руководстве [Безопасность приложений на Rails](/security#csrf-countermeasures).
 
 [`match`]: https://api.rubyonrails.org/classes/ActionDispatch/Routing/Mapper/Base.html#method-i-match
 

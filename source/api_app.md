@@ -121,7 +121,7 @@ class ApplicationController < ActionController::API
 end
 ```
 
-[`config.debug_exception_response_format`]: /configuring-rails-applications#config-debug-exception-response-format
+[`config.debug_exception_response_format`]: /configuring#config-debug-exception-response-format
 
 Выбор промежуточных программ
 ----------------------------
@@ -214,7 +214,7 @@ config.action_dispatch.x_sendfile_header = "X-Accel-Redirect"
 
 Убедитесь, что сконфигурировали на своем сервере поддержку этих опций в соответствии с инструкциями в документации `Rack::Sendfile`.
 
-[`config.action_dispatch.x_sendfile_header`]: /configuring-rails-applications#config-action-dispatch-x-sendfile-header
+[`config.action_dispatch.x_sendfile_header`]: /configuring#config-action-dispatch-x-sendfile-header
 
 ### Использование ActionDispatch::Request
 

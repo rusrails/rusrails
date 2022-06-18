@@ -413,7 +413,7 @@ end
 
 Если у получателя есть упорядочивание, то поведение зависит от флажка [`config.active_record.error_on_ignored_order`][]. Если true, вызывается `ArgumentError`, в противном случае упорядочивание игнорируется, что является поведением по умолчанию. Это можно переопределить с помощью опции `:error_on_ignore`, описанной ниже.
 
-[`config.active_record.error_on_ignored_order`]: /configuring-rails-applications#config-active-record-error-on-ignored-order
+[`config.active_record.error_on_ignored_order`]: /configuring#config-active-record-error-on-ignored-order
 [`find_each`]: https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each
 
 ##### Опции для `find_each`
@@ -564,7 +564,7 @@ Book.where("title = #{params[:title]}")
 
 по причине безопасности аргумента. Помещение переменной прямо в строку условий передает переменную в базу данных _как есть_. Это означает, что неэкранированная переменная, переданная пользователем, может иметь злой умысел. Если так сделать, вы подвергаете базу данных риску, так как если пользователь обнаружит, что он может использовать вашу базу данных, то он сможет сделать с ней что угодно. Никогда не помещайте аргументы прямо в строку условий!
 
-TIP: Подробнее об опасности SQL-инъекций можно узнать из руководства [Безопасность приложений на Rails](/ruby-on-rails-security-guide).
+TIP: Подробнее об опасности SQL-инъекций можно узнать из руководства [Безопасность приложений на Rails](/security).
 
 #### Местозаполнители в условиях
 
@@ -1320,7 +1320,7 @@ INNER JOIN suppliers ON suppliers.id = books.supplier_id
 
 #### Определение условий в соединительных таблицах
 
-В соединительных таблицах можно определить условия, используя обычные [массивные](/active-record-query-interface#array-conditions) и [строковые](/active-record-query-interface#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-query-interface#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
+В соединительных таблицах можно определить условия, используя обычные [массивные](/active-record-querying#array-conditions) и [строковые](/active-record-querying#pure-string-conditions) условия. [Условия с использованием хэша](/active-record-querying#hash-conditions) предоставляют специальный синтаксис для определения условий в соединительных таблицах:
 
 ```ruby
 time_range = (Time.now.midnight - 1.day)..Time.now.midnight

@@ -130,7 +130,7 @@ end
 # переопределяя тот, что был настроен в `config.active_job.queue_adapter`.
 ```
 
-[`config.active_job.queue_adapter`]: /configuring-rails-applications#config-active-job-queue-adapter
+[`config.active_job.queue_adapter`]: /configuring#config-active-job-queue-adapter
 
 ### Запуск бэкенда
 
@@ -248,8 +248,8 @@ ProcessVideoJob.perform_later(Video.last)
 
 NOTE: Убедитесь, что ваш бэкенд для очередей "слушает" имя вашей очереди. Для некоторых бэкендов необходимо указать очереди, которые нужно слушать.
 
-[`config.active_job.queue_name_delimiter`]: /configuring-rails-applications#config-active-job-queue-name-delimiter
-[`config.active_job.queue_name_prefix`]: /configuring-rails-applications#config-active-job-queue-name-prefix
+[`config.active_job.queue_name_delimiter`]: /configuring#config-active-job-queue-name-delimiter
+[`config.active_job.queue_name_prefix`]: /configuring#config-active-job-queue-name-prefix
 [`queue_as`]: https://api.rubyonrails.org/classes/ActiveJob/QueueName/ClassMethods.html#method-i-queue_as
 
 Колбэки
@@ -473,4 +473,4 @@ GlobalID позволяет сериализовать полностью объ
 Тестирование заданий
 --------------------
 
-Подробные инструкции о том, как тестировать ваши задания, можно найти в руководстве [Тестирование приложений на Rails](a-guide-to-testing-rails-applications#jobs-testing).
+Подробные инструкции о том, как тестировать ваши задания, можно найти в руководстве [Тестирование приложений на Rails](testing#jobs-testing).

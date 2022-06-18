@@ -27,7 +27,7 @@ Active Record предоставляет шифрование на уровне 
 
 ### Настройка
 
-Сначала необходимо добавить несколько ключей в ваши [учетные данные Rails](/ruby-on-rails-security-guide#custom-credentials). Запустите `bin/rails db:encryption:init` для генерации набора случайных ключей:
+Сначала необходимо добавить несколько ключей в ваши [учетные данные Rails](/security#custom-credentials). Запустите `bin/rails db:encryption:init` для генерации набора случайных ключей:
 
 ```bash
 $ bin/rails db:encryption:init
@@ -430,7 +430,7 @@ WARNING: Для хранения ключей рекомендуется исп�
 
 Когда true, имена шифруемых атрибутов автоматически добавляются в [`config.filter_parameters`][], которые не показываются в логах. По умолчанию: `true`.
 
-[`config.filter_parameters`]: /configuring-rails-applications#config-filter-parameters
+[`config.filter_parameters`]: /configuring#config-filter-parameters
 
 #### `config.active_record.encryption.excluded_from_filter_parameters`
 
