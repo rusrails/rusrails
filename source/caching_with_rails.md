@@ -25,7 +25,7 @@ Rails предоставляет набор функций кэшировани�
 
 NOTE: Изменение значения `config.action_controller.perform_caching` повлияет только на кэширование, предоставленное Action Controller. Например, это не повлияет на низкоуровневое кэширование, которое мы рассмотрим [ниже](#low-level-caching).
 
-[`config.action_controller.perform_caching`]: configuring.html#config-action-controller-perform-caching
+[`config.action_controller.perform_caching`]: /configuring#config-action-controller-perform-caching
 
 ### Кэширование страницы
 

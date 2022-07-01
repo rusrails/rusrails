@@ -1083,7 +1083,7 @@ config.filter_parameters << :password
 
 NOTE: Предоставленные параметры будут отфильтрованы с помощью частично соответствующего регулярного выражения. Rails добавляет список фильтров по умолчанию, включающий `:passw`, `:secret` и `:token`, в соответствующем инициализаторе (`initializers/filter_parameter_logging.rb`), чтобы обрабатывать типичные параметры приложения, такие как `password`, `password_confirmation` и `my_token`.
 
-[`config.filter_parameters`]: configuring.html#config-filter-parameters
+[`config.filter_parameters`]: /configuring#config-filter-parameters
 
 ### Фильтрация редиректов
 

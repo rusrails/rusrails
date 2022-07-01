@@ -648,7 +648,7 @@ config.action_cable.disable_request_forgery_protection = true
 
 Чтобы сконфигурировать URL, добавьте вызов [`action_cable_meta_tag`][] в макете HTML HEAD. Он использует URL или путь, обычно устанавливаемые с помощью [`config.action_cable.url`][] в файлах настройки среды.
 
-[`config.action_cable.url`]: configuring.html#config-action-cable-url
+[`config.action_cable.url`]: /configuring#config-action-cable-url
 [`action_cable_meta_tag`]: https://api.rubyonrails.org/classes/ActionCable/Helpers/ActionCableHelper.html#method-i-action_cable_meta_tag
 
 ### Настройка пула воркеров
@@ -702,7 +702,7 @@ end
 
 Для каждого экземпляра создаваемого сервера и для каждого воркера, порождаемого сервером, у вас также будет новый экземпляр Action Cable, но использование адаптеров Redis или PostgreSQL позволяет синхронизировать сообщения между соединениями.
 
-[`config.action_cable.mount_path`]: configuring.html#config-action-cable-mount-path
+[`config.action_cable.mount_path`]: /configuring#config-action-cable-mount-path
 
 ### Отдельное
 

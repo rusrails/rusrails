@@ -256,7 +256,7 @@ undefined method `mechanism=' for ActiveSupport::Dependencies:Module
 
 А также убедитесь, что [`config.cache_classes`][] установлен `false` в `config/environments/test.rb`.
 
-[`config.cache_classes`]: configuring.html#config-cache-classes
+[`config.cache_classes`]: /configuring#config-cache-classes
 
 ### Sprockets теперь опциональная зависимость
 
@@ -318,7 +318,7 @@ to be an error condition in future versions of Rails.
 
 Если вы установили эту настройку после того, как конфигурации для сред были обработаны, и получили `FrozenError`, просто переместите этот код.
 
-[`config.autoload_once_paths`]: configuring.html#config-autoload-once-paths
+[`config.autoload_once_paths`]: /configuring#config-autoload-once-paths
 
 ### `ActionDispatch::Request#content_type` теперь возвращает заголовок Content-Type как есть.
 
@@ -697,8 +697,8 @@ $ bin/rails webpacker:install
 
 Метод `force_ssl` для контроллеров устарел и будет убран в Rails 6.1. Рекомендуется включить [`config.force_ssl`][] для обеспечения подключения HTTPS во всем приложении. Если необходимо освободить определенные конечные точки от перенаправления, можно использовать [`config.ssl_options`][] для конфигурирования этого поведения.
 
-[`config.force_ssl`]: configuring.html#config-force-ssl
-[`config.ssl_options`]: configuring.html#config-ssl-options
+[`config.force_ssl`]: /configuring#config-force-ssl
+[`config.ssl_options`]: /configuring#config-ssl-options
 
 ### Для увеличения безопасности, метаданные о назначении и истечении теперь встроены в подписанные и зашифрованные куки
 
@@ -987,7 +987,7 @@ Bootsnap должен быть как минимум версии 1.4.2.
 
 Уходя от этого, вы оптимизируете поиск `$LOAD_PATH` (меньше директорий для проверки), и экономите работу Bootsnap и потребление памяти, поскольку ему не нужно строить индекс для этих директорий.
 
-[`config.add_autoload_paths_to_load_path`]: configuring.html#config-add-autoload-paths-to-load-path
+[`config.add_autoload_paths_to_load_path`]: /configuring#config-add-autoload-paths-to-load-path
 
 #### Тредобезопасность
 
@@ -1076,7 +1076,7 @@ user.highlights.second.filename # => "town.jpg"
 
 Существующие приложения могут включить это новое поведение установив [`config.active_storage.replace_on_assign_to_many`][] в `true`. Старое поведение будет устаревшим в Rails 7.0 и убрано в Rails 7.1.
 
-[`config.active_storage.replace_on_assign_to_many`]: configuring.html#config-active-storage-replace-on-assign-to-many
+[`config.active_storage.replace_on_assign_to_many`]: /configuring#config-active-storage-replace-on-assign-to-many
 
 (Upgrading from Rails 5.1 to Rails 5.2) Апгрейд с Rails 5.1 на Rails 5.2
 ------------------------------------------------------------------------
@@ -1404,7 +1404,7 @@ config.action_mailer.deliver_later_queue_name = :new_queue_name
 config.action_mailer.perform_caching = true
 ```
 
-[`config.action_mailer.perform_caching`]: configuring.html#config-action-mailer-perform-caching
+[`config.action_mailer.perform_caching`]: /configuring#config-action-mailer-perform-caching
 
 #### Настройка вывода `db:structure:dump`
 
@@ -2245,7 +2245,7 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 *   В Rails 4.0 устарел `ActionController::Response` в пользу `ActionDispatch::Response`.
 *   В Rails 4.0 устарел `ActionController::Routing` в пользу `ActionDispatch::Routing`.
 
-[`config.assets.precompile`]: configuring.html#config-assets-precompile
+[`config.assets.precompile`]: /configuring#config-assets-precompile
 
 ### Active Support
 
@@ -2272,7 +2272,7 @@ Rails 4.0 убрал псевдоним `j` для `ERB::Util#json_escape`, та
     config.assets.js_compressor = :uglifier
     ```
 
-[`config.assets.js_compressor`]: configuring.html#config-assets-js-compressor
+[`config.assets.js_compressor`]: /configuring#config-assets-js-compressor
 
 ### sass-rails
 

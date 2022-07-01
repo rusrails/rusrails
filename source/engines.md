@@ -1121,4 +1121,4 @@ module Blorgh
 end
 ```
 
-[`config.eager_load`]: configuring.html#config-eager-load
+[`config.eager_load`]: /configuring#config-eager-load

@@ -16,32 +16,29 @@ Asset Pipeline
 
 Файлопровод представляет фреймворк для соединения и минимизации или сжатия ассетов JavaScript и CSS. Он также добавляет возможность писать эти ассеты на других языках и препроцессорах, таких как CoffeeScript, Sass и ERB. Это позволяет автоматически комбинировать ассеты приложения с ассетами других гемов.
 
-Файлопровод реализован в геме [sprockets-rails](https://github.com/rails/sprockets-rails) и включен по умолчанию. Можно отключить файлопровод при создании нового приложения, передав опцию `--skip-sprockets`.
+Файлопровод реализован в геме [sprockets-rails](https://github.com/rails/sprockets-rails) и включен по умолчанию. Можно отключить файлопровод при создании нового приложения, передав опцию `--skip-asset-pipeline`.
 
 ```bash
-$ rails new appname --skip-sprockets
+$ rails new appname --skip-asset-pipeline
 ```
 
-Rails автоматически добавляет гем [`sass-rails`](https://github.com/rails/sass-rails) в ваш `Gemfile`, который используются Sprockets для компиляции [Sass](https://sass-lang.com):
+В Rails может с легкостью работать с Sass, добавив гем [`sassc-rails`](https://github.com/rails/sass-rails) в ваш `Gemfile`, который используются Sprockets для компиляции [Sass](https://sass-lang.com):
 
 ```ruby
-gem 'sass-rails'
+gem 'sassc-rails'
 ```
 
-Использование опции `--skip-sprockets` предотвратит Rails от добавления этого гема, поэтому, если вы позже решите включить файлопровод, будет необходимо добавить его в `Gemfile` вручную. Так же создание приложения с опцией `--skip-sprockets` сгенерирует немного иной файл `config/application.rb`, с закомментированным выражением требования sprockets railtie. Необходимо раскомментировать эту строчку, чтобы в дальнейшем включить файлопровод:
-
-```ruby
-# require "sprockets/railtie"
-```
-
-Чтобы установить методы компрессии ассетов, установите соответствующие конфигурационные опции в `production.rb` - `config.assets.css_compressor` для CSS и `config.assets.js_compressor` для JavaScript:
+Чтобы установить методы компрессии ассетов, установите соответствующие конфигурационные опции в `production.rb` - [`config.assets.css_compressor`][] для CSS и [`config.assets.js_compressor`][] для JavaScript:
 
 ```ruby
 config.assets.css_compressor = :yui
-config.assets.js_compressor = :uglifier
+config.assets.js_compressor = :terser
 ```
 
-NOTE: Гем `sass-rails` автоматически используется для сжатия CSS, если он подключен в `Gemfile`, опцию `config.assets.css_compressor` устанавливать не нужно.
+NOTE: Гем `sassc-rails` автоматически используется для сжатия CSS, если он подключен в `Gemfile`, опцию `config.assets.css_compressor` устанавливать не нужно.
+
+[`config.assets.css_compressor`]: /configuring#config-assets-css-compressor
+[`config.assets.js_compressor`]: /configuring#config-assets-js-compressor
 
 ### Основные особенности
 
@@ -89,21 +86,25 @@ global-908e25f4bf641868d8683022a5b62f54.css
 
 Метки исправляют эти проблемы, избегая строки запроса и обеспечивая то, что имя файла основывается на его содержимом.
 
-По умолчанию метки включены для сред development и production. Их можно включить или отключить в конфигурации с помощью опции `config.assets.digest`.
+По умолчанию метки включены для сред development и production. Их можно включить или отключить в конфигурации с помощью опции [`config.assets.digest`][].
 
 Более подробно:
 
 * [Optimize caching](https://developers.google.com/speed/docs/insights/LeverageBrowserCaching)
 * [Revving Filenames: don't use querystring](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/)
 
+[`config.assets.digest`]: /configuring#config-assets-digest
+
 (how-to-use-the-asset-pipeline) Как использовать файлопровод (Asset Pipeline)
 -----------------------------------------------------------------------------
 
 В прежних версиях Rails, все ассеты были расположены в поддиректориях `public`, таких как `images`, `javascripts` и `stylesheets`. Сейчас, с файлопроводом, предпочтительным местом расположения для этих ассетов стала директория `app/assets`. Файлы в этой директории отдаются промежуточной программой Sprockets.
 
-Ассеты все еще могут быть размещены в `public`. Любой ассет в `public` будет отдан как статичный файл приложением или веб-сервером, когда `config.public_file_server.enabled` установлена true. Следует использовать `app/assets` для файлов, которые должны пройти некоторую предварительную обработку перед тем, как будут отданы.
+Ассеты все еще могут быть размещены в `public`. Любой ассет в `public` будет отдан как статичный файл приложением или веб-сервером, когда [`config.public_file_server.enabled`][] установлена true. Следует использовать `app/assets` для файлов, которые должны пройти некоторую предварительную обработку перед тем, как будут отданы.
 
 По умолчанию в production Rails прекомпилирует эти файлы в `public/assets`. Прекомпилированные копии затем отдаются веб-сервером как статичные ассеты. Файлы в `app/assets` никогда не отдаются напрямую в production.
+
+[`config.public_file_server.enabled`]: /configuring#config-public-file-server-enabled
 
 ### Ассеты конкретного контроллера
 
@@ -120,14 +121,6 @@ global-908e25f4bf641868d8683022a5b62f54.css
 WARNING: При использовании прекомпиляции ассетов, необходимо убедиться, что ассеты контроллера будут прекомпилированы при варианте загрузки их на основе страницы. По умолчанию файлы `.coffee` и `.scss` не будут прекомпилированы отдельно. Смотрите [Прекомпиляция ассетов](#in-production) о подробностях работы прекомпиляции.
 
 NOTE: Вам необходим runtime, поддерживаемый ExecJS, чтобы использовать CoffeeScript. Если используете macOS или Windows, у вас уже имеется JavaScript runtime, установленный в операционной системе. Обратитесь к документации по [ExecJS](https://github.com/rails/execjs#readme), чтобы узнать обо всех поддерживаемых JavaScript runtime-ах.
-
-Отключить генерацию ассетов при генерации контроллера можно, добавив следующее в конфигурацию `config/application.rb`:
-
-```ruby
-  config.generators do |g|
-    g.assets false
-  end
-```
 
 ### Организация ассетов
 
@@ -175,7 +168,7 @@ app/assets/javascripts/sub/something.js
 //= require sub/something
 ```
 
-Можно просмотреть путь поиска, проинспектировав `Rails.application.config.assets.paths` в консоли Rails.
+Можно просмотреть путь поиска, проинспектировав [`Rails.application.config.assets.paths`][`config.assets.paths`] в консоли Rails.
 
 Помимо стандартных путей `assets/*` в файлопровод могут быть добавлены дополнительные (полностью ограниченные) пути в `config/initializers/assets.rb`. Например:
 
@@ -186,6 +179,8 @@ Rails.application.config.assets.paths << Rails.root.join("lib", "videoplayer", "
 Пути обходятся в том порядке, в котором они выводятся в пути поиска. По умолчанию это означает, что имеют преимущество файлы в `app/assets`, они перекроют соответствующие пути в `lib` и `vendor`.
 
 Важно заметить, что если хотите сослаться на что-то еще, в прекомпилированный массив должен быть добавлен манифест, или оно не будет доступно в среде production.
+
+[`config.assets.paths`]: /configuring#config-assets-paths
 
 #### Использование индексных файлов
 
@@ -210,11 +205,11 @@ Sprockets не добавляет какие-либо новые методы д
 <%= javascript_include_tag "application" %>
 ```
 
-При использовании гема turbolinks, который включен по умолчанию в Rails, включите опцию 'data-turbolinks-track', которая вызывает проверку turbolinks, что ассет был обновлен, таким образом загружая его на страницу:
+При использовании гема turbolinks, который включен по умолчанию в Rails, включите опцию 'data-turbo-track', которая вызывает проверку Turbo, что ассет был обновлен, таким образом загружая его на страницу:
 
 ```erb
-<%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => "reload" %>
-<%= javascript_include_tag "application", "data-turbolinks-track" => "reload" %>
+<%= stylesheet_link_tag "application", media: "all", "data-turbo-track" => "reload" %>
+<%= javascript_include_tag "application", "data-turbo-track" => "reload" %>
 ```
 
 В обычных вью можно получить доступ к изображениям в директории `app/assets/images` следующим образом:
@@ -227,7 +222,7 @@ Sprockets не добавляет какие-либо новые методы д
 
 Кроме того, запрос файла с хэшем SHA256, такого как `public/assets/rails-f90d8a84c707a8dc923fca1ca1895ae8ed0a09237f6992015fef1e11be77c023.png` будет обработан тем же образом. Как генерируются эти хэши будет раскрыто позже в этом руководстве в разделе [В production](#in-production).
 
-Sprockets также будет смотреть среди путей, определенных в `config.assets.paths`, включающих стандартные пути приложения и любые пути, добавленные engine-ами Rails.
+Sprockets также будет смотреть среди путей, определенных в [`config.assets.paths`][], включающих стандартные пути приложения и любые пути, добавленные engine-ами Rails.
 
 Изображения также могут быть организованы в поддиректории и могут быть доступны с помощью указания имени директории в теге:
 
@@ -307,7 +302,7 @@ Rails также создает дефолтный файл `app/assets/styleshe
  */
 ```
 
-Rails создает `app/assets/stylesheets/application.css` независимо от того, была ли выбрана опция `--skip-sprockets` при создании нового приложения Rails. Это для того, чтобы было легко добавить файлопровод в будущем, если захотите.
+Rails создает `app/assets/stylesheets/application.css` независимо от того, была ли выбрана опция `--skip-asset-pipeline` при создании нового приложения Rails. Это для того, чтобы было легко добавить файлопровод в будущем, если захотите.
 
 Директивы, работающие в файлах JavaScript, также работают в таблицах стилей (хотя, очевидно, включая таблицы стилей вместо JavaScript). В манифесте CSS директива `require_tree` работает так же, как и для JavaScript, включающая все таблицы стилей из текущей директории.
 
@@ -342,7 +337,7 @@ NOTE. Если хотите использовать несколько файл
 (in-development) В development
 ------------------------------
 
-В режиме development ассеты отдаются как отдельные файлы в порядке, в котором они определены в файле манифеста.
+В режиме development ассеты отдаются как соединенный файл.
 
 Этот манифест `app/assets/javascripts/application.js`:
 
@@ -355,12 +350,8 @@ NOTE. Если хотите использовать несколько файл
 сгенерирует этот HTML:
 
 ```html
-<script src="/assets/core.js?body=1"></script>
-<script src="/assets/projects.js?body=1"></script>
-<script src="/assets/tickets.js?body=1"></script>
+<script src="/assets/application-728742f3b9daa182fe7c831f6a3b8fa87609b4007fdc2f87c134a07b19ad93fb.js"></script>
 ```
-
-Параметр `body` требуется Sprockets.
 
 ### Вызов ошибки, если ассет не найден
 
@@ -372,7 +363,7 @@ config.assets.unknown_asset_fallback = false
 
 Если "asset fallback" включен, тогда, когда ассет не может быть найден, вместо этого будет выведен путь, а не вызвана ошибка. Поведение "asset fallback" выключено по умолчанию.
 
-### Отключение дайджестов
+### Включение  дайджестов
 
 Можно отключить дайджесты, добавив в `config/environments/development.rb`:
 
@@ -382,34 +373,19 @@ config.assets.digest = false
 
 Когда эта опция true, для URL ассета будет генерироваться дайджест.
 
-### Отключение отладки
+### Включение карт исходников
 
-Можно отключить режим отладки, обновив `config/environments/development.rb`, вставив:
+Можно включить карты исходников, добавив в `config/environments/development.rb`:
 
 ```ruby
-config.assets.debug = false
+config.assets.debug = true
 ```
 
-Когда режим отладки отключен, Sprockets соединяет все файлы и запускает необходимые препроцессоры. С отключенным режимом отладки вышеуказанный манифест сгенерирует:
-
-```html
-<script src="/assets/application.js"></script>
-```
+Когда включена отладка, Sprockets сгенерирует карту исходников для каждого ассета. Это позволит вам отлаживать каждый файл по отдельности в средствах разработчика вашего браузера.
 
 Ассеты компилируются и кэшируются при первом запросе после запуска сервера. Sprockets устанавливает HTTP-заголовок контроля кэша `must-revalidate` для уменьшения нагрузки на последующие запросы - на них браузер получает отклик 304 (Not Modified).
 
-Если какой-либо из файлов в манифесте изменился между запросами, сервер возвращает новый скомпилированный файл.
-
-Режим отладки также может быть включен в методе хелпера Rails:
-
-```erb
-<%= stylesheet_link_tag "application", debug: true %>
-<%= javascript_include_tag "application", debug: true %>
-```
-
-Опция `:debug` излишняя, если режим отладки всегда включен.
-
-Также можно включить сжатие в режиме development в качестве проверки на нормальность и отключать его по требованию, когда необходимо для отладки.
+Если какой-либо из файлов в манифесте меняется между запросами, сервер возвращает новый скомпилированный файл.
 
 (in-production) В production
 ----------------------------
@@ -434,7 +410,7 @@ config.assets.debug = false
 
 NOTE: с Asset Pipeline опции `:cache` и `:concat` больше не используются, удалите эти опции из `javascript_include_tag` и `stylesheet_link_tag`.
 
-Режим меток контролируется с помощью инициализационной опции `config.assets.digest` (которая по умолчанию `true`).
+Режим меток контролируется с помощью инициализационной опции  [`config.assets.digest`][] (которая по умолчанию `true`).
 
 NOTE: В нормальных обстоятельствах опция `config.assets.digest` по умолчанию не должна изменяться. Если нет дайджеста в именах файлов и установлены заголовки с вечным кэшированием, удаленные клиенты никогда не узнают, когда перезапросить файлы при изменении их содержимого.
 
@@ -442,7 +418,7 @@ NOTE: В нормальных обстоятельствах опция `config.
 
 В Rails имеется встроенная команда для компиляции на диск манифестов ассетов и других файлов в файлопроводе.
 
-Скомпилированные ассеты записываются в место расположения, указанное в `config.assets.prefix`. По умолчанию это директория `/assets`.
+Скомпилированные ассеты записываются в место расположения, указанное в [`config.assets.prefix`][]. По умолчанию это директория `/assets`.
 
 Эту команду можно вызвать на сервере во время деплоя, чтобы создать скомпилированные версии ассетов непосредственно на сервере. Смотрите следующий раздел, чтобы узнать о том, как скомпилировать локально.
 
@@ -493,6 +469,8 @@ NOTE. Всегда определяйте ожидаемое имя скомпи
 Место расположения манифеста по умолчанию - корень папки, определенной в `config.assets.prefix` (по умолчанию '/assets').
 
 NOTE: Если в production отсутствуют прекомпилированные файлы, вы получите исключение `Sprockets::Helpers::RailsHelper::AssetPaths::AssetNotPrecompiledError`, указывающее имя отсутствующего файла(-ов).
+
+[`config.assets.prefix`]: /configuring#config-assets-prefix
 
 #### Вечный заголовок Expires
 
@@ -583,7 +561,7 @@ CDN расшифровывается как [Content Delivery Network](https://r
 
 Для настройки CDN вам нужно, чтобы ваше приложение было запущено в production в интернете на публично доступном URL, например `example.com`. Далее необходимо зарегистрироваться на сервисе CDN облачного провайдера. После этого необходимо настроить "origin" для CDN, указав ваш сайт `example.com`, по документации провайдера по настройке origin-сервера.
 
-Подготовленный CDN даст определенный поддомен для вашего приложения, такой как `mycdnsubdomain.fictional-cdn.com` (отметьте, что fictional-cdn.com это не существующий провайдер CDN в настоящее время). Теперь, когда есть настроенный сервер CDN, необходимо сообщить браузерам использовать ваш CDN для того, чтобы брать ассеты оттуда, а не от сервера Rails. Это можно осуществить, настроив Rails, установив ваш CDN в качестве хоста ассетов, вместо использования относительного пути. Для настройки хоста ассетов в Rails, необходимо установить `config.asset_host` в `config/environments/production.rb`:
+Подготовленный CDN даст определенный поддомен для вашего приложения, такой как `mycdnsubdomain.fictional-cdn.com` (отметьте, что fictional-cdn.com это не существующий провайдер CDN в настоящее время). Теперь, когда есть настроенный сервер CDN, необходимо сообщить браузерам использовать ваш CDN для того, чтобы брать ассеты оттуда, а не от сервера Rails. Это можно осуществить, настроив Rails, установив ваш CDN в качестве хоста ассетов, вместо использования относительного пути. Для настройки хоста ассетов в Rails, необходимо установить [`config.asset_host`][] в `config/environments/production.rb`:
 
 ```ruby
 config.asset_host = 'mycdnsubdomain.fictional-cdn.com'
@@ -599,25 +577,24 @@ config.asset_host = ENV['CDN_HOST']
 
 NOTE: Чтобы это работало, вам необходимо установить на сервере `CDN_HOST` значение `mycdnsubdomain.fictional-cdn.com`.
 
-После того, как вы настроили свой сервер и ваш CDN, когда вы отдаете страницу, содержащую ассет:
+После того, как вы настроили свой сервер и ваш CDN, пути ассета из хелперов такие как:
 
 ```erb
 <%= asset_path('smile.png') %>
 ```
 
-Вместо того, чтобы вернуть путь, такой как `/assets/smile.png` (дайджесты опущены для читаемости), сгенерированный URL будет содержать полный путь к вашему CDN.
-
-```
-http://mycdnsubdomain.fictional-cdn.com/assets/smile.png
-```
+Будут отрендерены полные пути к CDN, наподобие `http://mycdnsubdomain.fictional-cdn.com/assets/smile.png` (дайджест опущен для читаемости).
 
 Если на CDN имеется копия `smile.png`, она будет отдана браузеру, и ваш сервер даже не узнает, что она была запрошена. Если на CDN нет копии, он попытается найти ее на "origin" `example.com/assets/smile.png`, а затем сохранить ее для дальнейшего использования.
 
-Если хотите отдавать только некоторые ассеты из CDN, можно использовать опцию `:host` в хелпере ассета, переопределяющую значение, установленное в `config.action_controller.asset_host`.
+Если хотите отдавать только некоторые ассеты из CDN, можно использовать опцию `:host` в хелпере ассета, переопределяющую значение, установленное в [`config.action_controller.asset_host`][].
 
 ```erb
 <%= asset_path 'image.png', host: 'mycdnsubdomain.fictional-cdn.com' %>
 ```
+
+[`config.action_controller.asset_host`]: /configuring#config-action-controller-asset-host
+[`config.asset_host`]: /configuring#config-asset-host
 
 #### Настройка поведения кэширования CDN
 
@@ -720,9 +697,9 @@ config.assets.css_compressor = :sass
 
 ### Сжатие JavaScript
 
-Возможные варианты для сжатия JavaScript это `:terser`, `:closure`, `:uglifier` and `:yui`. Они требуют использование гемов `terser`, `closure-compiler`, `uglifier` или `yui-compressor` соответственно.
+Возможные варианты для сжатия JavaScript это `:terser`, `:closure` и `:yui`. Они требуют использование гемов `terser`, `closure-compiler` или `yui-compressor` соответственно.
 
-Возьмем, к примеру, гем `terser`. Этот гем оборачивает [Terser](https://github.com/terser/terser) (написанный для NodeJS) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
+Возьмем, к примеру, гем `terser`. Этот гем оборачивает [Terser](https://github.com/terser/terser) (написанный для Node.js) в Ruby. Он сжимает ваш код, убирая пробелы и комментарии, сокращая имена локальных переменных и выполняя иные микро-оптимизации, наподобие замены ваших выражений `if` и `else` на тернарные операторы там, где возможно.
 
 Следующая строчка вызывает `terser` для сжатия JavaScript.
 
