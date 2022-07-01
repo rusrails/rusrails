@@ -159,8 +159,8 @@ pages:
   - title:    Webpacker
     path:     webpacker
     file:     webpacker.md
-    revision: 6d0773a468a1f45e7f35ddfe44af48adeaf0ca76
-    date:     20/02/2021
+    revision: e40871e59577f3ca568670605b41c2c3241393e6
+    date:     20/01/2022
 
   - title:    Тестирование приложений на Rails
     path:     testing
