@@ -27,8 +27,8 @@ Active Storage облегчает загрузку файлов в облачн�
 
 Разные особенности Active Storage зависят от стороннего программного обеспечения, которое Rails не устанавливает, и которое должно быть установлено отдельно:
 
-* [ImageMagick](https://imagemagick.org/index.php) или [libvips](https://github.com/libvips/libvips) v8.6+ для анализа и трансформаций изображений
-* [ffmpeg](http://ffmpeg.org/) v3.4+ для анализа видео/аудио и предпросмотра видео
+* [libvips](https://github.com/libvips/libvips) v8.6+ или [ImageMagick](https://imagemagick.org/index.php) для анализа и трансформаций изображений
+* [ffmpeg](http://ffmpeg.org/) v3.4+ для предпросмотра видео и ffprobe для анализа видео/аудио
 * [poppler](https://poppler.freedesktop.org/) или [muPDF](https://mupdf.com/) для предпросмотра PDF
 
 Анализ и преобразования изображений также требуют гем `image_processing`. Раскомментируйте его в своем `Gemfile`, или добавьте:
@@ -192,7 +192,7 @@ azure:
 Кроме того, необходимо добавить гем [`azure-storage-blob`](https://github.com/Azure/azure-storage-ruby) в `Gemfile`:
 
 ```ruby
-gem "azure-storage-blob", require: false
+gem "azure-storage-blob", "~> 2.0", require: false
 ```
 
 ### Сервис Google Cloud Storage
@@ -389,7 +389,7 @@ end
 ```ruby
 class User < ApplicationRecord
   has_one_attached :avatar do |attachable|
-    attachable.variant :thumb, resize: "100x100"
+    attachable.variant :thumb, resize_to_limit: [100, 100]
   end
 end
 ```
@@ -463,7 +463,7 @@ end
 ```ruby
 class Message < ApplicationRecord
   has_many_attached :images do |attachable|
-    attachable.variant :thumb, resize: "100x100"
+    attachable.variant :thumb, resize_to_limit: [100, 100]
   end
 end
 ```
@@ -524,9 +524,7 @@ WARNING: Все контроллеры Active Storage по умолчанию д
 
 ### Режим перенаправления
 
-Чтобы сгенерировать постоянный URL для бинарного объекта, можно передать этот объект в хелпер вью [`url_for`][ActionView::RoutingUrlFor#url_for]. Это создаст URL с [`signed_id`][ActiveStorage::Blob#signed_id] бинарного объекта, который направляет в [`RedirectController`][ActiveStorage::Blobs::RedirectController] для бинарного объекта.
-
-[ActiveStorage::Blobs::RedirectController]: https://github.com/rails/rails/blob/main/activestorage/app/controllers/active_storage/blobs/redirect_controller.rb
+Чтобы сгенерировать постоянный URL для бинарного объекта, можно передать этот объект в хелпер вью [`url_for`][ActionView::RoutingUrlFor#url_for]. Это создаст URL с [`signed_id`][ActiveStorage::Blob#signed_id] бинарного объекта, который направляет в [`RedirectController`][`ActiveStorage::Blobs::RedirectController`] для бинарного объекта.
 
 ```ruby
 url_for(user.avatar)
@@ -578,15 +576,17 @@ Rails.application.config.active_storage.resolve_model_to_route = :rails_storage_
 ```ruby
 # config/routes.rb
 direct :cdn_image do |model, options|
+  expires_in = options.delete(:expires_in) { ActiveStorage.urls_expire_in }
+
   if model.respond_to?(:signed_id)
     route_for(
       :rails_service_blob_proxy,
-      model.signed_id,
+      model.signed_id(expires_in: expires_in),
       model.filename,
       options.merge(host: ENV['CDN_HOST'])
     )
   else
-    signed_blob_id = model.blob.signed_id
+    signed_blob_id = model.blob.signed_id(expires_in: expires_in)
     variation_key  = model.variation.key
     filename       = model.blob.filename
 
@@ -645,10 +645,10 @@ config.active_storage.draw_routes = false
 
 чтобы предотвратить доступ к файлам с помощью публично доступных URL.
 
-[`ActiveStorage::Blobs::RedirectController`]: https://github.com/rails/rails/blob/main/activestorage/app/controllers/active_storage/blobs/redirect_controller.rb
-[`ActiveStorage::Blobs::ProxyController`]: https://github.com/rails/rails/blob/main/activestorage/app/controllers/active_storage/blobs/proxy_controller.rb
-[`ActiveStorage::Representations::RedirectController`]: https://github.com/rails/rails/blob/main/activestorage/app/controllers/active_storage/representations/redirect_controller.rb
-[`ActiveStorage::Representations::ProxyController`]: https://github.com/rails/rails/blob/main/activestorage/app/controllers/active_storage/representations/proxy_controller.rb
+[`ActiveStorage::Blobs::RedirectController`]: https://api.rubyonrails.org/classes/ActiveStorage/Blobs/RedirectController.html
+[`ActiveStorage::Blobs::ProxyController`]: https://api.rubyonrails.org/classes/ActiveStorage/Blobs/ProxyController.html
+[`ActiveStorage::Representations::RedirectController`]: https://api.rubyonrails.org/classes/ActiveStorage/Representations/RedirectController.html
+[`ActiveStorage::Representations::ProxyController`]: https://api.rubyonrails.org/classes/ActiveStorage/Representations/ProxyController.html
 
 Скачивание файлов
 -----------------
@@ -726,7 +726,7 @@ image_tag file.representation(resize_to_limit: [100, 100])
 image_tag file.representation(resize_to_limit: [100, 100]).processed.url
 ```
 
-Отслеживание вариантов Active Storage улучшает производительность этого, сохраняя запись в базе данных, если запрашиваемое представление уже было обработано ранее. Таким образом, вышеприведенных код сделает вызов API к удаленному сервису (например, S3) только единожды, и как только вариант сохранится, будет использовать его. Отслеживание вариантов запускается автоматически, но может быть отключено с помощью `config.active_storage.track_variants`.
+Отслеживание вариантов Active Storage улучшает производительность этого, сохраняя запись в базе данных, если запрашиваемое представление уже было обработано ранее. Таким образом, вышеприведенных код сделает вызов API к удаленному сервису (например, S3) только единожды, и как только вариант сохранится, будет использовать его. Отслеживание вариантов запускается автоматически, но может быть отключено с помощью [`config.active_storage.track_variants`][].
 
 Если вы рендерите множество изображений на странице, вышеприведенный пример может привести к N+1 запросам, загружающим все записи вариантов. Чтобы избежать этих  N+1 запросов, используйте именованные скоупы на [`ActiveStorage::Attachment`][].
 
@@ -736,6 +736,7 @@ message.images.with_all_variant_records.each do |file|
 end
 ```
 
+[`config.active_storage.track_variants`]: /configuring#config-active-storage-track-variants
 [`ActiveStorage::Representations::RedirectController`]: https://api.rubyonrails.org/classes/ActiveStorage/Representations/RedirectController.html
 [`ActiveStorage::Attachment`]: https://api.rubyonrails.org/classes/ActiveStorage/Attachment.html
 
@@ -749,13 +750,15 @@ end
 <%= image_tag user.avatar.variant(resize_to_limit: [100, 100]) %>
 ```
 
-Процессором по умолчанию для Active Storage является MiniMagick, но также можно использовать [Vips][]. Чтобы переключиться на Vips, добавьте следующее в `config/application.rb`:
+Если запрошен вариант, Active Storage автоматически применит трансформации, в зависимости от формата изображения:
 
-```ruby
-config.active_storage.variant_processor = :vips
-```
+1. Переменные типы изображения (указанны в [`config.active_storage.variable_content_types`][]) и не рассматриваемые веб-изображениями (указаны в  [`config.active_storage.web_image_content_types`][]), будут преобразованы в PNG.
 
-Эти два процессора не полностью совместимы, поэтому при миграции существующего приложения, использующего MiniMagick, на Vips, нужно сделать несколько изменений при использовании специфичных опций форматирования:
+2. Если не указано `quality`, для форматирования будет использовано качество по умолчанию обработчика варианта.
+
+Active Storage может использовать либо [Vips][], либо MiniMagick в качестве обработчика варианта. Умолчания зависит от целевой версии вашей `config.load_defaults`, и обработчик может быть изменен, устанавливая [`config.active_storage.variant_processor`][].
+
+Эти два процессора не полностью совместимы, поэтому при миграции существующего приложения между MiniMagick и Vips, нужно сделать несколько изменений при использовании специфичных опций форматирования:
 
 ```rhtml
 <!-- MiniMagick -->
@@ -765,6 +768,9 @@ config.active_storage.variant_processor = :vips
 <%= image_tag user.avatar.variant(resize_to_limit: [100, 100], format: :jpeg, saver: { subsample_mode: "on", strip: true, interlace: true, quality: 80 }) %>
 ```
 
+[`config.active_storage.variable_content_types`]: /configuring#config-active-storage-variable-content-types
+[`config.active_storage.variant_processor`]: /configuring#config-active-storage-variant-processor
+[`config.active_storage.web_image_content_types`]: /configuring#config-active-storage-web-image-content-types
 [`variant`]: https://api.rubyonrails.org/classes/ActiveStorage/Blob/Representable.html#method-i-variant
 [Vips]: https://www.rubydoc.info/gems/ruby-vips/Vips/Image
 
@@ -1231,7 +1237,7 @@ end
 Реализация поддержки других облачных сервисов
 ---------------------------------------------
 
-Если необходимо поддерживать облачный сервис, отличный от имеющихся, необходимо реализовать Service. Каждый сервис расширяет [`ActiveStorage::Service`](https://github.com/rails/rails/blob/main/activestorage/lib/active_storage/service.rb), реализуя методы, требуемые для загрузки и скачивания файлов в облако.
+Если необходимо поддерживать облачный сервис, отличный от имеющихся, необходимо реализовать Service. Каждый сервис расширяет [`ActiveStorage::Service`](https://api.rubyonrails.org/classes/ActiveStorage/Service.html), реализуя методы, требуемые для загрузки и скачивания файлов в облако.
 
 (Purging Unattached Uploads) Очистка неприкрепленных загрузок
 -------------------------------------------------------------

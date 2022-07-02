@@ -147,8 +147,8 @@ pages:
   - title:    Обзор Active Storage
     path:     active_storage_overview
     file:     active_storage_overview.md
-    revision: ac87404bf8ca8d2edd264c31d2f431e428fcc078
-    date:     13/07/2021
+    revision: 3dad2919d58f56d46d87cd2712060fca9af79950
+    date:     26/05/2022
 
   - title:    Обзор Action Cable
     path:     action-cable-overview
