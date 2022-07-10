@@ -21,12 +21,14 @@ WIP: Тут перечислены не все хелперы. За полным
 
 Этот модуль предоставляет методы для генерации HTML, связывающего вью с файлами, такими как картинки, файлы JavaScript, таблицы стилей и новостные ленты.
 
-По умолчанию Rails ссылается на эти файлы на текущем хосте в папке public, но можно направить Rails ссылаться на файлы на выделенном сервере файлов, установив `config.asset_host` в конфигурации приложения, обычно в `config/environments/production.rb`. Например, допустим хост ваших файлов `assets.example.com`:
+По умолчанию Rails ссылается на эти файлы на текущем хосте в папке public, но можно направить Rails ссылаться на файлы на выделенном сервере файлов, установив [`config.asset_host`][] в конфигурации приложения, обычно в `config/environments/production.rb`. Например, допустим хост ваших файлов `assets.example.com`:
 
 ```ruby
 config.asset_host = "assets.example.com"
 image_tag("rails.png") # => <img src="http://assets.example.com/images/rails.png" />
 ```
+
+[`config.asset_host`]: /configuring#config-asset-host
 
 #### auto_discovery_link_tag
 
@@ -342,8 +344,8 @@ number_to_human(1234567) # => 1.23 Million
 Форматирует размер в байтах в более понятное представление; полезно для показа размеров файла пользователям.
 
 ```ruby
-number_to_human_size(1234)    # => 1.2 KB
-number_to_human_size(1234567) # => 1.2 MB
+number_to_human_size(1234)    # => 1.21 KB
+number_to_human_size(1234567) # => 1.18 MB
 ```
 
 #### number_to_percentage

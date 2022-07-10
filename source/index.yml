@@ -81,8 +81,8 @@ pages:
   - title:    Хелперы Action View
     path:     action-view-helpers
     file:     action_view_helpers.md
-    revision: 24d16157895e0ed5882c8daaa007688f17344949
-    date:     12/02/2021
+    revision: c7303ccc31cd82e2f4ca54c7b05984249127e4e9
+    date:     12/02/2022
 
   - title:    Хелперы форм в Action View
     path:     form-helpers
