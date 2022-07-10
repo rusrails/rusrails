@@ -219,6 +219,12 @@ user.update(name: 'Dave')
 User.update_all "max_login_attempts = 3, must_change_password = 'true'"
 ```
 
+Это то же самое, если бы вы написали:
+
+```ruby
+User.update(:all, max_login_attempts: 3, must_change_password: true)
+```
+
 ### Удаление
 
 Более того, после получения, объект Active Record может быть уничтожен, что уберет его из базы данных.
@@ -272,19 +278,17 @@ ActiveRecord::RecordInvalid: Validation failed: Name can't be blank
 Rails предоставляет DSL для управления схемой базы данных, называемый миграциями. Миграции хранятся в файлах, выполняемых для любой базы данных, которую поддерживает Active Record, с использованием `rake`. Вот миграция, создающая таблицу:
 
 ```ruby
-class CreatePublications < ActiveRecord::Migration[6.0]
+class CreatePublications < ActiveRecord::Migration[7.1]
   def change
     create_table :publications do |t|
       t.string :title
       t.text :description
       t.references :publication_type
-      t.integer :publisher_id
-      t.string :publisher_type
+      t.references :publisher, polymorphic: true
       t.boolean :single_issue
 
       t.timestamps
     end
-    add_index :publications, :publication_type_id
   end
 end
 ```

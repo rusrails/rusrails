@@ -21,8 +21,8 @@ pages:
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: 0b2a8c2b9f89e5339e0e3befc12af354d40c9aea
-    date:     21/02/2021
+    revision: d0f07d7abd6c8b71bdb30205539595b2ba154c91
+    date:     03/07/2022
 
   - title:    Миграции Active Record
     path:     active-record-migrations
