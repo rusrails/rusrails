@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.6.6'
 
-gem 'rails', " ~> 6.0.4"
+gem 'rails', " ~> 6.0.5"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 gem "bootsnap", ">= 1.1.0", require: false
