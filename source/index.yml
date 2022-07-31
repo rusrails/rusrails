@@ -15,8 +15,8 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started
     file:     getting_started.md
-    revision: 4f08d9d7533afc240b8ad4dcd15a390cf5fd2d1d
-    date:     16/12/2021
+    revision: 8ae17b2afc9de83f1bc34f92eaf6d5c042ca0847
+    date:     29/07/2022
 
   - title:    Основы Active Record
     path:     active-record-basics
