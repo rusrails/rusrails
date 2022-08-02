@@ -309,8 +309,8 @@ pages:
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
     file:     maintenance_policy.md
-    revision: 1b455e2e9d6937d4107e19cb32e2f98aa08886b9
-    date:     04/02/2021
+    revision: 8a042d827e12998abd164e6db44e5a218e9455ab
+    date:     05/01/2022
 
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
