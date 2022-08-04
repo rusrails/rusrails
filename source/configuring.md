@@ -63,6 +63,8 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.action_controller.allow_deprecated_parameters_hash_equality`](#config-action-controller-allow-deprecated-parameters-hash-equality): `false`
 - [`config.log_file_size`](#config-log-file-size): `100.megabytes`
 - [`config.active_record.sqlite3_adapter_strict_strings_by_default`](#config-active-record-sqlite3-adapter-strict-strings-by-default): `false`
+- [`config.active_record.allow_deprecated_singular_associations_name`](#config-active-record-allow-deprecated-singular-associations-name): `false`
+- [`config.active_job.use_big_decimal_serializer`](#config-active-job-use-big-decimal-serializer): `false`
 
 #### Значения по умолчанию для целевой версии 7.0
 
@@ -91,7 +93,6 @@ NOTE: Если необходимо применить конфигурацию 
 #### Значения по умолчанию для целевой версии 6.1
 
 - [`config.active_record.has_many_inversing`](#config-active-record-has-many-inversing): `true`
-- [`config.active_record.legacy_connection_handling`](#config-active-record-legacy-connection-handling): `false`
 - [`config.active_storage.track_variants`](#config-active-storage-track-variants): `true`
 - [`config.active_storage.queues.analysis`](#config-active-storage-queues-analysis): `nil`
 - [`config.active_storage.queues.purge`](#config-active-storage-queues-purge): `nil`
@@ -102,7 +103,6 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.action_dispatch.cookies_same_site_protection`](#config-action-dispatch-cookies-same-site-protection): `:lax`
 - [`config.action_dispatch.ssl_default_redirect_status`](#config-action-dispatch-ssl-default-redirect-status) = `308`
 - [`ActiveSupport.utc_to_local_returns_utc_offset_times`](#activesupport-utc-to-local-returns-utc-offset-times): `true`
-- [`config.action_controller.urlsafe_csrf_tokens`](#config-action-controller-urlsafe-csrf-tokens): `true`
 - [`config.action_view.form_with_generates_remote_forms`](#config-action-view-form-with-generates-remote-forms): `false`
 - [`config.action_view.preload_links_header`](#config-action-view-preload-links-header): `true`
 
@@ -142,28 +142,6 @@ NOTE: Если необходимо применить конфигурацию 
 
 Следующие конфигурационные методы вызываются на объекте `Rails::Railtie`, таком как подкласс `Rails::Engine` или `Rails::Application`.
 
-#### `config.after_initialize`
-
-Принимает блок, который будет запущен _после того_, как Rails закончит инициализацию приложения. Это включает инициализацию самого фреймворка, engine-ов и всех инициализаторов приложения из `config/initializers`. Отметьте, что этот блок _будет_ запущен для Rake задач. Полезно для конфигурирования настроек, установленных другими инициализаторами:
-
-```ruby
-config.after_initialize do
-  ActionView::Base.sanitized_allowed_tags.delete 'div'
-end
-```
-
-#### `config.asset_host`
-
-Устанавливает хост для ассетов. Полезна, когда для хостинга ассетов используются CDN, или когда необходимо обойти встроенные в браузеры конкурентные ограничения, используя различные псевдонимы доменов. Укороченная версия `config.action_controller.asset_host`.
-
-#### `config.autoload_once_paths`
-
-Принимает массив путей, по которым Rails будет загружать константы, не стирающиеся между запросами. Уместна, если перезагрузка включена, что является в среде `development` по умолчанию. В противном случае все автозагрузки происходят только раз. Все элементы этого массива также должны быть в `autoload_paths`. По умолчанию пустой массив.
-
-#### `config.autoload_paths`
-
-Принимает массив путей, по которым Rails будет автоматически загружать константы. По умолчанию пустой массив. Начиная с [Rails 6](/upgrading-ruby-on-rails#autoloading) не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants#autoload-paths)
-
 #### `config.add_autoload_paths_to_load_path`
 
 Сообщает, должны ли пути автозагрузки быть добавлены в `$LOAD_PATH`. Рекомендуется установить его `false` в режиме `:zeitwerk` как можно раньше, в `config/application.rb`. Внутри Zeitwerk используются абсолютные пути, и приложения, запущенные в режиме `:zeitwerk`, не требуют `require_dependency`, поэтому модели, контроллеры, задания и т.д. не должны быть в `$LOAD_PATH`. Настройка `false` предотвращает Ruby от проверок этих директорий при разрешении вызовов `require` с относительными путями, и экономит работу Bootsnap и RAM, так как ему не нужно их индексировать.
@@ -175,19 +153,43 @@ end
 | (изначально)     | `true`                |
 | 7.1              | `false`               |
 
-#### `config.enable_reloading`
+#### `config.after_initialize`
 
-Если `config.enable_reloading` true, классы и модули приложения перезагружаются между веб-запросами, если они изменяются. По умолчанию `true` в среде `development` и `false` в среде `production`.
+Принимает блок, который будет запущен _после того_, как Rails закончит инициализацию приложения. Это включает инициализацию самого фреймворка, engine-ов и всех инициализаторов приложения из `config/initializers`. Отметьте, что этот блок _будет_ запущен для Rake задач. Полезно для конфигурирования настроек, установленных другими инициализаторами:
 
-Также определен предикат `config.reloading_enabled?`.
+```ruby
+config.after_initialize do
+  ActionView::Base.sanitized_allowed_tags.delete 'div'
+end
+```
 
-#### `config.cache_classes`
+#### `config.allow_concurrency`
 
-Старая настройка эквивалентна `!config.enable_reloading`. Поддерживается для обратной совместимости.
+Контролирует, должны ли запросы обрабатываться параллельно. Она должна быть установлена `false`, если код приложения не является тредобезопасным. По умолчанию `true`.
+
+#### `config.asset_host`
+
+Устанавливает хост для ассетов. Полезна, когда для хостинга ассетов используются CDN, или когда необходимо обойти встроенные в браузеры конкурентные ограничения, используя различные псевдонимы доменов. Укороченная версия `config.action_controller.asset_host`.
+
+#### `config.autoflush_log`
+
+Включает немедленную запись вывода в файл лога вместо буферизации. По умолчанию `true`.
+
+#### `config.autoload_once_paths`
+
+Принимает массив путей, по которым Rails будет загружать константы, не стирающиеся между запросами. Уместна, если перезагрузка включена, что является в среде `development` по умолчанию. В противном случае все автозагрузки происходят только раз. Все элементы этого массива также должны быть в `autoload_paths`. По умолчанию пустой массив.
+
+#### `config.autoload_paths`
+
+Принимает массив путей, по которым Rails будет автоматически загружать константы. По умолчанию пустой массив. Начиная с [Rails 6](/upgrading-ruby-on-rails#autoloading) не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants#autoload-paths)
 
 #### `config.beginning_of_week`
 
 Устанавливает начало недели по умолчанию для приложения. Принимает валидный день недели как символ (например, `:monday`).
+
+#### `config.cache_classes`
+
+Старая настройка эквивалентна `!config.enable_reloading`. Поддерживается для обратной совместимости.
 
 #### `config.cache_store`
 
@@ -214,6 +216,30 @@ console do
 end
 ```
 
+#### `config.content_security_policy_nonce_directives`
+
+Смотрите [Добавление Nonce](/security#adding-a-nonce) в руководстве по безопасности
+
+#### `config.content_security_policy_nonce_generator`
+
+Смотрите [Добавление Nonce](/security#adding-a-nonce) в руководстве по безопасности
+
+#### `config.content_security_policy_report_only`
+
+Смотрите [Отчет о нарушениях](/security#reporting-violations) в руководстве по безопасности
+
+#### `config.credentials.content_path`
+
+Настраивает путь поиска зашифрованных учетных данных.
+
+#### `config.credentials.key_path`
+
+Настраивает путь поиска ключа шифрования.
+
+#### (config-debug-exception-response-format) `config.debug_exception_response_format`
+
+Устанавливает формат, используемый в откликах, когда возникают ошибки в среде development. По умолчанию `:api` для только API приложений и `:default` для нормальных приложений.
+
 #### `config.disable_sandbox`
 
 Контролирует, сможет ли кто-нибудь запустить консоль в режиме песочницы. Это полезно длинных сессий в песочнице, что может привести к дефициту памяти сервера базы данных. По умолчанию `false`.
@@ -230,6 +256,12 @@ end
 
 Принимает массив путей, из которых Rails будет нетерпеливо загружать при загрузке, если `config.eager_load` истинна. По умолчанию каждая папка в директории `app` приложения.
 
+#### `config.enable_reloading`
+
+Если `config.enable_reloading` true, классы и модули приложения перезагружаются между веб-запросами, если они изменяются. По умолчанию `true` в среде `development` и `false` в среде `production`.
+
+Также определен предикат `config.reloading_enabled?`.
+
 #### `config.encoding`
 
 Настраивает кодировку приложения. По умолчанию UTF-8.
@@ -237,10 +269,6 @@ end
 #### `config.exceptions_app`
 
 Устанавливает приложение по обработке исключений, вызываемое промежуточной программой ShowException, когда происходит исключение. По умолчанию `ActionDispatch::PublicExceptions.new(Rails.public_path)`.
-
-#### (config-debug-exception-response-format) `config.debug_exception_response_format`
-
-Устанавливает формат, используемый в откликах, когда возникают ошибки в среде development. По умолчанию `:api` для только API приложений и `:default` для нормальных приложений.
 
 #### `config.file_watcher`
 
@@ -258,9 +286,31 @@ Rails.application.config.filter_parameters += [
 
 Фильтр параметров работает как частично соответствующее регулярное выражение.
 
+#### `config.filter_redirect`
+
+Используется для фильтрации путей перенаправления из логов приложения.
+
+```ruby
+Rails.application.config.filter_redirect += ['s3.amazonaws.com', /private-match/]
+```
+
+Фильтр перенаправления работает, тестируя, что пути включают строки или регулярные выражения.
+
 #### (config-force-ssl) `config.force_ssl`
 
 Принуждает все запросы обслуживаться протоколом HTTPS и устанавливает "https://" как протокол по умолчанию при генерации URL. Принуждение к HTTPS обрабатывается промежуточной программой `ActionDispatch::SSL`, которая может быть настроена с помощью `config.ssl_options`.
+
+#### `config.helpers_paths`
+
+Определяет массив дополнительных путей для загрузки хелперов вью.
+
+#### `config.host_authorization`
+
+Принимает хэш опций для конфигурации [промежуточной программы HostAuthorization](#actiondispatch-hostauthorization)
+
+#### `config.hosts`
+
+Массив строк, регулярных выражений или `IPAddr` используется для валидации заголовка `Host`. Используется [промежуточной программы HostAuthorization](#actiondispatch-hostauthorization) для помощи в предотвращении атак с перепривязыванием DNS.
 
 #### `config.javascript_path`
 
@@ -304,33 +354,56 @@ config.logger      = ActiveSupport::TaggedLogging.new(mylogger)
 
 Позволяет настроить промежуточные программы приложения. Это подробнее раскрывается в разделе [Конфигурирование промежуточных программ](#configuring-middleware) ниже.
 
+#### (config-public-file-server-enabled) `config.public_file_server.enabled`
+
+Конфигурирует Rails на обслуживание статичных файлов из директории public. Эта опция по умолчанию `true`, но в среде production устанавливается `false`, так как серверные программы (например, NGINX или Apache), используемые для запуска приложения, должны обслуживать статичные ресурсы вместо Rails. Если запускаете или тестируете приложение в production с помощью WEBrick (не рекомендуется использовать WEBrick в production), установите эту опцию в `true`. В противном случае нельзя воспользоваться кэшированием страниц и запросами файлов, существующих в директории public.
+
+#### `config.railties_order`
+
+Позволяет вручную указать порядок загрузки Railtie/Engine. Значение по умолчанию `[:all]`.
+
+```ruby
+config.railties_order = [Blog::Engine, :main_app, :all]
+```
+
 #### `config.rake_eager_load`
 
 Когда `true`, нетерпеливо загружает приложении при запуске задач Rake. По умолчанию `false`.
+
+#### `config.read_encrypted_secrets`
+
+*DEPRECATED*: Следует использовать [учетные данные](/security#custom-credentials) вместо зашифрованных секретов.
+
+Когда `true`, попытается прочитать зашифрованные секреты из `config/secrets.yml.enc`
+
+#### `config.relative_url_root`
+
+Можно использовать, чтобы сообщить Rails, что вы [развертываете в поддиректорию](/configuring#deploy-to-a-subdirectory-relative-url-root). По умолчанию `ENV['RAILS_RELATIVE_URL_ROOT']`.
 
 #### `config.reload_classes_only_on_change`
 
 Включает или отключает перезагрузку классов только при изменении отслеживаемых файлов. По умолчанию отслеживает все по путям автозагрузки и установлена `true`. Если `config.enable_reloading` установлена `false`, эта опция игнорируется.
 
-#### `config.credentials.content_path`
+#### `config.require_master_key`
 
-Настраивает путь поиска зашифрованных учетных данных.
-
-#### `config.credentials.key_path`
-
-Настраивает путь поиска ключа шифрования.
+Приложение не будет загружено, если главный ключ не доступен в `ENV["RAILS_MASTER_KEY"]` или файле `config/master.key`.
 
 #### `config.secret_key_base`
 
 Фолбэк для указания секрета для генератора ключей приложения. Рекомендовано оставить его неустановленным, и вместо этого указать `secret_key_base` в `config/credentials.yml.enc`. Смотрите подробности и альтернативные конфигурационные методы в [документации `secret_key_base` API](https://api.rubyonrails.org/classes/Rails/Application.html#method-i-secret_key_base).
 
-#### `config.require_master_key`
+#### `config.server_timing`
 
-Приложение не будет загружено, если главный ключ не доступен в `ENV["RAILS_MASTER_KEY"]` или файле `config/master.key`.
+Когда `true`, добавляет [промежуточную программу ServerTiming](#actiondispatch-servertiming) в стек промежуточных программ
 
-#### (config-public-file-server-enabled) `config.public_file_server.enabled`
+#### `config.session_options`
 
-Конфигурирует Rails на обслуживание статичных файлов из директории public. Эта опция по умолчанию `true`, но в среде production устанавливается `false`, так как серверные программы (например, NGINX или Apache), используемые для запуска приложения, должны обслуживать статичные ресурсы вместо Rails. Если запускаете или тестируете приложение в production с помощью WEBrick (не рекомендуется использовать WEBrick в production), установите эту опцию в `true`. В противном случае нельзя воспользоваться кэшированием страниц и запросами файлов, существующих в директории public.
+Дополнительные опции, передаваемые в `config.session_store`. Следует использовать `config.session_store` для их установки вместо изменения.
+
+```ruby
+config.session_store :cookie_store, key: "_your_app_session"
+config.session_options # => {key: "_your_app_session"}
+```
 
 #### (config-session-store) `config.session_store`
 
@@ -365,6 +438,17 @@ config.session_store :my_custom_store
 #### `config.time_zone`
 
 Устанавливает временную зону по умолчанию для приложения и включает понимание временных зон для Active Record.
+
+#### `config.x`
+
+Используется для простого добавления многоуровневых произвольных настроек в объект конфига приложения
+
+  ```ruby
+  config.x.payment_processing.schedule = :daily
+  Rails.configuration.x.payment_processing.schedule # => :daily
+  ```
+
+Смотрите [Произвольные настройки](#custom-configuration)
 
 ### Настройка ассетов
 
@@ -521,6 +605,10 @@ Rails.application.config.host_authorization = {
   end
 }
 ```
+
+#### `ActionDispatch::ServerTiming`
+
+Добавляет метрики в заголовок `Server-Timing`, который можно просматривать в инструментах разработчика браузера.
 
 #### `ActionDispatch::SSL`
 
@@ -688,7 +776,52 @@ config.middleware.delete Rack::MethodOverride
 
 #### `config.active_model.i18n_customize_full_message`
 
-Это булево значение, управляющее, может ли формат ошибки `full_message` быть переопределен на уровне атрибута или модели в файлах локали. По умолчанию `false`.
+Контролирует, может ли формат [`Error#full_message`][ActiveModel::Error#full_message] быть переопределен в файле локали i18n. По умолчанию `false`.
+
+Когда установлен `true`, `full_message` будет искать формат на уровне атрибута и модели в файлах локали. Формат по умолчанию это `"%{attribute} %{message}"`, где `attribute` это имя атрибута, а `message` это сообщение, специфичное для валидации. Следующий пример переопределяет формат для всех атрибутов `Person`, а также формат для атрибута, специфичного для `Person` (`age`).
+
+```ruby
+class Person
+  include ActiveModel::Validations
+
+  attr_accessor :name, :age
+
+  validates :name, :age, presence: true
+end
+```
+
+```yml
+en:
+  activemodel: # or activerecord:
+    errors:
+      models:
+        person:
+          # Override the format for all Person attributes:
+          format: "Invalid %{attribute} (%{message})"
+          attributes:
+            age:
+              # Override the format for the age attribute:
+              format: "%{message}"
+              blank: "Please fill in your %{attribute}"
+```
+
+```irb
+irb> person = Person.new.tap(&:valid?)
+
+irb> person.errors.full_messages
+=> [
+  "Invalid Name (can't be blank)",
+  "Please fill in your Age"
+]
+
+irb> person.errors.messages
+=> {
+  :name => ["can't be blank"],
+  :age  => ["Please fill in your Age"]
+}
+```
+
+[ActiveModel::Error#full_message]: https://api.rubyonrails.org/classes/ActiveModel/Error.html#method-i-full_message
 
 ### Конфигурирование Active Record
 
@@ -744,6 +877,20 @@ config.middleware.delete Rack::MethodOverride
 #### `config.active_record.timestamped_migrations`
 
 Регулирует, должны ли миграции нумероваться серийными номерами или временными метками. По умолчанию `true` для использования временных меток, которые более предпочтительны, если над одним проектом работают несколько разработчиков.
+
+#### `config.active_record.migration_strategy`
+
+Контролирует класс стратегии, используемый для выполнения методов выражений схемы в миграции. Класс по умолчанию делегирует к адаптеру соединения. Пользовательские стратегии должны наследоваться от `ActiveRecord::Migration::ExecutionStrategy`, или могут наследоваться от `DefaultStrategy`, которая сохранит поведение по умолчанию для нереализованных методов:
+
+```ruby
+class CustomMigrationStrategy < ActiveRecord::Migration::DefaultStrategy
+  def drop_table(*)
+    raise "Dropping tables is not supported!"
+  end
+end
+
+config.active_record.migration_strategy = CustomMigrationStrategy
+```
 
 #### `config.active_record.lock_optimistically`
 
@@ -859,17 +1006,6 @@ config.middleware.delete Rack::MethodOverride
 | (изначально)     | `false`               |
 | 7.0              | `true`                |
 
-#### `config.active_record.legacy_connection_handling`
-
-Позволяет включить новый API обработки подключения. Для приложений, использующих несколько баз данных, этот новый API предоставляет поддержку гранулированного переключения соединения.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `true`                |
-| 6.1              | `false`               |
-
 #### `config.active_record.destroy_association_async_job`
 
 Позволяет указывать задание, используемое для удаления связанных записей в фоновом режиме. По умолчанию `ActiveRecord::DestroyAssociationAsyncJob`.
@@ -968,6 +1104,39 @@ config.middleware.delete Rack::MethodOverride
 
 Это количество должно рассматриваться с учетом размера пула базы данных, сконфигурированного в `database.yml`. Пул соединений должен быть достаточно большим, чтобы вместить и основные треды (т.е. треды веб сервера или обработчика заданий), и фоновые треды.
 
+#### `config.active_record.allow_deprecated_singular_associations_name`
+
+Это включает устаревшее поведение, в котором на одиночные связи можно сослаться по их множественному имени в выражениях `where`. Установите ей `false` для лучшего быстродействия.
+
+```ruby
+class Comment < ActiveRecord::Base
+  belongs_to :post
+end
+
+Comment.where(post: post_id).count  # => 5
+
+# Когда `allow_deprecated_singular_associations_name` true:
+Comment.where(posts: post_id).count # => 5 (предупреждение об устаревании)
+
+# Когда `allow_deprecated_singular_associations_name` false:
+Comment.where(posts: post_id).count # => ошибка
+```
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.1              | `false`               |
+
+#### `config.active_record.yaml_column_permitted_classes`
+
+По умолчанию `[Symbol]`. Позволяет приложениям включать дополнительные разрешенные классы в `safe_load()` на `ActiveStorage::Coders::YamlColumn`.
+
+#### `config.active_record.use_yaml_unsafe_load`
+
+По умолчанию `false`. Позволяет приложениям отключить использование `unsafe_load` на `ActiveStorage::Coders::YamlColumn`.
+
 #### `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans`
 
 Регулирует, должен ли Active Record рассматривать все столбцы `tinyint(1)` как boolean. По умолчанию `true`.
@@ -1060,20 +1229,9 @@ config.middleware.delete Rack::MethodOverride
 | (изначально)     | `false`               |
 | 5.2              | `true`                |
 
-#### `config.action_controller.urlsafe_csrf_tokens`
-
-Настраивает, должны ли быть генерируемые токены CSRF URL-безопасными.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `false`               |
-| 6.1              | `true`                |
-
 #### `config.action_controller.relative_url_root`
 
-Может использоваться, чтобы сообщить Rails, что [деплой происходит в поддиректорию](#deploy-to-a-subdirectory-relative-url-root). По умолчанию `ENV['RAILS_RELATIVE_URL_ROOT']`.
+Может использоваться, чтобы сообщить Rails, что [деплой происходит в поддиректорию](#deploy-to-a-subdirectory-relative-url-root). По умолчанию [`config.relative_url_root`](#config-relative-url-root).
 
 #### `config.action_controller.permit_all_parameters`
 
@@ -1962,6 +2120,10 @@ end
 
 Определяет, будет ли автоматически обновлен контекст задания для тегов запроса с помощью `around_perform`. Значение по умолчанию `true`.
 
+#### `config.active_job.use_big_decimal_serializer`
+
+Включает использование BigDecimalSerializer вместо устаревшей сериализации аргумента BigDecimal, что может привести к тому, что аргументы с потерями будут конвертированы в String при использовании определенных адаптеров очереди. Эта настройка отключена по умолчанию, позволяя развертывание без условия гонки приложений с несколькими репликами, в которой старая реплика не поддерживает BigDecimalSerializer.. В таких средах должно быть безопасно включить эту настройку после успешного развертывания Rails 7.1, который представил BigDecimalSerializer.
+
 ### Конфигурация Action Cable
 
 #### `config.action_cable.url`
@@ -2473,8 +2635,7 @@ development:
 
 Эта среда ничем не отличается от одной из стандартных, сервер запускается с помощью `bin/rails server -e staging`, консоль с помощью `bin/rails console -e staging`, работает `Rails.env.staging?`, и т.д.
 
-
-### (Deploy to a subdirectory relative url root) Деплой в поддиректорию (относительно корневого URL)
+### (deploy-to-a-subdirectory-relative-url-root) Деплой в поддиректорию (относительно корневого URL)
 
 По умолчанию Rails ожидает, что ваше приложение запускается в корне (т.е. `/`). Этот раздел объяснит, как запустить ваше приложение внутри директории.
 
@@ -2744,8 +2905,8 @@ ActiveRecord::ConnectionTimeoutError - could not obtain a database connection wi
 
 NOTE: Если вы запускаете многотредовую среду, есть вероятность, что несколько тредов могут получить доступ к нескольким подключениям одновременно. Поэтому, в зависимости от текущей загрузки, вы можете легко получить несколько тредов, претендующих на ограниченное количество подключений.
 
-Произвольные настройки
-----------------------
+(custom-configuration) Произвольные настройки
+---------------------------------------------
 
 Можно настроить свой собственный код с помощью конфигурационного объекта Rails с произвольными настройками или в пространстве имен `config.x`, либо непосредственно в `config`. Ключевой разницей между этими двумя вариантами является то, что необходимо использовать `config.x`, если вы определяете _вложенную_ конфигурацию (например, `config.x.nested.hi`), и просто `config` для _одноуровневой_ конфигурации (например, `config.hello`).
 

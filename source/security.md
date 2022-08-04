@@ -1112,7 +1112,7 @@ class PostsController < ApplicationController
 end
 ```
 
-#### Отчет о нарушениях
+#### (reporting-violations) Отчет о нарушениях
 
 Включите директиву [report-uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri), чтобы сообщить о нарушениях для указанного URI:
 
@@ -1135,7 +1135,7 @@ class PostsController < ApplicationController
 end
 ```
 
-#### Добавление Nonce
+#### (adding-a-nonce) Добавление Nonce
 
 Если вы рассматриваете 'unsafe-inline', рассмотрите вместо этого использование nonce. [Nonce предоставляют заменимое улучшение](https://www.w3.org/TR/CSP3/#security-nonces) над 'unsafe-inline' при реализации Content Security Policy поверх существующего кода.
 
