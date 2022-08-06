@@ -363,8 +363,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
     file:     4_2_release_notes.md
-    revision: b97b4fa207de7bda0eb752aab44950ac8bf02e57
-    date:     12/04/2021
+    revision: 2efb17dd9c3f59336335697f9569715123d555ee
+    date:     03/05/2022
 
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes

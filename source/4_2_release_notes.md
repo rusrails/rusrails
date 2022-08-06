@@ -367,7 +367,7 @@ Action Pack
 
 *   `respond_with` и метод класса `respond_to` были убраны из Rails и перемещены в гем `responders` (версия 2.0). Добавьте `gem 'responders', '~> 2.0'` в свой `Gemfile`, чтобы продолжать использовать эти особенности.
     ([Pull Request](https://github.com/rails/rails/pull/16526),
-     [подробнее](/upgrading-ruby-on-rails#responders))
+     [подробнее](https://github.com/morsbox/rusrails/blob/4.2/source/upgrading_ruby_on_rails.md#responders))
 
 *   Убран устаревший `AbstractController::Helpers::ClassMethods::MissingHelperError` в пользу `AbstractController::Helpers::MissingHelperError`.
     ([Commit](https://github.com/rails/rails/commit/a1ddde15ae0d612ff2973de9cf768ed701b594e8))
@@ -452,7 +452,7 @@ Action Pack
 *   Добавлена опция для отключения логирования ошибок CSRF.
     ([Pull Request](https://github.com/rails/rails/pull/14280))
 
-*   Когда сервер Rails настроен обслуживать статичные ассеты, gzip ассеты также будут обслужены, если клиент их поддерживает и предварительно генерирует файл gzip (`.gz`) на диск. По умолчанию asset pipeline генерирует файлы `.gz` для всех сжимаемых ассетов. Обслуживание gzip файлов минимизирует передаваемые данные и ускоряет запрос к ассету. Всегда [используйте CDN](/asset-pipeline#cdns), если обслуживаете файлы ассетов на сервере Rails в production.
+*   Когда сервер Rails настроен обслуживать статичные ассеты, gzip ассеты также будут обслужены, если клиент их поддерживает и предварительно генерирует файл gzip (`.gz`) на диск. По умолчанию asset pipeline генерирует файлы `.gz` для всех сжимаемых ассетов. Обслуживание gzip файлов минимизирует передаваемые данные и ускоряет запрос к ассету. Всегда [используйте CDN](https://github.com/morsbox/rusrails/blob/4.2/source/asset_pipeline.md#cdns-cdn), если обслуживаете файлы ассетов на сервере Rails в production.
     ([Pull Request](https://github.com/rails/rails/pull/16466))
 
 *   При вызове хелперов `process` в интеграционном тесте, пути необходим начальный слэш. Раньше его можно было опустить, но это был побочный продукт реализации, а не специальная особенность, т.е.:
