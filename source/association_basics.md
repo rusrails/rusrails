@@ -104,7 +104,7 @@ NOTE: Связи `belongs_to` _обязаны_ использовать един
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateOrders < ActiveRecord::Migration[7.0]
+class CreateOrders < ActiveRecord::Migration[7.1]
   def change
     create_table :authors do |t|
       t.string :name
@@ -150,7 +150,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateSuppliers < ActiveRecord::Migration[7.0]
+class CreateSuppliers < ActiveRecord::Migration[7.1]
   def change
     create_table :suppliers do |t|
       t.string :name
@@ -194,7 +194,7 @@ NOTE: Имя другой модели указывается во множес�
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateAuthors < ActiveRecord::Migration[7.0]
+class CreateAuthors < ActiveRecord::Migration[7.1]
   def change
     create_table :authors do |t|
       t.string :name
@@ -245,7 +245,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateAppointments < ActiveRecord::Migration[7.0]
+class CreateAppointments < ActiveRecord::Migration[7.1]
   def change
     create_table :physicians do |t|
       t.string :name
@@ -326,7 +326,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateAccountHistories < ActiveRecord::Migration[7.0]
+class CreateAccountHistories < ActiveRecord::Migration[7.1]
   def change
     create_table :suppliers do |t|
       t.string :name
@@ -367,7 +367,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateAssembliesAndParts < ActiveRecord::Migration[7.0]
+class CreateAssembliesAndParts < ActiveRecord::Migration[7.1]
   def change
     create_table :assemblies do |t|
       t.string :name
@@ -406,7 +406,7 @@ end
 Соответствующая миграция может выглядеть так:
 
 ```ruby
-class CreateSuppliers < ActiveRecord::Migration[7.0]
+class CreateSuppliers < ActiveRecord::Migration[7.1]
   def change
     create_table :suppliers do |t|
       t.string :name
@@ -488,7 +488,7 @@ end
 Если имеется экземпляр модели `Picture`, можно получить его родителя посредством `@picture.imageable`. Чтобы это работало, необходимо объявить столбец внешнего ключа и столбец типа в модели, объявляющей полиморфный интерфейс:
 
 ```ruby
-class CreatePictures < ActiveRecord::Migration[7.0]
+class CreatePictures < ActiveRecord::Migration[7.1]
   def change
     create_table :pictures do |t|
       t.string  :name
@@ -505,7 +505,7 @@ end
 Эта миграция может быть упрощена при использовании формы `t.references`:
 
 ```ruby
-class CreatePictures < ActiveRecord::Migration[7.0]
+class CreatePictures < ActiveRecord::Migration[7.1]
   def change
     create_table :pictures do |t|
       t.string :name
@@ -536,7 +536,7 @@ end
 В миграциях/схеме следует добавить столбец ссылки модели на саму себя.
 
 ```ruby
-class CreateEmployees < ActiveRecord::Migration[7.0]
+class CreateEmployees < ActiveRecord::Migration[7.1]
   def change
     create_table :employees do |t|
       t.references :manager, foreign_key: { to_table: :employees }
@@ -606,7 +606,7 @@ end
 Это объявление нуждается в поддержке соответствующим столбцом внешнего ключа в таблице books. Для совершенно новой таблицы миграция может выглядеть примерно так:
 
 ```ruby
-class CreateBooks < ActiveRecord::Migration[7.0]
+class CreateBooks < ActiveRecord::Migration[7.1]
   def change
     create_table :books do |t|
       t.datetime   :published_at
@@ -620,7 +620,7 @@ end
 В то время как для существующей таблицы, это может выглядеть следующим образом:
 
 ```ruby
-class AddAuthorToBooks < ActiveRecord::Migration[7.0]
+class AddAuthorToBooks < ActiveRecord::Migration[7.1]
   def change
     add_reference :books, :author
   end
@@ -650,7 +650,7 @@ end
 Теперь нужно написать миграцию для создания таблицы `assemblies_parts`. Эта таблица должна быть создана без первичного ключа:
 
 ```ruby
-class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[7.0]
+class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[7.1]
   def change
     create_table :assemblies_parts, id: false do |t|
       t.bigint :assembly_id
@@ -668,7 +668,7 @@ end
 Также можно использовать метод `create_join_table`
 
 ```ruby
-class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[7.0]
+class CreateAssembliesPartsJoinTable < ActiveRecord::Migration[7.1]
   def change
     create_join_table :assemblies, :parts do |t|
       t.index :assembly_id
@@ -748,20 +748,57 @@ class Book < ApplicationRecord
 end
 ```
 
-Active Record попытается автоматически определить, что эти две модели образуют двунаправленную связь, основываясь на имени связи. Таким образом, Active Record загрузит только одну копию объекта `Author`, делая ваше приложение более эффективным и предотвращая несогласованные данные:
+Active Record попытается автоматически определить, что эти две модели образуют двунаправленную связь, основываясь на имени связи. Эта информация позволяет Active Record:
 
+* Предотвращать необходимость запросов для уже загруженных данных
 
-```irb
-irb> a = Author.first
-irb> b = a.books.first
-irb> a.first_name == b.author.first_name
-=> true
-irb> a.first_name = 'David'
-irb> a.first_name == b.author.first_name
-=> true
-```
+    ```irb
+    irb> author = Author.first
+    irb> author.books.all? do |book|
+    irb>   book.author.equal?(author) # Тут не выполняются дополнительные запросы
+    irb> end
+    => true
+    ```
 
-Active Record поддерживает автоматическое определение для большинства связей со стандартными именами. Однако, Active Record не будет автоматически определять двунаправленные связи, содержащие опции `:through` или `:foreign_key`. Пользовательские скоупы на противоположных связях также предотвращают автоматическое определение, как и пользовательские скоупы на самой связи, за исключением когда `config.active_record.automatic_scope_inversing` установлена true (по умолчанию для новых приложений).
+* Предотвращать несогласованные данные (как только есть только одна загруженная копия объекта `Author`)
+
+    ```irb
+    irb> author = Author.first
+    irb> book = author.books.first
+    irb> author.name == book.author.name
+    => true
+    irb> author.name = "Changed Name"
+    irb> author.name == book.author.name
+    => true
+    ```
+
+* Автоматически сохраняет связи в большинстве случаев
+
+    ```irb
+    irb> author = Author.new
+    irb> book = author.books.new
+    irb> book.save!
+    irb> book.persisted?
+    => true
+    irb> author.persisted?
+    => true
+    ```
+
+* Проверяет [наличие](/active-record-validations#presence) и [отсутствие](/active-record-validations#absence) связей в большинстве случаев
+
+    ```irb
+    irb> book = Book.new
+    irb> book.valid?
+    => false
+    irb> book.errors.full_messages
+    => ["Author must exist"]
+    irb> author = Author.new
+    irb> book = author.books.new
+    irb> book.valid?
+    => true
+    ```
+
+Active Record поддерживает автоматическое определение для большинства связей со стандартными именами. Однако, Active Record не будет автоматически определять двунаправленные связи, содержащие опции `:through` или `:foreign_key`. Пользовательские скоупы на противоположных связях также предотвращают автоматическое определение, как и пользовательские скоупы на самой связи, за исключением когда [`config.active_record.automatic_scope_inversing`][] установлена true (по умолчанию для новых приложений).
 
 Например, рассмотрим следующие объявления моделей:
 
@@ -775,17 +812,52 @@ class Book < ApplicationRecord
 end
 ```
 
-Active Record больше не будет автоматически распознавать двунаправленную связь:
+Из-за опции `:foreign_key`, Active Record больше не будет автоматически распознавать двунаправленную связь. Это может вызвать, что ваше приложение:
 
-```irb
-irb> a = Author.first
-irb> b = a.books.first
-irb> a.first_name == b.writer.first_name
-=> true
-irb> a.first_name = 'David'
-irb> a.first_name == b.writer.first_name
-=> false
-```
+* Выполняет необходимые запросы для тех же данных (в этом примере вызывая N+1 запрос)
+
+    ```irb
+    irb> author = Author.first
+    irb> author.books.any? do |book|
+    irb>   book.author.equal?(author) # Это выполняет запрос для каждой книги
+    irb> end
+    => false
+    ```
+
+* Ссылается на несколько копий модели с несогласованными данными
+
+    ```irb
+    irb> author = Author.first
+    irb> book = author.books.first
+    irb> author.name == book.author.name
+    => true
+    irb> author.name = "Changed Name"
+    irb> author.name == book.author.name
+    => false
+    ```
+
+* Не в состоянии автоматически сохранять связи
+
+    ```irb
+    irb> author = Author.new
+    irb> book = author.books.new
+    irb> book.save!
+    irb> book.persisted?
+    => true
+    irb> author.persisted?
+    => false
+    ```
+
+* Не в состоянии проверять наличие или отсутствие
+
+    ```irb
+    irb> author = Author.new
+    irb> book = author.books.new
+    irb> book.valid?
+    => false
+    irb> book.errors.full_messages
+    => ["Author must exist"]
+    ```
 
 Active Record представляет опцию `:inverse_of`, таким образом можно явно объявить двунаправленные связи:
 
@@ -799,17 +871,9 @@ class Book < ApplicationRecord
 end
 ```
 
-Включив опцию `:inverse_of` в объявлении связи `has_many`, Active Record будет распознавать двунаправленную связь:
+Включив опцию `:inverse_of` в объявлении связи `has_many`, Active Record будет распознавать двунаправленную связь и будет вести себя как в изначальных примерах выше:
 
-```irb
-irb> a = Author.first
-irb> b = a.books.first
-irb> a.first_name == b.writer.first_name
-=> true
-irb> a.first_name = 'David'
-irb> a.first_name == b.writer.first_name
-=> true
-```
+[`config.active_record.automatic_scope_inversing`]: /configuring#config-active-record-automatic-scope-inversing
 
 Подробная информация по связи `belongs_to`
 ------------------------------------------
@@ -1009,6 +1073,10 @@ NOTE: Опцию `:counter_cache` необходимо указывать тол
 
 Столбцы кэша счетчика добавляются в список атрибутов модели только для чтения посредством `attr_readonly`.
 
+Если по какой-то причине вы изменяете значение первичного ключа модели, но не обновляете внешние ключи посчитанных моделей, то кэш счетчика может иметь устаревшие данные. Другими словами, любые "осиротевшие" модели все еще будут считать в отношении счетчика. Чтобы починить кэш счетчика, используйте [`reset_counters`][].
+
+[`reset_counters`]: https://api.rubyonrails.org/classes/ActiveRecord/CounterCache/ClassMethods.html#method-i-reset_counters
+
 #### `:dependent`
 
 Если установить опцию `:dependent` в:
@@ -1052,7 +1120,7 @@ end
 
 #### `:inverse_of`
 
-Опция `:inverse_of` определяет имя связи `has_many` или `has_one`, являющейся противоположностью для этой связи.
+Опция `:inverse_of` определяет имя связи `has_many` или `has_one`, являющейся противоположностью для этой связи. Подробности смотрите в разделе [Двунаправленная связь](#bi-directional-associations).
 
 ```ruby
 class Author < ApplicationRecord
@@ -1336,7 +1404,7 @@ TIP: В любом случае, Rails не создаст столбцы вне
 
 #### `:inverse_of`
 
-Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи.
+Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи. Подробности смотрите в разделе [Двунаправленная связь](#bi-directional-associations).
 
 ```ruby
 class Supplier < ApplicationRecord
@@ -1785,7 +1853,7 @@ TIP: В любом случае, Rails не создаст столбцы вне
 
 #### `:inverse_of`
 
-Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи.
+Опция `:inverse_of` определяет имя связи `belongs_to`, являющейся обратной для этой связи. Подробности смотрите в разделе [Двунаправленная связь](#bi-directional-associations).
 
 ```ruby
 class Author < ApplicationRecord
@@ -2347,7 +2415,7 @@ class Parts < ApplicationRecord
 end
 ```
 
-При использовании опции `where` хэшем, при создание записи через эту связь будет автоматически применен скоуп с использованием хэша. В этом случае при использовании `@parts.assemblies.create` или `@parts.assemblies.build` будут созданы заказы, в которых столбец `factory` будет иметь значение `Seattle`.
+При использовании опции `where` хэшем, при создание записи через эту связь будет автоматически применен скоуп с использованием хэша. В этом случае при использовании `@parts.assemblies.create` или `@parts.assemblies.build` будут созданы сборки, в которых столбец `factory` будет иметь значение `Seattle`.
 
 #### `extending`
 
