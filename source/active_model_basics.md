@@ -17,6 +17,48 @@
 
 Библиотека Active Model содержит различные модули, используемые для разработки классов, которым необходимы некоторые особенности, присутствующие в Active Record. Некоторые из этих модулей описаны ниже.
 
+### API
+
+`ActiveModel::API` добавляет возможность классу работать с Action Pack и Action View прямо из коробки.
+
+```ruby
+class EmailContact
+  include ActiveModel::API
+
+  attr_accessor :name, :email, :message
+  validates :name, :email, :message, presence: true
+
+  def deliver
+    if valid?
+      # доставляем письмо
+    end
+  end
+end
+```
+
+При включении `ActiveModel::API` вы получаете несколько возможностей, таких как:
+
+- интроспекция имени модели
+- преобразования
+- переводы
+- валидации
+
+Он также дает возможность инициализировать объект с помощью хэша атрибутов, подобно любому объекту Active Record.
+
+```irb
+irb> email_contact = EmailContact.new(name: 'David', email: 'david@example.com', message: 'Hello World')
+irb> email_contact.name
+=> "David"
+irb> email_contact.email
+=> "david@example.com"
+irb> email_contact.valid?
+=> true
+irb> email_contact.persisted?
+=> false
+```
+
+Любой класс, включающий `ActiveModel::API`, может быть использован с `form_with`, `render` и любыми другими методами хелпера Action View, точно так же, как и объекты Active Record.
+
 ### Методы атрибутов
 
 Модуль `ActiveModel::AttributeMethods` позволяет добавлять различные суффиксы и префиксы к методам класса. Для использования необходимо определить суффиксы, префиксы, а также к каким методам объекта они будут применяться.
@@ -107,7 +149,7 @@ irb> person.to_param
 
 ### Грязный объект
 
-Объект становится грязным после одного или нескольких изменений его атрибутов, и при этом он не был сохранен. `ActiveModel::Dirty` дает возможность проверить, был ли объект изменен или нет. Также имеются атрибуты на основе акцессор-методов. Представим, что имеется класс Person с атрибутами `first_name` и `last_name`:
+Объект становится грязным после одного или нескольких изменений его атрибутов, и при этом он не был сохранен. `ActiveModel::Dirty` дает возможность проверить, был ли объект изменен или нет. Также имеются акцессор-методы на основе атрибутов. Представим, что имеется класс Person с атрибутами `first_name` и `last_name`:
 
 ```ruby
 class Person
@@ -167,7 +209,7 @@ irb> person.changes
 => {"first_name"=>[nil, "First Name"]}
 ```
 
-#### Атрибуты, основанные на акцессор-методах
+#### Акцессор-методы, основанные на атрибутах
 
 Отслеживает, был ли атрибут изменен или нет.
 
@@ -188,7 +230,7 @@ irb> person.first_name_was
 => nil
 ```
 
-Отслеживает старое и новое значение измененного атрибута. Возвращает массив, если изменяли, в противном случае nil.
+Отслеживает старое и новое значения измененного атрибута. Возвращает массив, если изменяли, в противном случае nil.
 
 ```irb
 # attr_name_change
@@ -233,7 +275,7 @@ ActiveModel::StrictValidationFailed
 
 ### Именование
 
-`ActiveModel::Naming` добавляет ряд методов класса, упрощающие управление именованием и роутингом. Модуль определяет метод класса `model_name`, который определит несколько акцессоров с помощью методов `ActiveSupport::Inflector`.
+`ActiveModel::Naming` добавляет несколько методов класса, упрощающих управление именованием и роутингом. Модуль определяет метод класса `model_name`, который определит несколько акцессоров с помощью методов `ActiveSupport::Inflector`.
 
 ```ruby
 class Person
@@ -254,7 +296,7 @@ Person.model_name.singular_route_key  # => "person"
 
 ### Модель
 
-`ActiveModel::Model` добавляет для класса возможность работать из коробки с Action Pack и Action View.
+`ActiveModel::Model` позволяет реализовывать модели, схоже с `ActiveRecord::Base`.
 
 ```ruby
 class EmailContact
@@ -271,28 +313,7 @@ class EmailContact
 end
 ```
 
-При включении `ActiveModel::Model` вы получите несколько возможностей, таких как:
-
-- интроспекция имени модели
-- преобразования
-- переводы
-- валидации
-
-Он также дает возможность инициализировать объект с помощью хэша атрибутов, подобно любому объекту Active Record.
-
-```irb
-irb> email_contact = EmailContact.new(name: 'David', email: 'david@example.com', message: 'Hello World')
-irb> email_contact.name
-=> "David"
-irb> email_contact.email
-=> "david@example.com"
-irb> email_contact.valid?
-=> true
-irb> email_contact.persisted?
-=> false
-```
-
-Любой класс, включающий `ActiveModel::Model`, может быть использован с `form_with`, `render` и любыми другими методами хелпера Action View, точно так же, как и объекты Active Record.
+При включении `ActiveModel::Model`, вы получите все особенности из `ActiveModel::API`.
 
 ### Сериализация
 
@@ -449,9 +470,9 @@ Finished in 0.024899s, 240.9735 runs/s, 1204.8677 assertions/s.
 6 runs, 30 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-Объекту не нужно реализовывать все API, чтобы работать с Action Pack. Этот модуль всего лишь предназначен для предоставления руководства в случае, если вы хотите все особенности из коробки.
+Объекту не нужно реализовывать все API, чтобы работать с Action Pack. Этот модуль всего лишь предназначен для руководства в случае, если вы хотите все особенности из коробки.
 
-### Безопасный пароль
+### SecurePassword
 
 `ActiveModel::SecurePassword` предоставляет способ безопасно хранить любой пароль в зашифрованном виде. При включении этого модуля предоставляется метод класса `has_secure_password`, определяющий акцессор `password` с определенными валидациями на нем по умолчанию.
 
