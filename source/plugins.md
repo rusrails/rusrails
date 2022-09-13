@@ -42,7 +42,18 @@ $ rails plugin new --help
 Тестирование своего нового плагина
 ----------------------------------
 
-Можете перейти в директорию, содержащую плагин, запустить команду `bundle install`, и запустить сгенерированный тест с использованием команды `bin/test`.
+Можете перейти в директорию, содержащую плагин, изменить следующие строчки в `yaffle.gemspec`
+
+```ruby
+  spec.summary     = "Summary of Yaffle."
+  spec.description = "Description of Yaffle."
+...
+  spec.homepage    = "http://example.com"
+  spec.metadata["source_code_uri"] = "http://example.com"
+  spec.metadata["changelog_uri"] = "http://example.com"
+```
+
+запустить команду `bundle install`, и запустить сгенерированный тест с использованием команды `bin/test`.
 
 Вы должны увидеть:
 
@@ -97,6 +108,7 @@ Finished in 0.003358s, 595.6483 runs/s, 297.8242 assertions/s.
 ```ruby
 # yaffle/lib/yaffle.rb
 
+require "yaffle/version"
 require "yaffle/railtie"
 require "yaffle/core_ext"
 
@@ -149,6 +161,7 @@ end
 ```ruby
 # yaffle/lib/yaffle.rb
 
+require "yaffle/version"
 require "yaffle/railtie"
 require "yaffle/core_ext"
 require "yaffle/acts_as_yaffle"
@@ -469,7 +482,7 @@ $ bundle exec rake release
 * Как добавить функциональность в приложение (несколько примеров обычных ситуаций использования)
 * Предупреждения, хитрости или подсказки, которые могут помочь пользователям и сохранить их время
 
-Как только README готов, пройдитесь и добавьте комментарии rdoc ко всем методам, которые будут использовать разработчики. Также принято добавить комментарии `#:nodoc:` к тем частям кода, которые не включены в публичный API.
+Как только README готов, пройдитесь и добавьте комментарии rdoc ко всем методам, которые будут использовать разработчики. Также принято добавить комментарии `# :nodoc:` к тем частям кода, которые не включены в публичный API.
 
 Как только ваши комментарии закончены, перейдите в директорию плагины и запустите:
 
