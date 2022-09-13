@@ -396,7 +396,8 @@ pages:
     revision: ea0685fee96d885543c9f353f8fcf1076fac441e
     date:     21/02/2022
 
-plan: []
+plan:
+  - file:     error_reporting.md
 
 old:
   - file:     2_2_release_notes.md
