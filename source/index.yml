@@ -123,8 +123,8 @@ pages:
   - title:    Основы Action Mailer
     path:     action-mailer-basics
     file:     action_mailer_basics.md
-    revision: c7303ccc31cd82e2f4ca54c7b05984249127e4e9
-    date:     12/02/2022
+    revision: 89fdd5e34e053183b069595f40c5834559b0920c
+    date:     09/09/2022
 
   - title:    Основы Action Mailbox
     path:     action-mailbox-basics
