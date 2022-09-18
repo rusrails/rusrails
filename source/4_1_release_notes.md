@@ -433,7 +433,7 @@ Active Record
 
 * Добавлен `ActiveRecord::Base#enum` для описания enum атрибутов, в которых значения связаны с числами в базе данных, но могут быть запрошены с помощью имени. ([Commit](https://github.com/rails/rails/commit/db41eb8a6ea88b854bf5cd11070ea4245e1639c5))
 
-* Приведение типов для значений json при записи, таким образом значение не изменится при чтении из базы данных. ([Pull Request](https://github.com/rails/rails/pull/12643))
+* Приведение типов для значений JSON при записи, таким образом значение не изменится при чтении из базы данных. ([Pull Request](https://github.com/rails/rails/pull/12643))
 
 * Приведение типов для значений hstore при записи, таким образом значение не изменится при чтении из базы данных. ([Commit](https://github.com/rails/rails/commit/5ac2341fab689344991b2a4817bd2bc8b3edac9d))
 
