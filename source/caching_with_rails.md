@@ -125,7 +125,7 @@ end
 
 ### Кэширование общих партиалов
 
-Существует возможность делиться партиалами и связанным кэшированием между файлами с разными типами mime. Например, кэширование общих партиалов позволяет разработчикам шаблонов делить партиал между файлами HTML и JavaScript. Когда шаблоны собираются в шаблонном распознавателе путей файла, они включают только расширение языка шаблона и не включают тип mime. Из-за этого шаблоны можно использовать для нескольких типов mime. Оба запроса, HTML и JavaScript, будут отвечать на следующий код:
+Существует возможность делиться партиалами и связанным кэшированием между файлами с разными типами MIME. Например, кэширование общих партиалов позволяет разработчикам шаблонов делить партиал между файлами HTML и JavaScript. Когда шаблоны собираются в шаблонном распознавателе путей файла, они включают только расширение языка шаблона и не включают тип MIME. Из-за этого шаблоны можно использовать для нескольких типов MIME. Оба запроса, HTML и JavaScript, будут отвечать на следующий код:
 
 ```ruby
 render(partial: 'hotels/hotel', collection: @hotels, cached: true)
@@ -139,7 +139,7 @@ render(partial: 'hotels/hotel', collection: @hotels, cached: true)
 render(partial: 'hotels/hotel.html.erb', collection: @hotels, cached: true)
 ```
 
-Будет загружен файл с именем `hotels/hotel.html.erb` в любом типе файла mime, например, можно включить этот партиал в файл JavaScript.
+Будет загружен файл с именем `hotels/hotel.html.erb` в любом типе файла MIME, например, можно включить этот партиал в файл JavaScript.
 
 ### Управление зависимостями
 
@@ -296,65 +296,48 @@ Rails предоставляет различные хранилища для к
 config.cache_store = :memory_store, { size: 64.megabytes }
 ```
 
-NOTE: Альтернативно можно вызвать `ActionController::Base.cache_store` вне конфигурационного блока.
+Альтернативно можно вызвать `ActionController::Base.cache_store` вне конфигурационного блока.
 
 К кэшу можно получить доступ, вызвав `Rails.cache`.
 
-### ActiveSupport::Cache::Store
-
-Этот класс представляет основу для взаимодействия с кэшем в Rails. Это абстрактный класс, и он сам не может быть использован. Вместо него нужно использовать конкретную реализацию класса, связанного с engine-ом хранилища. Rails поставляется с несколькими реализациями, описанными ниже.
-
-Главные вызываемые методы это `read`, `write`, `delete`, `exist?` и `fetch`. Метод fetch принимает блок и либо возвращает существующее значение из кэша, либо вычисляет блок и записывает результат в кэш, если значение не существует.
-
-Имеется несколько общих опций, которые могут быть использованы всеми реализациями кэша. Они могут быть переданы в конструктор или в различные методы для взаимодействия с записями.
-
-* `:namespace` - Эта опция может быть использована для создания пространства имен в хранилище кэша. Она особенно полезна, если приложение разделяет кэш с другим приложением.
-
-* `:compress` - Включено по умолчанию. Сжимает записи кэша, поэтому больше данных может храниться в том же объеме памяти, что приводит к меньшему вытеснению кэша и большему проценту попадания в кэш.
-
-* `:compress_threshold` - По умолчанию 1 Кбайт. Записи кэша, превышающие этот порог, заданные в байтах, сжимаются.
-
-* `:expires_in` - Эта опция устанавливает время прекращения в секундах для записи кэша, если хранилище кэша поддерживает это, когда она будет автоматически убрана из кэша.
-
-* `:race_condition_ttl` - Эта опция используется в сочетании с опцией `:expires_in`. Она предотвращает состояние гонки при прекращении записи кэша, предотвращая несколько процессов от одновременного регенерировать одной и той же записи (также известного как dog pile effect). Эта опция устанавливает количество секунд, в течение которых прекращенная запись кэша может использоваться, пока не будет регенерирована новая запись. Считается хорошей практикой установить это значение, если используется опция `:expires_in`.
-
-* `:coder` - Эта опция заменяет механизм сериализации записи кэша по умолчанию пользовательским. `coder` должен отвечать на `dump` и `load`, и передача пользовательского кодера отключает автоматическое сжатие.
-
 #### Опции пула соединений
 
-По умолчанию `MemCacheStore` и `RedisCacheStore` используют единственное соединение на процесс. Это означает, что при использовании Puma или другого сервера на тредах, могут быть несколько тредов, ожидающих, когда соединение станет доступным. Чтобы увеличить количество доступных соединений, можно включить пул соединений.
+По умолчанию [`:mem_cache_store`](#activesupport-cache-memcachestore) и [`:redis_cache_store`](#activesupport-cache-rediscachestore) настроены использовать пул соединений. Это означает, что при использовании Puma или другого сервера на тредах, можно использовать несколько тредов, выполняющих запросы к хранилищу кэша в то же самое время.
 
-Сначала добавьте гем `connection_pool` в Gemfile:
-
-```ruby
-gem 'connection_pool'
-```
-
-Затем установите опции `:pool` `true` при настройке хранилища кэша:
+Если хотите отключить пул соединений, установите опции `:pool` `false` при конфигурировании хранилища кэша:
 
 ```ruby
-config.cache_store = :mem_cache_store, "cache.example.com", pool: true
+config.cache_store = :mem_cache_store, "cache.example.com", pool: false
 ```
 
-Также можно переопределять настройки пула по умолчанию, предоставляя индивидуальные опции вместо `true` для этой опции.
+Также можно переопределить настройки пула по умолчанию, предоставив индивидуальные опции к опции `:pool`:
+
+```ruby
+config.cache_store = :mem_cache_store, "cache.example.com", pool: { size: 32, timeout: 1 }
+```
 
 * `:size` - Эта опция устанавливает количество соединений на процесс (по умолчанию 5).
 
 * `:timeout` - Эта опция устанавливает количество секунд ожидания соединения (по умолчанию 5). Если не было доступного соединения в течение таймаута, будет вызвана `Timeout::Error`.
 
-### Произвольные хранилища кэша
+### ActiveSupport::Cache::Store
 
-Можно создать свое собственно хранилище кэша, просто расширив `ActiveSupport::Cache::Store` и реализовав соответствующие методы. Таким образом можно применить несколько кэширующих технологий в вашем приложении Rails.
+[`ActiveSupport::Cache::Store`][] представляет основу для взаимодействия с кэшем в Rails. Это абстрактный класс, и он сам не может быть использован. Вместо этого нужно использовать конкретную реализацию класса, связанного с engine-ом хранилища. Rails поставляется с несколькими реализациями, описанными ниже.
 
-Для использования произвольного хранилища кэша просто присвойте хранилищу кэша новый экземпляр класса.
+Главные вызываемые методы это [`read`][ActiveSupport::Cache::Store#read], [`write`][ActiveSupport::Cache::Store#write], [`delete`][ActiveSupport::Cache::Store#delete], [`exist?`][ActiveSupport::Cache::Store#exist?] и [`fetch`][ActiveSupport::Cache::Store#fetch].
 
-```ruby
-config.cache_store = MyCacheStore.new
-```
+Опции, переданные в конструктор хранилища кэша, будут трактованы как опции по умолчанию для соответствующих методов API.
 
-### ActiveSupport::Cache::MemoryStore
+[`ActiveSupport::Cache::Store`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html
+[ActiveSupport::Cache::Store#delete]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html#method-i-delete
+[ActiveSupport::Cache::Store#exist?]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html#method-i-exist-3F
+[ActiveSupport::Cache::Store#fetch]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html#method-i-fetch
+[ActiveSupport::Cache::Store#read]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html#method-i-read
+[ActiveSupport::Cache::Store#write]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html#method-i-write
 
-Это хранилище кэша хранит записи в памяти в том же процессе Ruby. У хранилища кэша ограниченный размер, определенный опцией `:size`, указанной в инициализаторе (по умолчанию 32Mb). Когда кэш превышает выделенный размер, происходит очистка и самые ранние используемые записи будут убраны.
+### `ActiveSupport::Cache::MemoryStore`
+
+[`ActiveSupport::Cache::MemoryStore`][] хранит записи в памяти в том же процессе Ruby. У хранилища кэша ограниченный размер, определенный опцией `:size`, указанной в инициализаторе (по умолчанию 32Mb). Когда кэш превышает выделенный размер, происходит очистка и самые ранние используемые записи будут убраны.
 
 ```ruby
 config.cache_store = :memory_store, { size: 64.megabytes }
@@ -366,9 +349,11 @@ config.cache_store = :memory_store, { size: 64.megabytes }
 
 NOTE: Поскольку процессы не делятся данными кэша при использовании `:memory_store`, то невозможно вручную считывать, записывать или очищать кэш через консоль Rails.
 
-### ActiveSupport::Cache::FileStore
+[`ActiveSupport::Cache::MemoryStore`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/MemoryStore.html
 
-Это хранилище кэша использует файловую систему для хранения записей. Путь к директории, в которой будут храниться файлы, должен быть определен при инициализации кэша.
+### `ActiveSupport::Cache::FileStore`
+
+[`ActiveSupport::Cache::FileStore`][] использует файловую систему для хранения записей. Путь к директории, в которой будут храниться файлы, должен быть определен при инициализации кэша.
 
 ```ruby
 config.cache_store = :file_store, "/path/to/cache/directory"
@@ -380,9 +365,11 @@ config.cache_store = :file_store, "/path/to/cache/directory"
 
 Это реализация хранилища кэша по умолчанию (хранится в `"#{root}/tmp/cache/"`), если `config.cache_store` явно не указан.
 
-### ActiveSupport::Cache::MemCacheStore
+[`ActiveSupport::Cache::FileStore`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/FileStore.html
 
-Это хранилище кэша использует сервер Danga's `memcached` для предоставления централизованного кэша вашему приложению. Rails по умолчанию использует встроенный гем `dalli`. Сейчас это наиболее популярное хранилище кэша для работающих веб-сайтов. Оно представляет отдельный общий кластер кэша с очень высокими производительностью и резервированием.
+### `ActiveSupport::Cache::MemCacheStore`
+
+[`ActiveSupport::Cache::MemCacheStore`][] использует сервер Danga's `memcached` для предоставления централизованного кэша вашему приложению. Rails по умолчанию использует встроенный гем `dalli`. Сейчас это наиболее популярное хранилище кэша для работающих веб-сайтов. Оно представляет отдельный общий кластер кэша с очень высокими производительностью и резервированием.
 
 При инициализации кэша необходимо указать адреса для всех серверов memcached в вашем кластере или убедиться, что переменная среды `MEMCACHE_SERVERS` установлена должным образом.
 
@@ -396,13 +383,16 @@ config.cache_store = :mem_cache_store, "cache-1.example.com", "cache-2.example.c
 config.cache_store = :mem_cache_store # Обратится к $MEMCACHE_SERVERS, затем к 127.0.0.1:11211
 ```
 
-Поддерживаемые типы адресов смотрите в [документации `Dalli::Client`](https://www.rubydoc.info/github/mperham/dalli/Dalli%2FClient:initialize).
+Поддерживаемые типы адресов смотрите в [документации `Dalli::Client`](https://www.rubydoc.info/gems/dalli/Dalli/Client#initialize-instance_method).
 
-Методы `write` и `fetch` на кэше принимают две дополнительных опции, дающие преимущества особенностей memcached. Можно определить `:raw` для отправки значения на сервер без сериализации. Значение должно быть строкой или числом. Прямые операции memcached, такие как `increment` и `decrement`, можно использовать только на значениях raw. Также можно определить `:unless_exist`, если не хотите, чтобы memcached перезаписал существующую запись.
+Метод [`write`][ActiveSupport::Cache::MemCacheStore#write] (и `fetch`) на кэше принимают дополнительных опции, дающие преимущества особенностей memcached.
 
-### ActiveSupport::Cache::RedisCacheStore
+[`ActiveSupport::Cache::MemCacheStore`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/MemCacheStore.html
+[ActiveSupport::Cache::MemCacheStore#write]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/MemCacheStore.html#method-i-write
 
-В хранилище кэша Redis используется поддержка Redis для автоматического вытеснения при достижении максимальной памяти, что позволяет вести себя так же, как сервер кэша Memcached.
+### `ActiveSupport::Cache::RedisCacheStore`
+
+В [`ActiveSupport::Cache::RedisCacheStore`][] используется поддержка Redis для автоматического вытеснения при достижении максимальной памяти, что позволяет вести себя так же, как сервер кэша Memcached.
 
 Примечание по развертыванию: ключи в Redis не истекают по умолчанию, поэтому будьте осторожны при использовании выделенного сервера кэша Redis. Не заполняйте свой персистентный сервер Redis данными волатильного кэша! Подробнее читайте в [руководстве по настройке сервера кэша в Redis](https://redis.io/topics/lru-cache).
 
@@ -419,14 +409,6 @@ config.cache_store = :mem_cache_store # Обратится к $MEMCACHE_SERVERS,
 ```ruby
 gem 'redis'
 ```
-
-Можно включить поддержку более быстрой библиотеки подключения [hiredis](https://github.com/redis/hiredis), добавив ее ruby-обертку в Gemfile:
-
-```ruby
-gem 'hiredis'
-```
-
-Хранилище кэша Redis автоматически требует и использует hiredis, если он доступен. Никакой дополнительной конфигурации не требуется.
 
 Наконец, добавьте конфигурацию в соответствующий файл `config/environments/*.rb`:
 
@@ -453,12 +435,26 @@ config.cache_store = :redis_cache_store, { url: cache_servers,
 }
 ```
 
-### ActiveSupport::Cache::NullStore
+[`ActiveSupport::Cache::RedisCacheStore`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/RedisCacheStore.html
 
-Это хранилище кэша ограничено каждым веб-запросом, и очищает хранимые значения в конце запроса. Оно предназначается для использования в средах development и test. Это может быть полезным, когда у вас имеется код, взаимодействующий непосредственно с `Rails.cache`, но кэширование может препятствовать способности видеть результат изменений в коде.
+### `ActiveSupport::Cache::NullStore`
+
+[`ActiveSupport::Cache::NullStore`][] ограничено каждым веб-запросом, и очищает хранимые значения в конце запроса. Оно предназначается для использования в средах development и test. Это может быть полезным, когда у вас имеется код, взаимодействующий непосредственно с `Rails.cache`, но кэширование может препятствовать способности видеть результат изменений в коде.
 
 ```ruby
 config.cache_store = :null_store
+```
+
+[`ActiveSupport::Cache::NullStore`]: https://api.rubyonrails.org/classes/ActiveSupport/Cache/NullStore.html
+
+### Произвольные хранилища кэша
+
+Можно создать свое собственно хранилище кэша, просто расширив `ActiveSupport::Cache::Store` и реализовав соответствующие методы. Таким образом, можно применить несколько кэширующих технологий в вашем приложении Rails.
+
+Для использования произвольного хранилища кэша просто присвойте хранилищу кэша новый экземпляр класса.
+
+```ruby
+config.cache_store = MyCacheStore.new
 ```
 
 Ключи кэша
@@ -595,7 +591,7 @@ $ bin/rails dev:cache
 Development mode is no longer being cached.
 ```
 
-NOTE: По умолчанию, когда кэширование в режиме development *отключено*, Rails использует [`ActiveSupport::Cache::NullStore`](#activesupport-cache-nullstore).
+По умолчанию, когда кэширование в режиме development *отключено*, Rails использует [`:null_store`](#activesupport-cache-nullstore).
 
 Ссылки
 ------
