@@ -210,7 +210,7 @@ Action Pack
     [Commit](https://github.com/rails/rails/commit/619b1b6353a65e1635d10b8f8c6630723a5a6f1a),
     [Commit](https://github.com/rails/rails/commit/4ec8bf68ff92f35e79232fbd605012ce1f4e1e6e))
 
-*   Зарегистрированы самые популярные audio/video/font типы mime, поддерживаемые современными браузерами.
+*   Зарегистрированы самые популярные audio/video/font типы MIME, поддерживаемые современными браузерами.
     ([Pull Request](https://github.com/rails/rails/pull/31251))
 
 *   Изменен вывод результата дефолтного системного скриншота теста с `inline` на `simple`.
@@ -435,7 +435,7 @@ Active Record
 *   Вызывается при вызове `lock!` в грязной (dirty) записи.
     ([Commit](https://github.com/rails/rails/commit/63cf15877bae859ff7b4ebaf05186f3ca79c1863))
 
-*   Исправлена программная ошибка, при которой порядки столбцов для индекса не записывались в `db/schema.rb`, когда используется адаптер sqlite.
+*   Исправлена программная ошибка, при которой порядки столбцов для индекса не записывались в `db/schema.rb`, когда используется адаптер SQLite.
     ([Pull Request](https://github.com/rails/rails/pull/30970))
 
 *   Исправлен `bin/rails db:migrate` с указанной `VERSION`. `bin/rails db:migrate` с пустым VERSION ведет себя как без `VERSION`. Проверен формат `VERSION`: Разрешен номер версии миграции или имя файла миграции. Вызывается ошибка, если формат `VERSION` недействителен. Вызывается ошибка, если целевая миграция не существует.

@@ -345,8 +345,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 5.2
     path:     5_2_release_notes
     file:     5_2_release_notes.md
-    revision: 3dad2919d58f56d46d87cd2712060fca9af79950
-    date:     26/05/2022
+    revision: 7e3f0995674afe3758181c055c841a9e5b409878
+    date:     02/10/2022
 
   - title:    Заметки о релизе Ruby on Rails 5.1
     path:     5_1_release_notes
@@ -357,8 +357,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 5.0
     path:     5_0_release_notes
     file:     5_0_release_notes.md
-    revision: f5d25cc37250ce8afe09d21eeb3ead1b5eb47054
-    date:     01/06/2021
+    revision: 3dcaca9a9e3ddd48cac56db4aa649ae94c996e84
+    date:     02/10/2022
 
   - title:    Заметки о релизе Ruby on Rails 4.2
     path:     4_2_release_notes
