@@ -51,6 +51,7 @@ namespace :docrails do
       score = stat[:lines] + stat[:outdated]
       color = case
       when stat[:new] then 34
+      when score < 0 then 37
       when 0 === score then 90
       when (1..200) === score then 32
       when (201..400) === score then 33
@@ -82,7 +83,7 @@ namespace :docrails do
 
   def docrails
     @docrails ||= if Dir.exists?(docrails_path)
-      Git.open(docrails_path).tap do |git| 
+      Git.open(docrails_path).tap do |git|
         git.pull('origin', 'main')
       rescue
         puts 'Cannot access remote rails repo, using local copy'
