@@ -1676,8 +1676,8 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 Чтобы использовать произвольный разделитель, переопределите аргумент `separator`.
 
 ```ruby
-"John Smith".parameterize(separator: "_") # => "john\_smith"
-"Kurt Gödel".parameterize(separator: "_") # => "kurt\_godel"
+"John Smith".parameterize(separator: "_") # => "john_smith"
+"Kurt Gödel".parameterize(separator: "_") # => "kurt_godel"
 ```
 
 NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
@@ -1841,6 +1841,32 @@ foreign_key = options[:foreign_key] || reflection.active_record.name.foreign_key
 NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 
 [String#foreign_key]: https://api.rubyonrails.org/classes/String.html#method-i-foreign_key
+
+#### `upcase_first`
+
+Метод [`upcase_first`][String#upcase_first] озаглавливает первую букву получателя:
+
+```ruby
+"employee salary".upcase_first # => "Employee salary"
+"".upcase_first                # => ""
+```
+
+NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
+
+[String#upcase_first]: https://api.rubyonrails.org/classes/String.html#method-i-upcase_first
+
+#### `downcase_first`
+
+Метод [`downcase_first`][String#downcase_first] конвертирует первую букву получателя в нижний регистр:
+
+```ruby
+"If I had read Alice in Wonderland".downcase_first # => "if I had read Alice in Wonderland"
+"".downcase_first                                  # => ""
+```
+
+NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
+
+[String#downcase_first]: https://api.rubyonrails.org/classes/String.html#method-i-downcase_first
 
 ### Конвертирование
 
@@ -3102,15 +3128,15 @@ NOTE: Определено в `active_support/core_ext/regexp.rb`.
 Расширения для `Range`
 ----------------------
 
-### `to_s`
+### `to_fs`
 
-Active Support расширяет метод `Range#to_s` так, что он понимает опциональный аргумент формата. В настоящий момент имеется только один поддерживаемый формат, отличный от дефолтного, это `:db`:
+Active Support определяет `Range#to_s` как альтернативу `to_s`, которая понимает опциональный аргумент формата. В настоящий момент имеется только один поддерживаемый формат, отличный от дефолтного, это `:db`:
 
 ```ruby
-(Date.today..Date.tomorrow).to_s
+(Date.today..Date.tomorrow).to_fs
 # => "2009-10-25..2009-10-26"
 
-(Date.today..Date.tomorrow).to_s(:db)
+(Date.today..Date.tomorrow).to_fs(:db)
 # => "BETWEEN '2009-10-25' AND '2009-10-26'"
 ```
 
@@ -3270,7 +3296,14 @@ NOTE: Определено в `active_support/core_ext/date_and_time/calculation
 [DateAndTime::Calculations#beginning_of_month]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-beginning_of_month
 [DateAndTime::Calculations#end_of_month]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-end_of_month
 
-##### `beginning_of_quarter`, `end_of_quarter`
+##### `quarter`, `beginning_of_quarter`, `end_of_quarter`
+
+Метод [`quarter`][DateAndTime::Calculations#quarter] возвращает квартал календарного года получателя:
+
+```ruby
+d = Date.new(2010, 5, 9) # => Sun, 09 May 2010
+d.quarter                # => 2
+```
 
 Методы [`beginning_of_quarter`][DateAndTime::Calculations#beginning_of_quarter] и [`end_of_quarter`][DateAndTime::Calculations#end_of_quarter] возвращают даты начала и конца квартала календарного года получателя:
 
@@ -3284,6 +3317,7 @@ d.end_of_quarter         # => Wed, 30 Jun 2010
 
 NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
+[DateAndTime::Calculations#quarter]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-quarter
 [DateAndTime::Calculations#at_beginning_of_quarter]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-at_beginning_of_quarter
 [DateAndTime::Calculations#at_end_of_quarter]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-at_end_of_quarter
 [DateAndTime::Calculations#beginning_of_quarter]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-beginning_of_quarter
