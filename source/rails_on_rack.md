@@ -165,6 +165,24 @@ config.middleware.insert_after ActionDispatch::Executor, Lifo::Cache, page_cache
 config.middleware.swap ActionDispatch::ShowExceptions, Lifo::ShowExceptions
 ```
 
+#### Перемещение промежуточных программ
+
+Можно переместить существующую промежуточную программу в стеке промежуточных программ с помощью `config.middleware.move_before` и `config.middleware.move_after`.
+
+```ruby
+# config/application.rb
+
+# Перемещаем ActionDispatch::ShowExceptions перед Lifo::ShowExceptions
+config.middleware.move_before Lifo::ShowExceptions, ActionDispatch::ShowExceptions
+```
+
+```ruby
+# config/application.rb
+
+# Перемещаем ActionDispatch::ShowExceptions после Lifo::ShowExceptions
+config.middleware.move_after Lifo::ShowExceptions, ActionDispatch::ShowExceptions
+```
+
 #### Удаление промежуточных программ
 
 Добавьте следующие строчки в конфигурацию вашего приложения:
