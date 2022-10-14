@@ -365,26 +365,26 @@ class Order < ApplicationRecord
 end
 ```
 
-### Составные условия для колбэков
+### Одновременное использование :if и :unless
 
-При написании условных колбэков, возможно смешивание `:if` и `:unless` в одном объявлении колбэка.
+В колбэках можно смешивать `:if` и `:unless` в одном выражении:
 
 ```ruby
 class Comment < ApplicationRecord
-  after_create :send_email_to_author, if: :author_wants_emails?,
-    unless: Proc.new { |comment| comment.article.ignore_comments? }
+  before_save :filter_content,
+    if: Proc.new { forum.parental_control? },
+    unless: Proc.new { author.trusted? }
 end
 ```
 
-### Комбинирование условий для колбэков
+### Составные условия колбэков
 
-Когда несколько условий определяют, должен ли произойти колбэк, можно использовать `Array`. Более того, можно применять и `:if`, и `:unless` к тому же самому колбэку.
+Опции `:if` и `:unless` также принимают массив из proc или имен методов в виде символов:
 
 ```ruby
 class Comment < ApplicationRecord
-  after_create :send_email_to_author,
-    if: [Proc.new { |c| c.user.allow_send_email? }, :author_wants_emails?],
-    unless: Proc.new { |c| c.article.ignore_comments? }
+  before_save :filter_content,
+    if: [:subject_to_parental_control?, :untrusted_author?]
 end
 ```
 
@@ -489,7 +489,7 @@ WARNING: Когда завершается транзакция, колбэки 
 
 WARNING. Сам код, выполняемый в колбэках `after_commit` или `after_rollback`, не замкнут в транзакцию.
 
-WARNING. При одновременном использовании `after_create_commit` и `after_update_commit` в одной и той же модели сработает только колбэк, определенный последним, переопределив все остальные.
+WARNING. При одновременном использовании `after_create_commit` и `after_update_commit` с тем же именем метода, сработает только колбэк, определенный последним, так как они оба являются псевдонимами к `after_commit`, который переопределяет ранее определенные колбэки с тем же именем метода.
 
 ```ruby
 class User < ApplicationRecord

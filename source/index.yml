@@ -39,8 +39,8 @@ pages:
   - title:    Колбэки Active Record
     path:     active-record-callbacks
     file:     active_record_callbacks.md
-    revision: a9665fffcd882727e32573c05b09dce30aa611aa
-    date:     07/11/2020
+    revision: a441eabc25a129d1137c0584c52428d905c1f464
+    date:     12/06/2021
 
   - title:    Связи (ассоциации) Active Record
     path:     active-record-associations
