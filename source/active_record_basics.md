@@ -190,7 +190,7 @@ david = User.find_by(name: 'David')
 ```
 
 ```ruby
-# найдет всех пользователей с именем David, которые Code Artists, и сортирует их по created_at в обратном хронологическом порядке
+# найдет всех пользователей с именем David, занятостью Code Artists, и сортирует их по created_at в обратном хронологическом порядке
 users = User.where(name: 'David', occupation: 'Code Artist').order(created_at: :desc)
 ```
 
