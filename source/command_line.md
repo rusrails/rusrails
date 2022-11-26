@@ -24,7 +24,7 @@ INFO: Гем rails можно установив, написав `gem install ra
 Первым аргументом, который передается в команду `rails new`, является имя приложения.
 
 ```bash
-$ rails new commandsapp
+$ rails new my_app
      create
      create  README.md
      create  Rakefile
@@ -40,11 +40,11 @@ $ rails new commandsapp
 
 Rails создаст кучу всего с помощью такой маленькой команды! Теперь вы получили готовую структуру директории Rails со всем кодом, необходимым для запуска нашего простого приложения.
 
-Если хотите пропустить какие-то файлы или компоненты при генерации, можно добавить следующие аргументы к команде `rails new`:
+Если хотите пропустить какие-то файлы при генерации, или опустить некоторые библиотеки, можно добавить любые из следующих аргументов к команде `rails new`:
 
 | Аргумент                | Описание                                            |
 | ----------------------- | --------------------------------------------------- |
-| `--skip-git`            | Пропустить файл .gitignore                          |
+| `--skip-git`            | Пропустить git init, .gitignore и .gitattributes    |
 | `--skip-keeps`          | Пропустить файлы для контроля версий .keep          |
 | `--skip-action-mailer`  | Пропустить файлы Action Mailer                      |
 | `--skip-action-mailbox` | Пропустить гем Action Mailbox                       |
@@ -61,6 +61,55 @@ Rails создаст кучу всего с помощью такой мален
 | `--skip-system-test`    | Пропустить файлы системных тестов                   |
 | `--skip-bootsnap`       | Пропустить гем bootsnap                             |
 
+Это только некоторые из опций, которые принимает `rails new`. Для полного списка опций, напишите `rails new --help`.
+
+### Конфигурирование другой базы данных
+
+При создании нового приложения Rails, есть опция указать, какой вид базы данных собирается использовать ваше приложение. Это сэкономит вам несколько минут, и определенно много нажатий клавиш.
+
+Давайте рассмотрим, что сделает для нас опция `--database=postgresql`:
+
+```bash
+$ rails new petstore --database=postgresql
+      create
+      create  app/controllers
+      create  app/helpers
+...
+```
+
+Давайте посмотрим, что она поместить в наш `config/database.yml`:
+
+```yaml
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On macOS with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On macOS with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem "pg"
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: petstore_development
+...
+```
+
+Она сгенерировала конфигурацию базы данных, соответствующую нашему выбору PostgreSQL.
 
 Основы командной строки
 -----------------------
@@ -120,7 +169,7 @@ In addition to those commands, there are:
 Безо всякого принуждения, `bin/rails server` запустит наше блестящее приложение на Rails:
 
 ```bash
-$ cd commandsapp
+$ cd my_app
 $ bin/rails server
 => Booting Puma
 => Rails 7.0.0 application starting in development
@@ -350,7 +399,7 @@ Any modifications you make will be rolled back on exit
 irb(main):001:0>
 ```
 
-#### Объекты app и helper
+#### Объекты `app` и `helper`
 
 Внутри `bin/rails console` имеется доступ к экземплярам `app` и `helper`.
 
@@ -448,7 +497,7 @@ RubyGems version          2.7.3
 Rack version              2.0.4
 JavaScript Runtime        Node.js (V8)
 Middleware:               Rack::Sendfile, ActionDispatch::Static, ActionDispatch::Executor, ActiveSupport::Cache::Strategy::LocalCache::Middleware, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Sprockets::Rails::QuietAssets, Rails::Rack::Logger, ActionDispatch::ShowExceptions, WebConsole::Middleware, ActionDispatch::DebugExceptions, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, Rack::Head, Rack::ConditionalGet, Rack::ETag
-Application root          /home/foobar/commandsapp
+Application root          /home/foobar/my_app
 Environment               development
 Database adapter          sqlite3
 Database schema version   20180205173523
@@ -641,77 +690,3 @@ $ bin/rails db:nothing
 ```
 
 NOTE: Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваша задача должна зависеть от задачи `environment`, которая загрузит код вашего приложения.
-
-Продвинутая командная строка Rails
-----------------------------------
-
-Более продвинутое использование командной строки сфокусировано на полезных (даже иногда удивляющих) опциях утилит, и подгонке утилит к вашим потребностям и особенностям рабочего процесса. Сейчас мы перечислим трюки из рукава Rails.
-
-### Rails с базами данными и SCM
-
-При создании нового приложения на Rails, можно выбрать, какой тип базы данных и какой тип системы управления исходным кодом (SCM) собирается использовать ваше приложение. Это сэкономит вам несколько минут и, конечно, несколько строк.
-
-Давайте посмотрим, что могут сделать для нас опции `--git` и `--database=postgresql`:
-
-```bash
-$ mkdir gitapp
-$ cd gitapp
-$ git init
-Initialized empty Git repository in .git/
-$ rails new . --git --database=postgresql
-      exists
-      create  app/controllers
-      create  app/helpers
-...
-...
-      create  tmp/cache
-      create  tmp/pids
-      create  Rakefile
-add 'Rakefile'
-      create  README.md
-add 'README.md'
-      create  app/controllers/application_controller.rb
-add 'app/controllers/application_controller.rb'
-      create  app/helpers/application_helper.rb
-...
-      create  log/test.log
-add 'log/test.log'
-```
-
-Мы создали директорию **gitapp** и инициализировали пустой репозиторий перед тем, как Rails добавил бы созданные им файлы в наш репозиторий. Давайте взглянем, что он нам поместил в конфигурацию базы данных:
-
-```bash
-$ cat config/database.yml
-# PostgreSQL. Versions 9.3 and up are supported.
-#
-# Install the pg driver:
-#   gem install pg
-# On macOS with Homebrew:
-#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
-# On macOS with MacPorts:
-#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
-# On Windows:
-#   gem install pg
-#       Choose the win32 build.
-#       Install PostgreSQL and put its /bin directory on your path.
-#
-# Configure Using Gemfile
-# gem 'pg'
-#
-default: &default
-  adapter: postgresql
-  encoding: unicode
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
-development:
-  <<: *default
-  database: gitapp_development
-...
-...
-```
-
-Это также сгенерирует несколько строчек в нашей конфигурации `database.yml`, соответствующих нашему выбору PostgreSQL как базы данных.
-
-NOTE. Единственная хитрость с использованием опции SCM состоит в том, что сначала нужно создать директорию для приложения, затем инициализировать ваш SCM, и лишь затем можно запустить команду `rails new` для генерация основы вашего приложения.
