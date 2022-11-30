@@ -564,10 +564,10 @@ INFO: _Благодаря умным методам, это вряд ли явл
 Project.where("name = '#{params[:name]}'")
 ```
 
-Это может быть экшн поиска и пользователь может ввести имя проекта, который он хочет найти. Если злонамеренный пользователь введет `' OR 1 --`, результирующим SQL-запросом будет:
+Это может быть экшн поиска и пользователь может ввести имя проекта, который он хочет найти. Если злонамеренный пользователь введет `' OR 1) --`, результирующим SQL-запросом будет:
 
 ```sql
-SELECT * FROM projects WHERE name = '' OR 1 --'
+SELECT * FROM projects WHERE (name = '' OR 1) --')
 ```
 
 Два тире начинают комментарий, игнорирующий все после него. Таким образом, запрос вернет все записи из таблицы `projects`, включая те, которые недоступны пользователю. Так случилось, поскольку условие истинно для всех записей.
@@ -638,7 +638,9 @@ Model.where("zip_code = :zip AND quantity >= :qty", values).first
 Model.where(zip_code: entered_zip_code).where("quantity >= ?", entered_quantity).first
 ```
 
-Отметьте, что ранее упомянутые контрмеры доступны только в экземплярах модели. В других местах используйте `sanitize_sql()`. _Введите в привычку думать о последствиях безопасности, когда используете внешние строки в SQL_.
+Отметьте, что ранее упомянутые контрмеры доступны только в экземплярах модели. В других местах используйте [`sanitize_sql`][]. _Введите в привычку думать о последствиях безопасности, когда используете внешние строки в SQL_.
+
+[`sanitize_sql`]: https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html#method-i-sanitize_sql
 
 ### (cross-site-scripting-xss) Межсайтовый скриптинг (XSS)
 
@@ -667,7 +669,7 @@ INFO: _Наиболее распространенная и одна из наи
 Этот код JavaScript просто отображает сообщение. Следующие примеры делают примерно то же самое, но в очень необычных местах:
 
 ```html
-<img src=javascript:alert('Hello')>
+<img src="javascript:alert('Hello')">
 <table background="javascript:alert('Hello')">
 ```
 
@@ -733,7 +735,7 @@ s = sanitize(user_input, tags: tags, attributes: %w(href title))
 
 Это допустит только заданные теги и сделает все хорошо, даже против всех ухищрений и злонамеренных тегов.
 
-В качестве второго шага, _хорошо экранировать весь вывод в приложении_, особенно при отображении пользовательского ввода, который не был отфильтрован при вводе (как в примере выше). _Используйте метод `escapeHTML()` (или его псевдоним `h()`)_, чтобы заменить введенные символы HTML `&`, `"`, `<` и `>` их неинтерпретируемыми представителями в HTML (`&amp;`, `&quot;`, `&lt;` и `&gt;`).
+В качестве второго шага, _хорошо экранировать весь вывод в приложении_, особенно при отображении пользовательского ввода, который не был отфильтрован при вводе (как в примере выше). _Используйте метод `html_escape()` (или его псевдоним `h()`)_, чтобы заменить введенные символы HTML `&`, `"`, `<` и `>` их неинтерпретируемыми представителями в HTML (`&amp;`, `&quot;`, `&lt;` и `&gt;`).
 
 ##### Обфусцированная и закодированная инъекция
 
@@ -1000,31 +1002,37 @@ config.action_dispatch.perform_deep_munge = false
 Заголовки безопасности HTTP
 ---------------------------
 
-Чтобы улучшить безопасность вашего приложения, Rails может быть настроен, чтобы возвращать заголовки безопасности HTTP. Некоторые заголовки настраиваются по умолчанию, иные нужно настраивать явно.
+Чтобы улучшить безопасность вашего приложения, Rails может быть настроен, чтобы возвращать заголовки безопасности HTTP. Некоторые заголовки настраиваются по умолчанию; иные нужно настраивать явно.
 
 ### Заголовки безопасности по умолчанию
 
 По умолчанию Rails настроен, чтобы возвращать следующие заголовки отклика. Ваше приложение возвращает эти заголовки для каждого отклика HTTP.
 
-#### X-Frame-Options
+#### `X-Frame-Options`
 
-Этот заголовок показывает, что браузер может рендерить страницу в теге `<frame>`, `<iframe>`, `<embed>` или `<object>`. Этот заголовок устанавливает `SAMEORIGIN` по умолчанию, чтобы разрешить фрейминг только на том же домене. Установите ему `DENY`, чтобы запретить фрейминг вообще, или уберите этот заголовок вообще, если хотите разрешить фрейминг на всех доменах.
+Заголовок [`X-Frame-Options`][] показывает, что браузер может рендерить страницу в теге `<frame>`, `<iframe>`, `<embed>` или `<object>`. Этот заголовок устанавливает `SAMEORIGIN` по умолчанию, чтобы разрешить фрейминг только на том же домене. Установите ему `DENY`, чтобы запретить фрейминг вообще, или уберите этот заголовок вообще, если хотите разрешить фрейминг на всех доменах.
 
-#### X-XSS-Protection
+[`X-Frame-Options`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+
+#### `X-XSS-Protection`
 
 [Устаревший заголовок](https://owasp.org/www-project-secure-headers/#x-xss-protection), установлен `0` в Rails по умолчанию, чтобы отключить проблематичные устаревшие аудиторы XSS.
 
-#### X-Content-Type-Options
+#### `X-Content-Type-Options`
 
-Этот заголовок установлен `nosniff` в Rails по умолчанию. Он останавливает браузер от угадывания типа MIME файла.
+Заголовок [`X-Content-Type-Options`][] установлен `nosniff` в Rails по умолчанию. Он останавливает браузер от угадывания типа MIME файла.
 
-#### X-Permitted-Cross-Domain-Policies
+[`X-Content-Type-Options`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+
+#### `X-Permitted-Cross-Domain-Policies`
 
 Этот заголовок установлен `none` в Rails по умолчанию. Он не разрешает Adobe Flash и клиентам PDF встраивать вашу страницу на других доменах.
 
-#### Referrer-Policy
+#### `Referrer-Policy`
 
-Этот заголовок установлен `strict-origin-when-cross-origin` в Rails по умолчанию. Для запроса с другого источника, он посылает только источник в заголовке Referer. Это предотвращает утечки частных данных, которые могут быть доступны из других частей полного URL, таких как путь и строка запроса.
+Заголовок [`Referrer-Policy`][] установлен `strict-origin-when-cross-origin` в Rails по умолчанию. Для запросов с другого источника, он посылает только источник в заголовке Referer. Это предотвращает утечки частных данных, которые могут быть доступны из других частей полного URL, таких как путь и строка запроса.
+
+[`Referrer-Policy`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
 
 #### Настройка заголовков по умолчанию
 
@@ -1053,19 +1061,20 @@ config.action_dispatch.default_headers['Header-Name']     = 'Value'
 config.action_dispatch.default_headers.clear
 ```
 
-### Заголовок Strict-Transport-Security Header
+### Заголовок `Strict-Transport-Security`
 
-Заголовок отклика HTTP [Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HTST) указывает браузеру автоматически переходить на HTTPS для текущего и будущих соединений.
+Заголовок отклика HTTP [`Strict-Transport-Security`][] (HTST) указывает браузеру автоматически переходить на HTTPS для текущего и будущих соединений.
 
 Этот заголовок добавляется в отклик при включении опции `force_ssl`:
 
 ```ruby
   config.force_ssl = true
 ```
+[`Strict-Transport-Security`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 
-### Заголовок Content-Security-Policy
+### Заголовок `Content-Security-Policy`
 
-Чтобы помочь защититься от атак XSS и инъекций, рекомендуется определить заголовок отклика [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) для вашего приложения. Rails предоставляет DSL, который разрешает конфигурировать заголовок.
+Чтобы помочь защититься от атак XSS и инъекций, рекомендуется определить заголовок отклика [`Content-Security-Policy`][] для вашего приложения. Rails предоставляет DSL, который разрешает конфигурировать заголовок.
 
 Определите политику безопасности в подходящем инициализаторе:
 
@@ -1112,16 +1121,18 @@ class PostsController < ApplicationController
 end
 ```
 
+[`Content-Security-Policy`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+
 #### (reporting-violations) Отчет о нарушениях
 
-Включите директиву [report-uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri), чтобы сообщить о нарушениях для указанного URI:
+Включите директиву [`report-uri`][], чтобы сообщить о нарушениях для указанного URI:
 
 ```ruby
 Rails.application.config.content_security_policy do |policy|
   policy.report_uri "/csp-violation-report-endpoint"
 ```
 
-При миграции устаревшего содержимого, вы, возможно, не хотите сообщать о нарушениях без принуждения к политике. Установите заголовок отклика [Content-Security-Policy-Report-Only](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only), чтобы сообщать только о нарушениях.
+При миграции устаревшего содержимого, вы, возможно, не хотите сообщать о нарушениях без принуждения к политике. Установите заголовок отклика [`Content-Security-Policy-Report-Only`][], чтобы сообщать только о нарушениях.
 
 ```ruby
 Rails.application.config.content_security_policy_report_only = true
@@ -1135,9 +1146,12 @@ class PostsController < ApplicationController
 end
 ```
 
+[`Content-Security-Policy-Report-Only`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
+[`report-uri`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri
+
 #### (adding-a-nonce) Добавление Nonce
 
-Если вы рассматриваете 'unsafe-inline', рассмотрите вместо этого использование nonce. [Nonce предоставляют заменимое улучшение](https://www.w3.org/TR/CSP3/#security-nonces) над 'unsafe-inline' при реализации Content Security Policy поверх существующего кода.
+Если вы рассматриваете `'unsafe-inline'`, рассмотрите вместо этого использование nonce. [Nonce предоставляют заменимое улучшение](https://www.w3.org/TR/CSP3/#security-nonces) над `'unsafe-inline'` при реализации Content Security Policy поверх существующего кода.
 
 ```ruby
 # config/initializers/content_security_policy.rb
@@ -1148,13 +1162,19 @@ end
 Rails.application.config.content_security_policy_nonce_generator = -> request { SecureRandom.base64(16) }
 ```
 
-Есть несколько компромиссов, которые нужно рассмотреть при настройке генератора nonce. Использование `SecureRandom.base64(16)` это хорошее значение по умолчанию, так как он сгенерирует новый случайный nonce для каждого запроса. Однако, этот метод несовместим с [кэшированием GET с условием](/caching-with-rails#conditional-get), так как новые nonce приведут к новым значениям ETag для каждого запроса. Альтернативой к случайным nonce для каждого запроса будет использование идентификатора сессии:
+Есть несколько компромиссов, которые нужно рассмотреть при настройке генератора nonce. Использование `SecureRandom.base64(16)` это хорошее значение по умолчанию, так как он сгенерирует новый случайный nonce для каждого запроса. Однако, этот метод несовместим с [кэшированием GET с условием](/caching-with-rails#conditional-get-support), так как новые nonce приведут к новым значениям ETag для каждого запроса. Альтернативой к случайным nonce для каждого запроса будет использование идентификатора сессии:
 
 ```ruby
 Rails.application.config.content_security_policy_nonce_generator = -> request { request.session.id.to_s }
 ```
 
 Этот метод генерации совместим с ETag, но его безопасность зависит от того, достаточно ли случаен идентификатор сессии, и не раскрыт ли он в небезопасных куки.
+
+По умолчанию nonce будут применены к `script-src` и `style-src`, если определен генератор nonce. Можно использовать `config.content_security_policy_nonce_directives`, чтобы изменить, какая директива будет использовать nonce:
+
+```ruby
+Rails.application.config.content_security_policy_nonce_directives = %w(script-src)
+```
 
 Как только генерация nonce настроена в инициализаторе, можно добавить автоматические значения nonce в теги script, передавая `nonce: true` как часть `html_options`:
 
@@ -1180,11 +1200,11 @@ Rails.application.config.content_security_policy_nonce_generator = -> request { 
 
 Это используется хелпером Rails UJS для создания динамически загружаемых встроенных элементов `<script>`.
 
-### Заголовок Feature-Policy
+### Заголовок `Feature-Policy`
 
-NOTE: Заголовок Feature-Policy был переименован в Permissions-Policy. Permissions-Policy требует другую реализацию и пока не поддерживается всеми браузерами. Чтобы избежать переименования этой промежуточной программы в будущем, мы используем новое имя для этой промежуточной программы, но пока сохраняем старое имя заголовка и его реализацию.
+NOTE: Заголовок `Feature-Policy` был переименован в `Permissions-Policy`. `Permissions-Policy` требует другую реализацию и пока не поддерживается всеми браузерами. Чтобы избежать переименования этой промежуточной программы в будущем, мы используем новое имя для этой промежуточной программы, но пока сохраняем старое имя заголовка и его реализацию.
 
-Чтобы разрешить или заблокировать использование особенностей браузера, можно определить заголовок отклика [Feature-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy) для вашего приложения. Rails предоставляет DSL, позволяющий настроить заголовок.
+Чтобы разрешить или заблокировать использование особенностей браузера, можно определить заголовок отклика [`Feature-Policy`][] для вашего приложения. Rails предоставляет DSL, позволяющий настроить заголовок.
 
 Определите политику в соответствующем инициализаторе:
 
@@ -1206,6 +1226,35 @@ end
 class PagesController < ApplicationController
   permissions_policy do |policy|
     policy.geolocation "https://example.com"
+  end
+end
+```
+
+[`Feature-Policy`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy
+
+### Совместное межсайтовое использование ресурсов
+
+Браузеры ограничивают межсайтовые запросы HTTP, инициированные скриптами. Если хотите запускать Rails в качестве API, а фронтенд приложение - на отдельном домене, следует включить [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (CORS).
+
+Можно использовать промежуточную программу [Rack CORS](https://github.com/cyu/rack-cors) для обработки CORS. Если вы сгенерировали свое приложение с помощью опции `--api`, Rack CORS, возможно, уже настроен, и вы можете опустить следующие шаги.
+
+Для начала, добавьте гем rack-cors в свой Gemfile:
+
+```ruby
+gem 'rack-cors'
+```
+
+Затем добавьте инициализатор, чтобы настроить промежуточную программу:
+
+```ruby
+# config/initializers/cors.rb
+Rails.application.config.middleware.insert_before 0, "Rack::Cors" do
+  allow do
+    origins 'example.com'
+
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
   end
 end
 ```

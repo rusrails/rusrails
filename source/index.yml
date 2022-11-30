@@ -171,8 +171,8 @@ pages:
   - title:    Безопасность приложений на Rails
     path:     security
     file:     security.md
-    revision: bcf56af0c19df8f92a936f0427b71181898818c0
-    date:     22/05/2022
+    revision: 58e6e5c8989a5387c94badf333e9329705c92b44
+    date:     28/11/2022
 
   - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
