@@ -135,8 +135,8 @@ pages:
   - title:    Обзор Action Text
     path:     action-text-overview
     file:     action_text_overview.md
-    revision: 940980d1afe4288522d0a9786822c79a08081087
-    date:     11/02/2022
+    revision: 897beb890246ce4af7285fd0eb19b707363369f0
+    date:     13/11/2022
 
   - title:    Основы Active Job
     path:     active_job_basics
