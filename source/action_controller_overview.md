@@ -329,8 +329,9 @@ Strong parameter API был разработан для наиболее общ�
 
 * [`ActionDispatch::Session::CookieStore`][] - Хранит все на клиенте.
 * [`ActionDispatch::Session::CacheStore`][] - Хранит данные в кэше Rails.
-* `ActionDispatch::Session::ActiveRecordStore` - Хранит данные в базе данных с использованием Active Record. (требует гем `activerecord-session_store`).
 * [`ActionDispatch::Session::MemCacheStore`][] - Хранит данные в кластере memcached (эта устаревшая реализация, вместо нее рассмотрите использование `CacheStore`).
+* `ActionDispatch::Session::ActiveRecordStore` - Хранит данные в базе данных с использованием Active Record. (требует гем [`activerecord-session_store`][activerecord-session_store]).
+* Пользовательское хранилище или хранилище, предоставленное сторонним гемом
 
 Все хранилища сессии используют куки для хранения уникального ID каждой сессии (вы должны использовать куки, Rails не позволяет передавать ID сессии в URL, так как это менее безопасно).
 
@@ -345,11 +346,10 @@ CookieStore могут хранить около 4 Кбайт данных - н�
 Если вы нуждаетесь в другом механизме хранения сессий, измените его в инициализаторе:
 
 ```ruby
-# Use the database for sessions instead of the cookie-based default,
-# which shouldn't be used to store highly confidential information
-# (create the session table with "rails g active_record:session_migration")
-# Rails.application.config.session_store :active_record_store
+Rails.application.config.session_store :cache_store
 ```
+
+Подробности смотрите в [`config.session_store`](/configuring#config-session-store) в руководстве по конфигурации.
 
 Rails устанавливает ключ сессии (имя куки) при подписании данных сессии. Он также может быть изменен в инициализаторе:
 
@@ -381,6 +381,7 @@ NOTE: Изменение secret_key_base при использовании `Cook
 [`ActionDispatch::Session::CookieStore`]: https://api.rubyonrails.org/classes/ActionDispatch/Session/CookieStore.html
 [`ActionDispatch::Session::CacheStore`]: https://api.rubyonrails.org/classes/ActionDispatch/Session/CacheStore.html
 [`ActionDispatch::Session::MemCacheStore`]: https://api.rubyonrails.org/classes/ActionDispatch/Session/MemCacheStore.html
+[activerecord-session_store]: https://github.com/rails/activerecord-session_store
 
 ### Доступ к сессии
 
@@ -416,7 +417,7 @@ class LoginsController < ApplicationController
       # Сохраняем ID пользователя в сессии, так что он может быть использован
       # в последующих запросах
       session[:current_user_id] = user.id
-      redirect_to root_url
+      redirect_to root_url, status: :see_other root_url
     end
   end
 end
@@ -432,7 +433,7 @@ class LoginsController < ApplicationController
     session.delete(:current_user_id)
     # Очистить мемоизированного текущего пользователя
     @_current_user = nil
-    redirect_to root_url
+    redirect_to root_url, status: :see_other
   end
 end
 ```
