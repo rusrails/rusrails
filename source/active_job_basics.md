@@ -62,6 +62,22 @@ end
 
 Отметьте, что можно определить `perform` с любым количеством аргументов.
 
+Если у вас уже есть абстрактный класс, и его имя отличается от `ApplicationJob`, можно передать опцию `--parent`, чтобы обозначить, что вы желаете иной абстрактный класс:
+
+```bash
+$ bin/rails generate job process_payment --parent=payment_job
+```
+
+```ruby
+class ProcessPaymentJob < PaymentJob
+  queue_as :default
+
+  def perform(*args)
+    # Сделать что-нибудь позже
+  end
+end
+```
+
 ### Помещение задания в очередь
 
 Поместите задание в очередь с помощью [`perform_later`][] и, опционально, [`set`][]. Например, так:
