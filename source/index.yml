@@ -174,7 +174,13 @@ pages:
     revision: 58e6e5c8989a5387c94badf333e9329705c92b44
     date:     28/11/2022
 
-  - title:    Отладка приложений на Rails
+  - title:    Отчет об ошибках в приложениях Rails
+    path:     error-reporting
+    file:     error_reporting.md
+    revision: 1a9b887c0c37321bdac76a036c2eec9da49edb5f
+    date:     21/10/2022
+
+  - title:    Отладка приловжений на Rails
     path:     debugging-rails-applications
     file:     debugging_rails_applications.md
     revision: fdc988bdd1329c54cae4259d462a8bff8c4b152e
@@ -396,8 +402,7 @@ pages:
     revision: ea0685fee96d885543c9f353f8fcf1076fac441e
     date:     21/02/2022
 
-plan:
-  - file:     error_reporting.md
+plan: []
 
 old:
   - file:     2_2_release_notes.md

@@ -40,12 +40,13 @@
     * [API интернационализации Rails (I18n)](/i18n)
     * [Тестирование приложений на Rails](/testing)
     * [Безопасность приложений на Rails](/security)
-    * [Отладка приложений на Rails](/debugging-rails-applications)
+    * [Отчет об ошибках в приложениях Rails](/error-reporting)
 
 next_column
 
 * **Копаем глубже**
 
+    * [Отладка приложений на Rails](/debugging-rails-applications)
     * [Конфигурирование приложений на Rails](/configuring)
     * [Командная строка Rails](/command-line)
     * [Asset Pipeline](/asset-pipeline)
