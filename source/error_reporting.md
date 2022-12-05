@@ -1,21 +1,21 @@
 Отчет об ошибках в приложениях Rails
 ====================================
 
-This guide introduces ways to manage exceptions that occur in Ruby on Rails applications.
+Это руководство представляет способы управления исключениями, которые случаются в приложениях Ruby on Rails.
 
-After reading this guide, you will know:
+После прочтения этого руководства, вы узнаете:
 
-* How to use Rails' error reporter to capture and report errors.
-* How to create custom subscribers for your error-reporting service.
+* Как использовать репортер об ошибках Rails, чтобы отлавливать и отчитываться об ошибках.
+* Как создавать пользовательских получателей для вашего отчитывающегося об ошибке сервиса.
 
 --------------------------------------------------------------------------------
 
-Error Reporting
-------------------------
+Отчет об ошибке
+---------------
 
-The Rails [error reporter](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html) provides a standard way to collect exceptions that occur in your application and report them to your preferred service or location.
+[Репортер об ошибках](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html) Rails предоставляет стандартных способ собирать исключения, случающиеся в вашем приложении, и сообщать о них предпочитаемому вами сервису или месту.
 
-The error reporter aims to replace boilerplate error-handling code like this:
+Репортер об ошибках нацелен заменить шаблонный код обработки ошибки, наподобие:
 
 ```ruby
 begin
@@ -25,7 +25,7 @@ rescue SomethingIsBroken => error
 end
 ```
 
-with a consistent interface:
+с помощью последовательного интерфейса:
 
 ```ruby
 Rails.error.handle(SomethingIsBroken) do
@@ -33,19 +33,19 @@ Rails.error.handle(SomethingIsBroken) do
 end
 ```
 
-Rails wraps all executions (such as HTTP requests, jobs, and `rails runner` invocations) in the error reporter, so any unhandled errors raised in your app will automatically be reported to your error-reporting service via their subscribers.
+Rails оборачивает все выполнения (такие как запросы HTTP, задачи и вызовы `rails runner`) в репортер об ошибках, поэтому любые необработанные ошибки, вызванные в вашем приложении, автоматически будут сообщены вашему сервису, отчитывающемуся об ошибке, через их получателей.
 
-This means that third-party error-reporting libraries no longer need to insert a Rack middleware or do any monkey-patching to capture unhandled exceptions. Libraries that use ActiveSupport can also use this to non-intrusively report warnings that would previously have been lost in logs.
+Это означает, что сторонним библиотекам, отчитывающимся об ошибке, больше не нужно вставлять промежуточную программу Rack или делать какие-либо Monkey patch, чтобы захватить необработанные исключения. Библиотеки, использующие ActiveSupport, также могут это использовать, чтобы ненавязчиво отчитываться о предупреждениях, которые раньше терялись в логах.
 
-Using the Rails' error reporter is not required. All other means of capturing errors still work.
+Использование репортера об ошибках Rails не обязательное. Все иные средства отлова ошибок все еще работают.
 
-### Subscribing to the Reporter
+### Подписка на репортер
 
-To use the error reporter, you need a _subscriber_. A subscriber is any object with a `report` method. When an error occurs in your application or is manually reported, the Rails error reporter will call this method with the error object and some options.
+Чтобы использовать репортер об ошибках, необходим _получатель_. Получателем может быть любым объектом с методом `report`. Когда в вашем приложении происходит ошибка, или вызывается вручную, репортер об ошибках Rails вызовет этот метод с объектом ошибки и некоторыми опциями.
 
-Some error-reporting libraries, such as [Sentry's](https://github.com/getsentry/sentry-ruby/blob/e18ce4b6dcce2ebd37778c1e96164684a1e9ebfc/sentry-rails/lib/sentry/rails/error_subscriber.rb) and [Honeybadger's](https://docs.honeybadger.io/lib/ruby/integration-guides/rails-exception-tracking/), automatically register a subscriber for you. Consult your provider's documentation for more details.
+Некоторые библиотеки для отчета об ошибках, такие как [Sentry](https://github.com/getsentry/sentry-ruby/blob/e18ce4b6dcce2ebd37778c1e96164684a1e9ebfc/sentry-rails/lib/sentry/rails/error_subscriber.rb) и [Honeybadger](https://docs.honeybadger.io/lib/ruby/integration-guides/rails-exception-tracking/), автоматически регистрируют для вас получателя. За подробностями обратитесь к документации вашего поставщика.
 
-You may also create a custom subscriber. For example:
+Также можно создать пользовательского получателя. Например:
 
 ```ruby
 # config/initializers/error_subscriber.rb
@@ -56,32 +56,33 @@ class ErrorSubscriber
 end
 ```
 
-After defining the subscriber class, register it by calling [`Rails.error.subscribe`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-subscribe) method:
+После определения класса получателя, зарегистрируйте его, вызвав метод [`Rails.error.subscribe`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-subscribe):
 
 ```ruby
 Rails.error.subscribe(ErrorSubscriber.new)
 ```
 
-You can register as many subscribers as you wish. Rails will call them in turn, in the order in which they were registered.
+Можно зарегистрировать столько получателей, сколько желаете. Rails вызовет их по очереди, в порядке, в котором они зарегистрированы.
 
-Note: The Rails error-reporter will always call registered subscribers, regardless of your environment. However, many error-reporting services only report errors in production by default. You should configure and test your setup across environments as needed.
+Note: Репортер об ошибках Rails всегда будет запускать зарегистрированные получатели, независимо от среды. Однако, многие сервисы отчета об ошибках сообщают об ошибках по умолчанию только в production. Вам следует настроить и протестировать ваши настройки в разных средах по необходимости.
 
-### Using the Error Reporter
+### Использование репортера об ошибках
 
-There are three ways you can use the error reporter:
+Есть три способа использования репортера об ошибках:
 
-#### Reporting and Swallowing Errors
-[`Rails.error.handle`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-handle) will report any error raised within the block. It will then **swallow** the error, and the rest of your code outside the block will continue as normal.
+#### Отчет и проглатывание ошибок
+
+[`Rails.error.handle`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-handle) отчитается о любой ошибке, вызванной в блоке. Затем он **проглотит** ошибку, и остальной ваш код вне блока будет продолжаться, как обычно.
 
 ```ruby
 result = Rails.error.handle do
-  1 + '1' # raises TypeError
+  1 + '1' # вызовет TypeError
 end
 result # => nil
-1 + 1 # This will be executed
+1 + 1 # Это будет выполнено
 ```
 
-If no error is raised in the block, `Rails.error.handle` will return the result of the block, otherwise it will return `nil`. You can override this by providing a `fallback`:
+Если в блоке не вызвана ошибка, `Rails.error.handle` возвратит результат блока, в противном случае вернет `nil`. Это можно переопределить, предоставив `fallback`:
 
 ```ruby
 user = Rails.error.handle(fallback: -> { User.anonymous }) do
@@ -89,39 +90,41 @@ user = Rails.error.handle(fallback: -> { User.anonymous }) do
 end
 ```
 
-#### Reporting and Re-raising Errors
-[`Rails.error.record`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-record) will report errors to all registered subscribers and then re-raise the error, meaning that the rest of your code won't execute.
+#### Отчет и повторный вызов ошибок
+
+[`Rails.error.record`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-record) отчитается об ошибках всем зарегистрированным получателям, а затем повторно вызовет ошибку, что означает, что остальной ваш код не будет выполнен.
 
 ```ruby
 Rails.error.record do
-  1 + '1' # raises TypeError
+  1 + '1' # вызовет TypeError
 end
-1 + 1 # This won't be executed
+1 + 1 # Это не будет выполнено
 ```
 
-If no error is raised in the block, `Rails.error.record` will return the result of the block.
+Если в блоке не вызвана ошибка, `Rails.error.record` возвратит результат блока.
 
-#### Manually Reporting Errors
-You can also manually report errors by calling [`Rails.error.report`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-report):
+#### Отчет об ошибках вручную
+
+Также можно вручную отчитаться об ошибках, вызвав [`Rails.error.report`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-report):
 
 ```ruby
 begin
-  # code
+  # код
 rescue StandardError => e
   Rails.error.report(e)
 end
 ```
 
-Any options you pass will be passed on the error subscribers.
+Любые переданные опции будут переданы получателям ошибки.
 
-### Error-reporting Options
+### Опции отчета об ошибки
 
-All 3 reporting APIs (`#handle`, `#record`, and `#report`) support the following options, which are then passed along to all registered subscribers:
+Все 3 отчитывающихся API (`#handle`, `#record` и `#report`) поддерживают следующие опции, которые затем передаются во все зарегистрированные получатели:
 
-- `handled`: a `Boolean` to indicate if the error was handled. This is set to `true` by default. `#record` sets this to `false`.
-- `severity`: a `Symbol` describing the severity of the error. Expected values are: `:error`, `:warning`, and `:info`. `#handle` sets this to `:warning`, while `#record` sets it to `:error`.
-- `context`: a `Hash` to provide more context about the error, like request or user details
-- `source`: a `String` about the source of the error. The default source is `"application"`. Errors reported by internal libraries may set other sources; the Redis cache library may use `"redis_cache_store.active_support"`, for instance. Your subscriber can use the source to ignore errors you aren't interested in.
+- `handled`: `Boolean` для обозначения, была ли обработана ошибка. По умолчанию `true`. `#record` устанавливает ей `false`.
+- `severity`: `Symbol`, описывающий суровость ошибки. Ожидаемые значения: `:error`, `:warning` и `:info`. `#handle` устанавливает ей `:warning`, в то время как `#record` устанавливает ей `:error`.
+- `context`: `Hash` для предоставления больше контекста об ошибке, наподобие подробностей о запросе или пользователе
+- `source`: `String` об источнике ошибки. Источник по умолчанию `"application"`. Ошибки, вызываемые внутренними библиотеками, могут устанавливать другие источники; библиотека кэша Redis может использовать `"redis_cache_store.active_support"`, например. Ваш получатель может использовать источник, чтобы игнорировать ошибки, в которой он не заинтересован.
 
 ```ruby
 Rails.error.handle(context: {user_id: user.id}, severity: :info) do
@@ -129,40 +132,40 @@ Rails.error.handle(context: {user_id: user.id}, severity: :info) do
 end
 ```
 
-### Filtering by Error Classes
+### Фильтрация по классам ошибок
 
-With `Rails.error.handle` and `Rails.error.record`, you can also choose to only report errors of certain classes. For example:
+С помощью `Rails.error.handle` и `Rails.error.record` также можно выбрать, чтобы отчитываться только об ошибках определенных классов. Например:
 
 ```ruby
 Rails.error.handle(IOError) do
-  1 + '1' # raises TypeError
+  1 + '1' # вызовет TypeError
 end
-1 + 1 # TypeErrors are not IOErrors, so this will *not* be executed
+1 + 1 # TypeErrors это не IOError, поэтому это *не* будет выполнено
 ```
 
-Here, the `TypeError` will not be captured by the Rails error reporter. Only instances of  `IOError` and its descendants will be reported. Any other errors will be raised as normal.
+Тут `TypeError` не будет отловлено репортером об ошибках Rails. Будет только отчет об экземплярах `IOError` и ее потомков. Любые другие ошибки будут вызваны, как обычно.
 
-### Setting Context Globally
+### Установка глобального контекста
 
-In addition to setting context through the `context` option, you can use the [`#set_context`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-set_context) API. For example:
+В дополнение к установке контекста с помощью опции `context`, можно использовать [`#set_context`](https://api.rubyonrails.org/classes/ActiveSupport/ErrorReporter.html#method-i-set_context) API. Например:
 
 ```ruby
 Rails.error.set_context(section: "checkout", user_id: @user.id)
 ```
 
-Any context set this way will be merged with the `context` option
+Любой контекст, установленный таким образом, будет объединена с опцией `context`
 
 ```ruby
 Rails.error.set_context(a: 1)
 Rails.error.handle(context: { b: 2 }) { raise }
-# The reported context will be: {:a=>1, :b=>2}
+# Контекст отчета будет: {:a=>1, :b=>2}
 Rails.error.handle(context: { b: 3 }) { raise }
-# The reported context will be: {:a=>1, :b=>3}
+# Контекст отчета будет: {:a=>1, :b=>3}
 ```
 
-### For Libraries
+### Для библиотек
 
-Error-reporting libraries can register their subscribers in a `Railtie`:
+Библиотеки для отчета об ошибках могут регистрировать своих получателей в `Railtie`:
 
 ```ruby
 module MySdk
@@ -174,4 +177,4 @@ module MySdk
 end
 ```
 
-If you register an error subscriber, but still have other error mechanisms like a Rack middleware, you may end up with errors reported multiple times. You should either remove your other mechanisms or adjust your report functionality so it skips reporting an exception it has seen before.
+Если вы зарегистрировали получателя ошибки, но все еще имеете другие механизмы для ошибок, наподобие промежуточной программы Rack, может получиться, что ошибки сообщаются несколько раз. Следует либо убрать ваши другие механизмы, либо исправить функционал вашего отчета, чтобы он пропускал сообщения об исключении, которое он уже видел.
