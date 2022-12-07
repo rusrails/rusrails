@@ -118,6 +118,28 @@ end
 
 [`rescue_from`]: https://api.rubyonrails.org/classes/ActiveSupport/Rescuable/ClassMethods.html#method-i-rescue_from
 
+#### Колбэки соединений
+
+Есть доступные колбэки `before_command`, `after_command` и `around_command`, которые вызываются, соответственно, до, после или вокруг каждой команды, полученной клиентом. Термин "команда" здесь относится к любому взаимодействию, полученному клиенту (подписке, отписке или выполняемым действиям):
+
+```ruby
+# app/channels/application_cable/connection.rb
+module ApplicationCable
+  class Connection < ActionCable::Connection::Base
+    identified_by :user
+
+    around_command :set_current_account
+
+    private
+
+    def set_current_account
+      # Теперь все каналы могут использовать Current.account
+      Current.set(account: user.account) { yield }
+    end
+  end
+end
+```
+
 ### Каналы
 
 *Канал* инкапсулирует логическую единицу работы, схожей с той, что делает контроллер в типичном MVC. По умолчанию Rails создает родительский класс `ApplicationCable::Channel` (который расширяет [`ActionCable::Channel::Base`][]) для инкапсуляции логики, общей для ваших каналов.
@@ -181,6 +203,35 @@ class ChatChannel < ApplicationCable::Channel
 end
 ```
 
+#### Колбэки канала
+
+`ApplicationCable::Channel` предоставляет ряд колбэков, которые можно использовать, чтобы запустить логику в течение жизненного цикла канала. Доступные колбэки:
+
+- `before_subscribe`
+- `after_subscribe` (также псевдоним: `on_subscribe`)
+- `before_unsubscribe`
+- `after_unsubscribe` (также псевдоним: `on_unsubscribe`)
+
+NOTE: Колбэк `after_subscribe` запускается, всякий раз, когда вызывается метод `subscribed`, даже если подписка отвергнута с помощью метода `reject`. Чтобы запустить `after_subscribe` только при успешной подписке, используйте `after_subscribe :send_welcome_message, unless: :subscription_rejected?`
+
+```ruby
+# app/channels/chat_channel.rb
+class ChatChannel < ApplicationCable::Channel
+  after_subscribe :send_welcome_message, unless: :subscription_rejected?
+  after_subscribe :track_subscription
+
+  private
+
+  def send_welcome_message
+    broadcast_to(...)
+  end
+
+  def track_subscription
+    # ...
+  end
+end
+```
+
 ## Клиентские компоненты
 
 ### Соединения
@@ -205,6 +256,8 @@ export default createConsumer()
 
 ```js
 // Указан другой URL для соединения
+createConsumer('wss://example.com/cable')
+// Или при использовании websockets поверх HTTP
 createConsumer('https://ws.example.com/cable')
 
 // Использована функция для динамической генерации URL
@@ -212,7 +265,7 @@ createConsumer(getWebSocketURL)
 
 function getWebSocketURL() {
   const token = localStorage.get('auth-token')
-  return `https://ws.example.com/cable?token=${token}`
+  return `wss://example.com/cable?token=${token}`
 }
 ```
 
@@ -488,14 +541,14 @@ consumer.subscriptions.create("AppearanceChannel", {
   install() {
     window.addEventListener("focus", this.update)
     window.addEventListener("blur", this.update)
-    document.addEventListener("turbolinks:load", this.update)
+    document.addEventListener("turbo:load", this.update)
     document.addEventListener("visibilitychange", this.update)
   },
 
   uninstall() {
     window.removeEventListener("focus", this.update)
     window.removeEventListener("blur", this.update)
-    document.removeEventListener("turbolinks:load", this.update)
+    document.removeEventListener("turbo:load", this.update)
     document.removeEventListener("visibilitychange", this.update)
   },
 
@@ -512,7 +565,7 @@ consumer.subscriptions.create("AppearanceChannel", {
 
 #### Клиент-серверное взаимодействие
 
-1. **Клиент** соединяется с **Сервером** с помощью `App.cable = ActionCable.createConsumer("ws://cable.example.com")`. (`cable.js`). **Сервер** идентифицирует экземпляр этого соединения по `current_user`.
+1. **Клиент** соединяется с **Сервером** с помощью `createConsumer()`. (`consumer.js`). **Сервер** идентифицирует экземпляр этого соединения по `current_user`.
 
 2. **Клиент** подписывается на канал появлений с помощью `consumer.subscriptions.create({ channel: "AppearanceChannel" })`. (`appearance_channel.js`)
 
