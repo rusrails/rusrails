@@ -300,7 +300,7 @@ config.cache_store = :memory_store, { size: 64.megabytes }
 
 К кэшу можно получить доступ, вызвав `Rails.cache`.
 
-#### Опции пула соединений
+#### (connection-pool-options) Опции пула соединений
 
 По умолчанию [`:mem_cache_store`](#activesupport-cache-memcachestore) и [`:redis_cache_store`](#activesupport-cache-rediscachestore) настроены использовать пул соединений. Это означает, что при использовании Puma или другого сервера на тредах, можно использовать несколько тредов, выполняющих запросы к хранилищу кэша в то же самое время.
 
