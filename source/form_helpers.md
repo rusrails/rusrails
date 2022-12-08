@@ -66,7 +66,7 @@ NOTE: Это руководство не является подробной д�
 </form>
 ```
 
-TIP: Передача `url: my_specified_path` в `form_with` сообщает форме, куда осуществлять запрос. Однако, как объясняется ниже, в форму также можно передавать объекты ActiveRecord.
+TIP: Передача `url: my_specified_path` в `form_with` сообщает форме, куда осуществлять запрос. Однако, как объясняется ниже, в форму также можно передавать объекты Active Record.
 
 TIP: Для каждого поля ввода формы генерируется атрибут ID из его имени (`"query"` в примере). Эти ID могут быть очень полезны для стилизации CSS или управления элементами форм с помощью JavaScript.
 
@@ -562,22 +562,37 @@ Rails также предоставляет хелперы для рендера
 Выбор из коллекции произвольных объектов
 ----------------------------------------
 
-Часто нам нужно создать набор вариантов в форме из коллекции объектов. Например, когда мы хотим, чтобы пользователь выбрал город из нашей базы данных, и у нас есть такая модель `City`:
+Иногда нам нужно создать набор вариантов из коллекции произвольных объектов. Например, если у нас есть модель `City` и соответствующая связь `belongs_to :city`:
 
 ```ruby
-City.order(:name).to_a
-# => [
-#      #<City id: 3, name: "Berlin">,
-#      #<City id: 1, name: "Chicago">,
-#      #<City id: 2, name: "Madrid">
-#    ]
+class City < ApplicationRecord
+end
+
+class Person < ApplicationRecord
+  belongs_to :city
+end
 ```
 
-Rails предоставляет хелперы для создания вариантов из коллекции без ее явного перебора. Эти хелперы определяют значение и текстовую надпись для каждого варианта, вызывая определенные методы на каждом объекте коллекции.
+```ruby
+City.order(:name).map { |city| [city.name, city.id] }
+# => [["Berlin", 3], ["Chicago", 1], ["Madrid", 2]]
+```
+
+Затем можно позволить пользователю выбирать город из базы данных с помощью следующей формы:
+
+```erb
+<%= form_with model: @person do |form| %>
+  <%= form.select :city_id, City.order(:name).map { |city| [city.name, city.id] } %>
+<% end %>
+```
+
+NOTE: При рендере поля для связи `belongs_to`, необходимо указать имя внешнего ключа (`city_id` в вышеприведенном примере), а не имя самой связи.
+
+Однако, Rails предоставляет хелперы для генерации выборов из коллекции без необходимости явного перебора по ней. Эти хелперы определяют метки значения и текста каждого выбора, вызывая указанные методы на каждом объекте в коллекции.
 
 ### Хелпер `collection_select`
 
-Чтобы создать список выбора для наших городов, можно использовать [`collection_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_select):
+Чтобы создать список выбора, можно использовать [`collection_select`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_select):
 
 ```erb
 <%= form.collection_select :city_id, City.order(:name), :id, :name %>
@@ -586,7 +601,7 @@ Rails предоставляет хелперы для создания вари
 Выведет:
 
 ```html
-<select name="city_id" id="city_id">
+<select name="person[city_id]" id="person_city_id">
   <option value="3">Berlin</option>
   <option value="1">Chicago</option>
   <option value="2">Madrid</option>
@@ -597,7 +612,7 @@ NOTE: С помощью `collection_select` мы определяем снача
 
 ### Хелпер `collection_radio_buttons`
 
-Чтобы создать набор радиокнопок для наших городов, можно использовать [`collection_radio_buttons`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_radio_buttons):
+Чтобы создать набор радиокнопок, можно использовать [`collection_radio_buttons`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_radio_buttons):
 
 ```erb
 <%= form.collection_radio_buttons :city_id, City.order(:name), :id, :name %>
@@ -606,31 +621,38 @@ NOTE: С помощью `collection_select` мы определяем снача
 Выведет:
 
 ```html
-<input type="radio" name="city_id" value="3" id="city_id_3">
-<label for="city_id_3">Berlin</label>
-<input type="radio" name="city_id" value="1" id="city_id_1">
-<label for="city_id_1">Chicago</label>
-<input type="radio" name="city_id" value="2" id="city_id_2">
-<label for="city_id_2">Madrid</label>
+<input type="radio" name="person[city_id]" value="3" id="person_city_id_3">
+<label for="person_city_id_3">Berlin</label>
+
+<input type="radio" name="person[city_id]" value="1" id="person_city_id_1">
+<label for="person_city_id_1">Chicago</label>
+
+<input type="radio" name="person[city_id]" value="2" id="person_city_id_2">
+<label for="person_city_id_2">Madrid</label>
 ```
 
 ### Хелпер `collection_check_boxes`
 
-Чтобы создать набор чекбоксов для наших городов (который позволяет выбрать более одного), можно использовать [`collection_check_boxes`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_check_boxes):
+Чтобы создать набор чекбоксов — к примеру, чтобы поддерживать связь `has_and_belongs_to_many` — можно использовать [`collection_check_boxes`](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html#method-i-collection_check_boxes):
 
 ```erb
-<%= form.collection_check_boxes :city_id, City.order(:name), :id, :name %>
+<%= form.collection_check_boxes :interest_ids, Interest.order(:name), :id, :name %>
 ```
 
 Выведет:
 
 ```html
-<input type="checkbox" name="city_id[]" value="3" id="city_id_3">
-<label for="city_id_3">Berlin</label>
-<input type="checkbox" name="city_id[]" value="1" id="city_id_1">
-<label for="city_id_1">Chicago</label>
-<input type="checkbox" name="city_id[]" value="2" id="city_id_2">
-<label for="city_id_2">Madrid</label>
+<input type="checkbox" name="person[interest_id][]" value="3" id="person_interest_id_3">
+<label for="person_interest_id_3">Engineering</label>
+
+<input type="checkbox" name="person[interest_id][]" value="4" id="person_interest_id_4">
+<label for="person_interest_id_4">Math</label>
+
+<input type="checkbox" name="person[interest_id][]" value="1" id="person_interest_id_1">
+<label for="person_interest_id_1">Science</label>
+
+<input type="checkbox" name="person[interest_id][]" value="2" id="person_interest_id_2">
+<label for="person_interest_id_2">Technology</label>
 ```
 
 (uploading-files) Загрузка файлов
@@ -823,7 +845,7 @@ WARNING: Параметры массива не очень хорошо рабо
 }
 ```
 
-Все поля ввода формы связаны с хэшем `"person"`, так как мы вызывали `fields_for` на построителе формы `person_form`. Указывая опцию `:index`, мы связываем поля ввода адреса с `person[address][#{address.id}][city]` вместо `person[address][city]`. Таким образом можно определить, какие записи Address должны быть изменены при обработке хэша `params`.
+Все поля ввода формы связаны с хэшем `"person"`, так как мы вызывали `fields_for` на построителе формы `person_form`. Также, указывая `index: address.id`, мы рендерим атрибут `name` каждого поля ввода города как `person[address][#{address.id}][city]` вместо `person[address][city]`. Таким образом можно определить, какие записи Address должны быть изменены при обработке хэша `params`.
 
 Можно передать другие числа или строки с помощью опции `:index`. Можно даже передать `nil`, что создаст параметр массив.
 
