@@ -122,7 +122,7 @@ end
 
 При одиночном использовании, `belongs_to` создает однонаправленное соединение один-к-одному. Следовательно, в вышеприведенном примере каждая книга "знает" своего автора, но авторы не знают о своих книгах. Чтобы настроить [двунаправленную связь](#bi-directional-associations) - используйте `belongs_to` в сочетании с `has_one` или `has_many` на другой модели.
 
-`belongs_to` не гарантирует ссылочной целостности, поэтому, в зависимости от использования, возможно, необходимо добавить ограничение внешнего ключа на столбце ссылки на уровне базы данных, подобным образом:
+`belongs_to` не гарантирует ссылочной целостности, если `optional` установлен true, поэтому, в зависимости от использования, возможно, необходимо добавить ограничение внешнего ключа на столбце ссылки на уровне базы данных, подобным образом:
 
 ```ruby
 create_table :books do |t|
@@ -890,6 +890,7 @@ end
 * `create_association(attributes = {})`
 * `create_association!(attributes = {})`
 * `reload_association`
+* `reset_association`
 * `association_changed?`
 * `association_previously_changed?`
 
@@ -910,6 +911,7 @@ build_author
 create_author
 create_author!
 reload_author
+reset_author
 author_changed?
 author_previously_changed?
 ```
@@ -928,6 +930,12 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 
 ```ruby
 @author = @book.reload_author
+```
+
+Чтобы выгрузить кэшированную версию связанного объекта при следующем доступе, если таковая имеется, и прочитать ее из базы данных, вызовите `#reset_association` на родительском объекте.
+
+```ruby
+@book.reset_author
 ```
 
 #### `association=(associate)`
@@ -1270,6 +1278,7 @@ end
 * `create_association(attributes = {})`
 * `create_association!(attributes = {})`
 * `reload_association`
+* `reset_assocation`
 
 Во всех этих методах `association` заменяется на символ, переданный как первый аргумент в `has_one`. Например, имеем объявление:
 
@@ -1288,6 +1297,7 @@ build_account
 create_account
 create_account!
 reload_account
+reset_account
 ```
 
 NOTE: При установлении новой связи `has_one` или `belongs_to`, следует использовать префикс `build_` для построения связи, в отличие от метода `association.build`, используемого для связей `has_many` или `has_and_belongs_to_many`. Чтобы создать связь, используйте префикс `create_`.
@@ -1304,6 +1314,12 @@ NOTE: При установлении новой связи `has_one` или `be
 
 ```ruby
 @account = @supplier.reload_account
+```
+
+Чтобы выгрузить кэшированную версию связанного объекта при следующем доступе, если таковая имеется, и прочитать ее из базы данных, вызовите `#reset_association` на родительском объекте.
+
+```ruby
+@book.reset_author
 ```
 
 #### `association=(associate)`
