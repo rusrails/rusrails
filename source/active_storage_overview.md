@@ -47,7 +47,7 @@ Active Storage использует три таблицы в базе данны
 
 WARNING: `active_storage_attachments` это полиморфная соединительная таблица, хранящая имена ваших классов моделей. Если имена ваших классов моделей меняются, необходимо запустить миграцию на эту таблицу, чтобы обновить соответствующие `record_type` новым именем вашего класса модели.
 
-WARNING: Если используются UUID вместо чисел в качестве первичного ключа моделей, необходимо изменить тип столбцов `active_storage_attachments.record_id` и `active_storage_variant_records.id` в соответствующей сгенерированной миграции.
+WARNING: Если используются UUID вместо чисел в качестве первичного ключа моделей, необходимо изменить тип столбцов `active_storage_attachments.record_id` и `active_storage_variant_records.id` в соответствующей сгенерированной миграции. Это можно опустить, если установить `Rails.application.config.generators { |g| g.orm :active_record, primary_key_type: :uuid }` в файле конфигурации.
 
 Сервисы Active Storage объявляются в `config/storage.yml`. Для каждого сервиса, используемого в приложении, стоит указать имя и необходимую конфигурацию. В нижеприведенном примере объявляются три сервиса с именами `local`, `test` и `amazon`:
 
@@ -398,6 +398,20 @@ end
 
 ```erb
 <%= image_tag user.avatar.variant(:thumb) %>
+```
+
+Также можно указать определенные варианты для предварительного просмотра:
+
+```ruby
+class User < ApplicationRecord
+  has_one_attached :video do |attachable|
+    attachable.variant :thumb, resize_to_limit: [100, 100]
+  end
+end
+```
+
+```erb
+<%= image_tag user.video.preview(:thumb) %>
 ```
 
 [`has_one_attached`]: https://api.rubyonrails.org/classes/ActiveStorage/Attached/Model.html#method-i-has_one_attached
@@ -768,11 +782,25 @@ Active Storage может использовать либо [Vips][], либо M
 <%= image_tag user.avatar.variant(resize_to_limit: [100, 100], format: :jpeg, saver: { subsample_mode: "on", strip: true, interlace: true, quality: 80 }) %>
 ```
 
+Доступные параметры определяются гемом [`image_processing`][] и зависят от используемого процессора варианта, но оба поддерживают следующие параметры:
+
+| Параметр          | Пример                       | Описание |
+| ----------------- | ---------------------------- | -------- |
+| `resize_to_limit` | `resize_to_limit: [100, 100]` | Уменьшает изображение в соответствие указанным габаритам, сохраняя оригинальные пропорции. Изменит размер, только если изображение больше, чем указанные габариты. |
+| `resize_to_fit`   | `resize_to_fit: [100, 100]`   | Уменьшает изображение в соответствие указанным габаритам, сохраняя оригинальные пропорции. Уменьшит, если изображение больше, чем указанные габариты, или увеличит, если меньше. |
+| `resize_to_fill`  | `resize_to_fill: [100, 100]`  | Изменит изображение, чтобы заполнить указанные габариты, сохраняя оригинальные пропорции. При необходимости обрежет изображение по большему габариту. |
+| `resize_and_pad`  | `resize_and_pad: [100, 100]`  | Уменьшает изображение в соответствие указанным габаритам, сохраняя оригинальные пропорции. При необходимости заполнит оставшуюся площадь прозрачным цветом, если исходное изображение имеет альфа-канал, в противном случае черным. |
+| `crop`            | `crop: [20, 50, 300, 300]`    | Извлекает область из изображения. Первые два аргумента это левый и верхний края извлекаемой области, а последние два аргумента это ширина и высота извлекаемой области. |
+| `rotate`          | `rotate: 90`                  | Поворачивает изображение на указанный угол. |
+
+У [`image_processing`][] больше доступных опций (таких как `saver`, позволяющей настроить компрессию изображения) в собственных документациях к процессорам [Vips](https://github.com/janko/image_processing/blob/master/doc/vips.md) и [MiniMagick](https://github.com/janko/image_processing/blob/master/doc/minimagick.md).
+
 [`config.active_storage.variable_content_types`]: /configuring#config-active-storage-variable-content-types
 [`config.active_storage.variant_processor`]: /configuring#config-active-storage-variant-processor
 [`config.active_storage.web_image_content_types`]: /configuring#config-active-storage-web-image-content-types
 [`variant`]: https://api.rubyonrails.org/classes/ActiveStorage/Blob/Representable.html#method-i-variant
 [Vips]: https://www.rubydoc.info/gems/ruby-vips/Vips/Image
+[`image_processing`]: https://github.com/janko/image_processing
 
 ### Предварительный просмотр файлов
 
