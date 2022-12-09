@@ -642,6 +642,18 @@ SELECT * FROM books WHERE (books.created_at BETWEEN '2008-12-21 00:00:00' AND '2
 
 Это была демонстрация более короткого синтаксиса для примеров в [Условия с использованием массива](#array-conditions)
 
+Можно использовать интервалы без начала и без конца, чтобы создавать условия больше/меньше.
+
+```ruby
+Book.where(created_at: (Time.now.midnight - 1.day)..)
+```
+
+Это сгенерирует подобный SQL:
+
+```sql
+SELECT * FROM books WHERE books.created_at >= '2008-12-21 00:00:00'
+```
+
 #### Условия подмножества
 
 Если хотите найти записи, используя выражение `IN`, можете передать массив в хэш условий:
@@ -673,13 +685,13 @@ SELECT * FROM customers WHERE (customers.orders_count NOT IN (1,3,5))
 Если в запросе есть условие с использованием хэша с не-nil значениями на null столбце, записи со значениями `nil` на null столбце не будут возвращены. Например:
 
 ```ruby
-Customer.create!(nullable_contry: nil)
+Customer.create!(nullable_country: nil)
 Customer.where.not(nullable_country: "UK")
 => []
 # Но
-Customer.create!(nullable_contry: "UK")
+Customer.create!(nullable_country: "UK")
 Customer.where.not(nullable_country: nil)
-=> [#<Customer id: 2, nullable_contry: "UK">]
+=> [#<Customer id: 2, nullable_country: "UK">]
 ```
 
 [`where.not`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods/WhereChain.html#method-i-not
@@ -988,7 +1000,7 @@ Book.select(:title, :isbn).reselect(:created_at)
 SQL, который будет выполнен:
 
 ```sql
-SELECT `books`.`created_at` FROM `books`
+SELECT books.created_at FROM books
 ```
 
 Сравните это со случаем, когда не было использовано выражение `reselect`:
@@ -1000,7 +1012,7 @@ Book.select(:title, :isbn).select(:created_at)
 SQL, который будет выполнен:
 
 ```sql
-SELECT `books`.`title`, `books`.`isbn`, `books`.`created_at` FROM `books`
+SELECT books.title, books.isbn, books.created_at FROM books
 ```
 
 ### `reorder`
@@ -1078,7 +1090,7 @@ Book.where(out_of_print: true).rewhere(out_of_print: false)
 SQL, который будет выполнен, будет выглядеть так:
 
 ```sql
-SELECT * FROM books WHERE `out_of_print` = 0
+SELECT * FROM books WHERE out_of_print = 0
 ```
 
 В случае, когда не используется условие `rewhere`, условия where соединяются с помощью AND
@@ -1090,7 +1102,7 @@ Book.where(out_of_print: true).where(out_of_print: false)
 выполненный SQL будет следующий:
 
 ```sql
-SELECT * FROM books WHERE `out_of_print` = 1 AND `out_of_print` = 0
+SELECT * FROM books WHERE out_of_print = 1 AND out_of_print = 0
 ```
 
 [`rewhere`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-rewhere
@@ -1196,8 +1208,8 @@ end
 
 ```sql
 SQL (0.2ms)   BEGIN
-Book Load (0.3ms)   SELECT * FROM `books` LIMIT 1 FOR UPDATE
-Book Update (0.4ms)   UPDATE `books` SET `updated_at` = '2009-02-07 18:05:56', `title` = 'Algorithms, second edition' WHERE `id` = 1
+Book Load (0.3ms)   SELECT * FROM books LIMIT 1 FOR UPDATE
+Book Update (0.4ms)   UPDATE books SET updated_at = '2009-02-07 18:05:56', title = 'Algorithms, second edition' WHERE id = 1
 SQL (0.8ms)   COMMIT
 ```
 
@@ -1420,9 +1432,9 @@ end
 Этот код выполнит всего **2** запроса, вместо **11** запросов из прошлого примера:
 
 ```sql
-SELECT `books`.* FROM `books` LIMIT 10
-SELECT `authors`.* FROM `authors`
-  WHERE `authors`.`book_id` IN (1,2,3,4,5,6,7,8,9,10)
+SELECT books.* FROM books LIMIT 10
+SELECT authors.* FROM authors
+  WHERE authors.book_id IN (1,2,3,4,5,6,7,8,9,10)
 ```
 
 #### Нетерпеливая загрузка нескольких связей
@@ -1458,7 +1470,7 @@ Author.includes(:books).where(books: { out_of_print: true })
 Это сгенерирует запрос с ограничением `LEFT OUTER JOIN`, в то время как метод `joins` сгенерировал бы его с использованием функции `INNER JOIN`.
 
 ```ruby
-  SELECT authors.id AS t0_r0, ... books.updated_at AS t1_r5 FROM authors LEFT OUTER JOIN "books" ON "books"."author_id" = "authors"."id" WHERE (books.out_of_print = 1)
+  SELECT authors.id AS t0_r0, ... books.updated_at AS t1_r5 FROM authors LEFT OUTER JOIN books ON books.author_id = authors.id WHERE (books.out_of_print = 1)
 ```
 
 Если бы не было условия `where`, то сгенерировался бы обычный набор из двух запросов.
@@ -1490,9 +1502,9 @@ end
 Вышеуказанный код выполнит всего лишь **2** запроса, против **11** запросов в прошлом случае:
 
 ```sql
-SELECT `books`.* FROM `books` LIMIT 10
-SELECT `authors`.* FROM `authors`
-  WHERE `authors`.`book_id` IN (1,2,3,4,5,6,7,8,9,10)
+SELECT books.* FROM books LIMIT 10
+SELECT authors.* FROM authors
+  WHERE authors.book_id IN (1,2,3,4,5,6,7,8,9,10)
 ```
 
 NOTE: Метод `preload` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для предварительной загрузки связей.
@@ -1514,10 +1526,10 @@ end
 Вышеуказанный код выполнит всего лишь **2** запросов, против **11** запросов в прошлом случае:
 
 ```sql
-SELECT DISTINCT `books`.`id` FROM `books` LEFT OUTER JOIN `authors` ON `authors`.`book_id` = `books`.`id` LIMIT 10
-SELECT `books`.`id` AS t0_r0, `books`.`last_name` AS t0_r1, ...
-  FROM `books` LEFT OUTER JOIN `authors` ON `authors`.`book_id` = `books`.`id`
-  WHERE `books`.`id` IN (1,2,3,4,5,6,7,8,9,10)
+SELECT DISTINCT books.id FROM books LEFT OUTER JOIN authors ON authors.book_id = books.id LIMIT 10
+SELECT books.id AS t0_r0, books.last_name AS t0_r1, ...
+  FROM books LEFT OUTER JOIN authors ON authors.book_id = books.id
+  WHERE books.id IN (1,2,3,4,5,6,7,8,9,10)
 ```
 
 NOTE: Метод `eager_load` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для нетерпеливой загрузки связей.
@@ -1762,7 +1774,7 @@ SELECT books.* FROM books WHERE books.out_of_print
 
 Для каждого поля (также называемого атрибутом), определенного в вашей таблице, Active Record предоставляет метод поиска. Например, если есть поле `first_name` в вашей модели `Customer`, вы автоматически получаете `find_by_first_name` от Active Record. Если также есть поле `locked` в модели `Customer`, вы также получаете `find_by_locked` метод.
 
-Можете определить восклицательный знак (`!`) в конце динамического поиска, чтобы он вызвал ошибку `ActiveRecord::RecordNotFound`, если не возвратит ни одной записи, например так `Customer.find_by_name!("Ryan")`
+Можете определить восклицательный знак (`!`) в конце динамического поиска, чтобы он вызвал ошибку `ActiveRecord::RecordNotFound`, если не возвратит ни одной записи, например так `Customer.find_by_first_name!("Ryan")`
 
 Если хотите искать и по `first_name`, и по `orders_count`, можете сцепить эти поиски вместе, просто написав "`and`" между полями, например, `Customer.find_by_first_name_and_orders_count("Ryan", 5)`.
 
@@ -1996,7 +2008,7 @@ irb> Customer.connection.select_all("SELECT first_name, created_at FROM customer
 
 ```irb
 irb> Book.where(out_of_print: true).pluck(:id)
-SELECT id FROM books WHERE out_of_print = false
+SELECT id FROM books WHERE out_of_print = true
 => [1, 2, 3]
 
 irb> Order.distinct.pluck(:status)

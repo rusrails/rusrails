@@ -51,8 +51,8 @@ pages:
   - title:    Интерфейс запросов Active Record
     path:     active-record-querying
     file:     active_record_querying.md
-    revision: 57dcca2ab8cd3209fdddf72e24aca8aec11716b1
-    date:     06/05/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Active Record для PostgreSQL
     path:     active-record-postgresql
