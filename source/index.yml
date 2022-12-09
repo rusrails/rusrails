@@ -27,8 +27,8 @@ pages:
   - title:    Миграции Active Record
     path:     active-record-migrations
     file:     active_record_migrations.md
-    revision: e2ffa662564fd9ee9b9c6f386c833b11f521946c
-    date:     21/04/2022
+    revision: 2e2fed77b6130c5bce5a29556e7042cb3c0b4e8a
+    date:     25/11/2022
 
   - title:    Валидации Active Record
     path:     active-record-validations

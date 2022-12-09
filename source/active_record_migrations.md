@@ -95,7 +95,7 @@ class AddPartNumberToProducts < ActiveRecord::Migration[7.1]
 end
 ```
 
-Этот генератор может гораздо больше, чем добавить временную метку к имени файла. Основываясь на соглашениях по именованию и дополнительных (необязательных) аргументах, он может также заполнить миграцию.
+Этот генератор может гораздо больше, чем приставить временную метку к имени файла. Основываясь на соглашениях по именованию и дополнительных (необязательных) аргументах, он может также заполнить миграцию.
 
 Если имя миграции имеет форму "AddColumnToTable" или "RemoveColumnFromTable" и далее следует перечень имен столбцов и их типов, то в миграции будут созданы соответствующие выражения [`add_column`][] и [`remove_column`][].
 
@@ -504,6 +504,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 
 Метод `change` это основной метод написания миграций. Он работает в большинстве случаев, в которых Active Record знает, как обратить действия миграции автоматически.  Ниже некоторые действия, которые поддерживает `change`:
 
+* [`add_check_constraint`][]
 * [`add_column`][]
 * [`add_foreign_key`][]
 * [`add_index`][]
@@ -519,6 +520,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 * [`drop_join_table`][]
 * [`drop_table`][] (необходимо предоставить блок)
 * `enable_extension`
+* [`remove_check_constraint`][] (необходимо предоставить выражение ограничения)
 * [`remove_column`][] (необходимо предоставить тип)
 * [`remove_foreign_key`][] (необходимо предоставить вторую таблицу)
 * [`remove_index`][]
@@ -538,12 +540,14 @@ remove_column :posts, :slug, :string, null: false, default: ''
 
 Если вы нуждаетесь в использовании иных методов, следует использовать `reversible` или писать методы `up` и `down` вместо метода `change`.
 
+[`add_check_constraint`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_check_constraint
 [`add_foreign_key`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_foreign_key
 [`add_timestamps`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_timestamps
 [`change_column_comment`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-change_column_comment
 [`change_table_comment`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-change_table_comment
 [`drop_join_table`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-drop_join_table
 [`drop_table`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-drop_table
+[`remove_check_constraint`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_check_constraint
 [`remove_foreign_key`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_foreign_key
 [`remove_index`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_index
 [`remove_reference`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_reference
