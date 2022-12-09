@@ -117,8 +117,8 @@ pages:
   - title:    API интернационализации Rails (I18n)
     path:     i18n
     file:     i18n.md
-    revision: 9af580d50eb927ac90bc662ab2181268adb6b152
-    date:     08/04/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Основы Action Mailer
     path:     action-mailer-basics
@@ -219,8 +219,8 @@ pages:
   - title:    Engine для начинающих
     path:     engines
     file:     engines.md
-    revision: 78ba02267afe60f6f9a97b783c993ed11a4198f6
-    date:     12/03/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Процесс инициализации в Rails
     path:     initialization
@@ -315,8 +315,8 @@ pages:
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
     file:     maintenance_policy.md
-    revision: 8a042d827e12998abd164e6db44e5a218e9455ab
-    date:     05/01/2022
+    revision: 8821574186335cf8702208f14dd9771e1e5dac1b
+    date:     03/08/2022
 
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
