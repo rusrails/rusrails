@@ -78,7 +78,7 @@ $ bin/rails runner 'p UsersHelper'
 UsersHelper
 ```
 
-Rails автоматически добавит пользовательские директории внутри `app` в пути автозагрузки. Например, если в вашем приложении есть `app/presenters`, или `app/services` и т.д., они будут добавлены в пути автозагрузки.
+Rails автоматически добавит пользовательские директории внутри `app` в пути автозагрузки. Например, если в вашем приложении есть `app/presenters`, не нужно ничего настраивать, чтобы автоматически загружать презентеры; они будут работать "из коробки".
 
 Массив путей автозагрузки может быть расширен с помощью добавления в `config.autoload_paths` в `config/application.rb` или `config/environments/*.rb`. Например:
 
@@ -324,74 +324,89 @@ end
 (single-table-inheritance) Наследование с единой таблицей
 ---------------------------------------------------------
 
-Наследование с единой таблицей является особенностью, не очень сочетающейся с ленивой загрузкой. Причина в том, что его API должен быть способен подсчитать иерархию STI, чтобы работать корректно, в то время как ленивая загрузка откладывает загрузку классов, пока на них не сослались. Невозможно подсчитать то, на что еще не сослались.
+Наследование с единой таблицей не очень хорошо сочетается с ленивой загрузкой: Active Record должен знать об иерархии STI, чтобы работать корректно, но при ленивой загрузке классы загружаются только по требованию!
 
-В некотором смысле, приложениям нужно нетерпеливо загрузить иерархии STI, независимо от режима загрузки.
+Чтобы справиться с этим фундаментальным несоответствием, нам нужно предварительно загрузить STI. Есть несколько вариантов достижения этого, с разными компромиссами. Давайте рассмотрим их.
 
-Конечно, если приложение нетерпеливо загружается при старте, это уже выполняется. Когда нет, на практике достаточно инициализировать типы, существующие в базе данных, что обычно достаточно в режимах разработки или тестирования. Одним из способов это сделать является включение модуля предварительной загрузки STI в директорию `lib`:
+### Опция 1: Включить нетерпеливую загрузку
+
+Самый простой способ предварительно загрузить STI - это включить нетерпеливую загрузку, установив:
 
 ```ruby
-module StiPreload
-  unless Rails.application.config.eager_load
-    extend ActiveSupport::Concern
+config.eager_load = true
+```
 
-    included do
-      cattr_accessor :preloaded, instance_accessor: false
-    end
+в `config/environments/development.rb` и `config/environments/test.rb`.
 
-    class_methods do
-      def descendants
-        preload_sti unless preloaded
-        super
-      end
+Это просто, но дорого стоит, так как он нетерпеливо загружает все приложение при запуске и каждой перезагрузки. Хотя это может быть компромиссом для маленьких приложений.
 
-      # Инициализирует как константу все типы, существующие в базе данных. There might be more on
-      # На диске может быть и больше, но на практике это не имеет значения, пока речь идет о STI API.
-      #
-      # Предполагаем, что store_full_sti_class является true, по умолчанию.
-      def preload_sti
-        types_in_db = \
-          base_class.
-            select(inheritance_column).
-            unscoped.
-            distinct.
-            pluck(inheritance_column).
-            compact
+### Опция 2: Предварительно загрузить свернутую директорию
 
-        types_in_db.each do |type|
-          logger.debug("Preloading STI type #{type}")
-          type.constantize
-        end
+Сохраните файлы, определяющие иерархию, в выделенную директорию, что также имеет смысл концептуально. Эта директория не предназначена для представления пространства имен, ее единственное назначение - группировка для STI:
 
-        self.preloaded = true
-      end
-    end
+```
+app/models/shapes/shape.rb
+app/models/shapes/circle.rb
+app/models/shapes/square.rb
+app/models/shapes/triangle.rb
+```
+
+В этом примере мы хотим, чтобы `app/models/shapes/circle.rb` определял `Circle`, а не `Shapes::Circle`. Это может быть вашим личным предпочтением, чтобы упростить вещи, а также избежать рефакторинг в существующем коде. Особенность [сворачивания](https://github.com/fxn/zeitwerk#collapsing-directories) в Zeitwerk позволяет нам делать так:
+
+```ruby
+# config/initializers/preload_stis.rb
+
+unless Rails.application.config.eager_load
+  shapes = "#{Rails.root}/app/models/shapes"
+  Rails.autoloaders.main.collapse(shapes) # Не пространство имен.
+  Rails.application.config.to_prepare do
+    Rails.autoloaders.main.eager_load_dir(shapes)
   end
 end
 ```
 
-и затем включите его в корневые классы STI вашего проекта:
+При этой опции мы нетерпеливо загружаем эти несколько файлов при запуске и перезагрузке, даже если STI не используется. Однако, если в вашем приложении не множество STI, это не принесет какого-либо измеримого воздействия.
+
+INFO: Метод `Zeitwerk::Loader#eager_load_dir` был добавлен в Zeitwerk 2.6.2. Для более старых версий, все еще можно перечислить директорию `app/models/shapes` и вызвать `require_dependency` на ее содержимом.
+
+WARNING: Если модели добавляются, изменяются или удаляются из STI, перезагрузка работает, как ожидается. Однако, если в приложение добавляется отдельная иерархия STI, необходимо отредактировать инициализатор и перезагрузить сервер.
+
+### Опция 3: Предварительно загрузить обычную директорию
+
+Похожа на предыдущую, но директория будет пространством имен. То есть от `app/models/shapes/circle.rb` ожидается определение `Shapes::Circle`.
+
+Для нее нужен такой же инициализатор, кроме настройки сворачивания:
 
 ```ruby
-# app/models/shape.rb
-require "sti_preload"
+# config/initializers/preload_stis.rb
 
-class Shape < ApplicationRecord
-  include StiPreload # Только в корневом класса.
+unless Rails.application.config.eager_load
+  Rails.application.config.to_prepare do
+    Rails.autoloaders.main.eager_load_dir("#{Rails.root}/app/models/shapes")
+  end
 end
 ```
 
+Те же самые компромиссы.
+
+### Опция 4: Предварительно загрузить типы из базы данных
+
+Для этой опции нам не нужно организовывать файлы каким-то образом, но нужно запросить базу данных:
+
 ```ruby
-# app/models/polygon.rb
-class Polygon < Shape
+# config/initializers/preload_stis.rb
+
+unless Rails.application.config.eager_load
+  Rails.application.config.to_prepare do
+    types = Shape.unscoped.select(:type).distinct.pluck(:type)
+    types.compact.each(&:constantize)
+  end
 end
 ```
 
-```ruby
-# app/models/triangle.rb
-class Triangle < Polygon
-end
-```
+WARNING: STI будет работать корректно, даже если в таблице нет всех типов, но методы, такие как `subclasses` или `descendants` не вернут отсутствующие типы.
+
+WARNING: Если модели добавляются, изменяются или удаляются из STI, перезагрузка работает, как ожидается. Однако, если в приложение добавляется отдельная иерархия STI, необходимо отредактировать инициализатор и перезагрузить сервер.
 
 Настройка словообразования
 --------------------------
