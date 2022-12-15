@@ -258,14 +258,12 @@ def up
   end
 end
 
-# Нет встроенной поддержки удаления enum, но это можно сделать вручную.
-# Сначала следует удалить любую таблицу, которая зависит от него.
+# Вышеприведенная миграция является обратимой (при использовании #change),
+# но также можно определить метод #down:
 def down
   drop_table :articles
 
-  execute <<-SQL
-    DROP TYPE article_status;
-  SQL
+  drop_enum :article_status
 end
 ```
 
@@ -475,7 +473,7 @@ irb> event.duration
 (uuid-primary-keys) Первичные ключи UUID
 ----------------------------------------
 
-NOTE: Для генерации случайных UUIDs необходимо включить расширение `pgcrypto` (только PostgreSQL >= 9.4) или `uuid-ossp`.
+NOTE: Если используете PostgreSQL более ранний, чем версия 13.0, необходимо включить специальные расширения для использования UUID. Включите расширение `pgcrypto` (PostgreSQL >= 9.4) или расширения `uuid-ossp` (для более ранних релизов).
 
 ```ruby
 # db/migrate/20131220144913_create_devices.rb
@@ -498,6 +496,20 @@ irb> device.id
 ```
 
 NOTE: Предполагается, что используется `gen_random_uuid()` (из `uuid-pgcrypto`) при отсутствии опции `:default`, переданной в `create_table`.
+
+Для использования генератора моделей Rails для таблицы, использующей UUID в качестве первичного ключа, передайте `--primary-key-type=uuid` в генератор моделей.
+
+Например:
+
+```ruby
+rails generate model Device --primary-key-type=uuid kind:string
+```
+
+При создании модели с внешним ключом, ссылающимся на этот UUID, задайте `uuid` в качестве нативного типа поля, например:
+
+```ruby
+rails generate model Case device_id:uuid
+```
 
 Генерируемые столбцы
 --------------------

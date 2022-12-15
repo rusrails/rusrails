@@ -57,8 +57,8 @@ pages:
   - title:    Active Record для PostgreSQL
     path:     active-record-postgresql
     file:     active_record_postgresql.md
-    revision: 63ba5ab88ddd56ca1148546986af9fc47c548ddd
-    date:     20/05/2022
+    revision: d322d9b44857a16e9d0c7607c57b72b44099f891
+    date:     18/10/2022
 
   - title:    Основы Active Model
     path:     active-model-basics
@@ -243,8 +243,8 @@ pages:
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
     file:     active_record_multiple_databases.md
-    revision: 5c89dc3eb96fb3f534c47b03fcade43e9db2ee3b
-    date:     21/04/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Шифрование Active Record
     path:     active-record-encryption
@@ -273,8 +273,8 @@ pages:
   - title:    Треды и выполнение кода в Rails
     path:     threading_and_code_execution
     file:     threading_and_code_execution.md
-    revision: 2953ae5c8a06f2d794350f1e1278253531b65d2e
-    date:     14/04/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Использование Rails для API-приложений
     path:     api-app
