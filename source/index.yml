@@ -237,8 +237,8 @@ pages:
   - title:    Как перейти с Classic на Zeitwerk
     path:     classic-to-zeitwerk-howto
     file:     classic_to_zeitwerk_howto.md
-    revision: 2953ae5c8a06f2d794350f1e1278253531b65d2e
-    date:     14/04/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases

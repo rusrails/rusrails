@@ -420,7 +420,7 @@ config.eager_load = ENV["CI"].present?
 
 Если в вашем проекте нет непрерывной интеграции, вы все еще можете нетерпеливо загружать в тестах, вызывая `Rails.application.eager_load!`:
 
-#### minitest
+#### Minitest
 
 ```ruby
 require "test_helper"
