@@ -844,8 +844,7 @@ class MyValidator < ActiveModel::Validator
   end
 end
  
-class Person
-  include ActiveModel::Validations
+class Person < ApplicationRecord
   validates_with MyValidator
 end
 ```
@@ -877,7 +876,7 @@ end
 
 Можно передать более одного символа для каждого метода класса, и соответствующие валидации будут запущены в том порядке, в котором они зарегистрированы.
 
-Метод `valid?` проверит, что коллекция ошибок пуста, поэтому ваши собственные методы валидации должны добавить ошибки в нее, когда вы хотите, чтобы валидация провалилась:
+Метод `valid?` проверит, что коллекция `errors` пуста, поэтому ваши собственные методы валидации должны добавить ошибки в нее, когда вы хотите, чтобы валидация провалилась:
 
 ```ruby
 class Invoice < ApplicationRecord
@@ -1024,7 +1023,7 @@ irb> error.full_message
 => "Name is too short (minimum is 3 characters)"
 ```
 
-Метод [`full_message`][] генерирует более дружелюбное сообщение с добавлением имени атрибута с большой буквы вначале.
+Метод [`full_message`][] генерирует более дружелюбное сообщение с добавлением имени атрибута с большой буквы вначале. (Чтобы настроить формат, используемый `full_message`, посмотрите [руководство I18n](/i18n#active-model-methods).)
 
 [`full_message`]: https://api.rubyonrails.org/classes/ActiveModel/Errors.html#method-i-full_message
 [`where`]: https://api.rubyonrails.org/classes/ActiveModel/Errors.html#method-i-where
