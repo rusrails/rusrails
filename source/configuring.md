@@ -60,6 +60,10 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.action_dispatch.default_headers`](#config-action-dispatch-default-headers): `{ "X-Frame-Options" => "SAMEORIGIN", "X-XSS-Protection" => "0", "X-Content-Type-Options" => "nosniff", "X-Permitted-Cross-Domain-Policies" => "none", "Referrer-Policy" => "strict-origin-when-cross-origin" }`
 - [`config.active_job.use_big_decimal_serializer`](#config-active-job-use-big-decimal-serializer): `true`
 - [`config.active_record.allow_deprecated_singular_associations_name`](#config-active-record-allow-deprecated-singular-associations-name): `false`
+- [`config.active_record.before_committed_on_all_records`](#config-active-record-before-committed-on-all-records): `true`
+- [`config.active_record.belongs_to_required_validates_foreign_key`](#config-active-record-belongs-to-required-validates-foreign-key): `false`
+- [`config.active_record.query_log_tags_format`](#config-active-record-query-log-tags-format): `:sqlcommenter`
+- [`config.active_record.raise_on_assign_to_attr_readonly`](#config-active-record-raise-on-assign-to-attr-readonly): `true`
 - [`config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction`](#config-active-record-run-commit-callbacks-on-first-saved-instances-in-transaction): `false`
 - [`config.active_record.sqlite3_adapter_strict_strings_by_default`](#config-active-record-sqlite3-adapter-strict-strings-by-default): `true`
 - [`config.active_support.default_message_encryptor_serializer`](#config-active-support-default-message-encryptor-serializer): `:json`
@@ -67,6 +71,7 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.active_support.raise_on_invalid_cache_expiration_time`](#config-active-support-raise-on-invalid-cache-expiration-time): `true`
 - [`config.add_autoload_paths_to_load_path`](#config-add-autoload-paths-to-load-path): `false`
 - [`config.log_file_size`](#config-log-file-size): `100 * 1024 * 1024`
+- [`config.precompile_filter_parameters`](#config-precompile-filter-parameters): `true`
 
 #### Значения по умолчанию для целевой версии 7.0
 
@@ -163,6 +168,16 @@ NOTE: Если необходимо применить конфигурацию 
 ```ruby
 config.after_initialize do
   ActionView::Base.sanitized_allowed_tags.delete 'div'
+end
+```
+
+### `config.after_routes_loaded`
+
+Принимает блок, который будет запущен после того, как Rails завершит загрузку маршрутов приложения. Этот блок будет также запущен всякий раз, когда маршруты перезагружаются.
+
+```ruby
+config.after_routes_loaded do
+  # Код, который что-то делает с Rails.application.routes
 end
 ```
 
@@ -321,7 +336,7 @@ Rails.application.config.filter_redirect += ['s3.amazonaws.com', /private-match/
 
 #### `config.log_file_size`
 
-Определяет максимальный размер файла лога Rails. По умолчанию 100 MB в development и test, и неограниченный во всех других средах.
+Определяет максимальный размер файла лога Rails в байтах. По умолчанию `104_857_600` (100 MB) в development и test, и неограниченный во всех других средах.
 
 #### `config.log_formatter`
 
@@ -356,6 +371,19 @@ config.logger      = ActiveSupport::TaggedLogging.new(mylogger)
 #### (config-middleware) `config.middleware`
 
 Позволяет настроить промежуточные программы приложения. Это подробнее раскрывается в разделе [Конфигурирование промежуточных программ](#configuring-middleware) ниже.
+
+#### `config.precompile_filter_parameters`
+
+Когда `true`, прекомпилирует [`config.filter_parameters`](#config-filter-parameters) с помощью [`ActiveSupport::ParameterFilter.precompile_filters`][].
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.1              | `true`                |
+
+[`ActiveSupport::ParameterFilter.precompile_filters`]: https://api.rubyonrails.org/classes/ActiveSupport/ParameterFilter.html#method-c-precompile_filters
 
 #### (config-public-file-server-enabled) `config.public_file_server.enabled`
 
@@ -934,6 +962,15 @@ config.active_record.migration_strategy = CustomMigrationStrategy
 
 Управляет, какие схемы баз данных будут выгружаться при вызове `db:schema:dump`. Опции: `:schema_search_path` (по умолчанию), при которой выгружается любая схема, перечисленная в `schema_search_path`, `:all`, при которой выгружаются все схемы, независимо от `schema_search_path`, или строки со схемами, разделенными через запятую.
 
+#### `config.active_record.before_committed_on_all_records`
+
+Включает колбэки before_committed! на всех зарегистрированных записях в транзакции. Предыдущим поведением был запуск колбэков на первой копии записи, если в транзакции зарегистрировано несколько копий одной и той же записи.
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.1              | `true`                |
+
 #### `config.active_record.belongs_to_required_by_default`
 
 Это булево значение и управляет, будет ли валидация записи падать, если отсутствует связь `belongs_to`.
@@ -944,6 +981,15 @@ config.active_record.migration_strategy = CustomMigrationStrategy
 | ---------------- | --------------------- |
 | (изначально)     | `nil`                 |
 | 5.0              | `true`                |
+
+#### `config.active_record.belongs_to_required_validates_foreign_key`
+
+Включает валидацию наличия столбцов, только относящиеся к родителю, когда родитель обязателен. Предыдущим поведением была валидация родительской записи, что выполняло дополнительный запрос для получения родителя каждый раз, когда обновлялась дочерняя запись, даже если родитель не изменялся.
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.1              | `false`               |
 
 #### `config.active_record.action_on_strict_loading_violation`
 
@@ -1035,6 +1081,15 @@ config.active_record.migration_strategy = CustomMigrationStrategy
 | ---------------- | --------------------- |
 | (изначально)     | `false`               |
 | 7.0              | `true`                |
+
+#### `config.active_record.raise_on_assign_to_attr_readonly`
+
+Включает вызов ошибки при присвоении атрибутам attr_readonly. Предыдущим поведением было разрешение присвоения, но молчаливо не сохраняя изменения в базу данных.
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.1              | `true`                |
 
 #### `config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction`
 
@@ -1741,7 +1796,7 @@ config.action_mailbox.incinerate_after = 14.days
 Позволяет детально сконфигурировать метод доставки `sendmail`. Она принимает хэш опций, который может включать любые из этих опций:
 
 * `:location` - Место расположения исполняемого файла sendmail. По умолчанию `/usr/sbin/sendmail`.
-* `:arguments` - Аргументы командной строки. По умолчанию `-i`.
+* `:arguments` - Аргументы командной строки. По умолчанию `%w[ -i ]`.
 
 #### `config.action_mailer.raise_delivery_errors`
 
@@ -1904,19 +1959,25 @@ config.action_mailer.show_previews = false
 
 #### `config.active_support.deprecation`
 
-Настраивает поведение предупреждений об устаревании. Возможные значения `:raise`, `:stderr`, `:log`, `:notify` или `:silence`. По умолчанию `:stderr`. Альтернативно можно настроить `ActiveSupport::Deprecation.behavior`.
+Настраивает поведение предупреждений об устаревании. Возможные значения `:raise`, `:stderr`, `:log`, `:notify` и `:silence`.
+
+В файлах `config/environments`, сгенерированных по умолчанию, она установлена `:log` для development, `:stderr` для test, и опущена для production в пользу [`config.active_support.report_deprecations`](#config-active-support-report-deprecations).
 
 #### `config.active_support.disallowed_deprecation`
 
-Настраивает поведение неразрешенных предупреждений об устаревании. Значения `:raise`, `:stderr`, `:log`, `:notify` или `:silence`. По умолчанию `:raise`. Альтернативно можно настроить `ActiveSupport::Deprecation.disallowed_behavior`.
+Настраивает поведение неразрешенных предупреждений об устаревании. Значения `:raise`, `:stderr`, `:log`, `:notify` и `:silence`.
+
+В файлах `config/environments`, сгенерированных по умолчанию, она установлена `:raise` для development и test, и опущена для production в пользу [`config.active_support.report_deprecations`](#config-active-support-report-deprecations).
 
 #### `config.active_support.disallowed_deprecation_warnings`
 
-Настраивает предупреждения об устаревании, которые рассматриваются неразрешенными в приложении. Это позволяет, например, трактовать определенные устаревания как серьезные ошибки. Альтернативно можно настроить `ActiveSupport::Deprecation.disallowed_warnings`.
+Настраивает предупреждения об устаревании, которые рассматриваются неразрешенными в приложении. Это позволяет, например, трактовать определенные устаревания как серьезные ошибки.
 
 #### `config.active_support.report_deprecations`
 
-Позволяет отключить все предупреждения об устаревании (включая неразрешенные устаревания); это отключит `ActiveSupport::Deprecation.warn`. Включено по умолчанию в production.
+Позволяет отключить все предупреждения об устаревании, включая неразрешенные устаревания, что отключит `ActiveSupport::Deprecation.warn`.
+
+В файлах `config/environments`, сгенерированных по умолчанию, она установлена `false` для production.
 
 #### `config.active_support.remove_deprecated_time_with_zone_name`
 
@@ -2552,7 +2613,7 @@ production:
 ```yaml
 development:
   adapter: sqlite3
-  database: db/development.sqlite3
+  database: storage/development.sqlite3
   pool: 5
   timeout: 5000
 ```
@@ -2624,7 +2685,7 @@ production:
 ```yaml
 development:
   adapter: jdbcsqlite3
-  database: db/development.sqlite3
+  database: storage/development.sqlite3
 ```
 
 #### Конфигурирование базы данных MySQL или MariaDB для платформы JRuby
@@ -2849,7 +2910,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `i18n.callbacks`: В среде development, настраивает колбэк `to_prepare`, вызывающий `I18n.reload!`, если любая из локалей изменилась с последнего запроса. В production этот колбэк запускается один раз при первом запросе.
 
-* `active_support.deprecation_behavior`: Настраивает отчеты об устаревании для сред, по умолчанию `:log` для development, `:silence` для production и `:stderr` для test. Можно установить массив значений. Этот инициализатор также настраивает поведение неразрешенных устареваний, по умолчанию `:raise` для development и test, и `:silence` для production. Предупреждения о неразрешенных устареваниях по умолчанию это пустой массив.
+* `active_support.deprecation_behavior`: Настраивает отчеты об устаревании для [`Rails.application.deprecators`][], основываясь на [`config.active_support.report_deprecations`](#config-active-support-report-deprecations), [`config.active_support.deprecation`](#config-active-support-deprecation), [`config.active_support.disallowed_deprecation`](#config-active-support-disallowed-deprecation) и [`config.active_support.disallowed_deprecation_warnings`](#config-active-support-disallowed-deprecation-warnings).
 
 * `active_support.initialize_time_zone`: Устанавливает для приложения временную зону по умолчанию, основываясь на настройке `config.time_zone`, которая по умолчанию равна "UTC".
 
@@ -2913,7 +2974,7 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `add_mailer_preview_paths`: Добавляет директорию `test/mailers/previews` из приложения, railties и engine-ов в путь поиска файлов превью рассыльщика приложения.
 
-* `load_environment_config`: Загружает файл `config/environments` для текущей среды.
+* `load_environment_config`: Этот инициализатор запускается до `load_environment_hook`. Загружает файл `config/environments` для текущей среды.
 
 * `prepend_helpers_path`: Добавляет директорию `app/helpers` из приложения, railties и engine-ов в путь поиска файлов хелперов приложения.
 
@@ -2939,6 +3000,8 @@ WARNING: Можно помещать свои инициализаторы до 
 
 * `disable_dependency_loading`: Отключает автоматическую загрузку зависимостей, если `config.eager_load` установлена true.
 
+[`Rails.application.deprecators`]: https://api.rubyonrails.org/classes/Rails/Application.html#method-i-deprecators
+
 Настройка пула подключений к базе данных
 ----------------------------------------
 
@@ -2947,7 +3010,7 @@ WARNING: Можно помещать свои инициализаторы до 
 ```yaml
 development:
   adapter: sqlite3
-  database: db/development.sqlite3
+  database: storage/development.sqlite3
   pool: 5
   timeout: 5000
 ```
