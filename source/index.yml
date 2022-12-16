@@ -75,8 +75,8 @@ pages:
   - title:    Макеты и рендеринг в Rails
     path:     layouts-and-rendering
     file:     layouts_and_rendering.md
-    revision: 5a069ae26268c9362b57d928a52bf84dda280010
-    date:     06/06/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Хелперы Action View
     path:     action-view-helpers
