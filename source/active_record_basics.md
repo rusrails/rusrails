@@ -213,16 +213,12 @@ user = User.find_by(name: 'David')
 user.update(name: 'Dave')
 ```
 
-Это наиболее полезно, когда необходимо обновить несколько атрибутов за раз. Если, с другой стороны, необходимо обновить несколько записей за раз, полезен метод класса `update_all`:
+Это наиболее полезно, когда необходимо обновить несколько атрибутов за раз.
+
+Если необходимо обновить несколько записей за раз без колбэков и валидаций, можно обновить базу данных напрямую с помощью `update_all`:
 
 ```ruby
-User.update_all "max_login_attempts = 3, must_change_password = 'true'"
-```
-
-Это то же самое, если бы вы написали:
-
-```ruby
-User.update(:all, max_login_attempts: 3, must_change_password: true)
+User.update_all max_login_attempts: 3, must_change_password: true
 ```
 
 ### Удаление

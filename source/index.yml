@@ -21,8 +21,8 @@ pages:
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: d0f07d7abd6c8b71bdb30205539595b2ba154c91
-    date:     03/07/2022
+    revision: 64ea36c29af606201358c2ae36c15ef7a4ccbe13
+    date:     12/11/2022
 
   - title:    Миграции Active Record
     path:     active-record-migrations
@@ -309,8 +309,8 @@ pages:
   - title:    Установка зависимостей для разработки
     path:     development_dependencies_install
     file:     development_dependencies_install.md
-    revision: ce17492101b54dab8f3fa5934618679c9671f582
-    date:     03/06/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
