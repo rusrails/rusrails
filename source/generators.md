@@ -48,7 +48,7 @@ class InitializerGenerator < Rails::Generators::Base
 end
 ```
 
-NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://rdoc.info/gems/thor/Thor/Actions)
+NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://www.rubydoc.info/gems/thor/Thor/Actions)
 
 Наш новый генератор очень прост: он наследуется от `Rails::Generators::Base` и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе выполняется в порядке, в котором он определен. Наконец, мы вызываем метод `create_file`, который создаст файл в указанном месте с заданным содержимым. Если вы знакомы с Rails Application Templates API, API генераторов покажется вам очень знакомым.
 
@@ -317,7 +317,9 @@ config.generators do |g|
 end
 ```
 
-Если сгенерировать другой ресурс, то увидите абсолютно тот же результат! Это полезно, если хотите изменить шаблоны вашего скаффолда и/или макет, просто создав `edit.html.erb`, `index.html.erb` и так далее в `lib/templates/erb/scaffold`.
+Теперь, если сгенерируете другой ресурс, то увидите похожий результат!
+
+Еще одним обычным использованием пользовательских шаблонов является переопределение [шаблонов скаффолда вью по умолчанию](https://github.com/rails/rails/tree/main/railties/lib/rails/generators/erb/scaffold/templates). Любой из них можно переопределить, создав соответствующий файл (например, `index.html.erb`, `show.html.erb`, и т.д.) в `lib/templates/erb/scaffold`.
 
 Шаблоны скаффолда в Rails часто используют теги ERB; эти теги необходимо экранировать, чтобы сгенерированный результат являлся валидным кодом ERB.
 
@@ -425,7 +427,7 @@ $ rails new thud -m https://gist.github.com/radar/722911/raw/
 Добавление аргументов командной строки
 --------------------------------------
 
-Генераторы Rails легко модифицировать, чтобы они принимали произвольные аргументы командной строки. Эта функциональность исходит из [Thor](https://www.rubydoc.info/github/erikhuda/thor/master/Thor/Base/ClassMethods#class_option-instance_method):
+Генераторы Rails легко модифицировать, чтобы они принимали произвольные аргументы командной строки. Эта функциональность исходит из [Thor](https://www.rubydoc.info/gems/thor/Thor/Base/ClassMethods#class_options-instance_method):
 
 ```ruby
 class_option :scope, type: :string, default: 'read_products'
@@ -448,7 +450,7 @@ $ bin/rails generate initializer --scope write_products
 
 Следующие методы доступны как для генераторов, так и для шаблонов Rails.
 
-NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](https://rdoc.info/github/erikhuda/thor/master/Thor/Actions.html)
+NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](https://www.rubydoc.info/gems/thor/Thor/Actions)
 
 ### `gem`
 

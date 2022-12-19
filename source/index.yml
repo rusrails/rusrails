@@ -267,8 +267,8 @@ pages:
   - title:    Создание и настройка генераторов и шаблонов Rails
     path:     generators
     file:     generators.md
-    revision: 1d5bddc082c46f8a614140afa549d686f0592273
-    date:     24/04/2022
+    revision: 268bf18949570c19849b8f7596f73ea48ab3c8ee
+    date:     19/12/2022
 
   - title:    Треды и выполнение кода в Rails
     path:     threading_and_code_execution
@@ -327,8 +327,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 7.1
     path:     7_1_release_notes
     file:     7_1_release_notes.md
-    revision: ad52c0a19714a1b87a7d0c626a8b364cf95414cf
-    date:     01/04/2022
+    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
+    date:     18/12/2022
 
   - title:    Заметки о релизе Ruby on Rails 7.0
     path:     7_0_release_notes
