@@ -267,7 +267,7 @@ end
 Продвинутое использование
 -------------------------
 
-Шаблон приложения вычисляется в контексте экземпляра `Rails::Generators::AppGenerator`. Используется экшн [`apply`](https://rdoc.info/github/wycats/thor/Thor/Actions#apply-instance_method), предоставленный Thor.
+Шаблон приложения вычисляется в контексте экземпляра `Rails::Generators::AppGenerator`. Используется экшн [`apply`](https://www.rubydoc.info/gems/thor/Thor/Actions#apply-instance_method), предоставленный Thor.
 
 Это означает, что вы можете расширить и изменить экземпляр в соответствии с вашими потребностями.
 
