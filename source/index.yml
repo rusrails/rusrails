@@ -183,8 +183,8 @@ pages:
   - title:    Отладка приловжений на Rails
     path:     debugging-rails-applications
     file:     debugging_rails_applications.md
-    revision: fdc988bdd1329c54cae4259d462a8bff8c4b152e
-    date:     30/07/2022
+    revision: 7a56b7602c3d3575ea2c901d4ac2b043dce80fac
+    date:     18/10/2022
 
   - title:    Конфигурирование приложений на Rails
     path:     configuring
@@ -315,8 +315,8 @@ pages:
   - title:    Политика поддержки (версий)
     path:     maintenance-policy
     file:     maintenance_policy.md
-    revision: 8821574186335cf8702208f14dd9771e1e5dac1b
-    date:     03/08/2022
+    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
+    date:     18/12/2022
 
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails

@@ -226,7 +226,28 @@ irb(main):003:0> Article.pamplemousse
 
 Подробные логи запросов включены по умолчанию в среде development после Rails 5.2.
 
-WARNING: Мы отговариваем от использования этой настройки в среде production. Она полагается на метод Ruby `Kernel#caller`, который, как правило, использует много памяти для генерации трассировок стека вызовов метода.
+WARNING: Мы отговариваем от использования этой настройки в среде production. Она полагается на метод Ruby `Kernel#caller`, который, как правило, использует много памяти для генерации трассировок стека вызовов метода. Вместо этого используйте теги логов (смотрите ниже).
+
+Комментарии в запросе SQL
+-------------------------
+
+Выражения SQL могут быть откомментированы с помощью тегов, содержащих информацию о выполнении, такой как имя контроллера или задачи, чтобы связать проблемные запросы с областью приложения, сгенерировавшей эти выражения. Это полезно, когда вы логируете медленные запросы (например, [MySQL](https://dev.mysql.com/doc/refman/en/slow-query-log.html), [PostgreSQL](https://www.postgresql.org/docs/current/runtime-config-logging.html#GUC-LOG-MIN-DURATION-STATEMENT)), просматриваете текущие запущенные запросы, или для end-to-end инструментов отслеживания.
+
+Чтобы включить, добавьте в `application.rb` или любом инициализаторе среды:
+
+```rb
+config.active_record.query_log_tags_enabled = true
+```
+
+По умолчанию логируются имя приложения, имя и экшн контроллера, или имя задачи. Формат по умолчанию [SQLCommenter](https://open-telemetry.github.io/opentelemetry-sqlcommenter/). Например:
+
+```
+Article Load (0.2ms)  SELECT "articles".* FROM "articles" /*application='Blog',controller='articles',action='index'*/
+
+Article Update (0.3ms)  UPDATE "articles" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ? /*application='Blog',job='ImproveTitleJob'*/  [["title", "Improved Rails debugging guide"], ["updated_at", "2022-10-16 20:25:40.091371"], ["id", 1]]
+```
+
+Поведение [`ActiveRecord::QueryLogs`](https://api.rubyonrails.org/classes/ActiveRecord/QueryLogs.html) может быть изменено, чтобы включить все, что поможет идентифицировать запрос SQL, такое как id запроса или задачи для логов приложения, идентификаторы учетной записи и владельца, и так далее.
 
 ### Тегированное логирование
 
@@ -348,7 +369,7 @@ Processing by PostsController#index as HTML
 - `backtrace` (или `bt`) - Трассировка (с дополнительной информацией).
 - `outline` (или `o`, `ls`) - Доступные в текущей области видимости методы, константы, локальные переменные и переменные экземпляра.
 
-#### Команда info
+#### Команда `info`
 
 Она выдает обзор значений локальных переменных и переменных экземпляра, которые видны в текущем фрейме.
 
@@ -368,7 +389,7 @@ Processing by PostsController#index as HTML
 @rendered_format = nil
 ```
 
-#### Команда backtrace
+#### Команда `backtrace`
 
 При использовании без опций она перечисляет все фреймы стека:
 
@@ -403,7 +424,7 @@ Processing by PostsController#index as HTML
 
 Также возможно использовать эти опции вместе: `backtrace [num] /pattern/`.
 
-#### Команда outline
+#### Команда `outline`
 
 Команда похожа на команду `ls` из `pry` и `irb`. Она покажет вам, что доступна в текущем пространстве, включая:
 
@@ -457,7 +478,7 @@ class variables: @@raise_on_missing_translations  @@raise_on_open_redirects
   - `delete` - удалить все точки останова
   - `delete <num>` - удалить точку останова с идентификатором `num`
 
-#### Команда break
+#### Команда `break`
 
 **Устанавливаем точку останова на указанном номере строчки - т.е. `b 28`**
 
@@ -542,7 +563,7 @@ Stop by #0  BP - Line  /Users/st0012/projects/rails-guide-example/app/controller
 Stop by #0  BP - Method  @post.save at /Users/st0012/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activerecord-7.0.0.alpha2/lib/active_record/suppressor.rb:43
 ```
 
-#### Команда catch
+#### Команда `catch`
 
 **Останавливаем при вызове исключения - т.е. `catch ActiveRecord::RecordInvalid`**
 
@@ -585,7 +606,7 @@ Stop by #0  BP - Method  @post.save at /Users/st0012/.rbenv/versions/3.0.1/lib/r
 Stop by #1  BP - Catch  "ActiveRecord::RecordInvalid"
 ```
 
-#### Команда watch
+#### Команда `watch`
 
 **Останавливаем, когда изменяется переменная экземпляра - т.е. `watch @_response_body`**
 
