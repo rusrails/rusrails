@@ -165,8 +165,8 @@ pages:
   - title:    Тестирование приложений на Rails
     path:     testing
     file:     testing.md
-    revision: c6778debcd90e48eb85652fbefd5849bccf8db79
-    date:     10/08/2022
+    revision: 93c51f92fdf20e91b89ef39b08edb0d58b1e3cf4
+    date:     20/11/2022
 
   - title:    Безопасность приложений на Rails
     path:     security
