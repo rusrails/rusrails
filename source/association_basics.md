@@ -973,10 +973,10 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 Метод `association_changed?` возвращает true, если был назначен новый связанный объект, и внешний ключ будет обновлен при следующем сохранении.
 
 ```ruby
-@book.author # => #<Book author_number: 123, author_name: "John Doe">
+@book.author # => #<Author author_number: 123, author_name: "John Doe">
 @book.author_changed? # => false
 
-@book.author = Author.second # => #<Book author_number: 456, author_name: "Jane Smith">
+@book.author = Author.second # => #<Author author_number: 456, author_name: "Jane Smith">
 @book.author_changed? # => true
 
 @book.save!
@@ -988,10 +988,10 @@ NOTE: Когда устанавливаете новую связь `has_one` и
 Метод `association_previously_changed?` возвращает true, если предыдущее сохранение обновило связь, ссылающуюся на новый связанный объект.
 
 ```ruby
-@book.author # => #<Book author_number: 123, author_name: "John Doe">
+@book.author # => #<Author author_number: 123, author_name: "John Doe">
 @book.author_previously_changed? # => false
 
-@book.author = Author.second # => #<Book author_number: 456, author_name: "Jane Smith">
+@book.author = Author.second # => #<Author author_number: 456, author_name: "Jane Smith">
 @book.save!
 @book.author_previously_changed? # => true
 ```
