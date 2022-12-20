@@ -697,7 +697,7 @@ config.action_cable.disable_request_forgery_protection = true
 
 По умолчанию Action Cable позволяет все запросы из localhost:3000 при запуске в среде development.
 
-### Настройка потребителя
+### (consumer-configuration) Настройка потребителя
 
 Чтобы сконфигурировать URL, добавьте вызов [`action_cable_meta_tag`][] в макете HTML HEAD. Он использует URL или путь, обычно устанавливаемые с помощью [`config.action_cable.url`][] в файлах настройки среды.
 
@@ -738,7 +738,9 @@ config.action_cable.log_tags = [
 
 Полный список всех конфигурационных опций смотрите в классе `ActionCable::Server::Configuration`.
 
-## Запуск отдельного сервера cable
+## Запуск отдельного сервера Cable
+
+Action Cable может быть запущен, как часть приложения Rails, или как отдельный сервер. В development, запускать как часть приложения Rails обычно нормально, но в production следует запускать его отдельно.
 
 ### В приложении
 
@@ -751,11 +753,12 @@ class Application < Rails::Application
 end
 ```
 
-Можно использовать `ActionCable.createConsumer()`, чтобы соединить с сервером cable, если `action_cable_meta_tag` вызван в макете. В противном случае, путь указывается в качестве первого аргумента `createConsumer` (например, `ActionCable.createConsumer("/websocket")`).
+Можно использовать `ActionCable.createConsumer()`, чтобы соединить с сервером cable, если [`action_cable_meta_tag`][] вызван в макете. В противном случае, путь указывается в качестве первого аргумента `createConsumer` (например, `ActionCable.createConsumer("/websocket")`).
 
 Для каждого экземпляра создаваемого сервера и для каждого воркера, порождаемого сервером, у вас также будет новый экземпляр Action Cable, но использование адаптеров Redis или PostgreSQL позволяет синхронизировать сообщения между соединениями.
 
 [`config.action_cable.mount_path`]: /configuring#config-action-cable-mount-path
+[`action_cable_meta_tag`]: https://api.rubyonrails.org/classes/ActionCable/Helpers/ActionCableHelper.html#method-i-action_cable_meta_tag
 
 ### Отдельное
 
@@ -769,14 +772,23 @@ Rails.application.eager_load!
 run ActionCable.server
 ```
 
-Затем можно запустить сервер с помощью бинстаба в `bin/cable`, наподобие:
+Затем можно запустить сервер:
 
 ```
-#!/bin/bash
 bundle exec puma -p 28080 cable/config.ru
 ```
 
-Вышесказанное запустит сервер cable на порту 28080.
+Это запустит сервер cable на порту 28080. Чтобы сообщить Rails использовать этот сервер, обновите свою конфигурацию:
+
+```ruby
+# config/environments/development.rb
+Rails.application.configure do
+  config.action_cable.mount_path = nil
+  config.action_cable.url = "ws://localhost:28080" # используйте wss:// в production
+end
+```
+
+Наконец, убедитесь, что у вас [правильно сконфигурирован потребитель](#consumer-configuration).
 
 ### Заметки
 

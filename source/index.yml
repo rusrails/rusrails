@@ -153,8 +153,8 @@ pages:
   - title:    Обзор Action Cable
     path:     action-cable-overview
     file:     action_cable_overview.md
-    revision: cf2be235771e562393727510ec58e060c18cadd2
-    date:     18/10/2022
+    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
+    date:     18/12/2022
 
   - title:    Webpacker
     path:     webpacker
