@@ -429,7 +429,7 @@ config.cache_store = :redis_cache_store, { url: cache_servers,
 
   error_handler: -> (method:, returning:, exception:) {
     # Сообщать об ошибках Sentry как предупреждений
-    Raven.capture_exception exception, level: 'warning',
+    Sentry.capture_exception exception, level: 'warning',
       tags: { method: method, returning: returning }
   }
 }

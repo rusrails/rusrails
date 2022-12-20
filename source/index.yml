@@ -15,8 +15,8 @@ pages:
   - title:    Rails для начинающих
     path:     getting-started
     file:     getting_started.md
-    revision: 8ae17b2afc9de83f1bc34f92eaf6d5c042ca0847
-    date:     29/07/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Основы Active Record
     path:     active-record-basics
@@ -201,8 +201,8 @@ pages:
   - title:    'Кэширование с Rails: Обзор'
     path:     caching-with-rails
     file:     caching_with_rails.md
-    revision: 3dcaca9a9e3ddd48cac56db4aa649ae94c996e84
-    date:     02/10/2022
+    revision: c45d2f7587fccacd9bfeeab1e79de5827606fbdc
+    date:     08/12/2022
 
   - title:    Asset Pipeline
     path:     asset-pipeline
