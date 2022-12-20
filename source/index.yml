@@ -21,8 +21,8 @@ pages:
   - title:    Основы Active Record
     path:     active-record-basics
     file:     active_record_basics.md
-    revision: 64ea36c29af606201358c2ae36c15ef7a4ccbe13
-    date:     12/11/2022
+    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
+    date:     18/12/2022
 
   - title:    Миграции Active Record
     path:     active-record-migrations
@@ -57,8 +57,8 @@ pages:
   - title:    Active Record для PostgreSQL
     path:     active-record-postgresql
     file:     active_record_postgresql.md
-    revision: d322d9b44857a16e9d0c7607c57b72b44099f891
-    date:     18/10/2022
+    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
+    date:     18/12/2022
 
   - title:    Основы Active Model
     path:     active-model-basics
@@ -105,8 +105,8 @@ pages:
   - title:    Расширения ядра Active Support
     path:     active-support-core-extensions
     file:     active_support_core_extensions.md
-    revision: cace877149e5ae60be746bb621c4b46c2a412090
-    date:     13/10/2022
+    revision: c644df1b05e4f374b5953c52ba431ef6714d51c9
+    date:     12/11/2022
 
   - title:    Инструметарий Active Support
     path:     active-support-instrumentation
@@ -255,8 +255,8 @@ pages:
   - title:    Основы создания плагинов Rails
     path:     plugins
     file:     plugins.md
-    revision: d842f463f652eb1424b747f99a34d499d21143cf
-    date:     12/09/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Rails on Rack
     path:     rails-on-rack
