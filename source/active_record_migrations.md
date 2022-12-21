@@ -522,6 +522,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 * `enable_extension`
 * [`remove_check_constraint`][] (необходимо предоставить выражение ограничения)
 * [`remove_column`][] (необходимо предоставить тип)
+* [`remove_columns`][] (необходимо предоставить опцию `:type`)
 * [`remove_foreign_key`][] (необходимо предоставить вторую таблицу)
 * [`remove_index`][]
 * [`remove_reference`][]
@@ -530,7 +531,7 @@ Product.connection.execute("UPDATE products SET price = 'free' WHERE 1=1")
 * [`rename_index`][]
 * [`rename_table`][]
 
-[`change_table`][] также является обратимым, пока блок не вызывает `change`, `change_default` или `remove`.
+[`change_table`][] также является обратимым, когда блок вызывает только обратимые операции, подобные перечисленным.
 
 `remove_column` обратима, если предоставить тип столбца третьим аргументом. Также предоставьте опции оригинального столбца, иначе Rails не сможет в точности пересоздать этот столбец при откате:
 
@@ -553,6 +554,7 @@ remove_column :posts, :slug, :string, null: false, default: ''
 [`remove_reference`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_reference
 [`remove_timestamps`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_timestamps
 [`rename_column`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-rename_column
+[`remove_columns`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-remove_columns
 [`rename_index`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-rename_index
 [`rename_table`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-rename_table
 
