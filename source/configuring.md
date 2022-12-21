@@ -1214,9 +1214,31 @@ Comment.where(posts: post_id).count # => ошибка
 
 Регулирует, должны ли таблицы базы данных создаваться "нелогируемыми", что может ускорить быстродействие, но добавляет риск потери данных, если база данных ломается. Очень рекомендуется на включать это в среде production. По умолчанию `false` во всех средах.
 
+Чтобы включить ее для тестов:
+
+```ruby
+# config/environments/test.rb
+
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  self.create_unlogged_tables = true
+end
+```
+
 #### `ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.datetime_type`
 
-Управляет встроенным типом, который должен использовать адаптер Active Record PostgreSQL при вызове `datetime` в миграции или схеме. Она принимает символ, который должен соответствовать одному из настроенных `NATIVE_DATABASE_TYPES`. По умолчанию `:timestamp`, что означает, что `t.datetime` в миграции создаст столбец "timestamp without time zone". Чтобы использовать "timestamp with time zone", измените ее на `:timestamptz` в инициализаторе. Если вы ее меняете, следует запустить `bin/rails db:migrate`, чтобы перестроить schema.rb.
+Управляет встроенным типом, который должен использовать адаптер Active Record PostgreSQL при вызове `datetime` в миграции или схеме. Она принимает символ, который должен соответствовать одному из настроенных `NATIVE_DATABASE_TYPES`. По умолчанию `:timestamp`, что означает, что `t.datetime` в миграции создаст столбец "timestamp without time zone".
+
+Чтобы использовать "timestamp with time zone":
+
+```ruby
+# config/application.rb
+
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  self.datetime_type = :timestamptz
+end
+```
+
+Если вы ее меняете, следует запустить `bin/rails db:migrate`, чтобы перестроить schema.rb.
 
 #### `ActiveRecord::SchemaDumper.ignore_tables`
 
