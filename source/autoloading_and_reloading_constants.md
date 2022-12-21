@@ -355,10 +355,10 @@ app/models/shapes/triangle.rb
 
 ```ruby
 # config/initializers/preload_stis.rb
+shapes = "#{Rails.root}/app/models/shapes"
+Rails.autoloaders.main.collapse(shapes) # Не пространство имен.
 
 unless Rails.application.config.eager_load
-  shapes = "#{Rails.root}/app/models/shapes"
-  Rails.autoloaders.main.collapse(shapes) # Не пространство имен.
   Rails.application.config.to_prepare do
     Rails.autoloaders.main.eager_load_dir(shapes)
   end

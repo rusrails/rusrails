@@ -232,5 +232,5 @@ Turbo просканирует теги `<a>` в приложении на ат�
 В случае кнопок, атрибут `data-turbo-confirm` обязан быть связан со сгенерированной формой, как в этом примере:
 
 ```erb
-<%= button_to "Delete post', post, method: :delete, form: { data: { turbo_confirm: "Are you sure?" } } %>
+<%= button_to "Delete post", post, method: :delete, form: { data: { turbo_confirm: "Are you sure?" } } %>
 ```

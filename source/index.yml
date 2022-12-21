@@ -213,8 +213,8 @@ pages:
   - title:    Работа с JavaScript в Rails
     path:     working-with-javascript-in-rails
     file:     working_with_javascript_in_rails.md
-    revision: 40563a3ab457f5b1d8a5defaecb7375c55bc3fd5
-    date:     23/11/2022
+    revision: 9b5863bd1454d9411701fa8c9681fffa62959c84
+    date:     27/11/2022
 
   - title:    Engine для начинающих
     path:     engines
@@ -231,8 +231,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант
     path:     autoloading-and-reloading-constants
     file:     autoloading_and_reloading_constants.md
-    revision: 01bc3a4971068917e755bc0e15e6852cd65edfa9
-    date:     10/12/2022
+    revision: bd19260293b148120c4d7b0720009bf6498a1891
+    date:     19/12/2022
 
   - title:    Как перейти с Classic на Zeitwerk
     path:     classic-to-zeitwerk-howto
@@ -261,8 +261,8 @@ pages:
   - title:    Rails on Rack
     path:     rails-on-rack
     file:     rails_on_rack.md
-    revision: 1c54862c82f8977fa90f8d8da748df87c724c7a1
-    date:     05/10/2022
+    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
+    date:     15/10/2022
 
   - title:    Создание и настройка генераторов и шаблонов Rails
     path:     generators
