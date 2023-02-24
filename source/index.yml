@@ -303,8 +303,8 @@ pages:
   - title:    Рекомендации для руководств по Ruby on Rails
     path:     ruby_on_rails_guides_guidelines
     file:     ruby_on_rails_guides_guidelines.md
-    revision: 2f87589630aa30099fb8f910bd3963ff95be7e23
-    date:     05/07/2020
+    revision: 9eeaba64a7d4ff08cff2dcefcd2d2fe731c337ed
+    date:     02/02/2023
 
   - title:    Установка зависимостей для разработки
     path:     development_dependencies_install
