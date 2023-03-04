@@ -8,8 +8,8 @@ special:
     file:     menu.md
 
 images:
-    revision: 55073ac10f4c579460662fa917713efc647a4eb1
-    date:     10/05/2022
+    revision: 9dfb3b6f989bf569bd1b1fe91e5019a2672e7c85
+    date:     09/02/2023
 
 pages:
   - title:    Rails для начинающих
@@ -291,8 +291,8 @@ pages:
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
     file:     api_documentation_guidelines.md
-    revision: 0809dd3fca2522d85793f1199e22181f5c854250
-    date:     14/06/2022
+    revision: 70494a608c06b12329acc138aa405a46b7573038
+    date:     09/02/2023
 
   - title:    Шаблоны приложения Rails
     path:     rails-application-templates

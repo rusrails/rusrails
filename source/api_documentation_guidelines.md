@@ -21,18 +21,21 @@ $ bundle exec rake rdoc
 
 Итоговые файлы HTML будут в директории ./doc/rdoc.
 
-Обратитесь к документации RDoc за помощью с [разметкой](https://ruby.github.io/rdoc/RDoc/Markup.html), а также примите во внимание эти [дополнительные директивы](https://ruby.github.io/rdoc/RDoc/Parser/Ruby.html).
+NOTE: Обратитесь к [справке по разметке RDoc][RDoc Markup] за помощью с синтаксисом.
 
 Ссылки
 ------
 
-Документация Rails API не означает, что она будет просматриваемая на GitHub, и поэтому ссылки должны использовать разметку RDoc [`link`](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-Links), относительно текущего API.
+Документация Rails API не означает, что она будет просматриваемая на GitHub, и поэтому ссылки должны использовать разметку RDoc [`link`][RDoc Links], относительно текущего API.
 
 Это потому, что разница между GitHub Markdown и сгенерированным RDoc в том, что это публикуется на [api.rubyonrails.org](https://api.rubyonrails.org) и [edgeapi.rubyonrails.org](https://edgeapi.rubyonrails.org).
 
 Например, мы используем `[link:classes/ActiveRecord/Base.html]` для создания ссылки на класс `ActiveRecord::Base`, генерируемой RDoc.
 
 Это предпочтительней, чем абсолютный URL, такой как `[https://api.rubyonrails.org/classes/ActiveRecord/Base.html]`, который может перевести читателя на другую версию документации (например, edgeapi.rubyonrails.org).
+
+[RDoc Markup]: https://ruby.github.io/rdoc/RDoc/MarkupReference.html
+[RDoc Links]: https://ruby.github.io/rdoc/RDoc/MarkupReference.html#class-RDoc::MarkupReference-label-Links
 
 (wording) Формулировки
 ----------------------
@@ -57,6 +60,8 @@ end
 
 Правильные имена компонентов Rails имеют пробел между словами, например "Active Support". `ActiveRecord` это модуль на Ruby, в то время как Active Record — это ORM. Вся документация Rails должна последовательно ссылаться на компоненты Rails по их правильным именам.
 
+При ссылке на "Rails application", в протовоположность "engine" или "plugin", всегда используйте "application". Приложения Rails это не "services", если вы не обсуждаете специально сервисно-ориентированную архитектуру.
+
 Пишите имена правильно: Arel, minitest, RSpec, HTML, MySQL, JavaScript, ERB, Hotwire. Когда сомневаетесь, взгляните на какой-нибудь авторитетный источник, например, на их официальную документацию.
 
 Используйте артикль "an" для "SQL", как в "an SQL statement". А также "an SQLite database".
@@ -70,7 +75,7 @@ If you need to use `return` statements in your callbacks, it is recommended that
 используйте такую стилистику:
 
 ```markdown
-If `return` is needed it is recommended to explicitly define a method.
+If `return` is needed, it is recommended to explicitly define a method.
 ```
 
 Тем не менее, при использовании местоимений для ссылки на гипотетическую личность, такую как "a user with a session cookie", должны быть использованы гендерно нейтральные местоимения (they/their/them). Вместо:
@@ -264,24 +269,31 @@ end
 
 Описание начинается с заглавной буквы и заканчивается точкой — это стандартный английский.
 
+Альтернативно, когда хотите предоставить дополнительные детали и примеры, используйте стиль раздела опций.
+
+Хороший пример этого [`ActiveSupport::MessageEncryptor#encrypt_and_sign`][#encrypt_and_sign].
+
+```ruby
+# ==== Options
+#
+# [+:expires_at+]
+#   The datetime at which the message expires. After this datetime,
+#   verification of the message will fail.
+#
+#     message = encryptor.encrypt_and_sign("hello", expires_at: Time.now.tomorrow)
+#     encryptor.decrypt_and_verify(message) # => "hello"
+#     # 24 hours later...
+#     encryptor.decrypt_and_verify(message) # => nil
+```
+
+[#encrypt_and_sign]: https://edgeapi.rubyonrails.org/classes/ActiveSupport/MessageEncryptor.html#method-i-encrypt_and_sign
+
 Динамически создаваемые методы
 ------------------------------
 
 Методы, созданные с помощью `(module|class)_eval(STRING)`, имеют справа комментарий с экземпляром сгенерированного кода. Этот комментарий отделен двумя пробелами от шаблона:
 
-```ruby
-for severity in Severity.constants
-  class_eval <<-EOT, __FILE__, __LINE__ + 1
-    def #{severity.downcase}(message = nil, progname = nil, &block)  # def debug(message = nil, progname = nil, &block)
-      add(#{severity}, message, progname, &block)                    #   add(DEBUG, message, progname, &block)
-    end                                                              # end
-                                                                     #
-    def #{severity.downcase}?                                        # def debug?
-      #{severity} >= @level                                          #   DEBUG >= @level
-    end                                                              # end
-  EOT
-end
-```
+[![Комментарии кода (module|class)_eval(STRING)](dynamic_method_class_eval.png)](dynamic_method_class_eval.png)
 
 Если результирующие строчки получаются слишком длинными, скажем 200 символов и больше, поместите комментарий над вызовом:
 
