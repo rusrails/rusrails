@@ -293,7 +293,7 @@ end
 
 Методы, созданные с помощью `(module|class)_eval(STRING)`, имеют справа комментарий с экземпляром сгенерированного кода. Этот комментарий отделен двумя пробелами от шаблона:
 
-[![Комментарии кода (module|class)_eval(STRING)](dynamic_method_class_eval.png)](dynamic_method_class_eval.png)
+![Комментарии кода (module|class)_eval(STRING)](dynamic_method_class_eval.png)
 
 Если результирующие строчки получаются слишком длинными, скажем 200 символов и больше, поместите комментарий над вызовом:
 
