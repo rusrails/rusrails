@@ -5,7 +5,7 @@
 
 После прочтения этого руководства вы узнаете:
 
-* О жизненном цикле объектов Active Record
+* Когда определенные события случаются в течение жизни объекта Active Record
 * Как создавать методы колбэков, отвечающих на события в жизненном цикле объекта
 * Как создавать специальные классы, инкапсулирующих обычное поведение для ваших колбэков
 
@@ -15,6 +15,19 @@
 В результате обычных операций приложения на Rails, объекты могут быть созданы, обновлены и уничтожены. Active Record дает возможность вмешаться в этот жизненный цикл объекта, таким образом, вы можете контролировать свое приложение и его данные.
 
 Валидации позволяют вам быть уверенными, что только валидные данные хранятся в вашей базе данных. Колбэки позволяют вам переключать логику до или после изменения состояния объекта.
+
+```ruby
+class Baby < ApplicationRecord
+  after_create -> { puts "Congratulations!" }
+end
+```
+
+```irb
+irb> @baby = Baby.create
+Congratulations!
+```
+
+Вы увидите, что есть множество событий жизненного цикла, и вы сможете вклиниться в любое из них, до, после или даже вокруг них.
 
 Обзор колбэков
 --------------
@@ -33,7 +46,7 @@ class User < ApplicationRecord
 
   private
     def ensure_login_has_a_value
-      if login.nil?
+      if login.blank?
         self.login = email unless email.blank?
       end
     end
@@ -52,7 +65,31 @@ class User < ApplicationRecord
 end
 ```
 
-Колбэки также могут быть зарегистрированы на выполнение при определенных событиях жизненного цикла:
+Альтернативно можно передать в колбэк proc, который будут выполнен.
+
+```ruby
+class User < ApplicationRecord
+  before_create ->(user) { user.name = user.login.capitalize if user.name.blank? }
+end
+```
+
+Наконец, можно определить собственный объект колбэка, который мы раскроем подробнее [ниже](#callback-classes).
+
+```ruby
+class User < ApplicationRecord
+  before_create MaybeAddName
+end
+
+class MaybeAddName
+  def self.before_create(record)
+    if record.name.blank?
+      record.name = record.login.capitalize
+    end
+  end
+end
+```
+
+Колбэки также могут быть зарегистрированы на выполнение только при определенных событиях жизненного цикла, что позволяет полностью контролировать в каком контексте ваши колбэки выполняются.
 
 ```ruby
 class User < ApplicationRecord
@@ -73,6 +110,8 @@ end
 ```
 
 Считается хорошей практикой объявлять методы колбэков как private. Если их оставить public, они могут быть вызваны извне модели и нарушить принципы инкапсуляции объекта.
+
+WARNING. Избегайте вызовов `update`, `save` или других методов, которые создают побочные эффекты для объекта, внутри вашего колбэка. Например, не вызывайте `update(attribute: "value")` внутри колбэка. Это может изменить состояние модели и может привести к неожиданным побочным эффектам при завершении транзакции. Вместо этого можно безопасно присваивать значения напрямую (например, `self.attribute = "value"`) в `before_create` / `before_update` или более ранних колбэках.
 
 Доступные колбэки
 -----------------
@@ -118,6 +157,8 @@ end
 [`around_update`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_update
 [`before_update`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_update
 
+WARNING. `after_save` запускается и при создании, и при обновлении, но всегда _после_ более специфичных колбэков `after_create` и `after_update`, независимо от порядка, в котором выполняются макро-вызовы.
+
 ### Уничтожение объекта
 
 * [`before_destroy`][]
@@ -129,19 +170,19 @@ end
 [`around_destroy`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_destroy
 [`before_destroy`]: https://api.rubyonrails.org/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_destroy
 
-WARNING. `after_save` запускается и при создании, и при обновлении, но всегда _после_ более специфичных колбэков `after_create` и `after_update`, независимо от порядка, в котором выполняются макро-вызовы.
-
-WARNING. Избегайте обновления или сохранения атрибутов в колбэках. Например, не вызывайте `update(attribute: "value")` внутри колбэка. Это может изменить состояние модели и может привести к неожиданным побочным эффектам при завершении транзакции. Вместо этого можно безопасно присваивать значения напрямую (например, `self.attribute = "value"`) в `before_create` / `before_update` или более ранних колбэках.
-
 NOTE: Колбэк `before_destroy` должен быть размещен перед связями `dependent: :destroy` (или использовать опцию `prepend: true`), чтобы убедиться, что они выполняются до того, как записи будут удалены с помощью `dependent: :destroy`.
+
+WARNING. `after_commit` создает гарантии, сильно отличающиеся от `after_save`, `after_update` и `after_destroy`. Например, если случается исключение в `after_save`, транзакция будет отменена, и данные не сохранятся. Не важно, что произойдет, `after_commit` может гарантировать, что транзакция уже произошла, и данные были сохранены в базу данных. Подробнее о [транзакционных колбэках](#transaction-callbacks) ниже.
 
 ### `after_initialize` и `after_find`
 
-Колбэк [`after_initialize`][] вызывается всякий раз, когда возникает экземпляр объекта Active Record, или непосредственно при использовании `new`, или когда запись загружается из базы данных. Он может быть полезен, чтобы избежать необходимости напрямую переопределять метод Active Record `initialize`.
+Всякий раз, когда возникает объект Active Record, будет вызван колбэк [`after_initialize`][], или непосредственно при использовании `new`, или когда запись загружается из базы данных. Он может быть полезен, чтобы избежать необходимости напрямую переопределять метод Active Record `initialize`.
 
-Колбэк [`after_find`][] будет вызван всякий раз, когда Active Record загружает запись из базы данных. `after_find` вызывается перед `after_initialize`, если они оба определены.
+При загрузке записи из базы данных, будет вызван колбэк [`after_find`][]. `after_find` вызывается перед `after_initialize`, если они оба определены.
 
-У колбэков `after_initialize` и `after_find` нет пары `before_*`, но они могут быть зарегистрированы подобно другим колбэкам Active Record.
+NOTE: У колбэков `after_initialize` и `after_find` нет пары `before_*`.
+
+Они могут быть зарегистрированы подобно другим колбэкам Active Record.
 
 ```ruby
 class User < ApplicationRecord
@@ -193,31 +234,31 @@ You have touched an object
 Он может быть использован совместно с `belongs_to`:
 
 ```ruby
-class Employee < ApplicationRecord
-  belongs_to :company, touch: true
+class Book < ApplicationRecord
+  belongs_to :library, touch: true
   after_touch do
-    puts 'An Employee was touched'
+    puts 'A Book was touched'
   end
 end
 
-class Company < ApplicationRecord
-  has_many :employees
-  after_touch :log_when_employees_or_company_touched
+class Library < ApplicationRecord
+  has_many :books
+  after_touch :log_when_books_or_library_touched
 
   private
-    def log_when_employees_or_company_touched
-      puts 'Employee/Company was touched'
+    def log_when_books_or_library_touched
+      puts 'Book/Library was touched'
     end
 end
 ```
 
 ```irb
-irb> @employee = Employee.last
-=> #<Employee id: 1, company_id: 1, created_at: "2013-11-25 17:04:22", updated_at: "2013-11-25 17:05:05">
+irb> @book = Book.last
+=> #<Book id: 1, library_id: 1, created_at: "2013-11-25 17:04:22", updated_at: "2013-11-25 17:05:05">
 
-irb> @employee.touch # вызывает @employee.company.touch
-An Employee was touched
-Employee/Company was touched
+irb> @book.touch # triggers @book.library.touch
+A Book was touched
+Book/Library was touched
 => true
 ```
 
@@ -300,7 +341,7 @@ throw :abort
 
 WARNING. Вызов произвольного исключения может прервать код, который предполагает, что `save` и тому подобное не будут провалены подобным образом. Исключение `ActiveRecord::Rollback` чуть точнее сообщает Active Record, что происходит откат. Он подхватывается изнутри, но не перевызывает исключение.
 
-WARNING. Любое исключение, кроме `ActiveRecord::Rollback` или `ActiveRecord::RecordInvalid`, будет перевызвано Rails после того, как прервется цепочка колбэков. Вызов исключения, отличного от `ActiveRecord::Rollback` или `ActiveRecord::RecordInvalid`, может сломать код, который не ожидает, что методы, такие как `save` и `update` (которые обычно пытаются вернуть `true` или `false`) вызовут исключение.
+WARNING. Любое исключение, кроме `ActiveRecord::Rollback` или `ActiveRecord::RecordInvalid`, будет перевызвано Rails после того, как прервется цепочка колбэков. Помимо этого, они могут сломать код, который не ожидает, что методы, такие как `save` и `update` (которые обычно пытаются вернуть `true` или `false`) вызовут исключение.
 
 Колбэки для отношений
 ---------------------
@@ -334,17 +375,23 @@ Article destroyed
 Условные колбэки
 ----------------
 
-Как и в валидациях, возможно сделать вызов метода колбэка условным в зависимости от заданного предиката. Это осуществляется при использовании опций `:if` и `:unless`, которые могут принимать символ, `Proc` или массив. Опцию `:if` следует использовать для определения, при каких условиях колбэк *должен* быть вызван. Если вы хотите определить условия, при которых колбэк *не должен* быть вызван, используйте опцию `:unless`.
+Как и в валидациях, возможно сделать вызов метода колбэка условным в зависимости от заданного предиката. Это осуществляется при использовании опций `:if` и `:unless`, которые могут принимать символ, `Proc` или массив.
+
+Опцию `:if` следует использовать для определения, при каких условиях колбэк *должен* быть вызван. Если вы хотите определить условия, при которых колбэк *не должен* быть вызван, используйте опцию `:unless`.
 
 ### Использование `:if` и `:unless` с `Symbol`
 
-Опции `:if` и `:unless` можно связать с символом, соответствующим имени метода предиката, который будет вызван непосредственно перед вызовом колбэка. При использовании опции `:if`, колбэк не будет выполнен, если метод предиката возвратит false; при использовании опции `:unless`, колбэк не будет выполнен, если метод предиката возвратит true. Это самый распространенный вариант. При использовании такой формы регистрации, также возможно зарегистрировать несколько различных предикатов, которые будут вызваны, чтобы проверить, должен ли выполняться колбэк.
+Опции `:if` и `:unless` можно связать с символом, соответствующим имени метода предиката, который будет вызван непосредственно перед вызовом колбэка.
+
+При использовании опции `:if`, колбэк **не будет** выполнен, если метод предиката возвратит **false**; при использовании опции `:unless`, колбэк **не будет** выполнен, если метод предиката возвратит **true**. Это самый распространенный вариант.
 
 ```ruby
 class Order < ApplicationRecord
   before_save :normalize_card_number, if: :paid_with_card?
 end
 ```
+
+При использовании такой формы регистрации, также возможно зарегистрировать несколько различных предикатов, которые будут вызваны, чтобы проверить, должен ли выполняться колбэк. Мы раскроем это [ниже](#multiple-callback-conditions).
 
 ### Использование `:if` и `:unless` с `Proc`
 
@@ -365,6 +412,26 @@ class Order < ApplicationRecord
 end
 ```
 
+### (multiple-callback-conditions) Составные условия колбэков
+
+Опции `:if` и `:unless` также принимают массив из proc или имен методов в виде символов:
+
+```ruby
+class Comment < ApplicationRecord
+  before_save :filter_content,
+    if: [:subject_to_parental_control?, :untrusted_author?]
+end
+```
+
+В список условий также можно запросто включить proc:
+
+```ruby
+class Comment < ApplicationRecord
+  before_save :filter_content,
+    if: [:subject_to_parental_control?, Proc.new { untrusted_author? }]
+end
+```
+
 ### Одновременное использование :if и :unless
 
 В колбэках можно смешивать `:if` и `:unless` в одном выражении:
@@ -377,68 +444,59 @@ class Comment < ApplicationRecord
 end
 ```
 
-### Составные условия колбэков
-
-Опции `:if` и `:unless` также принимают массив из proc или имен методов в виде символов:
-
-```ruby
-class Comment < ApplicationRecord
-  before_save :filter_content,
-    if: [:subject_to_parental_control?, :untrusted_author?]
-end
-```
-
 Колбэк запустится только когда все условия `:if` и не один из условий `:unless` будут истинны.
 
-Классы колбэков
----------------
+(callback-classes) Классы колбэков
+----------------------------------
 
 Иногда написанные вами методы колбэков достаточно полезны для повторного использования в других моделях. Active Record делает возможным создавать классы, включающие методы колбэка, так, что их можно использовать повторно.
 
-Вот пример, где создается класс с колбэком `after_destroy` для модели `PictureFile`:
+Вот пример, где создается класс с колбэком `after_destroy`, чтобы разобраться с очисткой отвергнутых файлов в файловой системе. Это поведение может быть неуникальным для нашей модели `PictureFile`, и мы хотим поделиться им, таким образом хорошей идеей будет инкапсуляция его в отдельный класс. Это сделает более простым тестирование и изменение этого поведения.
 
 ```ruby
-class PictureFileCallbacks
-  def after_destroy(picture_file)
-    if File.exist?(picture_file.filepath)
-      File.delete(picture_file.filepath)
+class FileDestroyerCallback
+  def after_destroy(file)
+    if File.exist?(file.filepath)
+      File.delete(file.filepath)
     end
   end
 end
 ```
 
-При объявлении внутри класса, как выше, методы колбэка получают объект модели как параметр. Теперь можем использовать класс колбэка в модели:
+При объявлении внутри класса, как выше, методы колбэка получают объект модели как параметр. Это будет работать с любой моделью, которая использует класс подобным образом:
 
 ```ruby
 class PictureFile < ApplicationRecord
-  after_destroy PictureFileCallbacks.new
+  after_destroy FileDestroyerCallback.new
 end
 ```
 
-Заметьте, что нам нужно создать экземпляр нового объекта `PictureFileCallbacks`, после того, как объявили наш колбэк как отдельный метод. Это особенно полезно, если колбэки используют состояние экземпляра объекта. Часто, однако, более подходящим является объявление его в качестве метода класса.
+Заметьте, что нам нужно создать экземпляр нового объекта `FileDestroyerCallback`, после того, как объявили наш колбэк как отдельный метод. Это особенно полезно, если колбэки используют состояние экземпляра объекта. Часто, однако, более подходящим является объявление его в качестве метода класса.
 
 ```ruby
-class PictureFileCallbacks
-  def self.after_destroy(picture_file)
-    if File.exist?(picture_file.filepath)
-      File.delete(picture_file.filepath)
+class FileDestroyerCallback
+  def self.after_destroy(file)
+    if File.exist?(file.filepath)
+      File.delete(file.filepath)
     end
   end
 end
 ```
 
-Если метод колбэка объявляется таким образом, нет необходимости создавать экземпляр объекта `PictureFileCallbacks`.
+Когда метод колбэка объявляется таким образом, нет необходимости создавать экземпляр объекта `FileDestroyerCallback` в нашей модели.
 
 ```ruby
 class PictureFile < ApplicationRecord
-  after_destroy PictureFileCallbacks
+  after_destroy FileDestroyerCallback
 end
 ```
 
 Внутри своего колбэк-класса можно создать сколько угодно колбэков.
 
-Транзакционные колбэки
-----------------------
+(transaction-callbacks) Транзакционные колбэки
+----------------------------------------------
+
+### Разбираемся с согласованностью
 
 Имеются два дополнительных колбэка, которые включаются по завершению транзакции базы данных: [`after_commit`][] и [`after_rollback`][]. Эти колбэки очень похожи на колбэк `after_save`, за исключением того, что они не выполняются пока изменения в базе данных не будут подтверждены или обращены. Они наиболее полезны, когда вашим моделям Active Record необходимо взаимодействовать с внешними системами, не являющимися частью транзакции базы данных.
 
@@ -466,6 +524,8 @@ end
 ```
 
 NOTE: Опция `:on` определяет, когда будет запущен колбэк. Если не предоставить опцию `:on`, колбэк будет запущен для каждого экшна.
+
+### Контекст имеет значение
 
 Так как принято использовать колбэк `after_commit` только при создании, обновлении или удалении, есть псевдонимы для этих операций:
 
@@ -497,9 +557,9 @@ class User < ApplicationRecord
   after_update_commit :log_user_saved_to_db
 
   private
-  def log_user_saved_to_db
-    puts 'User was saved to database'
-  end
+    def log_user_saved_to_db
+      puts 'User was saved to database'
+    end
 end
 ```
 
@@ -510,18 +570,18 @@ irb> @user.save # обновление @user
 User was saved to database
 ```
 
-Также есть псевдоним для использования колбэка `after_commit` совместно для создания и обновления:
+### `after_save_commit`
 
-* [`after_save_commit`][]
+Также имеется [`after_save_commit`][], являющийся псевдонимом для использования колбэком `after_commit` вместе для создания и обновления:
 
 ```ruby
 class User < ApplicationRecord
   after_save_commit :log_user_saved_to_db
 
   private
-  def log_user_saved_to_db
-    puts 'User was saved to database'
-  end
+    def log_user_saved_to_db
+      puts 'User was saved to database'
+    end
 end
 ```
 
@@ -532,6 +592,19 @@ User was saved to database
 irb> @user.save # обновление @user
 User was saved to database
 ```
+
+### Упорядочивание транзакционных колбэков
+
+При определении нескольких транзакционных колбэков `after_` (`after_commit`, `after_rollback` и т.д.), порядок будет обратным к тому, как они определены.
+
+```ruby
+class User < ActiveRecord::Base
+  after_commit { puts("это будет фактически вызвано вторым") }
+  after_commit { puts("это будет фактически вызвано первым") }
+end
+```
+
+NOTE: Это также применяется ко всем вариациям `after_*_commit`, таким как `after_destroy_commit`.
 
 [`after_create_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_create_commit
 [`after_destroy_commit`]: https://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_destroy_commit
