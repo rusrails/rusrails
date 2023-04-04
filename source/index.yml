@@ -33,8 +33,8 @@ pages:
   - title:    Валидации Active Record
     path:     active-record-validations
     file:     active_record_validations.md
-    revision: 37ac589b3238960162ace9638dfd34771e56a52f
-    date:     01/12/2022
+    revision: dadf46de36570ecccc3e75268adfff11208fde6f
+    date:     15/03/2023
 
   - title:    Колбэки Active Record
     path:     active-record-callbacks

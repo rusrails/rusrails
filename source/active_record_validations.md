@@ -129,7 +129,7 @@ irb> Person.create(name: nil).valid?
 => false
 ```
 
-После того, как Active Record выполнит валидации, все найденные ошибки будут доступны в методе экземпляра [`errors`][], возвращающем коллекцию ошибок. По определению объект валиден, если эта коллекция будет пуста после запуска валидаций.
+После того, как Active Record выполнит валидации, все неудачи будут доступны в методе экземпляра [`errors`][], возвращающем коллекцию ошибок. По определению объект валиден, если эта коллекция будет пуста после запуска валидаций.
 
 Заметьте, что объект, созданный с помощью `new` не сообщает об ошибках, даже если технически невалиден, поскольку валидации автоматически запускаются только когда сохраняется объект, как в случае с методами `create` или `save`.
 
@@ -148,21 +148,21 @@ irb> p.errors.size
 irb> p.valid?
 => false
 irb> p.errors.objects.first.full_message
-=> "Name can't be blank"
+=> "Name can’t be blank"
 
 irb> p = Person.create
 => #<Person id: nil, name: nil>
 irb> p.errors.objects.first.full_message
-=> "Name can't be blank"
+=> "Name can’t be blank"
 
 irb> p.save
 => false
 
 irb> p.save!
-ActiveRecord::RecordInvalid: Validation failed: Name can't be blank
+ActiveRecord::RecordInvalid: Validation failed: Name can’t be blank
 
 irb> Person.create!
-ActiveRecord::RecordInvalid: Validation failed: Name can't be blank
+ActiveRecord::RecordInvalid: Validation failed: Name can’t be blank
 ```
 
 [`invalid?`][] это антипод `valid?`. Он запускает ваши валидации, возвращая true, если для объекта были добавлены ошибки, и false в противном случае.
@@ -203,6 +203,10 @@ Active Record предлагает множество предопределен
 
 Они все принимают опции `:on` и `:message`, которые определяют, когда валидация должна быть запущена, и какое сообщение должно быть добавлено в коллекцию `errors`, если она провалится. Опция `:on` принимает одно из значений `:create` или `:update`. Для каждого валидационного хелпера есть свое сообщение об ошибке по умолчанию. Эти сообщения используются, если не определена опция `:message`. Давайте рассмотрим каждый из доступных хелперов.
 
+INFO: Чтобы просмотреть список доступных хелперов по умолчанию, обратитесь к [`ActiveModel::Validations::HelperMethods`][].
+
+[`ActiveModel::Validations::HelperMethods`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/HelperMethods.html
+
 ### `acceptance`
 
 Этот метод проверяет, что чекбокс в пользовательском интерфейсе был нажат, когда форма была подтверждена. Обычно используется, когда пользователю нужно согласиться с условиями использования вашего приложения, подтвердить, что некоторый текст прочтен, или другой подобной концепции.
@@ -221,7 +225,7 @@ class Person < ApplicationRecord
 end
 ```
 
-Также он может получать опцию `:accept`, которая определяет допустимые значения, которые будут считаться принятыми. По умолчанию это "1", но его можно изменить.
+Также он может получать опцию `:accept`, которая определяет допустимые значения, которые будут считаться приемлемыми. По умолчанию это `['1', true]`, но его можно изменить.
 
 ```ruby
 class Person < ApplicationRecord
@@ -248,7 +252,7 @@ end
 <%= text_field :person, :email_confirmation %>
 ```
 
-Эта проверка выполняется, только если `email_confirmation` не равно `nil`. Чтобы требовать подтверждение, нужно добавить еще проверку на существование проверяемого атрибута (мы рассмотрим `presence` чуть позже):
+NOTE: Эта проверка выполняется, только если `email_confirmation` не равно `nil`. Чтобы требовать подтверждение, нужно добавить еще проверку на существование проверяемого атрибута (мы рассмотрим `presence` [чуть позже](#presence)):
 
 ```ruby
 class Person < ApplicationRecord
@@ -265,17 +269,28 @@ class Person < ApplicationRecord
 end
 ```
 
-По умолчанию сообщение об ошибке для этого хелпера такое _"doesn't match confirmation"_.
+По умолчанию сообщение об ошибке для этого хелпера такое _"doesn't match confirmation"_. Также можно передать произвольное сообщение с помощью опции `message`.
+
+В основном, при использовании этого валидатора, хочется объединить его с опцией `:if`, чтобы валидировать поле "_confirmation" только тогда, когда изменяется изначальное поле, а **не** каждый раз при сохранении записи. Подробности об [условных валидациях](#conditional-validation) позже.
+
+```ruby
+class Person < ApplicationRecord
+  validates :email, confirmation: true
+  validates :email_confirmation, presence: true, if: :email_changed?
+end
+```
 
 ### `comparison`
 
-Эта проверка проводит валидацию сравнения между любыми двумя сравниваемыми значениями. Этот валидатор требует предоставления опции сравнения. Каждая опция принимает значение, proc или символ. Любой класс, включающий Comparable, может быть сравнен.
+Эта проверка проводит валидацию сравнения между любыми двумя сравниваемыми значениями. Этот валидатор требует предоставления опции сравнения.
 
 ```ruby
 class Promotion < ApplicationRecord
   validates :end_date, comparison: { greater_than: :start_date }
 end
 ```
+
+Сообщение об ошибке по умолчанию для этого хелпера _"failed comparison"_. Также можно передать произвольное сообщение с помощью опции `message`.
 
 Все эти опции поддерживаются:
 
@@ -286,20 +301,7 @@ end
 * `:less_than_or_equal_to` - Указывает что значение должно быть меньше или равно предоставленному значению. Сообщение об ошибке для этой опции такое _"must be less than or equal to %{count}"_.
 * `:other_than` - Указывает что значение должно быть иным, чем предоставленное значение. Сообщение об ошибке для этой опции такое _"must be other than %{count}"_.
 
-### `exclusion`
-
-Этот хелпер проводит валидацию того, что значения атрибутов не включены в указанный набор. Фактически, этот набор может быть любым перечисляемым объектом.
-
-```ruby
-class Account < ApplicationRecord
-  validates :subdomain, exclusion: { in: %w(www us ca jp),
-    message: "%{value} is reserved." }
-end
-```
-
-Хелпер `exclusion` имеет опцию `:in`, которая получает набор значений, которые не должны приниматься проверяемыми атрибутами. Опция `:in` имеет псевдоним `:within`, который используется для тех же целей. Этот пример использует опцию `:message`, чтобы показать вам, как можно включать значение атрибута. Для того, чтобы увидеть все опции аргументов сообщения смотрите [документацию по message](#message).
-
-Значение сообщения об ошибке по умолчанию "_is reserved_".
+NOTE: Этот валидатор требует предоставления опции сравнения. Каждая опция принимает значение, proc или символ. Любой класс, включающий Comparable, может быть сравнен.
 
 ### `format`
 
@@ -314,7 +316,13 @@ end
 
 В качестве альтернативы можно потребовать, чтобы указанный атрибут _не_ соответствовал регулярному выражению, используя опцию `:without`.
 
+Наоборот, используя опцию `:without`, можно потребовать, что указанный атрибут _не_ соответствует регулярному выражению.
+
+В любом случае, предоставленная опция `:with` или `:without` должна быть либо регулярное выражение, либо proc, либо lambda, возвращающая это.
+
 Значение сообщения об ошибке по умолчанию "_is invalid_".
+
+WARNING. Используйте `\A` и `\z` для соответствия началу и концу строки, `^` и `$` для соответствия началу/концу строчки. Из-за частого неправильного использования `^` и `$`, необходимо передать опцию `multiline: true` в случае использования этих двух якорей в предоставленном регулярном выражении. В большинстве случаев следует использовать `\A` и `\z`.
 
 ### `inclusion`
 
@@ -330,6 +338,25 @@ end
 Хелпер `inclusion` имеет опцию `:in`, которая получает набор значений, которые должны быть приняты. Опция `:in` имеет псевдоним `:within`, который используется для тех же целей. Предыдущий пример использует опцию `:message`, чтобы показать вам, как можно включать значение атрибута. Для того, чтобы увидеть все опции смотрите [документацию по message](#message).
 
 Значение сообщения об ошибке по умолчанию для этого хелпера такое "_is not included in the list_".
+
+### `exclusion`
+
+Противоположностью `inclusion` является... `exclusion`!
+
+Этот хелпер проводит валидацию того, что значения атрибутов не включены в указанный набор. Фактически, этот набор может быть любым перечисляемым объектом.
+
+```ruby
+class Account < ApplicationRecord
+  validates :subdomain, exclusion: { in: %w(www us ca jp),
+    message: "%{value} is reserved." }
+end
+```
+
+Хелпер `exclusion` имеет опцию `:in`, которая получает набор значений, которые не должны приниматься проверяемыми атрибутами. Опция `:in` имеет псевдоним `:within`, который используется для тех же целей. Этот пример использует опцию `:message`, чтобы показать вам, как можно включать значение атрибута. Для того, чтобы увидеть все опции аргументов сообщения смотрите [документацию по message](#message).
+
+Значение сообщения об ошибке по умолчанию "_is reserved_".
+
+Альтернативно к традиционным перечисляемым (наподобие Array), можно предоставить proc, lambda или symbol, возвращающие перечисляемое. Если перечисляемое является числовым, временным или дата-временным рядом, проверка осуществляется с помощью `Range#cover?`, в противном случае `include?`. при использовании proc или lambda, проверяемый экземпляр передается как аргумент.
 
 ### `length`
 
@@ -362,17 +389,19 @@ end
 
 Отметьте, что сообщения об ошибке по умолчанию во множественном числе (т.е., "is too short (minimum is %{count} characters)"). По этой причине, когда `:minimum` равно 1, следует предоставить собственное сообщение или использовать вместо него `presence: true`. Когда `:in` или `:within` имеют как нижнюю границу 1, следует или предоставить собственное сообщение, или вызвать `presence` перед `length`.
 
+NOTE: Одновременно может быть использована одна опция, кроме опций `:minimum` и `:maximum`, которые комбинируются вместе.
+
 ### `numericality`
 
 Этот хелпер проводит валидацию того, что ваши атрибуты имеют только числовые значения. По умолчанию, этому будет соответствовать возможный знак первым символом, и следующее за ним целочисленное или с плавающей запятой число.
 
-Чтобы определить, что допустимы только целочисленные значения, установите `:only_integer` в true. Тогда будет использоваться регулярное выражение
+Чтобы определить, что допустимы только целочисленные значения, установите `:only_integer` в true. Тогда будет использоваться регулярное выражение для проведения валидации значения атрибута.
 
 ```ruby
 /\A[+-]?\d+\z/
 ```
 
-для проведения валидации значения атрибута. В противном случае, он будет пытаться конвертировать значение в число, используя `Float`. `Float` приводятся к `BigDecimal` с использованием значения precision 15.
+В противном случае, он будет пытаться конвертировать значение в число, используя `Float`. `Float` приводятся к `BigDecimal` с использованием значения precision столбца или максимум 15 разрядов.
 
 ```ruby
 class Player < ApplicationRecord
@@ -383,7 +412,13 @@ end
 
 Для `:only_integer` значение сообщения об ошибке по умолчанию _"must be an integer"_.
 
-Кроме `:only_integer`, хелпер `validates_numericality_of` также принимает следующие опции для добавления ограничений к приемлемым значениям:
+Кроме `:only_integer`, хелпер `validates_numericality_of` также принимает опцию `:only_numeric`, которая указывает, что значение должно быть экземпляром `Numeric` и пытается парсить значение, если оно `String`.
+
+NOTE: По умолчанию `numericality` не допускает значения `nil`. Чтобы их разрешить, можно использовать опцию `allow_nil: true`. Отметьте, что для столбцов `Integer` и `Float` пустые строки конвертируются в `nil`.
+
+По умолчанию сообщение об ошибке _"is not a number"_.
+
+Также есть множество опций для добавления ограничений к приемлемым значениям:
 
 * `:greater_than` - Указывает, что значение должно быть больше, чем значение опции. По умолчанию сообщение об ошибке для этой опции такое _"must be greater than %{count}"_.
 * `:greater_than_or_equal_to` - Указывает, что значение должно быть больше или равно значению опции. По умолчанию сообщение об ошибке для этой опции такое _"must be greater than or equal to %{count}"_.
@@ -392,16 +427,12 @@ end
 * `:less_than_or_equal_to` - Указывает, что значение должно быть меньше или равно значению опции. По умолчанию сообщение об ошибке для этой опции такое _"must be less than or equal to %{count}"_.
 * `:other_than` - Указывает, что значение должно отличаться от представленного значения. По умолчанию сообщение об ошибке для этой опции такое _"must be other than %{count}"_.
 * `:in` - Указывает, что значение должно быть в предоставленном диапазоне. По умолчанию сообщение об ошибке для этой опции такое _"must be in %{count}"_.
-* `:odd` - Указывает, что значение должно быть нечетным, если установлено true. По умолчанию сообщение об ошибке для этой опции такое _"must be odd"_.
-* `:even` - Указывает, что значение должно быть четным, если установлено true. По умолчанию сообщение об ошибке для этой опции такое _"must be even"_.
-
-NOTE: По умолчанию `numericality` не допускает значения `nil`. Чтобы их разрешить, можно использовать опцию `allow_nil: true`.
-
-По умолчанию сообщение об ошибке _"is not a number"_.
+* `:odd` - Указывает, что значение должно быть нечетным. По умолчанию сообщение об ошибке для этой опции такое _"must be odd"_.
+* `:even` - Указывает, что значение должно быть четным. По умолчанию сообщение об ошибке для этой опции такое _"must be even"_.
 
 ### `presence`
 
-Этот хелпер проводит валидацию того, что определенные атрибуты не пустые. Он использует метод `blank?` для проверки того, является ли значение или `nil`, или пустой строкой (это строка, которая или пуста, или состоит из пробелов).
+Этот хелпер проводит валидацию того, что определенные атрибуты не пустые. Он использует метод [`Object#blank?`][] для проверки того, является ли значение или `nil`, или пустой строкой (это строка, которая или пуста, или состоит из пробелов).
 
 ```ruby
 class Person < ApplicationRecord
@@ -420,28 +451,34 @@ end
 
 Для того, чтобы проверять связанные записи, чье присутствие необходимо, нужно определить опцию `:inverse_of` для связи:
 
-NOTE: Если хотите убедиться, что связь и существует, и валидна, нужно также использовать `validates_associated`.
-
 ```ruby
 class Order < ApplicationRecord
   has_many :line_items, inverse_of: :order
 end
 ```
 
+NOTE: Если хотите убедиться, что связь и существует, и валидна, нужно также использовать `validates_associated`. Подробнее [ниже](#validates-associated)
+
 При проведении валидации существования объекта, связанного отношением `has_one` или `has_many`, будет проверено, что объект ни `blank?`, ни `marked_for_destruction?`.
 
 Так как `false.blank?` это true, если хотите провести валидацию существования булева поля, нужно использовать одну из следующих валидаций:
 
 ```ruby
+# Значение _должно_ быть true или false
 validates :boolean_field_name, inclusion: [true, false]
+# Значение _не должно_ быть nil, только true или false
 validates :boolean_field_name, exclusion: [nil]
 ```
 
 При использовании одной из этих валидаций, вы можете быть уверены, что значение не будет `nil`, которое в большинстве случаев преобразуется в `NULL` значение.
 
+Значение об ошибке по умолчанию _"can’t be blank"_.
+
+[`Object#blank?`]: https://api.rubyonrails.org/classes/Object.html#method-i-blank-3F
+
 ### `absence`
 
-Этот хелпер проверяет, что указанные атрибуты отсутствуют. Он использует метод `present?` для проверки, что значение является либо nil, либо пустой строкой (то есть либо нулевой длины, либо состоящей из пробелов).
+Этот хелпер проверяет, что указанные атрибуты отсутствуют. Он использует метод [`Object#present?`][] для проверки, что значение является либо nil, либо пустой строкой (то есть либо нулевой длины, либо состоящей из пробелов).
 
 ```ruby
 class Person < ApplicationRecord
@@ -466,15 +503,19 @@ class Order < ApplicationRecord
 end
 ```
 
+NOTE: Если желаете убедиться, что связь и существует, и валидна, также необходимо использовать `validates_associated`. Подробнее [ниже](#validates-associated)
+
 Если проверяете отсутствие объекта, связанного отношением `has_one` или `has_many`, он проверит, что объект и не `present?`, и не `marked_for_destruction?`.
 
 Поскольку `false.present?` является false, если хотите проверить отсутствие булева поля, следует использовать `validates :field_name, exclusion: { in: [true, false] }`.
 
 По умолчанию сообщение об ошибке _"must be blank"_.
 
+[`Object#present?`]: https://api.rubyonrails.org/classes/Object.html#method-i-present-3F
+
 ### `uniqueness`
 
-Этот хелпер проводит валидацию того, что значение атрибута уникально, перед тем, как объект будет сохранен. Он не создает условие уникальности в базе данных, следовательно, может произойти так, что два разных подключения к базе данных создадут две записи с одинаковым значением для столбца, который вы подразумеваете уникальным. Чтобы этого избежать, нужно создать индекс unique на оба столбцах в вашей базе данных.
+Этот хелпер проводит валидацию того, что значение атрибута уникально, перед тем, как объект будет сохранен.
 
 ```ruby
 class Account < ApplicationRecord
@@ -493,7 +534,11 @@ class Holiday < ApplicationRecord
 end
 ```
 
-Если хотите создать ограничение на уровне базы данных, чтобы предотвратить возможные нарушения валидации уникальности с помощью опции `:scope`, необходимо создать индекс уникальности на обоих столбцах базы данных. Подробнее об индексах для нескольких столбцов смотрите в [мануале MySQL](https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html), или примеры ограничений уникальности, относящихся к группе столбцов в [мануале PostgreSQL](https://postgrespro.ru/docs/postgrespro/current/ddl-constraints.html).
+WARNING. Эта валидация не создает условие уникальности в базе данных, следовательно, может произойти так, что два разных подключения к базе данных создадут две записи с одинаковым значением для столбца, который вы подразумеваете уникальным. Чтобы этого избежать, нужно создать индекс unique на оба столбцах в вашей базе данных.
+
+Чтобы добавить ограничение уникальности для базы данных, используйте выражение [`add_index`][] в миграции и включите опцию `unique: true`.
+
+Если хотите создать ограничение на уровне базы данных, чтобы предотвратить возможные нарушения валидации уникальности с помощью опции `:scope`, необходимо создать индекс уникальности на обоих столбцах базы данных. Подробнее об индексах для нескольких столбцов смотрите в [мануале MySQL][], или примеры ограничений уникальности, относящихся к группе столбцов в [мануале PostgreSQL][].
 
 Также имеется опция `:case_sensitive`, которой можно определить, будет ли ограничение уникальности чувствительно к регистру, не чувствительным к регистру или соответствовать сортировке базы данных по умолчанию. Опцией по умолчанию является соответствие сортировке базы данных по умолчанию.
 
@@ -505,7 +550,16 @@ end
 
 WARNING. Отметьте, что некоторые базы данных настроены на выполнение чувствительного к регистру поиска в любом случае.
 
+Имеется опция `:conditions`, которой можно указать дополнительные условия в виде фрагмента SQL `WHERE` для ограничения поиска уникального ограничения (напр. `conditions: -> { where(status: 'active') }`).
+
 По умолчанию сообщение об ошибке _"has already been taken"_.
+
+Подробнее смотрите [`validates_uniqueness_of`][].
+
+[`validates_uniqueness_of`]: https://api.rubyonrails.org/classes/ActiveRecord/Validations/ClassMethods.html#method-i-validates_uniqueness_of
+[`add_index`]: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_index
+[the MySQL manual]: https://dev.mysql.com/doc/refman/en/multiple-column-indexes.html
+[the PostgreSQL manual]: https://www.postgresql.org/docs/current/static/ddl-constraints.html
 
 ### `validates_associated`
 
@@ -524,7 +578,29 @@ CAUTION: Не используйте `validates_associated` на обоих ко
 
 Для [`validates_associated`][] сообщение об ошибке по умолчанию следующее _"is invalid"_. Заметьте, что каждый связанный объект имеет свою собственную коллекцию `errors`; ошибки не добавляются к вызывающей модели.
 
+NOTE: [`validates_associated`][] можно использовать только с объектами ActiveRecord, а все до этого можно было также использовать с любым объектом, включающим [`ActiveModel::Validations`][].
+
 [`validates_associated`]: https://api.rubyonrails.org/classes/ActiveRecord/Validations/ClassMethods.html#method-i-validates_associated
+
+### `validates_each`
+
+Этот хелпер валидирует атрибуты в блоке. У него нет предопределенной функции валидации. Его следует создавать с помощью блока, и каждый атрибут, переданный в [`validates_each`][] будет в нем протестирован.
+
+В следующем примере мы отвергаем имена и фамилии, начинающиеся со строчной буквы.
+
+```ruby
+class Person < ApplicationRecord
+  validates_each :name, :surname do |record, attr, value|
+    record.errors.add(attr, 'must start with upper case') if /\A[[:lower:]]/.match?(value)
+  end
+end
+```
+
+Блок получает запись, имя атрибута и значение атрибута.
+
+Можно делать все, что угодно, чтобы проверять валидность данных внутри блока. Если ваша валидация проваливается, следует добавить ошибку к модели, что сделает ее невалидной.
+
+[`validates_each`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/ClassMethods.html#method-i-validates_each
 
 ### `validates_with`
 
@@ -544,11 +620,29 @@ class Person < ApplicationRecord
 end
 ```
 
-NOTE: Ошибки, добавляемые в `record.errors[:base]` относятся к состоянию записи в целом, а не к определенному атрибуту.
+Для `validates_with` нет сообщения об ошибке по умолчанию. Следует вручную добавлять ошибки в коллекцию errors записи в классе валидатора.
 
-Хелпер [`validates_with`][] принимает класс или список классов для использования в валидации. Для `validates_with` нет сообщения об ошибке по умолчанию. Следует вручную добавлять ошибки в коллекцию errors записи в классе валидатора.
+NOTE: Ошибки, добавляемые в `record.errors[:base]` относятся к состоянию записи в целом.
 
-Для применения метода validate, необходимо иметь определенным параметр `record`, который является записью, проходящей валидацию.
+Для реализации метода валидации, необходимо принимать параметр `record`, который является записью, проходящей валидацию.
+
+Если хотите добавить ошибку к определенному атрибуту, передайте его в качестве первого аргумента, как в `record.errors.add(:first_name, "please choose another name")`. Мы раскроем [валидационные ошибки][] гораздо детальнее позже.
+
+```ruby
+def validate(record)
+  if record.some_field != "acceptable"
+    record.errors.add :some_field, "this field is unacceptable"
+  end
+end
+```
+
+Хелпер [`validates_with`][] принимает класс или список классов для использования в валидации.
+
+```ruby
+class Person < ApplicationRecord
+  validates_with MyValidator, MyOtherValidator, on: :create
+end
+```
 
 Подобно всем другим валидациям, `validates_with` принимает опции `:if`, `:unless` и `:on`. Если передадите любые другие опции, они будут переданы в класс валидатора как `options`:
 
@@ -592,28 +686,28 @@ class GoodnessValidator
 end
 ```
 
+Мы раскроем [произвольные валидации](#performing-custom-validations) позже.
+
+[валидационные ошибки](#working-with-validation-errors)
 [`validates_with`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/ClassMethods.html#method-i-validates_with
-
-### `validates_each`
-
-Этот хелпер помогает провести валидацию атрибутов с помощью блока кода. Он не имеет предопределенной валидационной функции. Вы должны создать ее, используя блок, и каждый атрибут, указанный в [`validates_each`][], будет протестирован в нем. В следующем примере нам не нужны имена и фамилии, начинающиеся с маленькой буквы.
-
-```ruby
-class Person < ApplicationRecord
-  validates_each :name, :surname do |record, attr, value|
-    record.errors.add(attr, 'must start with upper case') if value =~ /\A[[:lower:]]/
-  end
-end
-```
-
-Блок получает запись, имя атрибута и значение атрибута. Вы можете делать что угодно для проверки валидности данных внутри блока. Если валидация проваливается, следует добавить ошибку в модель, которое делает ее невалидной.
-
-[`validates_each`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/ClassMethods.html#method-i-validates_each
 
 Общие опции валидаций
 ---------------------
 
-Есть несколько общих опций валидаций:
+Есть несколько общих опций валидаций, поддерживаемых валидаторами, которые мы только что описали, давайте пройдемся по ним!
+
+NOTE: Не все из этих опций поддерживаются каждым валидатором, обратитесь к документации API для [`ActiveModel::Validations`][].
+
+Используя любой из упомянутых методов валидации, также имеется список общих для валидаторов опций. Сейчас мы их раскроем!
+
+* [`:allow_nil`](#allow-nil): Пропускает валидацию, если атрибут `nil`.
+* [`:allow_blank`](#allow-blank): Пропускает валидацию, если атрибут пустой.
+* [`:message`](#message): Указывает произвольное сообщение об ошибке.
+* [`:on`](#on): Указывает контексты, в которых валидация активна.
+* [`:strict`](#strict-validations): Вызывает исключение, когда валидация проваливается.
+* [`:if` и `:unless`](#conditional-validation): Указывает, когда валидации следует или не следует происходить.
+
+[`ActiveModel::Validations`]: https://api.rubyonrails.org/classes/ActiveModel/Validations.html
 
 ### `:allow_nil`
 
@@ -624,6 +718,13 @@ class Coffee < ApplicationRecord
   validates :size, inclusion: { in: %w(small medium large),
     message: "%{value} is not a valid size" }, allow_nil: true
 end
+```
+
+```irb
+irb> Coffee.create(size: nil).valid?
+=> true
+irb> Coffee.create(size: "mega").valid?
+=> false
 ```
 
 Для того, чтобы увидеть все опции аргументов сообщения смотрите [документацию по message](#message).
@@ -647,11 +748,11 @@ irb> Topic.create(title: nil).valid?
 
 ### `:message`
 
-Как мы уже видели, опция `:message` позволяет определить сообщение, которое будет добавлено в коллекцию `errors`, когда валидация проваливается. Если эта опция не используется, Active Record будет использовать соответствующие сообщения об ошибках по умолчанию для каждого валидационного хелпера. Опция `:message` принимает `String` или `Proc`.
+Как мы уже видели, опция `:message` позволяет определить сообщение, которое будет добавлено в коллекцию `errors`, когда валидация проваливается. Если эта опция не используется, Active Record будет использовать соответствующие сообщения об ошибках по умолчанию для каждого валидационного хелпера.
 
-Значение `String` в `:message` может опционально содержать любые из `%{value}`, `%{attribute}` и `%{model}`, которые будут динамически заменены, когда валидация провалится. Эта замена выполняется, если используется гем I18n, и местозаполнитель должен полностью совпадать, пробелы не допускаются.
+Опция `:message` принимает `String` или `Proc` в качестве значения.
 
-Значение `Proc` в `:message` задается с двумя аргументами: проверяемым объектом и хэшем с ключами `:model`, `:attribute` и `:value`.
+Значение `String` в `:message` может опционально содержать любые из `%{value}`, `%{attribute}` и `%{model}`, которые будут динамически заменены, когда валидация провалится. Эта замена выполняется, если используется гем i18n, и местозаполнитель должен полностью совпадать, пробелы не допускаются.
 
 ```ruby
 class Person < ApplicationRecord
@@ -661,9 +762,12 @@ class Person < ApplicationRecord
   # Сообщение со значением с динамическим атрибутом. %{value} будет заменено
   # фактическим значением атрибута. Также доступны %{attribute} и %{model}.
   validates :age, numericality: { message: "%{value} seems wrong" }
+```
 
-  # Proc
-  validates :username,
+Значение `Proc` в `:message` задается с двумя аргументами: проверяемым объектом и хэшем с ключами `:model`, `:attribute` и `:value`.
+
+```ruby
+class Person < ApplicationRecord  validates :username,
     uniqueness: {
       # object = person object being validated
       # data = { model: "Person", attribute: "Username", value: <username> }
@@ -712,6 +816,26 @@ irb> person.errors.messages
 
 `person.valid?(:account_setup)` выполнит обе валидации без сохранения модели. `person.save(context: :account_setup)` перед сохранением валидирует `person` в контексте `account_setup`.
 
+Передача массива символов также приемлема.
+
+```ruby
+class Book
+  include ActiveModel::Validations
+
+  validates :title, presence: true, on: [:update, :ensure_title]
+end
+```
+
+```irb
+irb> book = Book.new(title: nil)
+irb> book.valid?
+=> true
+irb> book.valid?(:ensure_title)
+=> false
+irb> book.errors.messages
+=> {:title=>["can’t be blank"]}
+```
+
 При вызове с явным контекстом, будут запущены валидации не только этого контекста, но и валидации _без_ контекста.
 
 ```ruby
@@ -727,10 +851,12 @@ irb> person = Person.new
 irb> person.valid?(:account_setup)
 => false
 irb> person.errors.messages
-=> {:email=>["has already been taken"], :age=>["is not a number"], :name=>["can't be blank"]}
+=> {:email=>["has already been taken"], :age=>["is not a number"], :name=>["can’t be blank"]}
 ```
 
-Строгие валидации
+Мы раскроем больше способов использования для `on:` в [руководстве по колбэкам](/active-record-callbacks).
+
+(strict-validations) Строгие валидации
 -----------------
 
 Также можно определить валидации строгими, чтобы они вызывали `ActiveModel::StrictValidationFailed`, когда объект невалиден.
@@ -743,7 +869,7 @@ end
 
 ```irb
 irb> Person.new.valid?
-ActiveModel::StrictValidationFailed: Name can't be blank
+ActiveModel::StrictValidationFailed: Name can’t be blank
 ```
 
 Также возможно передать собственное исключение в опцию `:strict`.
@@ -756,13 +882,13 @@ end
 
 ```irb
 irb> Person.new.valid?
-TokenGenerationException: Token can't be blank
+TokenGenerationException: Token can’t be blank
 ```
 
-Условная валидация
-------------------
+(conditional-validation) Условная валидация
+-------------------------------------------
 
-Иногда имеет смысл проводить валидацию объекта только при выполнении заданного предиката. Это можно сделать, используя опции `:if` и `:unless`, которые принимают символ, `Proc` или `Array`. Опцию `:if` можно использовать, если необходимо определить, когда валидация **должна** произойти. Если же нужно определить, когда валидация **не должна** произойти, воспользуйтесь опцией `:unless`.
+Иногда имеет смысл проводить валидацию объекта только при выполнении заданного предиката. Это можно сделать, используя опции `:if` и `:unless`, которые принимают символ, `Proc` или `Array`. Опцию `:if` можно использовать, если необходимо определить, когда валидация **должна** произойти. Альтернативно, если нужно определить, когда валидация **не должна** произойти, воспользуйтесь опцией `:unless`.
 
 ### Использование символа с `:if` и `:unless`
 
@@ -789,7 +915,7 @@ class Account < ApplicationRecord
 end
 ```
 
-Так как `Lambda` это тип `Proc`, они также могут быть использованы для написания вложенных условий более кратко.
+Так как `lambda` это тип `Proc`, она также может быть использована для написания вложенных условий, используя преимущество сокращенного синтаксиса.
 
 ```ruby
 validates :password, confirmation: true, unless: -> { password.blank? }
@@ -826,7 +952,7 @@ end
 
 Валидация выполнится только тогда, когда все условия `:if` и ни одно из условий `:unless` будут вычислены со значением `true`.
 
-Выполнение собственных валидаций
+(performing-custom-validations) Выполнение собственных валидаций
 ---------------------------------
 
 Когда встроенных валидационных хелперов недостаточно для ваших нужд, можете написать свои собственные валидаторы или методы валидации.
@@ -854,7 +980,7 @@ end
 ```ruby
 class EmailValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    unless value =~ URI::MailTo::EMAIL_REGEXP
+    unless URI::MailTo::EMAIL_REGEXP.match?(value)
       record.errors.add attribute, (options[:message] || "is not an email")
     end
   end
@@ -908,6 +1034,40 @@ class Invoice < ApplicationRecord
 end
 ```
 
+Подробности об [`:on`](#on) смотрите в разделе выше.
+
+### Список валидаторов
+
+Если хотите обнаружить все валидаторы для данного объекта, не ищите что-то другое, кроме `validators`.
+
+Например, если у нас есть следующая модель, использующая пользовательский валидатор и встроенный валидатор:
+
+```ruby
+class Person < ApplicationRecord
+  validates :name, presence: true, on: :create
+  validates :email, format: URI::MailTo::EMAIL_REGEXP
+  validates_with MyOtherValidator, strict: true
+end
+```
+
+Теперь можно использовать `validators` на модели "Person" для перечисления всех валидаторов, или даже проверяющих определенного поля с помощью `validators_on`.
+
+```irb
+irb> Person.validators
+#=> [#<ActiveRecord::Validations::PresenceValidator:0x10b2f2158
+      @attributes=[:name], @options={:on=>:create}>,
+     #<MyOtherValidatorValidator:0x10b2f17d0
+      @attributes=[:name], @options={:strict=>true}>,
+     #<ActiveModel::Validations::FormatValidator:0x10b2f0f10
+      @attributes=[:email],
+      @options={:with=>URI::MailTo::EMAIL_REGEXP}>]
+     #<MyOtherValidator:0x10b2f0948 @options={:strict=>true}>]
+
+irb> Person.validators_on(:name)
+#=> [#<ActiveModel::Validations::PresenceValidator:0x10b2f2158
+      @attributes=[:name], @options={on: :create}>]
+```
+
 [`validate`]: https://api.rubyonrails.org/classes/ActiveModel/Validations/ClassMethods.html#method-i-validate
 
 (working-with-validation-errors) Работаем с ошибками валидации
@@ -936,13 +1096,19 @@ irb> person = Person.new
 irb> person.valid?
 => false
 irb> person.errors.full_messages
-=> ["Name can't be blank", "Name is too short (minimum is 3 characters)"]
+=> ["Name can’t be blank", "Name is too short (minimum is 3 characters)"]
 
 irb> person = Person.new(name: "John Doe")
 irb> person.valid?
 => true
 irb> person.errors.full_messages
 => []
+
+irb> person = Person.new
+irb> person.valid?
+=> false
+irb> person.errors.first.details
+=> {:error=>:too_short, :count=>3}
 ```
 
 [`ActiveModel::Error`]: https://api.rubyonrails.org/classes/ActiveModel/Error.html
@@ -974,7 +1140,7 @@ irb> person = Person.new
 irb> person.valid?
 => false
 irb> person.errors[:name]
-=> ["can't be blank", "is too short (minimum is 3 characters)"]
+=> ["can’t be blank", "is too short (minimum is 3 characters)"]
 ```
 
 ### `errors.where` и объект ошибки
@@ -989,6 +1155,8 @@ class Person < ApplicationRecord
 end
 ```
 
+Можно отфильтровать только по `attribute`, передав его как первый параметр в `errors.where(:attr)`. Второй параметр используется для фильтрации по `type` требуемой ошибки, вызывая `errors.where(:attr, :type)`.
+
 ```irb
 irb> person = Person.new
 irb> person.valid?
@@ -999,6 +1167,17 @@ irb> person.errors.where(:name)
 
 irb> person.errors.where(:name, :too_short)
 => [ ... ] # ошибки :too_short для атрибута :name
+```
+
+Наконец, можно отфильтровать по любой `options`, существующих для данного типа объекта ошибки.
+
+```irb
+irb> person = Person.new
+irb> person.valid?
+=> false
+
+irb> person.errors.where(:name, :too_short, minimum: 3)
+=> [ ... ] # all name errors being too short and minimum is 2
 ```
 
 Из этих объектов ошибки можно считывать разную информацию:
@@ -1030,7 +1209,7 @@ irb> error.full_message
 
 ### `errors.add`
 
-Метод [`add`][] создает объект ошибки, принимая `attribute`, `type` ошибки и дополнительный хэш опций. Это полезно для написания собственного валидатора.
+Метод [`add`][] создает объект ошибки, принимая `attribute`, `type` ошибки и дополнительный хэш опций. Это полезно при написания собственного валидатора, так как это позволяет определить очень специфичные ситуации с ошибками.
 
 ```ruby
 class Person < ApplicationRecord
@@ -1052,7 +1231,7 @@ irb> person.errors.where(:name).first.full_message
 
 ### `errors[:base]`
 
-Можете добавлять ошибки, которые относятся к состоянию объекта в целом, а не к отдельному атрибуту. Можно добавлять ошибки к `:base`, когда вы хотите сообщить, что этот объект невалиден, вне зависимости от значений его атрибутов.
+Можете добавлять ошибки, которые относятся к состоянию объекта в целом, а не к отдельному атрибуту. Для этого необходимо использовать `:base` как атрибут при добавлении новой ошибки.
 
 ```ruby
 class Person < ApplicationRecord
@@ -1066,6 +1245,30 @@ end
 irb> person = Person.create
 irb> person.errors.where(:base).first.full_message
 => "This person is invalid because ..."
+```
+
+### `errors.size`
+
+Метод `size` возвращает количество ошибок для объекта.
+
+```ruby
+class Person < ApplicationRecord
+  validates :name, presence: true, length: { minimum: 3 }
+end
+```
+
+```irb
+irb> person = Person.new
+irb> person.valid?
+=> false
+irb> person.errors.size
+=> 2
+
+irb> person = Person.new(name: "Andrea", email: "andrea@example.com")
+irb> person.valid?
+=> true
+irb> person.errors.size
+=> 0
 ```
 
 ### `errors.clear`
@@ -1094,30 +1297,6 @@ irb> person.save
 
 irb> person.errors.empty?
 => false
-```
-
-### `errors.size`
-
-Метод `size` возвращает количество ошибок для объекта.
-
-```ruby
-class Person < ApplicationRecord
-  validates :name, presence: true, length: { minimum: 3 }
-end
-```
-
-```irb
-irb> person = Person.new
-irb> person.valid?
-=> false
-irb> person.errors.size
-=> 2
-
-irb> person = Person.new(name: "Andrea", email: "andrea@example.com")
-irb> person.valid?
-=> true
-irb> person.errors.size
-=> 0
 ```
 
 (displaying-validation-errors-in-the-view) Отображение ошибок валидации во вью
