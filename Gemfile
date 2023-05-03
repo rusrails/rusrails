@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 ruby '2.7.8'
 
+gem "net-http"
+gem "net-smtp"
+gem "net-imap"
+
 gem 'rails', " ~> 6.0.5"
 gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
