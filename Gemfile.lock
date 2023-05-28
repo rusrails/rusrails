@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    RedCloth (4.3.2)
     actioncable (6.0.6.1)
       actionpack (= 6.0.6.1)
       nio4r (~> 2.0)
@@ -302,7 +301,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  RedCloth
   bootsnap (>= 1.1.0)
   bootstrap-sass (~> 2.3.2.2)
   capistrano (~> 2.15)
