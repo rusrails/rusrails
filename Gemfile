@@ -15,7 +15,6 @@ gem 'textacular'
 
 gem 'nokogiri'
 gem 'sass-rails'
-gem 'RedCloth'
 gem 'redcarpet'
 gem 'config'
 gem 'bootstrap-sass', '~> 2.3.2.2'
