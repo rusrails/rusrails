@@ -1,0 +1,15 @@
+<h1>
+  Вы искали:
+  <%= @search %>
+</h1>
+<% if @result.empty? %>
+  <p>Ничего не найдено</p>
+<% else %>
+  <ol>
+    <% @result.each do |result| %>
+      <li>
+        <%= link_to result.title, [static_docs, result] %>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

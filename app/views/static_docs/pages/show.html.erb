@@ -1,0 +1,13 @@
+<% if false && @page && @page.path == 'index' %>
+  <div class="well" id="main_page_banner">
+    <%= render "shared/banner", url: 'http://bit.ly/rbybnr1', image: 'partners/spherecon2017.jpg' %>
+  </div>
+<% end %>
+<% cache ['v2', @page] do %>
+  <%= @page.rendered_body(self) %>
+<% end %>
+<% content_for :menu do %>
+  <% cache ['v2', @page, 'menu'] do %>
+    <%= @page.meta[:menu] %>
+  <% end %>
+<% end %>

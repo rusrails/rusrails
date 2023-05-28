@@ -15,7 +15,6 @@ gem 'textacular'
 
 gem 'nokogiri'
 gem 'sass-rails'
-gem 'haml-rails'
 gem 'RedCloth'
 gem 'redcarpet'
 gem 'config'
