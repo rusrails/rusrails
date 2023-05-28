@@ -1,0 +1,11 @@
+<ul class="nav nav-list">
+  <% markdown_renderer.headers.each do |header| %>
+    <% unless header[0].empty? %>
+      <li>
+        <%= content_tag "h#{header[0].length + 3}" do %>
+          <%= link_to "#{header[0].join '.'}. #{header[2]}".html_safe, "##{header[1]}" %>
+        <% end %>
+      </li>
+    <% end %>
+  <% end %>
+</ul>

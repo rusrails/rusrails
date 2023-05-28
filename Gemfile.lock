@@ -126,7 +126,6 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (~> 1.5)
     erubi (1.12.0)
-    erubis (2.7.0)
     execjs (2.7.0)
     factory_bot (5.1.1)
       activesupport (>= 4.2.0)
@@ -139,21 +138,7 @@ GEM
       rchardet (~> 1.8)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    haml (5.1.2)
-      temple (>= 0.8.0)
-      tilt
-    haml-rails (2.0.1)
-      actionpack (>= 5.1)
-      activesupport (>= 5.1)
-      haml (>= 4.0.6, < 6.0)
-      html2haml (>= 1.0.1)
-      railties (>= 5.1)
     highline (2.0.3)
-    html2haml (2.2.0)
-      erubis (~> 2.7.0)
-      haml (>= 4.0, < 6)
-      nokogiri (>= 1.6.0)
-      ruby_parser (~> 3.5)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     jquery-rails (4.3.5)
@@ -264,8 +249,6 @@ GEM
     rspec-support (3.9.2)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
-    ruby_parser (3.14.2)
-      sexp_processor (~> 4.9)
     russian (0.6.0)
       i18n (>= 0.5.0)
     sass (3.7.4)
@@ -283,7 +266,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    sexp_processor (4.14.1)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -293,7 +275,6 @@ GEM
       sprockets (>= 3.0.0)
     static_docs (0.2.1)
       rails (>= 3.1)
-    temple (0.8.2)
     textacular (5.2.0)
       activerecord (>= 5.0, < 6.1)
     thor (1.2.1)
@@ -330,7 +311,6 @@ DEPENDENCIES
   database_cleaner
   factory_bot_rails
   git
-  haml-rails
   jquery-rails
   listen
   net-http
