@@ -1,23 +1,22 @@
 Создание и настройка генераторов и шаблонов Rails
 =================================================
 
-Генераторы Rails - необходимый инструмент, если вы планируете улучшить свой рабочий процесс. С помощью этого руководства вы изучите, как создавать генераторы и настраивать существующие.
+Генераторы Rails - необходимый инструмент, для улучшения своего рабочего процесса. С помощью этого руководства вы изучите, как создавать генераторы и настраивать существующие.
 
 После прочтения этого руководства, вы узнаете:
 
 * Как посмотреть, какие генераторы доступны в вашем приложении.
 * Как создать генератор с использованием шаблонов.
 * Как Rails ищет генераторы, чтобы вызвать их.
-* Как Rails генерирует код Rails из шаблонов.
-* Как настроить скаффолд, создавая новые генераторы.
-* Как настроить скаффолд, изменяя шаблоны генератора.
+* Как настроить скаффолд, переопределяя шаблоны генератора.
+* Как настроить скаффолд, переопределяя генераторы.
 * Как использовать фолбэки, чтобы избежать переопределения большого набора генераторов.
 * Как создать шаблон приложения.
 
 Первый контакт
 --------------
 
-При создании приложения с помощью команды `rails` фактически вы используете генератор Rails. После этого можно получить список всех доступных генераторов, просто вызвав `bin/rails generate`:
+При создании приложения с помощью команды `rails` фактически вы используете генератор Rails. После этого можно получить список всех доступных генераторов, вызвав `bin/rails generate`:
 
 ```bash
 $ rails new myapp
@@ -25,34 +24,34 @@ $ cd myapp
 $ bin/rails generate
 ```
 
-NOTE: Чтобы создать новое приложение rails, мы используем глобальную команду `rails`, которую установил гем rails с помощью `gem install rails`. Когда внутри директории вашего приложения, мы используем команду `bin/rails`, которая использует комплект rails этого приложения.
+NOTE: Чтобы создать новое приложение rails, мы используем глобальную команду `rails`, использующую версию Rails, установленную с помощью `gem install rails`. Когда внутри директории вашего приложения, мы используем команду `bin/rails`, которая использует версию Rails этого приложения.
 
-Вы получите список всех генераторов, поставляющихся с Rails. Если необходимо подробное описание, к примеру, генератора helper, можно просто сделать так:
+Вы получите список всех генераторов, поставляющихся с Rails. Чтобы увидеть подробное описание определенного генератора, вызовите генератор с опцией `--help`. Например:
 
 ```bash
-$ bin/rails generate helper --help
+$ bin/rails generate scaffold --help
 ```
 
 Создание своего генератора
 --------------------------
 
-Начиная с Rails 3.0, генераторы создаются на основе [Thor](https://github.com/erikhuda/thor). Thor представляет мощные опции для парсинга и великолепный API для взаимодействия с файлами. Например, давайте создадим генератор, создающий файл инициализатора с именем `initializer.rb` внутри `config/initializers`.
+Генераторы создаются на основе [Thor](https://github.com/erikhuda/thor), представляющего мощные опции для парсинга и великолепный API для взаимодействия с файлами.
 
-Первым шагом является создание файла `lib/generators/initializer_generator.rb` со следующим содержимым:
+Давайте создадим генератор, создающий файл инициализатора с именем `initializer.rb` внутри `config/initializers`. Первым шагом является создание файла `lib/generators/initializer_generator.rb` со следующим содержимым:
 
 ```ruby
 class InitializerGenerator < Rails::Generators::Base
   def create_initializer_file
-    create_file "config/initializers/initializer.rb", "# Add initialization content here"
+    create_file "config/initializers/initializer.rb", <<~RUBY
+      # Тут добавьте содержимое инициализации
+    RUBY
   end
 end
 ```
 
-NOTE: `create_file` - это метод, представленный `Thor::Actions`. Документация по `create_file` и другие методы Thor находятся в [документации по Thor](https://www.rubydoc.info/gems/thor/Thor/Actions)
+Наш новый генератор очень прост: он наследуется от [`Rails::Generators::Base`][] и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе выполняется в порядке, в котором он определен. Наш метод вызывает [`create_file`][], который создаст файл в указанном месте с заданным содержимым.
 
-Наш новый генератор очень прост: он наследуется от `Rails::Generators::Base` и содержит одно определение метода. Когда генератор вызывается, каждый публичный метод в генераторе выполняется в порядке, в котором он определен. Наконец, мы вызываем метод `create_file`, который создаст файл в указанном месте с заданным содержимым. Если вы знакомы с Rails Application Templates API, API генераторов покажется вам очень знакомым.
-
-Чтобы вызвать наш новый генератор, нужно всего лишь выполнить:
+Чтобы вызвать наш новый генератор, запустим:
 
 ```bash
 $ bin/rails generate initializer
@@ -64,25 +63,34 @@ $ bin/rails generate initializer
 $ bin/rails generate initializer --help
 ```
 
-Rails обычно способен генерировать хорошие описания, если генератор расположен в пространствах имен, таких как `ActiveRecord::Generators::ModelGenerator`, но не в этом частном случае. Эту проблему можно решить двумя способами. Первым является вызов `desc` внутри нашего генератора:
+Rails обычно способен производить хорошие описания, если генератор расположен в пространствах имен, таких как `ActiveRecord::Generators::ModelGenerator`, но не в этом случае. Эту проблему можно решить двумя способами. Первым является добавление описания, вызывая [`desc`][] внутри нашего генератора:
 
 ```ruby
 class InitializerGenerator < Rails::Generators::Base
   desc "This generator creates an initializer file at config/initializers"
-  def create_initializer_file
-    create_file "config/initializers/initializer.rb", "# Add initialization content here"
-  end
+  create_file "config/initializers/initializer.rb", <<~RUBY
+    # Тут добавьте содержимое инициализации
+  RUBY
 end
 ```
 
-Теперь можно просмотреть новое описание, вызвав `--help` на новом генераторе. Вторым способом является добавление описания в файле `USAGE` в той же директории, что и наш генератор. Мы это сделаем на следующем этапе.
+Теперь можно просмотреть новое описание, вызвав `--help` на новом генераторе.
+
+Вторым способом является добавление описания в файле `USAGE` в той же директории, что и наш генератор. Мы это сделаем на следующем этапе.
+
+[`Rails::Generators::Base`]: https://api.rubyonrails.org/classes/Rails/Generators/Base.html
+[`Thor::Actions`]: https://www.rubydoc.info/gems/thor/Thor/Actions
+[`create_file`]: https://www.rubydoc.info/gems/thor/Thor/Actions#create_file-instance_method
+[`desc`]: https://www.rubydoc.info/gems/thor/Thor#desc-class_method
 
 Создание генераторов с помощью генераторов
 ------------------------------------------
 
-У самих генераторов есть генератор:
+У самих генераторов есть генератор. Давайте уберем наш `InitializerGenerator` и используем `bin/rails generate generator` чтобы сгенерировать его заново:
 
 ```bash
+$ rm lib/generators/initializer_generator.rb
+
 $ bin/rails generate generator initializer
       create  lib/generators/initializer
       create  lib/generators/initializer/initializer_generator.rb
@@ -96,13 +104,13 @@ $ bin/rails generate generator initializer
 
 ```ruby
 class InitializerGenerator < Rails::Generators::NamedBase
-  source_root File.expand_path('templates', __dir__)
+  source_root File.expand_path("templates", __dir__)
 end
 ```
 
-Сперва обратите внимание, что он унаследован от `Rails::Generators::NamedBase` вместо `Rails::Generators::Base`. Это означает, что наш генератор ожидает как минимум один аргумент, который будет именем инициализатора и будет доступным в нашем коде в переменной `name`.
+Сперва обратите внимание, что генератор унаследован от [`Rails::Generators::NamedBase`][] вместо `Rails::Generators::Base`. Это означает, что наш генератор ожидает как минимум один аргумент, который будет именем инициализатора и будет доступным в нашем коде как `name`.
 
-Это можно увидеть, если вызвать описание для генератора (не забудьте удалить файл старого генератора):
+Это можно увидеть, если вызвать описание для генератора:
 
 ```bash
 $ bin/rails generate initializer --help
@@ -110,19 +118,19 @@ Usage:
   bin/rails generate initializer NAME [options]
 ```
 
-Также можно увидеть, что в нашем новом генераторе есть метод класса `source_root`. Этот метод указывает на место расположения шаблонов нашего генератора, если таковые имеются, и по умолчанию он указывает на созданную директорию `lib/generators/initializer/templates`.
+Также отметьте, что в генераторе есть метод класса [`source_root`][]. Этот метод указывает на расположение наших шаблонов, если таковые имеются, и по умолчанию он указывает на директорию `lib/generators/initializer/templates`, которая только что была создана.
 
-Чтобы понять, что такое шаблон генератора, давайте создадим файл `lib/generators/initializer/templates/initializer.rb` со следующим содержимым:
+Чтобы понять, как работает шаблон генератора, давайте создадим файл `lib/generators/initializer/templates/initializer.rb` со следующим содержимым:
 
 ```ruby
-# Add initialization content here
+# Тут добавьте содержимое инициализации
 ```
 
-А теперь изменим генератор, чтобы он копировал этот файл при вызове:
+И изменим генератор, чтобы он копировал этот файл при вызове:
 
 ```ruby
 class InitializerGenerator < Rails::Generators::NamedBase
-  source_root File.expand_path('templates', __dir__)
+  source_root File.expand_path("templates", __dir__)
 
   def copy_initializer_file
     copy_file "initializer.rb", "config/initializers/#{file_name}.rb"
@@ -130,51 +138,106 @@ class InitializerGenerator < Rails::Generators::NamedBase
 end
 ```
 
-И выполним наш генератор:
+Теперь запустим наш генератор:
 
 ```bash
 $ bin/rails generate initializer core_extensions
+      create  config/initializers/core_extensions.rb
+
+$ cat config/initializers/core_extensions.rb
+# Тут добавьте содержимое инициализации
 ```
 
-Теперь мы видим, что инициализатор с именем core_extensions был создан в `config/initializers/core_extensions.rb` с содержимым нашего шаблона. Это означает, что `copy_file` копирует файл из корневой директории исходников в заданный путь назначения. Метод `file_name` автоматически создается, когда мы наследуем от `Rails::Generators::NamedBase`.
+Мы видим, что [`copy_file`][] создал `config/initializers/core_extensions.rb` с содержимым нашего шаблона. (Метод `file_name`, используемый в пути назначения, унаследован от `Rails::Generators::NamedBase`.)
 
-Доступные для генераторов методы раскрываются в [последнем разделе](#generator-methods) этого руководства.
+[`Rails::Generators::NamedBase`]: https://api.rubyonrails.org/classes/Rails/Generators/NamedBase.html
+[`copy_file`]: https://www.rubydoc.info/gems/thor/Thor/Actions#copy_file-instance_method
+[`source_root`]: https://api.rubyonrails.org/classes/Rails/Generators/Base.html#method-c-source_root
 
-Поиск генераторов
------------------
+Опции командной строки генераторов
+----------------------------------
 
-При запуске `bin/rails generate initializer core_extensions` Rails затребует эти файлы в следующем порядке, пока один из них не будет найден:
-
-```
-rails/generators/initializer/initializer_generator.rb
-generators/initializer/initializer_generator.rb
-rails/generators/initializer_generator.rb
-generators/initializer_generator.rb
-```
-
-Если ни один не найден, вы получите сообщение об ошибке.
-
-INFO: Вышеуказанный пример положит файлы в папку `lib` приложения, поскольку сказано, что эта директория принадлежит `$LOAD_PATH`.
-
-Настройка рабочего процесса
----------------------------
-
-Собственные генераторы Rails достаточно гибки, чтобы позволить вам настроить скаффолд. Они могут быть настроены в `config/application.rb`, вот несколько настроек по умолчанию:
+Генераторы могут поддерживать опции командной строки с помощью [`class_option`][]. Например:
 
 ```ruby
-config.generators do |g|
-  g.orm             :active_record
-  g.template_engine :erb
-  g.test_framework  :test_unit, fixture: true
+class InitializerGenerator < Rails::Generators::NamedBase
+  class_option :scope, type: :string, default: "app"
 end
 ```
 
-Так как мы настраиваем наш рабочий процесс, давайте сперва посмотрим, как выглядит наш скаффолд:
+Теперь наш генератор может быть вызван с опцией `--scope`:
+
+```bash
+$ bin/rails generate initializer theme --scope dashboard
+```
+
+Значения опций доступны в методах генератора как [`options`][]:
+
+```ruby
+def copy_initializer_file
+  @scope = options["scope"]
+end
+```
+
+[`class_option`]: https://www.rubydoc.info/gems/thor/Thor/Base/ClassMethods#class_option-instance_method
+[`options`]: https://www.rubydoc.info/gems/thor/Thor/Base#options-instance_method
+
+Разрешение генератора
+---------------------
+
+При разрешении имени генератора, Rails ищет генератор с помощью нескольких имен файлов. Например, при запуске `bin/rails generate initializer core_extensions`, Rails пытается загрузить каждый из следующих файлов по порядку, пока один из них не будет найден:
+
+* `rails/generators/initializer/initializer_generator.rb`
+* `generators/initializer/initializer_generator.rb`
+* `rails/generators/initializer_generator.rb`
+* `generators/initializer_generator.rb`
+
+Если ни один из них не будет найден, будет вызвана ошибка.
+
+Мы поместили наш генератор в директорию `lib/` приложения, потому что эта директория в `$LOAD_PATH`, что позволяет Rails найти и загрузить файл.
+
+Переопределение шаблонов генератора Rails
+-----------------------------------------
+
+Rails также будет искать в нескольких местах при разрешении файлов шаблона генератора. Одним из этих мест является директория `lib/templates/` приложения. Это поведение позволяет нам переопределить шаблоны, используемые встроенными в Rails генераторами. Например, мы можем переопределить [шаблон скаффолда контроллера][] или [шаблоны скаффолда вью][].
+
+Чтобы увидеть это в действии, давайте создадим файл `lib/templates/erb/scaffold/index.html.erb.tt` со следующим содержимым:
+
+```erb
+<%% @<%= plural_table_name %>.count %> <%= human_name.pluralize %>
+```
+
+Отметьте, что это шаблон ERB, который рендерит _другой_ шаблон ERB. Поэтому любой `<%`, который должен появиться в _получившемся_ шаблоне, должен быть экранирован как `<%%` в шаблоне _генератора_.
+
+Теперь давайте запустим генератор скаффолда, встроенного в Rails:
+
+```bash
+$ bin/rails generate scaffold Post title:string
+      ...
+      create      app/views/posts/index.html.erb
+      ...
+```
+
+Содержимое `app/views/posts/index.html.erb`:
+
+```erb
+<% @posts.count %> Posts
+```
+
+[scaffold controller template]: https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/scaffold_controller/templates/controller.rb.tt
+[scaffold view templates]: https://github.com/rails/rails/tree/main/railties/lib/rails/generators/erb/scaffold/templates
+
+Переопределение генераторов Rails
+---------------------------------
+
+Встроенные генераторы Rails могут быть настроены с помощью [`config.generators`][], включая полное переопределение некоторых генераторов.
+
+Сначала давайте пристально взглянем на то, как работает генератор скаффолда.
 
 ```bash
 $ bin/rails generate scaffold User name:string
       invoke  active_record
-      create    db/migrate/20130924151154_create_users.rb
+      create    db/migrate/20230518000000_create_users.rb
       create    app/models/user.rb
       invoke    test_unit
       create      test/models/user_test.rb
@@ -190,33 +253,22 @@ $ bin/rails generate scaffold User name:string
       create      app/views/users/show.html.erb
       create      app/views/users/new.html.erb
       create      app/views/users/_form.html.erb
+      create      app/views/users/_user.html.erb
+      invoke    resource_route
       invoke    test_unit
       create      test/controllers/users_controller_test.rb
+      create      test/system/users_test.rb
       invoke    helper
       create      app/helpers/users_helper.rb
+      invoke      test_unit
       invoke    jbuilder
       create      app/views/users/index.json.jbuilder
       create      app/views/users/show.json.jbuilder
-      invoke  test_unit
-      create    test/application_system_test_case.rb
-      create    test/system/users_test.rb
 ```
 
-Глядя на этот вывод, легко понять, как работают генераторы в Rails 3.0 и выше. Генератор скаффолда фактически не генерирует ничего, он просто вызывает другие. Это позволяет нам добавить/заменить/убрать любые из этих вызовов. Например, генератор скаффолда вызывает генератор `scaffold_controller`, который вызывает генераторы `erb`, `test_unit` и `helper`. Поскольку у каждого генератора одна функция, их просто использовать повторно, избегая дублирования кода.
+Из вывода мы видим, что генератор скаффолда вызывает другие генераторы, такие как генератор `scaffold_controller`. И некоторые из этих генераторов также вызывают другие генераторы. В частности, генератор `scaffold_controller` вызывает несколько других генераторов, включая генератор `helper`.
 
-Следующей настройкой рабочего процесса будет полное прекращение генерации таблиц стилей и фикстур для тестов скаффолда. Этого можно достичь, изменив конфигурацию следующим образом:
-
-```ruby
-config.generators do |g|
-  g.orm             :active_record
-  g.template_engine :erb
-  g.test_framework  :test_unit, fixture: false
-end
-```
-
-Если мы сгенерируем другой ресурс с помощью генератора скаффолда, мы увидим, что ни таблица стилей, ни JavaScript, ни фикстуры более не будут созданы. Если мы захотим настраивать его дальше, например использовать DataMapper и RSpec вместо Active Record и TestUnit, это достигается всего лишь добавлением соответствующих гемов в приложение и настройкой ваших генераторов.
-
-Для демонстрации мы собираемся создать новый генератор хелперов, который просто добавляет несколько методов-ридеров для переменных экземпляра. Сначала мы создадим генератор в пространстве имен rails, так как тут rails ищет генераторы, используемые как хуки:
+Давайте переопределим встроенный генератор `helper` новым генератором. Мы назовем генератор `my_helper`:
 
 ```bash
 $ bin/rails generate generator rails/my_helper
@@ -228,141 +280,83 @@ $ bin/rails generate generator rails/my_helper
       create    test/lib/generators/rails/my_helper_generator_test.rb
 ```
 
-Можно опробовать наш новый генератор, создав хелпер для продуктов:
-
-```bash
-$ bin/rails generate my_helper products
-      create  app/helpers/products_helper.rb
-```
-
-И следующий хелпер будет сгенерирован в `app/helpers`:
+И в `lib/generators/rails/my_helper/my_helper_generator.rb` мы определим генератор как:
 
 ```ruby
-module ProductsHelper
-  attr_reader :products, :product
+class Rails::MyHelperGenerator < Rails::Generators::NamedBase
+  def create_helper_file
+    create_file "app/helpers/#{file_name}_helper.rb", <<~RUBY
+      module #{class_name}Helper
+        # I'm helping!
+      end
+    RUBY
+  end
 end
 ```
 
-Что, собственно, и ожидалось. Можно сообщить скаффолду использовать наш новый генератор хелпера, снова отредактировав `config/application.rb`:
+Наконец, необходимо сообщить Rails использовать генератор `my_helper` вместо встроенного генератора `helper`. Для этого мы используем `config.generators`. В `config/application.rb` добавим:
 
 ```ruby
 config.generators do |g|
-  g.orm             :active_record
-  g.template_engine :erb
-  g.test_framework  :test_unit, fixture: false
-  g.helper          :my_helper
+  g.helper :my_helper
 end
 ```
 
-и увидев его в действии при вызове генератора:
+Теперь, если мы снова запустим генератор скаффолда, мы увидим генератор `my_helper` в действии:
 
 ```bash
 $ bin/rails generate scaffold Article body:text
-      [...]
+      ...
+      invoke  scaffold_controller
+      ...
       invoke    my_helper
       create      app/helpers/articles_helper.rb
+      ...
 ```
 
-Можно отметить в выводе, что был вызван наш новый генератор хелпера вместо генератора Rails по умолчанию. Однако мы кое-что упустили, это тесты для нашего нового генератора, и чтобы их сделать, мы воспользуемся старыми генераторами теста для хелперов.
+NOTE: Можно отметить, что вывод для встроенного генератора `helper` включает "invoke test_unit", а вывод для `my_helper` нет. Хотя генератор `helper` не генерирует тесты по умолчанию, он предоставляет хук для этого с помощью [`hook_for`][]. Мы можем сделать то же самое, включив `hook_for :test_framework, as: :helper` в класс `MyHelperGenerator`. Подробнее смотрите в документации по `hook_for`.
 
-Начиная с Rails 3.0, это просто, благодаря концепции хуков. Наш новый хелпер не должен быть сфокусирован на какой-то определенный тестовый фреймворк, он просто представляет хук, и тестовому фреймворку нужно всего-лишь реализовать этот хук, чтобы быть совместимым.
+[`config.generators`]: configuring.html#configuring-generators
+[`hook_for`]: https://api.rubyonrails.org/classes/Rails/Generators/Base.html#method-c-hook_for
 
-Для этого мы изменим генератор следующим образом:
+### Фолбэки генераторов
+
+Другим способом переопределить определенные генераторы является использование _фолбэков_. Фолбэк позволяет пространству имен генератора делегировать пространству имен другого генератора.
+
+Скажем, к примеру, что мы хотим переопределить генератор `test_unit:model` нашим собственным генератором `my_test_unit:model`, но мы не хотим заменять все другие генераторы `test_unit:*`, такие как `test_unit:controller`.
+
+Сначала мы создадим генератор `my_test_unit:model` в `lib/generators/my_test_unit/model/model_generator.rb`:
 
 ```ruby
-# lib/generators/rails/my_helper/my_helper_generator.rb
-class Rails::MyHelperGenerator < Rails::Generators::NamedBase
-  def create_helper_file
-    create_file "app/helpers/#{file_name}_helper.rb", <<-FILE
-module #{class_name}Helper
-  attr_reader :#{plural_name}, :#{plural_name.singularize}
-end
-    FILE
+module MyTestUnit
+  class ModelGenerator < Rails::Generators::NamedBase
+    source_root File.expand_path("templates", __dir__)
+
+    def do_different_stuff
+      say "Doing different stuff..."
+    end
   end
-
-  hook_for :test_framework
 end
 ```
 
-Теперь, когда вызывается генератор хелпера, и как тестовый фреймворк настроен TestUnit, он попытается вызвать `Rails::TestUnitGenerator` и `TestUnit::MyHelperGenerator`. Поскольку ни один из них не определен, можно сообщить нашему генератору вместо них вызывать `TestUnit::Generators::HelperGenerator`, который определен, так как это генератор Rails. Для этого нужно всего лишь добавить:
-
-```ruby
-# Search for :helper instead of :my_helper
-hook_for :test_framework, as: :helper
-```
-
-Теперь можно снова запустить скаффолд для другого ресурса и увидеть, что он также генерирует тесты!
-
-Настройка рабочего процесса, изменяя шаблоны генераторов
---------------------------------------------------------
-
-На предыдущем шаге мы просто хотели добавить строчку в сгенерированный хелпер без добавления какой-либо дополнительной функциональности. Имеется более простой способ, чтобы сделать такое - замена шаблонов для уже существующих генераторов, в нашем случае `Rails::Generators::HelperGenerator`.
-
-В Rails 3.0 и выше генераторы не просто ищут шаблоны в корневом пути, они также ищут по другим путям. И одно из них — `lib/templates`. Поскольку мы хотим изменить `Rails::Generators::HelperGenerator`, можно это осуществить, просто сделав копию шаблона в `lib/templates/rails/helper` с именем `helper.rb`. Так давайте же создадим этот файл со следующим содержимым:
-
-```erb
-module <%= class_name %>Helper
-  attr_reader :<%= plural_name %>, :<%= plural_name.singularize %>
-end
-```
-
-и отменим последнее изменение в `config/application.rb`:
+Затем используем `config.generators` для конфигурации генератора `test_framework` как `my_test_unit`, но мы также сконфигурируем фолбэк, что любые отсутствующие генераторы `my_test_unit:*` будут разрешаться как `test_unit:*`:
 
 ```ruby
 config.generators do |g|
-  g.orm             :active_record
-  g.template_engine :erb
-  g.test_framework  :test_unit, fixture: false
-  g.stylesheets     false
+  g.test_framework :my_test_unit, fixture: false
+  g.fallbacks[:my_test_unit] = :test_unit
 end
 ```
 
-Теперь, если сгенерируете другой ресурс, то увидите похожий результат!
-
-Еще одним обычным использованием пользовательских шаблонов является переопределение [шаблонов скаффолда вью по умолчанию](https://github.com/rails/rails/tree/main/railties/lib/rails/generators/erb/scaffold/templates). Любой из них можно переопределить, создав соответствующий файл (например, `index.html.erb`, `show.html.erb`, и т.д.) в `lib/templates/erb/scaffold`.
-
-Шаблоны скаффолда в Rails часто используют теги ERB; эти теги необходимо экранировать, чтобы сгенерированный результат являлся валидным кодом ERB.
-
-Например, в шаблоне необходим следующий экранированный тег ERB (обратите внимание на дополнительный `%`)...
-
-```erb
-<%%= stylesheet_link_tag :application %>
-```
-
-...чтобы сгенерировать следующий результат:
-
-```erb
-<%= stylesheet_link_tag :application %>
-```
-
-Добавление фолбэков генераторов
--------------------------------
-
-Еще одна особенность генераторов, которая очень полезна, это фолбэки. Например, представим, что вы хотите добавить особенность над TestUnit, такую как [shoulda](https://github.com/thoughtbot/shoulda). Так как TestUnit уже реализует все генераторы, требуемые Rails, а shoulda всего лишь хочет переопределить часть из них, нет необходимости для shoulda переопределять некоторые генераторы, она может просто сообщить Rails использовать генератор `TestUnit`, если такой не найден в пространстве имен `Shoulda`.
-
-Можно с легкостью смоделировать это поведение, снова изменив наш `config/application.rb`:
-
-```ruby
-config.generators do |g|
-  g.orm             :active_record
-  g.template_engine :erb
-  g.test_framework  :shoulda, fixture: false
-
-  # Добавим фолбэк!
-  g.fallbacks[:shoulda] = :test_unit
-end
-```
-
-Теперь, если создать скаффолд Comment, вы увидите, что были вызваны генераторы shoulda, но в итоге они всего лишь переуступили генераторам TestUnit:
+Теперь, когда мы запустим генератор скаффолда, мы увидим, что `my_test_unit` заменил `test_unit`, но были затронуты только тесты модели:
 
 ```bash
 $ bin/rails generate scaffold Comment body:text
       invoke  active_record
-      create    db/migrate/20130924143118_create_comments.rb
+      create    db/migrate/20230518000000_create_comments.rb
       create    app/models/comment.rb
-      invoke    shoulda
-      create      test/models/comment_test.rb
-      create      test/fixtures/comments.yml
+      invoke    my_test_unit
+    Doing different stuff...
       invoke  resource_route
        route    resources :comments
       invoke  scaffold_controller
@@ -373,299 +367,96 @@ $ bin/rails generate scaffold Comment body:text
       create      app/views/comments/edit.html.erb
       create      app/views/comments/show.html.erb
       create      app/views/comments/new.html.erb
-      create      app/views/comments/_form.html.erb
-      invoke    my_helper
+      create      app/views/comments/_comment.html.erb
+      invoke    resource_route
+      invoke    my_test_unit
+      create      test/controllers/comments_controller_test.rb
+      create      test/system/comments_test.rb
+      invoke    helper
       create      app/helpers/comments_helper.rb
-      invoke      shoulda
-      create        test/helpers/comments_helper_test.rb
+      invoke      my_test_unit
       invoke    jbuilder
       create      app/views/comments/index.json.jbuilder
       create      app/views/comments/show.json.jbuilder
-      invoke  test_unit
-      create    test/application_system_test_case.rb
-      create    test/system/comments_test.rb
 ```
-
-Фолбэки позволяют вашим генераторам иметь единственную ответственность, увеличить повторное использование кода и уменьшить дублирование.
 
 Шаблоны приложения
 ------------------
 
-Теперь, когда вы узнали, как генераторы используются _внутри_ приложения, знаете ли вы, что они используются и для _генерации_ приложения тоже? Этот тип генератора называют "template". Далее идет краткий обзор Templates API. Подробную информацию смотрите в руководстве [Шаблоны приложения на Rails](/rails-application-templates).
+Шаблоны приложения это специальный тип генератора. Они могут использовать все [вспомогательные методы генератора](#generator-helper-methods), но написаны как скрипт Ruby вместо класса Ruby. Вот пример:
 
 ```ruby
-gem "rspec-rails", group: "test"
-gem "cucumber-rails", group: "test"
+# template.rb
 
 if yes?("Would you like to install Devise?")
   gem "devise"
-  generate "devise:install"
-  model_name = ask("What would you like the user model to be called? [user]")
-  model_name = "user" if model_name.blank?
-  generate "devise", model_name
+  devise_model = ask("What would you like the user model to be called?", default: "User")
+end
+
+after_bundle do
+  if devise_model
+    generate "devise:install"
+    generate "devise", devise_model
+    rails_command "db:migrate"
+  end
+  git add: ".", commit: %(-m 'Initial commit')
 end
 ```
 
-В вышеприведенном шаблоне мы определили, что приложение полагается на гемы `rspec-rails` и `cucumber-rails`, поэтому они будут добавлены в группу `test` в `Gemfile`. Затем мы зададим вопрос пользователю относительно того, хочет ли он установить Devise. Если пользователь ответит "y" или "yes" на этот вопрос, тогда шаблон добавит Devise в `Gemfile` вне какой-либо группы, а затем запустит генератор `devise:install`. Затем этот шаблон возьмет пользовательский ввод и запустит генератор `devise` с переданным ответом пользователя из последнего вопроса.
+Сначала шаблон спрашивает пользователя, желает ли он установить Devise. Если пользователь отвечает "yes" (или "y"), шаблон добавит Devise в `Gemfile`, спрашивая пользователя об имени модели пользователя Devise (по умолчанию `User`). Затем, после запуска `bundle install`, шаблон запустит генераторы Devise и `rails db:migrate`, если была указана модель Devise. Наконец, шаблон выполнит `git add` и `git commit` для всей директории приложения.
 
-Представим, что этот шаблон был в файле `template.rb`. Можно его использовать, чтобы модифицировать результат команды `rails new` с помощью опции `-m` и передачей имени файла:
+Наш шаблон можно запустить при генерации нового приложения Rails, передав опцию `-m` к команде `rails new`:
 
 ```bash
-$ rails new thud -m template.rb
+$ rails new my_cool_app -m path/to/template.rb
 ```
 
-Эта команда сгенерирует приложение `Thud`, а затем применит шаблон к сгенерированному результату.
-
-Шаблоны не обязательно должны храниться в локальной системе, опция `-m` также поддерживает онлайн шаблоны:
+Альтернативно можно запустить наш шаблон внутри существующего приложения с помощью `bin/rails app:template`:
 
 ```bash
-$ rails new thud -m https://gist.github.com/radar/722911/raw/
+$ bin/rails app:template LOCATION=path/to/template.rb
 ```
 
-В то время как последний раздел этого руководства не раскрывает, как генерировать замечательные шаблоны, он познакомит вас с доступными методами, с помощью которых вы сможете создать их самостоятельно. Абсолютно те же методы доступны и для генераторов.
-
-Добавление аргументов командной строки
---------------------------------------
-
-Генераторы Rails легко модифицировать, чтобы они принимали произвольные аргументы командной строки. Эта функциональность исходит из [Thor](https://www.rubydoc.info/gems/thor/Thor/Base/ClassMethods#class_options-instance_method):
-
-```ruby
-class_option :scope, type: :string, default: 'read_products'
-```
-
-Теперь наш генератор может быть вызван следующим образом:
+Также шаблоны не обязательно хранить локально — можно указать URL вместо пути:
 
 ```bash
-$ bin/rails generate initializer --scope write_products
+$ rails new my_cool_app -m http://example.com/template.rb
+$ bin/rails app:template LOCATION=http://example.com/template.rb
 ```
 
-К аргументам командной строки можно обратиться с помощью метода `options` в классе генератора. То есть:
-
-```ruby
-@scope = options['scope']
-```
-
-(Generator methods) Методы генератора
--------------------------------------
-
-Следующие методы доступны как для генераторов, так и для шаблонов Rails.
-
-NOTE: Методы, представленные Thor не раскрываются в этом руководстве, а находятся в [документации по Thor](https://www.rubydoc.info/gems/thor/Thor/Actions)
-
-### `gem`
-
-Указывает зависимость приложения от гема.
-
-```ruby
-gem "rspec", group: "test", version: "2.1.0"
-gem "devise", "1.1.5"
-```
-
-Доступны следующие опции:
-
-* `:group` - Группа в `Gemfile`, где должен быть гем.
-* `:version` - Строка версии гема, которую нужно использовать. Также может быть указана в качестве второго аргумента метода.
-* `:git` - URL репозитория git для этого гема.
-
-Любые дополнительные опции, переданные в этот метод помещаются в конце строчки:
-
-```ruby
-gem "devise", git: "https://github.com/plataformatec/devise.git", branch: "master"
-```
-
-Вышеприведенный код поместит следующую строчку в `Gemfile`:
-
-```ruby
-gem "devise", git: "https://github.com/plataformatec/devise.git", branch: "master"
-```
-
-### `gem_group`
-
-Оборачивает вхождения гемов в группу:
-
-```ruby
-gem_group :development, :test do
-  gem "rspec-rails"
-end
-```
-
-### `add_source`
-
-Добавляет определенный источник в `Gemfile`:
-
-```ruby
-add_source "http://gems.github.com"
-```
-
-Этот метод также принимает блок:
-
-```ruby
-add_source "http://gems.github.com" do
-  gem "rspec-rails"
-end
-```
-
-### `inject_into_file`
-
-Встраивает блок кода в определенную позицию вашего файла.
-
-```ruby
-inject_into_file 'name_of_file.rb', after: "#The code goes below this line. Don't forget the Line break at the end\n" do <<-'RUBY'
-  puts "Hello World"
-RUBY
-end
-```
-
-### `gsub_file`
-
-Заменяет текст в файле.
-
-```ruby
-gsub_file 'name_of_file.rb', 'method.to_be_replaced', 'method.the_replacing_code'
-```
-
-Этот метод можно сделать более точным с помощью регулярных выражений. Таким же образом можно использовать `append_file` и `prepend_file`, чтобы поместить код в начало или конец файла соответственно.
-
-### `application`
-
-Добавляет строчку в `config/application.rb` непосредственно после определения класса приложения.
-
-```ruby
-application "config.asset_host = 'http://example.com'"
-```
-
-Также этот метод может принимать блок:
-
-```ruby
-application do
-  "config.asset_host = 'http://example.com'"
-end
-```
-
-Доступные опции:
-
-* `:env` - Определяет среду для этой конфигурационной опции. Если хотите использовать эту опцию с блочным синтаксисом, рекомендуемый синтаксис следующий:
-
-```ruby
-application(nil, env: "development") do
-  "config.asset_host = 'http://localhost:3000'"
-end
-```
-
-### `git`
-
-Запускает определенную команду git:
-
-```ruby
-git :init
-git add: "."
-git commit: "-m First commit!"
-git add: "onefile.rb", rm: "badfile.cxx"
-```
-
-Значения хэша будут аргументами или опциями, переданными в определенную команду git. Как показано в последнем примере, одновременно могут быть определены несколько команд git, но не гарантируется соответствие порядка их запуска порядку, в котором они определены.
-
-### `vendor`
-
-Помещает файл, содержащий указанный код, в `vendor`.
-
-```ruby
-vendor "sekrit.rb", '#top secret stuff'
-```
-
-Этот метод также принимает блок:
-
-```ruby
-vendor "seeds.rb" do
-  "puts 'in your app, seeding your database'"
-end
-```
-
-### `lib`
-
-Помещает файл, содержащий указанный код, в `lib`.
-
-```ruby
-lib "special.rb", "p Rails.root"
-```
-
-Этот метод также принимает блок:
-
-```ruby
-lib "super_special.rb" do
-  "puts 'Super special!'"
-end
-```
-
-### `rakefile`
-
-Создает файл Rake в директории `lib/tasks` приложения.
-
-```ruby
-rakefile "test.rake", 'task(:hello) { puts "Hello, there" }'
-```
-
-Этот метод также принимает блок:
-
-```ruby
-rakefile "test.rake" do
-  %Q{
-    task rock: :environment do
-      puts "Rockin'"
-    end
-  }
-end
-```
-
-### `initializer`
-
-Создает инициализатор в директории `config/initializers` приложения:
-
-```ruby
-initializer "begin.rb", "puts 'this is the beginning'"
-```
-
-Этот метод также принимает блок и ожидает возврата строки:
-
-```ruby
-initializer "begin.rb" do
-  "puts 'this is the beginning'"
-end
-```
-
-### `generate`
-
-Запускает указанный генератор, где первый аргумент это имя генератора, а оставшиеся аргументы передаются непосредственно в генератор.
-
-```ruby
-generate "scaffold", "forums title:string description:text"
-```
-
-### `rake`
-
-Запускает указанную задачу Rake.
-
-```ruby
-rake "db:migrate"
-```
-
-Доступные опции:
-
-* `:env` - Указывает среду, в которой запускается эта задача rake.
-* `:sudo` - Запускать ли эту задачу с помощью `sudo`. По умолчанию `false`.
-
-### `route`
-
-Добавляет текст в файл `config/routes.rb`:
-
-```ruby
-route "resources :people"
-```
-
-### `readme`
-
-Выводит содержимое файла из `source_path` шаблона, обычно README.
-
-```ruby
-readme "README"
-```
+Вспомогательные методы генератора
+---------------------------------
+
+Thor предоставляет множество вспомогательным методам генератора посредством [`Thor::Actions`][], таких как:
+
+* [`copy_file`][]
+* [`create_file`][]
+* [`gsub_file`][]
+* [`insert_into_file`][]
+* [`inside`][]
+
+В дополнение к этому, Rails также предоставляет множество вспомогательных методов посредством [`Rails::Generators::Actions`][], таких как:
+
+* [`environment`][]
+* [`gem`][]
+* [`generate`][]
+* [`git`][]
+* [`initializer`][]
+* [`lib`][]
+* [`rails_command`][]
+* [`rake`][]
+* [`route`][]
+
+[`Rails::Generators::Actions`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html
+[`environment`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-environment
+[`gem`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-gem
+[`generate`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-generate
+[`git`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-git
+[`gsub_file`]: https://www.rubydoc.info/gems/thor/Thor/Actions#gsub_file-instance_method
+[`initializer`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-initializer
+[`insert_into_file`]: https://www.rubydoc.info/gems/thor/Thor/Actions#insert_into_file-instance_method
+[`inside`]: https://www.rubydoc.info/gems/thor/Thor/Actions#inside-instance_method
+[`lib`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-lib
+[`rails_command`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-rails_command
+[`rake`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-rake
+[`route`]: https://api.rubyonrails.org/classes/Rails/Generators/Actions.html#method-i-route
