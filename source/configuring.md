@@ -57,18 +57,27 @@ NOTE: Если необходимо применить конфигурацию 
 #### Значения по умолчанию для целевой версии 7.1
 
 - [`config.action_controller.allow_deprecated_parameters_hash_equality`](#config-action-controller-allow-deprecated-parameters-hash-equality): `false`
+- [`config.action_dispatch.debug_exception_log_level`](#config-action-dispatch-debug-exception-log-level): `:error`
 - [`config.action_dispatch.default_headers`](#config-action-dispatch-default-headers): `{ "X-Frame-Options" => "SAMEORIGIN", "X-XSS-Protection" => "0", "X-Content-Type-Options" => "nosniff", "X-Permitted-Cross-Domain-Policies" => "none", "Referrer-Policy" => "strict-origin-when-cross-origin" }`
+- [`config.action_text.sanitizer_vendor`](#config-action-text-sanitizer-vendor): `Rails::HTML::Sanitizer.best_supported_vendor`
+- [`config.action_view.sanitizer_vendor`](#config-action-view-sanitizer-vendor): `Rails::HTML::Sanitizer.best_supported_vendor`
 - [`config.active_job.use_big_decimal_serializer`](#config-active-job-use-big-decimal-serializer): `true`
 - [`config.active_record.allow_deprecated_singular_associations_name`](#config-active-record-allow-deprecated-singular-associations-name): `false`
 - [`config.active_record.before_committed_on_all_records`](#config-active-record-before-committed-on-all-records): `true`
 - [`config.active_record.belongs_to_required_validates_foreign_key`](#config-active-record-belongs-to-required-validates-foreign-key): `false`
+- [`config.active_record.default_column_serializer`](#config-active-record-default-column-serializer): `nil`
+- [`config.active_record.encryption.hash_digest_class`](#config-active-record-encryption-hash-digest-class): `OpenSSL::Digest::SHA256`
+- [`config.active_record.encryption.support_sha1_for_non_deterministic_encryption`](#config-active-record-encryption-support-sha1-for-non-deterministic-encryption): `false`
+- [`config.active_record.marshalling_format_version`](#config-active-record-marshalling-format-version): `7.1`
 - [`config.active_record.query_log_tags_format`](#config-active-record-query-log-tags-format): `:sqlcommenter`
 - [`config.active_record.raise_on_assign_to_attr_readonly`](#config-active-record-raise-on-assign-to-attr-readonly): `true`
+- [`config.active_record.run_after_transaction_callbacks_in_order_defined`](#config-active-record-run-after-transaction-callbacks-in-order-defined): `true`
 - [`config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction`](#config-active-record-run-commit-callbacks-on-first-saved-instances-in-transaction): `false`
 - [`config.active_record.sqlite3_adapter_strict_strings_by_default`](#config-active-record-sqlite3-adapter-strict-strings-by-default): `true`
-- [`config.active_support.default_message_encryptor_serializer`](#config-active-support-default-message-encryptor-serializer): `:json`
-- [`config.active_support.default_message_verifier_serializer`](#config-active-support-default-message-verifier-serializer): `:json`
+- [`config.active_support.cache_format_version`](#config-active-support-cache-format-version): `7.1`
+- [`config.active_support.message_serializer`](#config-active-support-message-serializer): `:json_allow_marshal`
 - [`config.active_support.raise_on_invalid_cache_expiration_time`](#config-active-support-raise-on-invalid-cache-expiration-time): `true`
+- [`config.active_support.use_message_serializer_for_metadata`](#config-active-support-use-message-serializer-for-metadata): `true`
 - [`config.add_autoload_paths_to_load_path`](#config-add-autoload-paths-to-load-path): `false`
 - [`config.log_file_size`](#config-log-file-size): `100 * 1024 * 1024`
 - [`config.precompile_filter_parameters`](#config-precompile-filter-parameters): `true`
@@ -79,7 +88,6 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.action_controller.wrap_parameters_by_default`](#config-action-controller-wrap-parameters-by-default): `true`
 - [`config.action_dispatch.cookies_serializer`](#config-action-dispatch-cookies-serializer): `:json`
 - [`config.action_dispatch.default_headers`](#config-action-dispatch-default-headers): `{ "X-Frame-Options" => "SAMEORIGIN", "X-XSS-Protection" => "0", "X-Content-Type-Options" => "nosniff", "X-Download-Options" => "noopen", "X-Permitted-Cross-Domain-Policies" => "none", "Referrer-Policy" => "strict-origin-when-cross-origin" }`
-- [`config.action_dispatch.return_only_request_media_type_on_content_type`](#config-action-dispatch-return-only-request-media-type-on-content-type): `false`
 - [`config.action_mailer.smtp_timeout`](#config-action-mailer-smtp-timeout): `5`
 - [`config.action_view.apply_stylesheet_media_default`](#config-action-view-apply-stylesheet-media-default): `false`
 - [`config.action_view.button_to_generates_button_tag`](#config-action-view-button-to-generates-button-tag): `true`
@@ -90,13 +98,10 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.active_storage.variant_processor`](#config-active-storage-variant-processor): `:vips`
 - [`config.active_storage.video_preview_arguments`](#config-active-storage-video-preview-arguments): `"-vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2"`
 - [`config.active_support.cache_format_version`](#config-active-support-cache-format-version): `7.0`
-- [`config.active_support.disable_to_s_conversion`](#config-active-support-disable-to-s-conversion): `true`
 - [`config.active_support.executor_around_test_case`](#config-active-support-executor-around-test-case): `true`
 - [`config.active_support.hash_digest_class`](#config-active-support-hash-digest-class): `OpenSSL::Digest::SHA256`
 - [`config.active_support.isolation_level`](#config-active-support-isolation-level): `:thread`
 - [`config.active_support.key_generator_hash_digest_class`](#config-active-support-key-generator-hash-digest-class): `OpenSSL::Digest::SHA256`
-- [`config.active_support.remove_deprecated_time_with_zone_name`](#config-active-support-remove-deprecated-time-with-zone-name): `true`
-- [`config.active_support.use_rfc4122_namespaced_uuids`](#config-active-support-use-rfc4122-namespaced-uuids): `true`
 
 #### Значения по умолчанию для целевой версии 6.1
 
@@ -122,7 +127,6 @@ NOTE: Если необходимо применить конфигурацию 
 - [`config.active_record.collection_cache_versioning`](#config-active-record-collection-cache-versioning): `true`
 - [`config.active_storage.queues.analysis`](#config-active-storage-queues-analysis): `:active_storage_analysis`
 - [`config.active_storage.queues.purge`](#config-active-storage-queues-purge): `:active_storage_purge`
-- [`config.active_storage.replace_on_assign_to_many`](#config-active-storage-replace-on-assign-to-many): `true`
 
 #### Значения по умолчанию для целевой версии 5.2
 
@@ -161,6 +165,8 @@ NOTE: Если необходимо применить конфигурацию 
 | (изначально)     | `true`                |
 | 7.1              | `false`               |
 
+Этот флажок не влияет на директорию `lib`, она всегда добавляется в `$LOAD_PATH`.
+
 #### `config.after_initialize`
 
 Принимает блок, который будет запущен _после того_, как Rails закончит инициализацию приложения. Это включает инициализацию самого фреймворка, engine-ов и всех инициализаторов приложения из `config/initializers`. Отметьте, что этот блок _будет_ запущен для Rake задач. Полезно для конфигурирования настроек, установленных другими инициализаторами:
@@ -171,7 +177,7 @@ config.after_initialize do
 end
 ```
 
-### `config.after_routes_loaded`
+#### `config.after_routes_loaded`
 
 Принимает блок, который будет запущен после того, как Rails завершит загрузку маршрутов приложения. Этот блок будет также запущен всякий раз, когда маршруты перезагружаются.
 
@@ -189,6 +195,10 @@ end
 
 Устанавливает хост для ассетов. Полезна, когда для хостинга ассетов используются CDN, или когда необходимо обойти встроенные в браузеры конкурентные ограничения, используя различные псевдонимы доменов. Укороченная версия `config.action_controller.asset_host`.
 
+#### `config.assume_ssl`
+
+Заставляет приложение считать, что все запросы приходят через SSL. Это полезно при проксировании через балансировщик нагрузки, который прекращает SSL, тогда направленный запрос появится в приложении как будто HTTP вместо HTTPS. Тогда HTTP вместо HTTPS будет целью для перенаправления и куки безопасности. Эта промежуточная программа позволяет серверу допускать, что прокси уже прекратил SSL, но что запрос в действительности HTTPS.
+
 #### `config.autoflush_log`
 
 Включает немедленную запись вывода в файл лога вместо буферизации. По умолчанию `true`.
@@ -200,6 +210,24 @@ end
 #### `config.autoload_paths`
 
 Принимает массив путей, по которым Rails будет автоматически загружать константы. По умолчанию пустой массив. Начиная с [Rails 6](/upgrading-ruby-on-rails#autoloading) не рекомендуется настраивать это. Подробнее смотрите в руководстве [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants#autoload-paths)
+
+#### `config.autoload_lib(ignore:)`
+
+Этот метод добавляет `lib` в `config.autoload_paths` и `config.eager_load_paths`.
+
+Обычно в директории `lib` есть поддиректории, которые не должны автоматически или нетерпеливо загружаться. Пожалуйста, передайте их имя относительно `lib` в обязательном аргументе-ключе `ignore`. Например,
+
+```ruby
+config.autoload_lib(ignore: %w(assets tasks generators))
+```
+
+Пожалуйста, за подробностями обратитесь к [руководству по автозагрузке](/autoloading-and-reloading-constants).
+
+#### `config.autoload_lib_once(ignore:)`
+
+Метод `config.autoload_lib_once` похож на `config.autoload_lib`, за исключением того, что он добавляет `lib` в `config.autoload_once_paths`.
+
+Вызывая `config.autoload_lib_once`, классы и модули в `lib` могут быть автоматически загружены, даже из инициализаторов приложения, но не могут быть перезагружены.
 
 #### `config.beginning_of_week`
 
@@ -248,11 +276,19 @@ end
 
 #### `config.credentials.content_path`
 
-Настраивает путь поиска зашифрованных учетных данных.
+Путь к файлу с зашифрованными учетными данными.
+
+По умолчанию `config/credentials/#{Rails.env}.yml.enc`, если он существует, в противном случае `config/credentials.yml.enc`.
+
+NOTE: Чтобы команды `bin/rails credentials` распознали это значение, оно должно быть установлено в `config/application.rb` или `config/environments/#{Rails.env}.rb`.
 
 #### `config.credentials.key_path`
 
-Настраивает путь поиска ключа шифрования.
+Путь файла ключей зашифрованных учетных данных.
+
+По умолчанию `config/credentials/#{Rails.env}.key` если он существует, в противном случае `config/master.key`.
+
+NOTE: Чтобы команды `bin/rails credentials` распознали это значение, оно должно быть установлено в `config/application.rb` или `config/environments/#{Rails.env}.rb`.
 
 #### (config-debug-exception-response-format) `config.debug_exception_response_format`
 
@@ -287,6 +323,37 @@ end
 #### `config.exceptions_app`
 
 Устанавливает приложение по обработке исключений, вызываемое промежуточной программой ShowException, когда происходит исключение. По умолчанию `ActionDispatch::PublicExceptions.new(Rails.public_path)`.
+
+Приложения по обработке исключений должно обрабатывать ошибки `ActionDispatch::Http::MimeNegotiation::InvalidType`, которые вызываются, когда клиент посылает неправильные заголовки `Accept` или `Content-Type`. Приложение по умолчанию `ActionDispatch::PublicExceptions` делает это автоматически, устанавливая `Content-Type` в `text/html` и возвращая статус `406 Not Acceptable`. Неудача в обработке этой ошибки приведет к `500 Internal Server Error`.
+
+С помощью `Rails.application.routes`, `RouteSet` в качестве приложения по обработке исключений также требует эту специальную обработку. Это может выглядеть так:
+
+```ruby
+# config/application.rb
+config.exceptions_app = CustomExceptionsAppWrapper.new(exceptions_app: routes)
+
+# lib/custom_exceptions_app_wrapper.rb
+class CustomExceptionsAppWrapper
+  def initialize(exceptions_app:)
+    @exceptions_app = exceptions_app
+  end
+
+  def call(env)
+    request = ActionDispatch::Request.new(env)
+
+    fallback_to_html_format_if_invalid_mime_type(request)
+
+    @exceptions_app.call(env)
+  end
+
+  private
+    def fallback_to_html_format_if_invalid_mime_type(request)
+      request.formats
+    rescue ActionDispatch::Http::MimeNegotiation::InvalidType
+      request.set_header "CONTENT_TYPE", "text/html"
+    end
+end
+```
 
 #### `config.file_watcher`
 
@@ -501,7 +568,7 @@ config.session_store :my_custom_store
 
 #### `config.assets.precompile`
 
-Позволяет определить дополнительные ассеты (иные, чем `application.css` и `application.js`), которые будут предварительно компилированы при запуске `rake assets:precompile`.
+Позволяет определить дополнительные ассеты (иные, чем `application.css` и `application.js`), которые будут предварительно компилированы при запуске `bin/rails assets:precompile`.
 
 #### `config.assets.unknown_asset_fallback`
 
@@ -623,7 +690,7 @@ Rails.application.config.hosts << ".product.com"
 ```ruby
 # Исключает запросы для пути /healthcheck/ из проверки хоста
 Rails.application.config.host_authorization = {
-  exclude: ->(request) { request.path =~ /healthcheck/ }
+  exclude: ->(request) { request.path.include?('healthcheck') }
 }
 ```
 
@@ -667,7 +734,7 @@ Rails.application.config.host_authorization = {
 
 #### `ActionDispatch::ShowExceptions`
 
-Ловит исключения, возвращаемые приложением, и рендерит прекрасные страницы исключения, если запрос локальный, или если `config.consider_all_requests_local` установлена `true`. Если `config.action_dispatch.show_exceptions` установлена `false`, исключения будут вызваны несмотря ни на что.
+Ловит исключения, возвращаемые приложением, и рендерит прекрасные страницы исключения, если запрос локальный, или если `config.consider_all_requests_local` установлена `true`. Если `config.action_dispatch.show_exceptions` установлена `:none`, исключения будут вызваны, несмотря ни на что.
 
 #### `ActionDispatch::RequestId`
 
@@ -777,7 +844,7 @@ config.middleware.delete Rack::MethodOverride
 
 #### `config.i18n.raise_on_missing_translations`
 
-Определяет, должна ли вызываться ошибка на отсутствующих переводах в контроллерах и вью. По умолчанию `false`.
+Определяет, должна ли вызываться ошибка на отсутствующих переводах. По умолчанию `false`.
 
 #### `config.i18n.fallbacks`
 
@@ -841,13 +908,13 @@ irb> person = Person.new.tap(&:valid?)
 
 irb> person.errors.full_messages
 => [
-  "Invalid Name (can't be blank)",
+  "Invalid Name (can’t be blank)",
   "Please fill in your Age"
 ]
 
 irb> person.errors.messages
 => {
-  :name => ["can't be blank"],
+  :name => ["can’t be blank"],
   :age  => ["Please fill in your Age"]
 }
 ```
@@ -908,6 +975,46 @@ irb> person.errors.messages
 #### `config.active_record.timestamped_migrations`
 
 Регулирует, должны ли миграции нумероваться серийными номерами или временными метками. По умолчанию `true` для использования временных меток, которые более предпочтительны, если над одним проектом работают несколько разработчиков.
+
+#### `config.active_record.db_warnings_action`
+
+Регулирует действие, которое следует предпринять, когда запрос SQL производит предупреждение. Доступны следующие опции:
+
+  * `:ignore` - Предупреждения базы данных должны игнорироваться. Это по умолчанию.
+
+  * `:log` - Предупреждения базы данных должны логироваться с помощью `ActiveRecord.logger` на уровне `:warn`.
+
+  * `:raise` - Предупреждения базы данных должны вызываться как `ActiveRecord::SQLWarning`.
+
+  * `:report` - Предупреждения базы данных должны сообщаться подписчикам репортера ошибок Rails.
+
+  * Произвольный proc - Может быть предоставлен произвольный proc. Он должен принимать объект ошибки `SQLWarning`.
+
+    Например:
+
+    ```ruby
+    config.active_record.db_warnings_action = ->(warning) do
+      # Сообщаем пользовательскому сервису по отчетам об исключениях
+      Bugsnag.notify(warning.message) do |notification|
+        notification.add_metadata(:warning_code, warning.code)
+        notification.add_metadata(:warning_level, warning.level)
+      end
+    end
+    ```
+
+#### `config.active_record.db_warnings_ignore`
+
+Указывает список разрешенных кодов и сообщений, которые следует игнорировать, вне зависимости от настроенной `db_warnings_action`. Поведением по умолчанию является сообщение обо всех предупреждениях. Предупреждения для игнорирования могут быть определены как String or Regexp. Например:
+
+  ```ruby
+  config.active_record.db_warnings_action = :raise
+  # Следующие предупреждения не будут вызваны
+  config.active_record.db_warnings_ignore = [
+    /Invalid utf8mb4 character string/,
+    "An exact warning message",
+    "1062", # MySQL Error 1062: Duplicate entry
+  ]
+  ```
 
 #### `config.active_record.migration_strategy`
 
@@ -990,6 +1097,17 @@ config.active_record.migration_strategy = CustomMigrationStrategy
 | ---------------- | --------------------- |
 | (изначально)     | `true`                |
 | 7.1              | `false`               |
+
+#### `config.active_record.marshalling_format_version`
+
+Когда установлено `7.1`, включает более эффективную сериализацию экземпляров Active Record с помощью `Marshal.dump`.
+
+Это изменяет формат сериализации, поэтому модели, сериализованные данным образом, не смогут быть прочитаны старыми (< 7.1) версиями Rails. Однако, сообщения, использующие старый формат, все еще могут быть прочитаны, вне зависимости от того, была ли включена эта оптимизация.
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `6.1`                 |
+| 7.1              | `7.1`                 |
 
 #### `config.active_record.action_on_strict_loading_violation`
 
@@ -1111,9 +1229,41 @@ config.active_record.migration_strategy = CustomMigrationStrategy
 | (изначально)     | `true`                |
 | 7.1              | `false`               |
 
+#### `config.active_record.default_column_serializer`
+
+Реализация сериализатора для использования, если ничто явно не указано для заданного столбца.
+
+Исторически `serialize` и `store`, хотя позволяют использование альтернативные реализации сериализатора, по умолчанию использовали `YAML`, но это не очень эффективный формат, и может быть источником уязвимостей безопасности, если применяется неосторожно.
+
+Поэтому рекомендуется предпочитать более строгие и ограниченные форматы для сериализации базы данных.
+
+К сожалению нет каких-либо реально подходящих умолчаний, доступных в стандартной библиотеке Ruby. `JSON` мог бы работать в качестве формата, но гемы `json` приводят неподдерживаемые типы к строкам, что может привести к багам.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `YAML`                |
+| 7.1              | `nil`                 |
+
+#### `config.active_record.run_after_transaction_callbacks_in_order_defined`
+
+Если true, колбэки `after_commit` выполняются в порядке, в котором они определены в модели. Если false, они выполняются в обратном порядке.
+
+Все другие колбэки всегда выполняются в порядке, в котором они определены в модели (кроме использующих `prepend: true`).
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.1              | `true`                |
+
 #### `config.active_record.query_log_tags_enabled`
 
 Указывает, включать ли комментарии на уровне адаптера. По умолчанию `false`.
+
+NOTE: Когда установлено `true`, prepared statements базы данных будут автоматически отключены.
 
 #### `config.active_record.query_log_tags`
 
@@ -1206,7 +1356,12 @@ Comment.where(posts: post_id).count # => ошибка
 
 По умолчанию `false`. Позволяет приложениям отключить использование `unsafe_load` на `ActiveRecord::Coders::YamlColumn`.
 
-#### `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans`
+#### `config.active_record.raise_int_wider_than_64bit`
+
+По умолчанию `true`. Определяет следует ли вызывать исключение или нет, когда адаптеру PostgreSQL предоставлено число, которое шире, чем подписанное
+64bit представление.
+
+#### `ActiveRecord::ConnectionAdapters::Mysql2Adapter.emulate_booleans` и `ActiveRecord::ConnectionAdapters::TrilogyAdapter.emulate_booleans`
 
 Регулирует, должен ли Active Record рассматривать все столбцы `tinyint(1)` как boolean. По умолчанию `true`.
 
@@ -1247,6 +1402,28 @@ end
 #### `ActiveRecord::SchemaDumper.fk_ignore_pattern`
 
 Позволяет настроить другое регулярное выражение, которое будет использоваться для определения того, следует ли выгружать имя внешнего ключа из db/schema.rb или нет. По умолчанию имена внешних ключей, начинающиеся с `fk_rails_`, не экспортируются в выгрузку схемы базы данных. По умолчанию используется `/^fk_rails_[0-9a-f]{10}$/`.
+
+#### `config.active_record.encryption.hash_digest_class`
+
+Устанавливает алгоритм дайджеста, используемый Active Record Encryption.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию     |
+| ---------------- | ------------------------- |
+| (изначально)     | `OpenSSL::Digest::SHA1`   |
+| 7.1              | `OpenSSL::Digest::SHA256` |
+
+#### `config.active_record.encryption.support_sha1_for_non_deterministic_encryption`
+
+Включает поддержку расшифровки существующих данных, зашифрованных с помощью класса дайджеста SHA-1. При `false` поддерживается только дайджест, настроенный в `config.active_record.encryption.hash_digest_class`.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `true`                |
+| 7.1              | `false`               |
 
 ### Конфигурирование Action Controller
 
@@ -1403,14 +1580,25 @@ Rendered recordings/threads/_thread.html.erb in 1.5 ms [cache miss]
 
 #### `config.action_dispatch.cookies_serializer`
 
-Указывает, какой сериализатор использовать для куки. Подробности смотрите в [куки Action Controller](/action-controller-overview#cookies).
+Указывает, какой сериализатор использовать для куки. Принимает те же значения, что и [`config.active_support.message_serializer`](#config-active-support-message-serializer), плюс `:hybrid`, который псевдоним для `:json_allow_marshal`.
 
 Значение по умолчанию зависит от целевой версии `config.load_defaults`:
 
 | Начиная с версии | Значение по умолчанию |
 | ---------------- | --------------------- |
-| (изначально)     | `false`               |
-| 7.0              | `true`                |
+| (original)       | `:marshal`            |
+| 7.0              | `:json`               |
+
+#### `config.action_dispatch.debug_exception_log_level`
+
+Конфигурирует уровень лога, используемый промежуточной программы DebugExceptions, при логировании не отловленных исключений в течение запросов.
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (original)       | `:fatal`              |
+| 7.1              | `:error`              |
 
 #### `config.action_dispatch.default_headers`
 
@@ -1540,17 +1728,6 @@ config.action_dispatch.rescue_responses = {
 ```
 
 Любое ненастроенное исключение приведет к 500 Internal Server Error.
-
-#### `config.action_dispatch.return_only_request_media_type_on_content_type`
-
-Изменяет возвращаемое значение `ActionDispatch::Request#content_type` на заголовок Content-Type без модификаций.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `true`                |
-| 7.0              | `false`               |
 
 #### `config.action_dispatch.cookies_same_site_protection`
 
@@ -1728,6 +1905,17 @@ Proc.new { |html_tag, instance| content_tag :div, html_tag, class: "field_with_e
 
 Определяет, должны ли хелперы `form_tag` и `button_to` производить теги HTML с предшествующим безопасным для браузера (но технически невалидным) HTML, гарантирующим, что их содержимое не сможет быть захвачен любыми предшествующими незакрытыми тегами. Значение по умолчанию `false`.
 
+#### `config.action_view.sanitizer_vendor`
+
+Конфигурирует набор санитайзеров HTML, используемых Action View, устанавливая `ActionView::Helpers::SanitizeHelper.sanitizer_vendor`. Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию                     | Которое парсит разметку как |
+|------------------|-------------------------------------------|-----------------------------|
+| (изначально)     | `Rails::HTML4::Sanitizer`                 | HTML4                       |
+| 7.1              | `Rails::HTML5::Sanitizer` (смотрите NOTE) | HTML5                       |
+
+NOTE: `Rails::HTML5::Sanitizer` не поддерживается на JRuby, поэтому на платформах JRuby, Rails будет использовать `Rails::HTML4::Sanitizer`.
+
 ### Конфигурирование Action Mailbox
 
 `config.action_mailbox` предоставляет следующие конфигурационные опции:
@@ -1891,13 +2079,17 @@ config.action_mailer.preview_paths << "#{Rails.root}/lib/mailer_previews"
 config.action_mailer.show_previews = false
 ```
 
-#### `config.action_mailer.deliver_later_queue_name`
-
-Указывает очередь Active Job для заданий доставки. Когда эта опция установлена `nil`, задания доставки направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`). Убедитесь, что ваш адаптер Active Job также настроен на обработку указанной очереди, иначе задания доставки могут быть молчаливо проигнорированы.
-
 #### `config.action_mailer.perform_caching`
 
 Указывает, должно ли выполняться кэширование фрагментов для шаблонов рассыльщиков. Если не указано, значение по умолчанию всегда будет `true`.
+
+#### `config.action_mailer.deliver_later_queue_name`
+
+Указывает очередь Active Job для заданий доставки по умолчанию (смотрите `config.action_mailer.delivery_job`). Когда эта опция установлена `nil`, задания доставки направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
+
+Классы рассыльщика могут переопределять ее, чтобы использовать другую очередь. Отметьте, что это только применимо при использовании задания доставки по умолчанию. Если рассыльщик использует произвольное задание, будет использована его очередь.
+
+Обеспечьте, чтобы ваш адаптер Active Job также был настроен на обработку указанной очереди, иначе задания доставки могут быть молчаливо проигнорированы.
 
 #### `config.action_mailer.delivery_job`
 
@@ -1968,9 +2160,59 @@ config.action_mailer.show_previews = false
 | (изначально)     | `false`               |
 | 5.2              | `true`                |
 
+#### `config.active_support.message_serializer`
+
+Указывает сериализатор по умолчанию, используемый экземплярами [`ActiveSupport::MessageEncryptor`][] и [`ActiveSupport::MessageVerifier`][]. Чтобы сделать миграцию между сериализаторами проще, предоставленные сериализаторы включает механизм фолбэка для поддержки нескольких форматов десериализации:
+
+| Сериализатор                  | Сериализует и десериализует  | Фолбэк десериализации                               |
+| ----------------------------- | ---------------------------- | --------------------------------------------------- |
+| `:marshal`                    | `Marshal`                    | `ActiveSupport::JSON`, `ActiveSupport::MessagePack` |
+| `:json`                       | `ActiveSupport::JSON`        | `ActiveSupport::MessagePack`                        |
+| `:json_allow_marshal`         | `ActiveSupport::JSON`        | `ActiveSupport::MessagePack`, `Marshal`             |
+| `:message_pack`               | `ActiveSupport::MessagePack` | `ActiveSupport::JSON`                               |
+| `:message_pack_allow_marshal` | `ActiveSupport::MessagePack` | `ActiveSupport::JSON`, `Marshal`                    |
+
+WARNING: `Marshal` это потенциальное направление атак десериализации в случаях, когда утек секрет подписания сообщения. _Если возможно, выбирайте сериализатор, не поддерживающий `Marshal`._
+
+INFO: Сериализаторы `:message_pack` и `:message_pack_allow_marshal` поддерживают некоторые типы Ruby, не поддерживаемые JSON, такие как `Symbol`. Они также предоставляют улучшенное быстродействие и меньший размер полезной нагрузки. Однако они требуют [гема `msgpack`](https://rubygems.org/gems/msgpack).
+
+Каждый из вышеперечисленных сериализаторов сгенерируют уведомление о событии [`message_serializer_fallback.active_support`][], когда они отступают к альтернативному формату десериализации, позволяя отслеживать, как часто происходят такие фолбэки.
+
+Альтернативно можно указать любой сериализатор, отвечающий на методы `dump` и `load`. Например:
+
+```ruby
+config.active_job.message_serializer = YAML
+```
+
+Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `:marshal`            |
+| 7.1              | `:json_allow_marshal` |
+
+[`ActiveSupport::MessageEncryptor`]: https://api.rubyonrails.org/classes/ActiveSupport/MessageEncryptor.html
+[`ActiveSupport::MessageVerifier`]: https://api.rubyonrails.org/classes/ActiveSupport/MessageVerifier.html
+[`message_serializer_fallback.active_support`]: active_support_instrumentation.html#message-serializer-fallback-active-support
+
+#### `config.active_support.use_message_serializer_for_metadata`
+
+Когда `true`, включает оптимизацию быстродействия, сериализующий совместно данные сообщения и метаданные. Это изменяет формат сообщения, таким образом сообщения, сериализованные таким способом, не смогут быть прочитаны старыми (< 7.1) версиями Rails. Однако, сообщения, использующие старый формат, все еще могут быть прочитаны, независимо от того, включена ли оптимизация.
+
+The default value depends on the `config.load_defaults` target version:
+
+| Начиная с версии | Значение по умолчанию |
+| ---------------- | --------------------- |
+| (изначально)     | `false`               |
+| 7.1              | `true`                |
+
 #### `config.active_support.cache_format_version`
 
-Указывает, какую версию сериализации кэша использовать. Возможные значения `6.1` и `7.0`.
+Указывает, какую версию сериализации кэша использовать. Возможные значения `6.1`, `7.0` и `7.1`.
+
+Все форматы `6.1`, `7.0` и `7.1` используют `Marshal` для кодера по умолчанию, но `7.0` использует более эффективное представление для элементов кэша, а `7.1` включает дополнительную оптимизацию для чисто строковых значений, таких как фрагменты вью.
+
+Все форматы полностью совместимы, что означает, что элементы кэша, написанные в одном формате, могут быть прочитаны с помощью другого формата. Это поведение упрощает миграцию между форматами без инвалидации всего кэша.
 
 Значение по умолчанию зависит от целевой версии `config.load_defaults`:
 
@@ -1978,6 +2220,7 @@ config.action_mailer.show_previews = false
 | ---------------- | --------------------- |
 | (изначально)     | `6.1`                 |
 | 7.0              | `7.0`                 |
+| 7.1              | `7.1`                 |
 
 #### `config.active_support.deprecation`
 
@@ -1997,64 +2240,17 @@ config.action_mailer.show_previews = false
 
 #### `config.active_support.report_deprecations`
 
-Позволяет отключить все предупреждения об устаревании, включая неразрешенные устаревания, что отключит `ActiveSupport::Deprecation.warn`.
+Позволяет отключить все предупреждения об устаревании, включая неразрешенные устаревания, из [устареваний приложения](https://api.rubyonrails.org/classes/Rails/Application.html#method-i-deprecators). Это включает все устаревания из Rails и других гемов, которые могут добавлять свои устаревания в коллекцию устареваний, но не могут предупредить все предупреждения об устаревании, эмитируемые из ActiveSupport::Deprecation
 
 В файлах `config/environments`, сгенерированных по умолчанию, она установлена `false` для production.
-
-#### `config.active_support.remove_deprecated_time_with_zone_name`
-
-Определяет, нужно ли убирать устаревшее переопределение метода [`ActiveSupport::TimeWithZone.name`](https://api.rubyonrails.org/classes/ActiveSupport/TimeWithZone.html#method-c-name), чтобы избежать предупреждения об его устаревании.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `nil`                 |
-| 7.0              | `true`                |
 
 #### `config.active_support.isolation_level`
 
 Конфигурирует расположение большей части внутреннего состояния Rails. Если используете сервер или обработчик заданий, основанные на файберах (например, `falcon`), следует установить `:fiber`. В противном случае, лучше использовать расположение `:thread`. По умолчанию `:thread`.
 
-#### `config.active_support.use_rfc4122_namespaced_uuids`
-
-Определяет, будут ли сгенерированные UUID пространств имен следовать стандарту RFC 4122 для идентификаторов пространства имен, переданных как строка в вызовы методов `Digest::UUID.uuid_v3` или `Digest::UUID.uuid_v5`.
-
-Если установлено `true`:
-
-* В качестве идентификаторов пространства имен допускаются только UUID. Если предоставленный идентификатор пространства имен недопустим, будет вызвана `ArgumentError`.
-* Никакое предупреждение об устаревании не будет сгенерировано, не важно, если используемый идентификатор пространства имен это константа, определенная в `Digest::UUID` или `String`.
-* Идентификаторы пространств имен не чувствительны к регистру.
-* Все сгенерированные UUID в пространстве имен должны соответствовать стандарту.
-
-Если установлено `false`:
-
-* Любое строковое значение может быть использовано в качестве идентификатора пространства имен (хотя не рекомендуется). В этом случае никакая `ArgumentError` не будет вызвана, чтобы сохранить обратную совместимость.
-* Будет сгенерировано предупреждение об устаревании, если предоставленный идентификатор пространства имен не является одной из констант, определенной в `Digest::UUID`.
-* Идентификаторы пространств имен чувствительны к регистру.
-* Только те сгенерированные UUID в пространстве имен, которые используют одну из констант, определенных в `Digest::UUID`, должны соответствовать стандарту.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `false`               |
-| 7.0              | `true`                |
-
 #### `config.active_support.executor_around_test_case`
 
 Конфигурирует тестовый набор, чтобы тестовые случаи оборачивались в `Rails.application.executor.wrap`. Это позволяет тестовым случаям вести себя приближенно к фактическому запросу или заданию. Некоторые особенности, которые обычно отключены в тесте, такие как кэш запросов Active Record и асинхронные запросы, будут тогда включены.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `false`               |
-| 7.0              | `true`                |
-
-#### `config.active_support.disable_to_s_conversion`
-
-Отключает переопределение методов `#to_s` некоторых ключевых классов Ruby. Эта конфигурация для приложений, которые хотят как можно быстрее воспользоваться преимуществом [оптимизации Ruby 3.1](https://github.com/ruby/ruby/commit/b08dacfea39ad8da3f1fd7fdd0e4538cc892ec44). Эта конфигурация должна быть установлена в `config/application.rb` внутри класса приложения, в противном случае она не сработает.
 
 Значение по умолчанию зависит от целевой версии `config.load_defaults`:
 
@@ -2092,48 +2288,6 @@ config.action_mailer.show_previews = false
 | ---------------- | --------------------- |
 | (изначально)     | `false`               |
 | 6.1              | `true`                |
-
-#### `config.active_support.default_message_encryptor_serializer`
-
-Указывает, какой сериализатор будет использовать класс `MessageEncryptor` по умолчанию.
-
-Опции это `:json`, `:hybrid` и `:marshal`. `:hybrid` использует класс `JsonWithMarshalFallback`.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `:marshal`            |
-| 7.1              | `:json`               |
-
-#### `config.active_support.fallback_to_marshal_deserialization`
-
-Указывает, будет ли класс `ActiveSupport::JsonWithMarshalFallback` переключаться на `Marshal`, когда он сталкивается с `::JSON::ParserError`.
-
-По умолчанию `true`.
-
-#### `config.active_support.use_marshal_serialization`
-
-Указывает, будет ли класс `ActiveSupport::JsonWithMarshalFallback` использовать `Marshal` для сериализации нагрузок.
-
-Если установить `false`, он будет использовать `JSON` для сериализации нагрузок.
-
-Используется для помощи в миграции приложений с `Marshal` на `JSON` в качестве сериализатора по умолчанию для класса `MessageEncryptor`.
-
-По умолчанию `true`.
-
-#### `config.active_support.default_message_verifier_serializer`
-
-Указывает, какой сериализатор класс `MessageVerifier` будет использовать по умолчанию.
-
-Опции это `:json`, `:hybrid` и `:marshal`. `:hybrid` использует класс `JsonWithMarshalFallback`.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `:marshal`            |
-| 7.1              | `:json`               |
 
 #### `config.active_support.raise_on_invalid_cache_expiration_time`
 
@@ -2218,6 +2372,10 @@ end
 #### `config.active_job.log_arguments`
 
 Управляет, логировать ли аргументы задания. По умолчанию `true`.
+
+#### `config.active_job.verbose_enqueue_logs`
+
+Указывает, должны ли расположения исходника методов, запускающие фоновые задания, логироваться ниже строчек лога соответственного запуска. По умолчанию флажок `true` в development и `false` во всех других средах.
 
 #### `config.active_job.retry_jitter`
 
@@ -2342,14 +2500,6 @@ config.active_storage.content_types_to_serve_as_binary = %w(text/html image/svg+
 config.active_storage.content_types_allowed_inline = %w(image/png image/gif image/jpeg image/tiff image/vnd.adobe.photoshop image/vnd.microsoft.icon application/pdf)
 ```
 
-#### `config.active_storage.silence_invalid_content_types_warning`
-
-Начиная с Rails 7, Active Storage предупредит, если вы используете неправильный тип содержимого, который некорректно поддерживался в Rails 6. Можно использовать эту настройку, чтобы отключить предупреждение.
-
-```ruby
-config.active_storage.silence_invalid_content_types_warning = false
-```
-
 #### `config.active_storage.queues.analysis`
 
 Принимает символ, указывающий очередь Active Job для использования заданиями анализа. Когда эта опция `nil`, задания анализа направляются в очередь Active Job по умолчанию (смотрите `config.active_job.default_queue_name`).
@@ -2409,17 +2559,6 @@ config.active_storage.routes_prefix = '/files'
 
 По умолчанию `/rails/active_storage`.
 
-#### `config.active_storage.replace_on_assign_to_many`
-
-Определяет, должно ли присвоение к коллекции с вложениями, объявленной с помощью `has_many_attached`, заменять любые существующие вложения, или добавлять к ним.
-
-Значение по умолчанию зависит от целевой версии `config.load_defaults`:
-
-| Начиная с версии | Значение по умолчанию |
-| ---------------- | --------------------- |
-| (изначально)     | `false`               |
-| 6.0              | `true`                |
-
 #### `config.active_storage.track_variants`
 
 Определяет, должны ли варианты записываться в базу данных.
@@ -2477,6 +2616,17 @@ config.active_storage.routes_prefix = '/files'
 #### `config.action_text.attachment_tag_name`
 
 Принимает строку для тега HTML, используемого для оборачивания вложений. По умолчанию `"action-text-attachment"`.
+
+#### `config.action_text.sanitizer_vendor`
+
+Конфигурирует санитайзер HTML, используемого Action Text, устанавливая `ActionText::ContentHelper.sanitizer` экземпляр класса, возвращающийся из внешнего метода `.safe_list_sanitizer`. Значение по умолчанию зависит от целевой версии `config.load_defaults`:
+
+| Начиная с версии | Значение по умолчанию                     | Которое парсит разметку как |
+|------------------|-------------------------------------------|-----------------------------|
+| (изначально)     | `Rails::HTML4::Sanitizer`                 | HTML4                       |
+| 7.1              | `Rails::HTML5::Sanitizer` (смотрите NOTE) | HTML5                       |
+
+NOTE: `Rails::HTML5::Sanitizer` не поддерживается на JRuby, поэтому на платформах JRuby, Rails будет использовать `Rails::HTML4::Sanitizer`.
 
 ### Конфигурирование базы данных
 
@@ -2769,11 +2919,40 @@ development:
   retry_deadline: 5 # Остановить повтор запросов через 5 секунд
 ```
 
+#### Конфигурация кэша запросов
+
+По умолчанию Rails автоматически кэширует результирующие множества, возвращаемые запросами. Если Rails снова встречается с тем же SQL запросом для того же http запроса или задания, он использует кэшированный результат вместо запуска запроса к базе данных снова.
+
+Кэш запросов хранится в памяти и, чтобы избежать использования слишком много памяти, он автоматически удаляет самые давно использованные запросы при достижении порога. По умолчанию порог `100`, но может быть настроен в `database.yml`.
+
+```yaml
+development:
+  adapter: mysql2
+  query_cache: 200
+```
+
+Чтобы полностью отключить кэширование запросов, можно установить `false`
+
+```yaml
+development:
+  adapter: mysql2
+  query_cache: false
+```
+
 ### (creating-rails-environments) Создание сред Rails
 
 По умолчанию Rails поставляется с тремя средами: "development", "test" и "production". Хотя в большинстве случаев их достаточно, бывают условия, когда нужно больше сред.
 
-Представим, что у вас есть сервер, отражающий среду production, но используемый только для тестирования. Такой сервер обычно называется "staging server". Для определения среды с именем "staging" для этого сервера, просто создайте файл с именем `config/environments/staging.rb`. В качестве исходного содержимого используйте любой файл, существующий в `config/environments`, а затем сделайте в нем необходимые изменения.
+Представим, что у вас есть сервер, отражающий среду production, но используемый только для тестирования. Такой сервер обычно называется "staging server". Для определения среды с именем "staging" для этого сервера, просто создайте файл с именем `config/environments/staging.rb`. Так как это среда наподобие production, можно скопировать содержимое `config/environments/production.rb` в качестве начальной точки и сделать необходимые изменения там. Также возможно затребовать и расширить другие конфигурации среды, наподобие:
+
+```ruby
+# config/environments/staging.rb
+require_relative "production"
+
+Rails.application.configure do
+  # Переопределения для staging
+end
+```
 
 Эта среда ничем не отличается от одной из стандартных, сервер запускается с помощью `bin/rails server -e staging`, консоль с помощью `bin/rails console -e staging`, работает `Rails.env.staging?`, и т.д.
 
