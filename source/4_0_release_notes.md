@@ -194,7 +194,7 @@ Active Support
 
 * Устарел метод совместимости `Module#local_constant_names`, используйте вместо него `Module#local_constants` (который возвращает символы).
 
-* Устарел `BufferedLogger`. Используйте `ActiveSupport::Logger` или `logger` из стандартной библиотеки Ruby.
+* Устарел `ActiveSupport::BufferedLogger`. Используйте `ActiveSupport::Logger` или `logger` из стандартной библиотеки Ruby.
 
 * Устарели `assert_present` и `assert_blank` в пользу `assert object.blank?` и `assert object.present?`
 

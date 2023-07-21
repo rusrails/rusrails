@@ -284,7 +284,7 @@ Active Record
 
     ```ruby
     User.where.not(name: "Jon", role: "admin")
-    # SELECT * FROM users WHERE NOT (name == 'Jon' AND role == 'admin')
+    # SELECT * FROM users WHERE NOT (name = 'Jon' AND role = 'admin')
     ```
 
 *   Чтобы использовать новые соединения для отдельной базы данных, в приложении нужно изменить `legacy_connection_handling` на false и удалить устаревшие методы доступа на `connection_handlers`. Публичные методы для `connects_to` и `connected_to` менять не нужно.

@@ -327,20 +327,20 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 7.1
     path:     7_1_release_notes
     file:     7_1_release_notes.md
-    revision: aa81f67a9eca1fc0d7f26bfe1a181dbed4d82ce1
-    date:     18/12/2022
+    revision: fee2bf3f80674edbfd2c4b20fc09f891b630baa7
+    date:     04/03/2023
 
   - title:    Заметки о релизе Ruby on Rails 7.0
     path:     7_0_release_notes
     file:     7_0_release_notes.md
-    revision: c7c18299b376afdfda82792fcb69fdfea1119ac0
-    date:     02/05/2022
+    revision: 1c82b8ff5d49d004cb47d2d067df083e7ed229b3
+    date:     04/02/2023
 
   - title:    Заметки о релизе Ruby on Rails 6.1
     path:     6_1_release_notes
     file:     6_1_release_notes.md
-    revision: 83a4fa414bc9e5008825f47857fdd80e85c82033
-    date:     12/01/2022
+    revision: b7ed4558b4d5674039d589c7f9569a8a8bab8898
+    date:     16/05/2023
 
   - title:    Заметки о релизе Ruby on Rails 6.0
     path:     6_0_release_notes
@@ -381,8 +381,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.0
     path:     4_0_release_notes
     file:     4_0_release_notes.md
-    revision: 226b171144039a8c02344a3cb22323e38eddbdf2
-    date:     31/05/2021
+    revision: 6e3d14399981a02e1d5be423a267937692f724e5
+    date:     30/03/2023
 
   - title:    Заметки о релизе Ruby on Rails 3.2
     path:     3_2_release_notes
