@@ -40,7 +40,7 @@ class Book < ApplicationRecord
 
   scope :in_print, -> { where(out_of_print: false) }
   scope :out_of_print, -> { where(out_of_print: true) }
-  scope :old, -> { where('year_published < ?', 50.years.ago )}
+  scope :old, -> { where(year_published: ...50.years.ago.year) }
   scope :out_of_print_and_expensive, -> { out_of_print.where('price > 500') }
   scope :costs_more_than, ->(amount) { where('price > ?', amount) }
 end
@@ -60,7 +60,7 @@ class Order < ApplicationRecord
 
   enum :status, [:shipped, :being_packed, :complete, :cancelled]
 
-  scope :created_before, ->(time) { where('created_at < ?', time) }
+  scope :created_before, ->(time) { where(created_at: ...time) }
 end
 ```
 
@@ -113,6 +113,7 @@ end
 * [`references`][]
 * [`reorder`][]
 * [`reselect`][]
+* [`regroup`][]
 * [`reverse_order`][]
 * [`select`][]
 * [`where`][]
@@ -151,6 +152,7 @@ end
 [`references`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-references
 [`reorder`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-reorder
 [`reselect`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-reselect
+[`regroup`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-regroup
 [`reverse_order`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-reverse_order
 [`select`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-select
 [`where`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where
@@ -459,6 +461,16 @@ end
 
 Переопределяет настройку приложения, указывающую, должна ли быть вызвана ошибка, если в relation присутствует упорядочивание.
 
+**`:order`**
+
+Указывает порядок следования первичных ключей (может быть `:asc` или `:desc`). По умолчанию `:asc`.
+
+```ruby
+Customer.find_each(order: :desc) do |customer|
+  NewsMailer.weekly(customer).deliver_now
+end
+```
+
 #### `find_in_batches`
 
 Метод [`find_in_batches`][] похож на `find_each` тем, что они оба получают пакеты записей. Различие в том, что `find_in_batches` передает в блок _пакеты_ как массив моделей, вместо отдельной модели. Следующий пример передаст в представленный блок массив из 1000 счетов за раз, а в последний блок содержащий всех оставшихся покупателей:
@@ -659,7 +671,7 @@ SELECT * FROM books WHERE books.created_at >= '2008-12-21 00:00:00'
 Если хотите найти записи, используя выражение `IN`, можете передать массив в хэш условий:
 
 ```ruby
-Customer.where(orders_count: [1,3,5])
+Customer.where(orders_count: [1, 3, 5])
 ```
 
 Этот код сгенерирует подобный SQL:
@@ -673,7 +685,7 @@ SELECT * FROM customers WHERE (customers.orders_count IN (1,3,5))
 Запросы `NOT` в SQL могут быть созданы с помощью [`where.not`][]:
 
 ```ruby
-Customer.where.not(orders_count: [1,3,5])
+Customer.where.not(orders_count: [1, 3, 5])
 ```
 
 Другими словами, этот запрос может быть сгенерирован с помощью вызова `where` без аргументов и далее присоединенным `not` с переданными условиями для `where`. Это сгенерирует такой SQL:
@@ -701,7 +713,7 @@ Customer.where.not(nullable_country: nil)
 Условия `OR` между двумя отношениями могут быть построены путем вызова [`or`][] на первом отношении и передачи второго в качестве аргумента.
 
 ```ruby
-Customer.where(last_name: 'Smith').or(Customer.where(orders_count: [1,3,5]))
+Customer.where(last_name: 'Smith').or(Customer.where(orders_count: [1, 3, 5]))
 ```
 
 ```sql
@@ -715,7 +727,7 @@ SELECT * FROM customers WHERE (customers.last_name = 'Smith' OR customers.orders
 Условия `AND` могут быть построены с помощью присоединения условий `where`.
 
 ```ruby
-Customer.where(last_name: 'Smith').where(orders_count: [1,3,5]))
+Customer.where(last_name: 'Smith').where(orders_count: [1, 3, 5]))
 ```
 
 ```sql
@@ -804,7 +816,7 @@ SELECT isbn, out_of_print FROM books
 Будьте осторожны, поскольку это также означает, что будет инициализирован объект модели только с теми полями, которые вы выбрали. Если вы попытаетесь обратиться к полям, которых нет в инициализированной записи, то получите:
 
 ```
-ActiveModel::MissingAttributeError: missing attribute: <attribute>
+ActiveModel::MissingAttributeError: missing attribute '<attribute>' for Book
 ```
 
 Где `<attribute>` это атрибут, который был запрошен. Метод `id` не вызывает `ActiveRecord::MissingAttributeError`, поэтому будьте аккуратны при работе со связями, так как они нуждаются в методе `id` для правильной работы.
@@ -900,8 +912,8 @@ GROUP BY status
 
 [`count`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-count
 
-Having
-------
+Условия HAVING
+--------------
 
 SQL использует условие `HAVING` для определения условий для полей, указанных в `GROUP BY`. Условие `HAVING`, определенное в SQL, запускается в `Model.find` с использованием метода [`having`][] для поиска.
 
@@ -1106,6 +1118,34 @@ SELECT * FROM books WHERE out_of_print = 1 AND out_of_print = 0
 ```
 
 [`rewhere`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-rewhere
+
+### `regroup`
+
+Метод [`regroup`][] переопределяет существующее именованное условие `group`. Например:
+
+```ruby
+Book.group(:author).regroup(:id)
+```
+
+SQL, который будет выполнен:
+
+```sql
+SELECT * FROM books GROUP BY id
+```
+
+Если не было бы использовано выражение `regroup`, выражения группировки объединились:
+
+```ruby
+Book.group(:author).group(:id)
+```
+
+SQL, который был бы выполнен:
+
+```sql
+SELECT * FROM books GROUP BY author, id
+```
+
+[`regroup`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-regroup
 
 Нулевой Relation
 ----------------
@@ -1314,13 +1354,13 @@ SELECT books.* FROM books
 ##### Соединение вложенных связей (разных уровней)
 
 ```ruby
-Author.joins(books: [{ reviews: { customer: :orders } }, :supplier] )
+Author.joins(books: [{ reviews: { customer: :orders } }, :supplier])
 ```
 
 Это создаст:
 
 ```sql
-SELECT * FROM authors
+SELECT authors.* FROM authors
   INNER JOIN books ON books.author_id = authors.id
   INNER JOIN reviews ON reviews.book_id = books.id
   INNER JOIN customers ON customers.id = reviews.customer_id
@@ -1386,12 +1426,48 @@ LEFT OUTER JOIN reviews ON reviews.customer_id = customers.id GROUP BY customers
 
 Что означает: "возвратить всех покупателей и количество их рецензий, независимо от того, имеются ли у них вообще рецензии".
 
+### `where.associated` и `where.missing`
+
+Методы запроса `associated` и `missing` позволяет выбрать набор записей, основываясь на существовании или отсутствии связи.
+
+Используя `where.associated`:
+
+```ruby
+Customer.where.associated(:reviews)
+```
+
+Создаст:
+
+```sql
+SELECT customers.* FROM customers
+INNER JOIN reviews ON reviews.customer_id = customers.id
+WHERE reviews.id IS NOT NULL
+```
+
+Что означает "вернуть всех покупателей, сделавших хотя бы один обзор".
+
+Используя `where.missing`:
+
+```ruby
+Customer.where.missing(:reviews)
+```
+
+Создаст:
+
+```sql
+SELECT customers.* FROM customers
+LEFT OUTER JOIN reviews ON reviews.customer_id = customers.id
+WHERE reviews.id IS NULL
+```
+
+Что означает "вернуть всех покупателей, не сделавших ни один обзор".
+
 Нетерпеливая загрузка связей
 ----------------------------
 
 Нетерпеливая загрузка - это механизм загрузки связанных записей объекта, возвращаемых `Model.find`, с использованием как можно меньшего количества запросов.
 
-**Проблема N + 1 запроса**
+### Проблема N + 1 запроса
 
 Рассмотрим следующий код, который находит 10 книг и выводит фамилии их авторов:
 
@@ -1405,7 +1481,7 @@ end
 
 На первый взгляд выглядит хорошо. Но проблема лежит в общем количестве выполненных запросов. Вышеупомянутый код выполняет 1 (чтобы найти 10 книг) + 10 (каждый на одну книгу для загрузки автора) = итого **11** запросов.
 
-**Решение проблемы N + 1 запроса**
+#### Решение проблемы N + 1 запроса
 
 Active Record позволяет заранее указать все связи, которые должны быть загружены.
 
@@ -1415,7 +1491,7 @@ Active Record позволяет заранее указать все связи
 * [`preload`][]
 * [`eager_load`][]
 
-### includes
+### `includes`
 
 С помощью `includes` Active Record убеждается, что все указанные связи загружаются с помощью минимально возможного количества запросов.
 
@@ -1452,7 +1528,7 @@ Customer.includes(:orders, :reviews)
 ##### Вложенный хэш связей
 
 ```ruby
-Customer.includes(orders: {books: [:supplier, :author]}).find(1)
+Customer.includes(orders: { books: [:supplier, :author] }).find(1)
 ```
 
 Вышеприведенный код находит покупателя с id 1 и нетерпеливо загружает все связанные заказы для него, книги для всех заказов, и автора и поставщика каждой книги.
@@ -1485,7 +1561,7 @@ Author.includes(:books).where("books.out_of_print = true").references(:books)
 
 NOTE: Если связь нетерпеливо загружена как часть join, любые поля из произвольного выражения select не будут присутствовать в загруженных моделях. Это так, потому что это избыточность, которая должна появиться или в родительской модели, или в дочерней.
 
-### (preload) Предварительная загрузка
+### `preload`
 
 С помощью `preload` Active Record загружает каждую указанную связь с помощью одного запроса на каждую связь.
 
@@ -1509,7 +1585,7 @@ SELECT authors.* FROM authors
 
 NOTE: Метод `preload` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для предварительной загрузки связей.
 
-### eager_load
+### `eager_load`
 
 С помощью `eager_load` Active Record загружает все указанные связи с помощью `LEFT OUTER JOIN`.
 
@@ -1533,6 +1609,19 @@ SELECT books.id AS t0_r0, books.last_name AS t0_r1, ...
 ```
 
 NOTE: Метод `eager_load` использует массив, хэш, или вложенный хэш массивов/хэшей тем же самым образом, как метод `includes`, чтобы загрузить любое количество связей, с помощь единого вызова `Model.find`. Однако, в отличие от метода `includes`, невозможно указать условия для нетерпеливой загрузки связей.
+
+### `strict_loading`
+
+Нетерпеливая загрузка может предотвратить N + 1 запрос, но вы все еще можете лениво загружать некоторые связи. Чтобы убедиться, что нет лениво загружаемых связей, можно включить [`strict_loading`][].
+
+Включив режим строгой загрузки на relation, будет вызвана `ActiveRecord::StrictLoadingViolationError`, если запись пытается лениво загрузить связь:
+
+```ruby
+user = User.strict_loading.first
+user.comments.to_a # вызовет ActiveRecord::StrictLoadingViolationError
+```
+
+[`strict_loading`]: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-strict_loading
 
 (scopes) Скоупы
 ---------------
@@ -1611,7 +1700,7 @@ irb> author.books.costs_more_than(100.10)
 
 ```ruby
 class Order < ApplicationRecord
-  scope :created_before, ->(time) { where("created_at < ?", time) if time.present? }
+  scope :created_before, ->(time) { where(created_at: ...time) if time.present? }
 end
 ```
 
@@ -1620,7 +1709,7 @@ end
 ```ruby
 class Order < ApplicationRecord
   def self.created_before(time)
-    where("created_at < ?", time) if time.present?
+    where(created_at: ...time) if time.present?
   end
 end
 ```
@@ -1692,8 +1781,8 @@ class Book < ApplicationRecord
   scope :in_print, -> { where(out_of_print: false) }
   scope :out_of_print, -> { where(out_of_print: true) }
 
-  scope :recent, -> { where('year_published >= ?', Date.current.year - 50 )}
-  scope :old, -> { where('year_published < ?', Date.current.year - 50 )}
+  scope :recent, -> { where(year_published: 50.years.ago.year..) }
+  scope :old, -> { where(year_published: ...50.years.ago.year) }
 end
 ```
 
@@ -1705,7 +1794,7 @@ SELECT books.* FROM books WHERE books.out_of_print = 'true' AND books.year_publi
 Можно комбинировать условия `scope` и `where`, и результирующий SQL будет содержать все условия, соединенные с помощью `AND`.
 
 ```irb
-irb> Book.in_print.where('price < 100')
+irb> Book.in_print.where(price: ...100)
 SELECT books.* FROM books WHERE books.out_of_print = 'false' AND books.price < 100
 ```
 
@@ -1720,7 +1809,7 @@ SELECT books.* FROM books WHERE books.out_of_print = true
 
 ```ruby
 class Book < ApplicationRecord
-  default_scope { where('year_published >= ?', Date.current.year - 50 )}
+  default_scope { where(year_published: 50.years.ago.year..) }
 
   scope :in_print, -> { where(out_of_print: false) }
   scope :out_of_print, -> { where(out_of_print: true) }
@@ -1942,7 +2031,7 @@ validates :orders_count, presence: true
 
 ```irb
 irb> Customer.find_or_create_by!(first_name: 'Andy')
-ActiveRecord::RecordInvalid: Validation failed: Orders count can't be blank
+ActiveRecord::RecordInvalid: Validation failed: Orders count can’t be blank
 ```
 
 [`find_or_create_by!`]: https://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by-21
@@ -2004,7 +2093,7 @@ irb> Customer.connection.select_all("SELECT first_name, created_at FROM customer
 
 ### `pluck`
 
-[`pluck`][] может быть использован для запроса с одним или несколькими столбцами из таблицы, лежащей в основе модели. Он принимает список имен столбцов как аргумент и возвращает массив значений определенных столбцов соответствующего типа данных.
+[`pluck`][] может быть использован для подбора значения(-ий) из названного столбца(-ов) в текущем relation. Он принимает список имен столбцов как аргумент и возвращает массив значений определенных столбцов соответствующего типа данных.
 
 ```irb
 irb> Book.where(out_of_print: true).pluck(:id)
@@ -2088,6 +2177,24 @@ irb> assoc.unscope(:includes).pluck(:id)
 
 [`pluck`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-pluck
 
+### `pick`
+
+[`pick`][] может быть использован для подбора значения(-ий) из названного столбца(-ов) в текущем relation. Он принимает список имен столбцов как аргумент и возвращает первый ряд значений указанного столбца с соответствующим типом данных. `pick` это сокращение для `relation.limit(1).pluck(*column_names).first`, которой, в основном, полезно, когда у вас уже имеется relation, ограниченное одним рядом.
+
+`pick` позволяет заменить код, такой как:
+
+```ruby
+Customer.where(id: 1).pluck(:id).first
+```
+
+на:
+
+```ruby
+Customer.where(id: 1).pick(:id)
+```
+
+[`pick`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-pick
+
 ### `ids`
 
 [`ids`][] может быть использован для сбора всех ID для relation, используя первичный ключ таблицы.
@@ -2122,7 +2229,7 @@ Customer.exists?(1)
 Метод `exists?` также принимает несколько значений, при этом возвращает `true`, если хотя бы одна из этих записей существует.
 
 ```ruby
-Customer.exists?(id: [1,2,3])
+Customer.exists?(id: [1, 2, 3])
 # или
 Customer.exists?(first_name: ['Jane', 'Sergei'])
 ```
@@ -2146,15 +2253,15 @@ Customer.exists?
 ```ruby
 # на модели
 Order.any?
-# => SELECT 1 FROM orders LIMIT 1
+# SELECT 1 FROM orders LIMIT 1
 Order.many?
-# => SELECT COUNT(*) FROM (SELECT 1 FROM orders LIMIT 2)
+# SELECT COUNT(*) FROM (SELECT 1 FROM orders LIMIT 2)
 
 # на именованном скоупе
 Order.shipped.any?
-# => SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 1
+# SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 1
 Order.shipped.many?
-# => SELECT COUNT(*) FROM (SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 2)
+# SELECT COUNT(*) FROM (SELECT 1 FROM orders WHERE orders.status = 0 LIMIT 2)
 
 # на relation
 Book.where(out_of_print: true).any?
@@ -2202,13 +2309,13 @@ SELECT COUNT(DISTINCT customers.id) FROM customers
 
 при условии что в Order есть `enum status: [ :shipped, :being_packed, :cancelled ]`
 
-### Количество
+### `count`
 
 Если хотите увидеть, сколько записей есть в таблице модели, можете вызвать `Customer.count`, и он возвратит число. Если хотите быть более определенным и найти всех покупателей с присутствующим в базе данных титулом, используйте `Customer.count(:title)`.
 
 Про опции смотрите выше в разделе [Вычисления](#calculations).
 
-### Среднее
+### `average`
 
 Если хотите увидеть среднее значение определенного показателя в одной из ваших таблиц, можно вызвать метод [`average`][] для класса, относящегося к таблице. Вызов этого метода выглядит так:
 
@@ -2222,7 +2329,7 @@ Order.average("subtotal")
 
 [`average`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-average
 
-### Минимум
+### `minimum`
 
 Если хотите найти минимальное значение поля в таблице, можете вызвать метод [`minimum`][] для класса, относящегося к таблице. Вызов этого метода выглядит так:
 
@@ -2234,7 +2341,7 @@ Order.minimum("subtotal")
 
 [`minimum`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-minimum
 
-### Максимум
+### `maximum`
 
 Если хотите найти максимальное значение поля в таблице, можете вызвать метод [`maximum`][] для класса, относящегося к таблице. Вызов этого метода выглядит так:
 
@@ -2246,7 +2353,7 @@ Order.maximum("subtotal")
 
 [`maximum`]: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-maximum
 
-### Сумма
+### `sum`
 
 Если хотите найти сумму полей для всех записей в таблице, можете вызвать метод [`sum`][] для класса, относящегося к таблице. Вызов этого метода выглядит так:
 
@@ -2272,7 +2379,7 @@ Customer.where(id: 1).joins(:orders).explain
 может выдать
 
 ```sql
-EXPLAIN for: SELECT `customers`.* FROM `customers` INNER JOIN `orders` ON `orders`.`customer_id` = `customers`.`id` WHERE `customers`.`id` = 1
+EXPLAIN SELECT `customers`.* FROM `customers` INNER JOIN `orders` ON `orders`.`customer_id` = `customers`.`id` WHERE `customers`.`id` = 1
 +----+-------------+------------+-------+---------------+
 | id | select_type | table      | type  | possible_keys |
 +----+-------------+------------+-------+---------------+
@@ -2294,7 +2401,7 @@ EXPLAIN for: SELECT `customers`.* FROM `customers` INNER JOIN `orders` ON `order
 Active Record применяет красивое форматирование, эмулирующее работу соответствующей оболочки базы данных. Таким образом, запуск того же запроса с адаптером PostgreSQL выдаст вместо этого
 
 ```
-EXPLAIN for: SELECT "customers".* FROM "customers" INNER JOIN "orders" ON "orders"."customer_id" = "customers"."id" WHERE "customers"."id" = $1 [["id", 1]]
+EXPLAIN SELECT "customers".* FROM "customers" INNER JOIN "orders" ON "orders"."customer_id" = "customers"."id" WHERE "customers"."id" = $1 [["id", 1]]
                                   QUERY PLAN
 ------------------------------------------------------------------------------
  Nested Loop  (cost=4.33..20.85 rows=4 width=164)
@@ -2316,7 +2423,7 @@ Customer.where(id: 1).includes(:orders).explain
 может выдать это для MySQL и MariaDB:
 
 ```
-EXPLAIN for: SELECT `customers`.* FROM `customers`  WHERE `customers`.`id` = 1
+EXPLAIN SELECT `customers`.* FROM `customers`  WHERE `customers`.`id` = 1
 +----+-------------+-----------+-------+---------------+
 | id | select_type | table     | type  | possible_keys |
 +----+-------------+-----------+-------+---------------+
@@ -2330,7 +2437,7 @@ EXPLAIN for: SELECT `customers`.* FROM `customers`  WHERE `customers`.`id` = 1
 
 1 row in set (0.00 sec)
 
-EXPLAIN for: SELECT `orders`.* FROM `orders`  WHERE `orders`.`customer_id` IN (1)
+EXPLAIN SELECT `orders`.* FROM `orders`  WHERE `orders`.`customer_id` IN (1)
 +----+-------------+--------+------+---------------+
 | id | select_type | table  | type | possible_keys |
 +----+-------------+--------+------+---------------+
@@ -2351,7 +2458,7 @@ EXPLAIN for: SELECT `orders`.* FROM `orders`  WHERE `orders`.`customer_id` IN (1
 ```
   Customer Load (0.3ms)  SELECT "customers".* FROM "customers" WHERE "customers"."id" = $1  [["id", 1]]
   Order Load (0.3ms)  SELECT "orders".* FROM "orders" WHERE "orders"."customer_id" = $1  [["customer_id", 1]]
-=> EXPLAIN for: SELECT "customers".* FROM "customers" WHERE "customers"."id" = $1 [["id", 1]]
+=> EXPLAIN SELECT "customers".* FROM "customers" WHERE "customers"."id" = $1 [["id", 1]]
                                     QUERY PLAN
 ----------------------------------------------------------------------------------
  Index Scan using customers_pkey on customers  (cost=0.15..8.17 rows=1 width=164)
@@ -2360,6 +2467,61 @@ EXPLAIN for: SELECT `orders`.* FROM `orders`  WHERE `orders`.`customer_id` IN (1
 ```
 
 [`explain`]: https://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-explain
+
+### Опции Explain
+
+Для баз данных и адаптеров, поддерживающих их (в настоящее время PostgreSQL и MySQL), можно передать опции, чтобы предоставить углубленный анализ.
+
+Для PostgreSQL, следующее:
+
+```ruby
+Customer.where(id: 1).joins(:orders).explain(:analyze, :verbose)
+```
+
+выдаст:
+
+```sql
+EXPLAIN (ANALYZE, VERBOSE) SELECT "shop_accounts".* FROM "shop_accounts" INNER JOIN "customers" ON "customers"."id" = "shop_accounts"."customer_id" WHERE "shop_accounts"."id" = $1 [["id", 1]]
+                                                                   QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.30..16.37 rows=1 width=24) (actual time=0.003..0.004 rows=0 loops=1)
+   Output: shop_accounts.id, shop_accounts.customer_id, shop_accounts.customer_carrier_id
+   Inner Unique: true
+   ->  Index Scan using shop_accounts_pkey on public.shop_accounts  (cost=0.15..8.17 rows=1 width=24) (actual time=0.003..0.003 rows=0 loops=1)
+         Output: shop_accounts.id, shop_accounts.customer_id, shop_accounts.customer_carrier_id
+         Index Cond: (shop_accounts.id = '1'::bigint)
+   ->  Index Only Scan using customers_pkey on public.customers  (cost=0.15..8.17 rows=1 width=8) (never executed)
+         Output: customers.id
+         Index Cond: (customers.id = shop_accounts.customer_id)
+         Heap Fetches: 0
+ Planning Time: 0.063 ms
+ Execution Time: 0.011 ms
+(12 rows)
+```
+
+Для MySQL или MariaDB, следующее:
+
+```ruby
+Customer.where(id: 1).joins(:orders).explain(:analyze)
+```
+
+выдаст:
+
+```sql
+ANALYZE SELECT `shop_accounts`.* FROM `shop_accounts` INNER JOIN `customers` ON `customers`.`id` = `shop_accounts`.`customer_id` WHERE `shop_accounts`.id` = 1
++----+-------------+-------+------+---------------+------+---------+------+------+--------+----------+------------+--------------------------------+
+| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | r_rows | filtered | r_filtered | Extra                          |
++----+-------------+-------+------+---------------+------+---------+------+------+--------+----------+------------+--------------------------------+
+|  1 | SIMPLE      | NULL  | NULL | NULL          | NULL | NULL    | NULL | NULL | NULL   | NULL     | NULL       | no matching row in const table |
++----+-------------+-------+------+---------------+------+---------+------+------+--------+----------+------------+--------------------------------+
+1 row in set (0.00 sec)
+```
+
+NOTE: Опции EXPLAIN и ANALYZE варьируются для разных версий MySQL и MariaDB. ([MySQL 5.7][MySQL5.7-explain], [MySQL 8.0][MySQL8-explain], [MariaDB][MariaDB-explain])
+
+[MySQL5.7-explain]: https://dev.mysql.com/doc/refman/5.7/en/explain.html
+[MySQL8-explain]: https://dev.mysql.com/doc/refman/8.0/en/explain.html
+[MariaDB-explain]: https://mariadb.com/kb/en/analyze-and-explain-statements/
 
 ### Интерпретация EXPLAIN
 
