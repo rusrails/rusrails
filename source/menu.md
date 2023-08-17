@@ -33,7 +33,6 @@
     * [Основы Active Job](/active_job_basics)
     * [Обзор Active Storage](/active_storage_overview)
     * [Обзор Action Cable](/action-cable-overview)
-    * [Webpacker](/webpacker)
 
 * **Копаем глубже**
 

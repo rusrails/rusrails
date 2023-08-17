@@ -824,7 +824,7 @@ Sprockets.register_preprocessor 'text/css', AddComment
 
 [`Webpacker`](webpacker.html) был препроцессором JavaScript по умолчанию и сборщиком для Rails 5 и 6. Теперь он не разрабатывается. Существует преемник, называющийся [`shakapacker`](https://github.com/shakacode/shakapacker), но он не поддерживается командой или проектом Rails.
 
-В отличие от других библиотек в этом списке, `webpacker`/`shakapacker` полностью не зависят от Sprockets и могут обрабатывать файлы как JavaScript, так и CSS. Подробности читайте в [руководстве по Webpacker](/webpacker).
+В отличие от других библиотек в этом списке, `webpacker`/`shakapacker` полностью не зависят от Sprockets и могут обрабатывать файлы как JavaScript, так и CSS.
 
 NOTE: Прочитайте документ по [сравнению с Webpacker](https://github.com/rails/jsbundling-rails/blob/main/docs/comparison_with_webpacker.md), чтобы понять разницу между `jsbundling-rails` и `webpacker`/`shakapacker`.
 
