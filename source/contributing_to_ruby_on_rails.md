@@ -156,7 +156,7 @@ NOTE: Гем Redcarpet не работает с JRuby.
 * **Корейский** : [https://github.com/rorlakr/rails-guides](https://github.com/rorlakr/rails-guides)
 * **Упрощенный китайский** : [https://github.com/ruby-china/guides](https://github.com/ruby-china/guides)
 * **Традиционный китайский** : [https://github.com/docrails-tw/guides](https://github.com/docrails-tw/guides)
-* **Русский** : [https://github.com/morsbox/rusrails](https://github.com/morsbox/rusrails)
+* **Русский** : [https://github.com/rusrails/rusrails](https://github.com/rusrails/rusrails)
 * **Японский** : [https://github.com/yasslab/railsguides.jp](https://github.com/yasslab/railsguides.jp)
 * **Бразильский португальский** : [https://github.com/campuscode/rails-guides-pt-BR](https://github.com/campuscode/rails-guides-pt-BR)
 

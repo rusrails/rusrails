@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/morsbox/rusrails.git"
+    "url": "git+https://github.com/rusrails/rusrails.git"
   },
   "author": "Mikhail Dieterle",
   "license": "CC BY-SA 4.0",
   "bugs": {
-    "url": "https://github.com/morsbox/rusrails/issues"
+    "url": "https://github.com/rusrails/rusrails/issues"
   },
-  "homepage": "https://github.com/morsbox/rusrails#readme"
+  "homepage": "https://github.com/rusrails/rusrails#readme"
 }

@@ -26,7 +26,7 @@
 Зачем переключаться из `classic` в `zeitwerk`?
 ----------------------------------------------
 
-Автозагрузчик `classic` был чрезвычайно полезным, но имел ряд [проблем](https://github.com/morsbox/rusrails/blob/6.1/source/autoloading_and_reloading_constants_classic_mode.md#common-gotchas-распространенные-случаи), которые иногда делали автоматическую загрузку немного запутанной и непонятной. Zeitwerk был разработан, чтобы их решить, среди прочих [мотивов](https://github.com/fxn/zeitwerk#motivation).
+Автозагрузчик `classic` был чрезвычайно полезным, но имел ряд [проблем](https://github.com/rusrails/rusrails/blob/6.1/source/autoloading_and_reloading_constants_classic_mode.md#common-gotchas-распространенные-случаи), которые иногда делали автоматическую загрузку немного запутанной и непонятной. Zeitwerk был разработан, чтобы их решить, среди прочих [мотивов](https://github.com/fxn/zeitwerk#motivation).
 
 При обновлении на Rails 6.x крайне рекомендуется переключиться на режим `zeitwerk`, так как этот автозагрузчик лучше, а режим `classic` устарел.
 
@@ -449,7 +449,7 @@ end
 
 Проекты обычно так не делают. Но иногда так бывает.
 
-В приложениях Rails `require` используется эксклюзивно для загрузки кода из `lib` или кода третьих сторон, например гемов или стандартной библиотеки. **Никогда не загружайте автоматически загружаемый код приложения с помощью `require`**. Посмотрите, почему это уже было плохой идеей в `classic`, [тут](https://github.com/morsbox/rusrails/blob/6.1/source/autoloading_and_reloading_constants_classic_mode.md#автозагрузка-и-require).
+В приложениях Rails `require` используется эксклюзивно для загрузки кода из `lib` или кода третьих сторон, например гемов или стандартной библиотеки. **Никогда не загружайте автоматически загружаемый код приложения с помощью `require`**. Посмотрите, почему это уже было плохой идеей в `classic`, [тут](https://github.com/rusrails/rusrails/blob/6.1/source/autoloading_and_reloading_constants_classic_mode.md#автозагрузка-и-require).
 
 ```ruby
 require "nokogiri" # ХОРОШО

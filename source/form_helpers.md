@@ -1066,4 +1066,4 @@ end
 Использование `form_tag` и `form_for`
 -------------------------------------
 
-До того, как `form_with` был представлен в Rails 5.1, его функционал был разделен между [`form_tag`](https://api.rubyonrails.org/v5.2/classes/ActionView/Helpers/FormTagHelper.html#method-i-form_tag) и [`form_for`](https://api.rubyonrails.org/v5.2/classes/ActionView/Helpers/FormHelper.html#method-i-form_for). Последние сейчас мягко устаревшие. Документация по их использованию находится в [старых версиях этого руководства](https://github.com/morsbox/rusrails/blob/5.1/source/form_helpers.md).
+До того, как `form_with` был представлен в Rails 5.1, его функционал был разделен между [`form_tag`](https://api.rubyonrails.org/v5.2/classes/ActionView/Helpers/FormTagHelper.html#method-i-form_tag) и [`form_for`](https://api.rubyonrails.org/v5.2/classes/ActionView/Helpers/FormHelper.html#method-i-form_for). Последние сейчас мягко устаревшие. Документация по их использованию находится в [старых версиях этого руководства](https://github.com/rusrails/rusrails/blob/5.1/source/form_helpers.md).

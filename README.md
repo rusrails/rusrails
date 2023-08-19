@@ -1,4 +1,4 @@
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/morsbox/rusrails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rusrails/rusrails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 Официальный репозиторий проекта [RusRails.ru](http://rusrails.ru)
 =================================================================
 
@@ -10,13 +10,13 @@
 * Скопировать и установить
 
     ```
-    $ git clone git://github.com/morsbox/rusrails.git
+    $ git clone git://github.com/rusrails/rusrails.git
     $ cd rusrails
     $ bundle install
     ```
 
 * Создать конфиг для своих настроек бд (`config/database.yml`)
-		
+
 * Создать базу данных и загрузить схему базы данных
 
 	```
@@ -54,14 +54,14 @@
 ---------------------------
 
 Для удобного перевода, каждое руководство привязано к определенной ревизии [rails/rails](https://github.com/rails/rails/tree/master/guides/source),
-в файле [source/index.yml](https://github.com/morsbox/rusrails/blob/master/source/index.yml).
+в файле [source/index.yml](https://github.com/rusrails/rusrails/blob/master/source/index.yml).
 Таким образом, указывается заголовок на русском, url, имя файла, ревизия и дата коммита.
 
 Алгоритм работы:
 
 * Делаете форк. [Инструкция по форкам](http://help.github.com/fork-a-repo/)
 * Выбираете руководство (степень актуальности всех руководств можно оценить с помощью `rails docrails:status`)
-* Открываете [issue в rusrails](https://github.com/morsbox/rusrails/issues), с пометкой о руководстве которое хотите обновить/перевести (чтобы этим руководством никто параллельно не занимался)
+* Открываете [issue в rusrails](https://github.com/rusrails/rusrails/issues), с пометкой о руководстве которое хотите обновить/перевести (чтобы этим руководством никто параллельно не занимался)
 * Смотрите, что изменилось - `rails 'docrails:diff[file_name]' > diff.diff` - в файле `diff.diff`
 * В том же файле смотрите информацию по последней ревизии и ее дате, изменяете эти данные в `source/index.yml`
 * Вносите в нужных местах исправления по диффу
