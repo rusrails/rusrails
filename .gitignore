@@ -1,6 +1,5 @@
 *~
 config/database.yml
-config/*.sphinx.conf
 db/*.sqlite3
 db/sphinx
 log/*.log
@@ -8,6 +7,7 @@ log/*.pid
 public/system
 public/system/*
 public/assets
+deploy/**/*
 tmp/**/*
 tmp
 .bundle
