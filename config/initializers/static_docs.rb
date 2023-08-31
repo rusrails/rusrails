@@ -1,4 +1,6 @@
-Page = StaticDocs::Page
+Rails.application.reloader.to_prepare do
+  Page = StaticDocs::Page
+end
 
 StaticDocs.setup do
   source 'source'
