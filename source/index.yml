@@ -369,8 +369,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 4.1
     path:     4_1_release_notes
     file:     4_1_release_notes.md
-    revision: 3a32915bbcfea4e0d8acde257ab9254ff2392de6
-    date:     16/09/2022
+    revision: f171101f172d99f0e3b250e065e0bdd8f7242cb7
+    date:     31/07/2023
 
   - title:    Заметки о релизе Ruby on Rails 4.0
     path:     4_0_release_notes
@@ -381,8 +381,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 3.2
     path:     3_2_release_notes
     file:     3_2_release_notes.md
-    revision: e469025ef5f6879fd7ec2f8733140789d872abd2
-    date:     16/07/2021
+    revision: d1040050532285a7d173b2c980527d900eb48805
+    date:     23/08/2023
 
   - title:    Заметки о релизе Ruby on Rails 3.1
     path:     3_1_release_notes

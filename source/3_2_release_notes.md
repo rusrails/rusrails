@@ -146,7 +146,7 @@ Railties
 * Позволяет генераторам скаффолда/модели/миграции принимать модификаторы "index" и "uniq". Например,
 
     ```bash
-    bin/rails g scaffold Post title:string:index author:uniq price:decimal{7,2}
+    $ bin/rails g scaffold Post title:string:index author:uniq price:decimal{7,2}
     ```
 
     создаст индексы для `title` и `author`, причем последний будет уникальным индексом. Некоторые типы, такие как decimal, принимают произвольные опции. В примере `price` будет столбцом decimal с установленными точностью и масштабом 7 и 2 соответственно.
