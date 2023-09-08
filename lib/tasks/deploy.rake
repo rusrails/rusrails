@@ -2,6 +2,7 @@ require 'git'
 
 namespace :deploy do
   task start: %i[
+    production
     clean_deploy_folder
     assets:clobber
     assets:precompile
@@ -15,6 +16,10 @@ namespace :deploy do
     done
   ]
 
+  task :production do
+    ENV['RAILS_ENV'] = 'production'
+  end
+
   task :clean_deploy_folder do
     FileUtils.rm_rf 'deploy' if File.exist? 'deploy'
   end
@@ -25,7 +30,7 @@ namespace :deploy do
 
   task :start_rails_server do
     # `rails s -d` # TODO: doesn't work, probably some legacy setup, need to compare with new Rails app setup.
-    `RAILS_ENV=production rails s > /dev/null &`
+    `rails s > /dev/null &`
     sleep 3
   end
 
