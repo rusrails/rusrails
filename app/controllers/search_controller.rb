@@ -1,6 +1,5 @@
 class SearchController < ApplicationController
   def show
-    @search = params[:search]
-    @result = Page.basic_search body: @search
+    # https://programmablesearchengine.google.com/controlpanel/all
   end
 end
