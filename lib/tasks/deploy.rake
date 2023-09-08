@@ -36,6 +36,9 @@ namespace :deploy do
           file << URI.open("http://localhost:3000/#{page.path}").read
         end
       end
+      File.open("search.html", 'wb:UTF-8') do |file|
+        file << URI.open("http://localhost:3000/search").read
+      end
     end
   end
 
