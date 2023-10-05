@@ -174,7 +174,7 @@ pages:
     revision: 1a9b887c0c37321bdac76a036c2eec9da49edb5f
     date:     21/10/2022
 
-  - title:    Отладка приловжений на Rails
+  - title:    Отладка приложений на Rails
     path:     debugging-rails-applications
     file:     debugging_rails_applications.md
     revision: 7a56b7602c3d3575ea2c901d4ac2b043dce80fac
