@@ -21,9 +21,6 @@ gem 'bootstrap-sass', '~> 2.3.2.2'
 gem 'jquery-rails'
 gem 'rouge'
 
-gem 'capistrano', '~> 2.15'
-gem 'unicorn'
-
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 

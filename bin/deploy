@@ -1,4 +1,0 @@
-#!/bin/bash
-
-ssh-add
-bundle exec cap deploy static_docs:import
