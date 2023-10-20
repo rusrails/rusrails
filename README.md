@@ -77,12 +77,8 @@
 Развертывание
 -------------
 
-```
-# first, create admin user (follow deploy.rb instructions)
-ssh-add
-bundle exec cap deploy:install
-bundle exec cap deploy:setup
-bundle exec cap deploy:cold static_docs:import
-```
+[HTML версия](https://github.com/rusrails/rusrails.github.io) развертывается на Github Pages.
 
-After that, to release `bundle exec cap deploy static_docs:import`
+Предполагается, что клон репозитория `rusrails/rusrails.github.io` находится в той же директории, что и клон `rusrails/rusrails`.
+
+Тогда `rails deploy:start` сгенерирует свежую версию и отправит на Гитхаб.

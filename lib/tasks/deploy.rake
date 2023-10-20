@@ -12,6 +12,7 @@ namespace :deploy do
     start_rails_server
     generate_pages
     stop_rails_server
+    cname
     commit_and_push
     done
   ]
@@ -49,6 +50,10 @@ namespace :deploy do
 
   task :stop_rails_server do
     `cat tmp/pids/server.pid | xargs -I {} kill {}`
+  end
+
+  task :cname do
+    `echo 'rusrails.ru' >> ../rusrails.github.io/CNAME`
   end
 
   task :commit_and_push do
