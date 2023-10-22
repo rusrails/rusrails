@@ -781,7 +781,7 @@ NOTE: Имеется исключения для ограничения `format`
 Если имеется более продвинутое ограничение, можете предоставить объект, отвечающий на `matches?`, который будет использовать Rails. Скажем, вы хотите направить всех пользователей через список ограничений в `RestrictedListController`. Можно сделать так:
 
 ```ruby
-class RestrictedListController
+class RestrictedListConstraint
   def initialize
     @ips = RestrictedList.retrieve_ips
   end
