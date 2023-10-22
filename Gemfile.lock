@@ -62,8 +62,8 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
-    bootsnap (1.4.6)
-      msgpack (~> 1.0)
+    bootsnap (1.16.0)
+      msgpack (~> 1.2)
     bootstrap-sass (2.3.2.2)
       sass (~> 3.2)
     builder (3.2.4)
@@ -157,7 +157,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.8.2)
     minitest (5.18.1)
-    msgpack (1.3.3)
+    msgpack (1.7.2)
     net-http (0.3.2)
       uri
     net-imap (0.3.6)
@@ -173,13 +173,15 @@ GEM
     nokogiri (1.15.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    pg (1.2.3)
+    pg (1.5.4)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (5.0.1)
+    puma (6.4.0)
+      nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.7)
     rack-test (2.1.0)
@@ -300,6 +302,7 @@ DEPENDENCIES
   nokogiri
   pg
   pry-rails
+  puma
   rails (~> 6.1.7)
   redcarpet
   rouge
@@ -312,7 +315,7 @@ DEPENDENCIES
   webrat
 
 RUBY VERSION
-   ruby 2.7.8p225
+   ruby 3.2.2p53
 
 BUNDLED WITH
    2.4.12
