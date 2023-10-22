@@ -6,6 +6,7 @@ gem "net-smtp"
 gem "net-imap"
 
 gem 'rails', " ~> 6.1.7"
+gem 'russian'
 gem 'static_docs' #, path: "/Users/mikdiet/projects/opensource/static_docs"
 gem "bootsnap", ">= 1.1.0", require: false
 gem 'puma'
