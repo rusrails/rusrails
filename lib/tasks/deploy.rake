@@ -12,7 +12,6 @@ namespace :deploy do
     start_rails_server
     generate_pages
     stop_rails_server
-    cname
     commit_and_push
     done
   ]
@@ -52,16 +51,13 @@ namespace :deploy do
     `cat tmp/pids/server.pid | xargs -I {} kill {}`
   end
 
-  task :cname do
-    `echo 'rusrails.ru' >> ../rusrails.github.io/CNAME`
-  end
-
   task :commit_and_push do
     pages = '../rusrails.github.io'
     git = Git.open(pages)
     git.pull
     git.remove('*', recursive: true)
     FileUtils.cp_r 'deploy/.', pages
+    `echo 'rusrails.ru' >> ../rusrails.github.io/CNAME`
     git.add(all: true)
     git.commit("Generated version #{Time.now}")
     git.push
