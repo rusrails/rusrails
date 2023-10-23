@@ -10,6 +10,8 @@ jobs:
   rspec:
     docker:
       - image: cimg/ruby:3.2.2-node
+        environment:
+          RAILS_ENV: test
       - image: cimg/postgres:13.12
 
     working_directory: ~/repo
