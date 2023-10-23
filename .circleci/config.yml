@@ -9,17 +9,8 @@ version: 2
 jobs:
   rspec:
     docker:
-      - image: cimg/ruby:2.7.8-node
-        environment:
-          PGHOST: 127.0.0.1
-          PGUSER: ubuntu
-          RAILS_ENV: test
-      - image: camptocamp/postgres:9.6
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: circle_ruby_test
-          POSTGRES_PASSWORD: ""
-          POSTGRES_HOST_AUTH_METHOD: trust
+      - image: cimg/ruby:3.2.2-node
+      - image: cimg/postgres:13.12
 
     working_directory: ~/repo
 
