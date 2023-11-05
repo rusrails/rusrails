@@ -10,16 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_11_215741) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_11_05_110018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "redirects", force: :cascade do |t|
     t.string "from"
     t.string "to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "static_docs_pages", force: :cascade do |t|
@@ -28,8 +27,8 @@ ActiveRecord::Schema.define(version: 2023_07_11_215741) do
     t.string "namespace"
     t.text "body"
     t.string "extension"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["namespace"], name: "index_static_docs_pages_on_namespace"
     t.index ["path"], name: "index_static_docs_pages_on_path"
   end
