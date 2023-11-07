@@ -11,8 +11,8 @@ namespace :docrails do
     new_guides = all_guides - known_guides
     removed_guides = known_guides - all_guides
 
-    puts 'New guides: ', new_guides.join(', ') if new_guides.present?
-    puts 'Removed guides: ', removed_guides.join(', ') if removed_guides.present?
+    puts "New guides: #{new_guides.join(', ')}" if new_guides.present?
+    puts "Removed guides: #{removed_guides.join(', ')}" if removed_guides.present?
 
     images_stat = docrails.diff(config['images']['revision']).path('guides/assets/images').stats
     images_stat[:files].reject! { |file, _| file == 'guides/assets/images/favicon.ico' }
@@ -82,7 +82,7 @@ namespace :docrails do
   end
 
   def docrails
-    @docrails ||= if Dir.exists?(docrails_path)
+    @docrails ||= if Dir.exist?(docrails_path)
       Git.open(docrails_path).tap do |git|
         git.pull('origin', 'main')
       rescue
@@ -101,6 +101,4 @@ namespace :docrails do
   def config
     @config ||= YAML.load IO.read Rails.root.join 'source', 'index.yml'
   end
-
-
 end
