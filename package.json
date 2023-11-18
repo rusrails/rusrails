@@ -7,10 +7,6 @@
     "doc": "doc",
     "lib": "lib"
   },
-  "dependencies": {
-    "yaspeller": "^8.0.0"
-  },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "yaspeller": "yaspeller ."
@@ -24,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/rusrails/rusrails/issues"
   },
-  "homepage": "https://github.com/rusrails/rusrails#readme"
+  "homepage": "https://github.com/rusrails/rusrails#readme",
+  "devDependencies": {
+    "yaspeller": "^10.0.1"
+  }
 }
