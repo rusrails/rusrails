@@ -67,7 +67,7 @@ jobs:
 
   spellcheck:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:20
 
     working_directory: ~/repo
 
