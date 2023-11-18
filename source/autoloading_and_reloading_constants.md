@@ -98,6 +98,9 @@ WARNING: Вы не можете автоматически загружать к
 
 Пути автозагрузки управляются автозагрузчиком `Rails.autoloaders.main`.
 
+config.autoload_lib(ignore:)
+----------------------------
+
 config.autoload_once_paths
 --------------------------
 
