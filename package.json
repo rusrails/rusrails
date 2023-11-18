@@ -21,7 +21,7 @@
     "url": "https://github.com/rusrails/rusrails/issues"
   },
   "homepage": "https://github.com/rusrails/rusrails#readme",
-  "devDependencies": {
+  "dependencies": {
     "yaspeller": "^10.0.1"
   }
 }
