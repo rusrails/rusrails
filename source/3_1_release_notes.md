@@ -32,18 +32,18 @@ TIP: Отметьте, что в Ruby 1.8.7 p248 и p249 имеются прог
 Сделайте изменения в вашем `Gemfile`.
 
 ```ruby
-gem 'rails', '= 3.1.3'
-gem 'mysql2'
+gem "rails", "= 3.1.3"
+gem "mysql2"
 
-# Needed for the new asset pipeline
+# Необходимо для нового asset pipeline
 group :assets do
-  gem 'sass-rails',   "~> 3.1.5"
-  gem 'coffee-rails', "~> 3.1.1"
-  gem 'uglifier',     ">= 1.0.3"
+  gem "sass-rails",   "~> 3.1.5"
+  gem "coffee-rails", "~> 3.1.1"
+  gem "uglifier",     ">= 1.0.3"
 end
 
-# jQuery is the default JavaScript library in Rails 3.1
-gem 'jquery-rails'
+# jQuery это библиотека JavaScript по умолчанию в Rails 3.1
+gem "jquery-rails"
 ```
 
 #### config/application.rb
