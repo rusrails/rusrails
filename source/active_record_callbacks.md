@@ -372,6 +372,11 @@ Article destroyed
 => #<User id: 1>
 ```
 
+(association-callbacks) Колбэки связи
+---------------------
+
+TODO
+
 Условные колбэки
 ----------------
 
