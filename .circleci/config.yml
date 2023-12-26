@@ -74,7 +74,6 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: install dependencies
-          command: npm install yaspeller
-      - run: npm run yaspeller
+      - run: npm install cspell
+      - run: npm install @cspell/dict-ru_ru
+      - run: npx cspell --config cspell.config.mjs source/

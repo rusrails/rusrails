@@ -1,0 +1,7 @@
+{
+  "import": [
+    "@cspell/dict-ru_ru/cspell-ext.json"
+  ],
+  "version": "0.2",
+  "language": "ru,en"
+}
