@@ -3,5 +3,6 @@
     "@cspell/dict-ru_ru/cspell-ext.json"
   ],
   "version": "0.2",
-  "language": "ru,en"
+  "language": "ru",
+  "ignoreRegExpList": ["/[a-zA-Z]+/g"]
 }
