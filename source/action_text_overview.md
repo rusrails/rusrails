@@ -113,7 +113,7 @@ end
 
 В дополнение к вложениям, загруженным с помощью Active Storage, Action Text может встроить все, что может быть найдено по [Signed GlobalID](https://github.com/rails/globalid#signed-global-ids).
 
-Action Text отрисовывает вложенные элементы `<action-text-attachment>`, преобразуя их атрибут `sgid` в экземпляр. Будучи найденным, этот экземпляр передается в [`render`](https://api.rubyonrails.org/classes/ActionView/Helpers/RenderingHelper.html#method-i-render). Результирующий HTML вкладывается как потомок в элемент `<action-text-attachment>`.
+Action Text отрисовывает вложенные элементы `<action-text-attachment>`, преобразовывая их атрибут `sgid` в экземпляр. Будучи найденным, этот экземпляр передается в [`render`](https://api.rubyonrails.org/classes/ActionView/Helpers/RenderingHelper.html#method-i-render). Результирующий HTML вкладывается как потомок в элемент `<action-text-attachment>`.
 
 Например, рассмотрим модель `User`:
 

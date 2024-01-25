@@ -83,7 +83,7 @@ StoreListing.new.my_string # => "original default"
 
 class StoreListing < ActiveRecord::Base
   attribute :price_in_cents, :integer # настраиваемый тип
-  attribute :my_string, :string, default: "new default" # значение по умаолчанию
+  attribute :my_string, :string, default: "new default" # значение по умолчанию
   attribute :my_default_proc, :datetime, default: -> { Time.now } # значение по умолчанию
   attribute :field_without_db_column, :integer, array: true
 end

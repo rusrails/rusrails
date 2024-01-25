@@ -303,7 +303,7 @@ end
 
 NOTE: Значения enum нельзя удалять. Можно прочесть почему [здесь](http://www.postgresql.org/message-id/29F36C7C98AB09499B1A209D48EAA615B7653DBC8A@mail2a.alliedtesting.com).
 
-Hint: Чтобы показать все имеющиеся значения enum, можно выполнить этот запрос в консоле `bin/rails db` или `psql`:
+Hint: Чтобы показать все имеющиеся значения enum, можно выполнить этот запрос в консоли `bin/rails db` или `psql`:
 
 ```sql
 SELECT n.nspname AS enum_schema,
