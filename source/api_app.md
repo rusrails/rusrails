@@ -257,7 +257,7 @@ jQuery.ajax({
 # Это также сконфигурирует session_options для использования ниже
 config.session_store :cookie_store, key: '_interslice_session'
 
-# Требуется для всех управлений сеесиями (независимо от session_store)
+# Требуется для всех управлений сессиями (независимо от session_store)
 config.middleware.use ActionDispatch::Cookies
 
 config.middleware.use config.session_store, config.session_options

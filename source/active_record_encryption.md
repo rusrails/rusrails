@@ -404,7 +404,7 @@ config.active_record.encryption.store_key_references = true
 #### Шифрование и дешифрование
 
 ```ruby
-article.encrypt # шифрует или перешифрует все шифруемые атрибуты
+article.encrypt # шифрует или перешифровывает все шифруемые атрибуты
 article.decrypt # дешифрует все шифруемые атрибуты
 ```
 

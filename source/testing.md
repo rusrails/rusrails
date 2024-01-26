@@ -687,7 +687,7 @@ david.call(david.partner)
 Чтобы получить несколько фикстур за раз, вы можете передать список имен фикстур. Например:
 
 ```ruby
-# это возвратит массив, содержаший фикстуры david и steve
+# это возвратит массив, содержащий фикстуры david и steve
 users(:david, :steve)
 ```
 
@@ -1353,7 +1353,7 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show article" do
-    # переиспользуем переменную экземпляра @article из setup
+    # повторно используем переменную экземпляра @article из setup
     get article_url(@article)}
     assert_response :success
   end

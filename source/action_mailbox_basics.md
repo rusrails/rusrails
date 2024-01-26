@@ -250,7 +250,7 @@ class ForwardsMailbox < ApplicationMailbox
   private
     def require_projects
       if forwarder.projects.none?
-        # Мспользуйте Action Mailers для возврата входящих писем отправителю – это прервет обработку
+        # Используйте Action Mailers для возврата входящих писем отправителю – это прервет обработку
         bounce_with Forwards::BounceMailer.no_projects(inbound_email, forwarder: forwarder)
       end
     end

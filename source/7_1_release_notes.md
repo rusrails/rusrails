@@ -112,7 +112,7 @@ User.find_by_token_for(:password_reset, token) # => nil
 # Постановка в очередь отдельных заданий
 ActiveJob.perform_all_later(MyJob.new("hello", 42), MyJob.new("world", 0))
 
-# Постановка в очередь моссива заданий
+# Постановка в очередь массива заданий
 user_jobs = User.pluck(:id).map { |id| UserJob.new(user_id: id) }
 ActiveJob.perform_all_later(user_jobs)
 ```

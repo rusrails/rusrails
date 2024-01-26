@@ -8,8 +8,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "yaspeller": "yaspeller ."
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -21,7 +20,8 @@
     "url": "https://github.com/rusrails/rusrails/issues"
   },
   "homepage": "https://github.com/rusrails/rusrails#readme",
-  "dependencies": {
-    "yaspeller": "^10.0.1"
+  "devDependencies": {
+    "cspell": "latest",
+    "@cspell/dict-ru_ru": "latest"
   }
 }
