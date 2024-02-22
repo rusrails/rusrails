@@ -55,7 +55,8 @@ namespace :docrails do
       when 0 === score then 90
       when (1..200) === score then 32
       when (201..400) === score then 33
-      else 31
+      when (401..700) === score then 31
+      else 91
       end
 
       puts "\e[%sm%s %55.55s: +/- %4s/%4s, outdated %4s days (%s %s)\e[0m" %
