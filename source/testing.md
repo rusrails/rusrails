@@ -430,6 +430,10 @@ Known extensions: rails, pride
     -p, --pride                      Pride. Show your testing pride!
 ```
 
+### (running-tests-in-continuous-integration-ci) Running tests in Continuous Integration (CI)
+
+TODO
+
 (parallel-testing) Параллельное тестирование
 --------------------------------------------
 

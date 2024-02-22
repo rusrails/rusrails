@@ -315,8 +315,8 @@ pages:
   - title:    Апгрейд Ruby on Rails
     path:     upgrading-ruby-on-rails
     file:     upgrading_ruby_on_rails.md
-    revision: fa09e3c6787d8dd5f3eff30e07deb67b249af6b6
-    date:     28/11/2022
+    revision: 01502fe2395737d04f169245fdab9ccc415a5b77
+    date:     15/02/2024
 
   - title:    Заметки о релизе Ruby on Rails 7.1
     path:     7_1_release_notes
