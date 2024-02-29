@@ -129,8 +129,8 @@ pages:
   - title:    Основы Action Mailbox
     path:     action-mailbox-basics
     file:     action_mailbox_basics.md
-    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
-    date:     15/10/2022
+    revision: a8002e4604417369bc9d51f5350c6362b2f1cc41
+    date:     14/02/2024
 
   - title:    Обзор Action Text
     path:     action-text-overview

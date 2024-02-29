@@ -15,22 +15,41 @@
 Что такое Action Mailbox?
 -----------------------
 
-Action Mailbox маршрутизирует входящие письма в подобные контроллеру ящики для обработки в Rails. Он поставляется с ингрессом для Mailgun, Mandrill, Postmark и SendGrid. Также можно обрабатывать входящие письма напрямую, с помощью встроенных ингрессов Exim, Postfix и Qmail.
+Action Mailbox маршрутизирует входящие письма в подобные контроллеру ящики для обработки в приложении Rails. Action Mailbox предназначен для получения электронных писем, в то время как [Action Mailer](/action-mailer-basics) используется для их *отправки*.
 
-Входящие письма преобразуются в записи `InboundEmail` с помощью Active Record и отслеживания жизненного цикла, оригинальные письма хранятся в облачном хранилище с помощью Active Storage, и данные обрабатываются с последующим их уничтожением по умолчанию.
+Входящие электронные письма асинхронно направляются с помощью [Active Job](/active_job_basics) в один или несколько специализированных почтовых ящиков. Затем эти письма преобразуются в записи [`InboundEmail`](https://api.rubyonrails.org/classes/ActionMailbox/InboundEmail.html) с помощью [Active Record](/active-record-basics), которые могут взаимодействовать напрямую с остальными моделями вашей предметной области.
 
-Эти входящие письма асинхронно маршрутизируются с помощью Active Job на один или несколько выделенных ящиков, которые способны непосредственно взаимодействовать с остальной частью вашей доменной модели.
+Записи `InboundEmail` также обеспечивают отслеживание жизненного цикла, хранение исходного письма с помощью [Active Storage](/active_storage_overview) и ответственное управление данными с автоматическим [уничтожением](#incineration-of-inboundemails) по умолчанию.
+
+Action Mailbox поставляется с ингрессами, которые позволяют вашему приложению получать электронные письма от внешних почтовых провайдеров, таких как Mailgun, Mandrill, Postmark и SendGrid. Также можно обрабатывать входящие письма напрямую, с помощью встроенных ингрессов Exim, Postfix и Qmail.
 
 ## Настройка
 
-Установите миграции, необходимые для `InboundEmail`, и убедитесь, что Active Storage настроен:
+В Action Mailbox есть несколько ключевых этапов настройки. Сначала запускаете установщик. Затем выбираете и конфигурируете ингресс для обработки входящих писем. И затем вы уже можете добавлять маршрутизацию Action Mailbox, создание почтовых ящиков и начать обрабатывать входящие письма.
+
+Для начала давайте установим Action Mailbox:
 
 ```bash
 $ bin/rails action_mailbox:install
+```
+
+Это создаст файл `application_mailbox.rb` и скопирует миграции.
+
+```bash
 $ bin/rails db:migrate
 ```
 
-## Конфигурация
+Эта команда выполнит миграции для Action Mailbox и Active Storage.
+
+Таблица `action_mailbox_inbound_emails` в Action Mailbox хранит входящие сообщения и их статус обработки.
+
+Теперь вы можете запустить сервер Rails и перейти по ссылке `http://localhost:3000/rails/conductor/action_mailbox/inbound_emails`. Подробности смотрите в  [Локальная разработка и тестирование](#local-development-and-testing)
+
+Следующим шагом будет настройка ингресса в вашем приложении Rails для определения способа получения входящих электронных писем.
+
+## Настройка ингресса
+
+Настройка ингресса включает в себя определение учетных данных и информации о конечной точке для выбранной службы электронной почты. Вот инструкции для каждого из поддерживаемого ингресса.
 
 ### Exim
 
@@ -212,24 +231,83 @@ https://actionmailbox:PASSWORD@example.com/rails/action_mailbox/sendgrid/inbound
 
 NOTE: При настройке веб хука SendGrid Inbound Parse, убедитесь, что включили флажок с надписью **“Post the raw, full MIME message.”** Action Mailbox для работы требует исходное сообщение MIME.
 
-## Примеры
+## Обработка входящих электронных писем
 
-Настройте простой роутинг:
+Обработка входящих электронных писем в вашем Rails-приложении обычно включает в себя использование содержимого письма для создания моделей, обновления вью, постановки фоновых задач в очередь.
+
+Прежде чем приступить к обработке входящих писем, необходимо настроить маршрутизацию Action Mailbox и создать почтовые ящики.
+
+### Настройка маршрутизации
+
+После того, как входящее письмо получено через настроенный ингресс, оно должно быть направлено в почтовый ящик для дальнейшей обработки вашим приложением Подобно тому, как [маршрутизатор Rails](/routing) направляет URL-адреса к контроллерам, маршрутизация в Action Mailbox определяет, какие письма отправляются в какие почтовые ящики для обработки. Маршруты добавляются в файл `application_mailbox.rb` с использованием регулярных выражений:
 
 ```ruby
 # app/mailboxes/application_mailbox.rb
 class ApplicationMailbox < ActionMailbox::Base
-  routing /^save@/i     => :forwards
-  routing /@replies\./i => :replies
+  routing(/^save@/i     => :forwards)
+  routing(/@replies\./i => :replies)
 end
 ```
 
-Затем настройте почтовый ящик:
+Регулярное выражение совпадает с полями `to` (кому), `cc` (копия) или `bcc` (скрытая копия) входящего письма. Например, приведенный выше код будет направлять любое письмо, отправленное на адрес `save@`, в почтовый ящик "forwards". Существуют и другие способы маршрутизации писем, подробности смотрите в
+[`ActionMailbox::Base`](https://api.rubyonrails.org/classes/ActionMailbox/Base.html).
+
+Далее нам нужно создать этот почтовый ящик "forwards".
+
+### Создание почтового ящика
 
 ```bash
 # Создайте новый почтовый ящик
 $ bin/rails generate mailbox forwards
 ```
+
+Это создаст файл `app/mailboxes/forwards_mailbox.rb`, содержащий класс `ForwardsMailbox` и метод `process`.
+
+### Обработка Email
+
+При обработке `InboundEmail` вы можете получить структурированную версию письма в виде объекта [`Mail`](https://github.com/mikel/mail) с помощью метода `InboundEmail#mail`. Вы также можете получить исходный код письма напрямую с помощью метода `#source`. Объект `Mail` предоставляет доступ к различным полям письма, таким как `mail.to`, `mail.body.decoded` и т.д.
+
+```irb
+irb> mail
+=> #<Mail::Message:33780, Multipart: false, Headers: <Date: Wed, 31 Jan 2024 22:18:40 -0600>, <From: someone@hey.com>, <To: save@example.com>, <Message-ID: <65bb1ba066830_50303a70397e@Bhumis-MacBook-Pro.local.mail>>, <In-Reply-To: >, <Subject: Hello Action Mailbox>, <Mime-Version: 1.0>, <Content-Type: text/plain; charset=UTF-8>, <Content-Transfer-Encoding: 7bit>, <x-original-to: >>
+irb> mail.to
+=> ["save@example.com"]
+irb> mail.from
+=> ["someone@hey.com"]
+irb> mail.date
+=> Wed, 31 Jan 2024 22:18:40 -0600
+irb> mail.subject
+=> "Hello Action Mailbox"
+irb> mail.body.decoded
+=> "This is the body of the email message."
+# mail.decoded, a shorthand for mail.body.decoded, also works
+irb> mail.decoded
+=> "This is the body of the email message."
+irb> mail.body
+=> <Mail::Body:0x00007fc74cbf46c0 @boundary=nil, @preamble=nil, @epilogue=nil, @charset="US-ASCII", @part_sort_order=["text/plain", "text/enriched", "text/html", "multipart/alternative"], @parts=[], @raw_source="This is the body of the email message.", @ascii_only=true, @encoding="7bit">
+```
+
+### Статус входящего письма
+
+Во время маршрутизации к соответствующему почтовому ящику и обработки Action Mailbox обновляет статус письма, хранящийся в таблице `action_mailbox_inbound_emails`, одним из следующих значений:
+
+- `pending`: письмо получено одним из контроллеров ингресса и запланировано к маршрутизации.
+- `processing`: письмо активно обрабатывается определенным почтовым ящиком, выполняющим его метод `process`.
+- `delivered`: письмо успешно обработано конкретным почтовым ящиком.
+- `failed`: во время выполнения метода `process` конкретного почтового ящика возникла ошибка.
+- `bounced`: письмо отклонено конкретным почтовым ящиком и возвращено отправителю.
+
+Если письмо помечено как `delivered`, `failed` или `bounced`, оно считается "обработанным" и помечается на [уничтожение](#incineration-of-inboundemails).
+
+## Пример
+
+Ниже приведен пример Action Mailbox, который обрабатывает электронные письма для создания "переадресаций" для проектов пользователя.
+
+Колбэк `before_processing` используется для обеспечения выполнения определенных условий перед вызовом метода `process`. В данном случае `before_processing` проверяет наличие у пользователя хотя бы одного проекта. Другие поддерживаемые [колбэки Action Mailbox](https://api.rubyonrails.org/classes/ActionMailbox/Callbacks.html) - `after_processing` и `around_processing`.
+
+Письмо может быть возвращено отправителю с помощью `bounced_with`, если у "переадресанта" нет проектов. "Переадресант" - это `User` с тем же адресом электронной почты, что и `mail.from`.
+
+Если у "переадресанта" есть хотя бы один проект, метод `record_forward` создает модель Active Record в приложении, используя данные письма `mail.subject` и `mail.decoded`. В противном случае он отправляет электронное письмо с помощью Action Mailer, с просьбой к "переадресанту" выбрать проект.
 
 ```ruby
 # app/mailboxes/forwards_mailbox.rb
@@ -256,7 +334,7 @@ class ForwardsMailbox < ApplicationMailbox
     end
 
     def record_forward
-      forwarder.forwards.create subject: mail.subject, content: mail.content
+      forwarder.forwards.create subject: mail.subject, content: mail.decoded
     end
 
     def request_forwarding_project
@@ -269,21 +347,11 @@ class ForwardsMailbox < ApplicationMailbox
 end
 ```
 
-## Уничтожение InboundEmails
-
-По умолчанию InboundEmail, которое было успешно обработано, будет уничтожено через 30 дней. Это удостоверяет, что вы не храните данные людей вынужденно, после того, как они могли закрыть свой аккаунт или удалить свое содержимое. Цель в том, что после обработки письма, вы должны извлечь все нужные данные и преобразовать их в модели домена и содержимое на вашей стороне в приложении. InboundEmail просто остается в системе на некоторое время для предоставления возможности отладки и криминалистики.
-
-Фактическое уничтожение выполняется с помощью `IncinerationJob`, которая запланирована на запуск через [`config.action_mailbox.incinerate_after`][]. Это значение по умолчанию установлено `30.days`, но его можно изменить в настройках production.rb. (Отметьте, что это планируемое будущее уничтожение полагается на возможность вашей очереди задач хранить задачи на такой промежуток времени.)
-
-[`config.action_mailbox.incinerate_after`]: /configuring#config-action-mailbox-incinerate-after
-
-## Работа с Action Mailbox при разработке
+## (local-development-and-testing) Локальная разработка и тестирование
 
 Полезно иметь возможность тестирования входящих писем при разработке без фактического отправления и получения реальных писем. Для этого есть вспомогательный контроллер, смонтированный на `/rails/conductor/action_mailbox/inbound_emails`, дающий перечень всех InboundEmail в системе, состояние их обработки, а также форму для создания нового InboundEmail.
 
-## Тестирование почтовых ящиков
-
-Пример:
+Вот пример тестирования входящего письма с помощью Action Mailbox TestHelpers.
 
 ```ruby
 class ForwardsMailboxTest < ActionMailbox::TestCase
@@ -310,3 +378,14 @@ end
 ```
 
 За остальными тестовыми вспомогательными методами обратитесь к [ActionMailbox::TestHelper API](https://api.rubyonrails.org/classes/ActionMailbox/TestHelper.html).
+
+
+## (incineration-of-inboundemails) Уничтожение InboundEmails
+
+По умолчанию `InboundEmail`, которое было обработано, будет уничтожено через 30 дней. `InboundEmail` рассматривается обработанным, когда его статус изменяется на `delivered`, `failed` или `bounced`.
+
+Фактическое уничтожение выполняется с помощью [`IncinerationJob`](https://api.rubyonrails.org/classes/ActionMailbox/IncinerationJob.html), которая запланирована на запуск через [`config.action_mailbox.incinerate_after`](/configuring#config-action-mailbox-incinerate-after). Это значение по умолчанию установлено `30.days`, но его можно изменить в настройках production.rb. (Отметьте, что это планируемое будущее уничтожение полагается на возможность вашей очереди задач хранить задачи на такой промежуток времени.)
+
+Уничтожение данных по умолчанию гарантирует, что вы не будете хранить данные пользователей без необходимости, после того, как они отменили свои учетные записи или удалили свой контент.
+
+Предполагается, что при обработке входящего письма с помощью Action Mailbox вы извлекаете из него все необходимые данные и сохраняете их в моделях предметной области вашего приложения. Запись `InboundEmail` остается в системе в течение настроенного времени для целей отладки и криминалистики, а затем удаляется.
