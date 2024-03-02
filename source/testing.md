@@ -89,6 +89,8 @@ require "test_helper"
 
 ```ruby
 class ArticleTest < ActiveSupport::TestCase
+  # ...
+end
 ```
 
 Класс `ArticleTest` определяет _тестовый случай_, поскольку он унаследован от `ActiveSupport::TestCase`. Поэтому `ArticleTest` имеет все методы, доступные в `ActiveSupport::TestCase`. Позже в этом руководстве мы увидим некоторые из методов, которые он нам дает.
@@ -156,7 +158,7 @@ ArticleTest#test_should_not_save_article_without_title [/path/to/blog/test/model
 Expected true to be nil or false
 
 
-rails test test/models/article_test.rb:6
+bin/rails test test/models/article_test.rb:6
 
 
 Finished in 0.023918s, 41.8090 runs/s, 41.8090 assertions/s.
@@ -233,7 +235,7 @@ NameError: undefined local variable or method 'some_undefined_variable' for #<Ar
     test/models/article_test.rb:11:in 'block in <class:ArticleTest>'
 
 
-rails test test/models/article_test.rb:9
+bin/rails test test/models/article_test.rb:9
 
 
 
@@ -271,7 +273,7 @@ end
 
 К этому моменту вы уже увидели некоторые из имеющихся утверждений. Утверждения - это рабочие лошадки тестирования. Они единственные, кто фактически выполняет проверки, чтобы убедиться, что все работает как задумано.
 
-Ниже представлена выдержка утверждений, которые вы можете использовать с [`Minitest`](https://github.com/seattlerb/minitest), библиотекой тестирования, используемой Rails по умолчанию. Параметр `[msg]` - это опциональное строковое сообщение, которое вы можете указать для того, чтобы сделать сообщение о провале более ясным.
+Ниже представлена выдержка утверждений, которые вы можете использовать с [`Minitest`](https://github.com/minitest/minitest), библиотекой тестирования, используемой Rails по умолчанию. Параметр `[msg]` - это опциональное строковое сообщение, которое вы можете указать для того, чтобы сделать сообщение о провале более ясным.
 
 | Утверждение                                                    | Назначение |
 | -------------------------------------------------------------- | ---------- |
@@ -305,6 +307,8 @@ end
 | `assert_not_operator( obj1, operator, [obj2], [msg] )`         | Утверждает, что `obj1.operator(obj2)` ложно.|
 | `assert_predicate ( obj, predicate, [msg] )`                   | Утверждает, что `obj.predicate` истинно, т.е. `assert_predicate str, :empty?`|
 | `assert_not_predicate ( obj, predicate, [msg] )`               | Утверждает, что `obj.predicate` ложно, т.е. `assert_not_predicate str, :empty?`|
+| `assert_error_reported(class) { block }`                       | Утверждает, что был сообщен класс ошибки, например `assert_error_reported IOError { Rails.error.report(IOError.new("Oops")) }`|
+| `assert_no_error_reported { block }`                           | Утверждает, что ни одной ошибки не было сообщено, например `assert_no_error_reported { perform_service }`|
 | `flunk( [msg] )`                                               | Утверждает провал. Это полезно для явного указания теста, который еще не закончен.|
 
 Представленный выше список утверждений поддерживается minitest. Более полный и более актуальный список всех доступных утверждений смотрите в [документации Minitest API](http://docs.seattlerb.org/minitest/), в частности [`Minitest::Assertions`](http://docs.seattlerb.org/minitest/Minitest/Assertions.html)
@@ -317,17 +321,35 @@ NOTE: Создание собственных утверждений это ос
 
 Rails добавляет некоторые свои утверждения в фреймворк `minitest`:
 
-| Утверждение                                                                       | Назначение |
-| --------------------------------------------------------------------------------- | ---------- |
-| [`assert_difference(expressions, difference = 1, message = nil) {...}`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_difference) | Тестирует числовую разницу между возвращаемым значением expression и результатом вычисления в данном блоке. |
-| [`assert_no_difference(expressions, message = nil, &block)`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_no_difference) | Утверждает, что числовой результат вычисления expression не изменяется до и после применения переданного в блоке. |
-| [`assert_changes(expressions, message = nil, from:, to:, &block)`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_changes) | Тестирует, что результат вычисления expression изменится после применения переданного в блоке.|
-| [`assert_no_changes(expressions, message = nil, &block)`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_no_changes) | Тестирует, что результат вычисления expression не изменится после применения переданного в блоке.|
-| [`assert_nothing_raised { block }`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_nothing_raised) | Обеспечивает, что данный блок не вызывает какие-либо исключения.|
-| [`assert_recognizes(expected_options, path, extras={}, message=nil)`](https://api.rubyonrails.org/classes/ActionDispatch/Assertions/RoutingAssertions.html#method-i-assert_recognizes) | Обеспечивает, что роутинг данного path был правильно обработан, и что проанализированные опции (заданные в хэше expected_options) соответствуют path. По существу он утверждает, что Rails распознает маршрут, заданный в expected_options. |
-| [`assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)`](https://api.rubyonrails.org/classes/ActionDispatch/Assertions/RoutingAssertions.html#method-i-assert_generates) | Утверждает, что предоставленные options могут быть использованы для генерации предоставленного пути. Это противоположность assert_recognizes. Параметр extras используется, чтобы сообщить запросу имена и значения дополнительных параметров запроса, которые могут быть в строке запроса. Параметр message позволяет определить свое сообщение об ошибке при провале утверждения. |
-| [`assert_response(type, message = nil)`](https://api.rubyonrails.org/classes/ActionDispatch/Assertions/ResponseAssertions.html#method-i-assert_response) | Утверждает, что отклик идет с определенным кодом статуса. Можете определить `:success` для обозначения 200-299, `:redirect` для обозначения 300-399, `:missing` для обозначения 404, или `:error` для соответствия интервалу 500-599. Можно передать явный номер статуса или его символьный эквивалент. Более подробно смотрите в [полном списке кодов статуса](https://rubydoc.info/gems/rack/Rack/Utils#HTTP_STATUS_CODES-constant) и как работает их [привязка](https://rubydoc.info/gems/rack/Rack/Utils#SYMBOL_TO_STATUS_CODE-constant). |
-| [`assert_redirected_to(options = {}, message=nil)`](https://api.rubyonrails.org/classes/ActionDispatch/Assertions/ResponseAssertions.html#method-i-assert_redirected_to) | Утверждает, что отклик - это перенаправление на URL, соответствующий заданным опциям. Также можно передать именованные маршруты, как в `assert_redirected_to root_path`, и объекты Active Record, как в `assert_redirected_to @article`. |
+| Утверждение                                                               | Назначение |
+| ------------------------------------------------------------------------- | ---------- |
+| [`assert_difference(expressions, difference = 1, message = nil) {...}`][] | Тестирует числовую разницу между возвращаемым значением expression и результатом вычисления в данном блоке. |
+| [`assert_no_difference(expressions, message = nil, &block)`][]            | Утверждает, что числовой результат вычисления expression не изменяется до и после применения переданного в блоке. |
+| [`assert_changes(expressions, message = nil, from:, to:, &block)`][]      | Тестирует, что результат вычисления expression изменится после применения переданного в блоке.|
+| [`assert_no_changes(expressions, message = nil, &block)`][]               | Тестирует, что результат вычисления expression не изменится после применения переданного в блоке.|
+| [`assert_nothing_raised { block }`][]                                     | Обеспечивает, что данный блок не вызывает какие-либо исключения.|
+| [`assert_recognizes(expected_options, path, extras={}, message=nil)`][]   | Обеспечивает, что роутинг данного path был правильно обработан, и что проанализированные опции (заданные в хэше expected_options) соответствуют path. По существу он утверждает, что Rails распознает маршрут, заданный в expected_options. |
+| [`assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)`][] | Утверждает, что предоставленные options могут быть использованы для генерации предоставленного пути. Это противоположность assert_recognizes. Параметр extras используется, чтобы сообщить запросу имена и значения дополнительных параметров запроса, которые могут быть в строке запроса. Параметр message позволяет определить свое сообщение об ошибке при провале утверждения. |
+| [`assert_response(type, message = nil)`][]                                | Утверждает, что отклик идет с определенным кодом статуса. Можете определить `:success` для обозначения 200-299, `:redirect` для обозначения 300-399, `:missing` для обозначения 404, или `:error` для соответствия интервалу 500-599. Можно передать явный номер статуса или его символьный эквивалент. Более подробно смотрите в [полном списке кодов статуса](https://rubydoc.info/gems/rack/Rack/Utils#HTTP_STATUS_CODES-constant) и как работает их [привязка](https://rubydoc.info/gems/rack/Rack/Utils#SYMBOL_TO_STATUS_CODE-constant). |
+| [`assert_redirected_to(options = {}, message=nil)`][]                     | Утверждает, что отклик - это перенаправление на URL, соответствующий заданным опциям. Также можно передать именованные маршруты, как в `assert_redirected_to root_path`, и объекты Active Record, как в `assert_redirected_to @article`. |
+| [`assert_queries_count(count = nil, include_schema: false, &block)`][]    | Утверждает, что  `&block` генерирует `int` раз запросы SQL.|
+| [`assert_no_queries(include_schema: false, &block)`][]                    | Утверждает, что  `&block` не генерирует запросы SQL.|
+| [`assert_queries_match(pattern, count: nil, include_schema: false, &block)`][] | Утверждает, что `&block` генерирует запросы SQL, соответствующие образцу.|
+| [`assert_no_queries_match(pattern, &block)`][]                            | Утверждает, что  `&block` не генерирует запросы SQL, соответствующие образцу.|
+
+[`assert_difference(expressions, difference = 1, message = nil) {...}`]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_difference)
+[`assert_no_difference(expressions, message = nil, &block)`]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_no_difference
+[`assert_changes(expressions, message = nil, from:, to:, &block)`]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_changes
+[`assert_no_changes(expressions, message = nil, &block)`]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_no_changes
+[`assert_nothing_raised { block }`]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/Assertions.html#method-i-assert_nothing_raised
+[`assert_recognizes(expected_options, path, extras={}, message=nil)`]: https://api.rubyonrails.org/classes/ActionDispatch/Assertions/RoutingAssertions.html#method-i-assert_recognizes
+[`assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)`]: https://api.rubyonrails.org/classes/ActionDispatch/Assertions/RoutingAssertions.html#method-i-assert_generates
+[`assert_response(type, message = nil)`]: https://api.rubyonrails.org/classes/ActionDispatch/Assertions/ResponseAssertions.html#method-i-assert_response
+[`assert_redirected_to(options = {}, message=nil)`]: https://api.rubyonrails.org/classes/ActionDispatch/Assertions/ResponseAssertions.html#method-i-assert_redirected_to
+[`assert_queries_count(count = nil, include_schema: false, &block)`]: https://api.rubyonrails.org/classes/ActiveRecord/Assertions/QueryAssertions.html#method-i-assert_queries_count
+[`assert_no_queries(include_schema: false, &block)`]: https://api.rubyonrails.org/classes/ActiveRecord/Assertions/QueryAssertions.html#method-i-assert_no_queries
+[`assert_queries_match(pattern, count: nil, include_schema: false, &block)`]: https://api.rubyonrails.org/classes/ActiveRecord/Assertions/QueryAssertions.html#method-i-assert_queries_match
+[`assert_no_queries_match(pattern, &block)`]: https://api.rubyonrails.org/classes/ActiveRecord/Assertions/QueryAssertions.html#method-i-assert_no_queries_match
 
 Вы увидите использование некоторых из этих утверждений в следующей части.
 
@@ -389,6 +411,12 @@ Finished tests in 0.009064s, 110.3266 tests/s, 110.3266 assertions/s.
 $ bin/rails test test/models/article_test.rb:6 # запускает определенный тест и строчку
 ```
 
+Также можно запустить ряд тестов, предоставив ряд строк.
+
+```bash
+$ bin/rails test test/models/article_test.rb:6-20 # запускает тесты со строчки 6 до 20
+```
+
 Также можно запустить целую директорию тестов, предоставив путь к этой директории.
 
 ```bash
@@ -405,6 +433,10 @@ Usage: rails test [options] [files or directories]
 You can run a single test by appending a line number to a filename:
 
     bin/rails test test/models/user_test.rb:27
+
+You can run multiple tests with in a line range by appending the line range to a filename:
+
+    bin/rails test test/models/user_test.rb:10-20
 
 You can run multiple files and directories at the same time:
 
@@ -430,9 +462,15 @@ Known extensions: rails, pride
     -p, --pride                      Pride. Show your testing pride!
 ```
 
-### (running-tests-in-continuous-integration-ci) Running tests in Continuous Integration (CI)
+### (running-tests-in-continuous-integration-ci) Запуск тестов в Непрерывной Интеграции (CI)
 
-TODO
+Для запуска всех тестов в среде CI достаточно одной команды:
+
+```bash
+$ bin/rails test
+```
+
+Однако, данная команда не запускает [системные тесты](#system-testing) (обычно более медленные), если вы их используете. Для включения системных тестов, добавьте еще один шаг CI, который выполняет команду `bin/rails test:system`, либо измените свой начальный шаг на `bin/rails test:all`, которая запускает все тесты, включая системные.
 
 (parallel-testing) Параллельное тестирование
 --------------------------------------------
@@ -656,9 +694,9 @@ ERb позволяет встраивать код Ruby в шаблоны. Фо�
 
 ```erb
 <% 1000.times do |n| %>
-user_<%= n %>:
-  username: <%= "user#{n}" %>
-  email: <%= "user#{n}@example.com" %>
+  user_<%= n %>:
+    username: <%= "user#{n}" %>
+    email: <%= "user#{n}@example.com" %>
 <% end %>
 ```
 
@@ -710,8 +748,8 @@ create  test/fixtures/articles.yml
 
 У тестов модели нет своего собственного суперкласса, такого как `ActionMailer::TestCase`. Вместо этого они наследуются от [`ActiveSupport::TestCase`](https://api.rubyonrails.org/classes/ActiveSupport/TestCase.html).
 
-Системное тестирование
-----------------------
+(system-testing) Системное тестирование
+---------------------------------------
 
 Системные тесты позволяют тестировать взаимодействие пользователя с вашим приложением, запускать тесты либо в реальном, либо в headless браузере. Системные тесты используют Capybara под капотом.
 
@@ -738,6 +776,8 @@ end
 ```
 
 По умолчанию системные тесты запускаются с помощью драйвера Selenium с использованием браузера Chrome и разрешения экрана 1400x1400. Следующий раздел объясняет, как изменить настройки по умолчанию.
+
+По умолчанию Rails пытается обработать исключения, возникшие во время тестов, и отобразить страницы ошибок в формате HTML. Это поведение можно контролировать с помощью настройки [`config.action_dispatch.show_exceptions`](/configuring#config-action-dispatch-show-exceptions).
 
 ### Изменение настроек по умолчанию
 
@@ -776,23 +816,19 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 end
 ```
 
-Если хотите использовать удаленный браузер, например [Headless Chrome in Docker](https://github.com/SeleniumHQ/docker-selenium), нужно добавить удаленный `url` в `options`.
+Если хотите использовать удаленный браузер, например [Headless Chrome in Docker](https://github.com/SeleniumHQ/docker-selenium), нужно добавить удаленный `url` и установить удаленный `browser` в `options`.
 
 ```ruby
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  options = ENV["SELENIUM_REMOTE_URL"].present? ? { url: ENV["SELENIUM_REMOTE_URL"] } : {}
+  url = ENV.fetch("SELENIUM_REMOTE_URL", nil)
+  options = if url
+    { browser: :remote, url: url }
+  else
+    { browser: :chrome }
+  end
   driven_by :selenium, using: :headless_chrome, options: options
-end
-```
-
-В этом случае гем `webdrivers` больше не нужен. Его можно убрать насовсем или добавить опцию `require:` в `Gemfile`.
-
-```ruby
-# ...
-group :test do
-  gem "webdrivers", require: !ENV["SELENIUM_REMOTE_URL"] || ENV["SELENIUM_REMOTE_URL"].empty?
 end
 ```
 
@@ -901,7 +937,7 @@ end
 
 #### Тестирование для нескольких размеров экрана
 
-Если необходимо протестировать размеры мобильных устройств поверх тестирования для десктопных, можно создать другой класс, который наследуется от SystemTestCase и использовать в тестовом наборе. В этом примере файл, называемый `mobile_system_test_case.rb`, создается в директории `/test` со следующей конфигурацией.
+Если необходимо протестировать размеры мобильных устройств поверх тестирования для десктопных, можно создать другой класс, который наследуется от `ActionDispatch::SystemTestCase` и использовать в тестовом наборе. В этом примере файл, называемый `mobile_system_test_case.rb`, создается в директории `/test` со следующей конфигурацией.
 
 ```ruby
 require "test_helper"
@@ -955,6 +991,8 @@ end
 
 Здесь тест наследуется от `ActionController::IntegrationTest`. Это делает доступным несколько дополнительных хелперов для использования в наших интеграционных тестах.
 
+По умолчанию Rails пытается обработать исключения, возникшие во время тестов, и отобразить страницы ошибок в формате HTML. Это поведение можно контролировать с помощью настройки [`config.action_dispatch.show_exceptions`](/configuring#config-action-dispatch-show-exceptions).
+
 ### Хелперы, доступные для интеграционных тестов
 
 В дополнение к стандартным хелперам тестирования, наследование от `ActionDispatch::IntegrationTest` дает несколько дополнительных хелперов для написания интеграционных тестов. Давайте для краткости представим три категории хелперов.
@@ -962,6 +1000,8 @@ end
 Для работы с runner-ом интеграционных тестов, смотрите [`ActionDispatch::Integration::Runner`](https://api.rubyonrails.org/classes/ActionDispatch/Integration/Runner.html).
 
 Для выполнения запросов у нас есть [`ActionDispatch::Integration::RequestHelpers`](https://api.rubyonrails.org/classes/ActionDispatch/Integration/RequestHelpers.html).
+
+Для загрузки файлов нам поможет [`ActionDispatch::TestProcess::FixtureFile`](https://api.rubyonrails.org/classes/ActionDispatch/TestProcess/FixtureFile.html).
 
 Если хотим модифицировать сессию или состояние вашего интеграционного теста, нам поможет [`ActionDispatch::Integration::Session`](https://api.rubyonrails.org/classes/ActionDispatch/Integration/Session.html).
 
@@ -1144,6 +1184,8 @@ NOTE: Если выполнены шаги в разделе про [базов�
 post articles_url, params: { article: { body: "Rails is awesome!", title: "Hello Rails" } }, headers: { Authorization: ActionController::HttpAuthentication::Basic.encode_credentials("dhh", "secret") }
 ```
 
+По умолчанию Rails пытается обработать исключения, возникшие во время тестов, и отобразить страницы ошибок в формате HTML. Это поведение можно контролировать с помощью настройки [`config.action_dispatch.show_exceptions`](/configuring#config-action-dispatch-show-exceptions).
+
 ### Доступные типы запросов для функциональных тестов
 
 Если вы знакомы с протоколом HTTP, то знаете, что `get` это тип запроса. Имеется 6 типов запросов, поддерживаемых в функциональных тестах Rails:
@@ -1184,14 +1226,14 @@ end
 Как и в случае с обычными объектами Hash, можете получать доступ к значениям, указав ключ в строке. Также можете указать его именем символа. Например:
 
 ```ruby
-flash["gordon"]               flash[:gordon]
-session["shmession"]          session[:shmession]
-cookies["are_good_for_u"]     cookies[:are_good_for_u]
+flash["gordon"]               # или flash[:gordon]
+session["shmession"]          # или session[:shmession]
+cookies["are_good_for_u"]     # или cookies[:are_good_for_u]
 ```
 
 ### Доступные переменные экземпляра
 
-В ваших функциональных тестах также доступны три переменные экземпляра, после того как запрос был выполнен:
+**После** того как запрос был выполнен, В ваших функциональных тестах также доступны три переменные экземпляра:
 
 * `@controller` - Контроллер, обрабатывающий запрос
 * `@request` - Объект запроса
@@ -1211,7 +1253,7 @@ end
 
 ### Установка заголовков и переменных CGI
 
-[Заголовки HTTP](https://tools.ietf.org/search/rfc2616#section-5.3) и [переменные CGI](https://tools.ietf.org/search/rfc3875#section-4.1) могут быть переданы как заголовки:
+[Заголовки HTTP](https://datatracker.ietf.org/doc/html/rfc2616#section-5.3) и [переменные CGI](https://datatracker.ietf.org/doc/html/rfc3875#section-4.1) могут быть переданы как заголовки:
 
 ```ruby
 # устанавливаем заголовок HTTP
@@ -1405,7 +1447,6 @@ end
 require "test_helper"
 
 class ProfileControllerTest < ActionDispatch::IntegrationTest
-
   test "should show profile" do
     # теперь хелпер можно повторно использовать в любом тестовом случае контроллера
     sign_in_as users(:david)
@@ -1475,8 +1516,8 @@ NOTE: Если в вашем приложении сложные маршрут�
 
 Подробности о тестировании маршрутов доступны в Rails, обратитесь к документации API для [`ActionDispatch::Assertions::RoutingAssertions`](https://api.rubyonrails.org/classes/ActionDispatch/Assertions/RoutingAssertions.html).
 
-Тестирование вью
------------------
+(testing-views) Тестирование вью
+--------------------------------
 
 Тестирование отклика на ваш запрос с помощью подтверждения наличия ключевых элементов HTML и их содержимого, это хороший способ протестировать вью вашего приложения. Как и тесты маршрутов, тесты вью находятся в `test/controllers/` или являются частью тестов контроллера. Метод `assert_select` позволяет осуществить выборку элементов HTML отклика с помощью простого, но мощного синтаксиса.
 
@@ -1518,9 +1559,9 @@ assert_select "ol" do
 end
 ```
 
-Это утверждение достаточно мощное. Для более продвинутого использования обратитесь к его [документации](https://github.com/rails/rails-dom-testing/blob/master/lib/rails/dom/testing/assertions/selector_assertions.rb).
+Это утверждение достаточно мощное. Для более продвинутого использования обратитесь к его [документации](https://github.com/rails/rails-dom-testing/blob/main/lib/rails/dom/testing/assertions/selector_assertions.rb).
 
-### Дополнительные утверждения, основанные на вью
+### (additional-view-based-assertions) Дополнительные утверждения, основанные на вью
 
 В тестировании вью в основном используется такие утверждения:
 
@@ -1537,6 +1578,142 @@ assert_select_email do
   assert_select "small", "Please click the 'Unsubscribe' link if you want to opt-out."
 end
 ```
+
+Тестирование партиалов вью
+--------------------------
+
+Частичные шаблоны, также часто называемые просто партиалами, представляют собой еще один способ разделить процесс рендеринга на более управляемые блоки. С помощью партиалов вы можете извлекать фрагменты кода из ваших шаблонов в отдельные файлы и повторно использовать их в любых других шаблонах.
+
+Тестирование вью позволяет проверить, что партиалы отображают содержимое так, как вы ожидаете. Тесты партиалов вью располагаются в `test/views/` и наследуются от `ActionView::TestCase`.
+
+Для рендеринга партиала используйте метод `render` так же, как и в обычном шаблоне. Содержимое доступно через локальный для теста метод `#rendered`:
+
+```ruby
+class ArticlePartialTest < ActionView::TestCase
+  test "renders a link to itself" do
+    article = Article.create! title: "Hello, world"
+
+    render "articles/article", article: article
+
+    assert_includes rendered, article.title
+  end
+end
+```
+
+В тестах, унаследованных от `ActionView::TestCase` также есть доступ к [`assert_select`](#testing-views) и [другим дополнительным утверждениям, основанным на вью](#additional-view-based-assertions), предоставленными [rails-dom-testing][]:
+
+```ruby
+test "renders a link to itself" do
+  article = Article.create! title: "Hello, world"
+
+  render "articles/article", article: article
+
+  assert_select "a[href=?]", article_url(article), text: article.title
+end
+```
+
+Для интеграции с [rails-dom-testing][], тесты, наследующиеся от `ActionView::TestCase` , объявляют метод `document_root_element`, который возвращает отрисованное содержимое в виде экземпляра [Nokogiri::XML::Node](https://www.rubydoc.info/github/sparklemotion/nokogiri/Nokogiri/XML/Node):
+
+```ruby
+test "renders a link to itself" do
+  article = Article.create! title: "Hello, world"
+
+  render "articles/article", article: article
+  anchor = document_root_element.at("a")
+
+  assert_equal article.name, anchor.text
+  assert_equal article_url(article), anchor["href"]
+end
+```
+
+Если ваше приложение использует Ruby >= 3.0, зависит от [Nokogiri >= 1.14.0](https://github.com/sparklemotion/nokogiri/releases/tag/v1.14.0), а также зависит от [Minitest >= >5.18.0](https://github.com/minitest/minitest/blob/v5.18.0/History.rdoc#5180--2023-03-04-), `document_root_element` поддерживает [сопоставление с образцом в Ruby](https://docs.ruby-lang.org/en/master/syntax/pattern_matching_rdoc.html):
+
+```ruby
+test "renders a link to itself" do
+  article = Article.create! title: "Hello, world"
+
+  render "articles/article", article: article
+  anchor = document_root_element.at("a")
+  url = article_url(article)
+
+  assert_pattern do
+    anchor => { content: "Hello, world", attributes: [{ name: "href", value: url }] }
+  end
+end
+```
+
+Если вы хотите использовать те же [утверждения на основе Capybara](https://rubydoc.info/github/teamcapybara/capybara/master/Capybara/Minitest/Assertions), которые применяются в ваших [функциональных и системных тестах](#functional-and-system-testing), вы можете определить базовый класс, наследуемый от `ActionView::TestCase`, и преобразовать метод `document_root_element` в метод `page`:
+
+```ruby
+# test/view_partial_test_case.rb
+
+require "test_helper"
+require "capybara/minitest"
+
+class ViewPartialTestCase < ActionView::TestCase
+  include Capybara::Minitest::Assertions
+
+  def page
+    Capybara.string(rendered)
+  end
+end
+
+# test/views/article_partial_test.rb
+
+require "view_partial_test_case"
+
+class ArticlePartialTest < ViewPartialTestCase
+  test "renders a link to itself" do
+    article = Article.create! title: "Hello, world"
+
+    render "articles/article", article: article
+
+    assert_link article.title, href: article_url(article)
+  end
+end
+```
+
+Начиная с версии Action View 7.1, вспомогательный метод `#rendered` возвращает объект, способный анализировать отрендеренное содержимое партиала.
+
+Чтобы преобразовать содержимое в `String`, возвращаемое методом `#rendered`, в объект, необходимо определить парсер с помощью вызова `.register_parser`. Вызов `.register_parser :rss` определяет вспомогательный метод `#rendered.rss`. Например, чтобы разобрать отрендеренный [RSS-контент][] в объект с помощью `#rendered.rss`, зарегистрируйте вызов `RSS::Parser.parse`:
+
+```ruby
+register_parser :rss, -> rendered { RSS::Parser.parse(rendered) }
+
+test "renders RSS" do
+  article = Article.create!(title: "Hello, world")
+
+  render formats: :rss, partial: article
+
+  assert_equal "Hello, world", rendered.rss.items.last.title
+end
+```
+
+По умолчанию `ActionView::TestCase` определяет парсер для:
+
+* `:html` - возвращает экземпляр [Nokogiri::XML::Node](https://nokogiri.org/rdoc/Nokogiri/XML/Node.html)
+* `:json` - возвращает экземпляр [ActiveSupport::HashWithIndifferentAccess](https://api.rubyonrails.org/classes/ActiveSupport/HashWithIndifferentAccess.html)
+
+```ruby
+test "renders HTML" do
+  article = Article.create!(title: "Hello, world")
+
+  render partial: "articles/article", locals: { article: article }
+
+  assert_pattern { rendered.html.at("main h1") => { content: "Hello, world" } }
+end
+
+test "renders JSON" do
+  article = Article.create!(title: "Hello, world")
+
+  render formats: :json, partial: "articles/article", locals: { article: article }
+
+  assert_pattern { rendered.json => { title: "Hello, world" } }
+end
+```
+
+[rails-dom-testing]: https://github.com/rails/rails-dom-testing
+[RSS-контент]: https://www.rssboard.org/rss-specification
 
 Тестирование хелперов
 ---------------------
@@ -1723,7 +1900,7 @@ class UserMailerTest < ActionMailer::TestCase
 end
 ```
 
-### Функциональное и системное тестирование
+### (functional-and-system-testing) Функциональное и системное тестирование
 
 Юнит тестирование позволяет протестировать атрибуты письмо, в то время как функциональное и системное тестирование позволяет протестировать, инициируют ли пользовательские взаимодействия доставку письма подходящим образом. Например, можно проверить, что операция по приглашению друзей надлежаще рассылает письма:
 
@@ -1763,46 +1940,81 @@ NOTE: Метод `assert_emails` не связан с определенным �
 (jobs-testing) Тестирование заданий
 -----------------------------------
 
-Так как ваши задания могут быть поставлены в очередь на различных уровнях приложения, вам нужно протестировать как сами задания (их поведение при получении из очереди), так и то, и что другие элементы правильно кладут их в очередь.
+Задания могут тестироваться в изоляции (фокусируясь на поведении задания) и в контексте (фокусируясь на поведении вызывающего кода).
 
-### Базовый тестовый случай
+### Тестирование заданий в изоляции
 
-По умолчанию при генерации задания, также будет сгенерирован связанный тест в директории `test/jobs`. Вот пример теста с заданием по выставлению счета:
+При генерации задания, также будет сгенерирован связанный файл теста в директории `test/jobs`.
+
+Вот пример теста с заданием по выставлению счета:
 
 ```ruby
 require "test_helper"
 
 class BillingJobTest < ActiveJob::TestCase
-  test "that account is charged" do
-    BillingJob.perform_now(account, product)
+  test "account is charged" do
+    perform_enqueued_jobs do
+      BillingJob.perform_later(account, product)
+    end
+  end
+end
+```
+
+В среде тестирования задания по умолчанию не выполняются, пока не будет вызван метод [`perform_enqueued_jobs`][]. Кроме того, перед каждым тестом все задания в очереди будут очищены, чтобы исключить их взаимовлияние.
+
+Тест использует `perform_enqueued_jobs` и [`perform_later`][] вместо [`perform_now`][], чтобы в случае, если настроены повторные попытки, ошибки при повторных попытках были перехвачены тестом, а не повторно поставлены в очередь и проигнорированы.
+
+[`perform_enqueued_jobs`]: https://api.rubyonrails.org/classes/ActiveJob/TestHelper.html#method-i-perform_enqueued_jobs
+[`perform_later`]: https://api.rubyonrails.org/classes/ActiveJob/Enqueuing/ClassMethods.html#method-i-perform_later
+[`perform_now`]: https://api.rubyonrails.org/classes/ActiveJob/Execution/ClassMethods.html#method-i-perform_now
+
+### Тестирование заданий в контексте
+
+Хорошей практикой бывает убедиться, что задания были поставлены в очередь, например, в экшне контроллера. Модуль [`ActiveJob::TestHelper`][] предоставляет несколько методов, которые могут помочь с этим, таких как [`assert_enqueued_with`][].
+
+Вот пример, тестирующий метод модели счета:
+
+```ruby
+require "test_helper"
+
+class AccountTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
+  test "#charge_for enqueues billing job" do
+    assert_enqueued_with(job: BillingJob) do
+      account.charge_for(product)
+    end
+
+    assert_not account.reload.charged_for?(product)
+
+    perform_enqueued_jobs
+
     assert account.reload.charged_for?(product)
   end
 end
 ```
 
-Это очень простой пример, он только проверяет, что задание делает работу так, как ожидается.
+[`ActiveJob::TestHelper`]: https://api.rubyonrails.org/classes/ActiveJob/TestHelper.html
+[`assert_enqueued_with`]: https://api.rubyonrails.org/classes/ActiveJob/TestHelper.html#method-i-assert_enqueued_with
 
-По умолчанию `ActiveJob::TestCase` устанавливает адаптер очереди `:test`, чтобы ваши задания выполнялись сразу. Это также позволяет убедиться, что все ранее выполненные и поставленные в очередь задания будут очищены до запуска любого теста, таким образом гарантируется, что в рамках каждого теста нет ранее выполненных заданий.
+### Тестирование возникновения исключений
 
-### Пользовательские утверждения и тестирование заданий внутри других компонент
-
-Active Job поставляется с набором пользовательских утверждений, которые могут быть использованы для уменьшения уровня детализации тестов. Полный список утверждений смотрите в документации API для [`ActiveJob::TestHelper`](https://api.rubyonrails.org/classes/ActiveJob/TestHelper.html).
-
-Хорошей практикой бывает убедиться, что ваши задания были поставлены в очередь или выполнены, там, где вы их вызываете (например, внутри контроллера). Именно тут пользовательские утверждения, предоставленные Active Job, особенно полезны. Например, в модели:
+Тестирование ситуаций, когда задание должно вызывать исключение, может быть сопряжено с трудностями, особенно при использовании повторных попыток. Вспомогательный метод `perform_enqueued_jobs` помечает тест как неудачный, если задание вызывает исключение, поэтому, чтобы тест завершился успешно, когда возникает исключение, необходимо напрямую вызвать метод `perform` задания.
 
 ```ruby
 require "test_helper"
 
-class ProductTest < ActiveSupport::TestCase
-  include ActiveJob::TestHelper
-
-  test "billing job scheduling" do
-    assert_enqueued_with(job: BillingJob) do
-      product.charge(account)
+class BillingJobTest < ActiveJob::TestCase
+  test "does not charge accounts with insufficient funds" do
+    assert_raises(InsufficientFundsError) do
+      BillingJob.new(empty_account, product).perform
     end
+    refute account.reload.charged_for?(product)
   end
 end
 ```
+
+Однако, не рекомендуется использовать такой подход повсеместно, поскольку он обходит некоторые части фреймворка, например, сериализацию аргументов.
 
 (testing-action-cable) Тестирование Action Cable
 ------------------------------------------------
@@ -1987,17 +2199,22 @@ end
 
 Rails предоставляет встроенные вспомогательные методы, позволяющие убеждаться, что ваш зависимый от времени код работает, как ожидается.
 
-Вот пример использования хелпера [`travel_to`](https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html#method-i-travel_to):
+Следующий пример использует хелпер [`travel_to`][travel_to]:
 
 ```ruby
 # Допустим, что пользователю можно сделать подарок через месяц после регистрации.
 user = User.create(name: "Gaurish", activation_date: Date.new(2004, 10, 24))
 assert_not user.applicable_for_gifting?
 travel_to Date.new(2004, 11, 24) do
-  assert_equal Date.new(2004, 10, 24), user.activation_date # внутри блока `travel_to` `Date.current` имитируется
+  # Внутри блока `travel_to` `Date.current` зафиксирована
+  assert_equal Date.new(2004, 10, 24), user.activation_date
   assert user.applicable_for_gifting?
 end
-assert_equal Date.new(2004, 10, 24), user.activation_date # Изменение было видно только внутри блока `travel_to`.
+# Изменение было видно только внутри блока `travel_to`.
+assert_equal Date.new(2004, 10, 24), user.activation_date
 ```
 
-Обратитесь к [документации `ActiveSupport::Testing::TimeHelpers` API](https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html) за более подробной информацией о доступных хелперах времени.
+Обратитесь к документации API [`ActiveSupport::Testing::TimeHelpers`][time_helpers_api] за более подробностями о доступных хелперах времени.
+
+[travel_to]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html#method-i-travel_to
+[time_helpers_api]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html
