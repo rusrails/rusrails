@@ -2214,7 +2214,7 @@ end
 assert_equal Date.new(2004, 10, 24), user.activation_date
 ```
 
-Обратитесь к документации API [`ActiveSupport::Testing::TimeHelpers`][time_helpers_api] за более подробностями о доступных хелперах времени.
+Обратитесь к документации API [`ActiveSupport::Testing::TimeHelpers`][time_helpers_api] за подробностями о доступных хелперах времени.
 
 [travel_to]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html#method-i-travel_to
 [time_helpers_api]: https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html
