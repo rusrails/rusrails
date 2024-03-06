@@ -8,15 +8,15 @@ special:
     file:     menu.md
 
 images:
-    revision: 22397bec6ff332fad45be75cc81f8e037563073e
-    date:     31/05/2023
+    revision: bf0f8846a7d28df1ca55fa6e785523a207e882d5
+    date:     03/01/2024
 
 pages:
   - title:    Rails для начинающих
     path:     getting-started
     file:     getting_started.md
-    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
-    date:     15/10/2022
+    revision: bf0f8846a7d28df1ca55fa6e785523a207e882d5
+    date:     03/01/2024
 
   - title:    Основы Active Record
     path:     active-record-basics
