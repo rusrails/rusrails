@@ -28,10 +28,12 @@ namespace :deploy do
     FileUtils.cp_r 'public', 'deploy'
   end
 
-  task :start_rails_server do
+  task start_rails_server: 'tmp:cache:clear' do
     # `rails s -d` # TODO: doesn't work, probably some legacy setup, need to compare with new Rails app setup.
     `rails s > /dev/null &`
-    sleep 3
+    puts 'waiting for server start'
+    sleep 10 # bootsnap
+    puts 'continue..'
   end
 
   task generate_pages: :environment do
