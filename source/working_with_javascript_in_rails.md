@@ -63,7 +63,7 @@ $ rails new my_new_app --javascript=webpack
 $ rails new my_new_app -j webpack
 ```
 
-Каждая из опций сборки поставляется с простой конфигурацией и интеграцией в файлопровод с помощью гема [jsbundling-rails](https://github.com/rails/jsbundling-rails).
+Каждая из опций сборки поставляется с простой конфигурацией и интеграцией в конвейер ресурсов с помощью гема [jsbundling-rails](https://github.com/rails/jsbundling-rails).
 
 При использовании опции сборки, используйте `bin/dev` для запуска сервера Rails и создания JavaScript для development.
 

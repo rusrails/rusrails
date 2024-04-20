@@ -826,7 +826,7 @@ WARNING: Хелперы ассетных тегов _не_ проверяют с
 
 Хелпер [`javascript_include_tag`][] возвращает HTML-тег `script` для каждого предоставленного источника.
 
-При использовании Rails с включенным [Asset Pipeline](/asset-pipeline), этот хелпер сгенерирует ссылку на `/assets/javascripts/`, а не на `public/javascripts`, которая использовалась в более ранних версиях Rails. Затем эта ссылка обслуживается файлопроводом (asset pipeline).
+При использовании Rails с включенным [Asset Pipeline](/asset-pipeline), этот хелпер сгенерирует ссылку на `/assets/javascripts/`, а не на `public/javascripts`, которая использовалась в более ранних версиях Rails. Затем эта ссылка обслуживается конвейером ресурсов (asset pipeline).
 
 Файл JavaScript в приложении Rails или Rails Engine размещается в одном из трех мест расположения: `app/assets`, `lib/assets` или `vendor/assets`. Эти места расположения детально описаны в разделе про [организацию ресурсов](/asset-pipeline#how-to-use-the-asset-pipeline) в руководстве по Asset Pipeline.
 

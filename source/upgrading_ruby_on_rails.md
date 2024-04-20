@@ -2275,7 +2275,7 @@ Rails 4.0 извлек Active Resource в отдельный гем. Если в
 
     Подробнее читайте в [Pull Request #9978](https://github.com/rails/rails/pull/9978) о переходе на подписанные куки сессии.
 
-* Rails 4.0 убрал опцию `ActionController::Base.asset_path`. Используйте особенность файлопровода (assets pipeline).
+* Rails 4.0 убрал опцию `ActionController::Base.asset_path`. Используйте особенность конвейера ресурсов (assets pipeline).
 
 * В Rails 4.0 устарела опция `ActionController::Base.page_cache_extension`. Используйте вместо нее `ActionController::Base.default_static_extension`.
 
@@ -2483,7 +2483,7 @@ gem "jquery-rails"
 
 ### config/application.rb
 
-Файлопровод (asset pipeline) требует следующих добавлений:
+Конвейер ресурсов (asset pipeline) требует следующих добавлений:
 
 ```ruby
 config.assets.enabled = true
@@ -2501,7 +2501,7 @@ config.assets.prefix = '/asset-files'
 
 Уберите настройку для RJS `config.action_view.debug_rjs = true`.
 
-Добавьте эти настройки, если вы включили файлопровод:
+Добавьте эти настройки, если вы включили конвейер ресурсов:
 
 ```ruby
 # Do not compress assets
@@ -2513,7 +2513,7 @@ config.assets.debug = true
 
 ### config/environments/production.rb
 
-Снова, большая часть изменений относится к файлопроводу. Подробнее о них можно прочитать в руководстве [Asset Pipeline](/asset-pipeline).
+Снова, большая часть изменений относится к конвейеру ресурсов. Подробнее о них можно прочитать в руководстве [Asset Pipeline](/asset-pipeline).
 
 ```ruby
 # Compress JavaScripts and CSS
@@ -2584,4 +2584,4 @@ $ bin/rake db:sessions:clear
 
 ### Убрать опции :cache и :concat в хелперах ассетов во вью
 
-* Вместе с файлопроводом опции :cache и :concat больше не используются, удалите эти опции из вью.
+* Вместе с конвейером ресурсов опции :cache и :concat больше не используются, удалите эти опции из вью.

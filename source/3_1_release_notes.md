@@ -5,7 +5,7 @@
 
 * Streaming
 * Обратимые миграции
-* Файлопровод (Assets Pipeline)
+* Конвейер ресурсов (Assets Pipeline)
 * jQuery как библиотека JavaScript по умолчанию
 
 Эти заметки о релизе покрывают только основные изменения. Чтобы узнать о различных исправлениях программных ошибок и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/3-1-stable) в главном репозитории Rails на GitHub.
@@ -48,7 +48,7 @@ gem "jquery-rails"
 
 #### config/application.rb
 
-* Файлопровод требует следующие добавления:
+* Конвейер ресурсов требует следующие добавления:
 
     ```ruby
     config.assets.enabled = true
@@ -66,7 +66,7 @@ gem "jquery-rails"
 
 * Уберите настройку RJS `config.action_view.debug_rjs = true`.
 
-* Добавьте следующее, если хотите включить файлопровод.
+* Добавьте следующее, если хотите включить конвейер ресурсов.
 
     ```ruby
     # Do not compress assets
@@ -78,7 +78,7 @@ gem "jquery-rails"
 
 #### config/environments/production.rb
 
-* Снова, большинство изменений относится к файлопроводу. Подробнее о них можно прочитать в руководстве [Asset Pipeline](/asset-pipeline).
+* Снова, большинство изменений относится к конвейеру ресурсов. Подробнее о них можно прочитать в руководстве [Asset Pipeline](/asset-pipeline).
 
     ```ruby
     # Compress JavaScripts and CSS
@@ -164,11 +164,11 @@ $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 Архитектурные изменения Rails
 -----------------------------
 
-### Файлопровод (Assets Pipeline)
+### Конвейер ресурсов (Assets Pipeline)
 
 Основное изменение в Rails 3.1 это Assets Pipeline. Он делает CSS и JavaScript первосортным кодом, и делает доступной надлежащую организацию, включая использование в плагинах и engine-ах.
 
-Файлопровод работает с помощью [Sprockets](https://github.com/rails/sprockets) и раскрывается в руководстве [Asset Pipeline](/asset-pipeline).
+Конвейер ресурсов работает с помощью [Sprockets](https://github.com/rails/sprockets) и раскрывается в руководстве [Asset Pipeline](/asset-pipeline).
 
 ### HTTP Streaming
 
@@ -195,7 +195,7 @@ Railties
 
 * jQuery и Prototype более не встроенные, а предоставляются как гемы `jquery-rails` и `prototype-rails`.
 
-* Генератор приложения принимает опцию `-j`, которая может быть произвольной строкой. Если передать "foo", в `Gemfile` будет добавлен гем "foo-rails", и манифест JavaScript приложения затребует "foo" и "foo_ujs". В данный момент существуют только "prototype-rails" и "jquery-rails", и эти файлы предоставляются через файлопровод.
+* Генератор приложения принимает опцию `-j`, которая может быть произвольной строкой. Если передать "foo", в `Gemfile` будет добавлен гем "foo-rails", и манифест JavaScript приложения затребует "foo" и "foo_ujs". В данный момент существуют только "prototype-rails" и "jquery-rails", и эти файлы предоставляются через конвейер ресурсов.
 
 * Генерация приложение или плагина запускает `bundle install`, если не определено `--skip-gemfile` или `--skip-bundle`.
 
