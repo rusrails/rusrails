@@ -213,8 +213,8 @@ pages:
   - title:    Engine для начинающих
     path:     engines
     file:     engines.md
-    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
-    date:     15/10/2022
+    revision: 247c892150eae0c3d8572f962d348568f493e4bb
+    date:     08/03/2024
 
   - title:    Процесс инициализации в Rails
     path:     initialization
