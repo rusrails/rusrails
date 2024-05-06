@@ -8,8 +8,8 @@ special:
     file:     menu.md
 
 images:
-    revision: b526f11f9d138cedcad043b50e6a209316c57432
-    date:     31/03/2024
+    revision: c8967521e5b82b34299f710e9d031fc30c82d201
+    date:     01/05/2024
 
 pages:
   - title:    Rails для начинающих
@@ -279,8 +279,8 @@ pages:
   - title:    Вносим вклад в Ruby on Rails
     path:     contributing_to_ruby_on_rails
     file:     contributing_to_ruby_on_rails.md
-    revision: 4af1ffadbe63e83b9e099f8c4cfe04133d68d171
-    date:     29/11/2022
+    revision: c8967521e5b82b34299f710e9d031fc30c82d201
+    date:     01/05/2024
 
   - title:    Рекомендации по документированию API
     path:     api_documentation_guidelines
