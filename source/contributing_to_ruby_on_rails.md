@@ -122,11 +122,11 @@ $ git pull JohnSmith orange
 
 Как только вы откроете PR, для удобного просмотра и совместной работы будет развернута предварительная версия документации.  В нижней части страницы Pull Request вы должны увидеть список проверок статуса. Найдите `buildkite/docs-preview` и нажмите "details".
 
-![GitHub rails/rails Pull Request status checks](images/docs_preview/status_checks.png)
+![GitHub rails/rails Pull Request status checks](docs_preview/status_checks.png)
 
 Это приведет вас на страницу сборки Buildkite. Если задание выполнено успешно, над списком заданий появится аннотация со ссылками на сгенерированные разделы API и руководств.
 
-![Buildkite rails/docs-preview annotation API & Guides links](images/docs_preview/annotation.png)
+![Buildkite rails/docs-preview annotation API & Guides links](docs_preview/annotation.png)
 
 При работе с документацией принимайте во внимание [Рекомендации по документированию API](/api_documentation_guidelines) и [Рекомендации для руководств по Ruby on Rails](/ruby_on_rails_guides_guidelines).
 
