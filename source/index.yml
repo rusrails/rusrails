@@ -399,6 +399,7 @@ pages:
 plan:
   - file:     7_2_release_notes.md
   - file:     active_record_composite_primary_keys.md
+  - file:     getting_started_with_devcontainer.md
 
 old:
   - file:     2_2_release_notes.md
