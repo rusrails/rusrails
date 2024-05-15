@@ -32,7 +32,7 @@ require "active_support"
 Этот пример показывает, как загрузить [`Hash#with_indifferent_access`][Hash#with_indifferent_access]. Это расширение включает преобразование `Hash` в [`ActiveSupport::HashWithIndifferentAccess`][ActiveSupport::HashWithIndifferentAccess], который позволяет доступ с как строковыми, так и символьными ключами.
 
 ```ruby
-{a: 1}.with_indifferent_access["a"] # => 1
+{ a: 1 }.with_indifferent_access["a"] # => 1
 ```
 
 Для каждого отдельного метода, определенного как расширение ядра, в этом руководстве имеется заметка, сообщающая, где такой метод определяется. В случае с `with_indifferent_access` заметка гласит:
@@ -115,8 +115,9 @@ end
 
 ```ruby
 def set_conditional_cache_control!
-  return if self["Cache-Control"].present?
-  # ...
+  unless self["Cache-Control"].present?
+    # ...
+  end
 end
 ```
 
@@ -130,7 +131,7 @@ NOTE: Определено в `active_support/core_ext/object/blank.rb`.
 Метод [`presence`][Object#presence] возвращает его получателя, если `present?`, и `nil` в противном случае. Он полезен для подобных идиом:
 
 ```ruby
-host = config[:host].presence || 'localhost'
+host = config[:host].presence || "localhost"
 ```
 
 NOTE: Определено в `active_support/core_ext/object/blank.rb`.
@@ -170,20 +171,20 @@ NOTE: Определено в `active_support/core_ext/object/duplicable.rb`.
 Метод [`deep_dup`][Object#deep_dup] возвращает "глубокую" копию данного объекта. Обычно при вызове `dup` на объекте, содержащем другие объекты, Ruby не вызывает `dup` для них, поэтому он создает "мелкую" копию объекта. Если, к примеру, имеется массив со строкой, это будет выглядеть так:
 
 ```ruby
-array     = ['string']
+array     = ["string"]
 duplicate = array.dup
 
-duplicate.push 'another-string'
+duplicate.push "another-string"
 
 # объект был дублирован, поэтому элемент был добавлен только в дубликат
-array     # => ['string']
-duplicate # => ['string', 'another-string']
+array     # => ["string"]
+duplicate # => ["string", "another-string"]
 
-duplicate.first.gsub!('string', 'foo')
+duplicate.first.gsub!("string", "foo")
 
 # первый элемент не был дублирован, он будет изменен в обоих массивах
-array     # => ['foo']
-duplicate # => ['foo', 'another-string']
+array     # => ["foo"]
+duplicate # => ["foo, "another-string"]
 ```
 
 Как видите, после дублирования экземпляра `Array`, мы получили еще один объект, следовательно мы можем его модифицировать, и исходный объект останется нетронутым. Однако, это не истинно для элементов массива. Поскольку `dup` не делает "глубокую" копию, строка внутри массива остается тем же самым объектом.
@@ -191,13 +192,13 @@ duplicate # => ['foo', 'another-string']
 Если нужна "глубокая" копия объекта, следует использовать `deep_dup`. Вот пример:
 
 ```ruby
-array     = ['string']
+array     = ["string"]
 duplicate = array.deep_dup
 
-duplicate.first.gsub!('string', 'foo')
+duplicate.first.gsub!("string", "foo")
 
-array     # => ['string']
-duplicate # => ['foo']
+array     # => ["string"]
+duplicate # => ["foo"]
 ```
 
 Если объект нельзя дублировать, `deep_dup` просто возвратит его:
@@ -233,8 +234,8 @@ end
 ```ruby
 def log_info(sql, name, ms)
   if @logger.try(:debug?)
-    name = '%s (%.1fms)' % [name || 'SQL', ms]
-    @logger.debug(format_log_entry(name, sql.squeeze(' ')))
+    name = "%s (%.1fms)" % [name || "SQL", ms]
+    @logger.debug(format_log_entry(name, sql.squeeze(" ")))
   end
 end
 ```
@@ -363,13 +364,13 @@ end
 мы получим:
 
 ```ruby
-current_user.to_query('user') # => "user=357-john-smith"
+current_user.to_query("user") # => "user=357-john-smith"
 ```
 
 Этот метод экранирует все, что требуется: и ключ, и значение:
 
 ```ruby
-account.to_query('company[name]')
+account.to_query("company[name]")
 # => "company%5Bname%5D=Johnson+%26+Johnson"
 ```
 
@@ -378,20 +379,20 @@ account.to_query('company[name]')
 Массивы возвращают результат применения `to_query` к каждому элементу с `key[]` в качестве ключа, и соединяет результат с помощью "&":
 
 ```ruby
-[3.4, -45.6].to_query('sample')
+[3.4, -45.6].to_query("sample")
 # => "sample%5B%5D=3.4&sample%5B%5D=-45.6"
 ```
 
 Хэши также отвечают на `to_query`, но c другой сигнатурой. Если аргумент не передается, вызов генерирует отсортированную серию присваиваний ключ/значение, вызвав `to_query(key)` на этих значениях. Затем он соединяет результат с помощью "&":
 
 ```ruby
-{c: 3, b: 2, a: 1}.to_query # => "a=1&b=2&c=3"
+{ c: 3, b: 2, a: 1 }.to_query # => "a=1&b=2&c=3"
 ```
 
 Метод [`Hash#to_query`][Hash#to_query] принимает опциональное пространство имен для ключей:
 
 ```ruby
-{id: 89, name: "John Smith"}.to_query('user')
+{ id: 89, name: "John Smith" }.to_query("user")
 # => "user%5Bid%5D=89&user%5Bname%5D=John+Smith"
 ```
 
@@ -519,7 +520,7 @@ NOTE: Определено в `active_support/core_ext/kernel/reporting.rb`.
 Примеры применения `in?`:
 
 ```ruby
-1.in?([1,2])        # => true
+1.in?([1, 2])       # => true
 "lo".in?("hello")   # => true
 25.in?(30..50)      # => false
 1.in?(1)            # => ArgumentError
@@ -967,7 +968,9 @@ end
 ```ruby
 module ActionView
   class Base
-    cattr_accessor :field_error_proc, default: Proc.new { ... }
+    cattr_accessor :field_error_proc, default: Proc.new {
+      # ...
+    }
   end
 end
 ```
@@ -1184,7 +1187,7 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 Многоточие может быть настроено с помощью опции `:omission`:
 
 ```ruby
-"Oh dear! Oh dear! I shall be late!".truncate(20, omission: '&hellip;')
+"Oh dear! Oh dear! I shall be late!".truncate(20, omission: "&hellip;")
 # => "Oh dear! Oh &hellip;"
 ```
 
@@ -1195,7 +1198,7 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 ```ruby
 "Oh dear! Oh dear! I shall be late!".truncate(18)
 # => "Oh dear! Oh dea..."
-"Oh dear! Oh dear! I shall be late!".truncate(18, separator: ' ')
+"Oh dear! Oh dear! I shall be late!".truncate(18, separator: " ")
 # => "Oh dear! Oh..."
 ```
 
@@ -1244,14 +1247,14 @@ NOTE: Определено в `active_support/core_ext/string/filters.rb`.
 Многоточие может быть настроено с помощью опции `:omission`:
 
 ```ruby
-"Oh dear! Oh dear! I shall be late!".truncate_words(4, omission: '&hellip;')
+"Oh dear! Oh dear! I shall be late!".truncate_words(4, omission: "&hellip;")
 # => "Oh dear! Oh dear!&hellip;"
 ```
 
 Передайте `:separator` для сокращения строки по естественным разрывам:
 
 ```ruby
-"Oh dear! Oh dear! I shall be late!".truncate_words(3, separator: '!')
+"Oh dear! Oh dear! I shall be late!".truncate_words(3, separator: "!")
 # => "Oh dear! Oh dear! I shall be late..."
 ```
 
@@ -1793,7 +1796,7 @@ NOTE: Определено в `active_support/core_ext/string/inflections.rb`.
 Если "SSL" был определен как акроним:
 
 ```ruby
-'ssl_error'.humanize # => "SSL error"
+"ssl_error".humanize # => "SSL error"
 ```
 
 Метод хелпера `full_messages` использует `humanize` как резервный способ для включения имен атрибутов:
@@ -1805,7 +1808,7 @@ end
 
 def full_message
   # ...
-  attr_name = attribute.to_s.tr('.', '_').humanize
+  attr_name = attribute.to_s.tr(".", "_").humanize
   attr_name = @base.class.human_attribute_name(attribute, default: attr_name)
   # ...
 end
@@ -1927,13 +1930,14 @@ NOTE: Определено в `active_support/core_ext/symbol/starts_ends_with.r
 * [`terabytes`][Numeric#terabytes]
 * [`petabytes`][Numeric#petabytes]
 * [`exabytes`][Numeric#exabytes]
+* [`zettabytes`][Numeric#zettabytes]
 
 Они возвращают соответствующее количество байтов, используя конвертирующий множитель 1024:
 
 ```ruby
 2.kilobytes   # => 2048
 3.megabytes   # => 3145728
-3.5.gigabytes # => 3758096384
+3.5.gigabytes # => 3758096384.0
 -4.exabytes   # => -4611686018427387904
 ```
 
@@ -1952,6 +1956,7 @@ NOTE: Определено в `active_support/core_ext/numeric/bytes.rb`.
 [Numeric#megabytes]: https://api.rubyonrails.org/classes/Numeric.html#method-i-megabytes
 [Numeric#petabytes]: https://api.rubyonrails.org/classes/Numeric.html#method-i-petabytes
 [Numeric#terabytes]: https://api.rubyonrails.org/classes/Numeric.html#method-i-terabytes
+[Numeric#zettabytes]: https://api.rubyonrails.org/classes/Numeric.html#method-i-zettabytes
 
 ### Время
 
@@ -2028,7 +2033,7 @@ NOTE: Определено в `active_support/core_ext/numeric/time.rb`
 # => 100.000%
 100.to_fs(:percentage, precision: 0)
 # => 100%
-1000.to_fs(:percentage, delimiter: '.', separator: ',')
+1000.to_fs(:percentage, delimiter: ".", separator: ",")
 # => 1.000,000%
 302.24398923423.to_fs(:percentage, precision: 5)
 # => 302.24399%
@@ -2180,47 +2185,6 @@ BigDecimal(5.00, 6).to_s("e")  # => "0.5E1"
 Расширения для `Enumerable`
 ---------------------------
 
-### `sum`
-
-Метод [`sum`][Enumerable#sum] складывает элементы перечисления:
-
-```ruby
-[1, 2, 3].sum # => 6
-(1..100).sum  # => 5050
-```
-
-Сложение применяется только к элементам, откликающимся на `+`:
-
-```ruby
-[[1, 2], [2, 3], [3, 4]].sum    # => [1, 2, 2, 3, 3, 4]
-%w(foo bar baz).sum             # => "foobarbaz"
-{a: 1, b: 2, c: 3}.sum          # => [:a, 1, :b, 2, :c, 3]
-```
-
-Сумма пустой коллекции равна нулю по умолчанию, но это может быть настроено:
-
-```ruby
-[].sum    # => 0
-[].sum(1) # => 1
-```
-
-Если задан блок, `sum` становится итератором, вкладывающим элементы коллекции и суммирующим возвращаемые значения:
-
-```ruby
-(1..5).sum {|n| n * 2 } # => 30
-[2, 4, 6, 8, 10].sum    # => 30
-```
-
-Сумма пустого получателя также может быть настроена в такой форме:
-
-```ruby
-[].sum(1) {|n| n**3} # => 1
-```
-
-NOTE: Определено в `active_support/core_ext/enumerable.rb`.
-
-[Enumerable#sum]: https://api.rubyonrails.org/classes/Enumerable.html#method-i-sum
-
 ### `index_by`
 
 Метод [`index_by`][Enumerable#index_by] генерирует хэш с элементами перечисления, индексированными по некоторому ключу.
@@ -2229,7 +2193,7 @@ NOTE: Определено в `active_support/core_ext/enumerable.rb`.
 
 ```ruby
 invoices.index_by(&:number)
-# => {'2009-032' => <Invoice ...>, '2009-008' => <Invoice ...>, ...}
+# => {"2009-032" => <Invoice ...>, "2009-008" => <Invoice ...>, ...}
 ```
 
 WARNING. Ключи, как правило, должны быть уникальными. Если блок возвратит одно и то же значение для нескольких элементов, для этого ключа не будет построена коллекция. А значение получит последний элемент.
@@ -2269,7 +2233,7 @@ NOTE: Определено в `active_support/core_ext/enumerable.rb`.
 Если задан опциональный блок, `many?` учитывает только те элементы, которые возвращают true:
 
 ```ruby
-@see_more = videos.many? {|video| video.category == params[:category]}
+@see_more = videos.many? { |video| video.category == params[:category] }
 ```
 
 NOTE: Определено в `active_support/core_ext/enumerable.rb`.
@@ -2549,7 +2513,7 @@ Contributor.limit(2).order(:rank).to_xml
 Если получатель является массивом хэшей, корневой элемент по умолчанию также "objects":
 
 ```ruby
-[{a: 1, b: 2}, {c: 3}].to_xml
+[{ a: 1, b: 2 }, { c: 3 }].to_xml
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
 # <objects type="array">
@@ -2699,7 +2663,7 @@ NOTE: Определено в `active_support/core_ext/array/grouping.rb`.
 или выдает их по очереди, если передается блок:
 
 ```ruby
-%w(1 2 3 4 5 6 7).in_groups(3) {|group| p group}
+%w(1 2 3 4 5 6 7).in_groups(3) { |group| p group }
 ["1", "2", "3"]
 ["4", "5", nil]
 ["6", "7", nil]
@@ -2761,7 +2725,7 @@ NOTE: Определено в `active_support/core_ext/array/grouping.rb`.
 Метод [`to_xml`][Hash#to_xml] возвращает строку, содержащую представление XML его получателя:
 
 ```ruby
-{"foo" => 1, "bar" => 2}.to_xml
+{ foo: 1, bar: 2 }.to_xml
 # =>
 # <?xml version="1.0" encoding="UTF-8"?>
 # <hash>
@@ -2805,7 +2769,7 @@ NOTE: Определено в `active_support/core_ext/hash/conversions.rb`.
 В Ruby имеется встроенный метод `Hash#merge`, который позволяет объединять два хэша:
 
 ```ruby
-{a: 1, b: 1}.merge(a: 0, c: 2)
+{ a: 1, b: 1 }.merge(a: 0, c: 2)
 # => {:a=>0, :b=>1, :c=>2}
 ```
 
@@ -2816,7 +2780,7 @@ Active Support определяет еще несколько способов �
 В случае коллизии, в `merge` остается ключ в хэше аргумента. Можно компактно предоставить хэш-опцию со значениями по умолчанию с помощью такой идиомы:
 
 ```ruby
-options = {length: 30, omission: "..."}.merge(options)
+options = { length: 30, omission: "..." }.merge(options)
 ```
 
 Active Support определяет [`reverse_merge`][Hash#reverse_merge] в случае, если нужна альтернативная запись:
@@ -2855,7 +2819,7 @@ NOTE: Определено в `active_support/core_ext/hash/reverse_merge.rb`.
 Active Support определяет [`Hash#deep_merge`][Hash#deep_merge]. В углубленном объединении, если один и тот же ключ обнаруживается в обоих хэшах, и их значения также хэши, то в результирующем хэше будет _объединение_ их значений.
 
 ```ruby
-{a: {b: 1}}.deep_merge(a: {c: 2})
+{ a: { b: 1 } }.deep_merge(a: { c: 2 })
 # => {:a=>{:b=>1, :c=>2}}
 ```
 
@@ -2892,14 +2856,14 @@ NOTE: Определено в `active_support/core_ext/object/deep_dup.rb`.
 Метод [`except`][Hash#except] возвращает хэш с убранными ключами, содержащимися в перечне аргументов, если они существуют:
 
 ```ruby
-{a: 1, b: 2}.except(:a) # => {:b=>2}
+{ a: 1, b: 2 }.except(:a) # => {:b=>2}
 ```
 
 Если получатель откликается на `convert_key`, метод вызывается на каждом из аргументов. Это позволяет `except` хорошо обращаться с хэшами с индифферентным доступом, например:
 
 ```ruby
-{a: 1}.with_indifferent_access.except(:a)  # => {}
-{a: 1}.with_indifferent_access.except("a") # => {}
+{ a: 1 }.with_indifferent_access.except(:a)  # => {}
+{ a: 1 }.with_indifferent_access.except("a") # => {}
 ```
 
 Также имеется вариант с восклицательным знаком [`except!`][Hash#except!], который убирает ключи в самом получателе.
@@ -2914,14 +2878,14 @@ NOTE: Определено в `active_support/core_ext/hash/except.rb`.
 Метод [`stringify_keys`][Hash#stringify_keys] возвращает хэш, в котором ключи получателя преобразованы в строку. Это выполняется с помощью применения к ним `to_s`:
 
 ```ruby
-{nil => nil, 1 => 1, a: :a}.stringify_keys
+{ nil => nil, 1 => 1, a: :a }.stringify_keys
 # => {"" => nil, "1" => 1, "a" => :a}
 ```
 
 В случае коллизии ключей, значением будет то, которое вставлено в хэш позже:
 
 ```ruby
-{"a" => 1, a: 2}.stringify_keys
+{ "a" => 1, a: 2 }.stringify_keys
 # Результатом будет
 # => {"a"=>2}
 ```
@@ -2943,7 +2907,7 @@ end
 Кроме этого, можно использовать [`deep_stringify_keys`][Hash#deep_stringify_keys] и [`deep_stringify_keys!`][Hash#deep_stringify_keys!] для преобразования к строке всех ключей в заданном хэше и всех хэшей, вложенных в него. Пример результата:
 
 ```ruby
-{nil => nil, 1 => 1, nested: {a: 3, 5 => 5}}.deep_stringify_keys
+{ nil => nil, 1 => 1, nested: { a: 3, 5 => 5 } }.deep_stringify_keys
 # => {""=>nil, "1"=>1, "nested"=>{"a"=>3, "5"=>5}}
 ```
 
@@ -2959,7 +2923,7 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 Метод [`symbolize_keys`][Hash#symbolize_keys] возвращает хэш, в котором ключи получателя преобразованы к символам там, где это возможно. Это выполняется с помощью применения к ним `to_sym`:
 
 ```ruby
-{nil => nil, 1 => 1, "a" => "a"}.symbolize_keys
+{ nil => nil, 1 => 1, "a" => "a" }.symbolize_keys
 # => {nil=>nil, 1=>1, :a=>"a"}
 ```
 
@@ -2968,7 +2932,7 @@ WARNING. Отметьте в предыдущем примере, что тол�
 В случае коллизии ключей, значением будет то, которое вставлено в хэш позже:
 
 ```ruby
-{"a" => 1, a: 2}.symbolize_keys
+{ "a" => 1, a: 2 }.symbolize_keys
 # => {:a=>2}
 ```
 
@@ -2990,7 +2954,7 @@ end
 Кроме этого, можно использовать [`deep_symbolize_keys`][Hash#deep_symbolize_keys] и [`deep_symbolize_keys!`][Hash#deep_symbolize_keys!] для преобразования к символам всех ключей в заданном хэше и всех хэшей, вложенных в него. Пример результата:
 
 ```ruby
-{nil => nil, 1 => 1, "nested" => {"a" => 3, 5 => 5}}.deep_symbolize_keys
+{ nil => nil, 1 => 1, "nested" => { "a" => 3, 5 => 5 } }.deep_symbolize_keys
 # => {nil=>nil, 1=>1, nested:{a:3, 5=>5}}
 ```
 
@@ -3015,8 +2979,8 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 Метод [`assert_valid_keys`][Hash#assert_valid_keys] получает определенное число аргументов и проверяет, имеет ли получатель хоть один ключ вне этого белого списка. Если имеет, вызывается `ArgumentError`.
 
 ```ruby
-{a: 1}.assert_valid_keys(:a)  # passes
-{a: 1}.assert_valid_keys("a") # ArgumentError
+{ a: 1 }.assert_valid_keys(:a)  # проходит
+{ a: 1 }.assert_valid_keys("a") # ArgumentError
 ```
 
 Active Record не принимает незнакомые опции при создании связей, к примеру. Он реализует такой контроль через `assert_valid_keys`.
@@ -3032,9 +2996,9 @@ NOTE: Определено в `active_support/core_ext/hash/keys.rb`.
 Метод [`deep_transform_values`][Hash#deep_transform_values] возвращает новый хэш со всеми значениями, конвертированными с помощью операции блока. Он включает значения корневого хэша и из всех вложенных хэшей и массивов.
 
 ```ruby
-hash = { person: { name: 'Rob', age: '28' } }
+hash = { person: { name: "Rob", age: "28" } }
 
-hash.deep_transform_values{ |value| value.to_s.upcase }
+hash.deep_transform_values { |value| value.to_s.upcase }
 # => {person: {name: "ROB", age: "28"}}
 ```
 
@@ -3050,7 +3014,7 @@ NOTE: Определено в `active_support/core_ext/hash/deep_transform_value
 Метод [`slice!`][Hash#slice!] заменяет хэш только заданными ключами и возвращает хэш, содержащий убранные пары ключ/значение.
 
 ```ruby
-hash = {a: 1, b: 2}
+hash = { a: 1, b: 2 }
 rest = hash.slice!(:a) # => {:b=>2}
 hash                   # => {:a=>1}
 ```
@@ -3064,7 +3028,7 @@ NOTE: Определено в `active_support/core_ext/hash/slice.rb`.
 Метод [`extract!`][Hash#extract!] убирает и возвращает пары ключ/значение, соответствующие заданным ключам.
 
 ```ruby
-hash = {:a => 1, :b => 2}
+hash = { a: 1, b: 2 }
 rest = hash.extract!(:a) # => {:a=>1}
 hash                     # => {:b=>2}
 ```
@@ -3072,7 +3036,7 @@ hash                     # => {:b=>2}
 Метод `extract!` возвращает тот же подкласс Hash, каким является получатель.
 
 ```ruby
-hash = {a: 1, b: 2}.with_indifferent_access
+hash = { a: 1, b: 2 }.with_indifferent_access
 rest = hash.extract!(:a).class
 # => ActiveSupport::HashWithIndifferentAccess
 ```
@@ -3086,7 +3050,7 @@ NOTE: Определено в `active_support/core_ext/hash/slice.rb`.
 Метод [`with_indifferent_access`][Hash#with_indifferent_access] возвращает [`ActiveSupport::HashWithIndifferentAccess`][ActiveSupport::HashWithIndifferentAccess] из своего получателя:
 
 ```ruby
-{a: 1}.with_indifferent_access["a"] # => 1
+{ a: 1 }.with_indifferent_access["a"] # => 1
 ```
 
 NOTE: Определено в `active_support/core_ext/hash/indifferent_access.rb`.
@@ -3105,8 +3069,8 @@ NOTE: Определено в `active_support/core_ext/hash/indifferent_access.r
 %r{.}.multiline?  # => false
 %r{.}m.multiline? # => true
 
-Regexp.new('.').multiline?                    # => false
-Regexp.new('.', Regexp::MULTILINE).multiline? # => true
+Regexp.new(".").multiline?                    # => false
+Regexp.new(".", Regexp::MULTILINE).multiline? # => true
 ```
 
 Rails использует этот метод в одном месте, в коде маршрутизации. Регулярные выражения Multiline недопустимы для маршрутных требований, и этот флаг облегчает соблюдение этого ограничения.
@@ -3168,19 +3132,19 @@ Active Support расширяет эти методы так, что аргум�
 
 NOTE: Определено в `active_support/core_ext/range/compare_range.rb`.
 
-### `overlaps?`
+### `overlap?`
 
-Метод [`Range#overlaps?`][Range#overlaps?] говорит, имеют ли два заданных интервала непустое пересечение:
+Метод [`Range#overlap?`][Range#overlap?] говорит, имеют ли два заданных интервала непустое пересечение:
 
 ```ruby
-(1..10).overlaps?(7..11)  # => true
-(1..10).overlaps?(0..7)   # => true
-(1..10).overlaps?(11..27) # => false
+(1..10).overlap?(7..11)  # => true
+(1..10).overlap?(0..7)   # => true
+(1..10).overlap?(11..27) # => false
 ```
 
-NOTE: Определено в `active_support/core_ext/range/overlaps.rb`.
+NOTE: Определено в `active_support/core_ext/range/overlap.rb`.
 
-[Range#overlaps?]: https://api.rubyonrails.org/classes/Range.html#method-i-overlaps-3F
+[Range#overlap?]: https://api.rubyonrails.org/classes/Range.html#method-i-overlaps-3F
 
 Расширения для `Date`
 ---------------------
@@ -3399,18 +3363,19 @@ NOTE: Определено в `active_support/core_ext/date_and_time/calculation
 [DateAndTime::Calculations#months_ago]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-months_ago
 [DateAndTime::Calculations#months_since]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-months_since
 
-##### `weeks_ago`
+##### `weeks_ago`, `weeks_since`
 
-Метод [`weeks_ago`][DateAndTime::Calculations#weeks_ago] работает аналогично для недель:
+Методы [`weeks_ago`][DateAndTime::Calculations#weeks_ago] и [`weeks_since`][DateAndTime::Calculations#week_since] работают аналогично для недель:
 
 ```ruby
-Date.new(2010, 5, 24).weeks_ago(1)    # => Mon, 17 May 2010
-Date.new(2010, 5, 24).weeks_ago(2)    # => Mon, 10 May 2010
+Date.new(2010, 5, 24).weeks_ago(1)   # => Mon, 17 May 2010
+Date.new(2010, 5, 24).weeks_since(2) # => Mon, 07 Jun 2010
 ```
 
 NOTE: Определено в `active_support/core_ext/date_and_time/calculations.rb`.
 
 [DateAndTime::Calculations#weeks_ago]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-weeks_ago
+[DateAndTime::Calculations#weeks_since]: https://api.rubyonrails.org/classes/DateAndTime/Calculations.html#method-i-weeks_since
 
 ##### `advance`
 
@@ -3423,22 +3388,6 @@ date.advance(months: 2, days: -2) # => Wed, 04 Aug 2010
 ```
 
 Отметьте в предыдущем примере, что приросты могут быть отрицательными.
-
-Для выполнения вычисления метод сначала приращивает года, затем месяцы, затем недели, и, наконец, дни. Этот порядок важен в концах месяцев. Скажем, к примеру, мы в конце февраля 2010, и мы хотим переместиться на один месяц и один день вперед.
-
-Метод `advance` передвигает сначала на один месяц, и затем на один день, результат такой:
-
-```ruby
-Date.new(2010, 2, 28).advance(months: 1, days: 1)
-# => Sun, 29 Mar 2010
-```
-
-Хотя, если бы мы делали по-другому, результат тоже был бы другой:
-
-```ruby
-Date.new(2010, 2, 28).advance(days: 1).advance(months: 1)
-# => Thu, 01 Apr 2010
-```
 
 NOTE: Определено в `active_support/core_ext/date/calculations.rb`.
 
