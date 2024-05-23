@@ -225,8 +225,8 @@ pages:
   - title:    Автозагрузка и перезагрузка констант
     path:     autoloading-and-reloading-constants
     file:     autoloading_and_reloading_constants.md
-    revision: bd19260293b148120c4d7b0720009bf6498a1891
-    date:     19/12/2022
+    revision: dcbd6b0996887b9a0c6a19bee379ba79f81c6022
+    date:     07/05/2024
 
   - title:    Как перейти с Classic на Zeitwerk
     path:     classic-to-zeitwerk-howto
