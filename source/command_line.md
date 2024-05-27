@@ -42,24 +42,27 @@ Rails создаст кучу всего с помощью такой мален
 
 Если хотите пропустить какие-то файлы при генерации, или опустить некоторые библиотеки, можно добавить любые из следующих аргументов к команде `rails new`:
 
-| Аргумент                | Описание                                            |
-| ----------------------- | --------------------------------------------------- |
-| `--skip-git`            | Пропустить git init, .gitignore и .gitattributes    |
-| `--skip-keeps`          | Пропустить файлы для контроля версий .keep          |
-| `--skip-action-mailer`  | Пропустить файлы Action Mailer                      |
-| `--skip-action-mailbox` | Пропустить гем Action Mailbox                       |
-| `--skip-action-text`    | Пропустить гем Action Text                          |
-| `--skip-active-record`  | Пропустить файлы Active Record                      |
-| `--skip-active-job`     | Пропустить Active Job                               |
-| `--skip-active-storage` | Пропустить файлы Active Storage                     |
-| `--skip-action-cable`   | Пропустить файлы Action Cable                       |
-| `--skip-asset-pipeline` | Пропустить Asset Pipeline                           |
-| `--skip-javascript`     | Пропустить файлы JavaScript                         |
-| `--skip-hotwire`        | Пропустить интеграцию с Hotwire                     |
-| `--skip-jbuilder`       | Пропустить гем jbuilder                             |
-| `--skip-test`           | Пропустить файлы тестов                             |
-| `--skip-system-test`    | Пропустить файлы системных тестов                   |
-| `--skip-bootsnap`       | Пропустить гем bootsnap                             |
+| Аргумент                | Описание                                                     |
+| ----------------------- | ------------------------------------------------------------ |
+| `--skip-git`            | Пропустить git init, .gitignore и .gitattributes             |
+| `--skip-docker`         | Пропустить Dockerfile, .dockerignore и bin/docker-entrypoint |
+| `--skip-keeps`          | Пропустить файлы для контроля версий .keep                   |
+| `--skip-action-mailer`  | Пропустить файлы Action Mailer                               |
+| `--skip-action-mailbox` | Пропустить гем Action Mailbox                                |
+| `--skip-action-text`    | Пропустить гем Action Text                                   |
+| `--skip-active-record`  | Пропустить файлы Active Record                               |
+| `--skip-active-job`     | Пропустить Active Job                                        |
+| `--skip-active-storage` | Пропустить файлы Active Storage                              |
+| `--skip-action-cable`   | Пропустить файлы Action Cable                                |
+| `--skip-asset-pipeline` | Пропустить Asset Pipeline                                    |
+| `--skip-javascript`     | Пропустить файлы JavaScript                                  |
+| `--skip-hotwire`        | Пропустить интеграцию с Hotwire                              |
+| `--skip-jbuilder`       | Пропустить гем jbuilder                                      |
+| `--skip-test`           | Пропустить файлы тестов                                      |
+| `--skip-system-test`    | Пропустить файлы системных тестов                            |
+| `--skip-bootsnap`       | Пропустить гем bootsnap                                      |
+| `--skip-dev-gems`       | Пропустить добавление гемов для разработки                   |
+| `--skip-rubocop`        | Пропустить настройку RuboCop                                 |
 
 Это только некоторые из опций, которые принимает `rails new`. Для полного списка опций, напишите `rails new --help`.
 
@@ -86,8 +89,6 @@ $ rails new petstore --database=postgresql
 #   gem install pg
 # On macOS with Homebrew:
 #   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
-# On macOS with MacPorts:
-#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
 # On Windows:
 #   gem install pg
 #       Choose the win32 build.
@@ -99,6 +100,7 @@ $ rails new petstore --database=postgresql
 default: &default
   adapter: postgresql
   encoding: unicode
+
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -130,36 +132,38 @@ development:
 
 ```
 $ rails --help
-Usage: rails COMMAND [ARGS]
+Usage:
+  bin/rails COMMAND [options]
 
-The most common rails commands are:
- generate    Generate new code (short-cut alias: "g")
- console     Start the Rails console (short-cut alias: "c")
- server      Start the Rails server (short-cut alias: "s")
- ...
+You must specify a command. The most common commands are:
+
+  generate     Generate new code (short-cut alias: "g")
+  console      Start the Rails console (short-cut alias: "c")
+  server       Start the Rails server (short-cut alias: "s")
+  ...
 
 All commands can be run with -h (or --help) for more information.
 
 In addition to those commands, there are:
- about                               List versions of all Rails ...
- assets:clean[keep]                  Remove old compiled assets
- assets:clobber                      Remove compiled assets
- assets:environment                  Load asset compile environment
- assets:precompile                   Compile all the assets ...
- ...
- db:fixtures:load                    Loads fixtures into the ...
- db:migrate                          Migrate the database ...
- db:migrate:status                   Display status of migrations
- db:rollback                         Rolls the schema back to ...
- db:schema:cache:clear               Clears a db/schema_cache.yml file
- db:schema:cache:dump                Creates a db/schema_cache.yml file
- db:schema:dump                      Creates a database schema file (either db/schema.rb or db/structure.sql ...
- db:schema:load                      Loads a database schema file (either db/schema.rb or db/structure.sql ...
- db:seed                             Loads the seed data ...
- db:version                          Retrieves the current schema ...
- ...
- restart                             Restart app by touching ...
- tmp:create                          Creates tmp directories ...
+about                               List versions of all Rails ...
+assets:clean[keep]                  Remove old compiled assets
+assets:clobber                      Remove compiled assets
+assets:environment                  Load asset compile environment
+assets:precompile                   Compile all the assets ...
+...
+db:fixtures:load                    Load fixtures into the ...
+db:migrate                          Migrate the database ...
+db:migrate:status                   Display status of migrations
+db:rollback                         Roll the schema back to ...
+db:schema:cache:clear               Clears a db/schema_cache.yml file
+db:schema:cache:dump                Create a db/schema_cache.yml file
+db:schema:dump                      Create a database schema file (either db/schema.rb or db/structure.sql ...
+db:schema:load                      Load a database schema file (either db/schema.rb or db/structure.sql ...
+db:seed                             Load the seed data ...
+db:version                          Retrieve the current schema ...
+...
+restart                             Restart app by touching ...
+tmp:create                          Create tmp directories ...
 ```
 
 ### `bin/rails server`
@@ -172,13 +176,16 @@ In addition to those commands, there are:
 $ cd my_app
 $ bin/rails server
 => Booting Puma
-=> Rails 7.0.0 application starting in development
+=> Rails 8.0.0 application starting in development
 => Run `bin/rails server --help` for more startup options
 Puma starting in single mode...
-* Version 3.12.1 (ruby 2.5.7-p206), codename: Llamas in Pajamas
-* Min threads: 5, max threads: 5
-* Environment: development
-* Listening on tcp://localhost:3000
+* Puma version: 6.4.0 (ruby 3.1.3-p185) ("The Eagle of Durango")
+*  Min threads: 5
+*  Max threads: 5
+*  Environment: development
+*          PID: 5295
+* Listening on http://127.0.0.1:3000
+* Listening on http://[::1]:3000
 Use Ctrl-C to stop
 ```
 
@@ -202,7 +209,8 @@ INFO: Также можно использовать псевдоним "g" дл
 
 ```bash
 $ bin/rails generate
-Usage: rails generate GENERATOR [args] [options]
+Usage:
+  bin/rails generate GENERATOR [args] [options]
 
 ...
 ...
@@ -228,7 +236,8 @@ INFO: Все консольные утилиты Rails имеют текст п�
 
 ```bash
 $ bin/rails generate controller
-Usage: bin/rails generate controller NAME [action action] [options]
+Usage:
+  bin/rails generate controller NAME [action action] [options]
 
 ...
 ...
@@ -394,7 +403,7 @@ $ bin/rails console -e staging
 
 ```bash
 $ bin/rails console --sandbox
-Loading development environment in sandbox (Rails 7.1.0)
+Loading development environment in sandbox (Rails 8.0.0)
 Any modifications you make will be rolled back on exit
 irb(main):001:0>
 ```
@@ -438,7 +447,7 @@ $ bin/rails dbconsole --database=animals
 
 ### `bin/rails runner`
 
-`runner` запускает код Ruby в контексте неинтерактивности Rails. Для примера:
+`runner` запускает код Ruby в контексте неинтерактивности Rails, без необходимости открывать Rails `console`. Для примера:
 
 ```bash
 $ bin/rails runner "Model.long_running_method"
@@ -491,12 +500,12 @@ $ bin/rails destroy model Oops
 ```
 $ rails about
 About your application's environment
-Rails version             7.0.0
-Ruby version              2.7.0 (x86_64-linux)
-RubyGems version          2.7.3
-Rack version              2.0.4
+Rails version             8.0.0
+Ruby version              3.1.0 (x86_64-linux)
+RubyGems version          3.3.7
+Rack version              3.0.8
 JavaScript Runtime        Node.js (V8)
-Middleware:               Rack::Sendfile, ActionDispatch::Static, ActionDispatch::Executor, ActiveSupport::Cache::Strategy::LocalCache::Middleware, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Sprockets::Rails::QuietAssets, Rails::Rack::Logger, ActionDispatch::ShowExceptions, WebConsole::Middleware, ActionDispatch::DebugExceptions, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, Rack::Head, Rack::ConditionalGet, Rack::ETag
+Middleware:               ActionDispatch::HostAuthorization, Rack::Sendfile, ActionDispatch::Static, ActionDispatch::Executor, ActionDispatch::ServerTiming, ActiveSupport::Cache::Strategy::LocalCache::Middleware, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Sprockets::Rails::QuietAssets, Rails::Rack::Logger, ActionDispatch::ShowExceptions, WebConsole::Middleware, ActionDispatch::DebugExceptions, ActionDispatch::ActionableExceptions, ActionDispatch::Reloader, ActionDispatch::Callbacks, ActiveRecord::Migration::CheckPending, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ContentSecurityPolicy::Middleware, ActionDispatch::PermissionsPolicy::Middleware, Rack::Head, Rack::ConditionalGet, Rack::ETag, Rack::TempfileReaper
 Application root          /home/foobar/my_app
 Environment               development
 Database adapter          sqlite3
@@ -689,4 +698,11 @@ $ bin/rails "task_name[value 1,value2,value3]" # несколько аргуме
 $ bin/rails db:nothing
 ```
 
-NOTE: Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваша задача должна зависеть от задачи `environment`, которая загрузит код вашего приложения.
+Если необходимо взаимодействовать с моделями приложения, выполнять запросы в базу данных и так далее, ваша задача должна зависеть от задачи `environment`, которая загрузит код вашего приложения.
+
+```ruby
+task task_that_requires_app_code: [:environment] do
+  User.create!
+end
+```
+
