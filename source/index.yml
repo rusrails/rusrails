@@ -327,8 +327,8 @@ pages:
   - title:    Заметки о релизе Ruby on Rails 7.1
     path:     7_1_release_notes
     file:     7_1_release_notes.md
-    revision: 054684537eabbbdf67ddca60fb562ed2df1d84db
-    date:     01/11/2023
+    revision: a0e8ea13418c72dda4b01d73e4b7bb1bdc1b62a3
+    date:     13/05/2024
 
   - title:    Заметки о релизе Ruby on Rails 7.0
     path:     7_0_release_notes
