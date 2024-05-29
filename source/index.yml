@@ -318,6 +318,12 @@ pages:
     revision: 01502fe2395737d04f169245fdab9ccc415a5b77
     date:     15/02/2024
 
+  - title:    Заметки о релизе Ruby on Rails 7.2
+    path:     7_2_release_notes
+    file:     7_2_release_notes.md
+    revision: b0efe426e763c9efaed345359a28d03c58e73305
+    date:     27/05/2024
+
   - title:    Заметки о релизе Ruby on Rails 7.1
     path:     7_1_release_notes
     file:     7_1_release_notes.md
@@ -397,7 +403,6 @@ pages:
     date:     21/02/2022
 
 plan:
-  - file:     7_2_release_notes.md
   - file:     8_0_release_notes.md
   - file:     active_record_composite_primary_keys.md
   - file:     getting_started_with_devcontainer.md
