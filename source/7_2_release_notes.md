@@ -1,180 +1,144 @@
 Заметки о релизе Ruby on Rails 7.2
 ==================================
 
-Highlights in Rails 7.2:
+Ключевые новинки в Rails 7.2:
 
-* Development containers configuration for applications.
-* Add browser version guard by default.
-* Make Ruby 3.1 the new minimum version.
-* Default Progressive Web Application (PWA) files.
-* Add omakase RuboCop rules by default.
-* Add GitHub CI workflow by default to new applications.
-* Add Brakeman by default to new applications.
-* Set a new default for the Puma thread count.
-* Prevent jobs from being scheduled within transactions.
-* Per transaction commit and rollback callbacks.
-* Enable YJIT by default if running Ruby 3.3+.
-* New design for the Rails guides.
-* Setup jemalloc in default Dockerfile to optimize memory allocation.
-* Suggest puma-dev configuration in bin/setup.
+* Конфигурация контейнеров разработки для приложений.
+* По умолчанию добавлена проверка версии браузера.
+* Ruby 3.1 сделан новой минимальной версией.
+* Файлы прогрессивного веб-приложения (PWA) по умолчанию.
+* По умолчанию добавлены правила omakase RuboCop.
+* По умолчанию добавлен рабочий процесс GitHub CI в новые приложения.
+* По умолчанию добавлен Brakeman в новые приложения.
+* Установлено новое значение по умолчанию для количества тредов Puma.
+* Предотвращено планирование заданий внутри транзакций.
+* Колбэки подтверждения и отката транзакций.
+* Включен YJIT по умолчанию при работе с Ruby 3.3+.
+* Новый дизайн руководств по Rails.
+* Настроен jemalloc в Dockerfile по умолчанию для оптимизации выделения памяти.
+* Предложена конфигурацию puma-dev в bin/setup.
 
-These release notes cover only the major changes. To learn about various bug
-fixes and changes, please refer to the changelogs or check out the [list of
-commits](https://github.com/rails/rails/commits/7-2-stable) in the main Rails
-repository on GitHub.
+Эти заметки о релизе покрывают только основные изменения. Чтобы узнать о других обновлениях, различных исправлениях программных ошибок и изменениях, обратитесь к логам изменений или к [списку коммитов](https://github.com/rails/rails/commits/7-2-stable) в главном репозитории Rails на GitHub.
 
 --------------------------------------------------------------------------------
 
-Upgrading to Rails 7.2
-----------------------
+Апгрейд до Rails 7.2
+--------------------
 
-If you're upgrading an existing application, it's a great idea to have good test
-coverage before going in. You should also first upgrade to Rails 7.1 in case you
-haven't and make sure your application still runs as expected before attempting
-an update to Rails 7.2. A list of things to watch out for when upgrading is
-available in the
-[Upgrading Ruby on Rails](upgrading_ruby_on_rails.html#upgrading-from-rails-7-1-to-rails-7-2)
-guide.
+Прежде чем апгрейднуть существующее приложение, было бы хорошо иметь перед этим покрытие тестами. Также, до попытки обновиться до Rails 7.2, необходимо сначала произвести апгрейд до Rails 7.1 и убедиться, что приложение все еще выполняется так, как нужно. Список вещей, которые нужно выполнить для апгрейда доступен в руководстве [Апгрейд Ruby on Rails](/upgrading-ruby-on-rails#upgrading-from-rails-7-1-to-rails-7-2).
 
-Major Features
---------------
+Основные особенности
+--------------------
 
-### Development containers configuration for applications
+### Конфигурация контейнеров разработки для приложений
 
-A [development container](https://containers.dev/) (or dev container for short) allows you to use a container
-as a full-featured development environment.
+[Контейнер разработки](https://containers.dev/) (dev container) позволяет использовать контейнер в качестве полноценной среды разработки.
 
-Rails 7.2 adds the ability to generate a development container configuration for your application. This configuration
-includes a `.devcontainer` folder with a `Dockerfile`, a `docker-compose.yml` file, and a `devcontainer.json` file.
+Rails 7.2 добавляет возможность генерировать конфигурацию контейнера разработки для вашего приложения. Эта конфигурация включает папку `.devcontainer` с файлами `Dockerfile`, `docker-compose.yml` и `devcontainer.json`.
 
-By default, the dev container contains the following:
+По умолчанию контейнер разработки содержит:
 
-* A Redis container for use with Kredis, Action Cable, etc.
-* A database (SQLite, Postgres, MySQL or MariaDB)
-* A Headless Chrome container for system tests
-* Active Storage configured to use the local disk and with preview features working
+* Контейнер Redis для использования с Kredis, Action Cable и т.д.
+* Базу данных (SQLite, Postgres, MySQL или MariaDB)
+* Контейнер Headless Chrome для системных тестов
+* Active Storage, настроенный для использования локального диска с работающими функциями предварительного просмотра
 
-To generate a new application with a development container, you can run:
+Для создания нового приложения с контейнером разработки вы можете выполнить команду:
 
 ```bash
 rails new myapp --devcontainer
 ```
 
-For existing applications, a `devcontainer` command is now available:
+Для существующих приложений теперь доступна команда `devcontainer`.
 
 ```bash
 rails devcontainer
 ```
 
-For more information, see the [Getting Started with Dev Containers](https://edgeguides.rubyonrails.org/getting_started_with_devcontainer.html) guide.
+Подробности смотрите в руководстве [TODO: Getting Started with Dev Containers](/getting_started_with_devcontainer).
 
-### Add browser version guard by default
+### По умолчанию добавлена проверка версии браузера
 
-Rails now adds the ability to specify the browser versions that will be allowed to access all actions
-(or some, as limited by `only:` or `except:`).
+Rails теперь добавляет возможность указывать версии браузеров, которым будет разрешен доступ ко всем экшнам (или некоторым из них, ограниченным `only:` или `except:`).
 
-Only browsers matched in the hash or named set passed to `versions:` will be blocked if they're below the versions
-specified.
+Только браузеры, соответствующие хэшу или именованному набору, переданному в `versions:`, будут заблокированы, если их версии ниже указанных.
 
-This means that all other unknown browsers, as well as agents that aren't reporting a user-agent header, will be allowed access.
+Это означает, что всем другим неизвестным браузерам, а также агентам, которые не сообщают заголовок user-agent, будет разрешен доступ.
 
-A browser that's blocked will by default be served the file in `public/406-unsupported-browser.html` with a HTTP status
-code of "406 Not Acceptable".
+Заблокированному браузеру по умолчанию будет предоставлен файл `public/406-unsupported-browser.html` с HTTP-кодом состояния "406 Not Acceptable".
 
-Examples:
+Примеры:
 
 ```ruby
 class ApplicationController < ActionController::Base
-  # Allow only browsers natively supporting webp images, web push, badges, import maps, CSS nesting + :has
+  # Разрешить только браузеры с родной поддержкой webp images, web push, badges, import maps, CSS nesting + :has
   allow_browser versions: :modern
 end
 
 class ApplicationController < ActionController::Base
-  # All versions of Chrome and Opera will be allowed, but no versions of "internet explorer" (ie). Safari needs to be 16.4+ and Firefox 121+.
+  # Все версии Chrome и Opera будут разрешены, но ни одна версия "internet explorer" (ie). Safari должен быть версии 16.4 и выше, а Firefox - 121 и выше.
   allow_browser versions: { safari: 16.4, firefox: 121, ie: false }
 end
 
 class MessagesController < ApplicationController
-  # In addition to the browsers blocked by ApplicationController, also block Opera below 104 and Chrome below 119 for the show action.
+  # В дополнение к браузерам, заблокированным в ApplicationController, также блокируется Opera ниже версии 104 и Chrome ниже версии 119 для действия show.
   allow_browser versions: { opera: 104, chrome: 119 }, only: :show
 end
 ```
 
-Newly generated applications have this guard set in `ApplicationController`.
+В новых приложениях эта защита установлена в `ApplicationController`.
 
-For more information, see the [allow_browser](https://api.rubyonrails.org/classes/ActionController/AllowBrowser/ClassMethods.html#method-i-allow_browser)
-documentation.
+Для получения дополнительной информации смотрите документацию по [allow_browser](https://api.rubyonrails.org/classes/ActionController/AllowBrowser/ClassMethods.html#method-i-allow_browser).
 
-### Make Ruby 3.1 the new minimum version
+### Ruby 3.1 сделан новой минимальной версией
 
-Until now, Rails only dropped compatibility with older Rubies on new majors version.
-We are changing this policy because it causes us to keep compatibility with long
-unsupported versions of Ruby or to bump the Rails major version more often, and to
-drop multiple Ruby versions at once when we bump the major.
+До сих пор Rails прекращал поддержку старых версий Ruby только при выпуске новых мажорных версий. Мы меняем эту политику, потому что она вынуждает нас либо поддерживать устаревшие версии Ruby, либо слишком часто выпускать новые мажорные версии Rails, а также отказываться от нескольких версий Ruby одновременно при переходе на новую мажорную версию.
 
-We will now drop Ruby versions that are end-of-life on minor Rails versions at the time of the release.
+Теперь мы будем прекращать поддержку версий Ruby, достигших конца жизненного цикла, на минорных версиях Rails во время их выпуска.
 
-For Rails 7.2, Ruby 3.1 is the new minimum version.
+Для Rails 7.2 минимальной версией Ruby становится 3.1.
 
-### Default Progressive Web Application (PWA) files
+### Файлы прогрессивного веб-приложения (PWA) по умолчанию
 
-In preparation to better supporting the creation of PWA applications with Rails, we now generate default PWA files for the manifest
-and service worker, which are served from `app/views/pwa` and can be dynamically rendered through ERB. Those files
-are mounted explicitly at the root with default routes in the generated routes file.
+Для подготовки к более эффективной поддержке создания PWA-приложений с Rails, мы теперь генерируем стандартные PWA-файлы для манифеста и service worker. Эти файлы доступны из `app/views/pwa` и могут динамически рендериться с помощью ERB. Эти файлы монтируются явно в корневом каталоге с использованием стандартных маршрутов в сгенерированном файле маршрутов.
 
-For more information, see the [pull request adding the feature](https://github.com/rails/rails/pull/50528).
+Для получения дополнительной информации смотрите [пул реквест на включение функции](https://github.com/rails/rails/pull/50528).
 
-### Add omakase RuboCop rules by default
+### По умолчанию добавлены правила omakase RuboCop
 
-Rails applications now come with [RuboCop](https://rubocop.org/) configured with a set of rules from [rubocop-rails-omakase](https://github.com/rails/rubocop-rails-omakase) by default.
+Rails теперь поставляется с [RuboCop](https://rubocop.org/), настроенным с набором правил из [rubocop-rails-omakase](https://github.com/rails/rubocop-rails-omakase) по умолчанию.
 
-Ruby is a beautifully expressive language that not only tolerates many different dialects, but celebrates their
-diversity. It was never meant as a language to be written exclusively in a single style across all libraries,
-frameworks, or applications. If you or your team has developed a particular house style that brings you joy,
-you should cherish that.
+Ruby - это красивый и выразительный язык, который не только допускает множество различных диалектов, но и приветствует их многообразие. Он никогда не задумывался как язык, который нужно писать исключительно в одном стиле во всех библиотеках, фреймворках или приложениях. Если у вас или вашей команды есть свой особый стиль, который вам нравится, вам следует его ценить.
 
-This collection of RuboCop styles is for those who haven't committed to any specific dialect already. Who would just
-like to have a reasonable starting point, and who will benefit from some default rules to at least start a consistent
-approach to Ruby styling.
+Этот набор стилей RuboCop предназначен для тех, кто еще не привержен какому-либо конкретному диалекту. Кто просто хочет иметь разумную отправную точку и кому будут полезны некоторые правила по умолчанию, чтобы хотя бы начать последовательный подход к стилизации Ruby.
 
-These specific rules aren't right or wrong, but merely represent the idiosyncratic aesthetic sensibilities of Rails'
-creator. Use them whole, use them as a starting point, use them as inspiration, or however you see fit.
+Эти конкретные правила не являются ни правильными, ни неправильными, а просто отражают идиосинкразические эстетические чувства создателя Rails. Используйте их целиком, используйте их как отправную точку, используйте их как вдохновение или как вам будет угодно.
 
-### Add GitHub CI workflow by default to new applications
+### По умолчанию добавлен рабочий процесс GitHub CI в новые приложения
 
-Rails now adds a default GitHub CI workflow file to new applications. This will get especially newcomers off to a good
-start with automated scanning, linting, and testing. We find that a natural continuation for the modern age of what
-we've done since the start with unit tests.
+Rails теперь по умолчанию добавляет файл рабочего процесса GitHub CI в новые приложения. Это, безусловно, поможет новичкам начать работу с автоматическим сканированием, анализом кода и тестированием. Мы считаем это естественным продолжением для современной эпохи того, что мы делали с самого начала с юнит-тестами.
 
-It's of course true that GitHub Actions are a commercial cloud product for private repositories after you've used the
-free tokens. But given the relationship between GitHub and Rails, the overwhelming default nature of the platform for
-newcomers, and the value of teaching newcomers good CI habits, we find this to be an acceptable trade-off.
+Конечно, верно, что GitHub Actions - это коммерческий облачный продукт для частных репозиториев после того, как вы потратили бесплатные токены. Однако, учитывая связь между GitHub и Rails, подавляющее использование платформы новичками и ценность обучения их хорошим привычкам CI, мы считаем это приемлемым компромиссом.
 
-### Add Brakeman by default to new applications
+### По умолчанию добавлен Brakeman в новые приложения
 
-[Brakeman](https://brakemanscanner.org/) is a great way to prevent common security vulnerabilities in Rails from going
-into production.
+[Brakeman](https://brakemanscanner.org/) - это отличный способ предотвратить попадание в production распространенных уязвимостей безопасности в Rails.
 
-New applications come with Brakeman installed and combined with the GitHub CI workflow, it will run automatically on
-every push.
+Brakeman по умолчанию установлен в новых приложениях и в сочетании с рабочим процессом GitHub CI будет автоматически запускаться при каждом push-е.
 
-### Set a new default for the Puma thread count
+### Установлено новое значение по умолчанию для количества тредов Puma
 
-Rails changed the default number of threads in Puma from 5 to 3.
+Rails изменил количество тредов по умолчанию в Puma с 5 на 3.
 
-Due to the nature of well-optimized Rails applications, with quick SQL queries and slow 3rd-party calls running via jobs,
-Ruby can spend a significant amount of time waiting for the Global VM Lock (GVL) to release when the thread count is too
-high, which is hurting latency (request response time).
+Из-за природы хорошо оптимизированных приложений Rails, с быстрыми SQL-запросами и медленными вызовами сторонних библиотек, работающих через задания, Ruby может тратить значительное время, ожидая освобождения Global VM Lock (GVL), когда количество тредов слишком велико, что негативно влияет на задержку (время ответа на запросы).
 
-After careful consideration, investigation, and based on battle-tested experience from applications running in
-production, we decided that a default of 3 threads is a good balance between concurrency and performance.
+После тщательного рассмотрения, изучения и на основе опыта, полученного в приложениях, работающих в production, мы решили, что значение по умолчанию 3 треда - это хороший баланс между параллелизмом и производительностью.
 
-You can follow a very detailed discussion about this change in [the issue](https://github.com/rails/rails/issues/50450).
+Вы можете ознакомиться с очень подробным обсуждением этого изменения в [этой проблеме](https://github.com/rails/rails/issues/50450).
 
-### Prevent jobs from being scheduled within transactions
+### Предотвращено планирование заданий внутри транзакций
 
-A common mistake with Active Job is to enqueue jobs from inside a transaction, causing them to potentially be picked
-and ran by another process, before the transaction is committed, which result in various errors.
+Частая ошибка при работе с Active Job заключается в том, что задания ставятся в очередь внутри транзакции, что может привести к тому, что другой процесс подхватит и выполнит задание до завершения транзакции, что, в свою очередь, может вызвать различные ошибки.
 
 ```ruby
 Topic.transaction do
@@ -184,11 +148,9 @@ Topic.transaction do
 end
 ```
 
-Now Active Job will automatically defer the enqueuing to after the transaction is committed, and drop the job if the
-transaction is rolled back.
+Теперь Active Job автоматически откладывает постановку в очередь до завершения транзакции. Если транзакция откатывается, задание будет сброшено.
 
-Various queue implementations can chose to disable this behavior, and users can disable it, or force it on a per job
-basis:
+Некоторые реализации очередей могут отключить это поведение. Пользователи также могут отключить его или принудительно включить для отдельных заданий:
 
 ```ruby
 class NewTopicNotificationJob < ApplicationJob
@@ -196,12 +158,11 @@ class NewTopicNotificationJob < ApplicationJob
 end
 ```
 
-### Per transaction commit and rollback callbacks
+### Колбэки подтверждения и отката транзакций
 
-This is now possible due to a new feature that allows registering transaction callbacks outside of a record.
+Эта возможность появилась благодаря новой функции, позволяющей регистрировать колбэки транзакций вне записи.
 
-`ActiveRecord::Base.transaction` now yields an `ActiveRecord::Transaction` object, which allows registering callbacks
-on it.
+Теперь `ActiveRecord::Base.transaction` возвращает объект `ActiveRecord::Transaction`, который позволяет регистрировать на нем колбэки.
 
 ```ruby
 Article.transaction do |transaction|
@@ -213,7 +174,7 @@ Article.transaction do |transaction|
 end
 ```
 
-`ActiveRecord::Base.current_transaction` was also added to allow to register callbacks on it.
+Также добавлен метод `ActiveRecord::Base.current_transaction`, который позволяет регистрировать колбэки на текущей транзакции.
 
 ```ruby
 Article.current_transaction.after_commit do
@@ -221,8 +182,7 @@ Article.current_transaction.after_commit do
 end
 ```
 
-And finally, `ActiveRecord.after_all_transactions_commit` was added, for code that may run either inside or outside a
-transaction and needs to perform work after the state changes have been properly persisted.
+И, наконец, был добавлен `ActiveRecord.after_all_transactions_commit` для кода, который может выполняться как внутри, так и вне транзакции, и которому необходимо выполнить работу после того, как изменения состояния будут успешно сохранены.
 
 ```ruby
 def publish_article(article)
@@ -234,284 +194,270 @@ def publish_article(article)
 end
 ```
 
-See [#51474](https://github.com/rails/rails/pull/51474) and [#51426](https://github.com/rails/rails/pull/51426) for more information:
+Подробности смотрите в [#51474](https://github.com/rails/rails/pull/51474) и [#51426](https://github.com/rails/rails/pull/51426).
 
-### Enable YJIT by default if running Ruby 3.3+
+### Включен YJIT по умолчанию при работе с Ruby 3.3+
 
-YJIT is Ruby's JIT compiler that is available in CRuby since Ruby 3.1. It can provide significant performance
-improvements for Rails applications, offering 15-25% latency improvements.
+YJIT, компилятор JIT Ruby, доступный в CRuby начиная с версии 3.1. Он может значительно повысить производительность Rails-приложений, сокращая задержки на 15-25%.
 
-In Rails 7.2, YJIT is enabled by default if running Ruby 3.3 or newer.
+В Rails 7.2 YJIT включен по умолчанию при использовании Ruby 3.3 или более поздней версии.
 
-You can disable YJIT by setting:
+Однако вы можете отключить YJIT с помощью:
 
 ```ruby
 Rails.application.config.yjit = false
 ```
 
-### New design for the Rails guides
+### Новый дизайн руководств по Rails
 
-When Rails 7.0 landed in December 2021, it came with a fresh new homepage and a new boot screen. The design of the
-guides, however, has remained largely untouched since 2009 - a point which hasn’t gone unnoticed (we heard your feedback).
+Когда Rails 7.0 вышел в декабре 2021 года, он появился с новой домашней страницей и новым экраном загрузки. Однако дизайн руководств оставался практически нетронутым с 2009 года, что не осталось незамеченным (мы услышали ваши отзывы).
 
-With all of the work right now going into removing complexity from the Rails framework and making the documentation
-consistent, clear, and up-to-date, it was time to tackle the design of the guides and make them equally modern, simple,
-and fresh.
+Поскольку сейчас ведется большая работа по устранению сложности фреймворка Rails и обеспечению единообразия, ясности и актуальности документации, пришло время заняться дизайном руководств и сделать их такими же современными, простыми и свежими.
 
-We worked with UX designer [John Athayde](https://meticulous.com/) to take the look and feel of the homepage and
-transfer that over to the Rails guides to make them clean, sleek, and up-to-date.
+Мы сотрудничали с UX-дизайнером [John Athayde](https://meticulous.com/), чтобы перенести внешний вид домашней страницы на руководства по Rails, сделав их чистыми, элегантными и современными.
 
-The layout will remain the same, but from today you will see the following changes reflected in the guides:
+Разметка останется прежней, но с сегодняшнего дня вы увидите следующие изменения в руководствах:
 
-* Cleaner, less busy design.
-* Fonts, color scheme, and logo more consistent with the home page.
-* Updated iconography.
-* Simplified navigation.
-* Sticky "Chapters" navbar when scrolling.
+* Более чистый и менее загруженный дизайн.
+* Шрифты, цветовая схема и логотип больше соответствуют главной странице.
+* Обновленная иконография.
+* Упрощенная навигация.
+* Панель навигации "Chapters" с фиксацией при прокрутке.
 
-See the [announcement blog post for some before/after images](https://rubyonrails.org/2024/3/20/rails-guides-get-a-facelift).
+Посмотрите [сообщение блога с анонсом, где представлены изображения до и после изменений](https://rubyonrails.org/2024/3/20/rails-guides-get-a-facelift).
 
-### Setup jemalloc in default Dockerfile to optimize memory allocation
+### Настроен jemalloc в Dockerfile по умолчанию для оптимизации выделения памяти
+Использование malloc в Ruby может привести к проблемам фрагментации памяти, особенно при использовании нескольких потоков
+[Использование `malloc` в Ruby может привести к проблемам фрагментации памяти, особенно при использовании нескольких тредов](https://www.speedshop.co/2017/12/04/malloc-doubles-ruby-memory.html) как в Puma. Переключение на выделение памяти, которое использует другие шаблоны для избежания фрагментации, может значительно снизить использование памяти.
 
-[Ruby's use of `malloc` can create memory fragmentation problems, especially when using multiple threads](https://www.speedshop.co/2017/12/04/malloc-doubles-ruby-memory.html)
-like Puma does. Switching to an allocator that uses different patterns to avoid fragmentation can decrease memory usage
-by a substantial margin.
+Rails 7.2 теперь включает [jemalloc](https://jemalloc.net/) в Dockerfile по умолчанию для оптимизации выделения памяти.
 
-Rails 7.2 now includes [jemalloc](https://jemalloc.net/) in the default Dockerfile to optimize memory allocation.
+### Предложена конфигурацию puma-dev в bin/setup
 
-### Suggest puma-dev configuration in bin/setup
+[Puma-dev](https://github.com/puma/puma-dev) — это золотой стандарт для локальной разработки нескольких Rails-приложений, если вы не используете Docker.
 
-[Puma-dev](https://github.com/puma/puma-dev) is the golden path for developing multiple Rails applications locally, if you're not using Docker.
-
-Rails now suggests how to get that setup in a new comment you'll find in `bin/setup`.
+Rails теперь предлагает, как получить эту конфигурацию, в новом комментарии, который вы найдете в файле `bin/setup`.
 
 Railties
 --------
 
-Please refer to the [Changelog][railties] for detailed changes.
+За подробностями обратитесь к [Changelog][railties].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `Rails::Generators::Testing::Behaviour`.
+*   Удален устаревший `Rails::Generators::Testing::Behaviour`.
 
-*   Remove deprecated `Rails.application.secrets`.
+*   Удален устаревший `Rails.application.secrets`.
 
-*   Remove deprecated `Rails.config.enable_dependency_loading`.
+*   Удален устаревший `Rails.config.enable_dependency_loading`.
 
-*   Remove deprecated `find_cmd_and_exec` console helper.
+*   Удален устаревший хелпер консоли `find_cmd_and_exec`.
 
-*   Remove support for `oracle`, `sqlserver`, and JRuby specific database adapters from the `new`
-    and `db:system:change` `rails` commands.
+*   Удалена поддержка `oracle`, `sqlserver` и адаптеров, специфичных для JRuby, из команд `rails` `new` и `db:system:change`.
 
-*   Remove `config.public_file_server.enabled` option from the generators.
+*   Удалена опция `config.public_file_server.enabled` из генераторов.
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
-*   Add RuboCop with rules from [rubocop-rails-omakase](https://github.com/rails/rubocop-rails-omakase)
-    by default in both new applications and plugins.
+*   Добавлен RuboCop с правилами из [rubocop-rails-omakase](https://github.com/rails/rubocop-rails-omakase) по умолчанию как в новых приложениях, так и плагинов.
 
-*   Add Brakeman with default configuration for security checks in new applications.
+*   Добавлен Brakeman с конфигурацией по умолчанию для проверок безопасности в новых приложениях.
 
-*   Add GitHub CI files for Dependabot, Brakeman, RuboCop, and running tests by default for new applications and plugins.
+*   Добавлены файлы GitHub CI для Dependabot, Brakeman, RuboCop и запуска тестов по умолчанию для новых приложений и плагинов.
 
-*   YJIT is now enabled by default for new applications running on Ruby 3.3+.
+*   YJIT теперь включен по умолчанию для новых приложений, запущенных на Ruby 3.3+.
 
-*   Generate a `.devcontainer` folder for running the application in a container with Visual Studio Code.
+*   Генерируется папка `.devcontainer` для запуска приложения в контейнере с помощью Visual Studio Code.
 
     ```bash
     $ rails new myapp --devcontainer
     ```
 
-*   Introduce `Rails::Generators::Testing::Assertions#assert_initializer` to test initializers.
+*   Представлен `Rails::Generators::Testing::Assertions#assert_initializer` для инициализаторов теста.
 
-*   System tests now use Headless Chrome by default for new applications.
+*   Системные тесты теперь используют Headless Chrome по умолчанию для новых приложений.
 
-*   Support the `BACKTRACE` environment variable to turn off backtrace cleaning in normal server runnings.
-    Previously, this was only available for testing.
+*   Поддержка переменной среды `BACKTRACE` для отключения очистки трассировки при обычных запусках сервера. Ранее это было доступно только для тестирования.
 
-*   Add default Progressive Web App (PWA) files for the manifest and service worker, served from `app/views/pwa`,
-    and make them dynamically renderable through ERB.
+*   По умолчанию добавлены файлы Progressive Web App (PWA) для манифеста и service worker, доступные из `app/views/pwa`, и их возможно динамически рендерить в ERB.
 
 Action Cable
 ------------
 
-Please refer to the [Changelog][action-cable] for detailed changes.
+За подробностями обратитесь к [Changelog][action-cable].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Pack
 -----------
 
-Please refer to the [Changelog][action-pack] for detailed changes.
+За подробностями обратитесь к [Changelog][action-pack].
 
-### Removals
+### Удалено
 
-*   Remove deprecated constant `ActionDispatch::IllegalStateError`.
+*   Удалена устаревшая константа `ActionDispatch::IllegalStateError`.
 
-*   Remove deprecated constant `AbstractController::Helpers::MissingHelperError`.
+*   Удалена устаревшая константа `AbstractController::Helpers::MissingHelperError`.
 
-*   Remove deprecated comparison between `ActionController::Parameters` and `Hash`.
+*   Удалено устаревшее сравнение между `ActionController::Parameters` и `Hash`.
 
-*   Remove deprecated `Rails.application.config.action_dispatch.return_only_request_media_type_on_content_type`.
+*   Удален устаревший `Rails.application.config.action_dispatch.return_only_request_media_type_on_content_type`.
 
-*   Remove deprecated `speaker`, `vibrate`, and `vr` permissions policy directives.
+*   Удалены устаревшие директивы политики разрешений `speaker`, `vibrate` и `vr`.
 
-*   Remove deprecated support to set `Rails.application.config.action_dispatch.show_exceptions` to `true` and `false`.
+*   Удалена устаревшая поддержка назначения `Rails.application.config.action_dispatch.show_exceptions` как `true` и `false`.
 
-### Deprecations
+### Устарело
 
-*   Deprecate `Rails.application.config.action_controller.allow_deprecated_parameters_hash_equality`.
+*   Устарел `Rails.application.config.action_controller.allow_deprecated_parameters_hash_equality`.
 
-### Notable changes
+### Значимые изменения
 
 Action View
 -----------
 
-Please refer to the [Changelog][action-view] for detailed changes.
+За подробностями обратитесь к [Changelog][action-view].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `@rails/ujs` in favor of Turbo.
+*   Удален устаревший `@rails/ujs` в пользу Turbo.
 
-### Deprecations
+### Устарело
 
-*  Deprecate passing content to void elements when using `tag.br` type tag builders.
+*  Устарела передача контекста в пустые элементы при использовании билдеров типа тега `tag.br`.
 
-### Notable changes
+### Значимые изменения
 
 Action Mailer
 -------------
 
-Please refer to the [Changelog][action-mailer] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailer].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `config.action_mailer.preview_path`.
+*   Удален устаревший `config.action_mailer.preview_path`.
 
-*   Remove deprecated params via `:args` for `assert_enqueued_email_with`.
+*   Удалены устаревшие параметры с помощью `:args` для `assert_enqueued_email_with`.
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Record
 -------------
 
-Please refer to the [Changelog][active-record] for detailed changes.
+За подробностями обратитесь к [Changelog][active-record].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `Rails.application.config.active_record.suppress_multiple_database_warning`.
+*   Удален устаревший `Rails.application.config.active_record.suppress_multiple_database_warning`.
 
-*   Remove deprecated support to call `alias_attribute` with non-existent attribute names.
+*   Удалена устаревшая поддержка вызова `alias_attribute` с несуществующими именами атрибута.
 
-*   Remove deprecated `name` argument from `ActiveRecord::Base.remove_connection`.
+*   Удален устаревший аргумент `name` из `ActiveRecord::Base.remove_connection`.
 
-*   Remove deprecated `ActiveRecord::Base.clear_active_connections!`.
+*   Удален устаревший `ActiveRecord::Base.clear_active_connections!`.
 
-*   Remove deprecated `ActiveRecord::Base.clear_reloadable_connections!`.
+*   Удален устаревший `ActiveRecord::Base.clear_reloadable_connections!`.
 
-*   Remove deprecated `ActiveRecord::Base.clear_all_connections!`.
+*   Удален устаревший `ActiveRecord::Base.clear_all_connections!`.
 
-*   Remove deprecated `ActiveRecord::Base.flush_idle_connections!`.
+*   Удален устаревший `ActiveRecord::Base.flush_idle_connections!`.
 
-*   Remove deprecated `ActiveRecord::ActiveJobRequiredError`.
+*   Удален устаревший `ActiveRecord::ActiveJobRequiredError`.
 
-*   Remove deprecated support to define `explain` in the connection adapter with 2 arguments.
+*   Удалена устаревшая поддержка определения `explain` в адаптере соединения с 2 аргументами.
 
-*   Remove deprecated `ActiveRecord::LogSubscriber.runtime` method.
+*   Удален устаревший метод `ActiveRecord::LogSubscriber.runtime`.
 
-*   Remove deprecated `ActiveRecord::LogSubscriber.runtime=` method.
+*   Удален устаревший метод `ActiveRecord::LogSubscriber.runtime=`.
 
-*   Remove deprecated `ActiveRecord::LogSubscriber.reset_runtime` method.
+*   Удален устаревший метод `ActiveRecord::LogSubscriber.reset_runtime`.
 
-*   Remove deprecated `ActiveRecord::Migration.check_pending` method.
+*   Удален устаревший метод `ActiveRecord::Migration.check_pending`.
 
-*   Remove deprecated support to passing `SchemaMigration` and `InternalMetadata` classes as arguments to
-    `ActiveRecord::MigrationContext`.
+*   Удалена устаревшая поддержка передачи классов `SchemaMigration` и `InternalMetadata` в качестве аргентов в `ActiveRecord::MigrationContext`.
 
-*   Remove deprecated behavior to support referring to a singular association by its plural name.
+*   Удалено устаревшее поведение поддержки ссылки на одиночную связь по ее множественному имени.
 
-*   Remove deprecated `TestFixtures.fixture_path`.
+*   Удален устаревший `TestFixtures.fixture_path`.
 
-*   Remove deprecated support to `ActiveRecord::Base#read_attribute(:id)` to return the custom primary key value.
+*   Удалена устаревшая поддержка `ActiveRecord::Base#read_attribute(:id)` возвращения значения пользовательского первичного ключа.
 
-*   Remove deprecated support to passing coder and class as second argument to `serialize`.
+*   Удалена устаревшая поддержка передачи кодировщика и класса в качестве второго аргумента в `serialize`.
 
-*   Remove deprecated `#all_foreign_keys_valid?` from database adapters.
+*   Удален устаревший `#all_foreign_keys_valid?` из адаптеров базы данных.
 
-*   Remove deprecated `ActiveRecord::ConnectionAdapters::SchemaCache.load_from`.
+*   Удален устаревший `ActiveRecord::ConnectionAdapters::SchemaCache.load_from`.
 
-*   Remove deprecated `ActiveRecord::ConnectionAdapters::SchemaCache#data_sources`.
+*   Удален устаревший `ActiveRecord::ConnectionAdapters::SchemaCache#data_sources`.
 
-*   Remove deprecated `#all_connection_pools`.
+*   Удален устаревший `#all_connection_pools`.
 
-*   Remove deprecated support to apply `#connection_pool_list`, `#active_connections?`, `#clear_active_connections!`,
-    `#clear_reloadable_connections!`, `#clear_all_connections!` and `#flush_idle_connections!` to the connections pools
-    for the current role when the `role` argument isn't provided.
+*   Удалена устаревшая поддержка применения `#connection_pool_list`, `#active_connections?`, `#clear_active_connections!`,     `#clear_reloadable_connections!`, `#clear_all_connections!` и `#flush_idle_connections!` на пуле соединений для текущей роли, когда не предоставлен аргумент `role`.
 
-*   Remove deprecated `ActiveRecord::ConnectionAdapters::ConnectionPool#connection_klass`.
+*   Удален устаревший `ActiveRecord::ConnectionAdapters::ConnectionPool#connection_klass`.
 
-*   Remove deprecated `#quote_bound_value`.
+*   Удален устаревший `#quote_bound_value`.
 
-*   Remove deprecated support to quote `ActiveSupport::Duration`.
+*   Удалена устаревшая поддержка экранирования `ActiveSupport::Duration`.
 
-*   Remove deprecated support to pass `deferrable: true` to `add_foreign_key`.
+*   Удалена устаревшая поддержка передачи `deferrable: true` в `add_foreign_key`.
 
-*   Remove deprecated support to pass `rewhere` to `ActiveRecord::Relation#merge`.
+*   Удалена устаревшая поддержка передачи `rewhere` в `ActiveRecord::Relation#merge`.
 
-*   Remove deprecated behavior that would rollback a transaction block when exited using `return`, `break` or `throw`.
+*   Удалена устаревшая поддержка, откатывающая блок транзакции при выходе с помощью `return`, `break` или `throw`.
 
-### Deprecations
+### Устарело
 
-*   Deprecate `Rails.application.config.active_record.allow_deprecated_singular_associations_name`
+*   Устарел `Rails.application.config.active_record.allow_deprecated_singular_associations_name`
 
-*   Deprecate `Rails.application.config.active_record.commit_transaction_on_non_local_return`
+*   Устарел `Rails.application.config.active_record.commit_transaction_on_non_local_return`
 
-### Notable changes
+### Значимые изменения
 
 Active Storage
 --------------
 
-Please refer to the [Changelog][active-storage] for detailed changes.
+За подробностями обратитесь к [Changelog][active-storage].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `config.active_storage.replace_on_assign_to_many`.
+*   Удален устаревший `config.active_storage.replace_on_assign_to_many`.
 
-*   Remove deprecated `config.active_storage.silence_invalid_content_types_warning`.
+*   Удален устаревший `config.active_storage.silence_invalid_content_types_warning`.
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Model
 ------------
 
-Please refer to the [Changelog][active-model] for detailed changes.
+За подробностями обратитесь к [Changelog][active-model].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Active Support
 --------------
 
-Please refer to the [Changelog][active-support] for detailed changes.
+За подробностями обратитесь к [Changelog][active-support].
 
-### Removals
+### Удалено
 
-*   Remove deprecated `ActiveSupport::Notifications::Event#children` and  `ActiveSupport::Notifications::Event#parent_of?`.
+*   Удалены устаревшие `ActiveSupport::Notifications::Event#children` и  `ActiveSupport::Notifications::Event#parent_of?`.
 
-*   Remove deprecated support to call the following methods without passing a deprecator:
+*   Удалена устаревшая поддержка вызова следующих методов без передачи депрекатора:
 
     - `deprecate`
     - `deprecate_constant`
@@ -522,93 +468,90 @@ Please refer to the [Changelog][active-support] for detailed changes.
     - `assert_not_deprecated`
     - `collect_deprecations`
 
-*   Remove deprecated `ActiveSupport::Deprecation` delegation to instance.
+*   Удалена устаревшая делегация `ActiveSupport::Deprecation` на экземпляр.
 
-*   Remove deprecated `SafeBuffer#clone_empty`.
+*   Удален устаревший `SafeBuffer#clone_empty`.
 
-*   Remove deprecated `#to_default_s` from `Array`, `Date`, `DateTime` and `Time`.
+*   Удален устаревший `#to_default_s` из `Array`, `Date`, `DateTime` и `Time`.
 
-*   Remove deprecated `:pool_size` and `:pool_timeout` options for the cache storage.
+*   Удалены устаревшие опции `:pool_size` и `:pool_timeout` для хранилища кэша.
 
-*   Remove deprecated support for `config.active_support.cache_format_version = 6.1`.
+*   Удалена устаревшая поддержка `config.active_support.cache_format_version = 6.1`.
 
-*   Remove deprecated constants `ActiveSupport::LogSubscriber::CLEAR` and `ActiveSupport::LogSubscriber::BOLD`.
+*   Удалены устаревшие константы `ActiveSupport::LogSubscriber::CLEAR` и `ActiveSupport::LogSubscriber::BOLD`.
 
-*   Remove deprecated support to bolding log text with positional boolean in `ActiveSupport::LogSubscriber#color`.
+*   Удалена устаревшая поддержка жирного текста с помощью позиционного флага в `ActiveSupport::LogSubscriber#color`.
 
-*   Remove deprecated `config.active_support.disable_to_s_conversion`.
+*   Удален устаревший `config.active_support.disable_to_s_conversion`.
 
-*   Remove deprecated `config.active_support.remove_deprecated_time_with_zone_name`.
+*   Удален устаревший `config.active_support.remove_deprecated_time_with_zone_name`.
 
-*   Remove deprecated `config.active_support.use_rfc4122_namespaced_uuids`.
+*   Удален устаревший `config.active_support.use_rfc4122_namespaced_uuids`.
 
-*   Remove deprecated support to passing `Dalli::Client` instances to `MemCacheStore`.
+*   Удалена устаревшая поддержка передачи экземпляров `Dalli::Client` в `MemCacheStore`.
 
-*   Remove deprecated support for the pre-Ruby 2.4 behavior of `to_time` returning a `Time` object with local timezone.
+*   Удалена устаревшая поддержка поведения до Ruby 2.4 метода `to_time`, возвращающего объект `Time` с местной временной зоной.
 
-### Deprecations
+### Устарело
 
-*   Deprecate `config.active_support.to_time_preserves_timezone`.
+*   Устарел `config.active_support.to_time_preserves_timezone`.
 
-*   Deprecate `DateAndTime::Compatibility.preserve_timezone`.
+*   Устарел `DateAndTime::Compatibility.preserve_timezone`.
 
-### Notable changes
+### Значимые изменения
 
 Active Job
 ----------
 
-Please refer to the [Changelog][active-job] for detailed changes.
+За подробностями обратитесь к [Changelog][active-job].
 
-### Removals
+### Удалено
 
-*   Remove deprecated primitive serializer for `BigDecimal` arguments.
+*   Удален устаревший примитивный сериализатор для аргументов `BigDecimal`.
 
-*   Remove deprecated support to set numeric values to `scheduled_at` attribute.
+*   Удалена устаревшая поддержка установки числовых значений атрибуту `scheduled_at`.
 
-*   Remove deprecated `:exponentially_longer` value for the `:wait` in `retry_on`.
+*   Удалено устаревшее значение `:exponentially_longer` для `:wait` в `retry_on`.
 
-### Deprecations
+### Устарело
 
-*   Deprecate `Rails.application.config.active_job.use_big_decimal_serialize`.
+*   Устарел `Rails.application.config.active_job.use_big_decimal_serialize`.
 
-### Notable changes
+### Значимые изменения
 
 Action Text
 ----------
 
-Please refer to the [Changelog][action-text] for detailed changes.
+За подробностями обратитесь к [Changelog][action-text].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Action Mailbox
 ----------
 
-Please refer to the [Changelog][action-mailbox] for detailed changes.
+За подробностями обратитесь к [Changelog][action-mailbox].
 
-### Removals
+### Удалено
 
-### Deprecations
+### Устарело
 
-### Notable changes
+### Значимые изменения
 
 Ruby on Rails Guides
 --------------------
 
-Please refer to the [Changelog][guides] for detailed changes.
+За подробностями обратитесь к [Changelog][guides].
 
-### Notable changes
+### Значимые изменения
 
 Credits
 -------
 
-See the
-[full list of contributors to Rails](https://contributors.rubyonrails.org/)
-for the many people who spent many hours making Rails, the stable and robust
-framework it is. Kudos to all of them.
+Взгляните [на полный список контрибьюторов Rails](http://contributors.rubyonrails.org/), на людей, которые потратили много часов, сделав Rails стабильнее и надёжнее. Спасибо им всем.
 
 [railties]:       https://github.com/rails/rails/blob/7-2-stable/railties/CHANGELOG.md
 [action-pack]:    https://github.com/rails/rails/blob/7-2-stable/actionpack/CHANGELOG.md
