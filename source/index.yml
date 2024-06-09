@@ -237,8 +237,8 @@ pages:
   - title:    Несколько баз данных с Active Record
     path:     active-record-multiple-databases
     file:     active_record_multiple_databases.md
-    revision: d49a3abc019732c35c2f1fdc7687572ddd168dd8
-    date:     15/10/2022
+    revision: f53d020c44be21010a113c90550e58fb1b90c8ad
+    date:     03/06/2024
 
   - title:    Шифрование Active Record
     path:     active-record-encryption
