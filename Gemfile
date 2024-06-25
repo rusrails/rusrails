@@ -23,7 +23,6 @@ gem 'jquery-rails'
 gem 'rouge'
 
 gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails'
 
 gem 'git', require: false
 
