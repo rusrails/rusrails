@@ -1,0 +1,47 @@
+@import "bootstrap_and_overrides";
+@import "highlight";
+@import "layout";
+@import "pages";
+@import "search";
+
+.banner {
+  text-align: center;
+  margin: 10px auto 10px auto;
+}
+
+.banner300 {
+  padding: 8px;
+}
+
+#main_page_banner {
+  float: right;
+  width: 240px;
+  margin: 0 0 10px 10px;
+}
+
+#footer {
+  margin-top: 30px;
+  padding: 10px;
+  background: #F7F7F7;
+  border-radius: 119px 119px 0 0;
+  text-align: center;
+  a {
+    padding: 10px;
+  }
+  img {
+    height: 40px;
+  }
+  p {
+    margin: 0px;
+  }
+}
+
+.inside_page_header:before {
+  display: block;
+  content: " ";
+  visibility: hidden;
+}
+
+.content-wrapper {
+  margin-top: 90px;
+}

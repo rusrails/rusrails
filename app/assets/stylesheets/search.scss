@@ -1,0 +1,10 @@
+input.gsc-input {
+  box-shadow: none;
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+button.gsc-search-button {
+  line-height: normal;
+}

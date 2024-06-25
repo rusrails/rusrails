@@ -8,7 +8,7 @@ $(function() {
     html: true,
     placement: 'bottom',
     content: $('.index-popover-content').html(),
-    template: '<div class="popover index-content"><div class="arrow"></div><div class="popover-content"></div></div>'
+    template: '<div class="popover index-content" role="tooltip"><div class="popover-arrow"></div><div class="popover-body popover-content"></div></div>'
   });
 
   $('.index-popover').click(function() { return false; });

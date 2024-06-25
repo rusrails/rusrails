@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg bg-primary fixed-top" data-bs-theme="dark">
+  <div class="container-fluid p-0">
+    <%= link_to '', '/', class: 'navbar-brand navbar-brand-logo' %>
+
+    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <%= link_to 'Главная', '/', class: 'nav-link' %>
+        </li>
+
+        <li class="nav-item dropdown">
+          <%= link_to '#', class: "index-popover nav-link" do %>
+            Содержание
+            <b class="caret"></b>
+          <% end %>
+          <div class="index-popover-content d-none">
+            <% menu_page = Page.matched("menu") %>
+            <% cache ['v1', menu_page] do %>
+              <%= menu_page.rendered_body(self) %>
+            <% end %>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <%= link_to 'Поиск', '/search', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to 'Ruby & Rails API', 'http://api.rusrails.ru', class: 'nav-link', target: :blank %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
