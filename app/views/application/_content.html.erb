@@ -1,0 +1,60 @@
+<div class="content-wrapper">
+  <div class="container">
+    <div class="row d-flex flex-wrap-reverse justify-content-between">
+      <div class="col-md-9 content">
+        <div class="banner">
+          <%= render "shared/adsense", position: 'top' %>
+        </div>
+        <% if false %>
+          <div class="banner">
+            <%= render "shared/banner", mkdev_random_banner %>
+          </div>
+        <% end %>
+        <%= yield %>
+        <div class="banner">
+          <%= render "shared/adsense", position: 'bottom' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <h6 class="card-title text-primary fw-bold">Принимаем пожелания и пул-реквесты!</h6>
+            <p class="card-text">
+              <iframe allowtransparency="true" frameborder="0" height="30" src="http://ghbtns.com/github-btn.html?user=rusrails&repo=rusrails&type=watch&count=true&size=large" width="180"></iframe>
+              <a class="twitter-follow-button" data-lang="ru" href="https://twitter.com/rusrails"></a>
+            </p>
+          </div>
+        </div>
+
+        <% if content_for?(:menu) %>
+          <%= yield(:menu) %>
+        <% end %>
+
+        <% if false && @page.try(:path) != 'index' %>
+          <div class="card banner300 banner mb-3">
+            <%= render "shared/banner", url: 'http://bit.ly/rbybnr1', image: 'partners/spherecon2017.jpg' %>
+          </div>
+        <% end %>
+
+        <div class="card bg-light banner300 banner">
+          <%= render "shared/adsense", position: 'sidebar' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md" id="footer">
+        <p>
+          <%= link_to (image_tag 'github.png'), 'https://github.com/rusrails/rusrails', target: :blank %>
+          <%= link_to (image_tag 'twitter.png'), 'http://twitter.com/rusrails', target: :blank %>
+        </p>
+        <p>
+          <%= link_to "Лицензия CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0/", class: 'link-underline' %>
+          "Rails", "Ruby on Rails" и логотип Rails - торговые марки DHH
+          <%= render "layouts/counter" %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

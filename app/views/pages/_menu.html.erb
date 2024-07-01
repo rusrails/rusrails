@@ -1,11 +1,16 @@
-<ul class="nav nav-list">
-  <% markdown_renderer.headers.each do |header| %>
-    <% unless header[0].empty? %>
-      <li>
-        <%= content_tag "h#{header[0].length + 3}" do %>
-          <%= link_to "#{header[0].join '.'}. #{header[2]}".html_safe, "##{header[1]}" %>
+<div class="card bg-light mb-3">
+  <div class="card-body">
+    <ul class="list-unstyled">
+      <% markdown_renderer.headers.each do |header| %>
+        <% unless header[0].empty? %>
+          <li>
+            <%= content_tag "h#{header[0].length + 3}" do %>
+              <%= link_to "#{header[0].join '.'}. #{header[2]}".html_safe, "##{header[1]}",
+                          class: 'nav-link' %>
+            <% end %>
+          </li>
         <% end %>
-      </li>
-    <% end %>
-  <% end %>
-</ul>
+      <% end %>
+    </ul>
+  </div>
+</div>

@@ -14,18 +14,16 @@ gem 'puma'
 gem 'pg'
 gem 'textacular'
 
-gem 'nokogiri'
-gem 'sass-rails'
-gem 'redcarpet'
 gem 'config'
-gem 'bootstrap-sass', '~> 2.3.2.2'
-gem 'jquery-rails'
+gem 'git', require: false
+gem 'nokogiri'
+gem 'redcarpet'
 gem 'rouge'
 
+gem 'bootstrap', '~> 5.3.3'
+gem 'jquery-rails'
+gem 'dartsass-sprockets'
 gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails'
-
-gem 'git', require: false
 
 group :development do
   gem 'listen'
