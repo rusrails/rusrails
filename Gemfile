@@ -18,7 +18,7 @@ gem 'nokogiri'
 gem 'sass-rails'
 gem 'redcarpet'
 gem 'config'
-gem 'bootstrap-sass', '~> 2.3.2.2'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'jquery-rails'
 gem 'rouge'
 
