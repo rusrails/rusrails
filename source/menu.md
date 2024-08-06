@@ -52,7 +52,6 @@ next_column
     * [Работа с JavaScript в Rails](/working-with-javascript-in-rails)
     * [Процесс инициализации в Rails](/initialization)
     * [Автозагрузка и перезагрузка констант](/autoloading-and-reloading-constants)
-    * [Как перейти с Classic на Zeitwerk](/classic-to-zeitwerk-howto)
     * [Кэширование с Rails: Обзор](/caching-with-rails)
     * [Инструментарий Active Support](/active-support-instrumentation)
     * [Использование Rails для API-приложений](/api-app)

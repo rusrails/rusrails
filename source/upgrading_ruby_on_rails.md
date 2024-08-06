@@ -366,7 +366,7 @@ gem "sprockets-rails"
 
 ### Приложения должны запускаться в режиме `zeitwerk`
 
-Приложения, все еще запущенные в режиме `classic`, должны быть переключены в режим `zeitwerk`. Пожалуйста, обратитесь к руководству [Как перейти с Classic на Zeitwerk](/classic-to-zeitwerk-howto).
+Приложения, все еще запущенные в режиме `classic`, должны быть переключены в режим `zeitwerk`. Пожалуйста, обратитесь к руководству [Как перейти с Classic на Zeitwerk](https://github.com/rusrails/rusrails/blob/7.0/source/classic_to_zeitwerk_howto.md).
 
 ### Метод назначения `config.autoloader=` был удален
 
