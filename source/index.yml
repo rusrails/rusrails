@@ -406,6 +406,7 @@ plan:
   - file:     8_0_release_notes.md
   - file:     active_record_composite_primary_keys.md
   - file:     getting_started_with_devcontainer.md
+  - file:     tuning_performance_for_deployment.md
 
 old:
   - file:     2_2_release_notes.md
