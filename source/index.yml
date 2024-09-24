@@ -87,8 +87,8 @@ pages:
   - title:    Хелперы форм в Action View
     path:     form-helpers
     file:     form_helpers.md
-    revision: d83f52cede6003b7773d0ae8bc44d62fdbb25d1c
-    date:     07/12/2022
+    revision: f9c51ec385a7b75e212954cd4b22c2da7c1d32f4
+    date:     30/07/2024
 
   - title:    Обзор Action Controller
     path:     action-controller-overview

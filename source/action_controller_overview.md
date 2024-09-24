@@ -179,7 +179,7 @@ get '/clients/:status', to: 'clients#index', foo: 'bar'
 [`controller_name`]: https://api.rubyonrails.org/classes/ActionController/Metal.html#method-i-controller_name
 [`action_name`]: https://api.rubyonrails.org/classes/AbstractController/Base.html#method-i-action_name
 
-### Параметры составного ключа
+### (composite-key-parameters) Параметры составного ключа
 
 Параметры составного ключа содержат несколько значений в одном параметре. По этой причине нам нужно иметь возможность извлекать каждое значение и передавать их в Active Record. Для этого случая мы можем использовать метод `extract_value`.
 
